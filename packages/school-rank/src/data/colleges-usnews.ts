@@ -149,17 +149,17 @@ export const COLLEGE_ROWS: readonly CollegeRow[] = [
 
 /**
  * Colleges with a wordmark in `@debate-ai/icons` that are not in the bundled
- * top 100. Their U.S. News rank is left `null`: it exists but is not sourced
- * here. Macalester and Redlands are ranked on other U.S. News lists (National
- * Liberal Arts Colleges and Regional Universities West) rather than National
- * Universities.
+ * top 100. Most have no rank bundled here (`null`: the rank exists but is not
+ * sourced); Kansas and Kentucky are at rank 148. Macalester and Redlands are
+ * ranked on other U.S. News lists (National Liberal Arts Colleges and Regional
+ * Universities West) rather than National Universities.
  */
 export const COLLEGES_OUTSIDE_TOP_100: readonly CollegeRow[] = [
   [null, "California State University, Long Beach", "CA", "public", ["CSU Long Beach", "Long Beach State", "CSULB"]],
   [null, "George Mason University", "VA", "public", ["George Mason", "GMU"]],
   [null, "University of Houston", "TX", "public", ["Houston", "UH"]],
-  [null, "University of Kansas", "KS", "public", ["Kansas", "KU"]],
-  [null, "University of Kentucky", "KY", "public", ["Kentucky", "UK"]],
+  [148, "University of Kansas", "KS", "public", ["Kansas", "KU"]],
+  [148, "University of Kentucky", "KY", "public", ["Kentucky", "UK"]],
   [null, "Liberty University", "VA", "private", ["Liberty"]],
   [null, "Loyola University Chicago", "IL", "private", ["Loyola Chicago", "LUC"]],
   [null, "Macalester College", "MN", "private", ["Macalester", "Mac"]],

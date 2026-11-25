@@ -15,14 +15,20 @@ Depends on `debate-editor` only for its read-aloud voice client (`@debate-ai/edi
 which the Synergy Slayer pages' Voice button uses, and the speaker button on each citation hover card
 (`components/guides/card-voice.ts`: says "Smith 19" once, then only the underlined card text).
 
-Every docs page's toolbar (Copy, Ask AI, the Synergy Slayer tools, then **Info**) sits in the
-header right after the search box: `routes/docs-layout.tsx` swaps the search slot for
-`SearchWithToolbarSlot`, which leaves an empty `#docs-header-toolbar`, and the page portals its
-buttons into it (`components/fumadocs/layout/header-toolbar.tsx`). Below the `lg` breakpoint the
+Every docs page's toolbar (Copy, Ask AI, the Synergy Slayer tools, **Info**, then **Flow chart**)
+sits in the header right after the **Search** button: `routes/docs-layout.tsx` swaps the search
+slot for `SearchWithToolbarSlot`, which renders a Search button in the toolbar's own style (in
+place of fumadocs' search box, from `md` up; smaller screens keep the header's search icon) and
+then an empty `#docs-header-toolbar`, and the page portals its buttons into it (`components/fumadocs/layout/header-toolbar.tsx`). Below the `lg` breakpoint the
 toolbar stays in the page body under the title. Each button is wrapped in `ToolbarItem`, a shadcn
 tooltip that takes over the button's `title`; the large-icon, tiny-label look is CSS
 (`.docs-header-toolbar` in `styles/docs.css`). Info's counts come from `lib/fumadocs/page-stats.ts`,
 run on the server over the page's processed Markdown.
+
+**Flow chart** is `PageFlowChartButton` from `@debate-ai/videos/page-flow-chart` (the package's
+only dependency on `debate-videos`): the watch page's AI mind map, drawn from this page alone. Its
+modal loads lazily, fetches the page's Markdown URL (the Copy button's source) on submit, and is
+described under "Page flow chart" in the `debate-videos` notes.
 
 ## Dependency graph
 

@@ -70,3 +70,71 @@ export function shouldReloadForStaleBuild(
     return false;
   }
 }
+
+/**
+ * Browser wordings for a lazy chunk that failed to load: Chrome's
+ * "Failed to fetch dynamically imported module", Safari's "Importing a module
+ * script failed", Firefox's "error loading dynamically imported module", the
+ * MIME rejection a 404 HTML page used to cause, and webpack's
+ * `ChunkLoadError` / "Loading chunk N failed". Kept in step with
+ * `CHUNK_FAILURE_PATTERN` in apps/debate-web/lib/chunk-reload/script.ts,
+ * which catches the same failures before React mounts.
+ */
+export const CHUNK_LOAD_ERROR_PATTERN =
+  /Failed to fetch dynamically imported module|Importing a module script failed|error loading dynamically imported module|is not a valid JavaScript MIME type|ChunkLoadError|Loading (?:CSS )?chunk [\w-]+ failed|Unable to preload CSS/i;
+
+/**
+ * True when `error` is a failed chunk / dynamic import, as opposed to a bug in
+ * the component. `React.lazy` rethrows the import's rejection into the nearest
+ * error boundary, so this is how a boundary tells "the build moved on" (reload
+ * fixes it) from "the code is broken" (reload would not).
+ */
+export function isChunkLoadError(error: unknown): boolean {
+  if (!error) return false;
+  if (typeof error === "string") return CHUNK_LOAD_ERROR_PATTERN.test(error);
+  if (typeof error !== "object") return false;
+  const { name, message } = error as { name?: unknown; message?: unknown };
+  return (
+    (typeof name === "string" && CHUNK_LOAD_ERROR_PATTERN.test(name)) ||
+    (typeof message === "string" && CHUNK_LOAD_ERROR_PATTERN.test(message))
+  );
+}
+
+/** This tab's sessionStorage, or undefined where reading it throws. */
+function sessionStore(): ReloadAttemptStore | undefined {
+  if (typeof window === "undefined") return undefined;
+  try {
+    return window.sessionStorage;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Reloads the page to pick up the current build, at most once per
+ * {@link STALE_BUILD_RELOAD_COOLDOWN_MS} per tab. Returns whether a reload was
+ * started, so a boundary can keep its fallback quiet while the page goes away
+ * and show its real error UI when the guard declines (the chunk is still
+ * missing after a fresh document, so reloading again would loop).
+ */
+export function reloadForStaleBuild(
+  store: ReloadAttemptStore | undefined = sessionStore(),
+  reload: () => void = () => window.location.reload(),
+): boolean {
+  if (!shouldReloadForStaleBuild(store)) return false;
+  reload();
+  return true;
+}
+
+/**
+ * For an error boundary's `componentDidCatch` / effect: when `error` is a
+ * failed chunk load, reload once (guarded) and return true.
+ */
+export function recoverFromChunkLoadError(
+  error: unknown,
+  store?: ReloadAttemptStore,
+  reload?: () => void,
+): boolean {
+  if (!isChunkLoadError(error)) return false;
+  return reloadForStaleBuild(store ?? sessionStore(), reload);
+}

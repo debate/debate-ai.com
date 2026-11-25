@@ -195,6 +195,8 @@ export function flowChartOutlines(
 export interface FlowChartSpeechColumn {
   /** The speech's label as bubbles carry it (`1NC`), or `""` for bubbles with no speech. */
   label: string;
+  /** A longer name shown after the label in the column header, e.g. a page section's heading. */
+  title?: string;
   side: FlowChartSide;
   /** Fill for this speech's main bubbles: a shade of blue (aff) or red (neg). */
   color: string;

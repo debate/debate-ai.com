@@ -5,24 +5,48 @@
 // packages/debate-qwksearch/src/components/base-url.ts).
 import "@debate-ai/qwksearch/components/base-url"
 
-import { lazy, useSyncExternalStore, type ReactElement } from "react"
+import { lazy, Suspense, useSyncExternalStore, type ReactElement } from "react"
+import { WorkspaceLoading } from "./WorkspaceLoading"
 
 /**
- * The full qwksearch research workspace embedded at /doc: research chat,
- * the REASON docs editor with its files/outline sidebar, and the settings
- * modal — all talking to qwksearch.com's public API as a guest.
- *
- * Not mounted at the moment: `/doc` shows qwksearch.com in an iframe instead
- * (see `WorkspaceScreen`). Kept so the bundled workspace can come back.
+ * The full qwksearch research workspace at /research/docs, rendered directly
+ * as React components (no iframe): research chat, the REASON docs editor with
+ * its files/outline sidebar, and the settings modal — all talking to
+ * qwksearch.com's public API.
  *
  * The workspace is pulled in with `import()` rather than a static import so
- * the server build can drop it entirely (see `Workspace` below).
+ * the server build can drop it entirely (see `Workspace` below). Its chunks
+ * are several megabytes, so until they arrive the page shows
+ * {@link WorkspaceLoading} (the orbital sphere and a progress bar) rather than
+ * an empty page.
  */
+
+/** How many of the workspace's dynamic imports have resolved, for the bar. */
+const WORKSPACE_IMPORTS = 3
+let importsLoaded = 0
+const progressListeners = new Set<() => void>()
+
+function markImportLoaded<T>(module: T): T {
+  importsLoaded = Math.min(WORKSPACE_IMPORTS, importsLoaded + 1)
+  for (const listener of progressListeners) listener()
+  return module
+}
+
+function subscribeProgress(listener: () => void) {
+  progressListeners.add(listener)
+  return () => {
+    progressListeners.delete(listener)
+  }
+}
+
+const readProgress = () => importsLoaded
+const readServerProgress = () => 0
+
 const loadWorkspace = async () => {
   const [{ QwksearchProviders }, { QwksearchWorkspace }, { SidebarWithAppDock }] = await Promise.all([
-    import("@debate-ai/qwksearch/components/Providers"),
-    import("@debate-ai/qwksearch/components/Workspace"),
-    import("../../components/qwksearch/SidebarWithAppDock"),
+    import("@debate-ai/qwksearch/components/Providers").then(markImportLoaded),
+    import("@debate-ai/qwksearch/components/Workspace").then(markImportLoaded),
+    import("../../components/qwksearch/SidebarWithAppDock").then(markImportLoaded),
   ])
 
   return {
@@ -50,11 +74,17 @@ const Workspace = lazy<() => ReactElement | null>(
 
 const subscribeNever = () => () => {}
 
+function WorkspaceProgress() {
+  const loaded = useSyncExternalStore(subscribeProgress, readProgress, readServerProgress)
+  return <WorkspaceLoading loaded={loaded} total={WORKSPACE_IMPORTS} />
+}
+
 /**
  * Renders the workspace in the browser only. It is browser-only UI whose
  * server render came out empty anyway, but rendering it on the server still
  * made the Worker import the whole ~7 MB workspace chunk, about 45 MB of
- * isolate memory against Cloudflare's 128 MB cap.
+ * isolate memory against Cloudflare's 128 MB cap. The server (and the first
+ * client render) draws the loader instead, so the page is never blank.
  */
 export default function ResearchAgentEmbed() {
   const inBrowser = useSyncExternalStore(
@@ -62,5 +92,10 @@ export default function ResearchAgentEmbed() {
     () => true,
     () => false,
   )
-  return inBrowser ? <Workspace /> : null
+  if (!inBrowser) return <WorkspaceProgress />
+  return (
+    <Suspense fallback={<WorkspaceProgress />}>
+      <Workspace />
+    </Suspense>
+  )
 }

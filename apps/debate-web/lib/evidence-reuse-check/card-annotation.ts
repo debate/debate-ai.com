@@ -24,7 +24,8 @@ import {
 import { isMissingTableError } from "@/lib/contacts/server";
 import { cardAiAnalyses, type DebateCardRow } from "@/lib/database/schema";
 import { OPENROUTER_FREE_MODEL } from "@/lib/ai/provider-key";
-import { getEnv } from "@/lib/env";
+import { getEnv } from "@/lib/env"
+import { cleanApiKey } from "@/lib/ai/provider-key";
 
 const ANTHROPIC_MODEL = "claude-opus-5";
 const ANTHROPIC_VERSION = "2023-06-01";
@@ -106,8 +107,8 @@ export async function annotateCard(
   const saved = (await readSavedAnnotations(db, [cardHash])).get(cardHash);
   if (saved) return { ok: true, annotation: saved, cached: true };
 
-const openrouterKey = getEnv("OPENROUTER_API_KEY");
-  const anthropicKey = getEnv("ANTHROPIC_API_KEY");
+const openrouterKey = cleanApiKey(getEnv("OPENROUTER_API_KEY"));
+  const anthropicKey = cleanApiKey(getEnv("ANTHROPIC_API_KEY"));
   if (!openrouterKey && !anthropicKey) return { ok: false, error: "AI features are not configured on the server.", status: 503 };
 
   let res: Response;

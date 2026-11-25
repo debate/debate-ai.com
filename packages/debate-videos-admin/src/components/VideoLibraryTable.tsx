@@ -27,7 +27,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/primitives/select";
-import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "./VideoEditDialog";
 import { formatCount } from "@debate-ai/rankings/src/format-count";
 import { ViewCount } from "@debate-ai/rankings/src/view-count";
@@ -49,7 +48,7 @@ interface LibraryResponse {
   total: number;
 }
 
-const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "ACC", 8: "Parli", 9: "Congress", 7: "Misc" };
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College", 5: "WSD", 6: "Atlantic", 8: "Parliamentary", 9: "Congress", 7: "Misc" };
 
 const STYLE_OPTIONS = [
   { value: "all", label: "All styles" },
@@ -58,8 +57,8 @@ const STYLE_OPTIONS = [
   { value: "3", label: "LD" },
   { value: "4", label: "College" },
   { value: "5", label: "WSD" },
-  { value: "6", label: "ACC" },
-  { value: "8", label: "Parli" },
+  { value: "6", label: "Atlantic" },
+  { value: "8", label: "Parliamentary" },
   { value: "9", label: "Congress" },
   { value: "7", label: "Misc" },
 ];
@@ -105,6 +104,7 @@ export function VideoLibraryTable() {
   const [editing, setEditing] = useState<LibraryVideo | null>(null);
   const [adding, setAdding] = useState<LibraryVideo | null>(null);
 
+  /** The paste-a-link box opens the long-form editor for any video, listed or not. */
   const [contentVideo, setContentVideo] = useState<ContentDialogVideo | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<LibraryVideo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -177,12 +177,17 @@ export function VideoLibraryTable() {
       const res = await fetch(`/api/admin/videos/library/${encodeURIComponent(videoId)}`);
       const body = res.ok ? await res.json().catch(() => null) : null;
       const video = body?.video as LibraryVideo | undefined;
-      setContentVideo({
+      const base = emptyLibraryVideo();
+      setEditing({
+        ...base,
         videoId,
         title: video?.title || "Not in the library yet",
+        publishedAt: video?.publishedAt ?? "",
         channel: video?.channel ?? "",
         tournament: video?.tournament ?? null,
         style: video?.style ?? null,
+        description: video?.description ?? "",
+        viewCount: video?.viewCount ?? 0,
       });
       setAddInput("");
     } catch {
@@ -262,9 +267,9 @@ export function VideoLibraryTable() {
           </Button>
         </div>
         <CardDescription>
-          Every video already published to the site. Search for one, correct its metadata, or
+Every video already published to the site. Search for one, correct its metadata, or
           remove it — a removed video is also recorded so the daily YouTube resync does not
-          bring it back. “Transcripts” opens the long-form content beside the video: the
+          bring it back. "Edit" also opens the long-form content beside the video: the
           speech-by-speech transcript, the AI summary, and the analysis videos linked to it.
           The Transcript column shows which videos have one; paste any YouTube link below to
           write one for a video that isn&apos;t in this list.
@@ -455,7 +460,7 @@ export function VideoLibraryTable() {
                       <Badge
                         variant="outline"
                         className="font-normal"
-                        title="No typed-up transcript, but YouTube's captions are cached — import them from the Transcripts dialog"
+                        title="No typed-up transcript, but YouTube's captions are cached — import them from Edit → Transcripts & related videos"
                       >
                         captions only
                       </Badge>
@@ -467,21 +472,6 @@ export function VideoLibraryTable() {
                     <div className="flex justify-end gap-2">
                       <Button size="sm" variant="outline" onClick={() => setEditing(video)}>
                         Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          setContentVideo({
-                            videoId: video.videoId,
-                            title: video.title,
-                            channel: video.channel,
-                            tournament: video.tournament,
-                            style: video.style,
-                          })
-                        }
-                      >
-                        Transcripts
                       </Button>
                       <Button
                         size="sm"
@@ -534,7 +524,21 @@ export function VideoLibraryTable() {
       </CardContent>
 
 
-      <VideoEditDialog video={editing} onClose={() => setEditing(null)} onSaved={handleSaved} />
+      <VideoEditDialog
+        video={editing}
+        onClose={() => setEditing(null)}
+        onSaved={handleSaved}
+        onDeleted={(removed) => {
+          setEditing(null);
+          setNotice(`Removed “${removed.title}” from the library.`);
+          void load();
+        }}
+        onContentSaved={(message) => {
+          setNotice(message);
+          // Refresh the Transcript column behind the dialog.
+          void load();
+        }}
+      />
       <VideoEditDialog
         video={adding}
         isNew
@@ -547,7 +551,6 @@ export function VideoLibraryTable() {
         onOpenChange={(open) => (open ? undefined : setContentVideo(null))}
         onSaved={(message) => {
           setNotice(message);
-          // Refresh the Transcript column behind the dialog.
           void load();
         }}
       />

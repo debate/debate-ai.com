@@ -46,7 +46,7 @@ get created.
 - **Practice:** [`saved_coach_materials`](#saved_coach_materials), [`saved_coach_material_versions`](#saved_coach_material_versions), [`saved_strategy_recommendations`](#saved_strategy_recommendations), [`saved_drill_sets`](#saved_drill_sets), [`saved_custom_opponent_personas`](#saved_custom_opponent_personas), [`practice_vs_ai_debates`](#practice_vs_ai_debates), [`saved_sprint_sessions`](#saved_sprint_sessions), [`practice_profiles`](#practice_profiles), [`practice_challenges`](#practice_challenges), [`topic_signups`](#topic_signups)
 - **Video library:** [`youtube_round_videos`](#youtube_round_videos), [`youtube_video_exclusions`](#youtube_video_exclusions), [`youtube_sync_runs`](#youtube_sync_runs), [`youtube_channels`](#youtube_channels), [`videos`](#videos), [`video_durations`](#video_durations), [`video_transcripts`](#video_transcripts), [`video_documents`](#video_documents), [`video_relations`](#video_relations), [`video_issues`](#video_issues), [`video_ai_results`](#video_ai_results), [`topic_area_votes`](#topic_area_votes), [`topic_area_rankings`](#topic_area_rankings), [`profile_follows`](#profile_follows)
 - **Evidence search:** [`evidence_reuse_index`](#evidence_reuse_index), [`reuse_check_log`](#reuse_check_log), [`detected_urls`](#detected_urls), [`debate_cards`](#debate_cards), [`caselist_documents`](#caselist_documents), [`debate_card_imports`](#debate_card_imports), [`card_ai_analyses`](#card_ai_analyses)
-- **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`collab_relay_*`](#collab_relay_rooms), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads)
+- **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`collab_relay_*`](#collab_relay_rooms), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads), [`site_feedback`](#site_feedback)
 - **Billing and teams:** [`stripe_subscriptions`](#stripe_subscriptions), [`usage_counters`](#usage_counters), [`team_students`](#team_students), [`team_assignments`](#team_assignments)
 - **Prediction markets:** [`prediction_wallets`](#prediction_wallets), [`prediction_markets`](#prediction_markets), [`prediction_bets`](#prediction_bets)
 - **Search index and bookkeeping:** [`debate_cards_fts`](#debate_cards_fts), [`debate_cards_vocab`](#debate_cards_vocab), [`debate_cards_fts_state`](#debate_cards_fts_state), [`debate_cards_body_fts`](#debate_cards_body_fts), [`_d1_applied_migrations`](#_d1_applied_migrations)
@@ -622,6 +622,23 @@ Answers to the docs' suggested questions ("Ask about this page" on the Synergy S
 
 - Primary key: (`page`, `question_key`)
 
+### site_feedback
+
+Messages sent from the **Feedback** button in the settings sidebar footer (`POST /api/feedback`), read and deleted on the admin page's Feedback tab (`/api/admin/feedback`). Open to signed-out visitors; one submission an hour per client address, account or email. Created on first use by `lib/feedback/store.ts` (not in `schema.ts`).
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `id` | integer | no |  | Autoincrement id. _(PK)_ |
+| `email` | text | no |  | The reply address the sender typed, lower-cased. |
+| `message` | text | no |  | The feedback, up to 200,000 characters. |
+| `page` | text | yes |  | The path the dialog was opened from. |
+| `user_id` | text | yes |  | The sender's `user.id` when signed in (no FK). |
+| `ip_hash` | text | yes |  | Salted SHA-256 of `cf-connecting-ip`, for the hourly limit; raw IPs are not stored. |
+| `user_agent` | text | yes |  | The browser's user agent, first 300 characters. |
+| `created_at` | integer | no | _(SQL expr)_ | When it was sent (unix seconds). |
+
+- Indexes: `idx_site_feedback_created` on (created_at); `idx_site_feedback_ip` on (ip_hash, created_at); `idx_site_feedback_email` on (email, created_at)
+
 ## Practice
 
 ### saved_coach_materials
@@ -1185,7 +1202,7 @@ _Drizzle export `debateCards`, `schema.ts:1846`._
 | `source_url` | text | no | `` | Source URL `debate-card-parser` extracted from the citation, or "" when it names none. Written at import and backfilled by the admin panel's "Extract source URLs" run; the URL recheck reads it instead of re-parsing every cite. |
 | `imported_at` | integer | no | _(SQL expr)_ | When this row was last imported. |
 
-- Indexes: `idx_debate_cards_year` on (year); `idx_debate_cards_event` on (event); `idx_debate_cards_level` on (level); `idx_debate_cards_side` on (side); `idx_debate_cards_caselist` on (caselist_display_name); `idx_debate_cards_bucket` on (bucket_id); `idx_debate_cards_source_file` on (source_file); `idx_debate_cards_source_url` on (source_url); `idx_debate_cards_imported_at` on (imported_at, id); `idx_debate_cards_duplicate_count` on (duplicate_count)
+- Indexes: `idx_debate_cards_year` on (year); `idx_debate_cards_event` on (event); `idx_debate_cards_level` on (level); `idx_debate_cards_side` on (side); `idx_debate_cards_caselist` on (caselist_display_name); `idx_debate_cards_bucket` on (bucket_id); `idx_debate_cards_source_file` on (source_file); `idx_debate_cards_source_url` on (source_url); `idx_debate_cards_imported_at` on (imported_at, id); `idx_debate_cards_recent_popular` on (year, duplicate_count, id); `idx_debate_cards_read_count` on (duplicate_count desc, id asc)
 
 ### caselist_documents
 

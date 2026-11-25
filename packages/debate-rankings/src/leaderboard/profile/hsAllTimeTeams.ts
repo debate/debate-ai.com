@@ -9,7 +9,9 @@
  * (`NDT_POINTS_MULTIPLIERS.highSchool`, 0.5) and era multiplier (before
  * 2000, 0.6): every Tournament of Champions result on record (1972 on),
  * every NDCA championship result (2006 on) and the Barkley Forum's Silver
- * Key champions and top speakers (2018, 2021 on). On top of that, each
+ * Key champions and top speakers (2018, 2021 on), and the Cal Invitational
+ * at UC Berkeley's LD and PF finals and top speakers (2017–2019, 2022,
+ * 2024). On top of that, each
  * debater who went on to debate in college adds their own all-seasons NDT
  * points in full ({@link HS_ALL_TIME_COLLEGE_SHARE}), high school credit left
  * out so it isn't counted twice.
@@ -26,6 +28,7 @@
  */
 
 import { BARKLEY_RESULTS, type BarkleyResult } from "../../sync/barkley-champions"
+import { CAL_RESULTS, type CalResult } from "../../sync/berkeley-champions"
 import { NDCA_HISTORY, NDCA_NAME_ALIASES, ndcaEvent, type NdcaResult } from "../../sync/ndca-champions"
 import {
   HS_NDCA_FINISH_POINTS,
@@ -43,13 +46,13 @@ export type HsAllTimeEvent = "Policy" | "Lincoln-Douglas" | "Public Forum"
 export const HS_ALL_TIME_EVENTS: readonly HsAllTimeEvent[] = ["Policy", "Lincoln-Douglas", "Public Forum"]
 
 /** The national championships a team's finishes come from. */
-export type HsAllTimeTournament = "TOC" | "NDCA" | "Barkley"
+export type HsAllTimeTournament = "TOC" | "NDCA" | "Barkley" | "Cal"
 
 /** What each debater's college NDT points are multiplied by when added to their high school team: in full, as the college list counts them. */
 export const HS_ALL_TIME_COLLEGE_SHARE = 1
 
 /**
- * Base points per national finish, TOC, NDCA and Barkley Forum alike: the
+ * Base points per national finish, TOC, NDCA, Barkley Forum and Cal alike: the
  * college all-seasons list's high school points ({@link HS_TOC_POINTS},
  * {@link HS_NDCA_FINISH_POINTS}), before {@link HS_ALL_TIME_MULTIPLIER} and
  * the era multiplier.
@@ -137,11 +140,17 @@ const nameKey = (name: string) => name.toLowerCase().replace(/[^a-z]/g, "")
 const lastWord = (name: string) => name.trim().split(/\s+/).at(-1) ?? ""
 const withoutState = (school: string) => school.replace(/\s*\([A-Z]{2}\)\s*$/, "").trim()
 
-function sources(toc: readonly TocResult[], ndca: readonly NdcaResult[], barkley: readonly BarkleyResult[]): Source[] {
+function sources(
+  toc: readonly TocResult[],
+  ndca: readonly NdcaResult[],
+  barkley: readonly BarkleyResult[],
+  cal: readonly CalResult[],
+): Source[] {
   return [
     ...toc.map((r) => ({ tournament: "TOC" as const, ...r })),
     ...ndca.map((r) => ({ tournament: "NDCA" as const, ...r, event: ndcaEvent(r) })),
     ...barkley.map((r) => ({ tournament: "Barkley" as const, ...r })),
+    ...cal.map((r) => ({ tournament: "Cal" as const, ...r })),
   ]
 }
 
@@ -171,6 +180,7 @@ export interface HsAllTimeSources {
   toc?: readonly TocResult[]
   ndca?: readonly NdcaResult[]
   barkley?: readonly BarkleyResult[]
+  cal?: readonly CalResult[]
   college?: HsCollegeLookup | null
 }
 
@@ -190,9 +200,9 @@ interface Building {
  * @param input - The results to score and the college lookup ({@link HsAllTimeSources}).
  */
 export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllTimeEvent, HsAllTimeTeam[]> {
-  const { toc = TOC_HISTORY, ndca = NDCA_HISTORY, barkley = BARKLEY_RESULTS, college = null } = input
+  const { toc = TOC_HISTORY, ndca = NDCA_HISTORY, barkley = BARKLEY_RESULTS, cal = CAL_RESULTS, college = null } = input
   const events = new Set<string>(HS_ALL_TIME_EVENTS)
-  const rows = sources(toc, ndca, barkley).filter(
+  const rows = sources(toc, ndca, barkley, cal).filter(
     (r) => events.has(r.event) && !r.partialNames && HS_ALL_TIME_POINTS[r.place] !== undefined,
   )
   const teams = new Map<string, Building>()

@@ -123,6 +123,14 @@ export function columnPositions(
   return positions
 }
 
+/** A column header's text: the speech label, then its title (a page section's heading) clipped to fit. */
+export function headerText(column: Pick<FlowChartSpeechColumn, "label" | "title">, max = 22): string {
+  const label = column.label || "Other"
+  if (!column.title) return label
+  const full = `${label} ${column.title}`
+  return full.length > max ? `${full.slice(0, max - 1).trimEnd()}…` : full
+}
+
 export interface DebateFlowChartGraphProps {
   chart: DebateFlowChart
   /** The chart's speeches in round order, with their colours. */
@@ -264,7 +272,8 @@ export function DebateFlowChartGraph({
           .attr("font-size", 14)
           .attr("font-weight", 700)
           .attr("fill", "#ffffff")
-          .text((d) => d.label || "Other")
+          .text((d) => headerText(d))
+        headers.append("title").text((d) => (d.title ? `${d.label} ${d.title}` : d.label || "Other"))
 
         const linkGroup = root.append("g").attr("fill", "none")
         const link = linkGroup

@@ -25,6 +25,72 @@ export interface HeadToHeadRound {
   tournament: string
   /** Whether the round was an elimination round. */
   elim: boolean
+  /** Tabroom round id, from the round file's name (`01-round-1-1534245.csv`, `Tabroom-1475608.csv`). */
+  roundId?: string
+  /** Round name for display, e.g. "Round 3", "Octas". */
+  roundLabel?: string
+}
+
+/** Tabroom's public pairing page for a round (works without the tournament id). */
+export function tabroomRoundUrl(roundId: string): string {
+  return `https://www.tabroom.com/index/tourn/postings/round.mhtml?round_id=${encodeURIComponent(roundId)}`
+}
+
+/** Slug words shown in capitals ("kentucky-rr" → "Kentucky RR"). */
+const TOURNAMENT_ACRONYMS = new Set(["rr", "hs", "ms", "ld", "pf", "cx", "toc", "ndt", "ceda", "ukso", "usc", "ucla", "ucf", "uk"])
+
+/** Words left lowercase inside a name ("Heart of Texas"). */
+const SMALL_WORDS = new Set(["of", "the", "and", "at"])
+
+/** A tournament folder slug for display: `kentucky-rr` → "Kentucky RR". */
+export function tournamentLabel(slug: string): string {
+  return slug
+    .split("-")
+    .map((word, i) =>
+      TOURNAMENT_ACRONYMS.has(word)
+        ? word.toUpperCase()
+        : i > 0 && SMALL_WORDS.has(word)
+          ? word
+          : word[0].toUpperCase() + word.slice(1),
+    )
+    .join(" ")
+}
+
+/** Elim names in round files, as shown. */
+const ELIM_NAMES: [RegExp, string][] = [
+  [/runoff/i, "Runoffs"],
+  [/triple/i, "Triples"],
+  [/double/i, "Doubles"],
+  [/octa|octo/i, "Octas"],
+  [/quarter/i, "Quarters"],
+  [/semi/i, "Semis"],
+  [/final/i, "Finals"],
+]
+
+/** Elim names counting back from the final. */
+const ELIMS_FROM_FINAL = ["Finals", "Semis", "Quarters", "Octas", "Doubles", "Triples"]
+
+/**
+ * A round file's Tabroom id and display name. Named files carry both
+ * (`06-round-6-1534250.csv`); bare `Tabroom-<id>.csv` files are numbered by
+ * their order in the folder (`index`), prelims and elims separately; bare
+ * elims are named back from the final, given how many there are (`totalElims`).
+ */
+export function roundFileInfo(
+  file: string,
+  index: number,
+  elim: boolean,
+  totalElims = 0,
+): { roundId?: string; roundLabel: string } {
+  const base = file.replace(/\.csv$/i, "")
+  const roundId = base.match(/(\d{5,})$/)?.[1]
+  const numbered = base.match(/round[-_ ]?(\d+)/i)
+  if (numbered) return { roundId, roundLabel: `Round ${Number(numbered[1])}` }
+  const named = ELIM_NAMES.find(([pattern]) => pattern.test(base))
+  if (named) return { roundId, roundLabel: named[1] }
+  if (!elim) return { roundId, roundLabel: `Round ${index + 1}` }
+  // Bare elim files: the last is the final, the one before the semis, and so on.
+  return { roundId, roundLabel: ELIMS_FROM_FINAL[totalElims - 1 - index] ?? `Elim ${index + 1}` }
 }
 
 /** One tournament's raw CSV text. */
@@ -88,7 +154,14 @@ export function parseTournamentRounds(tournament: TournamentCsvs, singles: boole
   }
 
   const rounds: HeadToHeadRound[] = []
-  for (const file of tournament.rounds) {
+  // Tabroom ids rise through a tournament, so sorting by name puts rounds in order.
+  const files = [...tournament.rounds].sort((a, b) => a.file.localeCompare(b.file, undefined, { numeric: true }))
+  let prelims = 0
+  let elims = 0
+  const isElim = (file: string, names: string[]) =>
+    ELIM_FILE.test(file) || (names.includes("Judges") && names.includes("Votes"))
+  const totalElims = files.filter((f) => isElim(f.file, (parseCsv(f.text.split(/\r?\n/, 1)[0])[0] ?? []).map((c) => c.trim()))).length
+  for (const file of files) {
     const [cols, ...body] = parseCsv(file.text)
     if (!cols) continue
     const names = cols.map((c) => c.trim())
@@ -96,7 +169,8 @@ export function parseTournamentRounds(tournament: TournamentCsvs, singles: boole
     const negCol = names.findIndex((c) => c === "Neg" || c === "Con")
     const winCol = names.indexOf("Win")
     if (affCol < 0 || negCol < 0 || winCol < 0) continue
-    const elim = ELIM_FILE.test(file.file) || (names.includes("Judges") && names.includes("Votes"))
+    const elim = isElim(file.file, names)
+    const info = roundFileInfo(file.file, elim ? elims++ : prelims++, elim, totalElims)
     for (const row of body) {
       const aff = codes.get(row[affCol]?.trim() ?? "")
       const neg = codes.get(row[negCol]?.trim() ?? "")
@@ -105,7 +179,7 @@ export function parseTournamentRounds(tournament: TournamentCsvs, singles: boole
       const affWon = win.includes("aff") || win.includes("pro")
       const negWon = win.includes("neg") || win.includes("con")
       if (affWon === negWon) continue
-      rounds.push({ aff, neg, winner: affWon ? aff : neg, tournament: tournament.slug, elim })
+      rounds.push({ aff, neg, winner: affWon ? aff : neg, tournament: tournament.slug, elim, ...info })
     }
   }
   return rounds
@@ -123,11 +197,10 @@ export const NETWORK_CATEGORIES: readonly NetworkCategory[] = [
   { name: "Top 10", maxRank: 10 },
   { name: "11–25", maxRank: 25 },
   { name: "26–50", maxRank: 50 },
-  { name: "51–75", maxRank: 75 },
 ]
 
-/** Entries drawn by default: the top 75. */
-export const NETWORK_NODE_LIMIT = 75
+/** Entries drawn by default: the top 50 of every division. */
+export const NETWORK_NODE_LIMIT = 50
 
 /** One entry in the graph. */
 export interface NetworkNode {
@@ -157,6 +230,18 @@ export interface NetworkLink {
   targetWins: number
   /** Elimination rounds between them. */
   elims: number
+  /** Each round they debated, in tournament order. */
+  meetings: NetworkMeeting[]
+}
+
+/** One round between a linked pair. */
+export interface NetworkMeeting {
+  tournament: string
+  roundId?: string
+  roundLabel?: string
+  elim: boolean
+  /** Whether the link's source won. */
+  sourceWon: boolean
 }
 
 export interface HeadToHeadNetwork {
@@ -194,7 +279,7 @@ export function buildHeadToHeadNetwork(
     categories = NETWORK_CATEGORIES,
     singles = false,
     width = 800,
-    height = 560,
+    height = 380,
     iterations = 300,
   } = options
   const top = [...entries].sort((a, b) => a.rank - b.rank).slice(0, limit)
@@ -210,13 +295,21 @@ export function buildHeadToHeadNetwork(
     const key = `${source}:${target}`
     let link = pairs.get(key)
     if (!link) {
-      link = { source, target, rounds: 0, sourceWins: 0, targetWins: 0, elims: 0 }
+      link = { source, target, rounds: 0, sourceWins: 0, targetWins: 0, elims: 0, meetings: [] }
       pairs.set(key, link)
     }
     link.rounds++
     if (round.elim) link.elims++
-    if (index.get(round.winner) === source) link.sourceWins++
+    const sourceWon = index.get(round.winner) === source
+    if (sourceWon) link.sourceWins++
     else link.targetWins++
+    link.meetings.push({
+      tournament: round.tournament,
+      roundId: round.roundId,
+      roundLabel: round.roundLabel,
+      elim: round.elim,
+      sourceWon,
+    })
   }
 
   // Keep only entries with at least one link, re-indexed in rank order.
@@ -360,6 +453,8 @@ export interface NetworkOpponent {
   wins: number
   losses: number
   rounds: number
+  /** The rounds, from the asking node's side (`won` is its result). */
+  meetings: (Omit<NetworkMeeting, "sourceWon"> & { won: boolean })[]
 }
 
 /** A node's opponents in the graph with its record against each, best-ranked first. */
@@ -367,9 +462,21 @@ export function nodeOpponents(network: HeadToHeadNetwork, index: number): Networ
   const out: NetworkOpponent[] = []
   for (const link of network.links) {
     if (link.source === index) {
-      out.push({ node: network.nodes[link.target], wins: link.sourceWins, losses: link.targetWins, rounds: link.rounds })
+      out.push({
+        node: network.nodes[link.target],
+        wins: link.sourceWins,
+        losses: link.targetWins,
+        rounds: link.rounds,
+        meetings: link.meetings.map(({ sourceWon, ...m }) => ({ ...m, won: sourceWon })),
+      })
     } else if (link.target === index) {
-      out.push({ node: network.nodes[link.source], wins: link.targetWins, losses: link.sourceWins, rounds: link.rounds })
+      out.push({
+        node: network.nodes[link.source],
+        wins: link.targetWins,
+        losses: link.sourceWins,
+        rounds: link.rounds,
+        meetings: link.meetings.map(({ sourceWon, ...m }) => ({ ...m, won: !sourceWon })),
+      })
     }
   }
   return out.sort((a, b) => a.node.entry.rank - b.node.entry.rank)

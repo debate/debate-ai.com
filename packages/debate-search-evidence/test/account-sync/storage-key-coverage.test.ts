@@ -154,6 +154,8 @@ const DEVICE_LOCAL = new Set([
   "debate-ai:debug",
   // packages/debate-videos flow-chart modal: the viewer's edited prompt, a per-browser draft.
   "debate-ai:flow-chart:instructions",
+  // packages/debate-videos page flow-chart modal (docs toolbar): the reader's edited prompt, a per-browser draft.
+  "debate-ai:page-flow-chart:instructions",
   "debate-ai:speech-judge-draft",
   "debate-ai:my-files:file-index",
   "debate-ai:topic-starters:file-index",

@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react"
 import type { ComponentType, ReactNode } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { Brain, BrainCog, HardDrive, Search, Server, Settings, ShieldCheck, SlidersHorizontal, UserCircle, UserCog, Volume2, Wand2 } from "lucide-react"
+import { Brain, BrainCog, HardDrive, Search, Server, Settings, MessageSquareText, ShieldCheck, SlidersHorizontal, UserCircle, UserCog, Volume2, Wand2 } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // the settings routes' own chunk — never loaded by the host app's main bundle.
 import "@debate-ai/editor/styles.css"
@@ -39,6 +39,7 @@ import { getHostConfig } from "../../host/config"
 import { Button } from "../../ui/primitives/button"
 import { openSubscriptionDialog } from "../../lib/stripe/subscription-dialog"
 import { UsageMeter } from "../pricing/UsageMeter"
+import { FeedbackDialog } from "./FeedbackDialog"
 
 // The General tab (id kept as `preferences` so old links still land on it):
 // the app's own account-linked preferences (debate style, font size, font
@@ -181,7 +182,7 @@ const SIDEBAR_CSS = `
 .dai-settings-search:focus { box-shadow: 0 0 0 1px rgba(127, 127, 127, 0.4); }
 .dai-settings-footer { margin-top: 16px; padding-top: 10px; display: flex; flex-wrap: wrap; gap: 2px 4px;
   border-top: 1px solid var(--pmd-border, rgba(127, 127, 127, 0.25)); }
-.dai-settings-footer-link { display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px; border-radius: 6px;
+.dai-settings-footer-link { border: none; background: none; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px; border-radius: 6px;
   color: inherit; font-size: 12px; text-decoration: none; opacity: 0.65; }
 .dai-settings-footer-link:hover { background: rgba(127, 127, 127, 0.12); opacity: 1; }
 @media (max-width: 640px) {
@@ -214,11 +215,21 @@ function useCategories() {
  * list the app sidebar's footer and the dock's Site Links menu read), pinned
  * to the bottom of the settings sidebar. App routes go through `Link`; the
  * help docs and outside sites get a real page load (see `hardNavigate`).
+ * A Feedback button after Support opens {@link FeedbackDialog}.
  */
 function SettingsSidebarFooter() {
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
+  // Feedback sits right after Support (after Docs when there is no Support).
+  const feedbackAfter = SITE_LINKS.some((link) => link.text === "Support") ? "Support" : "Docs"
+  const feedbackButton = (
+    <button key="feedback" type="button" className="dai-settings-footer-link" onClick={() => setFeedbackOpen(true)}>
+      <MessageSquareText size={13} className="h-[13px] w-[13px]" />
+      <span>Feedback</span>
+    </button>
+  )
   return (
     <nav className="dai-settings-footer" aria-label="Site links">
-      {SITE_LINKS.map((link) => {
+      {SITE_LINKS.flatMap((link) => {
         const isExternal = link.url.startsWith("http")
         const content = (
           <>
@@ -226,7 +237,7 @@ function SettingsSidebarFooter() {
             <span>{link.text}</span>
           </>
         )
-        return isExternal || link.hardNavigate ? (
+        const item = isExternal || link.hardNavigate ? (
           <a
             key={link.text}
             href={link.url}
@@ -241,7 +252,9 @@ function SettingsSidebarFooter() {
             {content}
           </Link>
         )
+        return link.text === feedbackAfter ? [item, feedbackButton] : [item]
       })}
+      <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} />
     </nav>
   )
 }

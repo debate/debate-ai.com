@@ -64,7 +64,7 @@ describe("ToolNavTree sectionIds", () => {
     expect(html).toContain("Prep Workspace");
   });
 
-  it("leaves out the glossary/rankings pair, which rides with Insights", () => {
+  it("leaves out the glossary/rankings pair, which rides with Inference", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
     expect(html).not.toContain("/dictionary");
@@ -112,7 +112,7 @@ describe("ToolNavTree sectionIds", () => {
     expect(html).toContain("Inference");
   });
 
-  it("lists Insights links without subgroup labels", () => {
+  it("lists Inference links without subgroup labels", () => {
     const html = render({ sectionIds: [INSIGHTS_SECTION_ID] });
 
     expect(html).not.toContain(">Performance<");

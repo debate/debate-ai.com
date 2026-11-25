@@ -18,10 +18,11 @@ async function freshDb() {
 describe("card search index maintenance", () => {
   beforeEach(() => resetCardFtsMemo());
 
-  it("creates the sort indexes the newest-first and Most read orders use", async () => {
+  it("creates the sort indexes the newest-first, Recent & Popular and Most read orders use", async () => {
     const db = await freshDb();
     await db.run(sql`DROP INDEX IF EXISTS idx_debate_cards_imported_at`);
-    await db.run(sql`DROP INDEX IF EXISTS idx_debate_cards_duplicate_count`);
+    await db.run(sql`DROP INDEX IF EXISTS idx_debate_cards_recent_popular`);
+    await db.run(sql`DROP INDEX IF EXISTS idx_debate_cards_read_count`);
     await ensureCardSortIndexes(db);
     await ensureCardSortIndexes(db);
     const rows = await db.all<{ name: string }>(
@@ -29,11 +30,26 @@ describe("card search index maintenance", () => {
     );
     const names = rows.map((row) => row.name);
     expect(names).toContain("idx_debate_cards_imported_at");
-    expect(names).toContain("idx_debate_cards_duplicate_count");
-    const plan = await db.all<{ detail: string }>(
-      sql`EXPLAIN QUERY PLAN SELECT id FROM debate_cards ORDER BY imported_at DESC, id DESC LIMIT 10`,
+    expect(names).toContain("idx_debate_cards_recent_popular");
+    expect(names).toContain("idx_debate_cards_read_count");
+
+    const planFor = async (sqlText: string) =>
+      (
+        await db.all<{ detail: string }>(sql`EXPLAIN QUERY PLAN ${sql.raw(sqlText)}`)
+      )
+        .map((row) => row.detail)
+        .join(" ");
+    // Every plan has to read an index in the requested order: a plan that sorts
+    // is the temp B-tree that ran the default search past D1's deadline.
+    expect(await planFor(`SELECT id FROM debate_cards ORDER BY imported_at DESC, id DESC LIMIT 10`)).toContain(
+      "idx_debate_cards_imported_at",
     );
-    expect(plan.map((row) => row.detail).join(" ")).toContain("idx_debate_cards_imported_at");
+    expect(
+      await planFor(`SELECT id FROM debate_cards ORDER BY year DESC, duplicate_count DESC, id DESC LIMIT 10`),
+    ).not.toContain("TEMP B-TREE");
+    expect(
+      await planFor(`SELECT id FROM debate_cards ORDER BY duplicate_count DESC, id ASC LIMIT 10`),
+    ).not.toContain("TEMP B-TREE");
   });
 
   it("backfills cards the FTS index is missing and marks it complete", async () => {

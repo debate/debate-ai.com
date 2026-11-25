@@ -11,7 +11,7 @@ import type { Metadata } from 'next';
 import { AskAIButton } from 'ask-ai-button';
 import { Sparkles } from 'lucide-react';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
-import { HighlightToggle } from '../components/guides/highlight-toggle';
+import { MarksMenu } from '../components/guides/highlight-toggle';
 import { VoiceReadButton } from '../components/guides/voice-read-button';
 import { PageSuggestedQuestions, SuggestQuestionsToggle } from '../components/guides/suggest-questions';
 import { ReadingModeButton } from '../components/guides/reading-mode';
@@ -30,6 +30,8 @@ import { hasInlineToc } from '../lib/fumadocs/inline-toc';
 import { HeaderToolbar, ToolbarItem } from '../components/fumadocs/layout/header-toolbar';
 import { PageInfoButton } from '../components/guides/page-info';
 import { pageStats } from '../lib/fumadocs/page-stats';
+import { PageFlowChartButton } from '@debate-ai/videos/page-flow-chart';
+import { buttonVariants } from '../components/ui/button';
 
 /** Lookups already made by this Worker isolate, keyed by content path. */
 const lastEditCache = new Map<string, Promise<Date | undefined>>();
@@ -143,8 +145,8 @@ export default async function Page(props: {
           </ToolbarItem>
           {synergySlayer && (
             <>
-              <ToolbarItem label="Underlining">
-                <HighlightToggle />
+              <ToolbarItem label="Marks">
+                <MarksMenu />
               </ToolbarItem>
               <ToolbarItem label="Voice">
                 <VoiceReadButton />
@@ -165,6 +167,15 @@ export default async function Page(props: {
           )}
           <ToolbarItem label="Info">
             <PageInfoButton stats={stats} lastUpdated={lastUpdated} showHighlights={synergySlayer} />
+          </ToolbarItem>
+          {/* Last: the watch page's AI flow chart, drawn from just this page. */}
+          <ToolbarItem label="Flow chart">
+            <PageFlowChartButton
+              pageKey={page.url}
+              title={data.title}
+              markdownUrl={markdownUrl}
+              className={buttonVariants({ size: 'sm', className: 'gap-2 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground' })}
+            />
           </ToolbarItem>
         </HeaderToolbar>
 

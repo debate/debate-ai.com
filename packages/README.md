@@ -104,7 +104,8 @@ site at `/docs/dev`. The web
 app mounts its route modules at `app/docs` and compiles its MDX in the app's own Vite build, so it is
 served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed on its own.
 Depends on `debate-editor` only for its read-aloud voice client (`@debate-ai/editor/read-voice`),
-which the Synergy Slayer pages' Voice button uses.
+which the Synergy Slayer pages' Voice button uses, and on `debate-videos` only for the toolbar's
+page **Flow chart** (`@debate-ai/videos/page-flow-chart`, lazy-loaded).
 
 ## debate-help-docs/dev-docs
 

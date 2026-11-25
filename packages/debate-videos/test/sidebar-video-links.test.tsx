@@ -107,7 +107,7 @@ describe("SIDEBAR_VIDEO_LINKS", () => {
 describe("the surfaces that render them", () => {
   it("gives the sidebar tree a link for every video destination", () => {
     // Every entry but the reference pair, which moved into the tool tree's
-    // Insights section — see the test below.
+    // Inference section — see the test below.
     const html = sidebarHtml();
     const hrefs = hrefsIn(html);
     const referenceHrefs = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.href));
@@ -127,7 +127,7 @@ describe("the surfaces that render them", () => {
 
   it("gives the mobile quick-link tiles one per entry but the reference pair", () => {
     // The tiles are the sidebar's stand-in on `/videos` below `md`. The
-    // reference pair has no tile; it stays reachable from Insights.
+    // reference pair has no tile; it stays reachable from Inference.
     const html = renderToStaticMarkup(createElement(QuickLinksGrid, {}));
     const hrefs = hrefsIn(html);
     const referenceHrefs = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.href));
@@ -139,14 +139,14 @@ describe("the surfaces that render them", () => {
     }
   });
 
-  it("keeps the glossary and statistics in Insights, not as tiles", () => {
-    // Reachable from the tool tree's Insights section; no longer tiles.
-    const insights = hrefsIn(
+  it("keeps the glossary and statistics in Inference, not as tiles", () => {
+    // Reachable from the tool tree's Inference section; no longer tiles.
+    const inference = hrefsIn(
       renderToStaticMarkup(<ToolNavTree sectionIds={[INSIGHTS_SECTION_ID]} />),
     );
     const tiles = hrefsIn(renderToStaticMarkup(createElement(QuickLinksGrid, {})));
     for (const link of VIDEO_REFERENCE_LINKS) {
-      expect(insights).toContain(link.href);
+      expect(inference).toContain(link.href);
       expect(tiles).not.toContain(link.href);
     }
   });

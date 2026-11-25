@@ -12,13 +12,16 @@ import {
   buildFtsMatch,
   cardFtsState,
   cardFtsStatus,
+  countCardFtsMatches,
   createCardFts,
+  debateCardsFts,
   ensureCardFts,
   ftsColumnsForScope,
   INLINE_REBUILD_MAX_CARDS,
   readFtsOperator,
   rebuildCardFts,
   resetCardFtsMemo,
+  searchCardsInSortOrder,
   searchCardsRanked,
 } from "../card-fts";
 import { buildCardSearchOrderBy, buildCardSearchWhere } from "../debate-card-search";
@@ -177,6 +180,72 @@ describe("searchCardsRanked", () => {
     expect(ids(await searchCardsRanked(db, buildFtsMatch("space"), undefined, 10))).toEqual([2]);
     expect(ids(await searchCardsRanked(db, buildFtsMatch("climate"), undefined, 10))).toEqual([]);
     await db.run(sql`INSERT INTO debate_cards_fts(debate_cards_fts) VALUES ('integrity-check')`);
+  });
+});
+
+describe("searchCardsInSortOrder", () => {
+  let db: Db;
+  beforeEach(async () => {
+    db = await seeded();
+  });
+
+  it("applies the same sort as the full-text join", async () => {
+    for (const sort of ["readCount:desc", "readCount:asc", "recentPopular:desc", "recentPopular:asc"]) {
+      const byIndex = ids(
+        await searchCardsInSortOrder(db, buildFtsMatch("nuclear"), undefined, 10, buildCardSearchOrderBy(sort)),
+      );
+      const byJoin = ids(
+        await searchCardsRanked(db, buildFtsMatch("nuclear"), undefined, 10, buildCardSearchOrderBy(sort)),
+      );
+      expect(byIndex).toEqual(byJoin);
+    }
+  });
+
+  it("stops at the limit", async () => {
+    const rows = await searchCardsInSortOrder(
+      db,
+      buildFtsMatch("nuclear"),
+      undefined,
+      2,
+      buildCardSearchOrderBy("readCount:desc"),
+    );
+    expect(ids(rows)).toEqual([2, 1]);
+  });
+
+  it("honours the non-text filters", async () => {
+    const rows = await searchCardsInSortOrder(
+      db,
+      buildFtsMatch("nuclear"),
+      buildCardSearchWhere({ year: "2023" }),
+      10,
+      buildCardSearchOrderBy("readCount:desc"),
+    );
+    expect(ids(rows)).toEqual([2]);
+  });
+
+  it("returns nothing without a sort", async () => {
+    expect(await searchCardsInSortOrder(db, buildFtsMatch("nuclear"), undefined, 10, [])).toEqual([]);
+  });
+
+  it("walks the card table rather than the full-text index", () => {
+    // SQLite never reorders a CROSS JOIN, so this is what keeps the scan in
+    // sort-index order instead of building a temp B-tree over every match.
+    const query = db
+      .select({ card: debateCards })
+      .from(debateCards)
+      .crossJoin(debateCardsFts)
+      .orderBy(...buildCardSearchOrderBy("recentPopular:desc"))
+      .limit(10);
+    expect(query.toSQL().sql).toContain("cross join");
+  });
+});
+
+describe("countCardFtsMatches", () => {
+  it("counts the cards a term matches without reading them", async () => {
+    const db = await seeded();
+    expect(await countCardFtsMatches(db, buildFtsMatch("nuclear"))).toBe(3);
+    expect(await countCardFtsMatches(db, buildFtsMatch("deterrence"))).toBe(2);
+    expect(await countCardFtsMatches(db, buildFtsMatch("quantum"))).toBe(0);
   });
 });
 

@@ -4,8 +4,9 @@
  * line, and both page routes wiring it in.
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import {
@@ -52,6 +53,42 @@ describe('gitLastModified', () => {
     const date = await gitLastModified(docsPkg)(resolve(docsPkg, 'source.config.ts'));
     if (shallow === 'true') expect(date).toBeUndefined();
     else expect(date).toBeInstanceOf(Date);
+  });
+
+  it('with deepen, fetches the history of a shallow clone and dates each file by its own last commit', async () => {
+    const tmp = mkdtempSync(join(tmpdir(), 'git-last-modified-'));
+    try {
+      const origin = join(tmp, 'origin');
+      const git = (cwd: string, args: string[], date?: string) =>
+        execFileSync('git', args, {
+          cwd,
+          env: {
+            ...process.env,
+            GIT_AUTHOR_NAME: 't',
+            GIT_AUTHOR_EMAIL: 't@example.com',
+            GIT_COMMITTER_NAME: 't',
+            GIT_COMMITTER_EMAIL: 't@example.com',
+            ...(date ? { GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date } : {}),
+          },
+        });
+      execFileSync('git', ['init', '-q', origin]);
+      writeFileSync(join(origin, 'old.mdx'), 'old');
+      git(origin, ['add', '.']);
+      git(origin, ['commit', '-q', '-m', 'old'], '2026-01-02T03:04:05+00:00');
+      writeFileSync(join(origin, 'new.mdx'), 'new');
+      git(origin, ['add', '.']);
+      git(origin, ['commit', '-q', '-m', 'new'], '2026-11-20T00:00:00+00:00');
+
+      const clone = join(tmp, 'clone');
+      execFileSync('git', ['clone', '-q', '--depth', '1', `file://${origin}`, clone]);
+      expect(git(clone, ['rev-parse', '--is-shallow-repository']).toString().trim()).toBe('true');
+
+      const lastModified = gitLastModified(clone, { deepen: true });
+      expect((await lastModified(join(clone, 'old.mdx')))?.toISOString()).toBe('2026-01-02T03:04:05.000Z');
+      expect((await lastModified(join(clone, 'new.mdx')))?.toISOString()).toBe('2026-11-20T00:00:00.000Z');
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
   });
 
   it('returns undefined for a file Git has never seen', async () => {

@@ -57,6 +57,10 @@ import { IconSettings } from "../../lib/ui/icons"
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
 
+/** Sidebar icon animations, on by default. Each dock icon rotates through them
+   so the row wiggles, bounces and spins rather than sitting still. */
+const SIDEBAR_ICON_ANIMATIONS: ("wiggle" | "bounce" | "spin")[] = ["wiggle", "bounce", "spin"]
+
 /** One rendered dock button, in either the desktop or the mobile instance. */
 interface DockNavRenderItem {
   key: string
@@ -169,7 +173,7 @@ function usePaletteChord(): string {
 
 /**
  * The site-nav rows at the top of {@link SettingsMenu}: the search palette
- * plus one submenu per sidebar section (Videos, Research, Debates, Insights).
+ * plus one submenu per sidebar section (Videos, Research, Debates, Inference).
  * They sit above Theme, so the gear opens one menu for "where do I go" and
  * "how do I configure this". The Practice vs AI dock icon used to open these
  * as a menu of its own; it is a plain link to `/practice/versus-ai` again.
@@ -517,7 +521,7 @@ function DockInstance({
         iconSize={embedded ? EMBEDDED_ICON_SIZE : undefined}
         magnification={embedded ? EMBEDDED_MAGNIFICATION : undefined}
       >
-        {allItems.map((item) =>
+        {allItems.map((item, index) =>
           (
             <DockItem
               key={item.key}
@@ -536,7 +540,7 @@ function DockInstance({
                   : "bg-gray-200 dark:bg-neutral-800",
               )}
             >
-              <DockIcon>
+              <DockIcon animate={SIDEBAR_ICON_ANIMATIONS[index % SIDEBAR_ICON_ANIMATIONS.length]}>
                 {item.renderIcon ? item.renderIcon() : (
                   <Image src={item.icon} alt={item.label} width={24} height={24} className="w-full h-full" unoptimized />
                 )}
@@ -546,7 +550,7 @@ function DockInstance({
         )}
         <DropdownMenuTrigger asChild>
           <DockItem aria-label="Settings" tooltip="Settings" tooltipSide={side} className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
-            <DockIcon>
+            <DockIcon animate="spin">
               <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
             </DockIcon>
           </DockItem>
@@ -756,11 +760,11 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
               aria-expanded={sidebarOpen}
               className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800"
             >
-              <DockIcon>
+              <DockIcon animate="wiggle">
                 <PanelLeft className="w-5 h-5" />
               </DockIcon>
             </DockItem>
-            {mobileItems.map((item) => {
+            {mobileItems.map((item, index) => {
               const { key, label, icon, active, href, onClick, onPreload, isPlayingIndicator, renderIcon } = item
               return (
                 <DockItem
@@ -782,7 +786,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
                         : "bg-gray-200 dark:bg-neutral-800",
                   )}
                 >
-                  <DockIcon>
+                  <DockIcon animate={SIDEBAR_ICON_ANIMATIONS[index % SIDEBAR_ICON_ANIMATIONS.length]}>
                     {renderIcon ? (
                       renderIcon()
                     ) : isPlayingIndicator ? (
@@ -800,7 +804,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
             })}
             <DropdownMenuTrigger asChild>
               <DockItem aria-label="Settings" tooltip="Settings" tooltipSide="top" className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
-                <DockIcon>
+                <DockIcon animate="spin">
                   <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
                 </DockIcon>
               </DockItem>

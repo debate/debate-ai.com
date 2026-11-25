@@ -186,8 +186,8 @@
 }
 
 .prose .debate-card mark {
-  background-color: #fff176;
-  color: #111;
+  background-color: var(--debate-hl-bg);
+  color: var(--color-fd-foreground);
   padding: 0 1px;
 }
 
@@ -203,17 +203,62 @@
 /*
  * Policy-style highlighting authored in the MDX as `==text==`
  * (lib/mdx/remark-debate-highlight.ts), rendered on the Synergy Slayer pages
- * only. On by default; their Underlining button sets data-debate-highlights="off"
- * on <html>, which hides it in the page prose inside .synergy-slayer-doc.
- * Like a cut card, every highlighted phrase is underlined as well, so the
- * button turns underlining and highlighting on and off together.
+ * only. Like a cut card, every highlighted phrase is underlined as well.
+ * Their Marks menu (components/guides/highlight-toggle.tsx) hides the two
+ * separately: data-debate-highlights="off" on <html> drops the background,
+ * data-debate-underlines="off" the underline, in the page prose inside
+ * .synergy-slayer-doc, for the authored marks and the reader's own alike.
+ * The auto-highlighter / auto-underliner can take one kind off part of an
+ * authored mark: that part gets debate-hl--no-highlight / --no-underline.
  * The quoted excerpts in the References cards (`.debate-card`, also shown in
  * the citation hover tooltips) always keep their underlining and highlighting:
  * the button never reaches inside a card.
+ *
+ * The highlight colour follows the reader's app theme rather than a fixed
+ * yellow: the theme's primary colour tinted 30% over the page background,
+ * with the theme's foreground for the text. Mixing into the background keeps
+ * light highlights on light themes and dark ones on dark themes, so the text
+ * stays readable (about 4:1 contrast or better across every theme in
+ * debate-webview's themes.css).
+ *
+ * The reader's own long highlights (auto highlight, AI marks, on the page
+ * and in reading mode) use exactly the page's highlight colour and style. The
+ * other reader marks need colours of their own: the theme's primary turned
+ * round the colour wheel (with a floor on its chroma, so a grey theme still
+ * gets a real colour), mixed into the background the same way. Short
+ * highlighting, the secondary minimal highlight, turns it 220° and is drawn
+ * as a low marker stroke over the bottom of the line; emphasized words (and
+ * the selection tint while an auto mode is on) turn it 120°. Browsers
+ * without relative colours fall back to the accent-based tints.
  */
+:root {
+  --debate-hl-bg: color-mix(in oklab, var(--color-fd-primary) 30%, var(--color-fd-background));
+  --debate-reader-hl-bg: color-mix(
+    in oklab,
+    var(--color-fd-accent) 45%,
+    color-mix(in oklab, var(--color-fd-primary) 12%, var(--color-fd-background))
+  );
+  --debate-reader-short-bg: color-mix(in oklab, var(--color-fd-accent) 70%, var(--color-fd-foreground) 10%);
+}
+
+@supports (color: oklch(from red l c h)) {
+  :root {
+    --debate-reader-hl-bg: color-mix(
+      in oklab,
+      oklch(from var(--color-fd-primary) 0.78 max(c, 0.14) calc(h + 120)) 40%,
+      var(--color-fd-background)
+    );
+    --debate-reader-short-bg: color-mix(
+      in oklab,
+      oklch(from var(--color-fd-primary) 0.8 max(c, 0.15) calc(h + 220)) 65%,
+      var(--color-fd-background)
+    );
+  }
+}
+
 .prose mark.debate-hl {
-  background-color: #fff176;
-  color: #111;
+  background-color: var(--debate-hl-bg);
+  color: var(--color-fd-foreground);
   padding: 0 1px;
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
@@ -223,15 +268,31 @@
   -webkit-box-decoration-break: clone;
 }
 
-.dark .prose mark.debate-hl {
-  background-color: rgb(255 235 59 / 0.85);
+/* The reader's underlines (auto-underliner, AI marks): the authored underline. */
+.synergy-slayer-doc u.reader-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
 }
 
-html[data-debate-highlights="off"] .synergy-slayer-doc mark.debate-hl:not(.debate-card *) {
+.prose mark.debate-hl.debate-hl--no-highlight,
+html[data-debate-highlights="off"] .synergy-slayer-doc :is(mark.debate-hl, mark.reader-highlight):not(.debate-card *) {
   background-color: transparent;
   color: inherit;
   padding: 0;
+}
+
+.prose mark.debate-hl.debate-hl--no-underline,
+html[data-debate-underlines="off"] .synergy-slayer-doc :is(mark.debate-hl, u.reader-underline):not(.debate-card *) {
   text-decoration: none;
+}
+
+/* While an auto mode is on, the selection shows in the reader's mark colour. */
+html[data-debate-auto-highlight="on"] .synergy-slayer-doc ::selection,
+html[data-debate-auto-underline="on"] .synergy-slayer-doc ::selection,
+html[data-debate-auto-short-highlight="on"] .synergy-slayer-doc ::selection,
+html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection {
+  background-color: var(--debate-reader-hl-bg);
 }
 
 /*
@@ -245,25 +306,53 @@ html[data-debate-highlights="off"] .synergy-slayer-doc mark.debate-hl:not(.debat
 }
 
 /*
- * Passages the reader marks in reading mode (components/guides/reading-mode.tsx,
- * `highlightRange` from @debate-ai/reading-mode), as in the extension's panel.
- * Clicking a mark removes it.
+ * Passages the reader highlights with the auto-highlighter or the AI
+ * (components/guides/highlight-toggle.tsx, `toggleMarks` / `markPhrase` from
+ * @debate-ai/reading-mode/marks), on the page or in reading mode.
  */
 .synergy-slayer-doc mark.reader-highlight {
-  background-color: rgb(125 211 252 / 0.55);
-  color: inherit;
+  background-color: var(--debate-hl-bg);
+  color: var(--color-fd-foreground);
+  padding: 0 1px;
   border-radius: 2px;
-  cursor: pointer;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
 
-.reading-mode-marking {
-  cursor: text;
+/* Short highlighting: a low marker stroke, so it reads inside a long highlight too. */
+.synergy-slayer-doc mark.reader-highlight-short {
+  background: linear-gradient(transparent 55%, var(--debate-reader-short-bg) 55%);
+  color: inherit;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
-.reading-mode-marking ::selection {
-  background-color: rgb(125 211 252 / 0.55);
+html[data-debate-short-highlights="off"] .synergy-slayer-doc mark.reader-highlight-short {
+  background: none;
+}
+
+/* Emphasized words: boxed, bold, tinted and underlined. */
+.synergy-slayer-doc strong.reader-emphasis {
+  font-weight: 700;
+  background-color: var(--debate-reader-hl-bg);
+  color: var(--color-fd-foreground);
+  border: 1.5px solid var(--color-fd-primary);
+  border-radius: 3px;
+  padding: 0 2px;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+html[data-debate-emphasis="off"] .synergy-slayer-doc strong.reader-emphasis {
+  font-weight: inherit;
+  background: none;
+  color: inherit;
+  border-color: transparent;
+  padding: 0;
+  text-decoration: none;
 }
 
 /*

@@ -114,7 +114,10 @@ const threadColumns = (viewerId: string | null | undefined) => ({
   // A reply that has been soft-deleted still occupies a row, and is not
   // something a reader arriving at the thread can read — so it is excluded from
   // the count the feed shows, the same way `countCommentsForResource` does.
-  replyCount: sql<number>`sum(case when ${comments.deletedAt} is null then 1 else 0 end)`,
+  // The `id is not null` matters as much: a thread with no replies still gets
+  // one row from the left join, all NULLs, whose `deleted_at` is NULL too — so
+  // without it every unanswered thread read as having one reply.
+  replyCount: sql<number>`sum(case when ${comments.id} is not null and ${comments.deletedAt} is null then 1 else 0 end)`,
 });
 
 /** The join that puts each thread's replies beside it, counted not fanned out. */

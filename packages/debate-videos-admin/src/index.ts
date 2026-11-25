@@ -39,7 +39,11 @@ export {
 } from "./components/DetectSpeechesBatchPanel";
 export { SpeechAudioSplitter, type SpeechAudioSplit } from "./components/SpeechAudioSplitter";
 export { TranscriptScraperPanel } from "./components/TranscriptScraperPanel";
-export { VideoContentDialog, type ContentDialogVideo } from "./components/VideoContentDialog";
+export {
+  VideoContentDialog,
+  VideoContentEditor,
+  type ContentDialogVideo,
+} from "./components/VideoContentDialog";
 export {
   VideoEditDialog,
   changedFields,

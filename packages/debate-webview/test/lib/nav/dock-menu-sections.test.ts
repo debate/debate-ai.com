@@ -43,7 +43,7 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
     }
   })
 
-  it("lists the glossary and statistics under Insights, not Videos", () => {
+  it("lists the glossary and statistics under Inference, not Videos", () => {
     const linksOf = (id: string) =>
       SIDEBAR_MENU_SECTIONS.find((section) => section.id === id)!.links.map((link) => link.href)
     for (const link of VIDEO_REFERENCE_LINKS) {

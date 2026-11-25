@@ -35,7 +35,9 @@ import {
   handleCanonicalHostRedirect,
   handleCategoryPathRedirect,
   handleVideoListingRedirect,
+  archivedBuildFileResponse,
   missingBuildFileResponse,
+  type BuildArchiveBucket,
   redirectNotFound,
 } from "../lib/redirects";
 import { setSiteOriginReader } from "../lib/seo/site-url";
@@ -70,6 +72,9 @@ interface Env extends TurnstileEnv {
   SPEECH_AUDIO?: unknown;
   // Imported cards' full text and markup (lib/search/card-text-store.ts).
   CARD_TEXT?: unknown;
+  // Every earlier deploy's hashed build files, so tabs on an older build keep
+  // loading their chunks (lib/redirects/missing-build-file.ts).
+  BUILD_ARCHIVE?: BuildArchiveBucket;
   // Workers AI, for Cloudflare read-aloud in app/api/tts/route.ts.
   AI?: unknown;
   // Webcam-room signalling (lib/webcam/debate-room.ts), bound in wrangler.jsonc.
@@ -136,6 +141,10 @@ const worker = {
     // not-found page, which Safari reported as "'text/html' is not a valid
     // JavaScript MIME type". The page reloads itself on a failed chunk (see
     // lib/chunk-reload/script.ts). See lib/redirects/missing-build-file.ts.
+    // First, though, serve it from the archive of earlier builds when it is
+    // there: a tab from before the deploy then keeps working with no reload.
+    const archivedBuildFile = await archivedBuildFileResponse(request, env.BUILD_ARCHIVE);
+    if (archivedBuildFile) return archivedBuildFile;
     const missingBuildFile = missingBuildFileResponse(request);
     if (missingBuildFile) return missingBuildFile;
 

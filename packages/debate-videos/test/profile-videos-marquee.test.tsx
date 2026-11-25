@@ -5,8 +5,8 @@
  * upload's title.
  */
 
-import { afterEach, describe, expect, it } from "vitest";
-import { mount, type Mounted } from "./helpers/mount";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { flush, mount, type Mounted } from "./helpers/mount";
 import { ProfileVideosMarqueeRow, arrowStep, wrapOffset } from "../src/panels/ProfileVideosMarquee";
 import type { VideoType } from "../src/types/videos";
 
@@ -14,6 +14,7 @@ let view: Mounted | null = null;
 afterEach(async () => {
   await view?.unmount();
   view = null;
+  vi.unstubAllGlobals();
 });
 
 const round = (id: string): VideoType =>
@@ -34,6 +35,17 @@ describe("ProfileVideosMarqueeRow", () => {
     // "Cap K" shows as a K category badge beside "Cap".
     expect(first).toContain("Cap");
     expect(lists[0].querySelector('[title="K argument"]')?.textContent).toBe("K");
+  });
+
+  it("leaves out each video's length", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response(JSON.stringify({ durations: { dur1: 3600 } }), { status: 200 })),
+    );
+    view = await mount(<ProfileVideosMarqueeRow videos={[round("dur1")]} label="Harker" />);
+    await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
+    expect(view.container.querySelector('[title^="Duration"]')).toBeNull();
+    expect(view.container.textContent).not.toContain("1:00:00");
   });
 
   it("renders nothing without videos", async () => {

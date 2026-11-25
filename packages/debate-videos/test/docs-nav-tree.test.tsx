@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /**
- * @fileoverview The sidebar's "Docs" section: open on arrival, expanded to
+ * @fileoverview The sidebar's "Learning" section: open on arrival, expanded to
  * the second level (top-level folders open, deeper ones shut), every docs
  * page a full page load, a failed load retried on reopen, and nothing on
  * /docs, where the docs layout portals its own tree in.

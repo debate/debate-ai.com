@@ -24,7 +24,7 @@
  * @module lib/search/card-fts
  */
 
-import { type SQL, and, asc, desc, eq, sql } from "drizzle-orm";
+import { type SQL, and, asc, count, desc, eq, sql } from "drizzle-orm";
 import { type BaseSQLiteDatabase, integer, sqliteTable } from "drizzle-orm/sqlite-core";
 import { debateCards, type DebateCardRow } from "@/lib/database/schema";
 import { describeError } from "@/lib/database/errors";
@@ -500,6 +500,86 @@ export async function searchCardsRanked(
     .innerJoin(debateCards, eq(debateCards.id, debateCardsFts.rowid))
     .where(and(sql`${sql.raw(CARD_FTS_TABLE)} MATCH ${match}`, where))
     .orderBy(...order)
+    .limit(limit);
+  return rows.map((row) => row.card);
+}
+
+/**
+ * How many cards an FTS expression matches.
+ *
+ * Only used to pick a query plan: the index can answer a count without reading
+ * a single card, which is what makes the choice below affordable.
+ *
+ * @param match - An expression from {@link buildFtsMatch}.
+ */
+export async function countCardFtsMatches(
+  db: BaseSQLiteDatabase<"async", any, any>,
+  match: string,
+): Promise<number> {
+  const rows = await db
+    .select({ matched: count() })
+    .from(debateCardsFts)
+    .where(sql`${sql.raw(CARD_FTS_TABLE)} MATCH ${match}`);
+  return Number(rows[0]?.matched ?? 0);
+}
+
+/**
+ * Above this many matches, ordering by the sort index beats sorting every match.
+ *
+ * Both plans have to touch roughly `limit / density` cards — one walking the
+ * sort index and probing the full-text index, the other sorting every match —
+ * so the answer depends on how much of the corpus the term matches. Below the
+ * line the full-text join wins because it never reads a card that does not
+ * match; above it the index walk wins because it stops at `limit` rows and
+ * never builds a temp B-tree. It is a fixed count rather than a share of the
+ * corpus, so choosing a plan needs only the match count and not the corpus
+ * size.
+ */
+export const SORT_INDEX_SCAN_MIN_MATCHES = 20_000;
+
+/**
+ * Cards matching `match`, ordered by the search's own sort expression.
+ *
+ * {@link searchCardsRanked} drives its query from the full-text index, which is
+ * the fast way to answer "which cards match" — but to apply an explicit order
+ * such as "Recent & Popular" it then sorts *every* match, and for a word that
+ * matches a large slice of the corpus that is most of the corpus. That sort is
+ * the temp B-tree that pushed the default card search past D1's deadline.
+ *
+ * This form drives from `debate_cards` instead, in sort-index order, and probes
+ * the full-text index for each card it reaches. SQLite never reorders a
+ * `CROSS JOIN`, so the sort index is walked and the `LIMIT` stops the scan as
+ * soon as enough cards have matched: no temp B-tree, and no card read that the
+ * search will not return.
+ *
+ * A term matching a handful of cards turns that into a full table walk, so the
+ * route only takes this path when {@link countCardFtsMatches} says the term is
+ * common enough for the walk to pay off.
+ *
+ * @param match - An expression from {@link buildFtsMatch}.
+ * @param where - The non-text filters (season, school, event…), if any.
+ * @param orderBy - Sort terms from `buildCardSearchOrderBy`.
+ * @returns The cards in sort order, or nothing when `orderBy` is empty — with
+ *   no order the query would be an arbitrary slice of the corpus, so callers
+ *   must not treat an empty `orderBy` as "any order".
+ */
+export async function searchCardsInSortOrder(
+  db: BaseSQLiteDatabase<"async", any, any>,
+  match: string,
+  where: SQL | undefined,
+  limit: number,
+  orderBy: SQL[],
+): Promise<DebateCardRow[]> {
+  if (orderBy.length === 0) return [];
+  const rows = await db
+    .select({ card: debateCards })
+    .from(debateCards)
+    // `crossJoin` takes no `on`: the join condition goes in `where`, where it
+    // still constrains the walk while SQLite keeps the cards table as the
+    // outer loop.
+    .crossJoin(debateCardsFts)
+    .where(and(eq(debateCardsFts.rowid, debateCards.id), sql`${sql.raw(CARD_FTS_TABLE)} MATCH ${match}`, where))
+    .orderBy(...orderBy)
     .limit(limit);
   return rows.map((row) => row.card);
 }
