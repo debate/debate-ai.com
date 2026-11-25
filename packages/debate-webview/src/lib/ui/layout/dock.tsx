@@ -248,6 +248,9 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
       <DockMeasureContext.Provider value={measureTick}>
         <div
           ref={ref}
+          // Opts the dock out of the sidebar's random icon hover animation
+          // (`useSidebarIconHover`) when the dock is hosted in a sidebar.
+          data-no-icon-hover=""
           onMouseMove={handleMouseMove}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -273,8 +276,6 @@ export interface DockIconProps {
   className?: string
   children?: React.ReactNode
   props?: PropsWithChildren
-  /** Sidebar icon animation, on by default: "wiggle" | "bounce" | "spin". */
-  animate?: "wiggle" | "bounce" | "spin"
 }
 
 const DockIcon = ({
@@ -285,7 +286,6 @@ const DockIcon = ({
   mousex,
   className,
   children,
-  animate,
   ...props
 }: DockIconProps) => {
   const ref = useRef<HTMLDivElement>(null)
@@ -343,19 +343,12 @@ const DockIcon = ({
         // Visual only. `pointer-events-none` so a magnified icon overlapping
         // its neighbour cannot swallow that neighbour's click. `transform:
         // none` is the identity the JS magnification scale writes over; keeping
-        // it in the markup matches the first paint on the server. The sidebar
-        // icon animation (rotate/translate) lives on the inner wrapper so the
-        // two transforms compose instead of fighting.
+        // it in the markup matches the first paint on the server. Dock icons
+        // never wiggle or spin; that hover effect is for sidebar rows only.
         style={{ transform: "none", width: iconSize, height: iconSize }}
         className="pointer-events-none flex items-center justify-center rounded-full will-change-transform transition-transform duration-150 ease-out"
       >
-        {animate ? (
-          <div className={`animate-sidebar-${animate}`} style={{ width: iconSize, height: iconSize }}>
-            {children}
-          </div>
-        ) : (
-          children
-        )}
+        {children}
       </div>
     </div>
   )
