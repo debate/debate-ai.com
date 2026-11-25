@@ -64,7 +64,16 @@ A chunk that still goes missing — a tab opened before a deploy with no service
 worker, or an edge serving the new HTML a moment before the new assets — is
 handled at both ends:
 
-- **The Worker answers it with a plain-text 404.** Anything under
+- **The Worker serves it from the build archive.** A Worker version's assets
+  layer only holds its own build, so a deploy or a dashboard rollback makes
+  every chunk of the build before it disappear. The deploy workflow's
+  "Archive build assets" step (`.github/scripts/archive-build-assets.mjs`)
+  copies each build's new `/_next/static/` and `/assets/` files into the
+  `debate-ai-build-archive` R2 bucket (binding `BUILD_ARCHIVE`, created by the
+  step if missing; `_archive/keys.txt` lists what is in it), and
+  `archivedBuildFileResponse` in `lib/redirects/missing-build-file.ts` serves
+  an asset miss from there as immutable. Old tabs keep working with no reload.
+- **Otherwise the Worker answers with a plain-text 404.** Anything under
   `/_next/static/` or `/assets/` that reaches `worker/index.ts` is not in this
   deploy (the assets layer serves the ones that are), so
   `lib/redirects/missing-build-file.ts` returns an uncached `text/plain` 404
