@@ -179,6 +179,8 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/settings/editor-panel",
   "/settings/preferences",
   "/settings/research",
+  // Email footer unsubscribe (token link); not a tool/nav destination.
+  "/unsubscribe",
   "/research/topics",
   "/practice",
   "/practice/briefings",
