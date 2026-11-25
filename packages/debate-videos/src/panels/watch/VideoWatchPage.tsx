@@ -1029,11 +1029,11 @@ export function VideoWatchPage({
 
   // The upload month, shown as a colored badge under the year.
   const monthLabel = formatVideoDate(date, "month")
-  // Style, views and length sit on the Aff row — right after the year,
-  // before Aff. With no year to stack the month badge under, the month
-  // leads this cluster instead.
+  // Style, views and length stack vertically in the title area — after the
+  // year column, before Aff. With no year to stack the month badge under,
+  // the month leads this cluster (four items: month, style, views, length).
   const affRowMeta = (
-    <div className="flex items-center gap-2 flex-wrap text-xs text-muted-foreground">
+    <div className="flex flex-col items-start gap-1 text-xs text-muted-foreground">
       {!year && monthLabel && (
         <span
           title={formatVideoDate(date, "full")}
@@ -1099,8 +1099,8 @@ export function VideoWatchPage({
                   />
                 )}
                 {/* The tournament and year lead; round level stacks under the
-                    tournament so style / views / duration can sit on the Aff
-                    row right after the year. */}
+                    tournament so style / views / duration can stack after the
+                    year, before Aff. */}
                 {(tournament || year || roundLabel) && (
                   <div className="flex flex-col items-start gap-1">
                     <div className="flex items-center gap-1.5">
@@ -1200,11 +1200,10 @@ export function VideoWatchPage({
                     )}
                   </div>
                 )}
-                {/* Style, views and duration — same row as Aff, right after
-                    the year (before Aff). */}
+                {/* Style, views and duration — stacked vertically after the
+                    year (before Aff). */}
                 {affRowMeta}
-                {/* The two teams sit right after style / views / duration, in
-                    the same row as the round's other badges: aff blue, neg red,
+                {/* The two teams sit right after the stacked meta: aff blue, neg red,
                     the winner ringed in gold once the decision is revealed.
                     Each team's argument (the 1AC for aff, the 2NR for neg)
                     sits in small type right under its name. */}
@@ -1291,7 +1290,7 @@ export function VideoWatchPage({
             </div>
 
             {/* The decision sits above the player; style, views and length
-                sit on the Aff row after the year (see affRowMeta). */}
+                stack after the year in the title row (see affRowMeta). */}
             {hasDecision(affWin, judgeDecision) && (
             <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
               {/* A recorded winner alone counts as a decision. Revealed, the
