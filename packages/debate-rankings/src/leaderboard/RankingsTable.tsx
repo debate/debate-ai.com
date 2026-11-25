@@ -42,7 +42,6 @@ type ColumnKey = Extract<
   | "school"
   | "adjustedRating"
   | "bids"
-  | "matches"
   | "affWinRate"
   | "negWinRate"
   | "affElimWinRate"
@@ -185,13 +184,6 @@ const COLUMNS: Column[] = [
     numeric: true,
     render: (e, _division, _tier, _schoolRanks, bids) => <BidCount team={bids?.get(rankedTeamKey(e))} />,
   },
-  {
-    key: "matches",
-    label: "Matches",
-    numeric: true,
-    // Past Elo-source seasons carry no round counts.
-    render: (e) => (e.matches > 0 ? e.matches : <span className="text-muted-foreground/60">—</span>),
-  },
   { key: "affWinRate", label: "Aff Win", numeric: true, render: (e) => <WinRate value={e.affWinRate} /> },
   { key: "negWinRate", label: "Neg Win", numeric: true, render: (e) => <WinRate value={e.negWinRate} /> },
   { key: "affElimWinRate", label: "Aff Elim", numeric: true, render: (e) => <WinRate value={e.affElimWinRate} /> },
@@ -205,7 +197,6 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   school: 360,
   adjustedRating: 90,
   bids: 70,
-  matches: 90,
   affWinRate: 100,
   negWinRate: 100,
   affElimWinRate: 100,

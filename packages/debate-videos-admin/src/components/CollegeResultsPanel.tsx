@@ -4,7 +4,9 @@
  * @fileoverview Admin card that looks every college round up on College
  * Debate Results and saves its winner, ballot count, judges and squirrels,
  * stepping `POST /api/admin/videos/college-results` one small batch at a time
- * until nothing remains.
+ * until nothing remains. `HsResultsPanel` is the same card for high school
+ * Policy, PF and LD rounds, looked up on Tabroom via
+ * `POST /api/admin/videos/hs-results`.
  * @module components/CollegeResultsPanel
  */
 
@@ -79,15 +81,33 @@ const LISTS: [status: string, label: string][] = [
 /** `2027` → `"2026-27"`, the season a video's `season_year` closes. */
 const seasonLabel = (year: number | null) => (year ? `${year - 1}-${String(year).slice(-2)}` : "");
 
+/** What differs between the college card and the high school (Tabroom) card. */
+const SOURCES = {
+  college: {
+    endpoint: "/api/admin/videos/college-results",
+    title: "Look up college results",
+    site: "College Debate Results",
+    rounds: "college rounds",
+  },
+  hs: {
+    endpoint: "/api/admin/videos/hs-results",
+    title: "Look up high school results",
+    site: "Tabroom",
+    rounds: "high school Policy, PF and LD rounds",
+  },
+} as const;
+
+export type ResultsSourceKind = keyof typeof SOURCES;
+
 /** The rounds whose last lookup ended in one status, each linking to its watch page. */
-function UnsettledList({ status }: { status: string }) {
+function UnsettledList({ status, endpoint }: { status: string; endpoint: string }) {
   const [state, setState] = useState<{ rows: UnsettledRound[]; total: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     let live = true;
     setState(null);
     setError(null);
-    fetch(`/api/admin/videos/college-results?status=${encodeURIComponent(status)}`)
+    fetch(`${endpoint}?status=${encodeURIComponent(status)}`)
       .then(async (res) => {
         const data = (await res.json()) as { rows?: UnsettledRound[]; total?: number; error?: string };
         if (!res.ok) throw new Error(data?.error || "Could not load the list");
@@ -97,7 +117,7 @@ function UnsettledList({ status }: { status: string }) {
     return () => {
       live = false;
     };
-  }, [status]);
+  }, [status, endpoint]);
 
   if (error) return <p className="text-destructive text-sm">{error}</p>;
   if (!state) return <p className="text-muted-foreground text-sm">Loading…</p>;
@@ -136,7 +156,12 @@ function UnsettledList({ status }: { status: string }) {
   );
 }
 
-export function CollegeResultsPanel() {
+/**
+ * The bulk results card. `source="hs"` runs the Tabroom lookup over high
+ * school rounds; the default runs College Debate Results over college rounds.
+ */
+export function CollegeResultsPanel({ source = "college" }: { source?: ResultsSourceKind } = {}) {
+  const config = SOURCES[source];
   const [list, setList] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState<string | null>(null);
@@ -161,7 +186,7 @@ export function CollegeResultsPanel() {
     };
     try {
       for (;;) {
-        const res = await fetch("/api/admin/videos/college-results", {
+        const res = await fetch(config.endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ since }),
@@ -179,7 +204,7 @@ export function CollegeResultsPanel() {
         if (totals.finished || totals.stopped) break;
       }
     } catch (err) {
-      setError(`${(err as Error).message} — press "Look up college results" to pick up where it stopped.`);
+      setError(`${(err as Error).message} — press "${config.title}" to pick up where it stopped.`);
     } finally {
       setRunning(false);
     }
@@ -188,9 +213,9 @@ export function CollegeResultsPanel() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Look up college results</CardTitle>
+        <CardTitle>{config.title}</CardTitle>
         <CardDescription>
-          Finds every college round on College Debate Results and saves the judges and who squirreled
+          Finds every one of the {config.rounds} on {config.site} and saves the judges and who squirreled
           (judges in the minority), plus the winner and ballot count where the video has none. A winner
           is only taken from the site&rsquo;s recorded decision; ambiguous tournaments and pairings are
           skipped, and a saved winner the site disagrees with is flagged, not overwritten. Runs about ten
@@ -200,9 +225,9 @@ export function CollegeResultsPanel() {
       <CardContent className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-3">
           <Button onClick={() => run(false)} disabled={running} variant="outline">
-            {running ? "Looking up…" : "Look up college results"}
+            {running ? "Looking up…" : config.title}
           </Button>
-          <Button onClick={() => run(true)} disabled={running} variant="ghost" title="Check every college round again, including ones already looked up">
+          <Button onClick={() => run(true)} disabled={running} variant="ghost" title={`Check every one of the ${config.rounds} again, including ones already looked up`}>
             Recheck all
           </Button>
           {running && (
@@ -227,8 +252,13 @@ export function CollegeResultsPanel() {
             </Button>
           ))}
         </div>
-        {list && <UnsettledList key={`${list}-${running}`} status={list} />}
+        {list && <UnsettledList key={`${list}-${running}`} status={list} endpoint={config.endpoint} />}
       </CardContent>
     </Card>
   );
+}
+
+/** The high school card: Tabroom results for Policy, PF and LD rounds. */
+export function HsResultsPanel() {
+  return <CollegeResultsPanel source="hs" />;
 }

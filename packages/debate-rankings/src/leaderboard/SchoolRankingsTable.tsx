@@ -1,7 +1,7 @@
 /**
  * @fileoverview Sortable Schools table: every school with ranked entries,
- * ranked by its balanced score, alongside its best rating, the average rating of all its
- * entries and a balanced score led by its top three entries.
+ * ranked by its balanced score, alongside its best rating and a balanced
+ * score led by its top three entries.
  * @module leaderboard/SchoolRankingsTable
  */
 
@@ -106,14 +106,6 @@ const COLUMNS: Column[] = [
         <span className="text-xs text-muted-foreground/70">({r.bestEvent})</span>
       </span>
     ),
-  },
-  {
-    key: "avgRating",
-    label: "Avg Rating",
-    numeric: true,
-    width: 120,
-    tooltip: "Mean adjusted rating across every ranked team (or LD debater) from the school.",
-    render: (r) => <RatingDigits value={r.avgRating} />,
   },
   {
     key: "balancedScore",

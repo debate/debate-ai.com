@@ -222,12 +222,67 @@ describe("VideoEditDialog college results lookup", () => {
     candidates: [],
   };
 
-  it("is hidden on non-college videos", () => {
-    mount(<VideoEditDialog video={libraryVideo({ style: 1 })} onClose={() => {}} onSaved={() => {}} />);
+  it("is hidden on lecture and non-debate styles", () => {
+    mount(<VideoEditDialog video={libraryVideo({ style: 7 })} onClose={() => {}} onSaved={() => {}} />);
     expect(bodyText()).not.toContain("Look up results");
     cleanup();
     mount(<VideoEditDialog video={libraryVideo({ style: null })} onClose={() => {}} onSaved={() => {}} />);
     expect(bodyText()).not.toContain("Look up results");
+  });
+
+  it("looks a high-school LD round up on Tabroom", async () => {
+    const tabroomLookup = {
+      status: "verified",
+      message: "Finals: Valley Christian YN won on the NEG 3-0.",
+      tournament: {
+        id: 35001,
+        name: "UCLA Invitational",
+        season: "2025-2026",
+        startDate: "2026-01-17 08:00:00",
+        url: "https://www.tabroom.com/index/tourn/results/index.mhtml?tourn_id=35001",
+      },
+      round: "Finals",
+      match: {
+        affTeam: "Mission San Jose SL",
+        affDebaters: "Siddharth Lagisetty",
+        negTeam: "Valley Christian YN",
+        negDebaters: "Yohaan Narayanan",
+        judges: "Emilio Lois, Angelina Tan, Tanisha Sonkusare",
+        decision: "NEG",
+      },
+      sidesSwapped: false,
+      winnerSide: "neg",
+      winnerTeam: "Valley Christian YN",
+      ballots: "3-0",
+      candidates: [],
+    };
+    const { calls } = mockFetch([{ method: "GET", match: "/api/videos/tabroom-results", respond: tabroomLookup }]);
+    mount(
+      <VideoEditDialog
+        video={libraryVideo({
+          style: 3,
+          tournament: "UCLA",
+          roundLevel: "Finals",
+          affTeam: "Mission San Jose SL",
+          negTeam: "Valley Christian YN",
+          seasonYear: 2026,
+          publishedAt: "2026-01-19",
+        })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    await clickAsync(button("🏛️ Look up results"));
+    const url = new URL(calls[0].url, "https://example.com");
+    expect(url.pathname).toBe("/api/videos/tabroom-results");
+    expect(Object.fromEntries(url.searchParams)).toMatchObject({
+      tournament: "UCLA",
+      style: "3",
+      affTeam: "Mission San Jose SL",
+      negTeam: "Valley Christian YN",
+    });
+    expect(bodyText()).toContain("Finals: Valley Christian YN won on the NEG 3-0.");
+    expect(document.querySelector('[data-testid="tabroom-results"]')).toBeTruthy();
   });
 
   it("looks the round up, shows the match and fills the form from it", async () => {
@@ -386,9 +441,40 @@ describe("VideoEditDialog college results lookup", () => {
     expect(input("video-negTeam").value).toBe("Emory GY");
   });
 
-  it("hides the judge fields on non-college videos with none saved", () => {
-    mount(<VideoEditDialog video={libraryVideo({ style: 1 })} onClose={() => {}} onSaved={() => {}} />);
+  it("hides the judge fields on videos no results site covers, with none saved", () => {
+    mount(<VideoEditDialog video={libraryVideo({ style: 7 })} onClose={() => {}} onSaved={() => {}} />);
     expect(document.getElementById("video-judges")).toBeNull();
+  });
+
+  it("looks high school Policy, PF and LD rounds up on Tabroom", async () => {
+    const tabroomLookup = {
+      ...finalsLookup,
+      message: "Round 3: Harker AB won on the AFF 1-0.",
+      tournament: { id: 34644, name: "53rd Annual Tournament of Champions", season: "2024-2025", startDate: "2025-04-25", url: "https://www.tabroom.com/x" },
+      round: "Round 3",
+      match: { affTeam: "Harker AB", affDebaters: "Ann Able, Bo Baker", negTeam: "Westminster CD", negDebaters: "Cy Cole, Di Dunn", judges: "Pat Judge", decision: "AFF 1-0" },
+      sidesSwapped: false,
+      winnerSide: "aff",
+      winnerTeam: "Harker AB",
+      ballots: "1-0",
+    };
+    const { calls } = mockFetch([{ method: "GET", match: "/api/videos/hs-results", respond: tabroomLookup }]);
+    mount(
+      <VideoEditDialog
+        video={libraryVideo({ style: 1, tournament: "TOC", roundLevel: "Round 3", affTeam: "Harker AB", negTeam: "Westminster CD" })}
+        onClose={() => {}}
+        onSaved={() => {}}
+      />,
+    );
+    expect(bodyText()).toContain("Finds this round on Tabroom");
+    await clickAsync(button("🏛️ Look up results"));
+    const url = new URL(calls[0].url, "https://example.com");
+    expect(url.pathname).toBe("/api/videos/hs-results");
+    expect(Object.fromEntries(url.searchParams)).toMatchObject({ style: "1", tournament: "TOC", roundLevel: "Round 3" });
+    expect(bodyText()).toContain("Round 3: Harker AB won on the AFF 1-0.");
+    click(button("Use this result"));
+    expect(input("video-judgeDecision").value).toBe("1-0");
+    expect(input("video-judges").value).toBe("Pat Judge");
   });
 
   it("is offered in suggest mode too, and reports a failed lookup", async () => {
