@@ -17,6 +17,7 @@
 // 10. Desktop auto-update from the profile's signed update feed (`updater`)
 // 11. A loopback bridge the site in a browser uses to find the running app and
 //     open its mini player (`desktop_bridge`)
+// 12. Find in page with Ctrl+F / Cmd+F on every page (`find_bar`)
 
 mod app_source;
 #[cfg(desktop)]
@@ -24,6 +25,7 @@ mod background;
 mod commands;
 #[cfg(desktop)]
 mod desktop_bridge;
+mod find_bar;
 mod generated_scheme;
 mod media;
 mod mini_player;
@@ -81,6 +83,7 @@ pub fn run() {
         ])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_deep_link::init())
+        .plugin(find_bar::init())
         .on_permission_request(|webview, kind| media::permission_response(&webview, kind))
         .setup(|app| {
             if let Some(window) = app.get_webview_window("main") {
