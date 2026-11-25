@@ -15,7 +15,10 @@ user-facing doc (top 10s, coverage, trademark disclaimer, use cases).
 - Niche public/private high school lists are **not** copied: they're imported
   from `@debate-ai/rankings/src/schools/academic-category-data`.
 - `src/data/wordmarks.ts`: png file → school. A test fails if a png in
-  `debate-icons/colleges` or `high-schools` is missing here.
+  `wordmarks/colleges` or `wordmarks/high-schools` is missing here.
+- `wordmarks/colleges`, `wordmarks/high-schools`: the pngs themselves;
+  `src/wordmarks/icons.ts` exports them. `@debate-ai/icons/schools` re-exports
+  them for existing imports; tournament logos stay in debate-icons.
 
 ## Things that bite
 
