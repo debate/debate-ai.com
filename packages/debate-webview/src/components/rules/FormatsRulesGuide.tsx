@@ -119,8 +119,12 @@ const EVIDENCE_TABLE: [string, string][] = [
     "Be ready to provide the complete citation upon request, including author, date, source/outlet, title, digital access date, URL if applicable, qualifications, and page numbers if available.",
   ],
   [
+    "Oral delivery",
+    "Oral delivery of each piece of evidence must be identified by a clear oral pause or by saying phrases such as “quote/unquote” or “mark the card.” The use of a phrase is definitive and may be preferable to debaters. Clear, oral pauses are left solely to the discretion of the judge.",
+  ],
+  [
     "Mark what is read",
-    "Identify evidence orally with a pause or phrase such as “mark the card,” and visibly mark the exact text read or paraphrased in the written document.",
+    "Visibly mark the exact text read or paraphrased in the written document.",
   ],
   [
     "Paraphrasing",
