@@ -27,6 +27,7 @@ import { backfillFileStats } from "../lib/file-stats/backfill";
 import { getSchoolRankings, runDailySchoolRankingsRefresh } from "../lib/rankings/school-rankings-store";
 import { runDailyNpdlRankingsRefresh } from "../lib/rankings/npdl-rankings-store";
 import { defaultRankBaselineSources, runRankBaselineCapture } from "../lib/rankings/rank-baseline-store";
+import { runMonthlyEloSnapshot } from "../lib/rankings/elo-snapshot-store";
 import { currentRankingSeasonYear } from "@debate-ai/rankings";
 import { runDailySchoolSeasonsRefresh } from "../lib/rankings/school-season-store";
 import { runDailySchoolDirectoryRefresh } from "../lib/rankings/school-directory-store";
@@ -338,6 +339,25 @@ const worker = {
           }),
         ).catch((error) => {
           console.error("Scheduled rank baseline capture failed:", describeError(error), error);
+        }),
+      );
+      // Monthly Elo snapshots (lib/rankings/elo-snapshot-store.ts): the first
+      // run of each month saves every team's rating and rank for that month,
+      // for good, in one batched write with its scraper_log row. Other days
+      // only read.
+      ctx.waitUntil(
+        runWithPrimaryD1Session(() =>
+          runWithContext(env, async () => {
+            const result = await runMonthlyEloSnapshot(await getDBFromContext());
+            if (result) {
+              console.log(
+                `[elo-snapshot] ${result.month}: saved ${result.saved.map((s) => `${s.dataset} (${s.teams})`).join(", ") || "nothing"}` +
+                  (result.failed.length ? `; failed ${result.failed.join(", ")}` : ""),
+              );
+            }
+          }),
+        ).catch((error) => {
+          console.error("Scheduled Elo monthly snapshot failed:", describeError(error), error);
         }),
       );
       // School pages' Historical legend (lib/rankings/school-season-store.ts):

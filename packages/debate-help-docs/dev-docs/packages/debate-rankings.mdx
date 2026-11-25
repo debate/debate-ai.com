@@ -36,6 +36,16 @@ the site. 2024-25 should give 879 team rows and 26 school rows. `ParliRankingsSe
 the leaderboard's Parli tab (`?format=PARLI`, after College Policy). Known gaps: season slugs are a hand-kept list (add next season's page to
 `NPDL_SEASON_SLUGS`), and a page with two team sheets keeps only the first.
 
+Monthly Elo snapshots (`src/leaderboard/eloHistory.ts`, `profile/EloSparkline.tsx`): the app's daily
+06:00 UTC cron (`apps/debate-web/lib/rankings/elo-snapshot-store.ts`) saves every dataset's teams as
+`{ teamSlug: [rating, rank] }` on its first run of each UTC month, into `elo_monthly_snapshots`
+(one row per month and dataset, `INSERT OR IGNORE`, so a saved month is never overwritten), plus one
+`scraper_log` row (job `elo-monthly-snapshot`), all in one `db.batch()`. Other days cost one read.
+`/api/rankings/elo-history?dataset=hspf&teams=a,b` returns just the asked-for teams' months; team
+pages and school-page rows draw `EloSparkline`, which renders nothing until a team has a month.
+Known gaps: teams are keyed by school plus names (`teamSlug`), so a renamed pairing starts a new
+line; a dataset that fails to load is retried the next day but still filed under that month.
+
 Also holds the school-claim rules and owner UI (`src/schools/`) that used to sit in `debate-webview`: claim
 codes, member and logo validation, "My school" settings and the owner panel. The school profile page that
 embeds videos stays in `debate-webview`.
