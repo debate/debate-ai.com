@@ -70,7 +70,7 @@ export const WORDMARK_ROWS: readonly WordmarkRow[] = [
 /** Debate-circuit nicknames for the wordmark high schools, added to their search aliases. */
 export const HIGH_SCHOOL_ALIASES: Readonly<Record<string, readonly string[]>> = {
   "Bronx High School of Science": ["Bronx Science", "Bronx Sci"],
-  "Caddo Parish Magnet High School": ["Caddo Magnet"],
+  "Caddo Parish Magnet High School": ["Caddo Magnet", "Caddo"],
   "The College Preparatory School": ["College Prep"],
   "Glenbrook North High School": ["GBN", "Glenbrook North"],
   "Glenbrook South High School": ["GBS", "Glenbrook South"],

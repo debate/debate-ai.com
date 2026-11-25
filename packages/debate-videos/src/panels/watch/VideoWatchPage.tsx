@@ -1220,7 +1220,7 @@ export function VideoWatchPage({
                           : "border border-blue-400/90 shadow-lg",
                       )}
                     >
-                      <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" bare showRank />
+                      <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" year={year} bare showRank />
                     </button>
                   </TeamWithArgument>
                 )}
@@ -1237,7 +1237,7 @@ export function VideoWatchPage({
                           : "border border-red-400/90 shadow-lg",
                       )}
                     >
-                      <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" bare showRank />
+                      <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" year={year} bare showRank />
                     </button>
                   </TeamWithArgument>
                 )}

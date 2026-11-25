@@ -39,7 +39,7 @@ export function PlayerTitleBar({ activeVideoMeta, activeVideoTitle }: PlayerTitl
           onClick={() => searchHandler?.(activeVideoMeta.affTeam || '')}
           className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 shrink-0 hover:underline cursor-pointer"
         >
-          <TeamCodeLabel label={activeVideoMeta.affTeam} side="aff" bare className="[&_img]:h-3" />
+          <TeamCodeLabel label={activeVideoMeta.affTeam} side="aff" year={activeVideoMeta.year} bare className="[&_img]:h-3" />
         </button>
       ) : null}
       {activeVideoMeta?.negTeam ? (
@@ -47,7 +47,7 @@ export function PlayerTitleBar({ activeVideoMeta, activeVideoTitle }: PlayerTitl
           onClick={() => searchHandler?.(activeVideoMeta.negTeam || '')}
           className="text-[10px] font-semibold text-red-600 dark:text-red-400 shrink-0 hover:underline cursor-pointer"
         >
-          <TeamCodeLabel label={activeVideoMeta.negTeam} side="neg" bare className="[&_img]:h-3" />
+          <TeamCodeLabel label={activeVideoMeta.negTeam} side="neg" year={activeVideoMeta.year} bare className="[&_img]:h-3" />
         </button>
       ) : null}
       {!activeVideoMeta?.style && !activeVideoMeta?.tournament && (

@@ -142,7 +142,7 @@ export function CollegeHistoryTable({ year, query }: CollegeHistoryTableProps) {
               <TableRow key={`${e.rank}-${e.name}`}>
                 <TableCell className="text-right font-semibold tabular-nums">{e.rank}</TableCell>
                 <TableCell>
-                  <TeamLabel {...teamDisplayParts({ school: e.school, name: e.name })} title={`${e.school} · ${e.name}`} href={current ? teamHref(e) : pastTeamHref(e)} />
+                  <TeamLabel {...teamDisplayParts({ school: e.school, name: e.name })} title={`${e.school} · ${e.name}`} href={current ? teamHref(e) : pastTeamHref(e)} stats={{ ranking: { ...e, season: Number(year) } }} />
                 </TableCell>
                 <TableCell className="text-right tabular-nums">{formatCollegeHistoryRating(e.rating)}</TableCell>
               </TableRow>

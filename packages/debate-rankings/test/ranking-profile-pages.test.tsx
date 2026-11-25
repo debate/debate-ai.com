@@ -82,6 +82,7 @@ const DOCS = {
 let view: Mounted | undefined;
 type FetchMock = ReturnType<typeof vi.fn<(url: string, init?: RequestInit) => Promise<unknown>>>;
 let fetchMock: FetchMock;
+let eloMock: FetchMock;
 let followMock: FetchMock;
 let caselistTeamMock: FetchMock;
 let adminMock: FetchMock;
@@ -109,6 +110,7 @@ beforeEach(() => {
     return ds(id, []);
   });
   fetchMock = vi.fn(async (_url: string, _init?: RequestInit): Promise<unknown> => ({ ok: true, json: async () => DOCS }));
+  eloMock = vi.fn(async (_url: string, _init?: RequestInit): Promise<unknown> => ({ ok: true, json: async () => ({ teams: {} }) }));
   followMock = vi.fn(async (_url: string, _init?: RequestInit): Promise<unknown> => ({
     ok: true,
     json: async () => ({ following: false, followers: 4, signedIn: false }),
@@ -126,6 +128,8 @@ beforeEach(() => {
   vi.stubGlobal("fetch", (url: string, init?: RequestInit) => {
     const path = String(url);
     if (path.startsWith("/api/caselist-team")) return caselistTeamMock(url, init);
+    // Monthly Elo snapshots: none saved yet unless a test says otherwise.
+    if (path.startsWith("/api/rankings/elo-history")) return eloMock(url, init);
     if (path.startsWith("/api/follows")) return followMock(url, init);
     if (path.startsWith("/api/settings")) return Promise.resolve({ ok: false, status: 401, json: async () => ({}) });
     // The admin-only "Sync from openCaselist" button asks who is viewing: a guest here.
@@ -181,6 +185,36 @@ describe("TeamProfilePage", () => {
     expect(followMock.mock.calls[0][0]).toContain("kind=team");
     expect(root.textContent).not.toMatch(/followers?\b/);
     expect(root.querySelector('a[href="/login"]')?.textContent).toContain("Sign in to follow");
+  });
+
+  it("charts the team's saved monthly ratings, and shows no chart without them", async () => {
+    const { TeamProfilePage } = await load();
+    const { teamHref } = await import("../src/leaderboard/profile/rankingProfileHelpers");
+    const slug = teamHref({ school: "Harker", name: "Kim & Lee" }).split("/").pop()!;
+    view = await mount(<TeamProfilePage slug={slug} />);
+    await flush();
+    expect(view.container.querySelector('[data-testid="elo-sparkline"]')).toBeNull();
+    expect(view.container.querySelector('section[aria-label="Rating by month"]')).toBeNull();
+    await view.unmount();
+
+    eloMock.mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        teams: {
+          "harker-kim-lee": [
+            { month: "2026-10", rating: 9, rank: 4 },
+            { month: "2026-11", rating: 9.5, rank: 1 },
+          ],
+        },
+      }),
+    });
+    const fresh = await load();
+    view = await mount(<fresh.TeamProfilePage slug={slug} />);
+    await flush();
+    expect(eloMock.mock.calls.at(-1)?.[0]).toBe("/api/rankings/elo-history?dataset=hspf&teams=harker-kim-lee");
+    const band = view.container.querySelector('section[aria-label="Rating by month"]');
+    expect(band?.textContent).toContain("2 months");
+    expect(band?.querySelector('[data-testid="elo-sparkline"] path')).not.toBeNull();
   });
 
   it("reports a link that matches no team", async () => {
@@ -422,5 +456,29 @@ describe("ProfileCaselistDocuments", () => {
     fetchMock.mockRejectedValueOnce(Object.assign(new Error("aborted"), { name: "AbortError" }));
     const root = await render({ school: "Harker" });
     expect(root.textContent).not.toContain("Error:");
+  });
+});
+
+describe("SchoolProfilePage monthly ratings", () => {
+  it("puts a monthly rating sparkline in the rows of teams with saved months only", async () => {
+    eloMock.mockImplementation(async (url: string) => ({
+      ok: true,
+      json: async () => ({
+        teams: url.includes("dataset=hspf") ? { "harker-kim-lee": [{ month: "2026-11", rating: 9.5, rank: 1 }] } : {},
+      }),
+    }));
+    const { SchoolProfilePage } = await load();
+    view = await mount(<SchoolProfilePage slug="harker" />);
+    await flush();
+    const urls = eloMock.mock.calls.map((call) => String(call[0])).sort();
+    expect(urls).toEqual([
+      "/api/rankings/elo-history?dataset=hsld&teams=harker-jane-kim",
+      "/api/rankings/elo-history?dataset=hspf&teams=harker-kim-lee%2Charker-ng-oh",
+    ]);
+    const sparkRows = [...view.container.querySelectorAll("table:not([data-event-ranks]) tbody tr")].filter((row) =>
+      row.querySelector('[data-testid="elo-sparkline"]'),
+    );
+    expect(sparkRows).toHaveLength(1);
+    expect(sparkRows[0]!.textContent).toContain("Kim");
   });
 });

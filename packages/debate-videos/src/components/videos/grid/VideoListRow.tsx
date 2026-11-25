@@ -139,12 +139,15 @@ function TeamCell({
   team,
   argument,
   ranking,
+  year,
   onSearch,
 }: {
   side: TeamSide
   team?: string | null
   argument?: string | null
   ranking?: VideoTeamRanking | null
+  /** The round's year, so the team's hover card finds the right pair's all-time records. */
+  year?: number | null
   onSearch?: (text: string) => void
 }) {
   const href = ranking ? (isPastSeasonRanking(ranking) ? pastTeamHref(ranking) : teamHref(ranking)) : null
@@ -160,7 +163,7 @@ function TeamCell({
             title={`${ranking.school} ${ranking.name} — team page`}
             className="min-w-0 text-left hover:text-primary hover:underline"
           >
-            <TeamCodeLabel label={team} ranking={ranking} side={side} showRank />
+            <TeamCodeLabel label={team} ranking={ranking} side={side} year={year} showRank />
           </Link>
         ) : onSearch ? (
           <button
@@ -172,10 +175,10 @@ function TeamCell({
             title={`Search for ${team}`}
             className="max-w-full text-left hover:text-primary hover:underline"
           >
-            <TeamCodeLabel label={team} ranking={ranking} side={side} showRank />
+            <TeamCodeLabel label={team} ranking={ranking} side={side} year={year} showRank />
           </button>
         ) : (
-          <TeamCodeLabel label={team} ranking={ranking} side={side} showRank />
+          <TeamCodeLabel label={team} ranking={ranking} side={side} year={year} showRank />
         )}
       </div>
       {argument && (
@@ -587,8 +590,8 @@ export function VideoListRow({
 
         {isRoundMode && !spansTeamCells && (
           <>
-            <TeamCell side="aff" team={affTeam} argument={arg1AC} ranking={affRanking} onSearch={onSearch} />
-            <TeamCell side="neg" team={negTeam} argument={arg2NR} ranking={negRanking} onSearch={onSearch} />
+            <TeamCell side="aff" team={affTeam} argument={arg1AC} ranking={affRanking} year={year} onSearch={onSearch} />
+            <TeamCell side="neg" team={negTeam} argument={arg2NR} ranking={negRanking} year={year} onSearch={onSearch} />
           </>
         )}
 

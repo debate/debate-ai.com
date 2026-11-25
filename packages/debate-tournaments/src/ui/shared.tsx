@@ -11,7 +11,7 @@ import { createContext, useContext, useEffect, useState, type ComponentType, typ
 import { ChevronLeft, Loader2 } from "lucide-react";
 import type { TournamentHrefs } from "../routes";
 import type { TournamentsClient } from "./client";
-import type { JudgeParadigmLookup, JudgeProfileLookup, TeamRatingLookup } from "./enrichment";
+import type { JudgeParadigmLookup, JudgeProfileLookup, TeamHoverCardComponent, TeamRatingLookup } from "./enrichment";
 import { Card, CardHeader, CardTitle, buttonVariants } from "./primitives";
 
 export type LinkLike = ComponentType<{
@@ -37,6 +37,8 @@ export interface TournamentsContextValue {
   ballotApiBase?: string;
   /** Finds an entry's current-season ranking; pairings and results show it beside the entry when set. */
   lookupTeamRating?: TeamRatingLookup;
+  /** Wraps an entry's label in the host's team stats hover card. */
+  TeamHoverCard?: TeamHoverCardComponent;
   /** Finds a judge's Tabroom paradigm by name, for judges whose pairing doesn't carry one. */
   lookupJudgeParadigm?: JudgeParadigmLookup;
   /** Loads a live Tabroom judge's paradigm and voting record for the judge dialog. */
