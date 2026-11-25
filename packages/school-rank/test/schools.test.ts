@@ -92,7 +92,7 @@ describe("wordmarks", () => {
 
     const priv = wordmarkCoverage("private-high-school")
     expect(priv.schools).toBe(100)
-    expect(priv.withWordmark).toBe(5)
+    expect(priv.withWordmark).toBe(7)
     expect(priv.names).toContain("Harvard-Westlake School")
   })
 })
