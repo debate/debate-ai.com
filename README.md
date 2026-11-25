@@ -101,7 +101,7 @@ Built on **[Debate Editor](https://github.com/debate/debate-editor)**, a ProseMi
 
 - **[Tournaments](https://debate-ai.com/tournaments)**: search live Tabroom tournaments by name, state, circuit, or event, then follow invitations, pairings, and results
 - **Host your own** tournament on the site, and read judge paradigms before the round
-- **[Team Rankings](https://debate-ai.com/coaching/rankings)**: every season since 2015-16 for PF, LD, Policy, and college, with Elo ratings, TOC bids, and aff/neg win rates
+- **[Team Rankings](https://debate-ai.com/rank)**: every season since 2015-16 for PF, LD, Policy, and college, with Elo ratings, TOC bids, and aff/neg win rates
 - **Team and school pages** with a matchup simulator
 
 ### 🧩 Take It With You
