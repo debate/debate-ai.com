@@ -16,7 +16,7 @@
  */
 
 import { useEffect } from "react"
-import { shouldReloadForStaleBuild } from "@debate-ai/webview/lib/layout/stale-build-recovery"
+import { isChunkLoadError, reloadForStaleBuild } from "@debate-ai/webview/lib/layout/stale-build-recovery"
 
 export default function GlobalError({
   error,
@@ -25,27 +25,22 @@ export default function GlobalError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const staleBuild = isChunkLoadError(error)
+
   useEffect(() => {
     console.error("Root layout error:", error)
 
     // A tab open across a deploy is running chunk hashes the origin no longer
-    // serves, so its lazy imports resolve to null and the first component to
-    // touch one throws out here. `reset()` re-renders that same dead graph and
-    // can never recover it — only a reload can, and documents are
-    // network-first in the service worker, so it comes back on the current
-    // build. Rate-limited to one attempt per tab per cooldown, so a build
-    // that is genuinely broken shows the message below instead of looping.
-    // See lib/layout/stale-build-recovery.ts.
-    if (typeof window === "undefined") return
-    let store: Storage | undefined
-    try {
-      store = window.sessionStorage
-    } catch {
-      // Storage is blocked (privacy mode); recovery is skipped, not attempted
-      // unguarded.
-      return
-    }
-    if (shouldReloadForStaleBuild(store)) window.location.reload()
+    // serves: Chrome reports "Failed to fetch dynamically imported module",
+    // Safari "Importing a module script failed", or a lazy import resolves to
+    // null and the first component to touch it throws out here. `reset()`
+    // re-renders that same dead graph and can never recover it — only a
+    // reload can, and documents are network-first in the service worker, so
+    // it comes back on the current build. Rate-limited to one attempt per tab
+    // per cooldown (sessionStorage; skipped where storage is blocked), so a
+    // build that is genuinely broken shows the message below instead of
+    // looping. See lib/layout/stale-build-recovery.ts.
+    reloadForStaleBuild()
   }, [error])
 
   return (
@@ -63,17 +58,21 @@ export default function GlobalError({
             textAlign: "center",
           }}
         >
-          <h2 style={{ fontSize: "1.25rem", fontWeight: 600 }}>Debate AI failed to start</h2>
+          <h2 style={{ fontSize: "1.25rem", fontWeight: 600 }}>
+            {staleBuild ? "Debate AI was just updated" : "Debate AI failed to start"}
+          </h2>
           <p style={{ maxWidth: "36rem", fontSize: "0.875rem", color: "#666", wordBreak: "break-word" }}>
-            {error.message || "An unexpected error occurred."}
+            {staleBuild
+              ? "Part of the app couldn't load because a new version is rolling out. Reload to get the latest version."
+              : error.message || "An unexpected error occurred."}
             {error.digest ? ` (${error.digest})` : ""}
           </p>
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <button
-              onClick={reset}
+              onClick={staleBuild ? () => window.location.reload() : reset}
               style={{ padding: "0.5rem 1rem", borderRadius: "0.375rem", border: "1px solid #ccc", cursor: "pointer" }}
             >
-              Try again
+              {staleBuild ? "Reload" : "Try again"}
             </button>
             <a
               href="/"

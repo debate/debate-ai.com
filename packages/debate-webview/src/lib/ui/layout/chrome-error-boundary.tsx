@@ -39,6 +39,7 @@
  */
 
 import { Component, Suspense, type ErrorInfo, type ReactNode } from "react"
+import { recoverFromChunkLoadError } from "../../layout/stale-build-recovery"
 
 export interface ChromeErrorBoundaryProps {
   /** The chrome region to isolate. */
@@ -71,6 +72,9 @@ class ChromeErrorCatch extends Component<ChromeErrorBoundaryProps, ChromeErrorBo
     // Swallowing the error is the point; swallowing the *report* would make
     // the next one of these invisible instead of merely contained.
     console.error(`[chrome] ${this.props.label} failed to render:`, error, info.componentStack)
+    // A lazy chunk that 404'd after a deploy would otherwise leave this region
+    // blank until the reader reloads by hand. Reload once (guarded) instead.
+    recoverFromChunkLoadError(error)
   }
 
   render(): ReactNode {
