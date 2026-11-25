@@ -243,7 +243,7 @@ export function LectureCategoryGridGallery({
 
   const gridClass = cn(
     "grid gap-2",
-    layout === "list" ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
+    layout === "list" ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
   );
 
   // A plain link per category: this is the page's category bar, so a click

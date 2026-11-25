@@ -1,6 +1,6 @@
 /**
  * @fileoverview Pins the rating number: divided by 10 to one decimal, with the
- * whole-number tier digits shaded from gold at tier 10 down to gray at tier 0.
+ * whole-number tier digits shaded from gold at tier 9 down to gray at tier 0.
  */
 
 import { describe, it, expect } from "vitest";
@@ -18,10 +18,10 @@ describe("RatingDigits", () => {
     expect(html).toMatch(/>0<\/span><span[^>]*>\.3<\/span>/);
   });
 
-  it("shows a top rating as tier 10 and its decimal", () => {
-    const html = render(104.4);
-    expect(html).toContain('aria-label="10.4"');
-    expect(html).toMatch(/>10<\/span><span[^>]*>\.4<\/span>/);
+  it("shows a top rating as tier 9 and its decimal", () => {
+    const html = render(94.4);
+    expect(html).toContain('aria-label="9.4"');
+    expect(html).toMatch(/>9<\/span><span[^>]*>\.4<\/span>/);
   });
 
   it("divides by 10 to one decimal, so 96 reads 9.6", () => {
@@ -35,14 +35,14 @@ describe("RatingDigits", () => {
     expect(render(57)).toContain(`color:${ratingTierColor(5)}`);
   });
 
-  it("reads the tier off the tens digit, clamped to 0–10", () => {
-    expect([0, 9.4, 9.6, 10, 55, 99, 104, 130, -3].map(ratingTier)).toEqual([0, 0, 1, 1, 5, 9, 10, 10, 0]);
+  it("reads the tier off the tens digit, clamped to 0–9", () => {
+    expect([0, 9.4, 9.6, 10, 55, 99, 104, 130, -3].map(ratingTier)).toEqual([0, 0, 1, 1, 5, 9, 9, 9, 0]);
   });
 
   it("shades a distinct color per tier, more saturated toward the top", () => {
-    const colors = Array.from({ length: 11 }, (_, t) => ratingTierColor(t));
-    expect(new Set(colors).size).toBe(11);
+    const colors = Array.from({ length: 10 }, (_, t) => ratingTierColor(t));
+    expect(new Set(colors).size).toBe(10);
     const saturation = (c: string) => Number(c.split(" ")[1].replace("%", ""));
-    for (let t = 1; t <= 10; t++) expect(saturation(colors[t])).toBeGreaterThan(saturation(colors[t - 1]));
+    for (let t = 1; t <= 9; t++) expect(saturation(colors[t])).toBeGreaterThan(saturation(colors[t - 1]));
   });
 });

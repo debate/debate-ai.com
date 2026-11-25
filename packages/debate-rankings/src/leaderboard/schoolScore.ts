@@ -11,7 +11,7 @@ export const TOP_THREE_WEIGHT = 0.7;
 export const BALANCED_SCALE = 1.1;
 
 /** Highest balanced score shown, matching the team ratings' cap. */
-export const BALANCED_MAX = 109;
+export const BALANCED_MAX = 99;
 
 /** Team count at which {@link depthScore} reaches 100. */
 const FULL_DEPTH_TEAMS = 15;
