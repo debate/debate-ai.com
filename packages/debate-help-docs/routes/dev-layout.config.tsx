@@ -38,5 +38,5 @@ export const devBaseOptions: BaseLayoutProps = {
       external: true,
     },
   ],
-  githubUrl: 'https://github.com/debate/debate-ai.com',
+
 };

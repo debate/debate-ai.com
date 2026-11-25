@@ -57,9 +57,9 @@ import { IconSettings } from "../../lib/ui/icons"
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
 
-/** Sidebar icon animations, on by default. Each dock icon rotates through them
-   so the row wiggles, bounces and spins rather than sitting still. */
-const SIDEBAR_ICON_ANIMATIONS: ("wiggle" | "bounce" | "spin")[] = ["wiggle", "bounce", "spin"]
+// Dock icons sit still: no wiggle, bounce or spin. The hover animation is for
+// sidebar rows only (see `useSidebarIconHover`), and the dock opts out of it
+// with `data-no-icon-hover` on its root.
 
 /** One rendered dock button, in either the desktop or the mobile instance. */
 interface DockNavRenderItem {
@@ -540,7 +540,7 @@ function DockInstance({
                   : "bg-gray-200 dark:bg-neutral-800",
               )}
             >
-              <DockIcon animate={SIDEBAR_ICON_ANIMATIONS[index % SIDEBAR_ICON_ANIMATIONS.length]}>
+              <DockIcon>
                 {item.renderIcon ? item.renderIcon() : (
                   <Image src={item.icon} alt={item.label} width={24} height={24} className="w-full h-full" unoptimized />
                 )}
@@ -550,7 +550,7 @@ function DockInstance({
         )}
         <DropdownMenuTrigger asChild>
           <DockItem aria-label="Settings" tooltip="Settings" tooltipSide={side} className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
-            <DockIcon animate="spin">
+            <DockIcon>
               <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
             </DockIcon>
           </DockItem>
@@ -760,7 +760,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
               aria-expanded={sidebarOpen}
               className="flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800"
             >
-              <DockIcon animate="wiggle">
+              <DockIcon>
                 <PanelLeft className="w-5 h-5" />
               </DockIcon>
             </DockItem>
@@ -786,7 +786,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
                         : "bg-gray-200 dark:bg-neutral-800",
                   )}
                 >
-                  <DockIcon animate={SIDEBAR_ICON_ANIMATIONS[index % SIDEBAR_ICON_ANIMATIONS.length]}>
+                  <DockIcon>
                     {renderIcon ? (
                       renderIcon()
                     ) : isPlayingIndicator ? (
@@ -804,7 +804,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
             })}
             <DropdownMenuTrigger asChild>
               <DockItem aria-label="Settings" tooltip="Settings" tooltipSide="top" className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
-                <DockIcon animate="spin">
+                <DockIcon>
                   <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
                 </DockIcon>
               </DockItem>

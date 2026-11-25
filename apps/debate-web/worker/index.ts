@@ -25,6 +25,7 @@ import { ROUND_FLOW_CRON, runHourlyRoundFlow } from "../lib/videos/hourly-round-
 import { runDailyTopicStarterIndex } from "../lib/topic-starters/file-index";
 import { backfillFileStats } from "../lib/file-stats/backfill";
 import { getSchoolRankings, runDailySchoolRankingsRefresh } from "../lib/rankings/school-rankings-store";
+import { runDailyNpdlRankingsRefresh } from "../lib/rankings/npdl-rankings-store";
 import { defaultRankBaselineSources, runRankBaselineCapture } from "../lib/rankings/rank-baseline-store";
 import { currentRankingSeasonYear } from "@debate-ai/rankings";
 import { runDailySchoolSeasonsRefresh } from "../lib/rankings/school-season-store";
@@ -259,8 +260,8 @@ const worker = {
   // trigger rather than a dedicated schedule of its own.
   //
   // The daily tick also rebuilds the Topic Starters file index and refreshes
-  // the precomputed Rankings → Schools table, and builds the school pages'
-  // past seasons and ranks.
+  // the precomputed Rankings → Schools table and the Parli tab's NPDL
+  // rankings, and builds the school pages' past seasons and ranks.
   //
   // A third cron (DB_BACKUP_CRON, Sundays) runs only the weekly content
   // backup to R2 — see lib/admin/weekly-db-backup.ts.
@@ -311,6 +312,16 @@ const worker = {
           runWithContext(env, async () => runDailySchoolRankingsRefresh(await getDBFromContext())),
         ).catch((error) => {
           console.error("Scheduled school rankings refresh failed:", describeError(error), error);
+        }),
+      );
+      // The Parli tab's NPDL rankings (lib/rankings/npdl-rankings-store.ts):
+      // re-scrapes the newest three seasons and rewrites D1 only when a
+      // season's rows changed.
+      ctx.waitUntil(
+        runWithPrimaryD1Session(() =>
+          runWithContext(env, async () => runDailyNpdlRankingsRefresh(await getDBFromContext())),
+        ).catch((error) => {
+          console.error("Scheduled NPDL rankings refresh failed:", describeError(error), error);
         }),
       );
       // The +/− column's 90-day rank baselines (lib/rankings/rank-baseline-store.ts):
