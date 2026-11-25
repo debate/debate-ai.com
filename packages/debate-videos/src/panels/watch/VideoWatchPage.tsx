@@ -1029,9 +1029,10 @@ export function VideoWatchPage({
 
   // The upload month, shown as a colored badge under the year.
   const monthLabel = formatVideoDate(date, "month")
-  // Views and length sit right under the tournament name. With no year to
-  // stack the month badge under, the month leads this row instead.
-  const headerStats = (
+  // Style, views and length sit on the Aff row — right after the year,
+  // before Aff. With no year to stack the month badge under, the month
+  // leads this cluster instead.
+  const affRowMeta = (
     <div className="flex items-center gap-2 flex-wrap text-xs text-muted-foreground">
       {!year && monthLabel && (
         <span
@@ -1044,27 +1045,28 @@ export function VideoWatchPage({
           {monthLabel}
         </span>
       )}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums cursor-default">
-                        <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <div className="text-sm space-y-1">
-                        <p className="font-medium">{channel}</p>
-                        <p className="text-muted-foreground">
-                          {formatVideoDate(date, "full")}
-                        </p>
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                  {(storedDuration || duration > 0) && (
-                    <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
-                      <Clock className="h-3 w-3" />
-                      {formatVideoDuration(storedDuration || duration)}
-                    </span>
-                  )}
+      <FormatBadge style={formatStyle} />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums cursor-default">
+            <ViewCount views={viewCount} icon={<Eye className="h-3 w-3" />} />
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div className="text-sm space-y-1">
+            <p className="font-medium">{channel}</p>
+            <p className="text-muted-foreground">
+              {formatVideoDate(date, "full")}
+            </p>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+      {(storedDuration || duration > 0) && (
+        <span className="inline-flex items-center gap-1 tabular-nums" title="Duration">
+          <Clock className="h-3 w-3" />
+          {formatVideoDuration(storedDuration || duration)}
+        </span>
+      )}
     </div>
   )
 
@@ -1096,9 +1098,10 @@ export function VideoWatchPage({
                     size="lg"
                   />
                 )}
-                {/* The tournament, with the round level and format stacked
-                    under it, so the teams can follow on the same line. */}
-                {(tournament || year || roundLabel || formatStyle !== undefined) ? (
+                {/* The tournament and year lead; round level stacks under the
+                    tournament so style / views / duration can sit on the Aff
+                    row right after the year. */}
+                {(tournament || year || roundLabel) && (
                   <div className="flex flex-col items-start gap-1">
                     <div className="flex items-center gap-1.5">
                       {tournament && (() => {
@@ -1182,31 +1185,29 @@ export function VideoWatchPage({
                         </span>
                       )}
                     </div>
-                    {(roundLabel || formatStyle !== undefined) && (
+                    {roundLabel && (
                       <div className="flex items-center gap-1">
                         {roundLabel === "Final" && <span className="text-sm">🏆</span>}
-                        {roundLabel && (
-                          <span
-                            className={cn(
-                              "text-xs font-semibold px-1.5 py-0.5 rounded border backdrop-blur-md shadow-sm",
-                              getRoundBadgeColor(roundLabel),
-                            )}
-                          >
-                            {formatElimBadgeLabel(roundLabel)}
-                          </span>
-                        )}
-                        <FormatBadge style={formatStyle} />
+                        <span
+                          className={cn(
+                            "text-xs font-semibold px-1.5 py-0.5 rounded border backdrop-blur-md shadow-sm",
+                            getRoundBadgeColor(roundLabel),
+                          )}
+                        >
+                          {formatElimBadgeLabel(roundLabel)}
+                        </span>
                       </div>
                     )}
-                    {headerStats}
                   </div>
-                ) : (
-                  headerStats
                 )}
-                {/* The two teams sit right after the tournament, in the same row as
-                    the round's other badges: aff blue, neg red, the winner
-                    ringed in gold once the decision is revealed. Each team's argument (the 1AC for aff, the
-                    2NR for neg) sits in small type right under its name. */}
+                {/* Style, views and duration — same row as Aff, right after
+                    the year (before Aff). */}
+                {affRowMeta}
+                {/* The two teams sit right after style / views / duration, in
+                    the same row as the round's other badges: aff blue, neg red,
+                    the winner ringed in gold once the decision is revealed.
+                    Each team's argument (the 1AC for aff, the 2NR for neg)
+                    sits in small type right under its name. */}
                 {affTeam && (
                   <TeamWithArgument argument={arg1AC} side="aff">
                     <button
@@ -1289,8 +1290,8 @@ export function VideoWatchPage({
                />
             </div>
 
-            {/* The decision sits above the player; the date, views and
-                length moved up under the tournament (see headerStats). */}
+            {/* The decision sits above the player; style, views and length
+                sit on the Aff row after the year (see affRowMeta). */}
             {hasDecision(affWin, judgeDecision) && (
             <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
               {/* A recorded winner alone counts as a decision. Revealed, the
