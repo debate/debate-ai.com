@@ -13,7 +13,7 @@
  * render exactly as Tabroom sends them.
  */
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ComponentType, type ReactNode } from "react";
 import type { JudgeProfile } from "../paradigms";
 import type { TournamentSource } from "./client";
 import { FramedOverlay } from "./FramedOverlay";
@@ -69,6 +69,17 @@ export interface TeamRating {
   /** The school's logo, when the site has one. */
   logoSrc?: string | null;
 }
+
+/**
+ * The host's hover card for an entry: wraps the entry's label so hovering it
+ * shows the team's stats. Given the query and, once matched, its ranking.
+ */
+export type TeamHoverCardComponent = ComponentType<{
+  query: TeamRatingQuery;
+  team: TeamRating | null;
+  side?: EntrySide | null;
+  children: ReactNode;
+}>;
 
 /** Resolves an entry to its ranking, or `null` when there is no confident match. */
 export type TeamRatingLookup = (query: TeamRatingQuery) => Promise<TeamRating | null>;
@@ -181,10 +192,13 @@ const SIDE_SURFACE: Record<EntrySide, string> = {
  * name — then the debaters' last names, or the code's initials when the
  * names aren't known. With a logo the names sit on a second row under it.
  * A matched entry's rating follows the pill. The code
- * itself stays in the hover text.
+ * itself stays in the hover text. When the host supplies a
+ * {@link TeamHoverCardComponent}, hovering the pill opens the team's stats card.
  */
 export function EntryLabel({ query, side }: { query: TeamRatingQuery; side?: EntrySide | null }) {
   const team = useTeamRating(query);
+  const HoverCard = useOptionalTournaments()?.TeamHoverCard;
+  const contextSeason = useContext(TournamentSeasonContext);
   const code = query.code?.trim() || null;
   const parsed = splitEntryCode(code);
   const school = team?.school || query.school?.trim() || parsed?.school || (parsed ? null : code);
@@ -192,8 +206,7 @@ export function EntryLabel({ query, side }: { query: TeamRatingQuery; side?: Ent
   const debaters = team?.names || printedName || parsed?.initials || null;
   if (!school && !debaters) return <>{code}</>;
   const stacked = Boolean(school && debaters && team?.logoSrc);
-  return (
-    <>
+  const pill = (
       <span
         data-entry-label=""
         data-side={side ?? undefined}
@@ -216,6 +229,16 @@ export function EntryLabel({ query, side }: { query: TeamRatingQuery; side?: Ent
         {school && debaters ? " " : null}
         {debaters ? <span className="truncate font-medium">{debaters}</span> : null}
       </span>
+  );
+  return (
+    <>
+      {HoverCard ? (
+        <HoverCard query={{ ...query, season: query.season ?? contextSeason }} team={team} side={side}>
+          {pill}
+        </HoverCard>
+      ) : (
+        pill
+      )}
       {team ? (
         <span
           className="ml-1.5 rounded bg-muted px-1 align-middle text-xs font-medium tabular-nums text-foreground"

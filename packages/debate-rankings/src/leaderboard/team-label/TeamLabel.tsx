@@ -15,18 +15,28 @@
  * from a past college season's table carries its `season`, and its tooltip
  * names that season and its debatedata rating.
  *
+ * Hovering or focusing a label with `stats` (every {@link TeamCodeLabel}
+ * unless `hoverCard={false}`) opens the team's stats card
+ * ({@link TeamHoverCard}): badges, this season's rank and win rates, and its
+ * all-time NDT and high school records, loaded on first open.
+ *
  * `teamDisplayParts` in `@debate-ai/rankings` decides the two parts;
  * this file only draws them.
  * @module leaderboard/team-label/TeamLabel
  */
 
-import type { CSSProperties, ReactNode } from "react"
+import { lazy, Suspense, useState, type CSSProperties, type ReactNode } from "react"
 import Link from "next/link"
 import { Crown } from "lucide-react"
+import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 import { formatSiteRating, teamDisplayParts, type RankingEntry } from "../../index"
 import { useSchoolLogo } from "../lib/school-art-settings"
 import { cn } from "../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
+import type { TeamHoverQuery } from "./teamHoverStats"
+
+/** The card's contents and the all-time tables they read, fetched on first hover. */
+const TeamStatsCardBody = lazy(() => import("./TeamStatsCardBody"))
 
 /** The side a team debated, which colors its border. */
 export type TeamSide = "aff" | "neg"
@@ -96,6 +106,12 @@ export interface TeamLabelProps {
   bare?: boolean
   /** Drawn inside the pill after the debaters, e.g. a {@link TeamRankBadge}. */
   badge?: ReactNode
+  /**
+   * What the hover card knows about the team; given, hovering the pill opens
+   * its {@link TeamHoverCard}. The label's own school and debaters fill in
+   * what it leaves out.
+   */
+  stats?: TeamHoverQuery
   className?: string
 }
 
@@ -112,6 +128,7 @@ export function TeamLabel({
   title,
   bare,
   badge,
+  stats,
   className,
 }: TeamLabelProps) {
   if (!school && !debaters) return null
@@ -127,7 +144,7 @@ export function TeamLabel({
     ))
   // School name on the first row, debaters on the second row.
   const stacked = Boolean(debaters && school)
-  return (
+  const pill = (
     <span
       data-team-label=""
       data-side={side ?? undefined}
@@ -159,6 +176,70 @@ export function TeamLabel({
       )}
     </span>
   )
+  if (!stats) return pill
+  return (
+    <TeamHoverCard query={{ school, debaters, ...stats }} side={side} href={href}>
+      {pill}
+    </TeamHoverCard>
+  )
+}
+
+/** How long the pointer rests on a label before its card opens, so sweeping a list doesn't flash cards. */
+const HOVER_CARD_DELAY_MS = 350
+
+/**
+ * Wraps a team label so hovering or focusing it opens a card with the team's
+ * key stats ({@link TeamStatsCardBody}). Nothing is loaded until the card
+ * first opens; the card's code and the all-time tables arrive then.
+ */
+export function TeamHoverCard({
+  query,
+  side,
+  href,
+  children,
+}: {
+  query: TeamHoverQuery
+  side?: TeamSide | null
+  href?: string
+  children: ReactNode
+}) {
+  const [open, setOpen] = useState(false)
+  // Stays mounted after the first open so reopening is instant.
+  const [opened, setOpened] = useState(false)
+  return (
+    <TooltipPrimitive.Provider delayDuration={HOVER_CARD_DELAY_MS} skipDelayDuration={150}>
+      <TooltipPrimitive.Root
+        open={open}
+        onOpenChange={(next) => {
+          setOpen(next)
+          if (next) setOpened(true)
+        }}
+      >
+        <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
+        <TooltipPrimitive.Portal>
+          <TooltipPrimitive.Content
+            side="top"
+            sideOffset={6}
+            collisionPadding={8}
+            data-team-hover-card=""
+            className={cn(
+              "z-50 w-64 max-w-[calc(100vw-16px)] rounded-lg border bg-popover p-3 text-left text-xs text-popover-foreground shadow-lg",
+              "animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+              side === "neg" ? "border-t-2 border-t-red-500/80" : "border-t-2 border-t-blue-500/80",
+            )}
+            // Clicks inside the card (its links) must not reach a row or card behind the label.
+            onClick={(e) => e.stopPropagation()}
+          >
+            {opened && (
+              <Suspense fallback={<p className="animate-pulse text-[11px] text-muted-foreground">Loading stats…</p>}>
+                <TeamStatsCardBody query={query} side={side} href={href} />
+              </Suspense>
+            )}
+          </TooltipPrimitive.Content>
+        </TooltipPrimitive.Portal>
+      </TooltipPrimitive.Root>
+    </TooltipPrimitive.Provider>
+  )
 }
 
 /**
@@ -175,6 +256,13 @@ export interface TeamCodeLabelProps extends Omit<TeamLabelProps, "school" | "deb
   ranking?: TeamRankingRow | null
   /** Shows the ranking's rank inside the pill as a {@link TeamRankBadge}. */
   showRank?: boolean
+  /**
+   * Hovering opens the team's stats card ({@link TeamHoverCard}). On by
+   * default; turn it off where the label already sits inside a tooltip.
+   */
+  hoverCard?: boolean
+  /** Year of the round the team is shown for, so the card's all-time records find the right pair. */
+  year?: number | null
 }
 
 /**
@@ -182,13 +270,15 @@ export interface TeamCodeLabelProps extends Omit<TeamLabelProps, "school" | "deb
  * rankings row's school and last names when there is one, else the code's
  * school and initials.
  */
-export function TeamCodeLabel({ label, ranking, showRank, ...rest }: TeamCodeLabelProps) {
+export function TeamCodeLabel({ label, ranking, showRank, hoverCard = true, year, ...rest }: TeamCodeLabelProps) {
   const parts = teamDisplayParts({ label, school: ranking?.school, name: ranking?.name })
   const badge =
     showRank && ranking && typeof ranking.rank === "number" ? (
-      <TeamRankBadge ranking={ranking} side={rest.side} />
+      // The hover card already lists the badge's stats, so the badge drops its own tooltip.
+      <TeamRankBadge ranking={ranking} side={rest.side} tooltip={!hoverCard} />
     ) : undefined
-  return <TeamLabel {...parts} badge={badge} {...rest} />
+  const stats = hoverCard ? { label, ranking, year } : undefined
+  return <TeamLabel {...parts} badge={badge} stats={stats} {...rest} />
 }
 
 /** Full-strength fill for the rank badge, matching the pill's border color. */
@@ -268,16 +358,17 @@ export function teamRankStats(ranking: TeamRankingRow) {
 export function TeamRankBadge({
   ranking,
   side,
+  tooltip = true,
 }: {
   ranking: TeamRankingRow
   side?: TeamSide | null
+  /** `false` drops the badge's own tooltip, inside a label whose hover card covers it. */
+  tooltip?: boolean
 }) {
   const stats = teamRankStats(ranking)
   const rank = ranking.rank ?? 0
   const { crown } = rankBadgeScale(rank)
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
+  const chip = (
         <span
           data-team-rank=""
           data-rank-top={crown ? "" : undefined}
@@ -292,6 +383,12 @@ export function TeamRankBadge({
           {crown && <Crown aria-hidden className="size-3 shrink-0 fill-amber-300 text-amber-300" />}
           #{ranking.rank}
         </span>
+  )
+  if (!tooltip) return chip
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        {chip}
       </TooltipTrigger>
       <TooltipContent side="top" className="text-left">
         <div className="font-semibold">{ranking.school}</div>

@@ -58,7 +58,7 @@ import {
  * Team and school profile pages (`/@<team>` handles, and the
  * `/teams/<team>` and `/schools/<school>` addresses they moved
  * from) are opened from the Team Rankings table rather than nested
- * under its own `/coaching/rankings` route, so a plain
+ * under its own `/rank` route, so a plain
  * `pathname === tool.href` match never lights that row up while you
  * are reading one — the tree looked like it had lost track of where
  * you were the moment you followed a rankings link. Both prefixes
@@ -66,7 +66,7 @@ import {
  * already treats them for keeping the sidebar itself mounted
  * (`sidebar-routes.ts`).
  */
-const TEAM_RANKINGS_HREF = "/coaching/rankings";
+const TEAM_RANKINGS_HREF = "/rank";
 const TEAM_RANKINGS_PROFILE_PREFIXES = ["/@", "/teams", "/schools"];
 
 function isToolActive(tool: SidebarToolLink, pathname: string | null): boolean {
@@ -83,6 +83,8 @@ function isToolActive(tool: SidebarToolLink, pathname: string | null): boolean {
     return true;
   }
   if (href !== TEAM_RANKINGS_HREF) return false;
+  // One address per format tab: `/rank/VCX`, `/rank/PARLI`, ….
+  if (pathname.startsWith(`${href}/`)) return true;
   return TEAM_RANKINGS_PROFILE_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
