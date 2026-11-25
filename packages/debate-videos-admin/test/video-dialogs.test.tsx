@@ -256,7 +256,7 @@ describe("VideoEditDialog college results lookup", () => {
       ballots: "3-0",
       candidates: [],
     };
-    const { calls } = mockFetch([{ method: "GET", match: "/api/videos/tabroom-results", respond: tabroomLookup }]);
+    const { calls } = mockFetch([{ method: "GET", match: "/api/videos/hs-results", respond: tabroomLookup }]);
     mount(
       <VideoEditDialog
         video={libraryVideo({
@@ -274,7 +274,7 @@ describe("VideoEditDialog college results lookup", () => {
     );
     await clickAsync(button("🏛️ Look up results"));
     const url = new URL(calls[0].url, "https://example.com");
-    expect(url.pathname).toBe("/api/videos/tabroom-results");
+    expect(url.pathname).toBe("/api/videos/hs-results");
     expect(Object.fromEntries(url.searchParams)).toMatchObject({
       tournament: "UCLA",
       style: "3",
@@ -282,7 +282,7 @@ describe("VideoEditDialog college results lookup", () => {
       negTeam: "Valley Christian YN",
     });
     expect(bodyText()).toContain("Finals: Valley Christian YN won on the NEG 3-0.");
-    expect(document.querySelector('[data-testid="tabroom-results"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="hs-results"]')).toBeTruthy();
   });
 
   it("looks the round up, shows the match and fills the form from it", async () => {

@@ -311,7 +311,7 @@ export const EXTINCTION_DATASET_FORMAT: Partial<Record<RankingDatasetId, DebateF
  * than the Bradley-Terry CSVs' (median ≈ 1670, the best teams 2150–2340), so
  * without this dozens of teams a season would pile up at the cap. With it, and
  * the 20%-higher {@link RATING_DIVISOR}, the best teams of every season from
- * 2015-16 on read at or near the 109 (10.9) cap.
+ * 2015-16 on read at or near the 99 (9.9) cap.
  * A constant shift keeps every rating gap, so win probabilities are unchanged.
  */
 export const EXTINCTION_ELO_SHIFT = 450;
