@@ -181,7 +181,7 @@ describe("VideoLibraryTable", () => {
     expect(calls.filter((c) => c.method === "GET").length).toBeGreaterThan(before);
   });
 
-it("carries transcripts & related videos inside the edit dialog, with no Transcripts button", async () => {
+  it("carries transcripts & related videos inside the edit dialog, with no Transcripts button", async () => {
     const { calls } = libraryRoutes([
       { method: "GET", match: "/documents", respond: { documents: [] } },
       { method: "GET", match: "/related", respond: { relations: [] } },

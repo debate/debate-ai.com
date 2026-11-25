@@ -10,7 +10,6 @@ import { parseJudgePanel, roundKey, type CollegeResultsLookup } from "../lib/col
 import { Button } from "../ui/primitives/button";
 import { Input } from "../ui/primitives/input";
 import { Label } from "../ui/primitives/label";
-import { VideoContentPanel, type ContentDialogVideo } from "./VideoContentDialog";
 import {
   Dialog,
   DialogContent,
@@ -454,7 +453,6 @@ export function VideoEditDialog({
   const [form, setForm] = useState<EditForm | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const [contentNotice, setContentNotice] = useState<string | null>(null);
   const [linkInput, setLinkInput] = useState("");
   const [isFilling, setIsFilling] = useState(false);
   const [fillNotice, setFillNotice] = useState<string | null>(null);
@@ -972,24 +970,6 @@ export function VideoEditDialog({
             )}
 
             {saveError && <p className="text-destructive text-sm">{saveError}</p>}
-            {video && (
-              <>
-                {contentNotice && <p className="text-muted-foreground text-sm">{contentNotice}</p>}
-                <VideoContentPanel
-                  video={{
-                    videoId: video.videoId,
-                    title: video.title,
-                    channel: video.channel,
-                    tournament: video.tournament,
-                    style: video.style,
-                  }}
-                  onSaved={(message) => {
-                    setContentNotice(message);
-                    setTimeout(() => setContentNotice(null), 4000);
-                  }}
-                />
-              </>
-            )}
           </div>
         )}
 
