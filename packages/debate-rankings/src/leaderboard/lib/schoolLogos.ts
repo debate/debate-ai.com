@@ -46,8 +46,10 @@ import {
   IconSchoolNewTrier,
   IconSchoolNorthTexas,
   IconSchoolNorthwestern,
+  IconSchoolNueva,
   IconSchoolOklahoma,
   IconSchoolPlanoWest,
+  IconSchoolQuarryLane,
   IconSchoolRedlands,
   IconSchoolSouthernCalifornia,
   IconSchoolStMarksSchoolOfTexas,
@@ -124,8 +126,10 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "new-trier": logoSrc(IconSchoolNewTrier),
   "north-texas": logoSrc(IconSchoolNorthTexas),
   "northwestern": logoSrc(IconSchoolNorthwestern),
+  "nueva": logoSrc(IconSchoolNueva),
   "oklahoma": logoSrc(IconSchoolOklahoma),
   "plano-west": logoSrc(IconSchoolPlanoWest),
+  "quarry-lane": logoSrc(IconSchoolQuarryLane),
   "redlands": logoSrc(IconSchoolRedlands),
   "southern-california": logoSrc(IconSchoolSouthernCalifornia),
   "st-marks": logoSrc(IconSchoolStMarksSchoolOfTexas),
@@ -221,8 +225,12 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "montgomery-bell-academy": "montgomery-bell",
   // New Trier
   "new-trier-township": "new-trier",
+  // Nueva
+  "nueva-school": "nueva",
   // Oklahoma
   ou: "oklahoma",
+  // Quarry Lane
+  "quarry-lane-school": "quarry-lane",
   // North Texas
   unt: "north-texas",
   // Plano West
