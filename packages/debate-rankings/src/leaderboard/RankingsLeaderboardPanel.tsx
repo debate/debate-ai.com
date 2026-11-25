@@ -153,7 +153,11 @@ export function LeaderboardPanel({
   // Division / view / year state (controlled or internal)
   // ---------------------------------------------------------------------------
 
-  const [internalYear, setInternalYear] = useState(() => String(currentSeasonYear()))
+  /** The season `?season=<year>` names on first render, else the current one. */
+  const [internalYear, setInternalYear] = useState(() => {
+    const season = searchParams.get("season")
+    return season && /^\d{4}$/.test(season) ? season : String(currentSeasonYear())
+  })
   const year = controlledYear ?? internalYear
   const setSeasonYearRaw = onControlledYearChange ?? setInternalYear
   /**
@@ -161,7 +165,7 @@ export function LeaderboardPanel({
    * league's newest season with rows (the coming season's sheet is often
    * still empty) instead of insisting on the current year.
    */
-  const [yearPicked, setYearPicked] = useState(false)
+  const [yearPicked, setYearPicked] = useState(() => /^\d{4}$/.test(searchParams.get("season") ?? ""))
   const setSeasonYear = (val: string) => {
     setYearPicked(true)
     setSeasonYearRaw(val)
@@ -169,15 +173,18 @@ export function LeaderboardPanel({
 
   /** "All time" (top of the season dropdown, `?season=all-time`) shows the greatest of all time instead of a season. */
   const [allTime, setAllTime] = useState(() => searchParams.get("season") === ALL_TIME_SEASON)
-  /** Picks a season year or All time, and syncs `?season=` for All time. */
+  /**
+   * Picks a season year or All time and writes it to `?season=`
+   * (`all-time`, or a past year like `2024`; the current season drops it).
+   */
   const setYear = (val: string) => {
     const nextAllTime = val === ALL_TIME_SEASON
     setAllTime(nextAllTime)
     if (!nextAllTime) setSeasonYear(val)
     const params = new URLSearchParams(searchParams.toString())
-    if (nextAllTime) params.set("season", ALL_TIME_SEASON)
+    if (nextAllTime || val !== String(currentSeasonYear())) params.set("season", val)
     else params.delete("season")
-    if (nextAllTime !== allTime) replaceUrl(parli ? PARLI_TAB : division, params)
+    replaceUrl(parli ? PARLI_TAB : division, params)
   }
 
   /**
