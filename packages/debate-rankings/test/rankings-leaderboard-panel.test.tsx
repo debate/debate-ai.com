@@ -152,8 +152,8 @@ describe("LeaderboardPanel", () => {
     expect(rowNames(root)[0]).toContain("Doe & Roe");
     expect(root.querySelector('th[aria-sort="descending"]')?.textContent).toContain("Team");
 
-    await click(headerButton(root, "Matches"));
-    expect(root.querySelector('th[aria-sort="descending"]')?.textContent).toContain("Matches");
+    await click(headerButton(root, "Rating"));
+    expect(root.querySelector('th[aria-sort="descending"]')?.textContent).toContain("Rating");
 
     const filter = root.querySelector<HTMLInputElement>('[aria-label="Filter rankings by name or school"]')!;
     await type(filter, "strake");
