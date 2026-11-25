@@ -399,6 +399,44 @@ describe("VideoEditDialog college results lookup", () => {
   });
 });
 
+describe("VideoEditDialog delete", () => {
+  it("asks to confirm, then DELETEs the video and reports it", async () => {
+    const onDeleted = vi.fn();
+    const { calls } = mockFetch([{ method: "DELETE", match: `/api/admin/videos/library/${VIDEO_ID}`, respond: { ok: true, id: VIDEO_ID } }]);
+    mount(<VideoEditDialog video={libraryVideo()} onClose={() => {}} onSaved={() => {}} onDeleted={onDeleted} />);
+
+    click(button("Delete video"));
+    expect(calls.some((c) => c.method === "DELETE")).toBe(false);
+    expect(bodyText()).toContain("Delete “TOC Finals”?");
+
+    click(button("Keep video"));
+    expect(bodyText()).not.toContain("Delete “TOC Finals”?");
+
+    click(button("Delete video"));
+    await clickAsync(button("Yes, delete video"));
+    expect(calls.filter((c) => c.method === "DELETE")).toHaveLength(1);
+    expect(onDeleted).toHaveBeenCalledWith(expect.objectContaining({ videoId: VIDEO_ID }));
+  });
+
+  it("shows the error and keeps the dialog when the delete fails", async () => {
+    const onDeleted = vi.fn();
+    mockFetch([{ method: "DELETE", match: "/api/admin/videos/library/", respond: { error: "Forbidden" }, status: 403 }]);
+    mount(<VideoEditDialog video={libraryVideo()} onClose={() => {}} onSaved={() => {}} onDeleted={onDeleted} />);
+    click(button("Delete video"));
+    await clickAsync(button("Yes, delete video"));
+    expect(bodyText()).toContain("Forbidden");
+    expect(onDeleted).not.toHaveBeenCalled();
+  });
+
+  it("is staff only: hidden in suggest mode and when adding a video", () => {
+    mount(<VideoEditDialog video={libraryVideo()} mode="suggest" onClose={() => {}} onSaved={() => {}} />);
+    expect(bodyText()).not.toContain("Delete video");
+    cleanup();
+    mount(<VideoEditDialog video={emptyLibraryVideo()} isNew onClose={() => {}} onSaved={() => {}} />);
+    expect(bodyText()).not.toContain("Delete video");
+  });
+});
+
 const contentVideo = { videoId: VIDEO_ID, title: "TOC Finals", channel: "Debate Channel", tournament: "TOC" };
 
 function contentRoutes(extra: Parameters<typeof mockFetch>[0] = []) {
