@@ -114,7 +114,7 @@ function ProfileFrame({ children }: { children: ReactNode }) {
   return (
     <div>
       <Link href="/rank" className="text-sm text-muted-foreground hover:text-foreground">
-        ← National Debate Ranking
+        ← Team & School Debate Rankings
       </Link>
       {children}
     </div>
