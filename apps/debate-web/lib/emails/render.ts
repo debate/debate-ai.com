@@ -1,5 +1,5 @@
 /// <reference types="@vitejs/plugin-rsc/types" />
-import type { EmailTemplateId, EmailTemplateProps, RenderedEmail } from "@debate-ai/emails";
+import type { CustomEmailProps, EmailTemplateId, EmailTemplateProps, RenderedEmail } from "@debate-ai/emails";
 
 /**
  * Renders `@debate-ai/emails` templates from a route handler.
@@ -28,4 +28,9 @@ export async function renderEmail<Id extends EmailTemplateId>(
 
 export async function renderEmailPreview(id: EmailTemplateId, baseUrl?: string): Promise<RenderedEmail> {
   return (await loadRenderer()).renderEmailPreview(id, baseUrl);
+}
+
+/** Renders an admin-written template (subject and plain-text body) in the shared layout. */
+export async function renderCustomEmail(props: CustomEmailProps): Promise<RenderedEmail> {
+  return (await loadRenderer()).renderCustomEmail(props);
 }

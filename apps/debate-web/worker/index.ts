@@ -96,6 +96,9 @@ interface Env extends TurnstileEnv {
   AUTH_LINKEDIN_ID?: string;
   AUTH_LINKEDIN_SECRET?: string;
   RESEND_API_KEY?: string;
+  // Cloudflare Email Service binding for Admin → Emails' "Cloudflare Worker"
+  // provider (lib/emails/campaign.ts). Optional; see wrangler.jsonc.
+  EMAIL?: { send(message: Record<string, unknown>): Promise<unknown> };
   NEXT_PUBLIC_BASE_URL?: string;
   // Canonical origin for SEO metadata — /sitemap.xml's `<loc>`, the
   // `robots.txt` `Sitemap:` line, and every page's `metadataBase`. Unset in
