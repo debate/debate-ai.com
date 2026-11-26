@@ -10,7 +10,8 @@
  * found by Tabroom person id, or by name when their pairing carries none
  * (the cache first, then Tabroom's paradigm search). A cached copy newer than
  * {@link PARADIGM_REFRESH_MS} is served as is; an older or missing one is
- * fetched from Tabroom with the site's session (`TABROOM_API_KEY`) and
+ * fetched from Tabroom with the site's session (the Tabroom login saved under
+ * Admin → Service logins, else `TABROOM_API_KEY`) and
  * saved. When Tabroom can't be read, an old copy is served marked stale.
  * A verified judge's own paradigm rides along as `ownParadigm`.
  *
@@ -37,7 +38,8 @@ import {
   type ParadigmSyncBatch,
   type ParadigmSyncStatus,
 } from "@debate-ai/tournaments/judge-paradigms/types";
-import { tabroomCredentials, tabroomFetch } from "./tabroom";
+import { siteTabroomCredentials, tabroomCredentials, tabroomFetch } from "./tabroom";
+import { serviceSession } from "@/lib/service-logins";
 import type { getDBFromContext } from "@/lib/database/context";
 import { judgeOwnParadigms, judgeParadigmSync, judgeParadigms, user, type JudgeParadigmRow } from "@/lib/database/schema";
 
@@ -48,6 +50,12 @@ const SYNC_ID = "tabroom";
 export const SYNC_BATCH_SIZE = 20;
 /** Rows per page of Tabroom's paradigm search (its maximum). */
 const SEARCH_PAGE = 100;
+
+/** Explicit credentials as given; otherwise the site's session, sent through `tabroomFetch` so a rejected token is replaced once. */
+async function tabroomAccess(credentials: TabroomCredentials | null | undefined): Promise<{ credentials: TabroomCredentials | null; fetchImpl?: typeof fetch }> {
+  if (credentials !== undefined) return { credentials };
+  return { credentials: await siteTabroomCredentials(), fetchImpl: tabroomFetch() };
+}
 
 const parseJson = <T>(text: string | null | undefined, fallback: T): T => {
   try {
@@ -121,7 +129,7 @@ async function ownParadigmFor(db: Db, personId: number): Promise<JudgeProfile["o
  * The Tabroom person id of the one judge named `first last`: the cache when
  * exactly one row has that name, otherwise Tabroom's paradigm search.
  */
-export async function findJudgeByName(db: Db, first: string, last: string, credentials = tabroomCredentials()): Promise<number | null> {
+export async function findJudgeByName(db: Db, first: string, last: string, credentials?: TabroomCredentials | null): Promise<number | null> {
   const key = nameKey(`${first} ${last}`);
   if (!key.first || !key.last) return null;
   const rows = await db
@@ -141,7 +149,7 @@ export async function findJudgeByName(db: Db, first: string, last: string, crede
 export async function loadJudgeProfile(
   db: Db,
   query: { personId: number | null; first?: string; last?: string },
-  { credentials = tabroomCredentials(), now = Date.now() }: { credentials?: TabroomCredentials | null; now?: number } = {},
+  { credentials, now = Date.now() }: { credentials?: TabroomCredentials | null; now?: number } = {},
 ): Promise<JudgeProfile | null> {
   const personId = query.personId ?? (query.first && query.last ? await findJudgeByName(db, query.first, query.last, credentials) : null);
   if (!personId) return null;
@@ -151,12 +159,13 @@ export async function loadJudgeProfile(
   let row = cached;
   let note: string | null = null;
   if (!fresh) {
-    const result = await fetchTabroomJudge(personId, { credentials });
+    const access = await tabroomAccess(credentials);
+    const result = await fetchTabroomJudge(personId, access);
     if (result.ok || result.reason === "not-found") {
       await saveTabroomJudge(db, personId, result, [query.first, query.last].filter(Boolean).join(" "));
       [row] = await db.select().from(judgeParadigms).where(eq(judgeParadigms.personId, personId)).limit(1);
     } else {
-      note = credentials ? "Tabroom couldn't be reached just now." : "Tabroom sign-in isn't set up on this site yet, so only synced judges can be shown.";
+      note = access.credentials ? "Tabroom couldn't be reached just now." : "Tabroom sign-in isn't set up on this site yet, so only synced judges can be shown.";
     }
   }
 
@@ -223,13 +232,14 @@ export async function saveOwnParadigm(db: Db, userId: string, input: OwnParadigm
 export async function verifyOwnParadigm(
   db: Db,
   userId: string,
-  credentials = tabroomCredentials(),
+  credentials?: TabroomCredentials | null,
 ): Promise<{ ok: true; paradigm: OwnParadigm } | { ok: false; status: number; error: string }> {
   const current = await getOwnParadigm(db, userId);
   if (!current.tabroomPersonId) return { ok: false, status: 400, error: "Link your Tabroom judge first, then save." };
   if (current.verified) return { ok: true, paradigm: current };
-  if (!credentials) return { ok: false, status: 503, error: "This site can't read Tabroom yet. Ask an admin to verify you instead." };
-  const result = await fetchTabroomJudge(current.tabroomPersonId, { credentials });
+  const access = await tabroomAccess(credentials);
+  if (!access.credentials) return { ok: false, status: 503, error: "This site can't read Tabroom yet. Ask an admin to verify you instead." };
+  const result = await fetchTabroomJudge(current.tabroomPersonId, access);
   if (!result.ok) {
     return { ok: false, status: 502, error: result.reason === "not-found" ? "Tabroom has no paradigm for that judge id." : "Tabroom couldn't be reached. Try again shortly." };
   }
@@ -309,7 +319,7 @@ export async function getParadigmSyncStatus(db: Db, now = Date.now()): Promise<P
     listParadigmClaims(db),
   ]);
   return {
-    credentialsConfigured: Boolean(tabroomCredentials()),
+    credentialsConfigured: Boolean(tabroomCredentials()) || (await serviceSession("tabroom").hasSavedLogin()),
     cached: totals?.n ?? 0,
     withParadigm: withParadigm?.n ?? 0,
     failed: failed?.n ?? 0,
@@ -323,13 +333,13 @@ export async function getParadigmSyncStatus(db: Db, now = Date.now()): Promise<P
 }
 
 /** Fetches and saves `ids` from Tabroom, a few at a time. */
-async function fetchAndSave(db: Db, people: Array<{ id: number; name?: string }>, credentials: TabroomCredentials) {
+async function fetchAndSave(db: Db, people: Array<{ id: number; name?: string }>, access: { credentials: TabroomCredentials; fetchImpl?: typeof fetch }) {
   let saved = 0;
   let failed = 0;
   let lastError: string | null = null;
   for (let i = 0; i < people.length; i += 4) {
     const chunk = people.slice(i, i + 4);
-    const results = await Promise.all(chunk.map((person) => fetchTabroomJudge(person.id, { credentials })));
+    const results = await Promise.all(chunk.map((person) => fetchTabroomJudge(person.id, access)));
     for (const [j, result] of results.entries()) {
       await saveTabroomJudge(db, chunk[j].id, result, chunk[j].name ?? "");
       if (result.ok) saved++;
@@ -356,19 +366,21 @@ async function fetchAndSave(db: Db, people: Array<{ id: number; name?: string }>
 export async function runParadigmSyncBatch(
   db: Db,
   mode: "discover" | "refresh",
-  { credentials = tabroomCredentials(), now = Date.now() }: { credentials?: TabroomCredentials | null; now?: number } = {},
+  { credentials: given, now = Date.now() }: { credentials?: TabroomCredentials | null; now?: number } = {},
 ): Promise<ParadigmSyncBatch> {
   const empty: ParadigmSyncBatch = { mode, fetched: 0, saved: 0, failed: 0, nextOffset: null, remaining: 0, error: null };
+  const { credentials, fetchImpl } = await tabroomAccess(given);
   if (!credentials) {
-    return { ...empty, error: "TABROOM_API_KEY is not set, and Tabroom refuses paradigm reads without a signed-in account." };
+    return { ...empty, error: "No Tabroom login is saved (Admin → Service logins) and TABROOM_API_KEY is not set; Tabroom refuses paradigm reads without a signed-in account." };
   }
+  const access = { credentials, fetchImpl };
   const state = await syncState(db);
 
   if (mode === "discover") {
     const offset = state.discoveryDone ? 0 : state.discoveryOffset;
-    const page = await searchTabroomParadigms("", { limit: SEARCH_PAGE, offset }, { credentials });
+    const page = await searchTabroomParadigms("", { limit: SEARCH_PAGE, offset }, access);
     if (!page.ok) {
-      const error = page.reason === "unauthorized" ? "Tabroom refused the site's session — TABROOM_API_KEY may have expired." : `Tabroom search failed: ${page.detail ?? page.reason}`;
+      const error = page.reason === "unauthorized" ? "Tabroom refused the site's session — check the Tabroom login under Admin → Service logins (or TABROOM_API_KEY)." : `Tabroom search failed: ${page.detail ?? page.reason}`;
       await saveSyncState(db, { lastRunAt: new Date(now), lastError: error });
       return { ...empty, nextOffset: offset, error };
     }
@@ -384,7 +396,7 @@ export async function runParadigmSyncBatch(
         )
       : new Set<number>();
     const todo = page.hits.filter((hit) => !known.has(hit.id)).slice(0, SYNC_BATCH_SIZE);
-    const result = await fetchAndSave(db, todo, credentials);
+    const result = await fetchAndSave(db, todo, access);
     // Stay on this page until every judge on it is cached, then move on.
     const pageDone = page.hits.length - known.size - todo.length <= 0;
     const done = pageDone && page.hits.length < SEARCH_PAGE;
@@ -400,7 +412,7 @@ export async function runParadigmSyncBatch(
     .where(lt(judgeParadigms.syncedAt, staleBefore))
     .orderBy(asc(judgeParadigms.syncedAt))
     .limit(SYNC_BATCH_SIZE);
-  const result = await fetchAndSave(db, due, credentials);
+  const result = await fetchAndSave(db, due, access);
   const [left] = await db.select({ n: count() }).from(judgeParadigms).where(lt(judgeParadigms.syncedAt, staleBefore));
   await saveSyncState(db, { lastRunAt: new Date(now), lastError: result.lastError });
   return { ...empty, fetched: due.length, saved: result.saved, failed: result.failed, remaining: left?.n ?? 0, error: result.lastError };

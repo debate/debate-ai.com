@@ -45,7 +45,7 @@ import {
 import { TOPIC_STARTER_FORMATS } from "@debate-ai/reason-docs/lib/topic-starters/format";
 import { docxToStoredCmir } from "@debate-ai/reason-docs/lib/topic-starters/import";
 import { findTopicByCode } from "@debate-ai/reason-docs/lib/reason-docs/topic-codes";
-import { caselistCredentials } from "@/lib/caselist/team-caselist";
+import { openCaselistClient } from "@/lib/caselist/team-caselist";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterImports, topicStarterItems, type TopicStarterImportRow } from "@/lib/database/schema";
 import { ensureTopicStarterColumns } from "@/lib/topic-starters/changes";
@@ -152,16 +152,16 @@ export function pickSyncArchive(downloads: { all: CaselistArchive | null; weekly
  */
 export async function startTopicStarterSync(request: TopicStarterSyncRequest): Promise<TopicStarterImportRow> {
   const caselist = parseCaselist(request.caselist);
-  const credentials = caselistCredentials();
-  if (!credentials) {
+  const client = await openCaselistClient();
+  if (!client) {
     throw new TopicStarterSyncError(
-      "openCaselist is not configured: set the OPENCASELIST_API_KEY secret to your Tabroom login as username:password (or a caselist_token cookie).",
+      "openCaselist is not configured: save an openCaselist login under Admin → Service logins, or set the OPENCASELIST_API_KEY secret to your Tabroom login as username:password (or a caselist_token cookie).",
       503,
       "caselist-not-configured",
     );
   }
 
-  const downloads = await fetchCaselistDownloads(caselist.slug, credentials);
+  const downloads = await fetchCaselistDownloads(caselist.slug, { client });
   const archive = pickSyncArchive(downloads);
   if (!archive) {
     const notes = downloads.notes.length > 0 ? ` ${downloads.notes.join(" ")}` : "";
