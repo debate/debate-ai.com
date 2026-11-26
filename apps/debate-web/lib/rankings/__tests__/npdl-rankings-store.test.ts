@@ -2,6 +2,7 @@
  * The Parli tab's NPDL rankings cached in D1, against a real in-memory SQLite database.
  */
 import { createClient } from "@libsql/client";
+import { drizzle as drizzleD1 } from "drizzle-orm/d1";
 import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it, vi } from "vitest";
 import { NPDL_SEASONS, type NpdlSeasonRankings } from "@debate-ai/rankings/src/sync/sync-npdl-rankings";
@@ -17,13 +18,14 @@ import {
   runDailyNpdlRankingsRefresh,
   saveNpdlSeason,
 } from "../npdl-rankings-store";
+import { libsqlD1Binding } from "./libsql-d1-binding";
 
-function freshDb() {
-  resetNpdlTablesForTests();
-  return drizzle(createClient({ url: ":memory:" }), { schema }) as unknown as Parameters<
-    typeof readSavedNpdlSeason
-  >[0];
-}
+type Db = Parameters<typeof readSavedNpdlSeason>[0];
+
+const DRIVERS: Array<[string, () => Db]> = [
+  ["libsql", () => drizzle(createClient({ url: ":memory:" }), { schema }) as unknown as Db],
+  ["D1", () => drizzleD1(libsqlD1Binding() as unknown as Parameters<typeof drizzleD1>[0], { schema }) as unknown as Db],
+];
 
 function season(name: string, teams = 30, points = 10): NpdlSeasonRankings {
   return {
@@ -42,7 +44,12 @@ function season(name: string, teams = 30, points = 10): NpdlSeasonRankings {
   };
 }
 
-describe("NPDL rankings store", () => {
+describe.each(DRIVERS)("NPDL rankings store (%s)", (_driver, open) => {
+  function freshDb() {
+    resetNpdlTablesForTests();
+    return open();
+  }
+
   it("round-trips a season, ties and nulls included, across many INSERTs", async () => {
     const db = freshDb();
     const s = season("2024-25", 300);
@@ -76,11 +83,12 @@ describe("NPDL rankings store", () => {
   it("serves the database without scraping once a season is saved", async () => {
     const db = freshDb();
     await saveNpdlSeason(db, season("2024-25"));
+    await saveNpdlSeason(db, season(NPDL_SEASONS[0]));
     const fetchSeason = vi.fn(async (name: string) => season(name));
     const asked = await getNpdlRankings(db, "2024-25", fetchSeason);
     const newest = await getNpdlRankings(db, null, fetchSeason);
     expect(asked.source).toBe("database");
-    expect(newest.rankings?.season).toBe("2024-25");
+    expect(newest).toMatchObject({ source: "database", rankings: { season: NPDL_SEASONS[0] } });
     expect(fetchSeason).not.toHaveBeenCalled();
   });
 
@@ -123,5 +131,57 @@ describe("NPDL rankings store", () => {
     fetchSeason.mockClear();
     await runDailyNpdlRankingsRefresh(db, fetchSeason, now + 86_400);
     expect(fetchSeason.mock.calls.map((c) => c[0])).toEqual(NPDL_SEASONS.slice(0, REFRESH_SEASONS));
+  });
+
+  it("saves a full-size season (891 rows) in one batch", async () => {
+    const db = freshDb();
+    const s = { ...season("2025-26", 835), schools: season("x", 56).teams.map((r) => ({ ...r, debater1: null, debater2: null })) };
+    expect(await refreshNpdlSeason(db, "2025-26", async () => s)).toBe("updated");
+    const saved = await readSavedNpdlSeason(db, "2025-26");
+    expect(saved?.teams).toHaveLength(835);
+    expect(saved?.schools).toHaveLength(56);
+  });
+
+  it("serves a fresh scrape even when the save fails, and scrapes again next time", async () => {
+    const db = freshDb();
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    Object.assign(db, { batch: async () => Promise.reject(new Error("D1_ERROR: write refused")) });
+    const fetchSeason = vi.fn(async (name: string) => season(name));
+    const first = await getNpdlRankings(db, "2023-24", fetchSeason);
+    expect(first.source).toBe("live");
+    expect(first.rankings?.teams).toHaveLength(30);
+    expect(await refreshNpdlSeason(db, "2023-24", fetchSeason)).toBe("unsaved");
+    expect((await getNpdlRankings(db, "2023-24", fetchSeason)).rankings?.season).toBe("2023-24");
+    expect(fetchSeason).toHaveBeenCalledTimes(3);
+  });
+
+  it("with no season asked, prefers the newest seasons over an older one saved first", async () => {
+    const db = freshDb();
+    await saveNpdlSeason(db, season("2017-18"));
+    const fetchSeason = vi.fn(async (name: string) => season(name));
+    const lookup = await getNpdlRankings(db, null, fetchSeason);
+    expect(lookup).toMatchObject({ source: "live", rankings: { season: NPDL_SEASONS[0] } });
+    expect((await getNpdlRankings(db, null, fetchSeason)).source).toBe("database");
+    expect(fetchSeason).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to the newest saved season when the newest seasons have no rows", async () => {
+    const db = freshDb();
+    await saveNpdlSeason(db, season("2019-20"));
+    const fetchSeason = vi.fn(async (name: string) => ({ ...season(name, 0), schools: [] }));
+    expect((await getNpdlRankings(db, null, fetchSeason)).rankings?.season).toBe("2019-20");
+  });
+
+  it("the daily run keeps going when one season fails", async () => {
+    const db = freshDb();
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const fetchSeason = vi.fn(async (name: string) => {
+      if (name === NPDL_SEASONS[1]) throw new Error("HTTP 503");
+      return season(name, 3);
+    });
+    await runDailyNpdlRankingsRefresh(db, fetchSeason);
+    expect(await listSavedNpdlSeasons(db)).toEqual(NPDL_SEASONS.filter((s) => s !== NPDL_SEASONS[1]));
+    expect(String(log.mock.calls.at(-1)?.[0])).toContain(`${NPDL_SEASONS[1]} empty`);
   });
 });
