@@ -8,13 +8,15 @@
  * high school results at once and add the college records when the NDT
  * history has loaded. This school's teams are highlighted, its best team in
  * the open event is pinned under the list when it ranks below 100, and the
- * modal opens on the event where this school ranks best.
+ * modal opens on the event where this school ranks best. Every team name, in
+ * every row, links to that team's page.
  * @module leaderboard/profile/ProfileHsAllTimeTeams
  */
 
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
+import Link from "next/link"
 import { Crown, X } from "lucide-react"
 import { Button } from "../ui/primitives/button"
 import { SchoolLogo } from "../SchoolLogo"
@@ -30,6 +32,7 @@ import {
   type HsAllTimeTeam,
 } from "./hsAllTimeTeams"
 import { NDT_ERA_CUTOFF_YEAR, NDT_PRE_ERA_MULTIPLIER } from "./ndtAllSeasons"
+import { teamHref } from "./rankingProfileHelpers"
 
 /** How many teams each event lists. */
 export const HS_ALL_TIME_LIMIT = 100
@@ -53,7 +56,12 @@ function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
       <span className="flex min-w-0 items-start gap-2">
         <SchoolLogo school={team.school} className="mt-0.5 h-6 w-auto max-w-[5rem] shrink-0 object-contain" />
         <span className="min-w-0">
-          <span className={`text-foreground ${own ? "font-semibold" : "font-medium"}`}>{team.debaters}</span>{" "}
+          <Link
+            href={teamHref({ school: team.school, name: team.debaters })}
+            className={`text-foreground underline-offset-4 hover:underline ${own ? "font-semibold" : "font-medium"}`}
+          >
+            {team.debaters}
+          </Link>{" "}
           <span className="text-xs text-muted-foreground">
             {team.school} · {years(team)}
           </span>
