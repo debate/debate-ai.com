@@ -58,11 +58,12 @@ const recordings = await import("@/app/api/round-recordings/route");
 const unsubscribe = await import("@/app/api/emails/unsubscribe/route");
 const { signUnsubscribeToken, isEmailUnsubscribed } = await import("@/lib/emails/unsubscribe");
 
-const upload = (query: string, body: BodyInit | null, headers: Record<string, string> = {}) =>
-  recordings.PUT(
+const upload = async (query: string, body: BodyInit | null, headers: Record<string, string> = {}) =>
+  (await recordings.PUT(
     new Request(`https://debate-ai.com/api/round-recordings?${query}`, { method: "PUT", body, headers }),
-  );
-const list = (query: string) => recordings.GET(new Request(`https://debate-ai.com/api/round-recordings?${query}`));
+  ))!;
+const list = async (query: string) =>
+  (await recordings.GET(new Request(`https://debate-ai.com/api/round-recordings?${query}`)))!;
 
 describe("/api/round-recordings", () => {
   beforeEach(() => {

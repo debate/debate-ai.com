@@ -77,7 +77,7 @@ describe("/api/contacts/block", () => {
   });
 
   it("answers 500 when the database fails", async () => {
-    db = { select: () => { throw new Error("boom"); }, delete: () => { throw new Error("boom"); } };
+    db = { select: () => { throw new Error("boom"); }, delete: () => { throw new Error("boom"); } } as unknown as typeof db;
     expect((await send("POST", { userId: "sam" })).status).toBe(500);
     expect((await send("DELETE", { userId: "sam" })).status).toBe(500);
   });

@@ -20,7 +20,7 @@ vi.mock("@/lib/auth/session", () => ({ getUserId: async () => signedInAs }));
 
 const route = await import("@/app/api/notifications/route");
 
-const req = (init?: RequestInit) => new NextRequest("https://debate-ai.com/api/notifications", init);
+const req = (init?: ConstructorParameters<typeof NextRequest>[1]) => new NextRequest("https://debate-ai.com/api/notifications", init);
 const patch = (body: unknown) => route.PATCH(req({ method: "PATCH", body: typeof body === "string" ? body : JSON.stringify(body) }));
 const feed = async () => (await route.GET(req())).json();
 const readAtOf = async (id: number) =>
@@ -93,7 +93,7 @@ describe("/api/notifications", () => {
     const missing = () => {
       throw new Error("D1_ERROR: no such table: notifications");
     };
-    db = { select: missing, update: missing };
+    db = { select: missing, update: missing } as unknown as typeof db;
 
     expect(await feed()).toEqual({ notifications: [], unreadCount: 0 });
     expect(warn).toHaveBeenCalledWith("Failed to load notifications", expect.anything());
@@ -108,7 +108,7 @@ describe("/api/notifications", () => {
 
   it("logs other database failures as errors", async () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
-    db = { select: () => { throw new Error("boom"); } };
+    db = { select: () => { throw new Error("boom"); } } as unknown as typeof db;
     expect(await feed()).toEqual({ notifications: [], unreadCount: 0 });
     expect(error).toHaveBeenCalledWith("Failed to load notifications", expect.any(Error));
     error.mockRestore();

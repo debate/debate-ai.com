@@ -134,7 +134,7 @@ describe("/api/comments", () => {
 
   it("answers a thrown query with a 500 rather than leaking the error", async () => {
     signedInAs = "alex";
-    db = { select: () => { throw new Error("boom"); } };
+    db = { select: () => { throw new Error("boom"); } } as unknown as typeof db;
     const res = await post({ ...page, body: "hi" });
     expect(res.status).toBe(500);
   });
