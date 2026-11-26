@@ -255,7 +255,7 @@ function PlayfulTrophy() {
 
 export function GoatSparklesHeading() {
   return (
-    <div className="mb-6 flex w-full flex-col items-center justify-center overflow-hidden rounded-md bg-black pb-4 pt-8 sm:pt-10">
+    <div className="mb-3 flex w-full flex-col items-center justify-center overflow-hidden rounded-md bg-black pb-4 pt-8 sm:pt-10">
       <style>{GOAT_DOTS_CSS + TROPHY_FX_CSS}</style>
       <h1 className="goat-dots-title relative z-20 bg-gradient-to-b from-white via-indigo-200 to-sky-400 bg-clip-text px-4 text-center text-3xl font-extrabold text-transparent md:text-5xl lg:text-6xl">
         {GOAT_HEADING_TITLE}
