@@ -32,6 +32,13 @@ renders a template with them, and the admin panel's **Emails** section
 (`/admin#emails`) shows the HTML and plain-text parts and can send a test to
 the signed-in admin.
 
+Admin-written emails (the saved templates in the Emails section's **Compose and
+send** tab) are plain-text subject and body rendered by `renderCustomEmail`
+inside the same layout, so they always carry the unsubscribe footer. The body
+format (`# heading`, `[label](url)` links and buttons, blank-line paragraphs) is
+documented in `src/custom-body.ts`; `WELCOME_TEMPLATE_STARTER` is the Welcome
+email as that text.
+
 Rendering uses `@react-email/render`, whose `workerd` export condition picks
 its edge build on Cloudflare Workers. It needs `react-dom/server`, so it
 can't run in a React Server Components environment: in the web app, route

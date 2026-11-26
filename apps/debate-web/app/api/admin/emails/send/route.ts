@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { Resend } from "resend";
 import { renderEmail } from "@/lib/emails/render";
 import { getAdminAccess } from "@/lib/auth/admin";
-import { getEnv } from "@/lib/env";
+import { resolveResendKey } from "@/lib/emails/settings";
 import { getDBFromContext } from "@/lib/database/context";
 import {
   applyUnsubscribeUrl,
@@ -82,7 +82,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const resendKey = getEnv("RESEND_API_KEY") || getEnv("AUTH_RESEND_KEY");
+  const db = await getDBFromContext().catch(() => null);
+  const resendKey = (await resolveResendKey(db))?.key;
   if (!resendKey) {
     return NextResponse.json({ error: "RESEND_API_KEY is not set, so no email can be sent." }, { status: 503 });
   }
@@ -95,7 +96,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Failed to render the "${template}" email.` }, { status: 500 });
   }
 
-  const db = await getDBFromContext().catch(() => null);
   const subscribed = db ? await filterSubscribedEmails(db, valid) : valid;
   const skippedUnsubscribed = valid.filter((email) => !subscribed.includes(email));
   const results: RecipientResult[] = skippedUnsubscribed.map((email) => ({
