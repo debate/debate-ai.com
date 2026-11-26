@@ -5,7 +5,7 @@
  */
 export { EMAIL_TEMPLATES, EMAIL_TEMPLATES_BY_ID, isEmailTemplateId } from "./registry";
 export type { EmailTemplate, EmailTemplateId, EmailTemplateProps } from "./registry";
-export { renderEmail, renderEmailPreview } from "./render";
+export { renderCustomEmail, renderEmail, renderEmailPreview } from "./render";
 export type { RenderedEmail } from "./render";
 export { DEFAULT_BASE_URL, siteUrl } from "./site";
 export { UNSUBSCRIBE_URL_PLACEHOLDER } from "./components/EmailLayout";
@@ -17,3 +17,7 @@ export { RoundInviteEmail, roundInviteLabel } from "./templates/RoundInviteEmail
 export type { RoundInviteEmailProps } from "./templates/RoundInviteEmail";
 export { CoachFeaturesEmail } from "./templates/CoachFeaturesEmail";
 export type { CoachFeaturesEmailProps } from "./templates/CoachFeaturesEmail";
+export { CustomEmail } from "./templates/CustomEmail";
+export type { CustomEmailProps } from "./templates/CustomEmail";
+export { WELCOME_TEMPLATE_STARTER, isSafeEmailHref, parseEmailBody } from "./custom-body";
+export type { BodyBlock, InlinePart } from "./custom-body";
