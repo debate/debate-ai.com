@@ -238,7 +238,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         ],
       },
       {
-        href: "/rank", label: "National Debate Ranking", icon: Crown,
+        href: "/rank", label: "Team & School Debate Rankings", icon: Crown,
         description: "Debate team rankings, leaderboard, and Elo ratings.",
       },
       {
