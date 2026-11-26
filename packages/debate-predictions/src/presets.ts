@@ -2,7 +2,7 @@
  * @fileoverview The markets the site opens by itself, so the board is never
  * empty:
  *
- * - **Top teams** — for each division, a rating market on each of its five
+ * - **Top teams** — for each division, a rating market on each of its ten
  *   highest-ranked teams, one per calendar month. Each settles itself at the
  *   end of the month against the team's rating when it opened.
  * - **Major tournaments** — for each of the season's major tournaments, a
@@ -41,10 +41,10 @@ export const PRESET_DIVISIONS: readonly PresetDivision[] = [
 ];
 
 /** How many teams per division get a rating market. */
-export const PRESET_TOP_TEAMS = 5;
+export const PRESET_TOP_TEAMS = 10;
 
 /** How many top-rated teams a tournament winner market lists by name. */
-export const PRESET_TOURNAMENT_FIELD = 8;
+export const PRESET_TOURNAMENT_FIELD = 10;
 
 /** The catch-all outcome of every preset tournament market. */
 export const FIELD_OUTCOME: MarketOutcome = { id: "field", label: "Anyone else" };
@@ -175,7 +175,7 @@ function byRank(teams: readonly PresetTeam[]): PresetTeam[] {
 
 /**
  * Every preset market that should be open at `now`: this month's rating
- * markets for each division's top five, and a winner market for every major
+ * markets for each division's top ten, and a winner market for every major
  * tournament that hasn't started, in each division it runs. A division with
  * no rankings gets neither.
  */

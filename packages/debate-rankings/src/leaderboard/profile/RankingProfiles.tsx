@@ -3,7 +3,8 @@
  * table. A team profile shows its ranking stats in every division it is
  * ranked in; a school profile aggregates all of that school's ranked entries.
  * Both list the library videos matching the team or school below the stats,
- * and carry a Follow button in the header.
+ * carry a Follow button in the header, and (for teams) related prediction
+ * markets when the host supplies {@link ProfileTeamMarketsProvider}.
  * @module leaderboard/profile/RankingProfiles
  */
 
@@ -43,6 +44,7 @@ import {
   type ProfileEntry,
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideosSlot"
+import { ProfileTeamMarkets } from "./ProfileTeamMarketsSlot"
 import { NICHE_ACADEMICS_STATE_COUNTS, findNicheAcademicsRank } from "../../schools/niche-academics"
 import { USNEWS_COLLEGE_ACADEMICS_SOURCE, findUsNewsCollegeRank } from "../../schools/usnews-college-academics"
 import { PastTeamProfileView, usePastTeamProfile } from "./PastTeamProfile"
@@ -451,6 +453,10 @@ export function TeamProfilePage({ slug }: { slug: string }) {
           <MatchupSimulator
             lockedTeamSlug={teamSlug(first)}
             title={`Simulate ${first.name} vs. any ranked team`}
+          />
+          <ProfileTeamMarkets
+            hashes={entries.map((item) => item.entry.hash).filter(Boolean)}
+            teamName={first.name}
           />
           <ProfileVideos search={teamVideoSearch(entries)} />
           <ProfileCaselistTeam dataset={selected.datasetId} school={first.school} team={first.name} />
