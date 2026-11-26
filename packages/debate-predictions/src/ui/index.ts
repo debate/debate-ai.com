@@ -10,3 +10,4 @@ export { PredictionMarketsPanel } from "./PredictionMarketsPanel";
 export { FeaturedMarkets, type FeaturedMarketsProps } from "./FeaturedMarkets";
 export { MarketCard, inputClass, type MarketCardProps } from "./MarketCard";
 export { NewMarketForm } from "./NewMarketForm";
+export { TeamRelatedMarkets, type TeamRelatedMarketsProps } from "./TeamRelatedMarkets";

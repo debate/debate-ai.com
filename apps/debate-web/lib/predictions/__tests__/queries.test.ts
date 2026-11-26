@@ -361,20 +361,20 @@ describe("resolveDueMarkets", () => {
 describe("seedPresetMarkets", () => {
   const OCT_2_2026 = Date.UTC(2026, 9, 2) / 1000;
   const team = (n: number) => ({ hash: `${n}`.padStart(16, "a"), name: `Team ${n}`, school: `School ${n}`, rating: 100 - n, rank: n });
-  const rankings = async () => [{ dataset: "hspf", teams: [1, 2, 3, 4, 5, 6, 7].map(team) }];
+  const rankings = async () => [{ dataset: "hspf", teams: Array.from({ length: 12 }, (_, i) => team(i + 1)) }];
 
   beforeEach(() => resetPresetSeeding());
 
-  it("opens the top five and the majors once, with no creator, and the board tags them", async () => {
+  it("opens the top ten and the majors once, with no creator, and the board tags them", async () => {
     const opened = await seedPresetMarkets(q(), OCT_2_2026, rankings);
-    // 5 rating markets + 13 PF majors: all fifteen but Heart of Texas (no PF) and the NDT (college).
-    expect(opened).toBe(5 + 13);
+    // 10 rating markets + 13 PF majors: all fifteen but Heart of Texas (no PF) and the NDT (college).
+    expect(opened).toBe(10 + 13);
 
     resetPresetSeeding();
     expect(await seedPresetMarkets(q(), OCT_2_2026, rankings)).toBe(0);
 
     const board = await listMarkets(q(), { id: "ana", isStaff: false });
-    expect(board.filter((m) => m.preset?.group === "top-teams")).toHaveLength(5);
+    expect(board.filter((m) => m.preset?.group === "top-teams")).toHaveLength(10);
     expect(board.filter((m) => m.preset?.group === "majors").every((m) => m.creator === null && m.preset?.dataset === "hspf")).toBe(true);
     // Settled only by staff: no creator to settle it.
     expect(board.every((m) => !m.canResolve)).toBe(true);
