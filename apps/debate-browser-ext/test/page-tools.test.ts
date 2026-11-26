@@ -76,3 +76,39 @@ describe('toSearchQuery', () => {
     expect(query.endsWith('word')).toBe(true);
   });
 });
+
+describe('SEARCH_ENGINES urls', () => {
+  const urlFor = (id: string, query: string, apiBase = 'https://debate-ai.com') =>
+    SEARCH_ENGINES.find((engine) => engine.id === id)!.url(query, apiBase);
+
+  it('has unique ids', () => {
+    const ids = SEARCH_ENGINES.map((engine) => engine.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('encodes the query for every engine', () => {
+    for (const engine of SEARCH_ENGINES) {
+      const url = engine.url('a&b c/d?', 'https://debate-ai.com');
+      expect(url).toContain('a%26b%20c%2Fd%3F');
+      expect(() => new URL(url)).not.toThrow();
+    }
+  });
+
+  it('sends Debate AI cards to the configured deployment, tolerating trailing slashes', () => {
+    expect(urlFor('cards', 'nuclear war', 'https://example.test///')).toBe(
+      'https://example.test/research/cards?q=nuclear%20war',
+    );
+    expect(urlFor('cards', 'x', 'https://example.test')).toBe('https://example.test/research/cards?q=x');
+  });
+
+  it('searches Quick search by default', () => {
+    expect(urlFor(DEFAULT_SEARCH_ENGINE_ID, 'hegemony')).toBe('https://qwksearch.com/?q=hegemony');
+  });
+
+  it('points the web engines at their own results pages', () => {
+    expect(new URL(urlFor('google', 'x')).hostname).toBe('www.google.com');
+    expect(new URL(urlFor('scholar', 'x')).hostname).toBe('scholar.google.com');
+    expect(new URL(urlFor('wikipedia', 'x')).searchParams.get('search')).toBe('x');
+    expect(new URL(urlFor('youtube', 'x')).searchParams.get('search_query')).toBe('x');
+  });
+});
