@@ -118,16 +118,18 @@ describe("cardSpeechText", () => {
 });
 
 describe("cardSpeechSegments", () => {
-  it("splits the tag with the author and year from the highlighted text", () => {
+  it("splits the tag, the author and year, and the highlighted text", () => {
     expect(cardSpeechSegments(cardParts(card()))).toEqual([
-      { part: "cite", text: "Warming causes extinction. Smith 24" },
+      { part: "tag", text: "Warming causes extinction" },
+      { part: "author", text: "Smith 24" },
       { part: "text", text: "will collapse ecosystems" },
     ]);
   });
 
   it("leaves out a part with nothing to read", () => {
     expect(cardSpeechSegments(cardParts(card(false)))).toEqual([
-      { part: "cite", text: "Warming causes extinction. Smith 24" },
+      { part: "tag", text: "Warming causes extinction" },
+      { part: "author", text: "Smith 24" },
     ]);
   });
 });
@@ -451,12 +453,12 @@ describe("card hover actions plugin", () => {
     return spoken;
   }
 
-  it("reads the tag and cite, then the highlighted text, each in its own voice and speed", async () => {
+  it("reads the tag and author, then the highlighted text, each in its own voice and speed", async () => {
     const { storeReadSpeed, storeVoiceId } = await import("../src/editor/card-tts-client");
     localStorage.clear();
     const spoken = stubBrowserSpeech();
-    storeVoiceId("browser", "cite");
-    storeReadSpeed(1, "cite");
+    storeVoiceId("browser", "tag");
+    storeReadSpeed(1, "tag");
     storeVoiceId("browser");
     storeReadSpeed(3);
     const { view } = mount(undefined, vi.fn(async () => null));
@@ -474,10 +476,33 @@ describe("card hover actions plugin", () => {
     localStorage.clear();
   });
 
-  it("fetches the cite in its model voice and the highlighted text in its own", async () => {
+  it("reads the author and year in their own voice and speed when set apart from the tag", async () => {
+    const { storeReadSpeed, storeVoiceId } = await import("../src/editor/card-tts-client");
+    localStorage.clear();
+    const spoken = stubBrowserSpeech();
+    storeVoiceId("browser");
+    storeReadSpeed(3);
+    storeReadSpeed(2, "tag");
+    storeVoiceId("browser", "author");
+    storeReadSpeed(1, "author");
+    const { view } = mount(undefined, vi.fn(async () => null));
+    hover(view.dom.querySelector(".pmd-card")!);
+    bar().querySelector<HTMLButtonElement>('[data-action="speak"]')!.click();
+    spoken[0]!.onend!();
+    spoken[1]!.onend!();
+    expect(spoken.map((u) => [u.text, u.rate])).toEqual([
+      ["Warming causes extinction", 2],
+      ["Smith 24", 1],
+      ["will collapse ecosystems", 3],
+    ]);
+    vi.unstubAllGlobals();
+    localStorage.clear();
+  });
+
+  it("fetches the tag and author in its model voice and the highlighted text in its own", async () => {
     const { storeVoiceId } = await import("../src/editor/card-tts-client");
     localStorage.clear();
-    storeVoiceId("deepgram:aura-luna-en", "cite");
+    storeVoiceId("deepgram:aura-luna-en", "tag");
     const fetchVoice = vi.fn(async () => null);
     const { view } = mount(undefined, fetchVoice);
     hover(view.dom.querySelector(".pmd-card")!);
@@ -500,13 +525,15 @@ describe("card hover actions plugin", () => {
     bar().querySelector<HTMLButtonElement>('[data-action="read-settings"]')!.click();
     const player = document.querySelector<HTMLElement>(".pmd-read-player")!;
     expect(player).not.toBeNull();
-    expect(player.querySelector('[data-part="cite"]')!.textContent).toContain("Tag, author & year");
+    expect(player.querySelector('[data-part="tag"]')!.textContent).toContain("Tag");
+    expect(player.querySelector('[data-part="author"]')!.textContent).toContain("Author & year");
     expect(player.querySelector('[data-part="text"]')!.textContent).toContain("Highlighted text");
 
-    const citeVoice = player.querySelector<HTMLSelectElement>("#pmd-read-player-cite-voice")!;
-    citeVoice.value = "deepgram:aura-orion-en";
-    citeVoice.dispatchEvent(new Event("change"));
-    expect(readStoredVoiceId("cite")).toBe("deepgram:aura-orion-en");
+    const authorVoice = player.querySelector<HTMLSelectElement>("#pmd-read-player-author-voice")!;
+    authorVoice.value = "deepgram:aura-orion-en";
+    authorVoice.dispatchEvent(new Event("change"));
+    expect(readStoredVoiceId("author")).toBe("deepgram:aura-orion-en");
+    expect(readStoredVoiceId("tag")).toBe("kokoro:af_heart");
     expect(readStoredVoiceId("text")).toBe("kokoro:af_heart");
     const textSpeed = player.querySelector<HTMLInputElement>("#pmd-read-player-text-speed")!;
     textSpeed.value = "1.5";
