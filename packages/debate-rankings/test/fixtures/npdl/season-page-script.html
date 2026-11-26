@@ -1,0 +1,21 @@
+<html><body>
+<h2 id="team-rankings">Team Rankings</h2>
+<div id="teamTable">Loading...</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const spreadsheetId = "1fixtureScriptSheet";//update each year
+    const sheetName = "Team";//change to "School"
+    const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}&headers=1`;
+  });
+</script>
+<h2 id="school-rankings">School Rankings</h2>
+<div id="schoolTable">Loading...</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const spreadsheetId = "1fixtureScriptSheet";//update each year
+    const sheetName = "School";//change to "School"
+    const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}&headers=1`;
+  });
+</script>
+<script>window.analytics = {};</script>
+</body></html>
