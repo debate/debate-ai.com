@@ -118,7 +118,8 @@ describe("getSchoolLogo", () => {
     expect(getSchoolLogo("Liberty Christian")).toBeNull();
     // Georgetown Day (DC) must not borrow Georgetown University's logo.
     expect(getSchoolLogo("Georgetown Day School (DC)")).toBeNull();
-    expect(getSchoolLogo("Pace Academy (GA)")).toBeNull();
+    expect(getSchoolLogo("Pace Academy (GA)")).toBe(getSchoolLogo("Pace"));
+    expect(getSchoolLogo("Pace Academy (GA)")).toBeTruthy();
   });
 
   it.each(["Loyola", "Loyola (CA)", "Loyola High School", "Loyola Marymount"])(

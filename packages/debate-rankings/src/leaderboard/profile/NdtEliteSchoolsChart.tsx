@@ -41,7 +41,12 @@ import {
   type EliteSeason,
 } from "./ndtEliteSchools"
 
-/** One distinct color per line (up to Top 20), readable on light and dark backgrounds. */
+/**
+ * One distinct color per line, up to the high school Top 20, each readable on
+ * light and dark backgrounds. The first ten are hues apart; the second ten are
+ * darker shades of other hues and also draw dashed ({@link eliteDash}), so no
+ * two lines rely on color alone.
+ */
 export const ELITE_COLORS = [
   "#7c3aed",
   "#ea580c",
@@ -53,17 +58,30 @@ export const ELITE_COLORS = [
   "#db2777",
   "#65a30d",
   "#0f766e",
-  "#9333ea",
-  "#c2410c",
-  "#b91c1c",
-  "#15803d",
-  "#1d4ed8",
-  "#a16207",
-  "#0e7490",
-  "#be185d",
+  "#4b5563",
+  "#92400e",
+  "#1e40af",
+  "#c026d3",
+  "#047857",
+  "#b45309",
+  "#0369a1",
   "#4d7c0f",
-  "#115e59",
+  "#9f1239",
+  "#5b21b6",
 ]
+
+/** Line dash for the school at `index`: solid for the first ten, dashed for the rest. */
+export function eliteDash(index: number): string | undefined {
+  return index % ELITE_COLORS.length >= 10 ? "6 3" : undefined
+}
+
+/** A line's swatch: a filled dot for solid lines, a ring for dashed ones. */
+function swatchStyle(index: number, color: string) {
+  return eliteDash(index) ? { border: `2px solid ${color}` } : { background: color }
+}
+
+/** Where the y-axis starts counting rank rows individually: every rank up to the Top 20 is labelled. */
+const FULL_TICKS_FROM = 11
 
 const KIND_ICON: Record<EliteAccomplishment["kind"], string> = {
   title: "🏆",
@@ -130,18 +148,20 @@ function SeasonTooltip({
   school,
   season,
   color,
+  index,
   copy,
 }: {
   school: EliteSchool
   season: EliteSeason
   color: string
+  index: number
   copy: EliteChartCopy
 }) {
   const name = copy.name(school)
   return (
     <div className="w-64 rounded-md border bg-popover p-2.5 text-xs text-popover-foreground shadow-lg">
       <div className="mb-1 flex items-center gap-1.5 font-semibold">
-        <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: color }} aria-hidden />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={swatchStyle(index, color)} aria-hidden />
         <span className="truncate">{name}</span>
         <span className="ml-auto shrink-0 tabular-nums text-muted-foreground">{season.year}</span>
       </div>
@@ -254,7 +274,10 @@ export function EliteSchoolsBumpChart({
 
   if (!chart.schools.length) return null
 
-  const ticks = [1, 5, 10, 15, 20, ELITE_RANK_FLOOR]
+  const many = chart.schools.length >= FULL_TICKS_FROM
+  const ticks = many
+    ? [...Array.from({ length: chart.schools.length }, (_, i) => i + 1), ELITE_RANK_FLOOR]
+    : [1, 5, 10, 15, 20, ELITE_RANK_FLOOR]
   const pointSchool = point ? chart.schools[point.index] : null
   const pointSeason = pointSchool?.seasons.find((season) => season.year === point!.year)
 
@@ -290,7 +313,7 @@ export function EliteSchoolsBumpChart({
             >
               <span
                 className="h-2.5 w-2.5 shrink-0 rounded-full"
-                style={{ background: ELITE_COLORS[s % ELITE_COLORS.length] }}
+                style={swatchStyle(s, ELITE_COLORS[s % ELITE_COLORS.length]!)}
                 aria-hidden
               />
               <span className="tabular-nums text-muted-foreground">{school.decadeRank}</span>
@@ -312,7 +335,9 @@ export function EliteSchoolsBumpChart({
           if (!(event.target as Element).classList?.contains("cursor-pointer")) setPoint(null)
         }}
       >
-        <ChartContainer config={config} className="aspect-auto h-[320px] w-full sm:h-[380px] [&_*:focus:not(:focus-visible)]:outline-none">
+        <ChartContainer config={config} className={`aspect-auto w-full [&_*:focus:not(:focus-visible)]:outline-none ${
+            many ? "h-[460px] sm:h-[520px]" : "h-[320px] sm:h-[380px]"
+          }`}>
           <LineChart data={data} margin={{ top: 10, right: 12, left: 0, bottom: 5 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis dataKey="year" tick={{ fontSize: 10 }} tickLine={false} minTickGap={20} />
@@ -338,6 +363,7 @@ export function EliteSchoolsBumpChart({
                   type="monotone"
                   stroke={color}
                   strokeWidth={focus === s ? 3 : 1.75}
+                  strokeDasharray={eliteDash(s)}
                   strokeOpacity={dim ? 0.12 : 1}
                   isAnimationActive={false}
                   activeDot={false}
@@ -388,6 +414,7 @@ export function EliteSchoolsBumpChart({
               school={pointSchool}
               season={pointSeason}
               color={ELITE_COLORS[point.index % ELITE_COLORS.length]!}
+              index={point.index}
               copy={copy}
             />
           </div>
