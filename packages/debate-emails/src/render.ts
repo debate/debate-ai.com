@@ -1,4 +1,5 @@
 import { render } from "@react-email/components";
+import { CustomEmail, customSubject, type CustomEmailProps } from "./templates/CustomEmail";
 import { EMAIL_TEMPLATES_BY_ID, type EmailTemplateId, type EmailTemplateProps } from "./registry";
 
 export interface RenderedEmail {
@@ -26,4 +27,15 @@ export async function renderEmail<Id extends EmailTemplateId>(
 export function renderEmailPreview(id: EmailTemplateId, baseUrl?: string): Promise<RenderedEmail> {
   const template = EMAIL_TEMPLATES_BY_ID[id];
   return renderEmail(id, { ...template.sampleProps, baseUrl } as EmailTemplateProps[typeof id]);
+}
+
+/**
+ * Renders an admin-written template (subject and plain-text body, see
+ * `parseEmailBody`) in the shared layout, with the unsubscribe placeholder
+ * in its footer for the sender to fill per recipient.
+ */
+export async function renderCustomEmail(props: CustomEmailProps): Promise<RenderedEmail> {
+  const element = CustomEmail(props);
+  const [html, text] = await Promise.all([render(element), render(element, { plainText: true })]);
+  return { subject: customSubject(props), html, text };
 }
