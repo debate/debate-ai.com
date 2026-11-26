@@ -2,11 +2,17 @@
  * NPDL Parliamentary Rankings Sync
  *
  * Scrapes the National Parliamentary Debate League's national rankings
- * (parliamentarydebate.org). The season pages hold no data themselves: each
- * embeds a published Google Sheet in an iframe under an `id="team-rankings"`
- * or `id="school-rankings"` heading. This module finds those iframes, downloads
- * each sheet as CSV (falling back to the sheet's `pubhtml` table when the CSV
- * export is blocked) and normalizes the rows.
+ * (parliamentarydebate.org). The season pages publish them three ways:
+ *
+ * - 2024-25 on: a published Google Sheet in an iframe under an
+ *   `id="team-rankings"` or `id="school-rankings"` heading;
+ * - 2023-24: a script that reads the sheet by name (`spreadsheetId`,
+ *   `sheetName = "Team"` / `"School"`) through the gviz endpoint;
+ * - 2017-18 to 2022-23: plain HTML tables written into the page.
+ *
+ * This module reads the inline tables, finds the sheets, downloads each as
+ * CSV (falling back to the sheet's HTML view when the CSV export is blocked)
+ * and normalizes the rows. The league's first ranked season is 2017-18.
  *
  * Ranks are kept **exactly as published**: the sheets have ties (`9, 9, 11`)
  * and the rank column is never renumbered from row order.
@@ -125,6 +131,9 @@ const EMBED_RE =
   /<iframe[^>]+src="(https:\/\/docs\.google\.com\/spreadsheets\/d\/(?:e\/)?([\w-]+)\/(?:pubhtml|pub|gviz\/tq)[^"]*)"/gi;
 const GID_RE = /[?&](?:amp;)?gid=(\d+)/;
 const HEADING_RE = /id="(team|school)-rankings"/gi;
+const SCRIPT_RE = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+const SCRIPT_SHEET_ID_RE = /spreadsheetId\s*=\s*["']([\w-]+)["']/;
+const SCRIPT_SHEET_NAME_RE = /sheetName\s*=\s*["']([^"']+)["']/;
 
 /** CSV and HTML links for one tab (`gid`) of a sheet. */
 export function npdlSheetUrls(sheetUrl: string): { csvUrl: string; fallbackUrl: string } | null {
@@ -143,10 +152,21 @@ export function npdlSheetUrls(sheetUrl: string): { csvUrl: string; fallbackUrl: 
   };
 }
 
+/** CSV and HTML links for a sheet tab read by name through the gviz endpoint. */
+export function npdlNamedSheetUrls(spreadsheetId: string, sheetName: string): { csvUrl: string; fallbackUrl: string } {
+  const stem = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq`;
+  const sheet = encodeURIComponent(sheetName);
+  return {
+    csvUrl: `${stem}?tqx=out:csv&sheet=${sheet}&headers=1`,
+    fallbackUrl: `${stem}?tqx=out:html&sheet=${sheet}&headers=1`,
+  };
+}
+
 /**
  * Find the embedded sheets on a season page. Each iframe takes the tab of the
- * last `team-rankings` / `school-rankings` heading above it (team when none),
- * and a sheet tab embedded twice is listed once.
+ * last `team-rankings` / `school-rankings` heading above it (team when none);
+ * a script that loads a sheet by name takes its tab from that name. A sheet
+ * tab embedded twice is listed once.
  */
 export function discoverNpdlSheets(html: string): NpdlSheetTarget[] {
   const headings = [...html.matchAll(HEADING_RE)].map((m) => ({
@@ -165,6 +185,15 @@ export function discoverNpdlSheets(html: string): NpdlSheetTarget[] {
     let tab: NpdlTab = "team";
     for (const h of headings) if (h.pos < (m.index ?? 0)) tab = h.tab;
     out.push({ tab, ...urls });
+  }
+  for (const m of html.matchAll(SCRIPT_RE)) {
+    const id = SCRIPT_SHEET_ID_RE.exec(m[1])?.[1];
+    const name = SCRIPT_SHEET_NAME_RE.exec(m[1])?.[1];
+    if (!id || !name) continue;
+    const urls = npdlNamedSheetUrls(id, name);
+    if (seen.has(urls.csvUrl)) continue;
+    seen.add(urls.csvUrl);
+    out.push({ tab: /school/i.test(name) ? "school" : "team", ...urls });
   }
   return out;
 }
@@ -186,16 +215,17 @@ type Field = "rank" | "school" | "region" | "points" | "d1" | "d2";
 const ALIASES: Record<Field, Set<string>> = {
   rank: new Set(["rank"]),
   school: new Set(["school", "team"]),
-  region: new Set(["region"]),
+  region: new Set(["region", "area"]),
   points: new Set(["points", "score"]),
-  d1: new Set(["debater1", "debaterone", "speaker1"]),
-  d2: new Set(["debater2", "debatertwo", "speaker2"]),
+  d1: new Set(["debater1", "debaterone", "speaker1", "partner1"]),
+  d2: new Set(["debater2", "debatertwo", "speaker2", "partner2"]),
 };
 
 function mapColumns(header: string[]): Partial<Record<Field, number>> {
   const idx: Partial<Record<Field, number>> = {};
   header.forEach((cell, i) => {
-    const n = norm(cell);
+    // Team sheets from 2025-26 on head the rank column `#`.
+    const n = cell.trim() === "#" ? "rank" : norm(cell);
     for (const field of Object.keys(ALIASES) as Field[]) {
       if (idx[field] === undefined && ALIASES[field].has(n)) idx[field] = i;
     }
@@ -274,22 +304,57 @@ const ENTITIES: Record<string, string> = {
 const decode = (s: string) => s.replace(/&(?:amp|lt|gt|quot|#39|nbsp);/g, (m) => ENTITIES[m]);
 
 /**
- * Parse a sheet's `pubhtml` view (used when the CSV export is blocked). The
- * viewer's own leading row-number cell is dropped.
+ * A table's rows as cell text. The `pubhtml` viewer's row-number cell (a
+ * `<th>` before a row's `<td>` cells) is dropped.
+ */
+function htmlTableCells(table: string): string[][] {
+  return [...table.matchAll(/<tr[\s\S]*?<\/tr>/gi)].map((tr) => {
+    const cells = [...tr[0].matchAll(/<(t[dh])[^>]*>([\s\S]*?)<\/t[dh]>/gi)];
+    const text = cells.map((c) => decode(c[2].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim());
+    const rowNumber =
+      cells.length > 1 &&
+      cells[0][1].toLowerCase() === "th" &&
+      cells.slice(1).some((c) => c[1].toLowerCase() === "td") &&
+      /^\d*$/.test(text[0]);
+    return rowNumber ? text.slice(1) : text;
+  });
+}
+
+/**
+ * Parse a sheet's HTML view (`pubhtml` or gviz `out:html`), used when the CSV
+ * export is blocked.
  *
  * @throws When the page has no table or the table no header row.
  */
 export function parseNpdlHtmlTable(html: string): NpdlParsedTable {
   const table = /<table[\s\S]*?<\/table>/i.exec(html)?.[0];
   if (!table) throw new Error("no <table> in fallback page");
+  return parseNpdlTable(htmlTableCells(table));
+}
 
-  const cells = [...table.matchAll(/<tr[\s\S]*?<\/tr>/gi)].map((tr) => {
-    const row = [...tr[0].matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].map((c) =>
-      decode(c[1].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim(),
-    );
-    return row[0] && /^\d+$/.test(row[0]) ? row.slice(1) : row;
-  });
-  return parseNpdlTable(cells);
+/**
+ * The ranking tables written straight into a season page (2017-18 to
+ * 2022-23). Each `<table>` runs to the next `<table>` or `</table>`, since one
+ * page leaves a table open around another. A table with debater columns is
+ * the team table; tables without a Rank + School header are skipped.
+ */
+export function parseNpdlInlineTables(html: string): Array<{ tab: NpdlTab; table: NpdlParsedTable }> {
+  const starts = [...html.matchAll(/<table\b/gi)].map((m) => m.index ?? 0);
+  const out: Array<{ tab: NpdlTab; table: NpdlParsedTable }> = [];
+  for (const start of starts) {
+    const rest = html.slice(start + 6);
+    const end = /<table\b|<\/table>/i.exec(rest)?.index ?? rest.length;
+    let table: NpdlParsedTable;
+    try {
+      table = parseNpdlTable(htmlTableCells(rest.slice(0, end)));
+    } catch {
+      continue;
+    }
+    if (table.rows.length === 0) continue;
+    const tab: NpdlTab = table.rows.some((r) => r.debater1 || r.debater2) ? "team" : "school";
+    out.push({ tab, table });
+  }
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -349,11 +414,12 @@ async function fetchSheet(target: NpdlSheetTarget, opts: NpdlFetchOptions): Prom
 }
 
 /**
- * Scrape one season's team and school tables.
+ * Scrape one season's team and school tables: the page's own tables first,
+ * then its embedded sheets for any tab still empty.
  *
  * @param season - `"2024-25"`; must be in {@link NPDL_SEASONS}.
- * @throws When the season is unknown, the page cannot be read or no sheet on
- *   it yields rows.
+ * @throws When the season is unknown, the page cannot be read, a sheet it
+ *   needs fails, or nothing on it yields rows.
  */
 export async function fetchNpdlSeason(
   season: string,
@@ -362,8 +428,10 @@ export async function fetchNpdlSeason(
   const slug = npdlSlugForSeason(season);
   if (!slug) throw new Error(`unknown NPDL season ${season}`);
   const pageUrl = NPDL_BASE_URL + slug;
-  const targets = discoverNpdlSheets(await fetchText(pageUrl, opts));
-  if (targets.length === 0) throw new Error(`no embedded sheets on ${pageUrl}`);
+  const html = await fetchText(pageUrl, opts);
+  const inline = parseNpdlInlineTables(html);
+  const targets = discoverNpdlSheets(html);
+  if (inline.length === 0 && targets.length === 0) throw new Error(`no ranking tables or sheets on ${pageUrl}`);
 
   const result: NpdlSeasonRankings = {
     season,
@@ -372,12 +440,16 @@ export async function fetchNpdlSeason(
     teams: [],
     schools: [],
   };
-  for (const target of targets) {
-    const { rows, skipped } = await fetchSheet(target, opts);
-    opts.log?.(`  ${season}/${target.tab}: ${rows.length} rows (skipped ${skipped})`);
-    // A page with two team sheets (e.g. a varsity and a novice tab) keeps the first.
-    const key = target.tab === "team" ? "teams" : "schools";
+  // A page with two team tables (e.g. a varsity and a novice tab) keeps the first.
+  const keep = (tab: NpdlTab, { rows, skipped }: NpdlParsedTable, from: string) => {
+    opts.log?.(`  ${season}/${tab} (${from}): ${rows.length} rows (skipped ${skipped})`);
+    const key = tab === "team" ? "teams" : "schools";
     if (result[key].length === 0) result[key] = rows;
+  };
+  for (const { tab, table } of inline) keep(tab, table, "page");
+  for (const target of targets) {
+    if (result[target.tab === "team" ? "teams" : "schools"].length > 0) continue;
+    keep(target.tab, await fetchSheet(target, opts), "sheet");
   }
   if (result.teams.length === 0 && result.schools.length === 0) {
     throw new Error(`no ranked rows on ${pageUrl}`);
