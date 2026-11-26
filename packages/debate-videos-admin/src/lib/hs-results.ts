@@ -14,8 +14,9 @@
  *   and each judge's W/L ballot (signed in).
  *
  * The last two answer 401 to signed-out requests, so the server passes a
- * `fetch` that sends the site's `TabroomToken` cookie (`tabroomFetch`, from
- * the `TABROOM_API_KEY` secret).
+ * `fetch` that sends the site's `TabroomToken` cookie (`tabroomFetch`: the
+ * Tabroom login saved under Admin → Service logins, re-logging in once when
+ * Tabroom rejects its session, else the `TABROOM_API_KEY` secret).
  *
  * Same rules as the college lookup: a winner only from the judges' recorded
  * ballots (never seeds or brackets), ambiguous tournaments and pairings are
@@ -109,8 +110,13 @@ type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
 
 /** Thrown when Tabroom refuses a read that needs the site's Tabroom session. */
 export class TabroomAuthError extends Error {
-  constructor(path: string) {
-    super(`Tabroom answered 401 for ${path}: round results need a signed-in session — set the TABROOM_API_KEY secret.`);
+  constructor(
+    path: string,
+    readonly status = 401,
+  ) {
+    super(
+      `Tabroom answered ${status} for ${path}: round results need a signed-in session — save a Tabroom login under Admin → Service logins (or set the TABROOM_API_KEY secret).`,
+    );
     this.name = "TabroomAuthError";
   }
 }
@@ -122,7 +128,7 @@ async function getJson<T>(fetcher: FetchLike, path: string): Promise<T> {
     headers: { accept: "application/json" },
     signal: AbortSignal.timeout(15_000),
   });
-  if (res.status === 401 || res.status === 403) throw new TabroomAuthError(path);
+  if (res.status === 401 || res.status === 403) throw new TabroomAuthError(path, res.status);
   if (res.status === 404) throw new TabroomNotFound(path);
   if (!res.ok) throw new Error(`Tabroom returned ${res.status} for ${path}`);
   return (await res.json()) as T;

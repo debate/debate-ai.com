@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { lookupTabroomResult } from "@debate-ai/videos-admin/src/lib/tabroom-results";
+import { TabroomAuthError, lookupTabroomResult } from "@debate-ai/videos-admin/src/lib/tabroom-results";
 import { tabroomFetch } from "@/lib/judge-paradigms/tabroom";
 
 /** Longest value accepted for any one field — tournament and team names are short. */
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: `Tabroom results lookup failed: ${error instanceof Error ? error.message : String(error)}` },
-      { status: 502 },
+      { status: error instanceof TabroomAuthError ? 503 : 502 },
     );
   }
 }

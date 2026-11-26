@@ -27,7 +27,7 @@ vi.mock("@/lib/database/context", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/database/context")>()),
   getDBFromContext: async () => mocks.db,
 }));
-vi.mock("@/lib/caselist/team-caselist", () => ({ caselistCredentials: () => ({ token: "token" }) }));
+vi.mock("@/lib/caselist/team-caselist", () => ({ openCaselistClient: async () => ({}) }));
 vi.mock("@/lib/search/card-text-store", () => ({ getCardTextBucket: () => mocks.bucket }));
 vi.mock("@/lib/topic-starters/file-index", () => ({ refreshTopicStarterFileIndexQuietly: async () => {} }));
 vi.mock("@/lib/file-stats/columns", () => ({ fileStatColumns: async () => ({ quoteCount: 1, blockCount: 1, pageCount: 1, charCount: 1 }) }));

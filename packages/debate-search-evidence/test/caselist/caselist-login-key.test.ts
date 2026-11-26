@@ -53,6 +53,19 @@ describe("createCaselistClient with a username:password key", () => {
     expect(await client.token()).toBe("tok2");
   });
 
+  it("leaves the session to an authenticatedFetch: no cookie, no login, no retry", async () => {
+    const api = fakeApi();
+    const calls: (string | null)[] = [];
+    const authenticatedFetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+      calls.push(new Headers(init?.headers).get("cookie"));
+      return new Response("{}", { status: 401 });
+    }) as typeof fetch;
+    const client = createCaselistClient({ token: "me:secret", fetch: api.fetchImpl, authenticatedFetch });
+    await expect(client.caselists()).rejects.toMatchObject({ status: 401 });
+    expect(calls).toEqual([null]);
+    expect(api.calls).toEqual([]);
+  });
+
   it("falls back to the login when a stored token has expired", async () => {
     const api = fakeApi();
     const client = createCaselistClient({ token: "stale", username: "me", password: "secret", fetch: api.fetchImpl });

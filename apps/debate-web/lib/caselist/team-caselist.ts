@@ -7,9 +7,10 @@
  * (`caselist/caselist-api.ts`); this file only picks the caselists for the
  * dataset, does the matching and trims the payload for the client.
  *
- * openCaselist answers only signed-in requests, so the route needs either a
+ * openCaselist answers only signed-in requests, so the route needs the
+ * openCaselist login saved under Admin → Service logins, or else a
  * `OPENCASELIST_API_KEY` (a `caselist_token` cookie value) or `CASELIST_USERNAME` +
- * `CASELIST_PASSWORD` (a Tabroom login) as Worker secrets. Without them the
+ * `CASELIST_PASSWORD` (a Tabroom login) as Worker secrets. Without any the
  * payload says `configured: false` and the profile falls back to the
  * documents already unpacked from the bulk archives.
  */
@@ -22,6 +23,7 @@ import {
   caselistRoundLabel,
   caselistSideLabel,
   caselistsForFormat,
+  createCaselistClient,
   matchCaselistSchool,
   matchCaselistTeam,
   openSourceFileName,
@@ -30,6 +32,7 @@ import {
 } from "@debate-ai/research-evidence/src/caselist/caselist-api"
 import type { CaselistEvent, CaselistLevel } from "@debate-ai/research-evidence/src/caselist/caselist-config"
 import { getCloudflareContext } from "@/lib/database/context"
+import { serviceSession } from "@/lib/service-logins"
 
 /** The caselist format each rankings dataset is disclosed in. */
 export const DATASET_CASELIST_FORMAT: Record<string, { event: CaselistEvent; level: CaselistLevel }> = {
@@ -129,6 +132,19 @@ export function caselistCredentials(): { token?: string; username?: string; pass
   if (token) return username && password ? { token, username, password } : { token }
   if (username && password) return { username, password }
   return null
+}
+
+/**
+ * The site's openCaselist client: the login saved under Admin → Service
+ * logins (kept signed in by `lib/service-logins`, which re-logs in once when
+ * the session is rejected), else the env credentials; `null` when neither is
+ * set.
+ */
+export async function openCaselistClient(): Promise<CaselistClient | null> {
+  const session = serviceSession("opencaselist")
+  if (await session.hasSavedLogin()) return createCaselistClient({ authenticatedFetch: session.fetch as typeof fetch })
+  const credentials = caselistCredentials()
+  return credentials ? createCaselistClient(credentials) : null
 }
 
 /** The open-source path pattern rounds carry: `<caselist>/<school>/<team>/<file>`. */
