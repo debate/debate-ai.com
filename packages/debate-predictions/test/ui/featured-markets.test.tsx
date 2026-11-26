@@ -55,7 +55,7 @@ describe("FeaturedMarkets", () => {
         section={section}
       />,
     )
-    expect(bodyText()).toContain("Top 5 teams")
+    expect(bodyText()).toContain("Top 10 teams")
     expect(bodyText()).toContain("No Public Forum rankings to open these from yet.")
   })
 
