@@ -6,7 +6,7 @@
  *   bun run sync-npdl -- --all-seasons
  *
  * Seasons already in the file and not re-scraped are kept. A season that fails
- * keeps its old copy. Sanity check: 2024-25 gives 879 team rows and 26 school
+ * keeps its old copy. Sanity check: 2024-25 gives 877 team rows and 25 school
  * rows; far fewer means a truncated page, not a good scrape.
  * @module sync/npdl-rankings-cli
  */
