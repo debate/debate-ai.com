@@ -12,11 +12,13 @@ import {
   getTournamentLogo,
 } from "../src/components/videos/card/tournamentLogos";
 
-/** Every college, high-school and tournament-organization png (the Debate AI logo is not a tournament). */
-const SCHOOL_PNGS = ["colleges", "high-schools", "organizations"]
-  .flatMap((folder) =>
-    readdirSync(fileURLToPath(new URL(`../../debate-icons/${folder}`, import.meta.url))),
-  )
+/** Every college/HS wordmark (school-rank) and tournament-organization png (debate-icons). */
+const SCHOOL_PNGS = [
+  ...["colleges", "high-schools"].flatMap((folder) =>
+    readdirSync(fileURLToPath(new URL(`../../school-rank/wordmarks/${folder}`, import.meta.url))),
+  ),
+  ...readdirSync(fileURLToPath(new URL(`../../debate-icons/organizations`, import.meta.url))),
+]
   .filter((file) => file.endsWith(".png"))
   .map((file) => file.replace(/\.png$/, ""))
   .filter((name) => name !== "debate-ai");

@@ -24,7 +24,7 @@ dependencies.
 | --- | --- |
 | [`app-icons/`](app-icons/) | 17 SVG and PNG icons for app navigation and feature tiles: flow, rounds, lectures, leaderboard, trophies, settings, theme, and the aff/neg speech bubbles. |
 | [`brand/`](brand/) | The Debate AI wordmark, `logo.png` (400 × 89). Import it as `DebateAiLogo` from `@debate-ai/icons/brand` (the login page and dialog, the footer, the privacy page and the docs header all do). The app also keeps serving it at `/logo.png` (see `ROOT_ASSETS` in `apps/debate-web/vite.config.ts`) for links from outside the bundle, such as the offline file list. |
-| [`colleges/`](colleges/), [`high-schools/`](high-schools/), [`organizations/`](organizations/) | Logo PNGs named by school slug, exported from [`schools.ts`](schools.ts) as `@debate-ai/icons/schools` (`north-texas.png` is `IconSchoolNorthTexas`); `organizations/` holds tournament and league logos (TOC, NSDA, NDCA, NDT, CEDA, plus a copy of the Debate AI logo as `debate-ai.png`). Name lookups go through `getSchoolLogo` in `debate-rankings`; tests fail if a png is left unexported, or a college or high-school png unmapped. |
+| [`organizations/`](organizations/) | Tournament and league logos (TOC, NSDA, NDCA, NDT, CEDA, plus a copy of the Debate AI logo as `debate-ai.png`), exported from [`schools.ts`](schools.ts). College and high-school wordmarks live in `@debate-ai/school-rank` (`wordmarks/colleges`, `wordmarks/high-schools`) and are re-exported from the same `@debate-ai/icons/schools` entry so existing imports keep working. Name lookups go through `getSchoolLogo` in `debate-rankings`. |
 | [`mascots/`](mascots/) | Full-size college mascot illustrations (`kansas.png`, 1467 × 1072) plus 640px-wide webp images in `mascots/thumbs/`, exported from [`mascots.ts`](mascots.ts) as `@debate-ai/icons/mascots` (`IconMascotKansas`). The watch page shows a team's mascot above its stats; name lookups go through `getSchoolMascot` in `debate-rankings`. Harvard has no animal mascot, so `harvard.png` is its Veritas crest. |
 | [`editor/`](editor/) | 37 PNG toolbar icons for the card editor, all prefixed `icon-debate-`. |
 
@@ -57,9 +57,11 @@ Editor icons come in three sizes: 16 × 16 (`exp*` actions and `star`),
    that folder's `index.ts`.
 3. Import it by name, never by path.
 
-A school logo goes in `colleges/` or `high-schools/`, named by school slug
-rather than `icon-`, with its export line in `schools.ts` under that folder's
-heading. Then map it in `SCHOOL_LOGO_MAP` (`schoolLogos.ts` in
-`debate-rankings`). Give a school whose short name is shared by others its
-full slug: `loyola-chicago.png`, because "Loyola" in the rankings is a high
-school in California.
+A college or high-school wordmark goes in `packages/school-rank/wordmarks/colleges/`
+or `high-schools/`, named by school slug rather than `icon-`, with matching
+rows in `school-rank`'s `src/data/wordmarks.ts` and `src/wordmarks/icons.ts`,
+a re-export in this package's `schools.ts`, and a map entry in
+`SCHOOL_LOGO_MAP` (`schoolLogos.ts` in `debate-rankings`). Give a school whose
+short name is shared by others its full slug: `loyola-chicago.png`, because
+"Loyola" in the rankings is a high school in California. Tournament logos
+still go in `organizations/` here.

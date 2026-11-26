@@ -10,9 +10,9 @@ import { fileURLToPath } from "node:url";
 import * as schoolIcons from "@debate-ai/icons/schools";
 import { getSchoolLogo, SCHOOL_LOGO_MAP } from "../src/leaderboard/lib/schoolLogos";
 
-/** School logos live in `colleges/` and `high-schools/`; `organizations/` holds tournaments and leagues. */
+/** College/HS wordmarks live in `@debate-ai/school-rank/wordmarks`; orgs stay in debate-icons. */
 const SCHOOL_PNGS = ["colleges", "high-schools"].flatMap((folder) =>
-  readdirSync(fileURLToPath(new URL(`../../debate-icons/${folder}`, import.meta.url)))
+  readdirSync(fileURLToPath(new URL(`../../school-rank/wordmarks/${folder}`, import.meta.url)))
     .filter((file) => file.endsWith(".png"))
     .map((file) => file.replace(/\.png$/, "")),
 );
@@ -25,6 +25,13 @@ describe("getSchoolLogo", () => {
   });
 
   it.each([
+    ["Montgomery Bell Academy (TN)", "Montgomery Bell"],
+    ["The Westminster Schools (GA)", "Westminster"],
+    ["Greenhill School (TX)", "Greenhill"],
+    ["Glenbrook North High School (IL)", "Glenbrook North"],
+    ["St. Mark's School of Texas (TX)", "St. Marks"],
+    ["New Trier High School (IL)", "New Trier"],
+    ["Bronx High School of Science (NY)", "Bronx"],
     ["University of Kansas", "Kansas"],
     ["California State University - Long Beach", "CSU Long Beach"],
     ["CSULB", "CSU Long Beach"],
@@ -109,6 +116,9 @@ describe("getSchoolLogo", () => {
     expect(getSchoolLogo("Kansas State")).toBeNull();
     expect(getSchoolLogo("Boston College")).toBeNull();
     expect(getSchoolLogo("Liberty Christian")).toBeNull();
+    // Georgetown Day (DC) must not borrow Georgetown University's logo.
+    expect(getSchoolLogo("Georgetown Day School (DC)")).toBeNull();
+    expect(getSchoolLogo("Pace Academy (GA)")).toBeNull();
   });
 
   it.each(["Loyola", "Loyola (CA)", "Loyola High School", "Loyola Marymount"])(
@@ -128,11 +138,16 @@ describe("@debate-ai/icons/schools", () => {
   const pascalCase = (slug: string) =>
     slug.replace(/(?:^|-)(\w)/g, (_, letter: string) => letter.toUpperCase());
 
-  it.each(["colleges", "high-schools", "organizations"].flatMap((folder) =>
-    readdirSync(fileURLToPath(new URL(`../../debate-icons/${folder}`, import.meta.url)))
+  it.each([
+    ...["colleges", "high-schools"].flatMap((folder) =>
+      readdirSync(fileURLToPath(new URL(`../../school-rank/wordmarks/${folder}`, import.meta.url)))
+        .filter((file) => file.endsWith(".png"))
+        .map((file) => [folder, file.replace(/\.png$/, "")]),
+    ),
+    ...readdirSync(fileURLToPath(new URL(`../../debate-icons/organizations`, import.meta.url)))
       .filter((file) => file.endsWith(".png"))
-      .map((file) => [folder, file.replace(/\.png$/, "")]),
-  ))("exports %s/%s.png by name", (_folder, name) => {
+      .map((file) => ["organizations", file.replace(/\.png$/, "")]),
+  ])("exports %s/%s.png by name", (_folder, name) => {
     const exportName = name === "debate-ai" ? "IconOrgDebateAi" : `IconSchool${pascalCase(name)}`;
     expect(schoolIcons[exportName as keyof typeof schoolIcons]).toBeTruthy();
   });
