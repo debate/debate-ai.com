@@ -46,18 +46,18 @@ describe("latestOutlineFiles", () => {
     expect(latestOutlineFiles(items, 0)).toEqual([])
   })
 
-  it("links each file at its /docs/<code>/<path> address with its format", () => {
+  it("links each file at its /<code>/<path> address with its format", () => {
     const byId = new Map(latestOutlineFiles(items).map((entry) => [entry.id, entry]))
     expect(byId.get(10)).toMatchObject({
       title: "Policy one",
       topicCode: "vcx27",
       format: "vcx",
       formatLabel: "Policy",
-      href: "/docs/vcx27/aff/policy-one",
+      href: "/vcx27/aff/policy-one",
       quoteCount: 12,
     })
-    expect(byId.get(13)).toMatchObject({ topicCode: "lda27", formatLabel: "LD", href: "/docs/lda27/neg/ld-case" })
-    expect(byId.get(14)).toMatchObject({ formatLabel: "PF", href: "/docs/pfb27/pf-pro/pf-case" })
+    expect(byId.get(13)).toMatchObject({ topicCode: "lda27", formatLabel: "LD", href: "/lda27/neg/ld-case" })
+    expect(byId.get(14)).toMatchObject({ formatLabel: "PF", href: "/pfb27/pf-pro/pf-case" })
   })
 
   it("never lists folders", () => {
@@ -78,7 +78,7 @@ describe("latestOutlineFiles edge cases", () => {
     const byId = new Map(out.map((entry) => [entry.id, entry]))
     expect(byId.get(10)).toMatchObject({ formatLabel: "NDT", title: "NDT file" })
     expect(byId.get(11)).toMatchObject({ formatLabel: "BQ", updatedAt: null, author: null, quoteCount: null, pageCount: null })
-    expect(byId.get(12)).toMatchObject({ author: "Coach", href: "/docs/bq27/bq/f12" })
+    expect(byId.get(12)).toMatchObject({ author: "Coach", href: "/bq27/bq/f12" })
     expect(out.map((entry) => entry.id)).toEqual([12, 10, 11])
   })
 })

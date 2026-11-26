@@ -181,7 +181,7 @@ describe("failed page loads", () => {
   // worker reads.
   const navigation = (aborted = false) =>
     ({
-      url: `${ORIGIN}/docs/vcx27/aff/aff-case/some-case`,
+      url: `${ORIGIN}/vcx27/aff/aff-case/some-case`,
       method: "GET",
       mode: "navigate",
       destination: "document",
