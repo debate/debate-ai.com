@@ -5,6 +5,10 @@ import { MAX_BULK_RECIPIENTS, parseRecipientList } from "../../../lib/admin/emai
 import { cn } from "../../../ui/lib/utils";
 import { Badge } from "../../../ui/primitives/badge";
 import { Button } from "../../../ui/primitives/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../../ui/primitives/tabs";
+import { EmailComposePanel } from "./EmailComposePanel";
+import { EmailListsPanel } from "./EmailListsPanel";
+import { EmailSettingsPanel } from "./EmailSettingsPanel";
 import {
   Card,
   CardContent,
@@ -40,12 +44,41 @@ interface RecipientResult {
 }
 
 /**
- * The admin Emails section: every React Email template in `@debate-ai/emails`,
+ * The admin Emails section: template previews, saved recipient lists,
+ * composing and sending to a list, and the Resend API key.
+ */
+export function EmailsPanel() {
+  return (
+    <Tabs defaultValue="previews" className="gap-6">
+      <TabsList>
+        <TabsTrigger value="previews">Previews</TabsTrigger>
+        <TabsTrigger value="lists">Lists</TabsTrigger>
+        <TabsTrigger value="compose">Compose and send</TabsTrigger>
+        <TabsTrigger value="settings">Settings</TabsTrigger>
+      </TabsList>
+      <TabsContent value="previews">
+        <EmailPreviewsPanel />
+      </TabsContent>
+      <TabsContent value="lists">
+        <EmailListsPanel />
+      </TabsContent>
+      <TabsContent value="compose">
+        <EmailComposePanel />
+      </TabsContent>
+      <TabsContent value="settings">
+        <EmailSettingsPanel />
+      </TabsContent>
+    </Tabs>
+  );
+}
+
+/**
+ * Every React Email template in `@debate-ai/emails`,
  * rendered on the server with its sample data (GET /api/admin/emails), shown
  * as the HTML an inbox gets — sandboxed in an iframe — or its plain-text
  * part, with a button that sends the sample to the admin's own address.
  */
-export function EmailsPanel() {
+function EmailPreviewsPanel() {
   const [templates, setTemplates] = useState<EmailTemplateSummary[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [rendered, setRendered] = useState<RenderedEmail | null>(null);

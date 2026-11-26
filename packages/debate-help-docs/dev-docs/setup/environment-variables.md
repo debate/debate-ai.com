@@ -33,7 +33,7 @@ dashboard variable, a `vars` entry, or a line in `.dev.vars` locally. Never comm
 | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | The same client id for browser-side Google One Tap. Build-time. | `packages/debate-webview/src/lib/auth/client.ts`, `…/config/site.ts` | Optional |
 | `AUTH_DISCORD_ID` / `AUTH_DISCORD_SECRET` | "Sign in with Discord". | `lib/auth/index.ts`, `app/api/auth/providers/route.ts` | Optional |
 | `AUTH_LINKEDIN_ID` / `AUTH_LINKEDIN_SECRET` | "Sign in with LinkedIn". | same | Optional |
-| `RESEND_API_KEY` | Sends magic-link and verification email, round invitations and moderator invites through Resend. | `lib/auth/index.ts`, `app/api/rounds/invite/route.ts`, `app/api/admin/moderators/route.ts` | Required for email sign-in and invites. |
+| `RESEND_API_KEY` | Sends magic-link and verification email, round invitations and moderator invites through Resend. Admin → Emails sends to saved lists with the key saved there (stored encrypted in D1) and falls back to this secret. | `lib/auth/index.ts`, `app/api/rounds/invite/route.ts`, `app/api/admin/moderators/route.ts`, `lib/emails/settings.ts` | Required for email sign-in and invites. |
 | `AUTH_RESEND_KEY` | Alias read when `RESEND_API_KEY` is unset. | same | Optional |
 
 ## AI providers
