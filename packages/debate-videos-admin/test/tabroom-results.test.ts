@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   TABROOM_RESULTS_API,
+  TabroomAuthError,
   decisionFromSection,
   entrySide,
   eventMatchesStyle,
@@ -228,6 +229,21 @@ describe("lookupTabroomResult", () => {
     expect(result.status).toBe("not_found");
     expect(result.winnerSide).toBeNull();
   });
+
+  it.each(["/rest/tourns/35001/rounds", "/pages/invite/35001/OPLD/"])(
+    "throws TabroomAuthError when Tabroom refuses %s, rather than reporting no debate",
+    async (refused) => {
+      const { fetcher } = fixtureFetch();
+      const signedOut = async (url: string) =>
+        url.slice(TABROOM_RESULTS_API.length).startsWith(refused) ? new Response("{}", { status: 401 }) : fetcher(url);
+      const lookup = lookupTabroomResult(
+        { tournament: "UCLA", roundLevel: "Final", affTeam: "Mission San Jose SL", negTeam: "Valley Christian YN", seasonYear: 2026, style: 3, publishedAt: "2026-01-19" },
+        signedOut,
+      );
+      await expect(lookup).rejects.toBeInstanceOf(TabroomAuthError);
+      await expect(lookup).rejects.toThrow(/Service logins/);
+    },
+  );
 
   it("asks for the tournament and teams before searching", async () => {
     const { fetcher, requested } = fixtureFetch();

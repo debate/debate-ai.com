@@ -11,6 +11,11 @@
  * - `GET /rest/tourns?publishedResults&startAfter&startBefore` — season list
  * - `GET /rest/tourns/{id}/rounds` — published rounds
  * - `GET /pages/invite/{id}/{eventAbbr}/{roundName}/results` — ballots
+ *
+ * The last two need a signed-in session: the app passes `tabroomFetch` (the
+ * Tabroom login saved under Admin → Service logins, else `TABROOM_API_KEY`).
+ * A 401/403 throws {@link TabroomAuthError} rather than reading as "no
+ * results", so a lost session is reported instead of hidden.
  */
 
 import {
@@ -26,13 +31,14 @@ import {
   type CollegeResultsStatus,
   type StoredRoundResult,
 } from "./college-results";
+import { TabroomAuthError } from "./hs-results";
 
 /** Live Tabroom API root (same as `TABROOM_BETA_API` in the webview proxy). */
 export const TABROOM_RESULTS_API = "https://api.tabroom.com/v1";
 /** Classic Tabroom invite URL for links back to a tournament. */
 export const TABROOM_RESULTS_SITE = "https://www.tabroom.com";
 
-export { createBudgetedFetcher, RequestBudgetExceeded, roundKey, seasonFor };
+export { createBudgetedFetcher, RequestBudgetExceeded, roundKey, seasonFor, TabroomAuthError };
 
 /** What the edit form knows about the round. */
 export interface TabroomResultsQuery {
@@ -325,6 +331,7 @@ async function getJson<T>(fetcher: FetchLike, path: string): Promise<T> {
     headers: { accept: "application/json" },
     signal: AbortSignal.timeout(15_000),
   });
+  if (res.status === 401 || res.status === 403) throw new TabroomAuthError(path, res.status);
   if (!res.ok) throw new Error(`Tabroom returned ${res.status} for ${path}`);
   return (await res.json()) as T;
 }
@@ -357,7 +364,7 @@ export function tabroomTournamentUrl(tourn: TabroomTournament): string {
   return `${TABROOM_RESULTS_SITE}/index/tourn/results/index.mhtml?tourn_id=${tourn.id}`;
 }
 
-/** Looks the round up. Never throws for "not found"; network failures do throw. */
+/** Looks the round up. Never throws for "not found"; network and auth failures do throw. */
 export async function lookupTabroomResult(
   query: TabroomResultsQuery,
   fetcher: FetchLike = fetch,
@@ -435,7 +442,8 @@ export async function lookupTabroomResult(
           `/pages/invite/${tournament.id}/${encodeURIComponent(abbr)}/${encodeURIComponent(String(round.name))}/results`,
         );
         return { round, results };
-      } catch {
+      } catch (error) {
+        if (error instanceof TabroomAuthError) throw error;
         return { round, results: null };
       }
     }),

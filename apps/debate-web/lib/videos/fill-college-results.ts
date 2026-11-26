@@ -26,6 +26,7 @@ import {
   type CollegeResultUpdate,
   type CollegeResultsLookup,
 } from "@debate-ai/videos-admin/src/lib/college-results";
+import { TabroomAuthError } from "@debate-ai/videos-admin/src/lib/hs-results";
 import { sqlLiteral } from "@debate-ai/videos-admin/src/sync/videos/video-seed-sql";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import { chunkStatements } from "@/lib/database/query-budget";
@@ -184,6 +185,8 @@ export async function fillRoundResults(
       const affWin = row.affWin === null || row.affWin === undefined ? null : Boolean(row.affWin);
       update = planCollegeResultUpdate({ affWin, judgeDecision: row.judgeDecision }, lookup);
     } catch (error) {
+      // A lost Tabroom session fails every row alike: stop, leaving them unchecked.
+      if (error instanceof TabroomAuthError) throw error;
       // Out of requests: leave this row and the rest for the next call —
       // unless it is the first, which alone outgrew a call's budget.
       if (error instanceof RequestBudgetExceeded && statements.length > 0) break;

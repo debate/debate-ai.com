@@ -12,15 +12,16 @@
  *   paces these calls under openCaselist's ten-downloads-a-minute limit; a
  *   429 from openCaselist is passed through so it can wait and retry.
  *
-* openCaselist needs a session: `OPENCASELIST_API_KEY`, or `CASELIST_USERNAME` +
+* openCaselist needs a session: the openCaselist login saved under Admin →
+* Service logins, else `OPENCASELIST_API_KEY`, or `CASELIST_USERNAME` +
 * `CASELIST_PASSWORD`, as Worker secrets.
  *
  * @module app/api/admin/caselist-team-sync/route
  */
 import { NextRequest, NextResponse } from "next/server"
-import { CaselistApiError, createCaselistClient } from "@debate-ai/research-evidence/src/caselist/caselist-api"
+import { CaselistApiError } from "@debate-ai/research-evidence/src/caselist/caselist-api"
 import { authorizeCardImport } from "@/lib/admin/debate-card-import"
-import { caselistCredentials } from "@/lib/caselist/team-caselist"
+import { openCaselistClient } from "@/lib/caselist/team-caselist"
 import {
   type CaselistFileBucket,
   listSyncedPages,
@@ -32,13 +33,13 @@ import { getDBFromContext } from "@/lib/database/context"
 import { getCardTextBucket } from "@/lib/search/card-text-store"
 
 const NOT_CONFIGURED =
-  "openCaselist is not configured: set the OPENCASELIST_API_KEY secret to your Tabroom login as username:password (or a caselist_token cookie)."
+  "openCaselist is not configured: save an openCaselist login under Admin → Service logins, or set the OPENCASELIST_API_KEY secret to your Tabroom login as username:password (or a caselist_token cookie)."
 
 function upstreamError(error: unknown) {
   if (error instanceof CaselistApiError) {
     const message =
       error.status === 401
-        ? "openCaselist refused the login. Check OPENCASELIST_API_KEY: it should be your Tabroom login as username:password."
+        ? "openCaselist refused the login. Check the openCaselist login under Admin → Service logins (or OPENCASELIST_API_KEY: your Tabroom login as username:password)."
         : error.status === 429
           ? "openCaselist download limit reached; wait a minute."
           : error.message
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
   if (!access.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   const db = await getDBFromContext()
   return NextResponse.json({
-    configured: Boolean(caselistCredentials()),
+    configured: Boolean(await openCaselistClient()),
     bucket: Boolean(getCardTextBucket()),
     pages: await listSyncedPages(db, { limit: 50 }),
   })
@@ -62,8 +63,8 @@ export async function POST(request: NextRequest) {
   const access = await authorizeCardImport(request)
   if (!access.allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-  const credentials = caselistCredentials()
-  if (!credentials) return NextResponse.json({ error: NOT_CONFIGURED }, { status: 503 })
+  const client = await openCaselistClient()
+  if (!client) return NextResponse.json({ error: NOT_CONFIGURED }, { status: 503 })
 
   let body: Record<string, unknown> = {}
   try {
@@ -73,7 +74,6 @@ export async function POST(request: NextRequest) {
   }
   const text = (key: string) => (typeof body[key] === "string" ? (body[key] as string).trim() : "")
   const db = await getDBFromContext()
-  const client = createCaselistClient(credentials)
 
   if (body.action === "file") {
     const bucket = getCardTextBucket() as unknown as CaselistFileBucket | null
