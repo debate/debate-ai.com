@@ -287,11 +287,20 @@ export function buildHsAllTimeSchools(
 
 const loads = new Map<SchoolSeasonEvent, Promise<SchoolEliteResponse>>();
 
+/**
+ * The URL of one event's chart. The count and seasons ride along as query
+ * parameters (the route ignores them) so browser and CDN copies cached from
+ * when the chart followed fewer schools or seasons are never served again.
+ */
+export function schoolEliteUrl(event: SchoolSeasonEvent): string {
+  return `${SCHOOL_ELITE_PATH}?event=${encodeURIComponent(event)}&top=${HS_ELITE_COUNT}&years=${HS_ELITE_RANK_SEASONS}`;
+}
+
 /** One event's chart from {@link SCHOOL_ELITE_PATH}, loaded once per page. */
 export function fetchSchoolElite(event: SchoolSeasonEvent): Promise<SchoolEliteResponse> {
   let pending = loads.get(event);
   if (!pending) {
-    pending = fetch(`${SCHOOL_ELITE_PATH}?event=${encodeURIComponent(event)}`).then(async (res) => {
+    pending = fetch(schoolEliteUrl(event)).then(async (res) => {
       if (!res.ok) throw new Error(`School Top 20 failed: ${res.status}`);
       return (await res.json()) as SchoolEliteResponse;
     });
