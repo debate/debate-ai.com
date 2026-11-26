@@ -160,7 +160,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
         icon: Award,
         aliases: ["/practice/challenges", "/practice/drills", "/practice/partners"],
       },
-      { href: "/rank", title: "National Debate Ranking", icon: Medal },
+      { href: "/rank", title: "Team & School Rank", icon: Medal },
       // Coach Workspace, AI Coach Mode, Coaching Programs, Team Calendar, Coach
       // Materials and the Laptop-less Debating guide, one tab each.
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },
