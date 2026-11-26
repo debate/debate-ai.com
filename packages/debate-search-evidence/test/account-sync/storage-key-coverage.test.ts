@@ -258,6 +258,9 @@ const NOT_LOCAL_STORAGE = new Set([
   // sessionStorage: per-tab flags that must not outlive the tab.
   "debate-ai:stale-build-reload",
   "toolRecordSyncHydratedAt",
+  // Admin Emails Resend API key: the `email_settings` row key in D1 (apps/debate-web/lib/emails/settings.ts).
+  // A secret stored encrypted server-side and never sent to the browser, so it can never sync or sit in any storage.
+  "resend_api_key",
 ]);
 
 /**
