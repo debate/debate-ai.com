@@ -55,6 +55,7 @@ export { default as IconSchoolMarlborough } from "../../wordmarks/high-schools/m
 export { default as IconSchoolMontgomeryBell } from "../../wordmarks/high-schools/montgomery-bell.png";
 export { default as IconSchoolNewTrier } from "../../wordmarks/high-schools/new-trier.png";
 export { default as IconSchoolNueva } from "../../wordmarks/high-schools/nueva.png";
+export { default as IconSchoolPace } from "../../wordmarks/high-schools/pace.png";
 export { default as IconSchoolPeninsula } from "../../wordmarks/high-schools/peninsula.png";
 export { default as IconSchoolPlanoWest } from "../../wordmarks/high-schools/plano-west.png";
 export { default as IconSchoolQuarryLane } from "../../wordmarks/high-schools/quarry-lane.png";
