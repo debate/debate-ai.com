@@ -31,7 +31,7 @@ const PF = 2
 const COLLEGE = 4
 
 function round(style: number | string | undefined, aff: string | null, neg: string | null, season?: number, date = "2026-02-10"): VideoType {
-  const video: VideoType = ["id", "Round", date, "Channel", 10, "", style, "Tournament", "Finals", aff, neg]
+  const video = ["id", "Round", date, "Channel", 10, "", style, "Tournament", "Finals", aff, neg] as VideoType
   if (season !== undefined) video[17] = season
   return video
 }
