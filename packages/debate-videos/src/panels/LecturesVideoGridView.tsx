@@ -30,6 +30,7 @@ import { QuickLinksGrid } from "../components/navigation/category-gallery/QuickL
 import { VideoSidebarTree } from "../components/navigation/sidebar-nav/VideoSidebarTree"
 import { ToolNavTree } from "../components/navigation/sidebar-nav/ToolNavTree"
 import { GoatSparklesHeading } from "../components/navigation/category-gallery/GoatSparklesHeading"
+import { GoatRankingsLinks } from "../components/navigation/category-gallery/GoatRankingsLinks"
 import { cn } from "../ui/lib/utils";
 import {
   VIDEO_ALL_VIDEOS_FILTER_LINKS,
@@ -449,7 +450,12 @@ export function LecturesVideoGridView({
           </nav>
         )}
         {/* The Greatest of All-Time collection opens on its own banner. */}
-        {currentCategory === "topPicks" && <GoatSparklesHeading />}
+        {currentCategory === "topPicks" && (
+          <>
+            <GoatSparklesHeading />
+            <GoatRankingsLinks />
+          </>
+        )}
 
         {/* The WSD, ACC, Parli, Congress and Speech collections, directly above
             the search box on the All Videos page (ACC and Parli on College Team
