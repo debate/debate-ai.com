@@ -79,8 +79,8 @@ describe("judge paradigm API client", () => {
 
   it("builds a profile URL from a person id, or from a full name, or not at all", () => {
     expect(judgeProfileUrl({ personId: 9, first: "", last: "" })).toBe(`${JUDGE_PARADIGMS_API}?personId=9`);
-    expect(judgeProfileUrl({ first: " Sam ", last: " Lee " })).toBe(`${JUDGE_PARADIGMS_API}?first=Sam&last=Lee`);
-    expect(judgeProfileUrl({ first: "Sam", last: " " })).toBeNull();
+    expect(judgeProfileUrl({ personId: null, first: " Sam ", last: " Lee " })).toBe(`${JUDGE_PARADIGMS_API}?first=Sam&last=Lee`);
+    expect(judgeProfileUrl({ personId: null, first: "Sam", last: " " })).toBeNull();
   });
 
   it("looks a judge up once, and again after a miss", async () => {
@@ -98,7 +98,7 @@ describe("judge paradigm API client", () => {
     // The miss was forgotten; the hit is cached.
     expect(fetchImpl).toHaveBeenCalledTimes(2);
     expect(fetchImpl.mock.calls[0][0]).toBe("/x?personId=5");
-    expect(await lookup({ first: "", last: "" })).toBeNull();
+    expect(await lookup({ personId: null, first: "", last: "" })).toBeNull();
   });
 
   it("treats an HTTP error or a network failure as no profile", async () => {
