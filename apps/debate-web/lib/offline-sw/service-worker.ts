@@ -11,40 +11,63 @@ const sw: ServiceWorkerGlobalScope = self as unknown as ServiceWorkerGlobalScope
 // from an older build survived forever and were served in preference to the
 // files the new build actually shipped.
 const CACHE_NAME = `debate-ai-${VERSION}`;
+// Build caches are `debate-ai-<semver>[-<digest>]`. The origin also holds
+// unrelated caches that share the `debate-ai-` prefix (`debate-ai-models`,
+// the speech-model cache), so match the version shape rather than the prefix.
+const BUILD_CACHE = /^debate-ai-\d+\.\d+\.\d+/;
 
 // Everything the build emitted, for cache-first serving. These are the only
 // same-origin paths we trust to be immutable within a build.
 const PRECACHED = new Set<string>(APP_FILE_LIST);
 
+/**
+ * Precache one URL without ever failing the install.
+ *
+ * `cache.add` / `addAll` reject on any non-2xx response, and each rejection
+ * surfaced in the console as "Cache.add() failed … Response status 404". A
+ * precache entry is an optimisation, not a requirement: anything that is
+ * missing (a stale list, a file removed mid-deploy, a flaky connection) is
+ * skipped and picked up lazily by the cache-first fetch handler instead.
+ * `cache: "reload"` bypasses the HTTP cache so a stale copy is never pinned
+ * into this build's cache.
+ */
+async function precache(cache: Cache, url: string): Promise<boolean> {
+  try {
+    const response = await fetch(url, { cache: "reload" });
+    if (!response.ok || response.redirected || response.type === "opaqueredirect") {
+      return false;
+    }
+    await cache.put(url, response);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function onInstall() {
   console.info("SW : Install : " + VERSION);
   const cache = await caches.open(CACHE_NAME);
 
-  // Cache assets individually so one missing file doesn't break the whole installation.
   // The app is server-rendered (no static index.html), so the navigation shell is
   // the root document `/`; the rest comes from the generated build manifest.
-  const assetsToCache = ['/', ...APP_FILE_LIST];
-  let cachedCount = 0;
+  const assetsToCache = ["/", ...APP_FILE_LIST];
+  const results = await Promise.all(assetsToCache.map((url) => precache(cache, url)));
+  const cachedCount = results.filter(Boolean).length;
+  const skipped = assetsToCache.length - cachedCount;
 
-  await Promise.all(
-    assetsToCache.map(async (url) => {
-      try {
-        await cache.add(url);
-        cachedCount++;
-      } catch (err) {
-        console.warn(`SW : Failed to cache asset: ${url}`, err);
-      }
-    })
+  console.info(
+    `SW : Cached ${cachedCount}/${assetsToCache.length} critical assets` +
+      (skipped > 0 ? ` (${skipped} unavailable, will be cached on first use)` : ""),
   );
-
-  console.info(`SW : Cached ${cachedCount}/${assetsToCache.length} critical assets`);
 }
 
 async function onActivate() {
   console.info("SW : Activate : " + VERSION);
   const cacheNames = await caches.keys();
   await Promise.all(
-    cacheNames.filter((name) => name !== CACHE_NAME).map((name) => caches.delete(name))
+    cacheNames
+      .filter((name) => BUILD_CACHE.test(name) && name !== CACHE_NAME)
+      .map((name) => caches.delete(name)),
   );
   // Safe here in a way `skipWaiting()` is not: the browser only activates a
   // waiting worker once every page the previous one controlled has gone, so
