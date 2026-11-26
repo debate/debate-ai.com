@@ -8,6 +8,7 @@ import {
   type HsAllTimeTeam,
 } from "../src/leaderboard/profile/hsAllTimeTeams"
 import { HsAllTimeTeamsRankings } from "../src/leaderboard/profile/ProfileHsAllTimeTeams"
+import { teamHref } from "../src/leaderboard/profile/rankingProfileHelpers"
 import { findBarkleySchoolResults } from "../src/sync/barkley-champions"
 import type { NdtPointsRow } from "../src/leaderboard/profile/ndtAllSeasons"
 
@@ -98,6 +99,37 @@ describe("greatest high school teams of all time", () => {
     expect(html).toContain("Greatest Lincoln-Douglas teams of all time")
     expect(html).toContain("data-own-team")
     expect(html).toContain("Sheth")
+  })
+
+  it("links every listed team name to its team page, footnotes and college partners intact", () => {
+    const lists = hsAllTimeTeams()
+    const html = renderToStaticMarkup(
+      <HsAllTimeTeamsRankings lists={lists} schoolKey={null} collegeLoaded={false} event="Policy" />,
+    )
+    const shown = lists.Policy.slice(0, 100)
+    expect(shown).toHaveLength(100)
+    const rows = html.split("<li ").slice(1)
+    expect(rows).toHaveLength(100)
+    shown.forEach((team, i) => {
+      const href = teamHref({ school: team.school, name: team.debaters })
+      expect(rows[i]).toContain(`href="${href}"`)
+      expect(rows[i]).toMatch(new RegExp(`<a [^>]*href="${href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"[^>]*>${team.debaters.replace(/&/g, "&amp;")}</a>`))
+    })
+    const noted = shown.find((team) => team.notes.length > 0)
+    expect(noted).toBeDefined()
+    expect(html).toContain(noted!.notes.join(" · ").replace(/&/g, "&amp;"))
+  })
+
+  it("links the pinned best-of-school row too", () => {
+    const lists = hsAllTimeTeams()
+    const best = lists.Policy.find((team) => team.rank > 3 && lists.Policy.find((t) => t.schoolKey === team.schoolKey) === team)!
+    expect(best).toBeDefined()
+    const html = renderToStaticMarkup(
+      <HsAllTimeTeamsRankings lists={lists} schoolKey={best.schoolKey} collegeLoaded={false} event="Policy" limit={3} />,
+    )
+    expect(html).toContain("This school&#x27;s best in Policy")
+    const pinned = html.split("This school&#x27;s best in Policy")[1]
+    expect(pinned).toContain(`href="${teamHref({ school: best.school, name: best.debaters })}"`)
   })
 
   it("shows a school's wordmark logo when it has one", () => {
