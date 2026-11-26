@@ -63,7 +63,9 @@ submodule. Two entry points with different rules:
   cross-package API: `debate-round` persists it (`src/state/opponentTeamProfiles.ts`)
   and the app's D1 schema mirrors it. Grep before you rename a field.
 - `src/sync/sync-npdl-rankings.ts` scrapes NPDL parliamentary rankings
-  (parliamentarydebate.org pages embed published Google Sheets). The rows are
+  (parliamentarydebate.org pages hold inline HTML tables through 2022-23, a
+  gviz script for 2023-24, and embedded published Google Sheets from
+  2024-25; 2017-18 is the first ranked season). The rows are
   cached in D1 (`npdl_rankings` + `npdl_rankings_seasons`, see
   `apps/debate-web/lib/rankings/npdl-rankings-store.ts`): `/api/rankings/npdl`
   reads D1 and only scrapes a never-saved season; the daily 06:00 cron
