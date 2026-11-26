@@ -10,6 +10,7 @@ import {
   type EmailProvider,
   type SendResult,
 } from "../../../lib/admin/email-campaign";
+import { CURRENT_CUSTOMERS_LIST_ID } from "../../../lib/admin/email-customers";
 import { cn } from "../../../ui/lib/utils";
 import { Button } from "../../../ui/primitives/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../ui/primitives/card";
@@ -71,6 +72,7 @@ export function EmailComposePanel() {
   const [results, setResults] = useState<SendResult[] | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
   const [resumeFrom, setResumeFrom] = useState<number | null>(null);
+  const [refreshingCustomers, setRefreshingCustomers] = useState(false);
   const stopRef = useRef(false);
 
   const selected = templates.find((template) => template.id === selectedId) ?? null;
@@ -187,6 +189,23 @@ export function EmailComposePanel() {
       setError((err as Error).message);
     } finally {
       setBusy(false);
+    }
+  };
+
+  /** Re-imports every current customer into the customers list, picks it, and asks for confirmation with its fresh count. */
+  const reviewSendToCustomers = async () => {
+    setRefreshingCustomers(true);
+    resetSend();
+    try {
+      await adminEmailApi("/api/admin/emails/lists/import", { method: "POST", body: JSON.stringify({}) });
+      const { lists: fresh } = await adminEmailApi<{ lists: EmailListSummary[] }>("/api/admin/emails/lists");
+      setLists(fresh);
+      setListId(CURRENT_CUSTOMERS_LIST_ID);
+      setConfirming(true);
+    } catch (err) {
+      setSendError((err as Error).message);
+    } finally {
+      setRefreshingCustomers(false);
     }
   };
 
@@ -307,7 +326,8 @@ export function EmailComposePanel() {
           <CardTitle>Send to a list</CardTitle>
           <CardDescription>
             Sends the saved template to every address in a saved list, one email each, in batches. Addresses that
-            unsubscribed are skipped.
+            unsubscribed are skipped. "Send to all current customers" first refreshes the imported customers list from
+            current accounts, then asks you to confirm the count.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
@@ -367,9 +387,17 @@ export function EmailComposePanel() {
           {selected && dirty && <p className="text-muted-foreground text-sm">Save your changes to the template before sending.</p>}
 
           {!confirming && (
-            <div>
+            <div className="flex flex-wrap gap-2">
               <Button size="sm" onClick={() => setConfirming(true)} disabled={!canReview}>
                 Review and send
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={reviewSendToCustomers}
+                disabled={!selected || dirty || !providerReady || sending || refreshingCustomers}
+              >
+                {refreshingCustomers ? "Refreshing customers…" : "Send to all current customers"}
               </Button>
             </div>
           )}
