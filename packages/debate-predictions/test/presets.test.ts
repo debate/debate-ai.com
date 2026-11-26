@@ -14,7 +14,8 @@ import {
 } from "../src/presets";
 
 const team = (rank: number): PresetTeam => ({
-  hash: `HASH${rank}`.padEnd(64, "0"),
+  // Unique 16-char prefixes so tournament outcome ids (`team:<16 hex>`) do not collide.
+  hash: `hash${String(rank).padStart(2, "0")}`.padEnd(64, "0"),
   name: `Team ${rank}`,
   school: `School ${rank}`,
   rating: 2000 - rank,
@@ -58,7 +59,7 @@ describe("planPresetMarkets", () => {
     { dataset: "cpd", teams: [1, 2].map(team) },
   ];
 
-  it("opens a rating market on each division's top five, by rank, closing at month end", () => {
+  it("opens a rating market on each division's top ten, by rank, closing at month end", () => {
     const ratings = planPresetMarkets(OCT_2_2026, rankings).filter((m) => m.kind === "rating");
     expect(ratings.map((m) => (m.source.type === "rating" ? `${m.source.dataset}:${m.source.name}` : ""))).toEqual([
       "hspf:Team 1",
@@ -66,12 +67,17 @@ describe("planPresetMarkets", () => {
       "hspf:Team 3",
       "hspf:Team 4",
       "hspf:Team 5",
+      "hspf:Team 6",
+      "hspf:Team 7",
+      "hspf:Team 8",
+      "hspf:Team 9",
+      "hspf:Team 10",
       "cpd:Team 1",
       "cpd:Team 2",
     ]);
     expect(ratings[0]).toMatchObject({
       closesAt: Date.UTC(2026, 10, 1) / 1000,
-      source: { baseline: 1999, hash: "hash1".padEnd(64, "0") },
+      source: { baseline: 1999, hash: "hash01".padEnd(64, "0") },
     });
   });
 

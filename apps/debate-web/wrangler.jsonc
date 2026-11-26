@@ -40,6 +40,13 @@
 	"images": {
 		"binding": "IMAGES"
 	},
+	// Cloudflare Email Service, the "Cloudflare Worker" provider in Admin →
+	// Emails (lib/emails/campaign.ts reads the `EMAIL` binding). Left off until
+	// the sending domain is onboarded in the Cloudflare dashboard (Email
+	// Service → Onboard domain); uncomment, and repeat it under
+	// env.production, then redeploy. Without it that provider shows as
+	// unavailable and Resend is the only transport.
+	// "send_email": [{ "name": "EMAIL" }],
 	// Workers AI, for Cloudflare read-aloud (Deepgram Aura) behind /api/tts:
 	// the docs Voice button and the card editor's Read aloud. Without it the
 	// route can only reach Workers AI through the REST API
