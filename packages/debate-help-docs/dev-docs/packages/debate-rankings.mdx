@@ -36,12 +36,14 @@ stores (`src/state/`), the topic formatters (`src/topics/`) and the bundled topi
 tournaments, NDT history and school-name data (`data/`, exported as `./data/*`).
 
 NPDL (high school parliamentary) rankings come from `src/sync/sync-npdl-rankings.ts`: it reads a
-parliamentarydebate.org season page, finds the Google Sheets embedded under its `team-rankings` and
-`school-rankings` headings, downloads each as CSV (the sheet's `pubhtml` table when CSV is blocked)
-and keeps ranks exactly as published, ties included. `/api/rankings/npdl?season=2024-25` runs it
-live in the Worker (6 h edge cache) and falls back to the bundled `data/npdl-rankings.json`, which
-`bun run sync-npdl -- --season 2024-25` (or `--all-seasons`) refreshes from a machine that can reach
-the site. 2024-25 should give 879 team rows and 26 school rows. `ParliRankingsSection` renders it in
+parliamentarydebate.org season page, which publishes them one of three ways: HTML tables written into
+the page (2017-18 to 2022-23), a script that loads the sheet by name through gviz (2023-24), or
+Google Sheets embedded under its `team-rankings` and `school-rankings` headings (2024-25 on). Sheets
+are downloaded as CSV (the sheet's HTML view when CSV is blocked), and ranks are kept exactly as
+published, ties included. 2017-18 is the league's first ranked season. `/api/rankings/npdl?season=2024-25`
+reads D1, scrapes a never-saved season, and falls back to the bundled `data/npdl-rankings.json`
+(every season), which `bun run sync-npdl -- --season 2024-25` (or `--all-seasons`) refreshes from a
+machine that can reach the site. 2024-25 should give 877 team rows and 25 school rows. `ParliRankingsSection` renders it in
 the leaderboard's Parli tab (`/rank/PARLI`, after College Policy); it has no pickers of its own, and
 the panel's shared Teams/Schools toggle and season select drive it (`NPDL_SEASON_YEARS`, no "All
 time"). The daily cron refreshes the newest three seasons and backfills any older season not yet in

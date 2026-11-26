@@ -3,14 +3,15 @@ import { Resend } from "resend";
 import { EMAIL_TEMPLATES, isEmailTemplateId } from "@debate-ai/emails";
 import { renderEmailPreview } from "@/lib/emails/render";
 import { getAdminAccess } from "@/lib/auth/admin";
-import { getEnv } from "@/lib/env";
+import { getDBFromContext } from "@/lib/database/context";
+import { resolveResendKey } from "@/lib/emails/settings";
 import { APP_EMAIL, APP_NAME } from "@debate-ai/webview/lib/config/site";
 
 /**
  * Email template previews for the admin Emails section — admins only.
  *
  * GET lists every `@debate-ai/emails` template, with `canSend` saying whether
- * a Resend key is configured (the panel turns its send buttons off without one). GET ?template=<id> renders that
+ * a Resend key is saved or in the env (the panel turns its send buttons off without one). GET ?template=<id> renders that
  * template with its sample data, linked to this deployment's origin, and
  * returns `{ subject, html, text }`. Rendering here rather than in the browser
  * previews exactly what the Worker sends.
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest) {
   if (id === null) {
     return NextResponse.json({
       templates: EMAIL_TEMPLATES.map(({ id, name, description, sentFrom }) => ({ id, name, description, sentFrom })),
-      canSend: Boolean(getEnv("RESEND_API_KEY") || getEnv("AUTH_RESEND_KEY")),
+      canSend: Boolean(await resolveResendKey(await getDBFromContext().catch(() => null))),
     });
   }
   if (!isEmailTemplateId(id)) {
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Provide a known email template." }, { status: 400 });
   }
 
-  const resendKey = getEnv("RESEND_API_KEY") || getEnv("AUTH_RESEND_KEY");
+  const resendKey = (await resolveResendKey(await getDBFromContext().catch(() => null)))?.key;
   if (!resendKey) {
     return NextResponse.json({ error: "RESEND_API_KEY is not set, so no email can be sent." }, { status: 503 });
   }
