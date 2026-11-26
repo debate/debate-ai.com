@@ -45,3 +45,22 @@ describe("isValidEmailAddress", () => {
     expect(isValidEmailAddress("first.last+tag@sub.example.co.uk")).toBe(true);
   });
 });
+
+describe("saved list input", () => {
+  it("dedupes case-insensitively across mixed separators and keeps first-seen order", () => {
+    const parsed = parseRecipientList("Zed@x.com; amy@x.com\nZED@x.com,bob@x.com amy@x.com");
+    expect(parsed.valid).toEqual(["zed@x.com", "amy@x.com", "bob@x.com"]);
+    expect(parsed.duplicates).toBe(2);
+  });
+
+  it("reports every invalid entry as typed so none is silently dropped", () => {
+    const parsed = parseRecipientList("ok@x.com, not-an-email, @nope.com, two@@x.com");
+    expect(parsed.valid).toEqual(["ok@x.com"]);
+    expect(parsed.invalid).toEqual(["not-an-email", "@nope.com", "two@@x.com"]);
+  });
+
+  it("parses a list a save wrote back out, one address per line", () => {
+    const parsed = parseRecipientList(["a@x.com", "b@x.com"].join("\n"));
+    expect(parsed).toEqual({ valid: ["a@x.com", "b@x.com"], invalid: [], duplicates: 0 });
+  });
+});
