@@ -12,6 +12,7 @@ import { describe, expect, it } from "vitest";
 import { SIDEBAR_VIDEO_LINKS } from "@debate-ai/videos";
 
 import {
+  authorSitemapEntries,
   buildSitemap,
   docsSitemapEntries,
   lectureCategorySitemapEntries,
@@ -161,5 +162,29 @@ describe("buildSitemap", () => {
 
   it("is a valid sitemap with no dynamic parts to fill in", () => {
     expect(buildSitemap(VIDEO_INPUT).length).toBeGreaterThan(0);
+  });
+});
+
+describe("authorSitemapEntries", () => {
+  it("lists each author page once, at its absolute URL", () => {
+    const entries = authorSitemapEntries([
+      { path: "/authors/steven-pinker" },
+      { path: "/authors/steven-pinker" },
+      { path: "/authors/ryan-galloway" },
+    ]);
+    expect(entries.map((entry) => entry.url)).toEqual([
+      absoluteUrl("/authors/steven-pinker"),
+      absoluteUrl("/authors/ryan-galloway"),
+    ]);
+  });
+
+  it("ignores anything that is not an author page", () => {
+    expect(authorSitemapEntries([{ path: "" }, { path: "/videos" }, { path: "/authors/ok" }]).length).toBe(1);
+  });
+
+  it("is part of the whole sitemap, along with the index", () => {
+    const urls = buildSitemap({ ...VIDEO_INPUT, authors: [{ path: "/authors/ryan-galloway" }] }).map((entry) => entry.url);
+    expect(urls).toContain(absoluteUrl("/authors"));
+    expect(urls).toContain(absoluteUrl("/authors/ryan-galloway"));
   });
 });
