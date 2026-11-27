@@ -335,6 +335,14 @@ describe("TeamProfilePage caselist section", () => {
     expect(root.querySelector('a[href="https://opencaselist.com/hspf25/Harker/KiLe"]')).not.toBeNull();
     const download = root.querySelector('a[download="a.docx"]');
     expect(download?.getAttribute("href")).toBe("/api/caselist-team/file?path=hspf25%2FHarker%2FKiLe%2Fa.docx");
+    const editor = [...root.querySelectorAll("a")].find((a) => a.textContent === ".docx")!;
+    const editorUrl = new URL(editor.getAttribute("href")!, "http://localhost");
+    expect(editorUrl.pathname).toBe("/import/docx");
+    expect(editorUrl.searchParams.get("name")).toBe("a.docx");
+    expect(editorUrl.searchParams.get("url")).toBe(
+      `${window.location.origin}/api/caselist-team/file?path=hspf25%2FHarker%2FKiLe%2Fa.docx`,
+    );
+    expect(editor.hasAttribute("download")).toBe(false);
   });
 
   it("filters rounds by side", async () => {
