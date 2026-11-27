@@ -95,7 +95,9 @@ function RankCell({ rank, pending }: { rank: SchoolStrengthRank | null; pending:
 
 /**
  * The school's standing in each event it competes in: its
- * rank among every program in that event over the last decade and all time.
+ * rank among every program in that event over the last decade and all time,
+ * by the greatest-of-all-time program points, so the all-time cell is the
+ * school's rank, points and field on that event's all-time Schools list.
  * Programs are ranked per event (the #1 Policy school, the #1 PF school),
  * never across events combined.
  */
@@ -259,6 +261,11 @@ function StrengthFormula() {
         Ranks are among every entry rated that season ({seasonLabel(SCHOOL_SEASON_FIRST_YEAR)} on), so
         earlier seasons, back to the school's first national finish, score those results only. The current season counts
         the rankings so far.
+      </p>
+      <p className="mt-2">
+        The all-time rank is the school's place on the Greatest of all time list for the event, the same points over every
+        finished season among every program with a TOC, NDCA, Cal or Glenbrooks finish or a ranked entry; the last decade
+        ranks those points over its seasons alone.
       </p>
     </details>
   )

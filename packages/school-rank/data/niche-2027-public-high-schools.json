@@ -1,0 +1,1140 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "publisher": "Niche",
+    "list": "Niche 2027 Best High Schools in America",
+    "url": "https://www.niche.com/k12/search/best-high-schools/",
+    "listLabel": "Best Public High Schools in America"
+  },
+  "year": 2027,
+  "listType": "public-high-schools",
+  "level": "high-school",
+  "schoolType": "public",
+  "metadata": {
+    "complete": false,
+    "firstRank": 1,
+    "lastRank": 1001,
+    "entryCount": 200,
+    "rankRangesPresent": [
+      {
+        "from": 1,
+        "to": 50
+      },
+      {
+        "from": 76,
+        "to": 100
+      },
+      {
+        "from": 126,
+        "to": 150
+      },
+      {
+        "from": 176,
+        "to": 250
+      },
+      {
+        "from": 601,
+        "to": 625
+      }
+    ],
+    "knownGaps": [
+      {
+        "from": 51,
+        "to": 75,
+        "reason": "Not compiled yet (Niche page timed out or was not retrieved); rank unknown, not unranked."
+      },
+      {
+        "from": 101,
+        "to": 125,
+        "reason": "Not compiled yet (Niche page timed out or was not retrieved); rank unknown, not unranked."
+      },
+      {
+        "from": 151,
+        "to": 175,
+        "reason": "Not compiled yet (Niche page timed out or was not retrieved); rank unknown, not unranked."
+      },
+      {
+        "from": 251,
+        "to": 600,
+        "reason": "Not compiled yet (Niche page timed out or was not retrieved); rank unknown, not unranked."
+      },
+      {
+        "from": 626,
+        "to": 1001,
+        "reason": "Not compiled yet (Niche page timed out or was not retrieved); rank unknown, not unranked."
+      }
+    ],
+    "notes": [
+      "Partial list: only the rank ranges in rankRangesPresent are compiled. Every rank in knownGaps is unknown, never guessed.",
+      "Location is stored as city and/or state only where the source states it. A lone two-letter code is read as a state, except Girls Academic Leadership Academy, whose source shows \"(LA)\" (Los Angeles); it is kept as locationRaw with no state.",
+      "The Niche order is for all schools; U.S. News ranks for the 42 U.S. News-ranked public schools are not tabulated against it."
+    ]
+  },
+  "entries": [
+    {
+      "rank": 1,
+      "tie": false,
+      "name": "NC School of Science and Mathematics",
+      "city": "Durham",
+      "state": "NC"
+    },
+    {
+      "rank": 2,
+      "tie": false,
+      "name": "The Davidson Academy",
+      "city": "Reno",
+      "state": "NV"
+    },
+    {
+      "rank": 3,
+      "tie": false,
+      "name": "SC Governor's School for Science and Mathematics",
+      "city": "Hartsville",
+      "state": "SC"
+    },
+    {
+      "rank": 4,
+      "tie": false,
+      "name": "MA Academy for Math & Science",
+      "city": "Worcester",
+      "state": "MA"
+    },
+    {
+      "rank": 5,
+      "tie": false,
+      "name": "Stuyvesant HS",
+      "state": "NY"
+    },
+    {
+      "rank": 6,
+      "tie": false,
+      "name": "Pine View School",
+      "city": "Osprey",
+      "state": "FL"
+    },
+    {
+      "rank": 7,
+      "tie": false,
+      "name": "Payton College Prep",
+      "city": "Chicago"
+    },
+    {
+      "rank": 8,
+      "tie": false,
+      "name": "Northside College Prep",
+      "city": "Chicago"
+    },
+    {
+      "rank": 9,
+      "tie": false,
+      "name": "Oklahoma School of Science and Mathematics",
+      "city": "Oklahoma City"
+    },
+    {
+      "rank": 10,
+      "tie": false,
+      "name": "International Academy",
+      "city": "Bloomfield Hills",
+      "state": "MI"
+    },
+    {
+      "rank": 11,
+      "tie": false,
+      "name": "School for the Talented & Gifted",
+      "city": "Dallas"
+    },
+    {
+      "rank": 12,
+      "tie": false,
+      "name": "Bronx High School of Science",
+      "state": "NY"
+    },
+    {
+      "rank": 13,
+      "tie": false,
+      "name": "Illinois Mathematics and Science Academy",
+      "city": "Aurora"
+    },
+    {
+      "rank": 14,
+      "tie": false,
+      "name": "Whitney M. Young Magnet",
+      "city": "Chicago"
+    },
+    {
+      "rank": 15,
+      "tie": false,
+      "name": "A.D. Henderson University School & FAU HS",
+      "city": "Boca Raton"
+    },
+    {
+      "rank": 16,
+      "tie": false,
+      "name": "Indiana Academy for Science, Mathematics, and Humanities",
+      "city": "Muncie"
+    },
+    {
+      "rank": 17,
+      "tie": false,
+      "name": "HS Math Science & Engineering at CCNY",
+      "state": "NY"
+    },
+    {
+      "rank": 18,
+      "tie": false,
+      "name": "Gwinnett School of Mathematics, Science & Technology",
+      "city": "Lawrenceville",
+      "state": "GA"
+    },
+    {
+      "rank": 19,
+      "tie": false,
+      "name": "School of Science & Engineering",
+      "city": "Dallas"
+    },
+    {
+      "rank": 20,
+      "tie": false,
+      "name": "Academy for Mathematics, Science & Engineering",
+      "city": "Rockaway",
+      "state": "NJ"
+    },
+    {
+      "rank": 21,
+      "tie": false,
+      "name": "Alabama School of Mathematics and Science",
+      "city": "Mobile"
+    },
+    {
+      "rank": 22,
+      "tie": false,
+      "name": "Signature School",
+      "city": "Evansville",
+      "state": "IN"
+    },
+    {
+      "rank": 23,
+      "tie": false,
+      "name": "Thomas Jefferson HS for Science & Technology",
+      "city": "Alexandria",
+      "state": "VA"
+    },
+    {
+      "rank": 24,
+      "tie": false,
+      "name": "California Academy of Mathematics & Science",
+      "city": "Carson"
+    },
+    {
+      "rank": 25,
+      "tie": false,
+      "name": "BASIS Scottsdale",
+      "state": "AZ"
+    },
+    {
+      "rank": 26,
+      "tie": false,
+      "name": "Lane Tech College Prep",
+      "city": "Chicago"
+    },
+    {
+      "rank": 27,
+      "tie": false,
+      "name": "BASIS Ahwatukee",
+      "city": "Phoenix"
+    },
+    {
+      "rank": 28,
+      "tie": false,
+      "name": "NeoCity Academy",
+      "city": "Kissimmee",
+      "state": "FL"
+    },
+    {
+      "rank": 29,
+      "tie": false,
+      "name": "The Early College at Guilford",
+      "city": "Greensboro"
+    },
+    {
+      "rank": 30,
+      "tie": false,
+      "name": "Townsend Harris HS",
+      "city": "Flushing",
+      "state": "NY"
+    },
+    {
+      "rank": 31,
+      "tie": false,
+      "name": "Staten Island Technical HS",
+      "state": "NY"
+    },
+    {
+      "rank": 32,
+      "tie": false,
+      "name": "Half Hollow Hills HS West",
+      "city": "Dix Hills",
+      "state": "NY"
+    },
+    {
+      "rank": 33,
+      "tie": false,
+      "name": "Syosset Senior HS",
+      "state": "NY"
+    },
+    {
+      "rank": 34,
+      "tie": false,
+      "name": "Girls Academic Leadership Academy",
+      "locationRaw": "LA"
+    },
+    {
+      "rank": 35,
+      "tie": false,
+      "name": "Spring Branch Academic Institute",
+      "city": "Houston"
+    },
+    {
+      "rank": 36,
+      "tie": false,
+      "name": "Carnegie Vanguard HS",
+      "city": "Houston"
+    },
+    {
+      "rank": 37,
+      "tie": false,
+      "name": "HS of American Studies at Lehman College",
+      "city": "Bronx"
+    },
+    {
+      "rank": 38,
+      "tie": false,
+      "name": "Adlai E. Stevenson HS",
+      "city": "Lincolnshire",
+      "state": "IL"
+    },
+    {
+      "rank": 39,
+      "tie": false,
+      "name": "Alexander W. Dreyfoos Jr. School of the Arts",
+      "city": "West Palm Beach"
+    },
+    {
+      "rank": 40,
+      "tie": false,
+      "name": "Marine Academy of Technology & Environmental Science",
+      "city": "Manahawkin",
+      "state": "NJ"
+    },
+    {
+      "rank": 41,
+      "tie": false,
+      "name": "Jones College Prep",
+      "city": "Chicago"
+    },
+    {
+      "rank": 42,
+      "tie": false,
+      "name": "Liberal Arts & Science Academy",
+      "city": "Austin"
+    },
+    {
+      "rank": 43,
+      "tie": false,
+      "name": "Bergen County Academies",
+      "city": "Hackensack"
+    },
+    {
+      "rank": 44,
+      "tie": false,
+      "name": "Stanton College Preparatory",
+      "city": "Jacksonville"
+    },
+    {
+      "rank": 45,
+      "tie": false,
+      "name": "California School of the Arts-San Gabriel Valley",
+      "city": "Duarte"
+    },
+    {
+      "rank": 46,
+      "tie": false,
+      "name": "Loveless Academic Magnet Program HS",
+      "city": "Montgomery"
+    },
+    {
+      "rank": 47,
+      "tie": false,
+      "name": "School for Advanced Studies-North",
+      "city": "Miami"
+    },
+    {
+      "rank": 48,
+      "tie": false,
+      "name": "Poolesville HS",
+      "state": "MD"
+    },
+    {
+      "rank": 49,
+      "tie": false,
+      "name": "Scarsdale Senior HS",
+      "state": "NY"
+    },
+    {
+      "rank": 50,
+      "tie": false,
+      "name": "Jericho Senior HS",
+      "state": "NY"
+    },
+    {
+      "rank": 76,
+      "tie": false,
+      "name": "The College Academy at Broward College"
+    },
+    {
+      "rank": 77,
+      "tie": false,
+      "name": "Neuqua Valley HS"
+    },
+    {
+      "rank": 78,
+      "tie": false,
+      "name": "River Hill HS"
+    },
+    {
+      "rank": 79,
+      "tie": false,
+      "name": "The Mississippi School for Mathematics and Science"
+    },
+    {
+      "rank": 80,
+      "tie": false,
+      "name": "School for Advanced Studies-South"
+    },
+    {
+      "rank": 81,
+      "tie": false,
+      "name": "Orange County School of the Arts"
+    },
+    {
+      "rank": 82,
+      "tie": false,
+      "name": "Independence HS"
+    },
+    {
+      "rank": 83,
+      "tie": false,
+      "name": "Weston HS"
+    },
+    {
+      "rank": 84,
+      "tie": false,
+      "name": "Hinsdale Central HS"
+    },
+    {
+      "rank": 85,
+      "tie": false,
+      "name": "Roslyn HS"
+    },
+    {
+      "rank": 86,
+      "tie": false,
+      "name": "McFatter Technical HS"
+    },
+    {
+      "rank": 87,
+      "tie": false,
+      "name": "The School Without Walls HS"
+    },
+    {
+      "rank": 88,
+      "tie": false,
+      "name": "Seven Lakes HS"
+    },
+    {
+      "rank": 89,
+      "tie": false,
+      "name": "Columbus HS"
+    },
+    {
+      "rank": 90,
+      "tie": false,
+      "name": "Palo Alto HS"
+    },
+    {
+      "rank": 91,
+      "tie": false,
+      "name": "Brooklyn Latin School"
+    },
+    {
+      "rank": 92,
+      "tie": false,
+      "name": "Westwood HS IB World School"
+    },
+    {
+      "rank": 93,
+      "tie": false,
+      "name": "DeBakey HS for Health Professions"
+    },
+    {
+      "rank": 94,
+      "tie": false,
+      "name": "St. Petersburg Collegiate HS"
+    },
+    {
+      "rank": 95,
+      "tie": false,
+      "name": "Clayton HS"
+    },
+    {
+      "rank": 96,
+      "tie": false,
+      "name": "Julia R. Masterman Laboratory and Demonstration School"
+    },
+    {
+      "rank": 97,
+      "tie": false,
+      "name": "Eleanor Roosevelt HS"
+    },
+    {
+      "rank": 98,
+      "tie": false,
+      "name": "Novi HS"
+    },
+    {
+      "rank": 99,
+      "tie": false,
+      "name": "Radnor Senior HS"
+    },
+    {
+      "rank": 100,
+      "tie": false,
+      "name": "Bergen County Technical HS-Teterboro"
+    },
+    {
+      "rank": 126,
+      "tie": false,
+      "name": "Peak to Peak Charter School"
+    },
+    {
+      "rank": 127,
+      "tie": false,
+      "name": "South Texas ISD Science Academy"
+    },
+    {
+      "rank": 128,
+      "tie": false,
+      "name": "Wake STEM Early College HS"
+    },
+    {
+      "rank": 129,
+      "tie": false,
+      "name": "West Lafayette Junior/Senior HS"
+    },
+    {
+      "rank": 130,
+      "tie": false,
+      "name": "Evanston Township HS"
+    },
+    {
+      "rank": 131,
+      "tie": false,
+      "name": "Lexington HS"
+    },
+    {
+      "rank": 132,
+      "tie": false,
+      "name": "Coppell HS"
+    },
+    {
+      "rank": 133,
+      "tie": false,
+      "name": "Hume-Fogg HS"
+    },
+    {
+      "rank": 134,
+      "tie": false,
+      "name": "South Pasadena Senior HS"
+    },
+    {
+      "rank": 135,
+      "tie": false,
+      "name": "Obra D. Tompkins HS"
+    },
+    {
+      "rank": 136,
+      "tie": false,
+      "name": "Great Hearts-Chandler Prep"
+    },
+    {
+      "rank": 137,
+      "tie": false,
+      "name": "Northern Valley Regional HS Demarest"
+    },
+    {
+      "rank": 138,
+      "tie": false,
+      "name": "MAST@FIU-Biscayne Bay"
+    },
+    {
+      "rank": 139,
+      "tie": false,
+      "name": "Troy HS"
+    },
+    {
+      "rank": 140,
+      "tie": false,
+      "name": "Raleigh Charter HS"
+    },
+    {
+      "rank": 141,
+      "tie": false,
+      "name": "Torrey Pines HS"
+    },
+    {
+      "rank": 142,
+      "tie": false,
+      "name": "Metea Valley HS"
+    },
+    {
+      "rank": 143,
+      "tie": false,
+      "name": "Pompano Beach HS"
+    },
+    {
+      "rank": 144,
+      "tie": false,
+      "name": "McLean HS"
+    },
+    {
+      "rank": 145,
+      "tie": false,
+      "name": "Onslow Early College HS"
+    },
+    {
+      "rank": 146,
+      "tie": false,
+      "name": "Archimedean Upper Conservatory"
+    },
+    {
+      "rank": 147,
+      "tie": false,
+      "name": "Los Altos HS"
+    },
+    {
+      "rank": 148,
+      "tie": false,
+      "name": "BASIS Flagstaff"
+    },
+    {
+      "rank": 149,
+      "tie": false,
+      "name": "Lambert HS"
+    },
+    {
+      "rank": 150,
+      "tie": false,
+      "name": "Marriotts Ridge HS"
+    },
+    {
+      "rank": 176,
+      "tie": false,
+      "name": "Rochester Adams HS"
+    },
+    {
+      "rank": 177,
+      "tie": false,
+      "name": "Newport HS"
+    },
+    {
+      "rank": 178,
+      "tie": false,
+      "name": "Palos Verdes Peninsula HS"
+    },
+    {
+      "rank": 179,
+      "tie": false,
+      "name": "John Hersey HS"
+    },
+    {
+      "rank": 180,
+      "tie": false,
+      "name": "Naperville North HS"
+    },
+    {
+      "rank": 181,
+      "tie": false,
+      "name": "Carmel HS"
+    },
+    {
+      "rank": 182,
+      "tie": false,
+      "name": "Bronxville HS"
+    },
+    {
+      "rank": 183,
+      "tie": false,
+      "name": "iUniversity Prep"
+    },
+    {
+      "rank": 184,
+      "tie": false,
+      "name": "Campolindo HS"
+    },
+    {
+      "rank": 185,
+      "tie": false,
+      "name": "The Science Academy STEM Magnet"
+    },
+    {
+      "rank": 186,
+      "tie": false,
+      "name": "Minnetonka Senior HS"
+    },
+    {
+      "rank": 187,
+      "tie": false,
+      "name": "Westview HS"
+    },
+    {
+      "rank": 188,
+      "tie": false,
+      "name": "Darien HS"
+    },
+    {
+      "rank": 189,
+      "tie": false,
+      "name": "Oakton HS"
+    },
+    {
+      "rank": 190,
+      "tie": false,
+      "name": "Del Norte HS"
+    },
+    {
+      "rank": 191,
+      "tie": false,
+      "name": "Valley International Preparatory HS"
+    },
+    {
+      "rank": 192,
+      "tie": false,
+      "name": "North Gwinnett HS"
+    },
+    {
+      "rank": 193,
+      "tie": false,
+      "name": "Early College HS"
+    },
+    {
+      "rank": 194,
+      "tie": false,
+      "name": "Helix Charter HS"
+    },
+    {
+      "rank": 195,
+      "tie": false,
+      "name": "iPrep Academy"
+    },
+    {
+      "rank": 196,
+      "tie": false,
+      "name": "University HS"
+    },
+    {
+      "rank": 197,
+      "tie": false,
+      "name": "Baton Rouge Magnet HS"
+    },
+    {
+      "rank": 198,
+      "tie": false,
+      "name": "Tenafly HS"
+    },
+    {
+      "rank": 199,
+      "tie": false,
+      "name": "Coral Reef Senior HS"
+    },
+    {
+      "rank": 200,
+      "tie": false,
+      "name": "Rye HS"
+    },
+    {
+      "rank": 201,
+      "tie": false,
+      "name": "Tesla STEM HS"
+    },
+    {
+      "rank": 202,
+      "tie": false,
+      "name": "Mayo HS for Math, Science & Technology"
+    },
+    {
+      "rank": 203,
+      "tie": false,
+      "name": "Da Vinci Science"
+    },
+    {
+      "rank": 204,
+      "tie": false,
+      "name": "Barrington HS"
+    },
+    {
+      "rank": 205,
+      "tie": false,
+      "name": "Central Magnet School"
+    },
+    {
+      "rank": 206,
+      "tie": false,
+      "name": "Mosaic Digital Academy"
+    },
+    {
+      "rank": 207,
+      "tie": false,
+      "name": "Eastern Technical HS"
+    },
+    {
+      "rank": 208,
+      "tie": false,
+      "name": "Haas Hall Academy Jones Center"
+    },
+    {
+      "rank": 209,
+      "tie": false,
+      "name": "Eunice Sato Academy of Math & Science"
+    },
+    {
+      "rank": 210,
+      "tie": false,
+      "name": "Piedmont HS"
+    },
+    {
+      "rank": 211,
+      "tie": false,
+      "name": "Buford HS"
+    },
+    {
+      "rank": 212,
+      "tie": false,
+      "name": "Indian Hill HS"
+    },
+    {
+      "rank": 213,
+      "tie": false,
+      "name": "James B. Conant HS"
+    },
+    {
+      "rank": 214,
+      "tie": false,
+      "name": "Clear Horizons Early College HS"
+    },
+    {
+      "rank": 215,
+      "tie": false,
+      "name": "West Windsor-Plainsboro HS South"
+    },
+    {
+      "rank": 216,
+      "tie": false,
+      "name": "Dublin Jerome HS"
+    },
+    {
+      "rank": 217,
+      "tie": false,
+      "name": "Northern Valley Regional HS-Old Tappan"
+    },
+    {
+      "rank": 218,
+      "tie": false,
+      "name": "Millennium Brooklyn HS"
+    },
+    {
+      "rank": 219,
+      "tie": false,
+      "name": "Waxahachie Global HS"
+    },
+    {
+      "rank": 220,
+      "tie": false,
+      "name": "Burlingame HS"
+    },
+    {
+      "rank": 221,
+      "tie": false,
+      "name": "Centennial HS"
+    },
+    {
+      "rank": 222,
+      "tie": false,
+      "name": "Shasta Collegiate Academy"
+    },
+    {
+      "rank": 223,
+      "tie": false,
+      "name": "Judge Barefoot Sanders Law Magnet"
+    },
+    {
+      "rank": 224,
+      "tie": false,
+      "name": "Ravenwood HS"
+    },
+    {
+      "rank": 225,
+      "tie": false,
+      "name": "Mountain View HS"
+    },
+    {
+      "rank": 226,
+      "tie": false,
+      "name": "Baccalaureate School for Global Education"
+    },
+    {
+      "rank": 227,
+      "tie": false,
+      "name": "BASIS Peoria"
+    },
+    {
+      "rank": 228,
+      "tie": false,
+      "name": "Walton HS"
+    },
+    {
+      "rank": 229,
+      "tie": false,
+      "name": "The Charter School of Wilmington"
+    },
+    {
+      "rank": 230,
+      "tie": false,
+      "name": "Miramonte HS"
+    },
+    {
+      "rank": 231,
+      "tie": false,
+      "name": "Caddo Parish Magnet HS"
+    },
+    {
+      "rank": 232,
+      "tie": false,
+      "name": "Palos Verdes HS"
+    },
+    {
+      "rank": 233,
+      "tie": false,
+      "name": "Chattahoochee HS"
+    },
+    {
+      "rank": 234,
+      "tie": false,
+      "name": "Waubonsie Valley HS"
+    },
+    {
+      "rank": 235,
+      "tie": false,
+      "name": "Open HS"
+    },
+    {
+      "rank": 236,
+      "tie": false,
+      "name": "Hopkinton HS"
+    },
+    {
+      "rank": 237,
+      "tie": false,
+      "name": "Bard HS Early College Queens"
+    },
+    {
+      "rank": 238,
+      "tie": false,
+      "name": "BASIS Chandler"
+    },
+    {
+      "rank": 239,
+      "tie": false,
+      "name": "State College of Florida Collegiate School-Bradenton"
+    },
+    {
+      "rank": 240,
+      "tie": false,
+      "name": "Union County Vocational-Technical HS"
+    },
+    {
+      "rank": 241,
+      "tie": false,
+      "name": "Wayzata HS"
+    },
+    {
+      "rank": 242,
+      "tie": false,
+      "name": "Allen HS"
+    },
+    {
+      "rank": 243,
+      "tie": false,
+      "name": "Belmont HS"
+    },
+    {
+      "rank": 244,
+      "tie": false,
+      "name": "Naperville Central HS"
+    },
+    {
+      "rank": 245,
+      "tie": false,
+      "name": "Great Neck South HS"
+    },
+    {
+      "rank": 246,
+      "tie": false,
+      "name": "Cypress Bay HS"
+    },
+    {
+      "rank": 247,
+      "tie": false,
+      "name": "South Forsyth HS"
+    },
+    {
+      "rank": 248,
+      "tie": false,
+      "name": "Meridian World School"
+    },
+    {
+      "rank": 249,
+      "tie": false,
+      "name": "Johns Creek HS"
+    },
+    {
+      "rank": 250,
+      "tie": false,
+      "name": "Early College of Forsyth"
+    },
+    {
+      "rank": 601,
+      "tie": false,
+      "name": "Mission Vista HS"
+    },
+    {
+      "rank": 602,
+      "tie": false,
+      "name": "Argyle HS"
+    },
+    {
+      "rank": 603,
+      "tie": false,
+      "name": "Walnut HS"
+    },
+    {
+      "rank": 604,
+      "tie": false,
+      "name": "Speedway Senior HS"
+    },
+    {
+      "rank": 605,
+      "tie": false,
+      "name": "Lincoln HS"
+    },
+    {
+      "rank": 606,
+      "tie": false,
+      "name": "Catawba Ridge HS"
+    },
+    {
+      "rank": 607,
+      "tie": false,
+      "name": "Olentangy Berlin HS"
+    },
+    {
+      "rank": 608,
+      "tie": false,
+      "name": "Redmond HS"
+    },
+    {
+      "rank": 609,
+      "tie": false,
+      "name": "Albany HS"
+    },
+    {
+      "rank": 610,
+      "tie": false,
+      "name": "Manhattan Center for Science & Mathematics"
+    },
+    {
+      "rank": 611,
+      "tie": false,
+      "name": "Plano East Senior HS"
+    },
+    {
+      "rank": 612,
+      "tie": false,
+      "name": "College Park HS"
+    },
+    {
+      "rank": 613,
+      "tie": false,
+      "name": "North Shore Senior HS"
+    },
+    {
+      "rank": 614,
+      "tie": false,
+      "name": "Founders Classical Academy-Lewisville"
+    },
+    {
+      "rank": 615,
+      "tie": false,
+      "name": "Lake Travis HS"
+    },
+    {
+      "rank": 616,
+      "tie": false,
+      "name": "Plymouth-Whitemarsh Senior HS"
+    },
+    {
+      "rank": 617,
+      "tie": false,
+      "name": "Cabarrus-Kannapolis Early College HS"
+    },
+    {
+      "rank": 618,
+      "tie": false,
+      "name": "Paul D. Schreiber Senior HS"
+    },
+    {
+      "rank": 619,
+      "tie": false,
+      "name": "La Cueva HS"
+    },
+    {
+      "rank": 620,
+      "tie": false,
+      "name": "School of Health Professions"
+    },
+    {
+      "rank": 621,
+      "tie": false,
+      "name": "Diamond Bar HS"
+    },
+    {
+      "rank": 622,
+      "tie": false,
+      "name": "Communications HS"
+    },
+    {
+      "rank": 623,
+      "tie": false,
+      "name": "Hillsdale HS"
+    },
+    {
+      "rank": 624,
+      "tie": false,
+      "name": "Byram Hills HS"
+    },
+    {
+      "rank": 625,
+      "tie": false,
+      "name": "Riverside HS"
+    }
+  ]
+}
