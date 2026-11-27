@@ -30,10 +30,15 @@ export {
 export * from "./state/contacts";
 export * from "./state/cardShares";
 export * from "./hooks/useContacts";
+export * from "./state/contactGroups";
+export * from "./hooks/useContactGroups";
 export * from "./hooks/useCardShares";
 export {
   CONTACT_REQUEST_REFUSED_MESSAGE,
   MAX_CARD_SHARE_MESSAGE_LENGTH,
+  MAX_CONTACT_GROUPS,
+  MAX_CONTACT_GROUP_MEMBERS,
+  MAX_CONTACT_GROUP_NAME_LENGTH,
   MAX_CARD_SHARE_TITLE_LENGTH,
   PRESENCE_ONLINE_WINDOW_MS,
   buildInviteLink,
@@ -43,6 +48,8 @@ export {
   isPresenceOnline,
   normalizeCardShareMessage,
   normalizeCardShareTitle,
+  normalizeContactGroupName,
+  togglePickedGroup,
   parseInviteInput,
   parseShareCode,
   resolveContactRequest,

@@ -60,7 +60,7 @@ export function ContactAvatar({ user, online }: { user: ContactUser; online?: bo
   );
 }
 
-function UserLine({ user, online }: { user: ContactUser; online?: boolean }) {
+export function UserLine({ user, online }: { user: ContactUser; online?: boolean }) {
   return (
     <div className="flex items-center gap-2 min-w-0">
       <ContactAvatar user={user} online={online} />
@@ -82,7 +82,7 @@ async function run(work: Promise<unknown>, success?: string): Promise<void> {
 }
 
 /** Search box + results with "Add" buttons; results already in the graph show their state instead. */
-function AddContactSearch({ contacts }: { contacts: UseContactsResult }) {
+export function AddContactSearch({ contacts }: { contacts: UseContactsResult }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ContactUser[]>([]);
   const [searching, setSearching] = useState(false);
