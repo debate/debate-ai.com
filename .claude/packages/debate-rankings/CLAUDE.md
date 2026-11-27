@@ -70,7 +70,10 @@ submodule. Two entry points with different rules:
   `apps/debate-web/lib/rankings/npdl-rankings-store.ts`): `/api/rankings/npdl`
   reads D1 and only scrapes a never-saved season; the daily 06:00 cron
   re-scrapes the newest three seasons and rewrites one only when its hash
-  changed. `data/npdl-rankings.json` is the fallback when D1 can't be read;
+  changed. The save is one `db.batch()` of drizzle query builders: D1's
+  driver can't batch a raw `db.run(sql…)` that binds values (libsql can, so
+  the store tests run on both drivers). `data/npdl-rankings.json` is the
+  fallback when D1 can't be read or has no rows for the season;
   `bun run sync-npdl -- --all-seasons` refreshes that file. Keep ranks as
   published (ties), and keep the User-Agent generic (no personal contact).
   Tests use `test/fixtures/npdl/`.
