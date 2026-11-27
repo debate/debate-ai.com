@@ -314,9 +314,10 @@ html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection {
 }
 
 /*
- * The ball that follows the word Voice is saying
- * (components/guides/voice-read-ball.ts): it sits under the active word and
- * glides to the next.
+ * The marker that follows the word Voice is saying
+ * (components/guides/voice-read-ball.ts): a grab.js loading spinner
+ * (components/guides/voice-read-spinner.tsx) that sits under the active word
+ * and glides to the next. It draws in the theme's primary colour.
  */
 [data-voice-ball] {
   position: absolute;
@@ -326,20 +327,18 @@ html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection {
   width: 0;
   height: 0;
   pointer-events: none;
+  color: var(--color-fd-primary);
 }
-[data-voice-ball]::after {
-  content: "";
+[data-voice-ball] .voice-spinner {
   position: absolute;
-  left: -5px;
-  top: 1px;
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  background: var(--color-fd-primary);
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--color-fd-primary) 25%, transparent),
-    0 0 12px 2px color-mix(in srgb, var(--color-fd-primary) 55%, transparent);
-  animation: voice-ball-pulse 1.2s ease-in-out infinite;
+  left: -9px;
+  top: 2px;
+  display: block;
+  width: 18px;
+  height: 18px;
+  line-height: 0;
+  color: inherit;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--color-fd-primary) 45%, transparent));
 }
 [data-voice-ball="hidden"] {
   display: none;
@@ -347,21 +346,13 @@ html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection {
 [data-voice-ball="moving"] {
   transition: transform 150ms cubic-bezier(0.3, 0.8, 0.3, 1);
 }
-@keyframes voice-ball-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.25);
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   [data-voice-ball="moving"] {
     transition: none;
   }
-  [data-voice-ball]::after {
-    animation: none;
+  [data-voice-ball] .voice-spinner,
+  [data-voice-ball] .voice-spinner * {
+    animation: none !important;
   }
 }
 
