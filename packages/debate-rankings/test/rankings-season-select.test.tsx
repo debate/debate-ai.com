@@ -92,6 +92,31 @@ describe("rankings season select", () => {
     expect(seasonSelect(root).value).toBe(String(currentSeasonYear()));
   });
 
+  it("offers All time on the Parli tab and keeps it when switching to Parli", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation(async (input) =>
+      String(input) === "/api/rankings/npdl/all-time"
+        ? new Response(JSON.stringify({ source: "snapshot", seasons: [], teams: [], schools: [] }))
+        : new Response("{}", { status: 404 }),
+    );
+    try {
+      view = await mount(<LeaderboardPanel />);
+      await flush();
+      const root = view.container;
+      const parliTab = [...root.querySelectorAll('[role="tab"]')].find((t) => t.textContent === "Parli")!;
+      await flush(() => {
+        parliTab.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, button: 0 }));
+      });
+      expect(seasonSelect(root).querySelector('option[value="all-time"]')).not.toBeNull();
+
+      await pickSeason(root, "all-time");
+      expect(m.replace).toHaveBeenLastCalledWith("/rank/PARLI?season=all-time");
+      expect(seasonSelect(root).value).toBe("all-time");
+      expect(fetchSpy.mock.calls.some(([url]) => String(url) === "/api/rankings/npdl/all-time")).toBe(true);
+    } finally {
+      fetchSpy.mockRestore();
+    }
+  });
+
   it("opens on the season ?season= names", async () => {
     m.search = "season=2020";
     view = await mount(<LeaderboardPanel />);

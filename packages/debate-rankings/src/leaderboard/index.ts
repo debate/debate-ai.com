@@ -23,6 +23,7 @@ export {
   rankingsHref,
 } from "./rankingsUrl";
 export { ParliRankingsSection } from "./ParliRankingsSection";
+export { ParliAllTimeRankings, ParliAllTimeList } from "./ParliAllTimeRankings";
 export { TeamProfilePage, SchoolProfilePage, ProfileHandlePage } from "./profile/RankingProfiles";
 export {
   TEAM_SIDE_CLASS,
