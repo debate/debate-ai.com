@@ -21,6 +21,8 @@
     "db:migrate:d1": "bun run ../../.github/scripts/migrate-d1.ts",
     "db:seed:videos": "bun run ../../.github/scripts/seed-videos.ts",
     "db:seed:videos:d1": "bun run ../../.github/scripts/seed-videos.ts --sql-only && wrangler d1 execute debate-ai-db --remote --file=drizzle/seed/videos-seed.sql",
+    "db:sync:authors": "bun run ../../.github/scripts/sync-authors.ts",
+    "db:seed:authors:d1": "bun run ../../.github/scripts/sync-authors.ts --sql-only && wrangler d1 execute debate-ai-db --remote --file=drizzle/seed/authors-seed.sql",
     "db:studio": "drizzle-kit studio",
     "favicon": "bun create favicon public/favicon-512.png public/ --overwrite",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",

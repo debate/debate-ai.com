@@ -23,11 +23,20 @@
  *   `card-voice.ts`). The panel and the page follow the card being read.
  *
  * The list is rebuilt while the panel is open, so it follows reading mode's
- * pages as they load. Escape or the close button closes it. The page's panel
- * sits under reading mode's `z-[60]` overlay and reading mode's own above it;
- * hover cards (`z-[70]`) open over both.
+ * pages as they load. Escape or the close button closes it (and returns focus
+ * to the References button). The page's panel sits under reading mode's
+ * `z-[60]` overlay and reading mode's own above it; hover cards (`z-[70]`)
+ * open over both.
+ *
+ * - **Docked, not overlaid**: from `DOCK_MIN_VIEWPORT` up, the open panel is a
+ *   column at the right edge that pushes the page aside, and the page's right-hand
+ *   "On this page" outline is hidden while it is open (`references-panel-dock.ts`
+ *   and `styles/docs.css`). Narrower windows get a drawer over the page.
+ * - **Resizable**: a handle on the panel's left edge, by mouse, touch or pen
+ *   (drag) or keyboard (arrows, Shift for bigger steps, Home/End for the limits;
+ *   double-click or Enter resets). The width is clamped and remembered per browser.
  */
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react"
 import { createPortal } from "react-dom"
 import { BookMarked, ChevronDown, ChevronsDownUp, ChevronsUpDown, Square, Volume2, X } from "lucide-react"
 import { cn } from "../../lib/utils"
@@ -43,6 +52,20 @@ import {
   readAllCards,
   type ReferenceItem,
 } from "./references-panel-items"
+import {
+  DEFAULT_PANEL_WIDTH,
+  MIN_PANEL_WIDTH,
+  RESIZING_ATTRIBUTE,
+  canDock,
+  clampPanelWidth,
+  dockPanel,
+  maxPanelWidth,
+  readStoredWidth,
+  setDockedWidth,
+  storeWidth,
+  subscribeToDockable,
+  widthForKey,
+} from "./references-panel-dock"
 
 /** The page content the panel lists (`SYNERGY_SLAYER_CLASS` in routes/docs-page.tsx). */
 const CONTENT_SELECTOR = `.${SYNERGY_SLAYER_CLASS}`
@@ -95,9 +118,15 @@ export interface ReferencesPanelButtonProps {
 /** The toolbar button and the side panel it opens (see the module doc). */
 export function ReferencesPanelButton({ contentSelector = CONTENT_SELECTOR }: ReferencesPanelButtonProps) {
   const [open, setOpen] = useState(false)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const close = useCallback(() => {
+    setOpen(false)
+    buttonRef.current?.focus()
+  }, [])
   return (
     <>
       <button
+        ref={buttonRef}
         type="button"
         aria-pressed={open}
         aria-haspopup="dialog"
@@ -108,7 +137,7 @@ export function ReferencesPanelButton({ contentSelector = CONTENT_SELECTOR }: Re
         <BookMarked />
         References
       </button>
-      {open && <ReferencesPanel contentSelector={contentSelector} onClose={() => setOpen(false)} />}
+      {open && <ReferencesPanel contentSelector={contentSelector} onClose={close} />}
     </>
   )
 }
@@ -125,6 +154,74 @@ function ReferencesPanel({ contentSelector, onClose }: { contentSelector: string
   const nextPlace = useRef(new Map<string, number>())
 
   useEffect(() => setFull(readStoredFull()), [])
+
+  // Wide windows dock the panel beside the page; narrow ones keep a drawer.
+  const docked = useSyncExternalStore(subscribeToDockable, canDock, () => false)
+  const [storedWidth, setStoredWidth] = useState(readStoredWidth)
+  const [viewport, setViewport] = useState(() => window.innerWidth)
+  const [resizing, setResizing] = useState(false)
+  const width = clampPanelWidth(storedWidth, viewport)
+  const widthRef = useRef(width)
+  widthRef.current = width
+
+  useEffect(() => {
+    const onResize = () => setViewport(window.innerWidth)
+    window.addEventListener("resize", onResize)
+    return () => window.removeEventListener("resize", onResize)
+  }, [])
+
+  useEffect(() => {
+    if (!docked) return
+    return dockPanel(widthRef.current)
+  }, [docked])
+
+  useEffect(() => {
+    if (docked) setDockedWidth(width)
+  }, [docked, width])
+
+  const resizeTo = useCallback((next: number) => setStoredWidth(clampPanelWidth(next, window.innerWidth)), [])
+  const commitWidth = useCallback(() => storeWidth(widthRef.current), [])
+
+  const onHandlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return
+    event.preventDefault()
+    event.currentTarget.setPointerCapture?.(event.pointerId)
+    document.documentElement.setAttribute(RESIZING_ATTRIBUTE, "")
+    setResizing(true)
+  }
+  const onHandlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!resizing) return
+    // The panel is flush with the right edge, so its width is the distance from the pointer to it.
+    resizeTo(window.innerWidth - event.clientX)
+  }
+  const endResize = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!resizing) return
+    event.currentTarget.releasePointerCapture?.(event.pointerId)
+    setResizing(false)
+    commitWidth()
+  }
+  const resetWidth = () => {
+    resizeTo(DEFAULT_PANEL_WIDTH)
+    storeWidth(DEFAULT_PANEL_WIDTH)
+  }
+  const onHandleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault()
+      resetWidth()
+      return
+    }
+    const next = widthForKey(event.key, event.shiftKey, widthRef.current, window.innerWidth)
+    if (next === null) return
+    event.preventDefault()
+    resizeTo(next)
+    storeWidth(next)
+  }
+
+  // The drag may end somewhere unexpected (a lost capture, the panel closing).
+  useEffect(() => {
+    if (!resizing) return
+    return () => document.documentElement.removeAttribute(RESIZING_ATTRIBUTE)
+  }, [resizing])
 
   // Collect now, and again whenever the content changes while the panel is open.
   useEffect(() => {
@@ -227,12 +324,45 @@ function ReferencesPanel({ contentSelector, onClose }: { contentSelector: string
       {...{ [REFERENCES_PANEL_ATTRIBUTE]: "" }}
       role="dialog"
       aria-label="References cited on this page"
+      data-docked={docked ? "" : undefined}
+      style={docked ? { width } : undefined}
       className={cn(
-        "fixed inset-y-0 right-0 flex w-full flex-col border-l bg-fd-background text-fd-foreground shadow-2xl sm:w-[min(21rem,100vw)]",
+        "fixed inset-y-0 right-0 flex flex-col border-l bg-fd-background text-fd-foreground",
+        // Docked it sits beside the page; otherwise a drawer over it.
+        docked ? "max-w-[60vw]" : "w-full shadow-2xl sm:w-[min(21rem,100vw)]",
         // The page's panel stays under reading mode (z-[60]); reading mode's own sits above it.
         contentSelector === CONTENT_SELECTOR ? "z-[55]" : "z-[65]",
       )}
     >
+      {docked && (
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize the References panel"
+          aria-valuemin={MIN_PANEL_WIDTH}
+          aria-valuemax={maxPanelWidth(viewport)}
+          aria-valuenow={width}
+          aria-valuetext={`${width} pixels wide`}
+          tabIndex={0}
+          title="Drag to resize (arrow keys too; double-click or Enter to reset)"
+          className="group absolute inset-y-0 -left-1.5 z-10 w-3 cursor-col-resize touch-none outline-none"
+          onPointerDown={onHandlePointerDown}
+          onPointerMove={onHandlePointerMove}
+          onPointerUp={endResize}
+          onPointerCancel={endResize}
+          onLostPointerCapture={endResize}
+          onKeyDown={onHandleKeyDown}
+          onDoubleClick={resetWidth}
+        >
+          <span
+            aria-hidden
+            className={cn(
+              "absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-transparent transition-colors group-hover:bg-fd-primary/60 group-focus-visible:bg-fd-primary",
+              resizing && "bg-fd-primary",
+            )}
+          />
+        </div>
+      )}
       <header className="flex flex-col gap-2 border-b px-4 py-3">
         <div className="flex items-center gap-2">
           <BookMarked className="size-4 shrink-0 text-fd-primary" aria-hidden />
