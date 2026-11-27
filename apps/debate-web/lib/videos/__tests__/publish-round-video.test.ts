@@ -433,6 +433,35 @@ describe("roundVideoToVideoRow for Super Debate videos", () => {
   });
 });
 
+describe("roundVideoToVideoRow for Congress and Miscellaneous lectures", () => {
+  it("files a Congressional Debate lecture under Congress, whatever its queued category", () => {
+    const row = roundVideoToVideoRow(
+      roundRow("cg1", { style: null, category: "Novice & Introductory", title: "Congressional Debate: presiding officer basics", channel: "Elsewhere" }),
+    );
+    expect(row.category).toBe("Congress");
+    expect(row.categoryKey).toBe("congress");
+  });
+
+  it("does not file a US Congress topic lecture under Congress", () => {
+    const row = roundVideoToVideoRow(
+      roundRow("cg2", { style: null, category: "Topic Lectures", title: "Should Congress ban TikTok? Topic analysis", channel: "Elsewhere" }),
+    );
+    expect(row.category).toBe("Topic Lectures");
+  });
+
+  it("files a lecture with no valid category under Miscellaneous", () => {
+    const none = roundVideoToVideoRow(roundRow("m1", { style: null, category: null, title: "Odd talk" }));
+    expect(none).toMatchObject({ category: "Miscellaneous", categoryKey: "miscellaneous" });
+    const unknown = roundVideoToVideoRow(roundRow("m2", { style: null, category: "Brand New", title: "Odd talk" }));
+    expect(unknown.category).toBe("Miscellaneous");
+  });
+
+  it("leaves rounds without a lecture category", () => {
+    const row = roundVideoToVideoRow(roundRow("m3", { style: 2, category: null, title: "Final: A vs B" }));
+    expect(row.category).not.toBe("Miscellaneous");
+  });
+});
+
 describe("roundVideoToVideoRow for NSDA lectures", () => {
   it("files an NSDA channel lecture under NSDA Speech, whatever its queued category", () => {
     const row = roundVideoToVideoRow(

@@ -18,6 +18,7 @@ vi.mock("next/link", () => ({
 import { HeadToHeadNetworkChart } from "../src/leaderboard/network/HeadToHeadNetworkChart"
 import { HeadToHeadVideosProvider } from "../src/leaderboard/network/HeadToHeadVideosSlot"
 import { buildHeadToHeadNetwork, entryKey } from "../src/leaderboard/network/headToHeadNetwork"
+import { MAX_ZOOM, MIN_ZOOM } from "../src/leaderboard/network/networkZoom"
 import type { RankingEntry } from "../src/types"
 import type { HeadToHeadVideosProps } from "../src/leaderboard/network/HeadToHeadVideosSlot"
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
@@ -159,5 +160,60 @@ describe("HeadToHeadNetworkChart", () => {
     const container = render(true)
     click(container.querySelectorAll("svg path.cursor-pointer")[0])
     expect(container.querySelector('[data-testid="h2h-videos"]')?.textContent).toMatch(/^pairing:/)
+  })
+
+  it("no longer shows the intro paragraph", () => {
+    const container = render()
+    expect(container.textContent).not.toContain("linked by every round")
+    expect(container.textContent).not.toContain("Drag to pan")
+  })
+
+  describe("wheel zoom", () => {
+    const viewGroup = (container: HTMLElement) => container.querySelector("svg[role=img] > g")!
+    const scaleOf = (container: HTMLElement) =>
+      Number(/scale\(([\d.e+-]+)\)/.exec(viewGroup(container).getAttribute("transform")!)![1])
+    const wheel = (el: Element, deltaY: number, init: WheelEventInit = {}) => {
+      const event = new WheelEvent("wheel", { bubbles: true, cancelable: true, deltaY, ...init })
+      act(() => {
+        el.dispatchEvent(event)
+      })
+      return event
+    }
+
+    it("zooms in on scroll up and out on scroll down, preventing page scroll", () => {
+      const container = render()
+      const svg = container.querySelector("svg[role=img]")!
+      expect(scaleOf(container)).toBe(1)
+
+      const up = wheel(svg, -100)
+      expect(up.defaultPrevented).toBe(true)
+      const zoomedIn = scaleOf(container)
+      expect(zoomedIn).toBeGreaterThan(1)
+
+      const down = wheel(svg, 300)
+      expect(down.defaultPrevented).toBe(true)
+      expect(scaleOf(container)).toBeLessThan(zoomedIn)
+    })
+
+    it("keeps the point under the cursor fixed", () => {
+      const container = render()
+      const svg = container.querySelector("svg[role=img]")!
+      // jsdom has no layout: pretend the svg is drawn at 1 user unit per pixel.
+      svg.getBoundingClientRect = () => ({ left: 0, top: 0, width: 400, height: 300, right: 400, bottom: 300, x: 0, y: 0, toJSON() {} })
+      wheel(svg, -200, { clientX: 100, clientY: 50 })
+      const [, tx, ty] = /translate\(([-\d.e+]+),([-\d.e+]+)\)/.exec(viewGroup(container).getAttribute("transform")!)!.map(Number)
+      const k = scaleOf(container)
+      expect(100 * k + tx).toBeCloseTo(100, 6)
+      expect(50 * k + ty).toBeCloseTo(50, 6)
+    })
+
+    it("clamps the zoom range", () => {
+      const container = render()
+      const svg = container.querySelector("svg[role=img]")!
+      for (let i = 0; i < 40; i++) wheel(svg, -500)
+      expect(scaleOf(container)).toBe(MAX_ZOOM)
+      for (let i = 0; i < 80; i++) wheel(svg, 500)
+      expect(scaleOf(container)).toBe(MIN_ZOOM)
+    })
   })
 })

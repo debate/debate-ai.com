@@ -17,9 +17,9 @@ import { createElement } from "react";
 import {
   SIDEBAR_VIDEO_LINKS,
   SIDEBAR_VIDEO_LINKS_BY_ID,
-  VIDEO_ALL_LINK,
-  VIDEO_COLLEGE_LINK,
-  VIDEO_FORMAT_LINKS,
+  VIDEO_ROUNDS_LINK,
+  VIDEO_STRATEGY_LECTURES_LINK,
+  VIDEO_GOAT_LINK,
   VIDEO_LIBRARY_LINKS,
   VIDEO_REFERENCE_LINKS,
   VIDEO_ALL_VIDEOS_FILTER_LINKS,
@@ -69,18 +69,30 @@ function htmlEscaped(title: string): string {
 }
 
 describe("SIDEBAR_VIDEO_LINKS", () => {
-  it("is the concatenation of the tree's five groups", () => {
+  it("is the concatenation of the tree's groups", () => {
     expect(SIDEBAR_VIDEO_LINKS).toEqual([
-      VIDEO_ALL_LINK,
-      VIDEO_COLLEGE_LINK,
-      ...VIDEO_FORMAT_LINKS,
+      VIDEO_ROUNDS_LINK,
+      VIDEO_STRATEGY_LECTURES_LINK,
+      VIDEO_GOAT_LINK,
       ...VIDEO_LIBRARY_LINKS,
       ...VIDEO_REFERENCE_LINKS,
     ]);
   });
 
-  it("puts All Videos, the home page, at /videos first", () => {
-    expect(SIDEBAR_VIDEO_LINKS[0]).toMatchObject({ href: "/videos", title: "All Videos" });
+  it("leads with Debate Rounds and Strategy Lectures", () => {
+    expect(SIDEBAR_VIDEO_LINKS[0]).toMatchObject({ href: "/videos/rounds", title: "Debate Rounds" });
+    expect(SIDEBAR_VIDEO_LINKS[1]).toMatchObject({ href: "/lectures", title: "Strategy Lectures" });
+  });
+
+  it("no longer lists All Videos, Lectures or the per-format pages", () => {
+    const hrefs = SIDEBAR_VIDEO_LINKS.map((link) => link.href);
+    for (const gone of ["/videos", "/videos/college", "/videos/policy", "/videos/ld", "/videos/pf"]) {
+      expect(hrefs).not.toContain(gone);
+    }
+    const html = sidebarHtml();
+    for (const title of ["All Videos", "NDT", "College Policy", "HS Policy", "HS Individual", "HS Forum"]) {
+      expect(html).not.toContain(title);
+    }
   });
 
   it("carries no duplicate id or destination", () => {
@@ -115,13 +127,6 @@ describe("the surfaces that render them", () => {
       if (referenceHrefs.has(link.href)) continue;
       expect(hrefs).toContain(link.href);
       expect(html).toContain(htmlEscaped(link.title));
-    }
-  });
-
-  it("badges College Policy and the formats with their lettered icons", () => {
-    const html = sidebarHtml();
-    for (const label of ["NDT", "CX", "PF", "LD"]) {
-      expect(html).toContain(`>${label}</text>`);
     }
   });
 

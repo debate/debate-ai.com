@@ -414,6 +414,9 @@ export function LeaderboardPanel({
       ? (yearData[divConfig.championKey] as string)
       : undefined
 
+  /** Forum puts its topic and side bias beside the "Who debated whom" graph instead of stacking them. */
+  const forumSplit = division === "VPF" && !isSchools && isCurrentYear && !!datasetId && !loading && !error && !!dataset
+
   // ---------------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------------
@@ -447,7 +450,7 @@ return (
             ) : (
             <>
             {/* Champion / topic banner */}
-            {!championsLoading && !isSchools && (
+            {!championsLoading && !isSchools && !forumSplit && (
               <LeaderboardChampionBanner
                 division={division}
                 year={year}
@@ -562,7 +565,7 @@ return (
               </div>
             ) : (
               <>
-                <RankingsFieldSummary dataset={dataset} />
+                <RankingsFieldSummary dataset={dataset} seasonYear={seasonYear} />
                 {isCurrentYear && datasetId && (
                   <HeadToHeadNetworkSection datasetId={datasetId} entries={dataset.entries} formatLabel={divConfig.label} />
                 )}
