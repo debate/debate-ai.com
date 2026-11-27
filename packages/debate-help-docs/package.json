@@ -35,6 +35,11 @@
     "./lib/blog": "./lib/blog.ts",
     "./lib/reference-suggestions": "./lib/reference-suggestions.ts",
     "./lib/reference-quote-status": "./lib/reference-quote-status.ts",
+    "./lib/reference-display": "./lib/reference-display.ts",
+    "./lib/authors/types": "./lib/authors/types.ts",
+    "./lib/authors/author-names": "./lib/authors/author-names.ts",
+    "./lib/authors/extract-authors": "./lib/authors/extract-authors.ts",
+    "./lib/authors/collect-authors": "./lib/authors/collect-authors.ts",
     "./lib/fumadocs/source": "./lib/fumadocs/source.tsx",
     "./package.json": "./package.json"
   },
