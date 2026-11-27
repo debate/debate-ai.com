@@ -10,7 +10,7 @@
  * rankings page shows beside its topic names. Parli has no logo and is listed
  * under Formats instead.
  *
- * Below it the cards are compact pills in a 2 to 4 column grid under a heading (Getting started,
+ * Below it the cards are laid out as columns: a heading (General,
  * Strategy, Topics & ideas, Formats) with its categories listed underneath.
  * A category not named in {@link LECTURE_CATEGORY_SECTIONS} lands in a
  * trailing "More" column, so a new category never goes missing.
@@ -127,13 +127,14 @@ export interface LectureGalleryExtraLink {
  */
 export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = [
   {
-    title: "Getting started",
+    title: "General",
     labels: [
       "Novice & Introductory",
       "Camp & Coaching Advice",
       "Judge & Tournament Skills",
       "Research & Flowing",
       "Speaking & Delivery",
+      "Miscellaneous",
     ],
   },
   {
@@ -164,10 +165,6 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
   {
     title: "Formats",
     labels: ["WSD", "Demo Debates", "Open Super Debates", "Congress", "Speech"],
-  },
-  {
-    title: "Miscellaneous",
-    labels: ["Miscellaneous"],
   },
 ];
 
