@@ -115,8 +115,8 @@ export default async function Page(props: {
   const lastUpdated = edited ? new Date(edited).toISOString() : undefined;
   const breadcrumbs = getPageBreadcrumbs(source.pageTree, page.url);
 
-  // Fumadocs' own header stays off: ours (breadcrumbs with hover dropdowns,
-  // then the title) replaces it, and a body `#` heading that repeats the
+  // Fumadocs' own header stays off: ours (the title; the breadcrumbs are
+  // hidden, the Navigation button has them) replaces it, and a body `#` heading that repeats the
   // title is dropped at compile time (lib/mdx/remark-drop-title-heading.ts).
   return (
     <DocsPage
