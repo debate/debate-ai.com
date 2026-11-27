@@ -1,0 +1,572 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "publisher": "U.S. News & World Report",
+    "list": "U.S. News 2027 Best National Universities",
+    "url": "https://www.usnews.com/best-colleges/rankings/national-universities",
+    "publishedAt": "2026-09-22"
+  },
+  "year": 2027,
+  "listType": "national-universities",
+  "level": "college",
+  "metadata": {
+    "complete": true,
+    "firstRank": 1,
+    "lastRank": 100,
+    "entryCount": 108,
+    "rankRangesPresent": [
+      {
+        "from": 1,
+        "to": 100
+      }
+    ],
+    "knownGaps": [],
+    "notes": [
+      "Complete top 100 as published; tied schools share a rank and the next rank skips ahead (nine schools tie at No. 100).",
+      "The source gives neither city nor state for colleges, so entries carry none.",
+      "The 14 colleges that have a wordmark but rank outside the top 100 are not compiled yet."
+    ]
+  },
+  "entries": [
+    {
+      "rank": 1,
+      "tie": false,
+      "name": "Massachusetts Institute of Technology"
+    },
+    {
+      "rank": 2,
+      "tie": false,
+      "name": "Princeton University"
+    },
+    {
+      "rank": 3,
+      "tie": false,
+      "name": "Harvard University"
+    },
+    {
+      "rank": 4,
+      "tie": false,
+      "name": "Yale University"
+    },
+    {
+      "rank": 5,
+      "tie": true,
+      "name": "California Institute of Technology"
+    },
+    {
+      "rank": 5,
+      "tie": true,
+      "name": "Stanford University"
+    },
+    {
+      "rank": 7,
+      "tie": false,
+      "name": "University of Pennsylvania"
+    },
+    {
+      "rank": 8,
+      "tie": false,
+      "name": "Duke University"
+    },
+    {
+      "rank": 9,
+      "tie": true,
+      "name": "Johns Hopkins University"
+    },
+    {
+      "rank": 9,
+      "tie": true,
+      "name": "Northwestern University"
+    },
+    {
+      "rank": 9,
+      "tie": true,
+      "name": "University of Chicago"
+    },
+    {
+      "rank": 12,
+      "tie": true,
+      "name": "Columbia University"
+    },
+    {
+      "rank": 12,
+      "tie": true,
+      "name": "Dartmouth College"
+    },
+    {
+      "rank": 14,
+      "tie": true,
+      "name": "Carnegie Mellon University"
+    },
+    {
+      "rank": 14,
+      "tie": true,
+      "name": "Cornell University"
+    },
+    {
+      "rank": 16,
+      "tie": true,
+      "name": "Brown University"
+    },
+    {
+      "rank": 16,
+      "tie": true,
+      "name": "Rice University"
+    },
+    {
+      "rank": 16,
+      "tie": true,
+      "name": "Vanderbilt University"
+    },
+    {
+      "rank": 16,
+      "tie": true,
+      "name": "Washington University in St. Louis"
+    },
+    {
+      "rank": 20,
+      "tie": true,
+      "name": "University of California-Berkeley"
+    },
+    {
+      "rank": 20,
+      "tie": true,
+      "name": "University of California-Los Angeles"
+    },
+    {
+      "rank": 20,
+      "tie": true,
+      "name": "University of Notre Dame"
+    },
+    {
+      "rank": 23,
+      "tie": true,
+      "name": "Emory University"
+    },
+    {
+      "rank": 23,
+      "tie": true,
+      "name": "Georgetown University"
+    },
+    {
+      "rank": 25,
+      "tie": false,
+      "name": "University of Michigan-Ann Arbor"
+    },
+    {
+      "rank": 26,
+      "tie": false,
+      "name": "University of Virginia"
+    },
+    {
+      "rank": 27,
+      "tie": true,
+      "name": "University of North Carolina-Chapel Hill"
+    },
+    {
+      "rank": 27,
+      "tie": true,
+      "name": "University of Southern California"
+    },
+    {
+      "rank": 29,
+      "tie": true,
+      "name": "Georgia Institute of Technology"
+    },
+    {
+      "rank": 29,
+      "tie": true,
+      "name": "University of California-San Diego"
+    },
+    {
+      "rank": 31,
+      "tie": true,
+      "name": "Boston College"
+    },
+    {
+      "rank": 31,
+      "tie": true,
+      "name": "New York University"
+    },
+    {
+      "rank": 31,
+      "tie": true,
+      "name": "Tufts University"
+    },
+    {
+      "rank": 34,
+      "tie": true,
+      "name": "Boston University"
+    },
+    {
+      "rank": 34,
+      "tie": true,
+      "name": "University of California-Davis"
+    },
+    {
+      "rank": 34,
+      "tie": true,
+      "name": "University of California-Irvine"
+    },
+    {
+      "rank": 34,
+      "tie": true,
+      "name": "University of Florida"
+    },
+    {
+      "rank": 34,
+      "tie": true,
+      "name": "University of Illinois-Urbana-Champaign"
+    },
+    {
+      "rank": 34,
+      "tie": true,
+      "name": "University of Texas-Austin"
+    },
+    {
+      "rank": 34,
+      "tie": true,
+      "name": "University of Wisconsin-Madison"
+    },
+    {
+      "rank": 34,
+      "tie": true,
+      "name": "Wake Forest University"
+    },
+    {
+      "rank": 42,
+      "tie": true,
+      "name": "Northeastern University"
+    },
+    {
+      "rank": 42,
+      "tie": true,
+      "name": "Villanova University"
+    },
+    {
+      "rank": 44,
+      "tie": true,
+      "name": "Case Western Reserve University"
+    },
+    {
+      "rank": 44,
+      "tie": true,
+      "name": "Lehigh University"
+    },
+    {
+      "rank": 44,
+      "tie": true,
+      "name": "Ohio State University-Columbus"
+    },
+    {
+      "rank": 44,
+      "tie": true,
+      "name": "Rutgers University-New Brunswick"
+    },
+    {
+      "rank": 44,
+      "tie": true,
+      "name": "University of California-Santa Barbara"
+    },
+    {
+      "rank": 49,
+      "tie": true,
+      "name": "University of Maryland-College Park"
+    },
+    {
+      "rank": 49,
+      "tie": true,
+      "name": "University of Rochester"
+    },
+    {
+      "rank": 49,
+      "tie": true,
+      "name": "University of Washington"
+    },
+    {
+      "rank": 52,
+      "tie": true,
+      "name": "University of Georgia"
+    },
+    {
+      "rank": 52,
+      "tie": true,
+      "name": "Virginia Polytechnic Institute and State University"
+    },
+    {
+      "rank": 52,
+      "tie": true,
+      "name": "College of William and Mary"
+    },
+    {
+      "rank": 55,
+      "tie": true,
+      "name": "Pennsylvania State University-University Park"
+    },
+    {
+      "rank": 55,
+      "tie": true,
+      "name": "Purdue University"
+    },
+    {
+      "rank": 55,
+      "tie": true,
+      "name": "Santa Clara University"
+    },
+    {
+      "rank": 55,
+      "tie": true,
+      "name": "University of Miami"
+    },
+    {
+      "rank": 59,
+      "tie": true,
+      "name": "Brandeis University"
+    },
+    {
+      "rank": 59,
+      "tie": true,
+      "name": "Florida State University"
+    },
+    {
+      "rank": 59,
+      "tie": true,
+      "name": "George Washington University"
+    },
+    {
+      "rank": 59,
+      "tie": true,
+      "name": "Stevens Institute of Technology"
+    },
+    {
+      "rank": 59,
+      "tie": true,
+      "name": "Stony Brook University"
+    },
+    {
+      "rank": 59,
+      "tie": true,
+      "name": "Texas A&M University-College Station"
+    },
+    {
+      "rank": 59,
+      "tie": true,
+      "name": "Tulane University"
+    },
+    {
+      "rank": 59,
+      "tie": true,
+      "name": "University of Massachusetts-Amherst"
+    },
+    {
+      "rank": 59,
+      "tie": true,
+      "name": "University of Minnesota"
+    },
+    {
+      "rank": 59,
+      "tie": true,
+      "name": "University of Pittsburgh"
+    },
+    {
+      "rank": 69,
+      "tie": true,
+      "name": "Michigan State University"
+    },
+    {
+      "rank": 69,
+      "tie": true,
+      "name": "Rensselaer Polytechnic Institute"
+    },
+    {
+      "rank": 69,
+      "tie": true,
+      "name": "University of California-Merced"
+    },
+    {
+      "rank": 72,
+      "tie": false,
+      "name": "Syracuse University"
+    },
+    {
+      "rank": 73,
+      "tie": true,
+      "name": "Binghamton University"
+    },
+    {
+      "rank": 73,
+      "tie": true,
+      "name": "Howard University"
+    },
+    {
+      "rank": 73,
+      "tie": true,
+      "name": "Indiana University-Bloomington"
+    },
+    {
+      "rank": 73,
+      "tie": true,
+      "name": "North Carolina State University"
+    },
+    {
+      "rank": 73,
+      "tie": true,
+      "name": "Rutgers University-Newark"
+    },
+    {
+      "rank": 73,
+      "tie": true,
+      "name": "University of Connecticut"
+    },
+    {
+      "rank": 73,
+      "tie": true,
+      "name": "Worcester Polytechnic Institute"
+    },
+    {
+      "rank": 80,
+      "tie": true,
+      "name": "Clemson University"
+    },
+    {
+      "rank": 80,
+      "tie": true,
+      "name": "Colorado School of Mines"
+    },
+    {
+      "rank": 80,
+      "tie": true,
+      "name": "Drexel University"
+    },
+    {
+      "rank": 80,
+      "tie": true,
+      "name": "Pepperdine University"
+    },
+    {
+      "rank": 80,
+      "tie": true,
+      "name": "University of California-Riverside"
+    },
+    {
+      "rank": 85,
+      "tie": true,
+      "name": "Fordham University"
+    },
+    {
+      "rank": 85,
+      "tie": true,
+      "name": "New Jersey Institute of Technology"
+    },
+    {
+      "rank": 85,
+      "tie": true,
+      "name": "Southern Methodist University"
+    },
+    {
+      "rank": 85,
+      "tie": true,
+      "name": "University at Buffalo"
+    },
+    {
+      "rank": 85,
+      "tie": true,
+      "name": "University of Delaware"
+    },
+    {
+      "rank": 90,
+      "tie": true,
+      "name": "Baylor University"
+    },
+    {
+      "rank": 90,
+      "tie": true,
+      "name": "Gonzaga University"
+    },
+    {
+      "rank": 90,
+      "tie": true,
+      "name": "Marquette University"
+    },
+    {
+      "rank": 90,
+      "tie": true,
+      "name": "Texas Christian University"
+    },
+    {
+      "rank": 90,
+      "tie": true,
+      "name": "Yeshiva University"
+    },
+    {
+      "rank": 95,
+      "tie": true,
+      "name": "American University"
+    },
+    {
+      "rank": 95,
+      "tie": true,
+      "name": "Rochester Institute of Technology"
+    },
+    {
+      "rank": 95,
+      "tie": true,
+      "name": "Rutgers University-Camden"
+    },
+    {
+      "rank": 95,
+      "tie": true,
+      "name": "University of Illinois-Chicago"
+    },
+    {
+      "rank": 95,
+      "tie": true,
+      "name": "University of Missouri"
+    },
+    {
+      "rank": 100,
+      "tie": true,
+      "name": "Auburn University"
+    },
+    {
+      "rank": 100,
+      "tie": true,
+      "name": "Chapman University"
+    },
+    {
+      "rank": 100,
+      "tie": true,
+      "name": "Creighton University"
+    },
+    {
+      "rank": 100,
+      "tie": true,
+      "name": "Elon University"
+    },
+    {
+      "rank": 100,
+      "tie": true,
+      "name": "Florida International University"
+    },
+    {
+      "rank": 100,
+      "tie": true,
+      "name": "Saint Louis University"
+    },
+    {
+      "rank": 100,
+      "tie": true,
+      "name": "University of Iowa"
+    },
+    {
+      "rank": 100,
+      "tie": true,
+      "name": "University of San Diego"
+    },
+    {
+      "rank": 100,
+      "tie": true,
+      "name": "University of South Florida"
+    }
+  ]
+}
