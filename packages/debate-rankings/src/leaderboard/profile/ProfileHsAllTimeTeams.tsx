@@ -25,7 +25,6 @@ import {
   HS_ALL_TIME_COLLEGE_SHARE,
   HS_ALL_TIME_EVENTS,
   HS_ALL_TIME_MULTIPLIER,
-  HS_ALL_TIME_PARTICIPATION_POINTS,
   HS_ALL_TIME_POINTS,
   hsAllTimeSchoolKey,
   hsAllTimeTeams,
@@ -47,12 +46,10 @@ function years(team: HsAllTimeTeam): string {
   return team.firstYear === team.lastYear ? String(team.firstYear) : `${team.firstYear}–${team.lastYear}`
 }
 
-/** A college debater's points as the college line reads: `participated, 1 pt` or `12 NDT pts + 1 participation pt`. */
+/** A college debater's note as the college line reads: `1 pt` for a debater with no NDT points, or `12 NDT pts`. */
 export function collegeNote(college: HsAllTimeCollege): string {
-  const participation = `${college.participationPoints} ${college.participationPoints === 1 ? "pt" : "pts"}`
-  return college.collegePoints > 0
-    ? `${college.collegePoints} NDT pts + ${participation} participation`
-    : `participated, ${participation}`
+  if (college.collegePoints > 0) return `${college.collegePoints} NDT pts`
+  return `${college.participationPoints} ${college.participationPoints === 1 ? "pt" : "pts"}`
 }
 
 const TOURNAMENT_LABEL: Record<string, string> = { TOC: "TOC", NDCA: "NDCA", Barkley: "Barkley", Cal: "Cal", Glenbrooks: "Glenbrooks" }
@@ -106,7 +103,7 @@ function TeamRow({ team, own, event }: { team: HsAllTimeTeam; own: boolean; even
       </span>
       <span
         className="text-right text-sm tabular-nums text-foreground"
-        title={team.collegeCredit ? `${team.nationals} nationals + ${team.collegeCredit} college (NDT and participation points)` : undefined}
+        title={team.collegeCredit ? `${team.nationals} nationals + ${team.collegeCredit} college` : undefined}
       >
         {team.total}
       </span>
@@ -160,9 +157,7 @@ export function HsAllTimeTeamsRankings({
             {HS_ALL_TIME_MULTIPLIER}× the high school points (champion {p.Champion}, finalist {p.Finalist}, semifinalist{" "}
             {p.Semifinalist}, top speaker {p["Top speaker"]}; an NDT title is 30), and {NDT_PRE_ERA_MULTIPLIER}× before{" "}
             {NDT_ERA_CUTOFF_YEAR}, plus each debater's own college NDT points
-            {HS_ALL_TIME_COLLEGE_SHARE >= 1 ? " in full" : ` at ${Math.round(HS_ALL_TIME_COLLEGE_SHARE * 100)}%`},
-            and {HS_ALL_TIME_PARTICIPATION_POINTS} college point{HS_ALL_TIME_PARTICIPATION_POINTS === 1 ? "" : "s"} (at the same
-            share) for each debater who competed in college (an NDT record, or a name match in College Debate Results)
+            {HS_ALL_TIME_COLLEGE_SHARE >= 1 ? " in full" : ` at ${Math.round(HS_ALL_TIME_COLLEGE_SHARE * 100)}%`}
             {collegeLoaded ? "" : " (loading college records…)"}. A debater's third and later partnerships fold into
             their top two with a footnote.{schoolKey ? " This school's teams are highlighted." : ""}
           </p>
