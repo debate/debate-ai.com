@@ -10,6 +10,7 @@ import { readdirSync, readFileSync } from "node:fs"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
+import { referenceQuoteStatus } from "../../../../packages/debate-help-docs/lib/reference-quote-status"
 import {
   buildCitationIndex,
   citeAuthors,
@@ -206,6 +207,9 @@ describe("Synergy Slayer of Critiques", () => {
     expect(citeAuthors(entry)).toBe("Schwartz et al.")
     const cited = findCitations("“Patients must decide” (Schwartz 2002).", slayerIndex)
     expect(cited.map((m) => m.entry.id)).toEqual(["ref-schwartz-2002"])
+    expect(referenceQuoteStatus(entry.cardHtml)).toBe("full")
+    expect(entry.cardHtml).toContain("Katherine Lewis made this decision for herself")
+    expect(entry.cardHtml).toContain("112")
   })
 })
 
