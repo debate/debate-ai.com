@@ -30,15 +30,16 @@ import { VideoTeamRankingContext, useVideoTeamRankings } from "../../../hooks/us
 export const GRID_CHUNK_SIZE = 60
 
 /** Grid classes shared by every chunk, so the chunks line up as one grid. */
-const GRID_CLASSES = "grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4"
+const GRID_CLASSES = "grid grid-cols-1 gap-2 sm:grid-cols-4 sm:gap-4 xl:grid-cols-5"
 
 /** Rough card height plus gap, for a chunk that has never been measured. */
 const ESTIMATED_ROW_HEIGHT = 300
 
 /** Columns the grid has at the current window width, matching {@link GRID_CLASSES}. */
 function currentColumnCount(): number {
-  if (typeof window === "undefined") return 3
-  return window.innerWidth >= 640 ? 3 : 1
+  if (typeof window === "undefined") return 4
+  if (window.innerWidth >= 1280) return 5
+  return window.innerWidth >= 640 ? 4 : 1
 }
 
 interface VideoGridProps {
