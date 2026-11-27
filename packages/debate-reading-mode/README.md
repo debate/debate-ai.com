@@ -30,6 +30,11 @@ shared with the docs' Synergy Slayer reading mode.
   `referenceSearchQueries` and `rankSearchResults` (quick-search queries and
   ranking), and `verifyArticle` (accepts an extracted page only when its title
   and author match the entry, so a wrong article is never shown as the right one).
+- `@debate-ai/reading-mode/favorites`: the references a reader starred in the
+  docs' References panel, kept in `localStorage` (`docsFavoriteReferences`):
+  `toggleFavoriteReference`, `readFavoriteReferences`, `removeFavoriteReference`
+  and `subscribeFavoriteReferences`. The key is one of the app's account-synced
+  tool collections, so a signed-in reader's favorites also reach their account.
 - `@debate-ai/reading-mode/article-html`: `sanitizeArticleHtml`, an allowlist
   sanitizer for HTML extracted from the web, run in the browser before it is shown.
 

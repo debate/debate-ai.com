@@ -76,6 +76,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   peerReviews: "cardId",
   contributions: "id",
   trackedArguments: "id",
+  docsFavoriteReferences: "id",
   revisionHistory: "id",
   reuseCheckHistory: "id",
   topicCoverageSnapshots: "id",
