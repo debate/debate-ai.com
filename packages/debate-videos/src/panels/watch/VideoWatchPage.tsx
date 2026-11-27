@@ -105,8 +105,8 @@ import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
 import { useDecisionReveal } from "../../hooks/useDecisionReveal"
-import { useRoundJudges } from "../../hooks/useRoundJudges"
-import { JudgeVotes } from "../../components/videos/watch/JudgeVotes"
+import { useRoundDecision } from "../../hooks/useRoundDecision"
+import { WatchDecision } from "../../components/videos/watch/WatchDecision"
 import { useVideoFeed, useVideoMeta } from "../../hooks/useVideoFeed"
 import {
   sendYouTubeCommand,
@@ -150,7 +150,6 @@ import {
 } from "../../lib/speech-segmentation"
 import { lectureCategoryDisplayLabel, type VideoType } from "../../types/videos"
 import { videoComputedTitle, videoDisplayTitle } from "../../lib/computed-title"
-import { decisionSummary, hasDecision } from "../../lib/decision-summary"
 import { DebateFlowChartButton } from "../../components/videos/watch/flow-chart/DebateFlowChartButton"
 import { videoPageTitle, type VideoPageTitleRanks } from "../../lib/video-page-title"
 import { formatVideoCopy, type CopyFormat } from "../../lib/copy-format"
@@ -338,10 +337,14 @@ export function VideoWatchPage({
 
   const { state: viewState, actions: viewActions } = useVideoState()
   // The decision and the winner's gold border stay hidden until the viewer
-  // clicks "Reveal decision"; the video's card shares the same flag.
+  // clicks the scales button; the video's card shares the same flag. Every
+  // round has the button: one with no stored decision is looked up on
+  // Tabroom / College Debate Results, and shows "?" when nothing is found.
   const [decisionRevealed, revealDecision] = useDecisionReveal(videoId)
-  // Revealing also names the judges, each in the color of the side they voted for.
-  const roundJudges = useRoundJudges(videoId, decisionRevealed && hasDecision(affWin, judgeDecision))
+  const isRound = styleNumber !== undefined
+  const roundDecision = useRoundDecision(videoId, decisionRevealed && isRound)
+  // The winner the gold border marks: the video's own, else the looked-up one.
+  const winnerAffWin = typeof affWin === "boolean" ? affWin : roundDecision.decision.affWin
   const { counts, meta: videoLibraryMeta } = useVideoMeta()
 
   // The search box above the related videos swaps the list under the player
@@ -1225,7 +1228,7 @@ export function VideoWatchPage({
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
                         TEAM_SIDE_SURFACE_CLASS.aff,
-                        decisionRevealed && affWin === true
+                        decisionRevealed && winnerAffWin === true
                           ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]"
                           : "border border-blue-400/90 shadow-lg",
                       )}
@@ -1242,7 +1245,7 @@ export function VideoWatchPage({
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
                         TEAM_SIDE_SURFACE_CLASS.neg,
-                        decisionRevealed && affWin === false
+                        decisionRevealed && winnerAffWin === false
                           ? "border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]"
                           : "border border-red-400/90 shadow-lg",
                       )}
@@ -1269,6 +1272,8 @@ export function VideoWatchPage({
                  canCopyLink={canCopyLink}
                  copyFormat={copyFormat}
                  youtubeUrl={watchUrl(videoId)}
+                 onRevealDecision={isRound ? revealDecision : undefined}
+                 isDecisionRevealed={decisionRevealed}
                  extraControls={
                    <>
                      {extraControls}
@@ -1301,30 +1306,15 @@ export function VideoWatchPage({
 
             {/* The decision sits above the player; style, views and length
                 stack after the year in the title row (see affRowMeta). */}
-            {hasDecision(affWin, judgeDecision) && (
-            <div className="flex items-center gap-3 flex-wrap text-xs text-muted-foreground">
-              {/* A recorded winner alone counts as a decision. Revealed, the
-                  decision and the judges read on one line:
-                  "Harker LL (Aff)  2-1 Kevin Hirn, …". */}
-              {decisionRevealed ? (
-                  <span className="font-medium text-amber-500">
-                    {decisionSummary(affWin, judgeDecision, {
-                      aff: affTeam ? `${affTeam} (Aff)` : "Aff",
-                      neg: negTeam ? `${negTeam} (Neg)` : "Neg",
-                    })}{" "}
-                    <JudgeVotes
-                      judges={roundJudges.judges}
-                      squirrels={roundJudges.squirrels}
-                      affWin={affWin}
-                      hideLabel
-                    />
-                  </span>
-                ) : (
-                  <button onClick={revealDecision} className="text-xs text-muted-foreground hover:text-foreground">
-                    Reveal decision
-                  </button>
-                )}
-            </div>
+            {isRound && decisionRevealed && (
+              <WatchDecision
+                affTeam={affTeam}
+                negTeam={negTeam}
+                storedAffWin={typeof affWin === "boolean" ? affWin : null}
+                storedDecision={judgeDecision}
+                decision={roundDecision.decision}
+                loading={roundDecision.loading}
+              />
             )}
 
             <div
