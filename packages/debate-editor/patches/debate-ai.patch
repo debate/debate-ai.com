@@ -3736,6 +3736,227 @@ index 14b490c..a5377e6 100644
    },
    {
      title: 'Select',
+diff --git a/src/editor/ribbon-tooltips.ts b/src/editor/ribbon-tooltips.ts
+index 446da1c..64a3566 100644
+--- a/src/editor/ribbon-tooltips.ts
++++ b/src/editor/ribbon-tooltips.ts
+@@ -41,6 +41,35 @@ import {
+   RIBBON_COMMAND_LABELS,
+   type AnyCommandId,
+ } from './ribbon-commands.js';
++import { RIBBON_BUTTON_INFO } from './ribbon-button-info.js';
++
++/** What a tooltip says, split into the parts a rich renderer lays out. */
++export interface RibbonTipContent {
++  /** The action name. Empty in `shortcut` mode, which shows only the key. */
++  label: string;
++  /** One sentence on what the button does. */
++  description?: string;
++  /** The live keyboard shortcut, formatted for this platform. */
++  shortcut?: string;
++}
++
++/** A host-supplied tooltip drawer (debate-ai.com draws shadcn tooltips).
++ *  While one is installed it replaces the built-in floating element and the
++ *  hover delay, so a tip appears the instant the pointer or keyboard focus
++ *  lands on a button. */
++export interface RibbonTipRenderer {
++  show(target: HTMLElement, content: RibbonTipContent): void;
++  hide(): void;
++}
++
++let tipRenderer: RibbonTipRenderer | null = null;
++/** Structured tooltip content per registered element (what a renderer shows). */
++const tipContent = new WeakMap<HTMLElement, RibbonTipContent>();
++
++export function setRibbonTipRenderer(renderer: RibbonTipRenderer | null): void {
++  hideTip();
++  tipRenderer = renderer;
++}
+ 
+ export interface RibbonTooltipTarget {
+   el: HTMLElement;
+@@ -76,6 +105,7 @@ export function unregisterRibbonTooltip(el: HTMLElement): void {
+   const idx = targets.findIndex((x) => x.el === el);
+   if (idx >= 0) targets.splice(idx, 1);
+   tipText.delete(el);
++  tipContent.delete(el);
+   if (hoveredEl === el || activeEl === el) hideTip();
+ }
+ 
+@@ -87,8 +117,10 @@ export function reapplyAllRibbonTooltips(): void {
+ 
+ function applyOne(t: RibbonTooltipTarget): void {
+   const mode = settings.get('ribbonTooltipMode');
++  const meta = RIBBON_BUTTON_INFO[t.el.id];
+   const label =
+     t.label ??
++    meta?.label ??
+     (t.commandId
+       ? ((RIBBON_COMMAND_LABELS as Partial<Record<string, string>>)[t.commandId] ?? '')
+       : '');
+@@ -98,7 +130,12 @@ function applyOne(t: RibbonTooltipTarget): void {
+     if (key) shortcut = formatKeyForDisplay(key);
+   }
+   const kind = t.kind ?? 'button';
++  if (!shortcut && meta?.command) {
++    const key = primaryKeyFor(meta.command, settings.get('ribbonKeyOverrides'));
++    if (key) shortcut = formatKeyForDisplay(key);
++  }
+   const text = composeTitle(mode, kind, label, shortcut);
++  const content = composeContent(mode, kind, label, shortcut, meta?.description);
+ 
+   // Never set the native `title` — that's the flaky path the custom
+   // renderer exists to avoid.
+@@ -107,6 +144,8 @@ function applyOne(t: RibbonTooltipTarget): void {
+   // Custom-tooltip text (mode-dependent; empty in `none` mode → no tooltip).
+   if (text) tipText.set(t.el, text);
+   else tipText.delete(t.el);
++  if (content) tipContent.set(t.el, content);
++  else tipContent.delete(t.el);
+ 
+   // Accessibility: with `title` stripped, an icon-only button still needs a
+   // stable accessible name — give it the action label, independent of the
+@@ -141,6 +180,26 @@ function composeTitle(
+   }
+ }
+ 
++/** The structured counterpart of `composeTitle`, honoring the same modes:
++ *  `tooltip` → name + description, `shortcut` → the key alone, `both` → all
++ *  three. Menu items never repeat their label or description. */
++function composeContent(
++  mode: 'none' | 'tooltip' | 'shortcut' | 'both',
++  kind: 'button' | 'menuItem',
++  label: string,
++  shortcut: string | null,
++  description: string | undefined,
++): RibbonTipContent | null {
++  if (mode === 'none') return null;
++  if (kind === 'menuItem') {
++    return (mode === 'shortcut' || mode === 'both') && shortcut ? { label: '', shortcut } : null;
++  }
++  if (mode === 'tooltip') return label ? { label, description } : null;
++  if (mode === 'shortcut') return shortcut ? { label: '', shortcut } : null;
++  if (!label && !shortcut) return null;
++  return { label, description, shortcut: shortcut ?? undefined };
++}
++
+ // ---- custom tooltip renderer ---------------------------------------------
+ //
+ // One shared floating element, shown after a hover delay and positioned under
+@@ -152,6 +211,9 @@ const SHOW_DELAY_MS = 450;
+ let tipEl: HTMLDivElement | null = null;
+ let hoveredEl: HTMLElement | null = null;
+ let activeEl: HTMLElement | null = null;
++/** The target the pointer went down on: its tip stays down until the pointer
++ *  leaves it, so moving across its icon after a click doesn't pop it back. */
++let pressedEl: HTMLElement | null = null;
+ let showTimer: ReturnType<typeof setTimeout> | null = null;
+ let controllerInstalled = false;
+ 
+@@ -185,6 +247,12 @@ function positionTip(target: HTMLElement, tip: HTMLDivElement): void {
+ function showTip(target: HTMLElement): void {
+   const text = tipText.get(target);
+   if (!text || !target.isConnected) return;
++  const content = tipContent.get(target) ?? { label: text };
++  if (tipRenderer) {
++    tipRenderer.show(target, content);
++    activeEl = target;
++    return;
++  }
+   const tip = ensureTipEl();
+   tip.textContent = text;
+   positionTip(target, tip); // position while still transparent → no flash
+@@ -200,6 +268,7 @@ function hideTip(): void {
+   }
+   hoveredEl = null;
+   activeEl = null;
++  tipRenderer?.hide();
+   if (tipEl) {
+     tipEl.classList.remove('pmd-ribbon-tooltip-visible');
+     tipEl.setAttribute('aria-hidden', 'true');
+@@ -224,7 +293,8 @@ function tooltipElFor(node: EventTarget | null): HTMLElement | null {
+ 
+ function onPointerOver(e: PointerEvent): void {
+   const el = tooltipElFor(e.target);
+-  if (!el || el === hoveredEl) return; // same target → don't reset the timer
++  if (el !== pressedEl) pressedEl = null;
++  if (!el || el === hoveredEl || el === pressedEl) return; // same target → don't reset the timer
+   // Adopt a native `title` set directly by UI chrome (most of the app does this,
+   // bypassing the controller) so it gets our reliable tooltip instead of
+   // Chromium's flaky one. Re-read every hover so state-aware titles stay fresh;
+@@ -234,6 +304,13 @@ function onPointerOver(e: PointerEvent): void {
+     if (!el.hasAttribute('aria-label')) el.setAttribute('aria-label', adopted);
+     el.removeAttribute('title');
+     tipText.set(el, adopted);
++    const meta = RIBBON_BUTTON_INFO[el.id];
++    let shortcut: string | undefined;
++    if (meta?.command) {
++      const key = primaryKeyFor(meta.command, settings.get('ribbonKeyOverrides'));
++      if (key) shortcut = formatKeyForDisplay(key);
++    }
++    tipContent.set(el, { label: meta?.label ?? adopted, description: meta?.description, shortcut });
+   }
+   // Entered a new (or first) target.
+   if (showTimer != null) {
+@@ -242,6 +319,10 @@ function onPointerOver(e: PointerEvent): void {
+   }
+   if (activeEl && activeEl !== el) hideTip();
+   hoveredEl = el;
++  if (tipRenderer) {
++    showTip(el);
++    return;
++  }
+   showTimer = setTimeout(() => {
+     showTimer = null;
+     if (hoveredEl === el) showTip(el);
+@@ -257,13 +338,45 @@ function onPointerOut(e: PointerEvent): void {
+   hideTip();
+ }
+ 
++/** Keyboard users get the same tip a pointer does: it shows when a target
++ *  takes focus-visible focus and goes when focus leaves. Only with a renderer
++ *  installed, since the built-in floating element is pointer-only. */
++function onFocusIn(e: FocusEvent): void {
++  if (!tipRenderer) return;
++  const el = tooltipElFor(e.target);
++  if (!el || !el.matches(':focus-visible')) return;
++  const content = tipContent.get(el);
++  if (!content && !el.title) return;
++  if (el.title) {
++    onPointerOver({ target: el } as unknown as PointerEvent);
++    return;
++  }
++  hoveredEl = el;
++  showTip(el);
++}
++
++function onFocusOut(e: FocusEvent): void {
++  if (!tipRenderer) return;
++  if (tooltipElFor(e.target) === activeEl) hideTip();
++}
++
+ function installController(): void {
+   if (controllerInstalled) return;
+   controllerInstalled = true;
+   document.addEventListener('pointerover', onPointerOver, true);
+   document.addEventListener('pointerout', onPointerOut, true);
+   // Anything that could otherwise leave a stuck or misplaced tip.
+-  document.addEventListener('pointerdown', hideTip, true);
++  document.addEventListener(
++    'pointerdown',
++    (e) => {
++      pressedEl = tooltipElFor(e.target);
++      hideTip();
++    },
++    true,
++  );
++  document.addEventListener('focusin', onFocusIn, true);
++  document.addEventListener('focusout', onFocusOut, true);
++  document.addEventListener('keydown', (e) => e.key === 'Escape' && hideTip(), true);
+   window.addEventListener('scroll', hideTip, true);
+   window.addEventListener('blur', hideTip);
+ }
 diff --git a/src/editor/settings-categories.ts b/src/editor/settings-categories.ts
 index 2d367d1..15ecc53 100644
 --- a/src/editor/settings-categories.ts
