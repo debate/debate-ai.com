@@ -40,13 +40,19 @@ type LoadState =
   | { status: "error" }
   | { status: "ready"; body: NpdlRankingsResponse }
 
-/** Loads one season (`null` = newest with rows). */
-function useNpdlRankings(season: string | null): LoadState {
+/**
+ * Loads one season (`null` = newest with rows). `retry` loads it again,
+ * past the browser's cache, so an answer cached while the rankings were
+ * unavailable is not shown again.
+ */
+function useNpdlRankings(season: string | null): { state: LoadState; retry: () => void } {
   const [state, setState] = useState<LoadState>({ status: "loading" })
+  const [attempt, setAttempt] = useState(0)
   useEffect(() => {
     let cancelled = false
     setState({ status: "loading" })
-    fetch(`/api/rankings/npdl${season ? `?season=${encodeURIComponent(season)}` : ""}`)
+    const url = `/api/rankings/npdl${season ? `?season=${encodeURIComponent(season)}` : ""}`
+    ;(attempt > 0 ? fetch(url, { cache: "reload" }) : fetch(url))
       .then((res) => (res.ok ? (res.json() as Promise<NpdlRankingsResponse>) : null))
       .then((body) => {
         if (cancelled) return
@@ -56,8 +62,8 @@ function useNpdlRankings(season: string | null): LoadState {
     return () => {
       cancelled = true
     }
-  }, [season])
-  return state
+  }, [season, attempt])
+  return { state, retry: () => setAttempt((n) => n + 1) }
 }
 
 /** `"Smith & Lee"` from the two debater cells; empty when neither is set. */
@@ -120,7 +126,7 @@ export interface ParliRankingsSectionProps {
 
 /** The section. */
 export function ParliRankingsSection({ season = null, view = "teams", onSeasonShown, className }: ParliRankingsSectionProps) {
-  const state = useNpdlRankings(season)
+  const { state, retry } = useNpdlRankings(season)
   const rankings = state.status === "ready" ? state.body.rankings : null
   const shownSeason = rankings?.season ?? season
 
@@ -142,9 +148,12 @@ export function ParliRankingsSection({ season = null, view = "teams", onSeasonSh
       {state.status === "loading" ? (
         <p className="py-6 text-center text-sm text-muted-foreground">Loading parliamentary rankings…</p>
       ) : !rankings ? (
-        <p className="py-6 text-center text-sm text-muted-foreground">
-          Parliamentary rankings aren't available{season ? ` for ${season}` : ""} right now.
-        </p>
+        <div className="flex flex-col items-center gap-2 py-6 text-center text-sm text-muted-foreground">
+          <p>Parliamentary rankings aren't available{season ? ` for ${season}` : ""} right now.</p>
+          <Button variant="outline" size="sm" onClick={retry}>
+            Try again
+          </Button>
+        </div>
       ) : (
         <ParliRankingsTable
           key={`${rankings.season}-${view}`}

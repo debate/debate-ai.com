@@ -30,7 +30,8 @@
  *   then the author's last name and the year (two digits, nothing more
  *   of the citation line), then the card's highlighted text — what a
  *   debater reads in round — or its underlined text when nothing is
- *   highlighted. In read mode it reads only what read mode shows of the
+ *   highlighted. The tag, the author & year and the highlighted text each
+ *   have their own voice and speed. In read mode it reads only what read mode shows of the
  *   card body (the read-aloud text, plus undertags or background-colored
  *   text when those settings show them). Clicking it again (on any card)
  *   stops. Its speed and voice live in Settings → Sound & speech
@@ -196,32 +197,42 @@ export interface SpeechSegment {
 }
 
 /**
- * What Read aloud speaks, split by voice: the tag with the author's last
- * name and year (`cite`), then the highlighted text (`text`) — the same
+ * What Read aloud speaks, split by part: the tag (`tag`), the author's last
+ * name and year (`author`), then the highlighted text (`text`) — the same
  * words as `cardSpeechText`. Empty parts are left out.
  */
 export function cardSpeechSegments(parts: CardParts): SpeechSegment[] {
   const clean = (t: string) => t.replace(/\s+/g, ' ').trim();
-  const cite = clean([parts.tag, citeSpeaker(parts.cite)].filter(Boolean).join('. '));
-  const text = clean(parts.highlighted || parts.underlined);
   const segments: SpeechSegment[] = [];
-  if (cite) segments.push({ part: 'cite', text: cite });
+  const tag = clean(parts.tag);
+  const author = clean(citeSpeaker(parts.cite));
+  const text = clean(parts.highlighted || parts.underlined);
+  if (tag) segments.push({ part: 'tag', text: tag });
+  if (author) segments.push({ part: 'author', text: author });
   if (text) segments.push({ part: 'text', text });
   return segments;
 }
 
 /**
- * The segments to play for a card: split by part when the tag / cite voice
- * or speed differs from the highlighted text's, else one segment in the
- * highlighted text's voice (one request, and the cache keys a single voice
- * setting always used).
+ * The segments to play for a card: the three parts, with neighbors that share
+ * a voice and speed joined into one segment (so one request, and the cache
+ * keys a single voice setting always used, when nothing was split off).
  */
 export function speechSegmentsFor(parts: CardParts): SpeechSegment[] {
-  const sameVoice =
-    readStoredVoiceId('cite') === readStoredVoiceId('text') && readStoredSpeed('cite') === readStoredSpeed('text');
-  if (!sameVoice) return cardSpeechSegments(parts);
-  const text = cardSpeechText(parts);
-  return text ? [{ part: 'text', text }] : [];
+  const merged: SpeechSegment[] = [];
+  for (const segment of cardSpeechSegments(parts)) {
+    const last = merged[merged.length - 1];
+    if (
+      last &&
+      readStoredVoiceId(last.part) === readStoredVoiceId(segment.part) &&
+      readStoredSpeed(last.part) === readStoredSpeed(segment.part)
+    ) {
+      last.text = `${last.text}. ${segment.text}`;
+    } else {
+      merged.push({ ...segment });
+    }
+  }
+  return merged;
 }
 
 /** Whether `el` is drawn: `checkVisibility` where the browser has it, else read mode's hide class. */
@@ -343,7 +354,7 @@ class CardHoverActionsView {
   private readonly progressEl: HTMLDivElement;
   private readonly progressText: HTMLSpanElement;
   private readonly progressFill: HTMLSpanElement;
-  /** The read's segments (tag / cite, then highlighted text) and the one playing. */
+  /** The read's segments (tag, author & year, then highlighted text) and the one playing. */
   private segments: SpeechSegment[] = [];
   private segmentIndex = 0;
   private currentPart: ReadVoicePart = 'text';
@@ -679,9 +690,9 @@ class CardHoverActionsView {
     if (this.voicePreloaded) this.preloadVoice();
   };
 
-  /** Downloads the chosen model voices (tag / cite and highlighted text) ahead of the first read. */
+  /** Downloads the chosen model voices (tag, author & year, and highlighted text) ahead of the first read. */
   private preloadVoice(): void {
-    for (const part of ['text', 'cite'] as const) {
+    for (const part of ['text', 'tag', 'author'] as const) {
       const id = readStoredVoiceId(part);
       if (this.preloadedVoices.has(id)) continue;
       this.preloadedVoices.add(id);

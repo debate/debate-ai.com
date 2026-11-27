@@ -2259,10 +2259,32 @@ index 9d885e8..3e793a1 100644
          kind: 'item',
          label: `Delete ${what} and contents`,
 diff --git a/src/editor/pairing/pairing-wiring.ts b/src/editor/pairing/pairing-wiring.ts
-index 56c7e8b..b06b446 100644
+index 56c7e8b..5459f60 100644
 --- a/src/editor/pairing/pairing-wiring.ts
 +++ b/src/editor/pairing/pairing-wiring.ts
-@@ -131,8 +131,7 @@ export function initPairingWiring(): void {
+@@ -93,6 +93,21 @@ export async function regenerateOwnCode(): Promise<void> {
+ 
+ let lastMismatchToast = 0;
+ 
++/** Background relay auth failure (401/403 from the poller/sender). These
++ *  surface from the first poll after the editor mounts, so a toast would pop
++ *  up on every file open for anyone not signed in. File it under the status
++ *  bar chip instead (still readable and dismissible, but nothing floats over
++ *  the page). Deliberate card-sharing actions report their own failures. */
++export function postRelayRejectedNotice(): void {
++  postNotice({
++    severity: 'error',
++    title: 'Card sharing needs credentials',
++    body: 'Card sharing: the relay rejected your credentials. ' + RELAY_FIX_PATH,
++    key: 'pairing-401',
++    toast: false,
++  });
++}
++
+ /** Wire config sync + incoming-event handling. Idempotent-ish; call once
+  *  at boot. */
+ export function initPairingWiring(): void {
+@@ -131,8 +146,7 @@ export function initPairingWiring(): void {
        }
        if (st.evicted) {
          showToast(
@@ -2272,7 +2294,21 @@ index 56c7e8b..b06b446 100644
              'to keep using collaboration features here.',
          );
        }
-@@ -168,14 +167,16 @@ export function initPairingWiring(): void {
+@@ -146,12 +160,7 @@ export function initPairingWiring(): void {
+   // (a wrong custom-relay token or a stale build is the likely cause).
+   if (electron?.onPairingUnauthorized) {
+     electron.onPairingUnauthorized(() => {
+-      postNotice({
+-        severity: 'error',
+-        title: 'Card sharing needs credentials',
+-        body: 'Card sharing: the relay rejected your credentials. ' + RELAY_FIX_PATH,
+-        key: 'pairing-401',
+-      });
++      postRelayRejectedNotice();
+     });
+   }
+ 
+@@ -168,24 +177,21 @@ export function initPairingWiring(): void {
          );
        });
        m.onWebPairingAccountRequired(() => {
@@ -2294,7 +2330,18 @@ index 56c7e8b..b06b446 100644
            key: 'pairing-account-required',
          });
        });
-@@ -193,3 +194,18 @@ export function initPairingWiring(): void {
+       m.onWebPairingUnauthorized(() => {
+-        postNotice({
+-          severity: 'error',
+-          title: 'Card sharing needs credentials',
+-          body: 'Card sharing: the relay rejected your credentials. ' + RELAY_FIX_PATH,
+-          key: 'pairing-401',
+-        });
++        postRelayRejectedNotice();
+       });
+     });
+   }
+@@ -193,3 +199,18 @@ export function initPairingWiring(): void {
    applyConfig();
    settings.subscribe(() => applyConfig());
  }

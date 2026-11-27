@@ -148,24 +148,29 @@ export function firstVoiceOf(engine: ReadVoiceEngine): string {
 }
 
 /**
- * The two parts of a card that Read aloud can speak in different voices and
- * at different speeds: `cite` is the tag and the author's name and year,
- * `text` is the highlighted (or underlined) card text. `text` keeps the
- * storage keys the single voice setting used before the split, so a voice
- * picked then still reads the evidence; `cite` follows `text` until the
- * reader picks something for it.
+ * The three parts of a card that Read aloud can speak in different voices and
+ * at different speeds, in reading order: `tag` is the card's tag, `author` is
+ * the author's last name and the year, `text` is the highlighted (or
+ * underlined) card text. `text` keeps the storage keys the single voice
+ * setting used before the split, so a voice picked then still reads the
+ * evidence. `tag` keeps the keys of the combined tag-author-year part it
+ * replaced, and `author` follows `tag` until the reader picks something for
+ * it, so a reader who had set that combined part hears no change.
  */
-export type ReadVoicePart = 'cite' | 'text';
+export type ReadVoicePart = 'tag' | 'author' | 'text';
 
 export const READ_VOICE_PARTS: ReadonlyArray<{ id: ReadVoicePart; label: string; description: string }> = [
-  { id: 'cite', label: 'Tag, author & year', description: "The card's tag, then the author's last name and the year." },
+  { id: 'tag', label: 'Tag', description: "The card's tag." },
+  { id: 'author', label: 'Author & year', description: "The author's last name and the year." },
   { id: 'text', label: 'Highlighted text', description: 'The highlighted card text (or the underlined text when nothing is highlighted).' },
 ];
 
 /** Where the voice choice (a `READ_VOICE_OPTIONS` id) is kept, in this browser only. */
 export const READ_VOICE_STORAGE_KEY = 'pmd-card-actions-read-voice';
-/** Where the tag / author / year voice is kept; unset, it follows `READ_VOICE_STORAGE_KEY`. */
-export const READ_CITE_VOICE_STORAGE_KEY = 'pmd-card-actions-read-voice-cite';
+/** Where the tag voice is kept (the key of the former tag-author-year voice); unset, it follows `READ_VOICE_STORAGE_KEY`. */
+export const READ_TAG_VOICE_STORAGE_KEY = 'pmd-card-actions-read-voice-cite';
+/** Where the author & year voice is kept; unset, it follows the tag's. */
+export const READ_AUTHOR_VOICE_STORAGE_KEY = 'pmd-card-actions-read-voice-author';
 
 /** Fired on `window` when a voice choice changes (`detail`: the id; listeners re-read both parts), so open editors and Settings stay in step. */
 export const READ_VOICE_CHANGE_EVENT = 'pmd-read-voice-change';
@@ -192,26 +197,41 @@ function validVoiceId(raw: string | null): string | null {
 
 /**
  * The stored voice id for `part` (the highlighted text by default), or the
- * default when none (or an unknown one) is stored. The tag / cite voice
- * falls back to the highlighted text's voice.
+ * default when none (or an unknown one) is stored. The tag falls back to the
+ * highlighted text's voice, and the author & year to the tag's.
  */
 export function readStoredVoiceId(part: ReadVoicePart = 'text'): string {
   const text = validVoiceId(storageGet(READ_VOICE_STORAGE_KEY)) ?? DEFAULT_READ_VOICE_ID;
   if (part === 'text') return text;
-  return validVoiceId(storageGet(READ_CITE_VOICE_STORAGE_KEY)) ?? text;
+  const tag = validVoiceId(storageGet(READ_TAG_VOICE_STORAGE_KEY)) ?? text;
+  if (part === 'tag') return tag;
+  return validVoiceId(storageGet(READ_AUTHOR_VOICE_STORAGE_KEY)) ?? tag;
 }
 
 /** Saves the voice choice for `part` and tells every listener (the card buttons, Settings). */
 export function storeVoiceId(id: string, part: ReadVoicePart = 'text'): void {
   if (!READ_VOICE_OPTIONS.some((o) => o.id === id)) return;
-  storageSet(part === 'cite' ? READ_CITE_VOICE_STORAGE_KEY : READ_VOICE_STORAGE_KEY, id);
+  storageSet(VOICE_KEYS[part], id);
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(READ_VOICE_CHANGE_EVENT, { detail: id }));
 }
 
 /** Where the read-aloud speed multiplier is kept, in this browser only. */
 export const READ_SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed';
-/** Where the tag / author / year speed is kept; unset, it follows `READ_SPEED_STORAGE_KEY`. */
-export const READ_CITE_SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed-cite';
+/** Where the tag speed is kept (the key of the former tag-author-year speed); unset, it follows `READ_SPEED_STORAGE_KEY`. */
+export const READ_TAG_SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed-cite';
+/** Where the author & year speed is kept; unset, it follows the tag's. */
+export const READ_AUTHOR_SPEED_STORAGE_KEY = 'pmd-card-actions-read-speed-author';
+
+const VOICE_KEYS: Record<ReadVoicePart, string> = {
+  tag: READ_TAG_VOICE_STORAGE_KEY,
+  author: READ_AUTHOR_VOICE_STORAGE_KEY,
+  text: READ_VOICE_STORAGE_KEY,
+};
+const SPEED_KEYS: Record<ReadVoicePart, string> = {
+  tag: READ_TAG_SPEED_STORAGE_KEY,
+  author: READ_AUTHOR_SPEED_STORAGE_KEY,
+  text: READ_SPEED_STORAGE_KEY,
+};
 
 /** Fired on `window` when a read speed changes (`detail`: the speed; listeners re-read both parts), so a card that is playing speeds up live. */
 export const READ_SPEED_CHANGE_EVENT = 'pmd-read-speed-change';
@@ -228,20 +248,22 @@ function validSpeed(raw: string | null): number | null {
 
 /**
  * The stored read speed for `part` (the highlighted text by default), or the
- * 2x default when none (or an out-of-range one) is stored. The tag / cite
- * speed falls back to the highlighted text's speed.
+ * 2x default when none (or an out-of-range one) is stored. The tag's speed
+ * falls back to the highlighted text's, and the author & year's to the tag's.
  */
 export function readStoredSpeed(part: ReadVoicePart = 'text'): number {
   const text = validSpeed(storageGet(READ_SPEED_STORAGE_KEY)) ?? DEFAULT_READ_SPEED;
   if (part === 'text') return text;
-  return validSpeed(storageGet(READ_CITE_SPEED_STORAGE_KEY)) ?? text;
+  const tag = validSpeed(storageGet(READ_TAG_SPEED_STORAGE_KEY)) ?? text;
+  if (part === 'tag') return tag;
+  return validSpeed(storageGet(READ_AUTHOR_SPEED_STORAGE_KEY)) ?? tag;
 }
 
 /** Saves the read speed for `part` (clamped to 0.5x–4x) and tells every listener. */
 export function storeReadSpeed(speed: number, part: ReadVoicePart = 'text'): void {
   if (!Number.isFinite(speed)) return;
   const value = Math.min(MAX_READ_SPEED, Math.max(MIN_READ_SPEED, speed));
-  storageSet(part === 'cite' ? READ_CITE_SPEED_STORAGE_KEY : READ_SPEED_STORAGE_KEY, String(value));
+  storageSet(SPEED_KEYS[part], String(value));
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(READ_SPEED_CHANGE_EVENT, { detail: value }));
 }
 

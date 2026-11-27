@@ -138,6 +138,18 @@ export async function resubscribeEmail(db: Database, email: string): Promise<{ e
   return { email: normalized };
 }
 
+/** Every address that has opted out, normalized, for bulk exclusion without a query per address. */
+export async function listUnsubscribedEmails(db: Database): Promise<Set<string>> {
+  await ensureTable(db);
+  const rows = await db.select({ email: emailUnsubscribes.email }).from(emailUnsubscribes);
+  const out = new Set<string>();
+  for (const { email } of rows) {
+    const normalized = normalizeEmail(email);
+    if (normalized) out.add(normalized);
+  }
+  return out;
+}
+
 /** Drop addresses that have unsubscribed; keeps original order otherwise. */
 export async function filterSubscribedEmails(db: Database, emails: readonly string[]): Promise<string[]> {
   const out: string[] = [];

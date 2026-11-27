@@ -35,10 +35,15 @@ export class EmailListError extends Error {
  * `parseRecipientList` accepts. Any invalid entry rejects the whole list, so
  * a typo is never silently dropped.
  */
-export function validateListInput(name: unknown, rawEmails: unknown): { name: string; emails: string[]; duplicates: number } {
+export function validateListName(name: unknown): string {
   const trimmed = typeof name === "string" ? name.trim() : "";
   if (!trimmed) throw new EmailListError("Give the list a name.");
   if (trimmed.length > MAX_LIST_NAME) throw new EmailListError(`List names are at most ${MAX_LIST_NAME} characters.`);
+  return trimmed;
+}
+
+export function validateListInput(name: unknown, rawEmails: unknown): { name: string; emails: string[]; duplicates: number } {
+  const trimmed = validateListName(name);
   const isStringArray = Array.isArray(rawEmails) && rawEmails.every((entry) => typeof entry === "string");
   if (typeof rawEmails !== "string" && !isStringArray) throw new EmailListError("Provide the addresses as text.");
   const { valid, invalid, duplicates } = parseRecipientList(rawEmails as string | string[]);
@@ -112,6 +117,26 @@ export async function saveEmailList(
         VALUES (${id}, ${input.name}, ${json}, ${input.emails.length}, ${now}, ${now}, ${updatedBy})`,
   );
   return getEmailList(db, id);
+}
+
+/** Creates the list with this `id`, or replaces its name and addresses when it exists. */
+export async function upsertEmailList(
+  db: Database,
+  input: { id: string; name: string; emails: string[] },
+  updatedBy: string | null,
+  now = Date.now(),
+): Promise<EmailList> {
+  await ensureEmailTables(db);
+  const json = JSON.stringify(input.emails);
+  await db.run(
+    sql`INSERT INTO email_lists (id, name, emails, count, created_at, updated_at, updated_by)
+        VALUES (${input.id}, ${input.name}, ${json}, ${input.emails.length}, ${now}, ${now}, ${updatedBy})
+        ON CONFLICT(id) DO UPDATE SET name = excluded.name, emails = excluded.emails, count = excluded.count,
+          updated_at = excluded.updated_at, updated_by = excluded.updated_by`,
+  );
+  const saved = await getEmailList(db, input.id);
+  if (!saved) throw new Error("The list was not saved.");
+  return saved;
 }
 
 export async function deleteEmailList(db: Database, id: string): Promise<void> {
