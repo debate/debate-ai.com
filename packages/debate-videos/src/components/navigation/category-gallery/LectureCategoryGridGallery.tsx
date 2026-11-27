@@ -41,6 +41,7 @@ import {
   Presentation,
   Vote,
   Swords,
+  Archive,
 } from "lucide-react";
 import { DIVISION_CONFIG, type Division } from "@debate-ai/rankings/src/leaderboard/leaderboardUtils";
 import { GlowingEffect } from "../../../ui/effects/glowing-effect";
@@ -148,11 +149,16 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
       "Public Forum",
       "Philosophy & IR Theory",
       "Documentaries & Culture",
+      "NSDA Speech",
     ],
   },
   {
     title: "Formats",
-    labels: ["WSD", "NSDA Speech", "Demo Debates", "Congress", "Speech"],
+    labels: ["WSD", "Demo Debates", "Open Super Debates", "Congress", "Speech"],
+  },
+  {
+    title: "Miscellaneous",
+    labels: ["Miscellaneous"],
   },
 ];
 
@@ -188,6 +194,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Speech": <Mic className="h-4 w-4" />, // Example icon, adjust as needed
   "NSDA Speech": <Mic className="h-4 w-4" />,
   "Open Super Debates": <Swords className="h-4 w-4" />,
+  "Miscellaneous": <Archive className="h-4 w-4" />,
 };
 
 

@@ -75,7 +75,7 @@ Extracts from title/description:
 
 #### Lecture Classifier ([debate-videos/src/data/lecture-classifier.ts](../debate-videos/src/data/lecture-classifier.ts))
 
-Categorizes lectures into topics (plus channel/title-forced shelves such as NSDA Speech and Open Super Debates; see `forcedLectureCategory`):
+Categorizes lectures into topics (plus channel/title-forced shelves such as NSDA Speech, Open Super Debates and Congressional Debate lectures under Congress; see `ruleLectureCategory`; anything unplaced falls back to Miscellaneous):
 
 - Topic Lectures
 - Novice & Introductory
@@ -94,6 +94,8 @@ Categorizes lectures into topics (plus channel/title-forced shelves such as NSDA
 - Philosophy & IR Theory
 - Camp & Coaching Advice
 - Documentaries & Culture
+- Congress
+- Miscellaneous
 
 #### Video Classifier ([src/sync/youtube/parsers/video-classifier.ts](src/sync/youtube/parsers/video-classifier.ts))
 
