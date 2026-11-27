@@ -79,6 +79,75 @@ describe("EmailListsPanel", () => {
   });
 });
 
+describe("EmailListsPanel import", () => {
+  const preview = (over: object = {}) => ({
+    total: 3,
+    excludedUnsubscribed: 1,
+    invalid: 0,
+    sources: [
+      { id: "accounts", label: "Registered accounts", count: 3, added: 3 },
+      { id: "stripe", label: "Stripe billing emails", count: 2, added: 0 },
+    ],
+    existing: null,
+    added: 3,
+    removed: 0,
+    maxRecipients: 20000,
+    ...over,
+  });
+  const saved = { id: "current-customers", name: "All current customers", count: 3, emails: ["a@x.com", "b@x.com", "c@x.com"] };
+
+  it("previews counts by source, then saves the customers list", async () => {
+    const { calls } = mockFetch([
+      { match: "/lists/import", method: "POST", respond: { list: { id: saved.id, name: saved.name, count: 3 }, report: { excludedUnsubscribed: 1 } } },
+      { match: "/lists/import", respond: { preview: preview() } },
+      { match: "/lists?id=current-customers", respond: { list: saved } },
+      { match: "/lists", respond: { lists: [] } },
+    ]);
+    mount(<EmailListsPanel />);
+    await flush();
+    await clickAsync(button("Import existing emails"));
+    await flush();
+    expect(bodyText()).toContain("3 addresses will be saved, 1 unsubscribed left out.");
+    expect(bodyText()).toContain("Registered accounts");
+    expect(bodyText()).toContain("2 found, 0 new");
+    expect(field("Import list name").value).toBe("All current customers");
+
+    change(field("Import list name"), "Everyone");
+    await clickAsync(button("Save list"));
+    await flush();
+    expect(calls.find((c) => c.method === "POST" && c.url.includes("/lists/import"))?.body).toEqual({ name: "Everyone" });
+    expect(bodyText()).toContain('Imported "All current customers" with 3 addresses (1 unsubscribed left out).');
+    expect(field("List addresses").value).toBe("a@x.com\nb@x.com\nc@x.com");
+  });
+
+  it("offers a refresh with what it would add and remove when the list exists", async () => {
+    mockFetch([
+      { match: "/lists/import", respond: { preview: preview({ existing: { id: "current-customers", name: "Everyone", count: 2 }, added: 2, removed: 1 }) } },
+      { match: "/lists", respond: { lists: [] } },
+    ]);
+    mount(<EmailListsPanel />);
+    await flush();
+    await clickAsync(button("Import existing emails"));
+    await flush();
+    expect(field("Import list name").value).toBe("Everyone");
+    expect(bodyText()).toContain("refreshing adds 2 and removes 1");
+    expect(button("Refresh from current users").disabled).toBe(false);
+  });
+
+  it("will not save an empty import", async () => {
+    mockFetch([
+      { match: "/lists/import", respond: { preview: preview({ total: 0, sources: [] }) } },
+      { match: "/lists", respond: { lists: [] } },
+    ]);
+    mount(<EmailListsPanel />);
+    await flush();
+    await clickAsync(button("Import existing emails"));
+    await flush();
+    expect(bodyText()).toContain("No subscribed customer emails were found.");
+    expect(button("Save list").disabled).toBe(true);
+  });
+});
+
 describe("EmailComposePanel", () => {
   const template = { id: "t1", name: "News", subject: "Big news", body: "Hello" };
   const list = { id: "l1", name: "Coaches", count: 3 };
@@ -169,5 +238,34 @@ describe("EmailComposePanel", () => {
     change(field("Subject"), "Edited");
     expect(button("Review and send").disabled).toBe(true);
     expect(bodyText()).toContain("Save your changes to the template before sending.");
+  });
+
+  it("refreshes the customers list and confirms the recipient count before sending to all current customers", async () => {
+    const customers = { id: "current-customers", name: "All current customers", count: 7 };
+    let refreshed = false;
+    const { calls } = mockFetch([
+      { match: "/lists/import", method: "POST", respond: () => ((refreshed = true), { list: customers, report: {} }) },
+      { match: "/campaign", method: "POST", respond: () => ({ results: [{ email: "a@x.com", status: "sent" }], totals: { sent: 1, failed: 0, skipped: 0 }, total: 7, nextOffset: null }) },
+      { match: "/campaign", respond: { providers: { resend: { ready: true, batchSize: 100 }, cloudflare: { ready: false, batchSize: 25 } } } },
+      { match: "/templates", respond: { templates: [template], starter: { name: "Welcome", subject: "Welcome to Debate AI", body: "# Welcome" } } },
+      { match: "/lists", respond: () => ({ lists: refreshed ? [list, customers] : [list] }) },
+    ]);
+    mount(<EmailComposePanel />);
+    await flush();
+    expect(button("Send to all current customers").disabled).toBe(true);
+    await clickAsync(button(/News/));
+    await clickAsync(button("Send to all current customers"));
+    await flush();
+    expect(bodyText()).toContain("Send Big news to 7 addresses in All current customers through Resend");
+    expect(calls.filter((c) => c.url.includes("/campaign") && c.method === "POST")).toHaveLength(0);
+
+    await clickAsync(button("Send to 7 addresses"));
+    await flush();
+    expect(calls.find((c) => c.url.includes("/campaign") && c.method === "POST")?.body).toEqual({
+      templateId: "t1",
+      listId: "current-customers",
+      provider: "resend",
+      offset: 0,
+    });
   });
 });

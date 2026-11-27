@@ -7,6 +7,7 @@ import { cn } from "../../../ui/lib/utils";
 import { Button } from "../../../ui/primitives/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../ui/primitives/card";
 import { Input } from "../../../ui/primitives/input";
+import { EmailImportPanel } from "./EmailImportPanel";
 
 export interface EmailListSummary {
   id: string;
@@ -32,6 +33,7 @@ export function EmailListsPanel({ onChanged }: { onChanged?: () => void }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
 
   const parsed = useMemo(() => parseRecipientList(input), [input]);
   const tooMany = parsed.valid.length > MAX_LIST_RECIPIENTS;
@@ -48,6 +50,7 @@ export function EmailListsPanel({ onChanged }: { onChanged?: () => void }) {
   }, [refresh]);
 
   const startNew = () => {
+    setImporting(false);
     setSelectedId(null);
     setName("");
     setInput("");
@@ -56,6 +59,7 @@ export function EmailListsPanel({ onChanged }: { onChanged?: () => void }) {
   };
 
   const open = async (id: string) => {
+    setImporting(false);
     setError(null);
     setNotice(null);
     try {
@@ -117,6 +121,16 @@ export function EmailListsPanel({ onChanged }: { onChanged?: () => void }) {
         <Button size="sm" variant="outline" onClick={startNew}>
           New list
         </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            startNew();
+            setImporting(true);
+          }}
+        >
+          Import existing emails
+        </Button>
         {lists.length === 0 && <p className="text-muted-foreground text-sm">No saved lists yet.</p>}
         {lists.map((list) => (
           <button
@@ -136,6 +150,17 @@ export function EmailListsPanel({ onChanged }: { onChanged?: () => void }) {
         ))}
       </div>
 
+      {importing ? (
+        <EmailImportPanel
+          onCancel={() => setImporting(false)}
+          onSaved={async (id, message) => {
+            await refresh();
+            await open(id);
+            setNotice(message);
+            onChanged?.();
+          }}
+        />
+      ) : (
       <Card className="min-w-0 flex-1">
         <CardHeader>
           <CardTitle>{selectedId ? "Edit list" : "New list"}</CardTitle>
@@ -187,6 +212,7 @@ export function EmailListsPanel({ onChanged }: { onChanged?: () => void }) {
           {notice && <p className="text-muted-foreground text-sm">{notice}</p>}
         </CardContent>
       </Card>
+      )}
     </div>
   );
 }

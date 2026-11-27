@@ -9,7 +9,7 @@
 export const MAX_BULK_RECIPIENTS = 500;
 
 /** Most addresses one saved list holds. Sends from a list go out in batches, so it may exceed one send's cap. */
-export const MAX_LIST_RECIPIENTS = 5000;
+export const MAX_LIST_RECIPIENTS = 20000;
 
 /** Practical address check: one `@`, no spaces, a dotted domain. */
 const EMAIL_PATTERN = /^[^\s@<>(),;:"[\]]+@[^\s@<>(),;:"[\]]+\.[^\s@<>(),;:"[\]]{2,}$/;
