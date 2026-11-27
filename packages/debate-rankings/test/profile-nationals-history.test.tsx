@@ -13,7 +13,7 @@ describe("ProfileNationalsHistory", () => {
   it("lists a school's NDCA titles and elim finishes by year, without speaker places", async () => {
     mounted = await mount(<ProfileNationalsHistory school="Glenbrook North High School (IL)" />);
     const text = mounted.container.textContent ?? "";
-    expect(text).toContain("TOC, NDCA & Glenbrooks nationals");
+    expect(text).toContain("TOC, NDCA, Barkley, Cal & Glenbrooks nationals");
     expect(text).toContain("Quarterfinalist");
     expect(text).toContain("Matt Fisher & Stephanie Spies");
     // Speaker places below first only score points; they aren't listed.
@@ -39,7 +39,7 @@ describe("ProfileNationalsHistory", () => {
   it("merges TOC, NDCA and Barkley finishes into one list, newest year first", async () => {
     mounted = await mount(<ProfileNationalsHistory school="St. Mark's School of Texas (TX)" />);
     const text = mounted.container.textContent ?? "";
-    expect(text.match(/TOC, NDCA, Barkley & Glenbrooks nationals/g)).toHaveLength(1);
+    expect(text.match(/TOC, NDCA, Barkley, Cal & Glenbrooks nationals/g)).toHaveLength(1);
     expect(text).toContain("1 TOC title");
     expect(text).toContain("2 NDCA titles");
     expect(text).not.toContain("0 NDCA top speakers");
