@@ -38,17 +38,20 @@ export { default as IconSchoolWesternKentucky } from "../school-rank/wordmarks/c
 export { default as IconSchoolYale } from "../school-rank/wordmarks/colleges/yale.png";
 
 // High schools (owned by @debate-ai/school-rank)
+export { default as IconSchoolBellarmine } from "../school-rank/wordmarks/high-schools/bellarmine.png";
 export { default as IconSchoolBlake } from "../school-rank/wordmarks/high-schools/blake.png";
 export { default as IconSchoolBronx } from "../school-rank/wordmarks/high-schools/bronx.png";
 export { default as IconSchoolCaddoMagnet } from "../school-rank/wordmarks/high-schools/caddo-magnet.png";
 export { default as IconSchoolCarrolltonSchoolOfTheSacredHeart } from "../school-rank/wordmarks/high-schools/carrollton-school-of-the-sacred-heart.png";
 export { default as IconSchoolCollegePrep } from "../school-rank/wordmarks/high-schools/college-prep.png";
+export { default as IconSchoolCoppell } from "../school-rank/wordmarks/high-schools/coppell.png";
 export { default as IconSchoolGlenbrookNorth } from "../school-rank/wordmarks/high-schools/glenbrook-north.png";
 export { default as IconSchoolGlenbrookSouth } from "../school-rank/wordmarks/high-schools/glenbrook-south.png";
 export { default as IconSchoolGreenhill } from "../school-rank/wordmarks/high-schools/greenhill.png";
 export { default as IconSchoolHarker } from "../school-rank/wordmarks/high-schools/harker.png";
 export { default as IconSchoolHarvardWestlake } from "../school-rank/wordmarks/high-schools/harvard-westlake.png";
 export { default as IconSchoolKinkaid } from "../school-rank/wordmarks/high-schools/kinkaid.png";
+export { default as IconSchoolLexington } from "../school-rank/wordmarks/high-schools/lexington.png";
 export { default as IconSchoolLiberalArtsAndScience } from "../school-rank/wordmarks/high-schools/liberal-arts-and-science.png";
 export { default as IconSchoolLoyola } from "../school-rank/wordmarks/high-schools/loyola.png";
 export { default as IconSchoolLynbrook } from "../school-rank/wordmarks/high-schools/lynbrook.png";

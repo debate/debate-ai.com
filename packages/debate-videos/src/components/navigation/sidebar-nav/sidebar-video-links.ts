@@ -67,7 +67,7 @@ export const VIDEO_ROUNDS_LINK: SidebarVideoLink = {
 };
 
 /** Strategy Lectures — the lecture library without its Formats section
- *  (Getting started, Strategy, Topics & ideas). Its id stays `lectures`, the
+ *  (General, Strategy, Topics & ideas). Its id stays `lectures`, the
  *  key the page and the per-category counts already use. */
 export const VIDEO_STRATEGY_LECTURES_LINK: SidebarVideoLink = {
   id: "lectures",

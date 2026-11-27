@@ -2,7 +2,8 @@
  * @fileoverview The "All time" season on the rankings page. Picking "All time"
  * at the top of the season dropdown swaps the season's rankings for the
  * greatest of all time in the event tab that is showing, as the full page,
- * with the Teams/Schools toggle picking which list. For College Policy (NDT)
+ * with the Teams/Schools toggle picking which list; each team's row lists its
+ * debaters' top speaker awards inline ({@link TeamSpeakerAwards}). For College Policy (NDT)
  * both are the all-seasons NDT points ranking ({@link NdtAllSeasonsRankings});
  * for the high school events Teams is the top 100 high school teams of that
  * event ({@link HsAllTimeTeamsRankings}) and Schools the top 100 programs of
@@ -160,14 +161,16 @@ function HighSchoolAllTimeSchools({ event }: { event: HsAllTimeEvent }) {
  */
 export function AllTimeRankingsView({ division, view = "teams" }: { division: Division; view?: LeaderboardView }) {
   return (
-    <section aria-labelledby={TITLE_ID} className="rounded-lg border bg-background">
-      {division === "NDT" ? (
-        <CollegeAllTime view={view} />
-      ) : view === "schools" ? (
-        <HighSchoolAllTimeSchools event={HS_ALL_TIME_EVENT[division]} />
-      ) : (
-        <HighSchoolAllTime event={HS_ALL_TIME_EVENT[division]} />
-      )}
-    </section>
+    <div className="space-y-3">
+      <section aria-labelledby={TITLE_ID} className="rounded-lg border bg-background">
+        {division === "NDT" ? (
+          <CollegeAllTime view={view} />
+        ) : view === "schools" ? (
+          <HighSchoolAllTimeSchools event={HS_ALL_TIME_EVENT[division]} />
+        ) : (
+          <HighSchoolAllTime event={HS_ALL_TIME_EVENT[division]} />
+        )}
+      </section>
+    </div>
   )
 }

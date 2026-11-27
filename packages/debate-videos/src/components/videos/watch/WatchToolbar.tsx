@@ -31,6 +31,7 @@ import {
   PictureInPicture,
   Play,
   RotateCcw,
+  Scale,
   SkipForward,
   Star,
   X,
@@ -70,6 +71,14 @@ interface WatchToolbarProps {
   youtubeUrl: string
   /** Host-supplied buttons, rendered right after play/pause — see `SlowSpreadButton`. */
   extraControls?: ReactNode
+  /**
+   * Reveals the round's decision. Given for every round video — also those
+   * with no stored decision, which the server then looks up. The scales
+   * button is left out when this is not given.
+   */
+  onRevealDecision?: () => void
+  /** Whether the decision has been revealed; the scales button shows as pressed. */
+  isDecisionRevealed?: boolean
   /** Whether the video should keep playing after it ends. */
   autoplay: boolean
   onPlayPause: () => void
@@ -112,6 +121,8 @@ export function WatchToolbar({
   copyFormat,
   youtubeUrl,
   extraControls,
+  onRevealDecision,
+  isDecisionRevealed = false,
   autoplay,
   onPlayPause,
   onToggleAutoplay,
@@ -154,6 +165,17 @@ export function WatchToolbar({
         />
 
         {extraControls}
+
+        {onRevealDecision && (
+          <PlayerIconButton
+            size="md"
+            icon={Scale}
+            label="Reveal decision"
+            tooltip={isDecisionRevealed ? "Decision revealed" : "Reveal decision and judges"}
+            active={isDecisionRevealed}
+            onClick={onRevealDecision}
+          />
+        )}
 
         <PlayerIconButton
           size="md"
