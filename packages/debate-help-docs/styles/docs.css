@@ -707,3 +707,59 @@ html[data-debate-auto-cursor="pencil"][data-debate-auto-frame="9"] .synergy-slay
 [data-docs-zoom] {
   zoom: var(--debate-docs-zoom, 1);
 }
+
+/*
+ * Minimize unread (Marks menu, components/guides/highlight-toggle.tsx):
+ * data-debate-minimize-unread="on" on <html> renders the body text inside
+ * .synergy-slayer-doc that is not marked at 8pt, so only what the reader
+ * marked (or the page authored) is full size. "Size 8" is 8pt, the Verbatim
+ * minimize convention, not the card's own 0.7rem shrink (about 8.4pt), which
+ * is a muted default and not tied to marks. 8pt is absolute, and the Zoom
+ * level button's `zoom` scales it with the rest of the page.
+ *
+ * Keyed off the mark elements themselves, so marks the reader adds (auto
+ * modes, AI) or brings back with Undo / Redo take effect with no script:
+ * <u> (authored or reader underline), <mark> (authored `debate-hl`, reader
+ * long and short highlight) and strong.reader-emphasis go back to
+ * --debate-read-size, the size body text has when not minimized (1rem, the
+ * card's own 0.9rem inside .debate-card, 0.75rem in its .stats). An underline
+ * the reader took off an authored <u> (debate-u--no-underline) is unmarked.
+ * Marks stay "marked" while their Show switch is off, since they are still in
+ * the text.
+ *
+ * Only body text shrinks: paragraphs, and list items other than reference
+ * entries (marks in headings are left alone too). Headings, <summary> citation lines, a card's summary and
+ * qualification lines (what its <hr> or first paragraph sets apart), its
+ * .stats line, code, tables and the citation hover cards keep their size.
+ */
+html[data-debate-minimize-unread="on"] .synergy-slayer-doc {
+  --debate-read-size: 1rem;
+}
+
+html[data-debate-minimize-unread="on"] .synergy-slayer-doc .debate-card {
+  --debate-read-size: 0.9rem;
+}
+
+html[data-debate-minimize-unread="on"] .synergy-slayer-doc .debate-card .stats {
+  --debate-read-size: 0.75rem;
+}
+
+html[data-debate-minimize-unread="on"]
+  .synergy-slayer-doc
+  :is(p, li:not(:has(details)):not(ol:has(> li > details) > li)):not(
+    summary *,
+    .citation-card *,
+    .debate-card .stats,
+    .debate-card .stats *,
+    .debate-card:has(hr) > p:nth-child(-n + 2),
+    .debate-card:not(:has(hr)) > p:first-child
+  ) {
+  font-size: 8pt;
+}
+
+html[data-debate-minimize-unread="on"]
+  .synergy-slayer-doc
+  :is(p, li)
+  :is(u, mark, strong.reader-emphasis):not(.debate-u--no-underline, .citation-card *) {
+  font-size: var(--debate-read-size);
+}

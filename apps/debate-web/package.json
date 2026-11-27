@@ -80,6 +80,7 @@
     "@debate-ai/file-market": "workspace:*",
     "@debate-ai/qwksearch": "workspace:*",
     "@debate-ai/rankings": "workspace:*",
+    "@debate-ai/reading-mode": "workspace:*",
     "@debate-ai/reason-docs": "workspace:*",
     "@debate-ai/research-evidence": "workspace:*",
     "@debate-ai/round": "workspace:*",

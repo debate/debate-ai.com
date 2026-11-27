@@ -92,6 +92,39 @@ describe("VideoEditDialog", () => {
     expect(onSaved).toHaveBeenCalledWith(saved);
   });
 
+  describe("demo format", () => {
+    const demo = (overrides: Partial<LibraryVideo> = {}) =>
+      libraryVideo({ source: "lecture", style: null, category: "Demo Debates", title: "PF demo round", ...overrides });
+    const trigger = () => document.getElementById("video-demo-style");
+
+    it("is offered for an unstyled demo, with the title's guess as the default", () => {
+      mount(<VideoEditDialog video={demo()} onClose={() => {}} onSaved={() => {}} />);
+      expect(trigger()!.textContent).toContain("Guess from title (PF)");
+    });
+
+    it("is not offered for a round or another lecture category", () => {
+      mount(<VideoEditDialog video={libraryVideo()} onClose={() => {}} onSaved={() => {}} />);
+      expect(trigger()).toBeNull();
+      cleanup();
+      mount(<VideoEditDialog video={demo({ category: "Theory & Skills" })} onClose={() => {}} onSaved={() => {}} />);
+      expect(trigger()).toBeNull();
+    });
+
+    it("saves the chosen format, and null for the guess", async () => {
+      const { calls } = mockFetch([{ method: "PATCH", match: `/api/admin/videos/library/${VIDEO_ID}`, respond: { video: demo() } }]);
+      mount(<VideoEditDialog video={demo({ demoStyle: 2 })} onClose={() => {}} onSaved={() => {}} />);
+      expect(trigger()!.textContent).toContain("PF demo");
+
+      selectOption(trigger()!, "Policy demo");
+      await clickAsync(button("Save changes"));
+      expect(calls.find((c) => c.method === "PATCH")!.body).toMatchObject({ demoStyle: 1 });
+
+      selectOption(trigger()!, "Guess from title (PF)");
+      await clickAsync(button("Save changes"));
+      expect(calls.filter((c) => c.method === "PATCH")[1].body).toMatchObject({ demoStyle: null });
+    });
+  });
+
   it("passes the watch-page paths the save returned, so the page can follow a moved video", async () => {
     const onSaved = vi.fn();
     const saved = libraryVideo({ roundLevel: "Semis" });

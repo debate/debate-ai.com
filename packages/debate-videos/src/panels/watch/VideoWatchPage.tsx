@@ -60,7 +60,7 @@ import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate-ai/time
 import { ViewCount } from "@debate-ai/rankings/src/view-count"
 
 import { WatchToolbar } from "../../components/videos/watch/WatchToolbar"
-import { WatchSeasonTopic } from "../../components/videos/watch/WatchSeasonTopic"
+import { VideoDateBadge } from "../../components/videos/card/VideoDateBadge"
 import { seasonYearForDate } from "../../data/video-rows"
 import { WatchSidePanel, type WatchSideTab } from "../../components/videos/watch/WatchSidePanel"
 import type { LinkedVideo } from "../../components/videos/watch/WatchAnalysisPanel"
@@ -98,6 +98,7 @@ import { TopPickBadge } from "../../components/videos/card/TopPickBadge"
 import { ArgumentLabels } from "../../components/videos/card/ArgumentLabels"
 import { isTopPickVideo } from "../../lib/topPickBadges"
 import { FormatBadge, videoFormat } from "../../components/videos/grid/FormatBadge"
+import { demoStyleOfTuple } from "../../data/demo-style"
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
@@ -304,7 +305,11 @@ export function VideoWatchPage({
     [video, affRanking, negRanking, titleRanks],
   )
 
-  const styleNumber = typeof style === "number" ? style : undefined
+  // A demo debate is a lecture with a debate format of its own (the admin's
+  // pick, else its title's guess), and that format is what makes this a round
+  // page: speech detection, the timeline and the per-speech tabs all key off
+  // it, exactly as for a round.
+  const styleNumber = typeof style === "number" ? style : (demoStyleOfTuple(video) ?? undefined)
   const categoryLabel = typeof style === "string" ? lectureCategoryDisplayLabel(style) : undefined
   const roundLabel = displayRoundLevel(roundLevel)
   const formatStyle = videoFormat(video)
@@ -459,7 +464,7 @@ export function VideoWatchPage({
    * widens only once it is settled that there is nothing to show.
    */
   /** The round's speeches as written up, or its format's standard order — empty for a lecture. */
-  const baseSpeeches = useMemo(() => resolveRoundSpeeches(documents, style), [documents, style])
+  const baseSpeeches = useMemo(() => resolveRoundSpeeches(documents, styleNumber ?? style), [documents, styleNumber, style])
   /**
    * Speech timing is public per video (`state/sharedVideoAi.ts`): the
    * latest "Detect speeches" run and the hand-marked starts any viewer
@@ -1185,32 +1190,13 @@ export function VideoWatchPage({
                       )}
                     </div>
                     {year && (
-                        <span className="flex flex-col items-center gap-0.5">
-                          <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
-                            '{String(year).slice(-2)}
-                          </span>
-                          {/* The year already says when, so the upload date
-                              under it is just the month, colored per month. */}
-                          {monthLabel && (
-                            <span
-                              title={formatVideoDate(date, "full")}
-                              className={cn(
-                                "text-[11px] font-semibold leading-none backdrop-blur-md border px-1.5 py-0.5 rounded shadow-sm",
-                                getMonthBadgeColor(date),
-                              )}
-                            >
-                              {monthLabel}
-                            </span>
-                          )}
-                          {/* The topic season, with the resolution debated
-                              that season on hover. */}
-                          <WatchSeasonTopic
-                            seasonYear={seasonYear}
-                            style={formatStyle}
-                            topics={videoLibraryMeta?.topics}
-                          />
-                        </span>
-                      )}
+                      <VideoDateBadge
+                        date={date}
+                        seasonYear={seasonYear}
+                        style={formatStyle}
+                        topics={videoLibraryMeta?.topics}
+                      />
+                    )}
                   </div>
                 )}
                 {/* Style, views and duration — stacked vertically after the

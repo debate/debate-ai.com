@@ -9,3 +9,6 @@ export * from './questions';
 export * from './summary-tags';
 export * from './sections';
 export * from './export';
+export * from './references';
+export * from './article-html';
+export * from './favorites';

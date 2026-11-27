@@ -25,6 +25,7 @@
  */
 
 import { formatSeasonLabel } from "../../../data/video-rows";
+import { demoStyleGroupLabel, demoStyleOfTuple } from "../../../data/demo-style";
 import {
   formatRoundLevel,
   getRoundSortKey,
@@ -168,6 +169,10 @@ export function tournamentHasRR(tournament: string | null | undefined): boolean 
 export function videoCategoryLabel(video: VideoType): string {
   const style = video[6];
   if (typeof style === "number") return DEBATE_STYLE_LABELS[style as 1 | 2 | 3 | 4] ?? "";
+  // A demo debate files under the format it demonstrates ("PF demos"), so the
+  // demo shelf reads as one group per format.
+  const demoStyle = demoStyleOfTuple(video);
+  if (demoStyle !== null) return demoStyleGroupLabel(demoStyle);
   return typeof style === "string" ? lectureCategoryDisplayLabel(style.trim()) : "";
 }
 

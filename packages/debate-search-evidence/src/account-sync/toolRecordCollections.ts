@@ -610,6 +610,18 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Research",
   },
   {
+    key: "docsFavoriteReferences",
+    storageKey: "docsFavoriteReferences",
+    idField: "id",
+    // Sources starred from the docs' References panel
+    // (`@debate-ai/reading-mode/favorites`, the star beside each card's Reading
+    // mode button), one record per source. The Research Workspace's Library tab
+    // lists them as "Favorite References".
+    label: "Favorite References",
+    href: "/research",
+    section: "Research",
+  },
+  {
     key: "revisionHistory",
     storageKey: "revisionHistory",
     idField: "id",

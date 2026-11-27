@@ -10,6 +10,12 @@
  *   reader's citation style; the quoted card text, with its underlining and
  *   highlights, is what opens. Small flags on the card's top edge say what
  *   kind of source it is and whether the author is a professor or an institution.
+ * - Every entry starts with a row of icon buttons (`reference-card-actions.tsx`):
+ *   **Reading mode** (`reference-reading-mode.tsx`) opens the source article
+ *   itself in the same reading mode modal, read from the entry's link or, with
+ *   none, found by searching its title and author; **Copy** copies the
+ *   citation and link; **Favorite** stars the source into the reader's
+ *   favorites, listed under Research, Library.
  * - Clicking an entry scrolls the page to where it is cited and flashes the
  *   citation; clicking again goes on to the next place it is cited, in page
  *   order. The numbered chips jump to one place directly.
@@ -40,6 +46,8 @@ import { cn } from "../../lib/utils"
 import { buttonVariants } from "../ui/button"
 import { SYNERGY_SLAYER_CLASS } from "../../lib/mdx/remark-debate-highlight"
 import { ReferenceCardLines, ReferenceEdgeIcons, describeReference } from "./reference-card-header"
+import { ReferenceCardActions } from "./reference-card-actions"
+import { NESTED_READER_ATTRIBUTE } from "./reading-mode-frame"
 import { readCardsAloud, stopCardVoice } from "./card-voice"
 import {
   REFERENCES_PANEL_ATTRIBUTE,
@@ -259,6 +267,8 @@ function ReferencesPanel({ contentSelector, onClose }: { contentSelector: string
       if (event.key !== "Escape" || event.defaultPrevented) return
       // A hover card open over the panel closes first.
       if (document.querySelector(".citation-tooltip[data-state$=\"open\"]")) return
+      // A source article's reader opened from an entry closes first, and takes this Escape itself.
+      if (document.querySelector(`[${NESTED_READER_ATTRIBUTE}]`)) return
       event.preventDefault()
       event.stopPropagation()
       onClose()
@@ -415,6 +425,7 @@ function ReferencesPanel({ contentSelector, onClose }: { contentSelector: string
                 )}
               >
                 <ReferenceEdgeIcons display={display} />
+                <ReferenceCardActions item={item} />
                 <div className="flex items-start gap-1 px-2 py-2">
                   <button
                     type="button"
