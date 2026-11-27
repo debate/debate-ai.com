@@ -14,6 +14,7 @@
  */
 
 import { and, asc, count, desc, eq, getTableColumns, isNull, not, or, sql, type AnyColumn, type SQL } from "drizzle-orm";
+import { asDebateStyle } from "@debate-ai/videos/src/data/demo-style";
 import {
   publishedMsForDate,
   seasonYearForDate,
@@ -108,6 +109,7 @@ export const EDITABLE_FIELDS = [
   "description",
   "viewCount",
   "style",
+  "demoStyle",
   "category",
   "categoryKey",
   "tournament",
@@ -207,6 +209,8 @@ export function buildLibraryUpdate(
   if (has("source")) update.source = String(patch.source ?? "").trim() || current.source;
   if (has("viewCount")) update.viewCount = Math.max(0, Math.trunc(optionalNumber(patch.viewCount) ?? 0));
   if (has("style")) update.style = optionalNumber(patch.style);
+  // A format outside the style enum is dropped to "guess from the title".
+  if (has("demoStyle")) update.demoStyle = asDebateStyle(optionalNumber(patch.demoStyle));
   if (has("category")) update.category = optionalText(patch.category);
   if (has("categoryKey")) update.categoryKey = optionalText(patch.categoryKey);
   // Saved without its year ("2024 TOC" -> "TOC"): the season column holds it.

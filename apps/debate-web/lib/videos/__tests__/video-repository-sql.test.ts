@@ -47,6 +47,11 @@ const LECTURES = [
   ["lecKritik01", "Kritik basics 100% explained_with_underscores", "2024-09-01", "Coach", 7000, "kritik lecture", "Kritiks"],
   ["lecKritik02", "Advanced kritik answers", "2025-01-01", "Coach", 300, "framework", "Kritiks"],
   ["lecWsd00001", "How to give a WSD reply speech", "2025-02-02", "WSDC", 900, "", "WSD"],
+  ["demoPf00001", "PF demo: a full round", "2025-03-03", "Coach", 400, "", "Demo Debates"],
+  ["demoPf00002", "Public Forum demonstration", "2025-03-04", "Coach", 100, "", "Demo Debates"],
+  ["demoPol0001", "Policy demo - 1AC to 2AR", "2024-03-05", "Coach", 250, "", "Demo Debates"],
+  ["demoPick001", "Mystery demonstration", "2025-03-06", "Coach", 80, "", "Demo Debates"],
+  ["demoNone001", "Another demonstration", "2025-03-07", "Coach", 60, "", "Demo Debates"],
 ] as unknown as VideoTuple[];
 
 const fixtureRows: VideoRow[] = (() => {
@@ -62,6 +67,9 @@ const fixtureRows: VideoRow[] = (() => {
     if (row.videoId === "Afl7_hl-H0c") Object.assign(row, { stackKey: "qx7Xx_6exzk", stackPosition: 1 });
     if (row.videoId === "toc2024pfF1") Object.assign(row, { stackKey: "toc2024pfF1", stackPosition: 0 });
   }
+  // An admin-picked format outranks the title; the seed leaves the column
+  // alone, so `beforeAll` stores it in the database too.
+  for (const row of rows) if (row.videoId === "demoPick001") row.demoStyle = 3;
   return rows;
 })();
 
@@ -86,6 +94,7 @@ const ids = (tuples: VideoTuple[]) => tuples.map((t) => t[0]);
 beforeAll(async () => {
   db = drizzle(await freshSchemaClient(), { schema });
   await seedVideosIntoDb(db);
+  await db.update(videos).set({ demoStyle: 3 }).where(eq(videos.videoId, "demoPick001"));
 });
 
 describe("getVideoPage on the SQL backend", () => {
@@ -102,6 +111,11 @@ describe("getVideoPage on the SQL backend", () => {
     ["legacy season", { year: "legacy" }],
     ["a tournament name, any year", { tournament: "NDT" }],
     ["a category key", { categoryKey: "kritiks" }],
+    ["the demo category", { categoryKey: "demo_debates" }],
+    ["one demo format", { categoryKey: "demo_debates", style: 2 }],
+    ["a demo format the admin picked", { categoryKey: "demo_debates", style: 3 }],
+    ["several demo formats", { categoryKey: "demo_debates", styles: [1, 3] }],
+    ["a demo format outside the demo category", { categoryKey: "kritiks", style: 2 }],
     ["a category that is also a style (WSD)", { categoryKey: "wsd" }],
     ["a one-word search", { q: "michigan" }],
     ["a multi-word search (all tokens must match)", { q: "dartmouth finals" }],
@@ -133,8 +147,8 @@ describe("getVideoPage on the SQL backend", () => {
     expect(first.videos).toHaveLength(4);
     expect(first.hasMore).toBe(true);
 
-    const last = await repo.getVideoPage({ source: "all", limit: 4, offset: 8 });
-    expect(last.videos).toHaveLength(fixtureRows.length - 8);
+    const last = await repo.getVideoPage({ source: "all", limit: 4, offset: fixtureRows.length - 4 });
+    expect(last.videos).toHaveLength(4);
     expect(last.hasMore).toBe(false);
     expect(new Set([...ids(first.videos), ...ids(last.videos)]).size).toBe(first.videos.length + last.videos.length);
   });
@@ -153,6 +167,19 @@ describe("getVideoPage on the SQL backend", () => {
     const params: VideoQueryParams = { source: "all", style: 4, year: "2026" };
     const page = await repo.getVideoPage(params, true);
     expect(page.facets).toEqual(computeVideoFacets(fixtureRows, params));
+  });
+
+  it("counts a demo category's formats, guessed from titles or picked", async () => {
+    for (const params of [
+      { categoryKey: "demo_debates" },
+      { categoryKey: "demo_debates", style: 2 },
+      { categoryKey: "demo_debates", year: "2025" },
+    ] as VideoQueryParams[]) {
+      const page = await repo.getVideoPage({ source: "all", ...params }, true);
+      expect(page.facets).toEqual(computeVideoFacets(fixtureRows, params));
+    }
+    const facets = (await repo.getVideoPage({ categoryKey: "demo_debates" }, true)).facets!;
+    expect(facets.styleCounts).toEqual({ 1: 1, 2: 2, 3: 1 });
   });
 
   it("omits facets unless asked", async () => {

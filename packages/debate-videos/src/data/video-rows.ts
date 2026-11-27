@@ -11,6 +11,7 @@
 
 import { classifyRoundCollection, forcedLectureCategory } from "./lecture-classifier";
 import { assignVideoStacks } from "./video-stacks";
+import { asDebateStyle, DEMO_STYLE_TUPLE_SLOT, resolveDemoStyle } from "./demo-style";
 
 /**
  * Positional video record as stored in the JSON assets and consumed by the UI.
@@ -18,7 +19,7 @@ import { assignVideoStacks } from "./video-stacks";
  * `[videoId, title, date, channel, viewCount, description, style|category,
  *   tournament, roundLevel, affTeam, negTeam, affWin, judgeDecision, arg1AC,
  *   arg2NR, isTopPick, speechDocsUrl, seasonYear, stackKey, stackPosition,
- *   computedTitle]`
+ *   computedTitle, demoStyle]`
  */
 export type VideoTuple = any[];
 
@@ -95,6 +96,14 @@ export interface VideoRow {
    * Optional so rows built before it existed still type-check.
    */
   computedTitle?: string | null;
+  /**
+   * The format of a "Demo Debates" lecture (a `DebateStyle`), which is what
+   * makes its watch page a round page; see `demo-style.ts`. In the table it is
+   * the admin's pick (`videos.demo_style`); on a row built from a tuple it is
+   * the resolved format, the title's guess when nobody picked. `null` for every
+   * video that is not an unstyled demo.
+   */
+  demoStyle?: number | null;
 }
 
 /** Season boundary: everything published before this date is "legacy". */
@@ -289,6 +298,12 @@ export function tupleToVideoRow(
   const description = typeof tuple[5] === "string" ? tuple[5] : "";
   const publishedAt = typeof tuple[2] === "string" ? tuple[2] : "";
   const computedTitle = typeof tuple[20] === "string" && tuple[20] !== "" ? tuple[20] : null;
+  const demoStyle = resolveDemoStyle({
+    style,
+    category,
+    title,
+    demoStyle: asDebateStyle(tuple[DEMO_STYLE_TUPLE_SLOT]),
+  });
 
   return {
     videoId,
@@ -326,6 +341,7 @@ export function tupleToVideoRow(
     // Not in the JSON assets either; only the client's index tuples carry it
     // (slot 20), and search should find a video by it there too.
     computedTitle,
+    demoStyle,
     searchText: `${title} ${channel} ${description}${computedTitle ? ` ${computedTitle}` : ""}`.toLowerCase(),
   };
 }
@@ -371,6 +387,8 @@ export function videoRowToTuple(row: VideoRow): VideoTuple {
     // video's tuple still trims back to its old length.
     row.stackKey ? row.stackPosition : null,
     row.computedTitle ?? null,
+    // The stored pick, or the title's guess for a demo nobody has classified.
+    resolveDemoStyle(row),
   ];
 
   // Keep the first seven slots (the fields every consumer reads) and drop

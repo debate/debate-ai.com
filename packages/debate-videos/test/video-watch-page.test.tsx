@@ -293,3 +293,36 @@ describe("VideoWatchPage round badge", () => {
     unmount()
   })
 });
+
+describe("VideoWatchPage demo debates", () => {
+  const lecture = (title: string, category: string, demoStyle?: number) => {
+    const tuple: unknown[] = [VIDEO_ID, title, "2024-03-25", "Coach", 1234, "A demo.", category]
+    if (demoStyle !== undefined) tuple[21] = demoStyle
+    return tuple as unknown as VideoType
+  }
+  const badge = () => container.querySelector("[data-testid=format-badge]")?.textContent
+
+  it("takes the round page's format treatment, guessed from the title", () => {
+    mount(createElement(VideoWatchPage, { video: lecture("PF demo round", "Demo Debates") }))
+    expect(badge()).toContain("PF")
+    unmount()
+  })
+
+  it("prefers the admin's pick over the title", () => {
+    mount(createElement(VideoWatchPage, { video: lecture("PF demo round", "Demo Debates", 1) }))
+    expect(badge()).toContain("Policy")
+    unmount()
+  })
+
+  it("leaves other lectures as plain lectures", () => {
+    mount(createElement(VideoWatchPage, { video: lecture("PF theory talk", "Theory") }))
+    expect(badge()).toBeUndefined()
+    unmount()
+  })
+
+  it("leaves a demo that names no format as a plain lecture", () => {
+    mount(createElement(VideoWatchPage, { video: lecture("A demonstration", "Demo Debates") }))
+    expect(badge()).toBeUndefined()
+    unmount()
+  })
+})

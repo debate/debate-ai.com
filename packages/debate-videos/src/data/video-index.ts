@@ -19,7 +19,7 @@
  * tuple with one extra slot:
  *
  * ```text
- * [ …the 21 UI slots…, sourceCode ]
+ * [ …the 22 UI slots…, sourceCode ]
  * ```
  *
  * `sourceCode` is the one field the UI tuple drops and the client cannot
@@ -43,7 +43,7 @@ import {
 export type VideoIndexTuple = any[];
 
 /** Index of the source-code slot appended to the UI tuple. */
-export const VIDEO_INDEX_SOURCE_SLOT = 21;
+export const VIDEO_INDEX_SOURCE_SLOT = 22;
 
 /** How {@link VideoSource} is encoded in the index — a byte, not a word. */
 export const VIDEO_INDEX_SOURCE_CODES: Record<VideoSource, number> = {
@@ -56,7 +56,7 @@ export const VIDEO_INDEX_SOURCE_CODES: Record<VideoSource, number> = {
  * unreadable. A client holding an older version throws its cache away and
  * fetches the library again rather than trying to interpret it.
  */
-export const VIDEO_INDEX_FORMAT_VERSION = 2;
+export const VIDEO_INDEX_FORMAT_VERSION = 3;
 
 /** The payload `/api/videos/index` answers with. */
 export interface VideoIndexResponse {
@@ -93,7 +93,8 @@ export function videoRowToIndexTuple(row: VideoRow): VideoIndexTuple {
   // source has to sit at a fixed index, so the padding comes back here. It is
   // a few nulls per row in the common case, and it keeps the reader a plain
   // index lookup rather than a length-dependent guess. (Version 2 moved the
-  // source from slot 20 to 21 when the computed title took slot 20.)
+  // source from slot 20 to 21 when the computed title took slot 20; version 3
+  // moved it to 22 for a demo debate's format.)
   const tuple = videoRowToTuple(row);
   while (tuple.length < VIDEO_INDEX_SOURCE_SLOT) tuple.push(null);
   tuple[VIDEO_INDEX_SOURCE_SLOT] = VIDEO_INDEX_SOURCE_CODES[row.source] ?? 0;

@@ -1496,6 +1496,12 @@ export const videos = sqliteTable(
     style: integer("style"),
     category: text("category"),
     categoryKey: text("category_key"),
+    // The debate format (a `style` value) of a "Demo Debates" lecture, which
+    // is what gives its watch page the round experience. Set by an admin;
+    // null means "guess it from the title" (`resolveDemoStyle` in
+    // `@debate-ai/videos/src/data/demo-style.ts`). Always null for rounds,
+    // which carry `style`. Added to existing databases by `ensureTableColumns`.
+    demoStyle: integer("demo_style"),
     tournament: text("tournament"),
     roundLevel: text("round_level"),
     affTeam: text("aff_team"),
