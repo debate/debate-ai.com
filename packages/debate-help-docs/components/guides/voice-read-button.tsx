@@ -13,8 +13,9 @@
  * a voice and speed for each part a read-aloud says (`voice-read-settings.tsx`,
  * the same settings as the editor's Read aloud player).
  *
- * **Follows along.** A ball glides under the word being said
- * (`voice-read-ball.ts`; engines give no per-word timing, so the word is
+ * **Follows along.** A grab.js loading spinner glides under the word being said
+ * (`voice-read-ball.ts`, `voice-read-spinner.tsx`; one of seven variants picked
+ * at random each time a reading starts and kept until it stops; engines give no per-word timing, so the word is
  * estimated from the clip's progress, `voice-read-words.ts`). While it reads,
  * clicking any text restarts from the start of that sentence.
  *
@@ -57,6 +58,7 @@ import { PauseControl } from "./voice-read-pause"
 import { blockFromWord, collectVoiceBlocks, type VoiceBlock } from "./voice-read-text"
 import { VoiceQueue, type VoiceSource } from "./voice-read-queue"
 import { VoiceSettings } from "./voice-read-settings"
+import { mountVoiceSpinner, pickVoiceSpinnerVariant, type VoiceSpinnerVariant } from "./voice-read-spinner"
 import { activeWordIndex, locateWord, sentenceStart, wordAtCharacter } from "./voice-read-words"
 
 /** The page content Voice reads (`SYNERGY_SLAYER_CLASS` in routes/docs-page.tsx). */
@@ -309,9 +311,12 @@ export function cloudSpeaker(voice: typeof import("@debate-ai/editor/read-voice"
 /** Reads the Synergy Slayer page (or reading mode's section) aloud: Cloudflare, racing local Kokoro when that's on. */
 export function VoiceReadButton({
   contentSelector = CONTENT_SELECTOR,
+  pickSpinner = pickVoiceSpinnerVariant,
 }: {
   /** What to read; reading mode (`reading-mode.tsx`) points it at its whole section. */
   contentSelector?: string
+  /** Chooses the spinner variant when a reading starts; tests inject a fixed one. */
+  pickSpinner?: () => VoiceSpinnerVariant
 } = {}) {
   const [options, setOptions] = useState<VoiceOptions>(DEFAULT_VOICE_OPTIONS)
   const optionsRef = useRef<VoiceOptions>(DEFAULT_VOICE_OPTIONS)
@@ -331,6 +336,8 @@ export function VoiceReadButton({
   /** The engine voicing the paragraph playing. */
   const [engine, setEngine] = useState<VoiceSource | null>(null)
   const controller = useRef<AbortController | null>(null)
+  /** The spinner variant of the reading in progress. */
+  const spinnerRef = useRef<VoiceSpinnerVariant | null>(null)
 
   const stop = () => {
     controller.current?.abort()
@@ -426,6 +433,9 @@ export function VoiceReadButton({
     }
     if (blocks.length === 0) return
 
+    // A click that restarts a reading in progress keeps its spinner; a fresh start picks a new one.
+    if (!controller.current || !spinnerRef.current) spinnerRef.current = pickSpinner()
+    const spinner = spinnerRef.current
     controller.current?.abort()
     const ctrl = new AbortController()
     controller.current = ctrl
@@ -435,7 +445,7 @@ export function VoiceReadButton({
     setPaused(false)
     setStatus("loading")
     setEngine(null)
-    const ball = createVoiceBall()
+    const ball = createVoiceBall(document, (host) => mountVoiceSpinner(host, spinner))
 
     // Unlock one audio element inside the click; every clip plays through it.
     const audio = new Audio()
