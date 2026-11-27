@@ -9,7 +9,7 @@
  *
  * ## Where the URLs come from
  *
- * Three dynamic sources, handed to the pure builder in `lib/seo/sitemap.ts`:
+ * Four dynamic sources, handed to the pure builder in `lib/seo/sitemap.ts`:
  *
  * - **Videos** (`getVideoSitemapEntries`) — every video at its *canonical*
  *   path. The old `/videos/watch/<slug>` URLs this file used to list
@@ -18,6 +18,8 @@
  *   category that empties out drops off the sitemap instead of lingering.
  * - **Docs pages** (`docsPageUrls`) — read from the same Fumadocs source the
  *   `/docs` routes render, so a page cannot be in the docs and missing here.
+ * - **Authors** (`getAuthorSitemapEntries`) — one page per author cited in the
+ *   References, from the committed authors snapshot.
  *
  * ## Why this is dynamic
  *
@@ -31,6 +33,7 @@
 import type { MetadataRoute } from "next"
 import { buildSitemap } from "@/lib/seo/sitemap"
 import { getVideoMeta, getVideoSitemapEntries } from "@/lib/videos/video-repository"
+import { getAuthorSitemapEntries } from "@/lib/authors/author-repository"
 import { docsPageUrls } from "@debate-ai/help-docs/lib/fumadocs/sitemap-helper"
 
 /** Read the library on each request rather than freezing it at build time. */
@@ -52,9 +55,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("sitemap: docs page list failed", error)
   }
 
+  // The authors come from the committed snapshot, kept out of the
+  // `Promise.all` above for the same reason as the docs pages.
+  let authorPages: { path: string }[] = []
+  try {
+    authorPages = await getAuthorSitemapEntries()
+  } catch (error) {
+    console.error("sitemap: author page list failed", error)
+  }
+
   return buildSitemap({
     videos,
     lectureCategories: meta.lectureCategories.map((category) => category.key),
     docsPages,
+    authors: authorPages,
   })
 }

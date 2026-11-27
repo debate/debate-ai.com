@@ -3991,3 +3991,87 @@ export const collabRelayMessages = sqliteTable(
     recipientIdx: index("idx_collab_relay_messages_recipient").on(table.recipient, table.id),
   }),
 );
+
+/** Everyone credited in a byline on a References page card: a person or an
+ *  organization. Built from the docs by `.github/scripts/sync-authors.ts`
+ *  (`lib/authors/`), so the rows are a projection of the MDX, not user data.
+ *  `slug` is the `/authors/<slug>` URL segment. */
+export const authors = sqliteTable(
+  "authors",
+  {
+    id: text("id").primaryKey(),
+    slug: text("slug").notNull(),
+    name: text("name").notNull(),
+    sortName: text("sort_name").notNull(),
+    /** Lowercase ASCII `given family`, for LIKE searches. */
+    normalizedName: text("normalized_name").notNull(),
+    kind: text("kind").notNull().default("person"),
+    qualifications: text("qualifications").notNull().default(""),
+    /** JSON array of other spellings that were merged into this author. */
+    aliases: text("aliases").notNull().default("[]"),
+    cardCount: integer("card_count").notNull().default(0),
+    quoteCount: integer("quote_count").notNull().default(0),
+    firstYear: integer("first_year"),
+    lastYear: integer("last_year"),
+  },
+  (table) => ({
+    slugIdx: uniqueIndex("idx_authors_slug").on(table.slug),
+    rankIdx: index("idx_authors_rank").on(table.cardCount, table.quoteCount),
+    nameIdx: index("idx_authors_normalized_name").on(table.normalizedName),
+  }),
+);
+
+/** One evidence card (a References page entry) with its Chicago citation and
+ *  quoted text. `id` is `<collection>#<anchor>`. */
+export const citations = sqliteTable(
+  "citations",
+  {
+    id: text("id").primaryKey(),
+    collection: text("collection").notNull(),
+    collectionTitle: text("collection_title").notNull(),
+    pagePath: text("page_path").notNull(),
+    anchor: text("anchor").notNull(),
+    entryNumber: integer("entry_number").notNull(),
+    chicago: text("chicago").notNull(),
+    chicagoText: text("chicago_text").notNull(),
+    year: text("year").notNull().default(""),
+    yearNumber: integer("year_number"),
+    title: text("title").notNull().default(""),
+    container: text("container").notNull().default(""),
+    sourceKind: text("source_kind").notNull().default("other"),
+    url: text("url").notNull().default(""),
+    summary: text("summary").notNull().default(""),
+    qualification: text("qualification").notNull().default(""),
+    quoteHtml: text("quote_html").notNull().default(""),
+    quoteText: text("quote_text").notNull().default(""),
+    quoteWordCount: integer("quote_word_count").notNull().default(0),
+    quoteStatus: text("quote_status").notNull().default("missing"),
+    etAl: integer("et_al").notNull().default(0),
+    /** JSON array of `{ path, title }`: the pages that cite this card in running text. */
+    citedIn: text("cited_in").notNull().default("[]"),
+  },
+  (table) => ({
+    collectionIdx: index("idx_citations_collection").on(table.collection, table.entryNumber),
+  }),
+);
+
+/** Which authors a card credits, in byline order. */
+export const citationAuthors = sqliteTable(
+  "citation_authors",
+  {
+    citationId: text("citation_id")
+      .notNull()
+      .references(() => citations.id, { onDelete: "cascade" }),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => authors.id, { onDelete: "cascade" }),
+    position: integer("position").notNull().default(0),
+    role: text("role").notNull().default("author"),
+    /** This author's qualification on this card; empty when the card gives none for them. */
+    qualification: text("qualification").notNull().default(""),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.citationId, table.authorId] }),
+    authorIdx: index("idx_citation_authors_author").on(table.authorId, table.citationId),
+  }),
+);
