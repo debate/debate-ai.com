@@ -447,14 +447,6 @@ html[data-debate-emphasis="off"] .synergy-slayer-doc strong.reader-emphasis {
   }
 }
 
-.citation-card .references-panel-intro {
-  margin: 0 0 0.6rem;
-  padding-left: 0.6rem;
-  border-left: 2px solid var(--color-fd-border);
-  color: var(--color-fd-muted-foreground);
-  font-style: italic;
-}
-
 .citation-tooltip svg {
   fill: var(--color-fd-popover);
 }
