@@ -4,7 +4,8 @@
  * from `topics` plus the pre-2000 legacy seasons), the topic-area research breakdown, and the YouTube channel
  * statistics charts (the totals charts four to a row), plus a searchable
  * section of 700 philosophical value resolutions, replacing the
- * previously-modal-only stats display.
+ * previously-modal-only stats display, and — at the very bottom — the
+ * championship side bias per format over the last ten seasons.
  * @module panels/statistics/StatisticsPage
  */
 
@@ -17,7 +18,10 @@ import { YouTubeStatsCharts } from "../../components/videos/youtube-stats/YouTub
 import { DebateTopicsExplorer, type YearVideoStats } from "../../components/topic-explorer/DebateTopicsExplorer";
 import { TopicAreasExplorer } from "../../components/topic-explorer/TopicAreasExplorer";
 import { ValueResolutionsExplorer } from "../../components/topic-explorer/ValueResolutionsExplorer";
+import { SideBiasChart } from "../../components/topic-explorer/SideBiasChart";
 import type { DebateTopicYear } from "@debate-ai/rankings/src/topics/debate-topics";
+import { sideBiasSeries, type SideBiasSeries } from "@debate-ai/rankings/src/side-bias";
+import { currentRankingSeasonYear } from "@debate-ai/rankings/src/extinction";
 import { withLegacyTopicYears } from "@debate-ai/rankings/src/topics/legacy-topics";
 
 export interface StatisticsPageProps {
@@ -37,9 +41,12 @@ export interface StatisticsPageProps {
    * carries the app dock into the video library.
    */
   topicAreasSlot?: ReactNode;
+  /** Championship side bias per format, for the closing chart; defaults to the bundled last ten seasons. */
+  sideBias?: SideBiasSeries[];
 }
 
-export function StatisticsPage({ topics, youtubeStats, topicAreasSlot }: StatisticsPageProps) {
+export function StatisticsPage({ topics, youtubeStats, topicAreasSlot, sideBias }: StatisticsPageProps) {
+  const sideBiasRows = useMemo(() => sideBias ?? sideBiasSeries(currentRankingSeasonYear()), [sideBias]);
   // Same one-boundary cast as the charts below: the timeline only reads `byYear`.
   const videoStatsByYear = (youtubeStats as { byYear?: YearVideoStats[] } | null)?.byYear;
   // The pre-2000 policy and LD seasons are listed here too: the Topic Starters
@@ -88,6 +95,10 @@ export function StatisticsPage({ topics, youtubeStats, topicAreasSlot }: Statist
             <YouTubeStatsCharts stats={youtubeStats as Parameters<typeof YouTubeStatsCharts>[0]["stats"]} />
           </div>
         ) : null}
+
+        <div className="mt-10">
+          <SideBiasChart series={sideBiasRows} />
+        </div>
       </div>
     </div>
   );

@@ -13,6 +13,31 @@
  */
 
 export * from "./upstream";
+export {
+  SIDE_BIAS_AFF_LABELS,
+  SIDE_BIAS_CHAMPIONSHIPS,
+  SIDE_BIAS_CHAMPIONSHIP_NAMES,
+  SIDE_BIAS_FORMATS,
+  SIDE_BIAS_FORMAT_BY_DATASET,
+  SIDE_BIAS_FORMAT_LABELS,
+  SIDE_BIAS_YEARS,
+  championshipSideBias,
+  championshipTournament,
+  countRounds,
+  hasSideBiasData,
+  sideBiasRates,
+  sideBiasSeries,
+  sideBiasYearRange,
+  sumCounts,
+  type ChampionshipRound,
+  type SideBiasCounts,
+  type SideBiasDataset,
+  type SideBiasFormat,
+  type SideBiasRates,
+  type SideBiasRecord,
+  type SideBiasSeries,
+  type SideBiasSeriesPoint,
+} from "./side-bias";
 // The site shows ratings shifted and scaled from upstream's (see rating-offset.ts).
 // `loadCsvRankingDataset` is the bundled-CSV loader; the official
 // `loadRankingDataset` below (from extinction.ts) takes precedence over the

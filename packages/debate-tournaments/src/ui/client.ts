@@ -325,13 +325,32 @@ const DATE_LABEL = new Intl.DateTimeFormat("en-US", { month: "short", day: "nume
 /** "Oct 3, 2026" or "Oct 3, 2026 – Oct 5, 2026" from a past tournament's start and end. */
 export function pastDates(start?: string | null, end?: string | null): string {
   const fmt = (v?: string | null) => {
-    if (!v) return "";
-    const d = new Date(v.includes("T") || v.includes("Z") ? v : `${v.replace(" ", "T")}Z`);
-    return Number.isNaN(d.getTime()) ? "" : DATE_LABEL.format(d);
+    const time = tournamentTime(v);
+    return Number.isNaN(time) ? "" : DATE_LABEL.format(time);
   };
   const a = fmt(start);
   const b = fmt(end);
   return a && b && a !== b ? `${a} – ${b}` : a || b;
+}
+
+/** The Results list's window, in days, when "results completed" is read off a tournament's end date. */
+export const RECENT_RESULTS_DAYS = 14;
+/** How much earlier than the window a tournament may have started and still have ended inside it. */
+const RECENT_RESULTS_START_PAD_DAYS = 7;
+
+/** A stored tournament timestamp (`2026-10-20 14:00:00`, treated as UTC, or ISO) as epoch ms, or `NaN`. */
+export function tournamentTime(value?: string | null): number {
+  if (!value) return Number.NaN;
+  return new Date(value.includes("T") || value.includes("Z") ? value : `${value.replace(" ", "T")}Z`).getTime();
+}
+
+/**
+ * When a listed tournament's results were completed: its end, falling back to
+ * its start for a row without one. `NaN` when neither parses.
+ */
+export function resultsCompletedAt(t: Pick<UpcomingTournament, "start" | "end">): number {
+  const end = tournamentTime(t.end);
+  return Number.isNaN(end) ? tournamentTime(t.start) : end;
 }
 
 /** Rows per page when listing a year's tournaments to resolve a slug (upstream's maximum). */
@@ -559,6 +578,23 @@ export function createTournamentsClient(
     return rows.sort((a, b) => (b.start || "").localeCompare(a.start || ""));
   }
 
+  /**
+   * Tournaments whose results were completed in the last `days` days (default
+   * 14), newest first. Upstream's `publishedResults` filter says a tournament
+   * has published results; its end date (see {@link resultsCompletedAt}) says
+   * they are done and recent. A tournament still under way is left out.
+   */
+  async function recentResults({ days = RECENT_RESULTS_DAYS, now = new Date(), ...rest }: PastTournamentsOptions = {}): Promise<UpcomingTournament[]> {
+    const rows = await pastTournaments({ ...rest, now, days: days + RECENT_RESULTS_START_PAD_DAYS });
+    const cutoff = now.getTime() - days * 86_400_000;
+    return rows
+      .filter((t) => {
+        const done = resultsCompletedAt(t);
+        return !Number.isNaN(done) && done >= cutoff && done <= now.getTime();
+      })
+      .sort((a, b) => resultsCompletedAt(b) - resultsCompletedAt(a));
+  }
+
   /** This school year's active circuits from every source, merged by abbreviation, busiest first. */
   async function activeCircuits(signal?: AbortSignal): Promise<ActiveCircuit[]> {
     const list = async (source: TournamentSource): Promise<ActiveCircuitRow[]> => {
@@ -644,6 +680,7 @@ export function createTournamentsClient(
   return {
     upcoming,
     pastTournaments,
+    recentResults,
     activeCircuits,
     invite,
     resolve,
