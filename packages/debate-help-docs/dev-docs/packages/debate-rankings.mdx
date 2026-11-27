@@ -46,8 +46,14 @@ to the bundled `data/npdl-rankings.json` (every season; an empty answer is sent 
 `bun run sync-npdl -- --season 2024-25` (or `--all-seasons`) refreshes from a
 machine that can reach the site. 2024-25 should give 877 team rows and 25 school rows. `ParliRankingsSection` renders it in
 the leaderboard's Parli tab (`/rank/PARLI`, after College Policy); it has no pickers of its own, and
-the panel's shared Teams/Schools toggle and season select drive it (`NPDL_SEASON_YEARS`, no "All
-time"). The daily cron refreshes the newest three seasons and backfills any older season not yet in
+the panel's shared Teams/Schools toggle and season select drive it (`NPDL_SEASON_YEARS`). "All time"
+(`/rank/PARLI?season=all-time`) shows `ParliAllTimeRankings`: `src/sync/npdl-all-time.ts`
+(`buildNpdlAllTime`) applies the high school program-strength formula (`schoolRankingPoints`: `(101 - rank) / 20` for a
+top-100 entry, a school's two best entries a season, summed over every finished season and ranked with
+`rankAllSchoolStrengths`) to the published team ranks, for schools and for teams (a pair at a school across
+seasons, joined on surnames), served by `/api/rankings/npdl/all-time` from D1 with the bundled snapshot as
+fallback. The league has no TOC/NDCA-style national finishes in the app, so Parli scores have no finish or
+college-credit components. The daily cron refreshes the newest three seasons and backfills any older season not yet in
 D1. Known gaps: season slugs are a hand-kept list (add next season's page to
 `NPDL_SEASON_SLUGS`), and a page with two team sheets keeps only the first.
 
