@@ -296,7 +296,7 @@ export function ResearchHub({ initialSection }: ResearchHubProps = {}) {
           refreshEntries()
         }}
       />
-      <HubSectionNav sections={RESEARCH_SECTIONS} active={section} onChange={setSection} label="Research sections" />
+      <HubSectionNav sections={RESEARCH_SECTIONS} active={section} onChange={setSection} label="Research sections" rows={2} />
 
       <section
         aria-label="Workspace identity"
