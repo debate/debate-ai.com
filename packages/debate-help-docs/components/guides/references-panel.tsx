@@ -5,14 +5,16 @@
  * right-hand side panel it opens: every citation hover card on the page, in
  * the order the sources are first cited (`references-panel-items.ts`).
  *
- * - Each entry shows what its hover card shows (`citation-card.tsx`): the
- *   References number, the bibliography line in the reader's citation style,
- *   and the full card with its underlining and highlights.
+ * - Each entry is two lines (`reference-card-header.tsx`): the card's summary,
+ *   then `Authors ’yy — qualifications` and the bibliography line in the
+ *   reader's citation style; the quoted card text, with its underlining and
+ *   highlights, is what opens. Small flags on the card's top edge say what
+ *   kind of source it is and whether the author is a professor or an institution.
  * - Clicking an entry scrolls the page to where it is cited and flashes the
  *   citation; clicking again goes on to the next place it is cited, in page
  *   order. The numbered chips jump to one place directly.
  * - **Collapse all** / **Expand all** switches between just the citations and
- *   the full cards (remembered per browser); each entry's chevron opens one.
+ *   the quoted text (remembered per browser); each entry's chevron opens one.
  * - **Read all** reads every card in order, each after the paragraph that
  *   introduces it, with the hover cards' voice (`readCardsAloud` in
  *   `card-voice.ts`). The panel and the page follow the card being read.
@@ -28,13 +30,11 @@ import { BookMarked, ChevronDown, ChevronsDownUp, ChevronsUpDown, Square, Volume
 import { cn } from "../../lib/utils"
 import { buttonVariants } from "../ui/button"
 import { SYNERGY_SLAYER_CLASS } from "../../lib/mdx/remark-debate-highlight"
-import { formatCitation } from "../../lib/citation-styles"
-import { useCitationStyle } from "./citation-style-switcher"
+import { ReferenceCardLines, ReferenceEdgeIcons, describeReference } from "./reference-card-header"
 import { readCardsAloud, stopCardVoice } from "./card-voice"
 import {
   REFERENCES_PANEL_ATTRIBUTE,
   collectReferenceItems,
-  paragraphText,
   readAllCards,
   type ReferenceItem,
 } from "./references-panel-items"
@@ -109,7 +109,6 @@ export function ReferencesPanelButton({ contentSelector = CONTENT_SELECTOR }: Re
 }
 
 function ReferencesPanel({ contentSelector, onClose }: { contentSelector: string; onClose: () => void }) {
-  const style = useCitationStyle()
   const [items, setItems] = useState<ReferenceItem[]>([])
   const [full, setFull] = useState(true)
   /** Entries opened or closed one at a time, overriding `full`. */
@@ -222,7 +221,7 @@ function ReferencesPanel({ contentSelector, onClose }: { contentSelector: string
       role="dialog"
       aria-label="References cited on this page"
       className={cn(
-        "fixed inset-y-0 right-0 flex w-full flex-col border-l bg-fd-background text-fd-foreground shadow-2xl sm:w-[min(28rem,100vw)]",
+        "fixed inset-y-0 right-0 flex w-full flex-col border-l bg-fd-background text-fd-foreground shadow-2xl sm:w-[min(21rem,100vw)]",
         // The page's panel stays under reading mode (z-[60]); reading mode's own sits above it.
         contentSelector === CONTENT_SELECTOR ? "z-[55]" : "z-[65]",
       )}
@@ -274,16 +273,18 @@ function ReferencesPanel({ contentSelector, onClose }: { contentSelector: string
         <ol ref={listRef} className="flex-1 space-y-2 overflow-y-auto px-3 py-3">
           {items.map((item, index) => {
             const expanded = isOpen(item)
-            const intro = expanded ? paragraphText(item.paragraph) : ""
+            const display = describeReference(item)
+            const hasQuote = display.card.quoteHtml !== ""
             return (
               <li
                 key={item.href || index}
                 data-reference-index={index}
                 className={cn(
-                  "rounded-lg border bg-fd-card",
+                  "relative rounded-lg border bg-fd-card",
                   readingIndex === index && "border-fd-primary ring-1 ring-fd-primary",
                 )}
               >
+                <ReferenceEdgeIcons display={display} />
                 <div className="flex items-start gap-1 px-2 py-2">
                   <button
                     type="button"
@@ -298,13 +299,12 @@ function ReferencesPanel({ contentSelector, onClose }: { contentSelector: string
                     <span className="mr-1.5 inline-block min-w-6 rounded-full bg-fd-muted px-1.5 text-center font-medium text-fd-muted-foreground">
                       {item.number}
                     </span>
-                    <span className="font-semibold">{item.label}</span>
-                    <span className="mt-0.5 block text-fd-muted-foreground" dangerouslySetInnerHTML={{ __html: formatCitation(item.citation, style) }} />
+                    <ReferenceCardLines item={item} display={display} />
                   </button>
                   <button
                     type="button"
                     aria-expanded={expanded}
-                    aria-label={expanded ? "Hide the card" : "Show the card"}
+                    aria-label={expanded ? "Hide the quoted text" : "Show the quoted text"}
                     className="rounded-md p-1 text-fd-muted-foreground hover:bg-fd-accent hover:text-fd-accent-foreground"
                     onClick={() => setOverrides((all) => ({ ...all, [item.href]: !expanded }))}
                   >
@@ -329,11 +329,10 @@ function ReferencesPanel({ contentSelector, onClose }: { contentSelector: string
                 )}
                 {expanded && (
                   <div className={`prose prose-sm ${SYNERGY_SLAYER_CLASS} citation-card border-t px-3 py-2`}>
-                    {intro && <p className="references-panel-intro">{intro}</p>}
-                    {item.card ? (
-                      <div dangerouslySetInnerHTML={{ __html: item.card }} />
+                    {hasQuote ? (
+                      <div dangerouslySetInnerHTML={{ __html: display.card.quoteHtml }} />
                     ) : (
-                      <p className="citation-card-empty">No card text for this source yet.</p>
+                      <p className="citation-card-empty">No quoted text for this source yet.</p>
                     )}
                   </div>
                 )}

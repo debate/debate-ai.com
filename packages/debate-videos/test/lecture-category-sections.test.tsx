@@ -47,26 +47,48 @@ describe("lecture category sections", () => {
     expect(html).not.toContain('href="/lectures"');
   });
 
-  it("leads with the main category badges, Parli last", () => {
+  it("leads with the four main category badges, each 200px wide", () => {
     const html = renderToStaticMarkup(
       createElement(LectureCategoryGridGallery, { categories, formatCounts: { college: 1400, parli: 15 } }),
     );
-    const hrefs = ["/videos/college", "/videos/policy", "/videos/ld", "/videos/pf", "/videos/parli"].map((href) =>
+    const hrefs = ["/videos/college", "/videos/policy", "/videos/ld", "/videos/pf"].map((href) =>
       html.indexOf(`href="${href}"`),
     );
     expect(hrefs.every((index) => index > -1)).toBe(true);
     expect([...hrefs].sort((a, b) => a - b)).toEqual(hrefs);
-    expect(hrefs[4]).toBeLessThan(html.indexOf('<section aria-label="Getting started"'));
+    expect(hrefs[3]).toBeLessThan(html.indexOf('<section aria-label="Getting started"'));
+    expect(html.slice(0, html.indexOf('<section aria-label="Getting started"'))).not.toContain("/videos/parli");
+    expect(html.match(/w-\[200px\]/g)).toHaveLength(4);
     expect(html).toContain("College Policy");
     expect(html).toContain("Individual");
     expect(html).toContain("Forum");
     expect(html).toContain(">1400<");
   });
 
-  it("lays the sections out as columns, at most 4 across", () => {
+  it("lists Parli under Formats with its count", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, { categories, formatCounts: { parli: 15 } }),
+    );
+    const formats = sectionOf(html, "Formats");
+    expect(formats).toContain('href="/videos/parli"');
+    expect(formats).toContain(">15<");
+  });
+
+  it("files Public Forum as Forum Lectures under Topics & ideas", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, {
+        categories: [...categories, { key: "public_forum", label: "Public Forum", count: 40, maxViews: 1 }],
+      }),
+    );
+    expect(sectionOf(html, "Topics &amp; ideas")).toContain('href="/lectures/public_forum"');
+    expect(sectionOf(html, "Topics &amp; ideas")).toContain("Forum Lectures");
+    expect(sectionOf(html, "Formats")).not.toContain("public_forum");
+    expect(html).not.toContain(">Public Forum<");
+  });
+
+  it("lays the sections out as narrow columns", () => {
     const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
-    expect(html).toContain("lg:grid-cols-4");
-    expect(html).not.toMatch(/lg:grid-cols-([5-9]|1\d)/);
+    expect(html).toContain("minmax(9.5rem,12rem)");
   });
 
   it("shows Open Super Debates in Formats, linked by its slug", () => {

@@ -1749,6 +1749,47 @@ export const videoIssues = sqliteTable(
 export type VideoIssueRow = typeof videoIssues.$inferSelect;
 export type VideoIssueInsert = typeof videoIssues.$inferInsert;
 
+// Full card text suggested by readers for a References entry whose quote is
+// missing or only ellipses (the red X / ellipsis icon on the journal
+// References pages, packages/debate-help-docs). Anyone may submit, signed in
+// or not, so the sender is known only by a salted hash of their address (for
+// rate limiting) and, when signed in, `user_id`. An entry is identified by its
+// docs page path and its `ref-…` anchor id. Reviewed in the admin panel's
+// Reference text tab: `pending` → `approved` or `dismissed`.
+export const referenceTextSuggestions = sqliteTable(
+  "reference_text_suggestions",
+  {
+    id: text("id").primaryKey(),
+    /** Docs page the entry is on, e.g. `/docs/journal/synergy-slayer-critiques/references`. */
+    page: text("page").notNull(),
+    /** The entry's anchor id on that page, e.g. `ref-ackerman-2020`. */
+    refId: text("ref_id").notNull(),
+    /** The entry's bibliography line as plain text, as the sender saw it. */
+    title: text("title").notNull().default(""),
+    text: text("text").notNull(),
+    note: text("note").notNull().default(""),
+    name: text("name").notNull().default(""),
+    /** `pending`, `approved` or `dismissed`. */
+    status: text("status").notNull().default("pending"),
+    userId: text("user_id"),
+    /** Salted SHA-256 of the sender's address; never the address itself. */
+    ipHash: text("ip_hash"),
+    userAgent: text("user_agent"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    resolvedBy: text("resolved_by"),
+    resolvedAt: integer("resolved_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    refIdx: index("idx_reference_text_suggestions_ref").on(table.page, table.refId, table.status),
+    statusIdx: index("idx_reference_text_suggestions_status").on(table.status, table.createdAt),
+    ipIdx: index("idx_reference_text_suggestions_ip").on(table.ipHash, table.createdAt),
+  }),
+);
+
+export type ReferenceTextSuggestionRow = typeof referenceTextSuggestions.$inferSelect;
+
 // Account-linked in-app notifications — backs the Create New Round dialog's
 // "invite a registered user" flow (an invitee with a matching `user` row
 // gets one of these instead of an email, since they can already see it
@@ -2056,6 +2097,53 @@ export const userPresence = sqliteTable("user_presence", {
     .notNull()
     .default(sql`(unixepoch())`),
 });
+
+// Personal contact groups ("teams"): a named set of the owner's contacts the
+// share dialog can pick in one click. Only the owner ever sees a group. A
+// member row is a plain pointer at a user id — whether that user is still an
+// unblocked contact is checked when the group is written and again when the
+// share is sent (`/api/card-shares`), so removing or blocking a contact never
+// needs to reach into groups.
+export const contactGroups = sqliteTable(
+  "contact_groups",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    ownerNameIdx: uniqueIndex("idx_contact_groups_owner_name").on(table.ownerId, table.name),
+  }),
+);
+
+export type ContactGroupRow = typeof contactGroups.$inferSelect;
+
+export const contactGroupMembers = sqliteTable(
+  "contact_group_members",
+  {
+    groupId: integer("group_id")
+      .notNull()
+      .references(() => contactGroups.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.groupId, table.userId] }),
+    userIdx: index("idx_contact_group_members_user").on(table.userId),
+  }),
+);
 
 export type UserPresenceRow = typeof userPresence.$inferSelect;
 

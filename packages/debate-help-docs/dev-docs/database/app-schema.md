@@ -46,7 +46,7 @@ get created.
 - **Practice:** [`saved_coach_materials`](#saved_coach_materials), [`saved_coach_material_versions`](#saved_coach_material_versions), [`saved_strategy_recommendations`](#saved_strategy_recommendations), [`saved_drill_sets`](#saved_drill_sets), [`saved_custom_opponent_personas`](#saved_custom_opponent_personas), [`practice_vs_ai_debates`](#practice_vs_ai_debates), [`saved_sprint_sessions`](#saved_sprint_sessions), [`practice_profiles`](#practice_profiles), [`practice_challenges`](#practice_challenges), [`topic_signups`](#topic_signups)
 - **Video library:** [`youtube_round_videos`](#youtube_round_videos), [`youtube_video_exclusions`](#youtube_video_exclusions), [`youtube_sync_runs`](#youtube_sync_runs), [`youtube_channels`](#youtube_channels), [`videos`](#videos), [`video_durations`](#video_durations), [`video_transcripts`](#video_transcripts), [`video_documents`](#video_documents), [`video_relations`](#video_relations), [`video_issues`](#video_issues), [`video_ai_results`](#video_ai_results), [`topic_area_votes`](#topic_area_votes), [`topic_area_rankings`](#topic_area_rankings), [`profile_follows`](#profile_follows)
 - **Evidence search:** [`evidence_reuse_index`](#evidence_reuse_index), [`reuse_check_log`](#reuse_check_log), [`detected_urls`](#detected_urls), [`debate_cards`](#debate_cards), [`caselist_documents`](#caselist_documents), [`debate_card_imports`](#debate_card_imports), [`card_ai_analyses`](#card_ai_analyses)
-- **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`collab_relay_*`](#collab_relay_rooms), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads), [`site_feedback`](#site_feedback)
+- **Social:** [`notifications`](#notifications), [`contacts`](#contacts), [`user_blocks`](#user_blocks), [`card_shares`](#card_shares), [`collab_relay_*`](#collab_relay_rooms), [`contact_groups`](#contact_groups), [`contact_group_members`](#contact_group_members), [`user_presence`](#user_presence), [`comments`](#comments), [`comment_likes`](#comment_likes), [`forum_threads`](#forum_threads), [`site_feedback`](#site_feedback)
 - **Billing and teams:** [`stripe_subscriptions`](#stripe_subscriptions), [`usage_counters`](#usage_counters), [`team_students`](#team_students), [`team_assignments`](#team_assignments)
 - **Prediction markets:** [`prediction_wallets`](#prediction_wallets), [`prediction_markets`](#prediction_markets), [`prediction_bets`](#prediction_bets)
 - **Search index and bookkeeping:** [`debate_cards_fts`](#debate_cards_fts), [`debate_cards_vocab`](#debate_cards_vocab), [`debate_cards_fts_state`](#debate_cards_fts_state), [`debate_cards_body_fts`](#debate_cards_body_fts), [`_d1_applied_migrations`](#_d1_applied_migrations)
@@ -1380,6 +1380,36 @@ _Drizzle export `userPresence`, `schema.ts:1820`._
 | --- | --- | --- | --- | --- |
 | `user_id` | text | no |  | Owning account (`user.id`). _(PK, → `user.id` (on delete cascade))_ |
 | `last_seen_at` | integer | no | _(SQL expr)_ | Latest heartbeat. |
+
+### contact_groups
+
+Named groups ("teams") of an account's contacts, picked together in the share dialog. Private to the owner.
+
+_Drizzle export `contactGroups`, `schema.ts`._
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `id` | integer | no | _(SQL expr)_ | Primary key. _(PK)_ |
+| `owner_id` | text | no |  | The account that made the group. _(→ `user.id` (on delete cascade))_ |
+| `name` | text | no |  | Group name, unique per owner. |
+| `created_at` | integer | no | _(SQL expr)_ | When the row was created. |
+| `updated_at` | integer | no | _(SQL expr)_ | When the row was last changed. |
+
+- Indexes: `idx_contact_groups_owner_name` (unique) on (owner_id, name)
+
+### contact_group_members
+
+Who is in each contact group. Rows are pointers; contact status and blocks are re-checked when a group is saved and when a share is sent.
+
+_Drizzle export `contactGroupMembers`, `schema.ts`._
+
+| Column | Type | Null | Default | Purpose |
+| --- | --- | --- | --- | --- |
+| `group_id` | integer | no |  | The group. _(PK, → `contact_groups.id` (on delete cascade))_ |
+| `user_id` | text | no |  | The member's account. _(PK, → `user.id` (on delete cascade))_ |
+| `created_at` | integer | no | _(SQL expr)_ | When the member was added. |
+
+- Indexes: `idx_contact_group_members_user` on (user_id)
 
 ### comments
 

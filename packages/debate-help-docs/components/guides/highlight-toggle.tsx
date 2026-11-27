@@ -35,7 +35,8 @@
  * applies a stored "off" before first paint, so it never flashes on. The auto
  * modes last for the visit and set `data-debate-auto-<kind>` (the selection is
  * tinted, and the pointer over the content is an animated pen or pencil
- * cursor from `styles/cursors/`, while one is on). The page's and reading
+ * cursor from `styles/cursors/`, while one is on; the pen arrives with a swoosh,
+ * `auto-highlight-swoosh.ts`). The page's and reading
  * mode's copies of the menu stay in step through `CHANGE_EVENT`. The reader's
  * own marks are not saved: they last until the page changes.
  */
@@ -54,6 +55,7 @@ import {
   type MarkKind,
 } from "@debate-ai/reading-mode/marks"
 import { cn } from "../../lib/utils"
+import { playAutoHighlightSwoosh } from "./auto-highlight-swoosh"
 import { buttonVariants } from "../ui/button"
 import { generateWithSite, readableText } from "./docs-ai"
 
@@ -146,12 +148,16 @@ function useSettings(): Record<Setting, boolean> {
 
 /** Turns an auto mode on or off; on also shows its kind (marks you can't see are no use). */
 function setAutoMode(kind: MarkKind, on: boolean) {
+  const hadPen = autoCursorFor((k) => readSetting(AUTO_SETTING(k))) === "pen"
   if (on) {
     const other = EXCLUSIVE[kind]
     if (other && readSetting(AUTO_SETTING(other))) writeSetting(AUTO_SETTING(other), false)
     writeSetting(SHOW_SETTING[kind], true)
   }
   writeSetting(AUTO_SETTING(kind), on)
+  // The swoosh goes with the pen appearing, not with every toggle: switching
+  // between long and short highlighting keeps the pen, and so stays quiet.
+  if (on && !hadPen && autoCursorFor((k) => readSetting(AUTO_SETTING(k))) === "pen") playAutoHighlightSwoosh()
 }
 
 /** Toggles the finished selection when an auto mode is on. */
