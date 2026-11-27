@@ -189,10 +189,10 @@ describe("News & Forums", () => {
     expect(hasEmbeddedDock("/news")).toBe(true);
   });
 
-  it("is one row in the Coaching section, with the forums folded into it", () => {
+  it("is one row in the Research section, with the forums folded into it", () => {
     const tools = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools);
-    const coaching = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "coaching");
-    const row = coaching?.tools.find((tool) => tool.href === "/news");
+    const research = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "research");
+    const row = research?.tools.find((tool) => tool.href === "/news");
 
     expect(row?.title).toBe("News & Forums");
     expect(row?.aliases).toContain("/practice/forums");

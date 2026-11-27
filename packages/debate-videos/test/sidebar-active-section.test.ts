@@ -47,7 +47,7 @@ describe("sidebarSectionForPath", () => {
   });
 
   it("finds the tool section holding a tool route", () => {
-    expect(sidebarSectionForPath("/coaching/progress")).toBe("coaching");
+    expect(sidebarSectionForPath("/coaching/progress")).toBe("research");
     expect(sidebarSectionForPath("/research/cards/library")).toBe("research");
     // Practice Debates (challenges, drills and partners, one tabbed page) is
     // the Practice Debates section's — the renamed Coaching section, which
@@ -58,9 +58,11 @@ describe("sidebarSectionForPath", () => {
     expect(sidebarSectionForPath("/practice/drills")).toBe("coaching");
     expect(sidebarSectionForPath("/practice/prep")).toBe("research");
     expect(sidebarSectionForPath("/practice/judge-decision")).toBeNull();
-    // News & Forums rides with the Practice Debates section, threads included.
-    expect(sidebarSectionForPath("/news")).toBe("coaching");
-    expect(sidebarSectionForPath("/practice/forums/t1")).toBe("coaching");
+    // Coach Workspace and News & Forums ride with the Research section,
+    // forum threads included.
+    expect(sidebarSectionForPath("/coaching")).toBe("research");
+    expect(sidebarSectionForPath("/news")).toBe("research");
+    expect(sidebarSectionForPath("/practice/forums/t1")).toBe("research");
     // Team & School Rank is Inference's first link. Rules & Glossary and
     // All Features sit in Learning, which is the docs tree rather than a
     // tool section, so this map does not claim them.
