@@ -57,6 +57,12 @@ college-credit components. The daily cron refreshes the newest three seasons and
 D1. Known gaps: season slugs are a hand-kept list (add next season's page to
 `NPDL_SEASON_SLUGS`), and a page with two team sheets keeps only the first.
 
+The all-time Teams view (`/rank/<format>?season=all-time`) opens with a collapsible "Top 10 speaker awards" card
+(`TopSpeakersList`, data from `src/leaderboard/profile/topSpeakers.ts`) for high school Policy, LD and PF (TOC, NDCA,
+Barkley, Cal and Glenbrooks top speakers, plus the TOC's and NDCA's lower speaker places as a tie-break) and College
+Policy (the NDT's published speaker awards). Debaters rank by first-place awards, then speaker points, tournaments and
+recency; a format with no speaker awards shows no card. Parli has no speaker data.
+
 The leaderboard lives at `/rank/<format>` (`VPF`, `VLD`, `VCX`, `NDT`, `PARLI`), with only `?season=all-time`
 and `?by=schools` in the query. `src/leaderboard/rankingsUrl.ts` builds and parses that address; the panel
 writes it with `history.replaceState` so switching tabs does not remount the page, and the Worker

@@ -29,7 +29,7 @@ import type { Division, LeaderboardView } from "@debate-ai/rankings/src/leaderbo
 import { VALID_DIVISIONS, VALID_LEADERBOARD_VIEWS, currentSeasonYear, seasonYears } from "@debate-ai/rankings/src/leaderboard/leaderboardUtils"
 import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
-import { SLUG_MAP, isLecturesOnlyListing, librarySlug } from "./lectureRouteConfig"
+import { SLUG_MAP, isLecturesOnlyListing, isRoundsListing, librarySlug } from "./lectureRouteConfig"
 import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
 import { LecturesSidebarShell } from "./LecturesSidebarShell"
 import { LecturesVideoGridView } from "./LecturesVideoGridView"
@@ -274,7 +274,7 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
   )
 
   const filters: VideoFeedFilters = {
-    source: "all",
+    source: isRoundsListing(slug) ? "round" : "all",
     lecturesOnly: isLecturesOnlyListing(slug, state.currentCategory, selectedCategory, state.selectedStyle),
     topPicksOnly: state.currentCategory === "topPicks",
     categoryKey: selectedCategory === "all" ? null : normalizeCategoryKey(selectedCategory),
@@ -313,6 +313,7 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
     () =>
       ({
         allVideos: counts.total,
+        rounds: counts.rounds,
         lectures: counts.lectures,
         policy: counts.byStyle[1] ?? 0,
         ld: counts.byStyle[3] ?? 0,
