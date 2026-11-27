@@ -136,7 +136,6 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
       "Topicality & Framework",
       "Critique / Critical Theory",
       "Impact Calculus & Evidence",
-      "Round Analysis",
     ],
   },
   {
@@ -146,13 +145,14 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
       "Policy Topic Lectures",
       "PF & LD Topic Analysis",
       "Public Forum",
+      "Round Analysis",
       "Philosophy & IR Theory",
       "Documentaries & Culture",
     ],
   },
   {
     title: "Formats",
-    labels: ["WSD", "NSDA Speech", "Demo Debates", "Congress", "Speech"],
+    labels: ["WSD", "NSDA Speech", "Demo Debates", "Open Super Debates", "Congress", "Speech"],
   },
 ];
 
@@ -323,7 +323,7 @@ export function LectureCategoryGridGallery({
 function FormatBadgeLink({ badge, count }: { badge: MainFormatBadge; count?: number }) {
   const logo = badge.division ? DIVISION_LOGOS[badge.division] : undefined;
   return (
-    <li className="w-[200px] max-w-full list-none">
+    <li className="w-[350px] max-w-full list-none">
       <Link
         href={badge.href}
         scroll={false}
@@ -332,9 +332,9 @@ function FormatBadgeLink({ badge, count }: { badge: MainFormatBadge; count?: num
       >
         {logo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={logo} alt="" className="h-24 w-24 object-contain" loading="lazy" />
+          <img src={logo} alt="" className="h-40 w-40 object-contain" loading="lazy" />
         ) : (
-          <Landmark className="h-24 w-24 p-4 text-muted-foreground" aria-hidden />
+          <Landmark className="h-40 w-40 p-6 text-muted-foreground" aria-hidden />
         )}
         <span className="text-sm font-semibold leading-tight text-foreground">{badge.title}</span>
         {count !== undefined && (
