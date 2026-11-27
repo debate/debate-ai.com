@@ -15,7 +15,7 @@ import {
   type LiveRoomInput,
 } from "../src/ui/live/demo-live";
 import { LiveRoundBadge, LiveStatusCell } from "../src/ui/live/LiveRoom";
-import { PAIRINGS_EMBLEM, PANOPTICON_QUOTE, PANOPTICON_RELATED, Schematic } from "../src/ui/pages/RoundPage";
+import { PAIRINGS_EMBLEM, PANOPTICON_QUOTE, Schematic } from "../src/ui/pages/RoundPage";
 
 const room: LiveRoomInput = { sectionId: 4242, eventAbbr: "VCX", eventType: "debate", entries: ["Alpha AB", "Beta CD"], judgeCount: 3 };
 
@@ -125,10 +125,21 @@ describe("live UI", () => {
 
   it("gives the emblem the Panopticon quote as a tooltip, with its dialog closed until clicked", () => {
     const html = renderToString(<Schematic round={round} />);
+    expect(html).toContain("He who is subjected to a field of visibility");
     expect(html).toContain("Panopticon, subtly arranged");
-    expect(html).toContain("p. 207.");
-    expect(PANOPTICON_QUOTE.source).toContain("Michel Foucault");
-    expect(PANOPTICON_RELATED).toHaveLength(4);
+    expect(html).toContain("to the great tribunal committee of the world");
+    expect(html).toContain("Jeremy Bentham");
     expect(html).not.toContain('role="dialog"');
+    expect(PANOPTICON_QUOTE.text).toBe(
+      `"He who is subjected to a field of visibility, and who knows it, assumes responsibility for the constraints . . . . Panopticon, subtly arranged so that an observer may observe, at a glance, so many different individuals, also enables everyone to come and observe any of the observers. . . . It has become a transparent building in which the exercise of power may be supervised by society as a whole. . . . The disciplinary mechanism will be democratically controlled, since it will be constantly accessible 'to the great tribunal committee of the world'. . . . Its aim is to strengthen the social forces—to increase production, to develop the economy, spread education, raise the level of public morality; to increase and multiply."¹`,
+    );
+    expect(PANOPTICON_QUOTE.source).toBe(
+      `Note
+1. Michel Foucault, Discipline and Punish: The Birth of the Prison, trans. Alan Sheridan (New York: Vintage Books, 1995), 202–3, 207–8. The phrase "to the great tribunal committee of the world" is quoted from Jeremy Bentham.`,
+    );
+    expect(PANOPTICON_QUOTE.text).toContain(" . . . . ");
+    expect(PANOPTICON_QUOTE.text).toContain("\u2014");
+    expect(PANOPTICON_QUOTE.text.endsWith("\u00b9")).toBe(true);
+    expect(PANOPTICON_QUOTE.source).toContain("202\u20133, 207\u20138");
   });
 });
