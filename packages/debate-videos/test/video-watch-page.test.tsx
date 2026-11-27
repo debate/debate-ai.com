@@ -268,3 +268,28 @@ describe("VideoWatchPage fullscreen", () => {
     Reflect.deleteProperty(HTMLElement.prototype, "requestFullscreen")
   })
 })
+
+describe("VideoWatchPage round badge", () => {
+  const roundVideo = (level: string) =>
+    [VIDEO_ID, "Round", "2022-03-25", "NDT", 1234, "A debate round.", 1, "Harvard", level] as unknown as VideoType
+
+  it("stacks the bracket size over the round name, directly under the tournament", () => {
+    mount(createElement(VideoWatchPage, { video: roundVideo("Quarters") }))
+    const top = [...container.querySelectorAll("span")].find((el) => el.textContent === "Top 8")
+    expect(top).toBeTruthy()
+    expect(top!.nextElementSibling?.textContent).toBe("Quarters")
+    const column = top!.closest("div.flex-col")!
+    expect(column.className).toContain("gap-0")
+    expect(column.firstElementChild?.tagName).toBe("BUTTON")
+    expect(column.children).toHaveLength(2)
+    unmount()
+  })
+
+  it("keeps a final on a single row", () => {
+    mount(createElement(VideoWatchPage, { video: roundVideo("Finals") }))
+    const spans = [...container.querySelectorAll("span")]
+    expect(spans.some((el) => el.textContent === "Final")).toBe(true)
+    expect(spans.some((el) => /^Top \d+$/.test(el.textContent ?? ""))).toBe(false)
+    unmount()
+  })
+});

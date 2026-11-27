@@ -45,22 +45,31 @@ export function isTOCTournament(tournament: string | undefined): boolean {
   return base === "TOC";
 }
 
-/** Elim round labels as shown under the tournament on the watch page header. */
-const ELIM_BADGE_LABELS: Record<string, string> = {
-  semis: "Top 4 Semis",
-  quarters: "Top 8 Quarters",
-  octas: "Top 16 Octos",
-  octos: "Top 16 Octos",
-  doubles: "Top 32 Doubles",
-  triples: "Top 64 Triples",
+/** Bracket size and round name of each elimination round the watch page header badges. */
+const ELIM_BADGE_PARTS: Record<string, { top: string; name: string }> = {
+  semis: { top: "Top 4", name: "Semis" },
+  quarters: { top: "Top 8", name: "Quarters" },
+  octas: { top: "Top 16", name: "Octos" },
+  octos: { top: "Top 16", name: "Octos" },
+  doubles: { top: "Top 32", name: "Doubles" },
+  triples: { top: "Top 64", name: "Triples" },
 };
 
 /**
- * A standard round label (`displayRoundLevel` output) with its bracket size,
- * e.g. `"Doubles"` → `"Top 32 Doubles"`. Prelims and finals pass through.
+ * A standard round label (`displayRoundLevel` output) split into the bracket
+ * size and the round name, so the watch page header can stack them on two
+ * rows: `"Doubles"` → `{ top: "Top 32", name: "Doubles" }`. Prelims and
+ * finals have no bracket size (`top: null`) and keep their label.
  */
+export function splitElimBadgeLabel(roundLabel: string): { top: string | null; name: string } {
+  const parts = ELIM_BADGE_PARTS[roundLabel.toLowerCase().trim()];
+  return parts ?? { top: null, name: roundLabel };
+}
+
+/** One-line form of {@link splitElimBadgeLabel}, e.g. `"Top 32 Doubles"`. */
 export function formatElimBadgeLabel(roundLabel: string): string {
-  return ELIM_BADGE_LABELS[roundLabel.toLowerCase().trim()] ?? roundLabel;
+  const { top, name } = splitElimBadgeLabel(roundLabel);
+  return top ? `${top} ${name}` : name;
 }
 
 export function getRoundBadgeColor(roundLevel: string) {
