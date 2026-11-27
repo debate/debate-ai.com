@@ -39,10 +39,12 @@ describe("sidebarSectionForPath", () => {
   });
 
   it("resolves a dock destination to the tool section that lists it", () => {
-    // `/practice/versus-ai` is a dock button and Research's "Practice vs AI"; `/research/cards`
-    // is the dock's Shared button and Research's "Card Search". With the Apps
-    // node gone, the section holding the link wins outright.
-    expect(sidebarSectionForPath("/practice/versus-ai")).toBe("research");
+    // `/practice/debates` is a dock button and the Debates section's "Practice debates"
+    // row (which also covers `/practice/versus-ai`); `/research/cards` is the dock's
+    // Shared button and Research's "Card Search". With the Apps node gone, the
+    // section holding the link wins outright.
+    expect(sidebarSectionForPath("/practice/debates")).toBe("coaching");
+    expect(sidebarSectionForPath("/practice/versus-ai")).toBe("coaching");
     expect(sidebarSectionForPath("/research/cards")).toBe("research");
   });
 
@@ -51,8 +53,8 @@ describe("sidebarSectionForPath", () => {
     expect(sidebarSectionForPath("/research/cards/library")).toBe("research");
     // Practice Debates (challenges, drills and partners, one tabbed page) is
     // the Practice Debates section's — the renamed Coaching section, which
-    // keeps the `coaching` id — old addresses included. Practice vs AI and
-    // the Prep Workspace stay under Research.
+    // keeps the `coaching` id — old addresses included. Practice vs AI is
+    // part of that row; the Prep Workspace stays under Research.
     expect(sidebarSectionForPath("/practice/debates")).toBe("coaching");
     expect(sidebarSectionForPath("/practice/challenges")).toBe("coaching");
     expect(sidebarSectionForPath("/practice/drills")).toBe("coaching");
@@ -61,11 +63,14 @@ describe("sidebarSectionForPath", () => {
     // News & Forums rides with the Practice Debates section, threads included.
     expect(sidebarSectionForPath("/news")).toBe("coaching");
     expect(sidebarSectionForPath("/practice/forums/t1")).toBe("coaching");
-    // Team & School Rank is Inference's first link. Rules & Glossary and
+    // Team & School Rank, Topics & Statistics and Prediction Markets moved from
+    // the removed Inference section into Debates. Rules & Glossary and
     // All Features sit in Learning, which is the docs tree rather than a
     // tool section, so this map does not claim them.
-    expect(sidebarSectionForPath("/rank")).toBe("insights");
-    expect(sidebarSectionForPath("/rank/VCX")).toBe("insights");
+    expect(sidebarSectionForPath("/rank")).toBe("coaching");
+    expect(sidebarSectionForPath("/rank/VCX")).toBe("coaching");
+    expect(sidebarSectionForPath("/practice/statistics")).toBe("coaching");
+    expect(sidebarSectionForPath("/practice/predictions")).toBe("coaching");
     expect(sidebarSectionForPath("/practice/rules")).toBeNull();
     expect(sidebarSectionForPath("/practice/features")).toBeNull();
   });
