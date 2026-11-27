@@ -22,6 +22,7 @@
     "./highlights": "./src/highlights.ts",
     "./marks": "./src/marks.ts",
     "./questions": "./src/questions.ts",
+    "./summary-tags": "./src/summary-tags.ts",
     "./sections": "./src/sections.ts",
     "./export": "./src/export.ts",
     "./package.json": "./package.json"
