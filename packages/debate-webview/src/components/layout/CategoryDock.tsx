@@ -193,7 +193,7 @@ function NavMenuItems() {
           md+ only, so on a phone this is the only place its Videos links and
           the glossary/rankings pair below its tree can be reached — see
           `lib/nav/dock-menu-sections.ts`, which derives these from the same
-          data the sidebar renders. Rules & Glossary and All Features are the
+          data the sidebar renders. Rules & Glossary and Overview Home are the
           Learning submenu. */}
       {SIDEBAR_MENU_SECTIONS.map((section) => (
         <DropdownMenuSub key={section.id}>
