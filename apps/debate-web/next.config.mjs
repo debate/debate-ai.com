@@ -61,6 +61,26 @@ const FEATURES_GROUP_PAGE = {
   "video-library": "videos",
 };
 
+// The November 2026 Synergy Slayer of Critiques revision merged sections 4–6
+// and 11 into their neighbours and moved The Alternative ahead of the
+// critical theories; each old section slug maps to the page that holds it now.
+const CRITIQUES_SECTION_MOVED = {
+  "04-exigency-and-moral-negligence": "03-nirvana-fallacy",
+  "05-mindset-fiat-is-not-solvency": "03-nirvana-fallacy",
+  "06-selling-vs-debating": "02-original-sin",
+  "07-equal-epistemic-standing": "04-equal-epistemic-standing",
+  "11-fear-of-death": "10-security-discourse",
+  "12-heidegger-calculative-thinking": "11-heidegger-calculative-thinking",
+  "13-biopolitics": "12-biopolitics",
+  "14-discursive-sound-bite-sophistry": "13-discursive-sound-bite-sophistry",
+  "15-nietzsche": "14-nietzsche",
+  "16-settler-colonialism": "15-settler-colonialism",
+  "17-vote-synergy-or-die": "05-vote-synergy-or-die",
+  "18-theory-into-action": "06-theory-into-action",
+  "19-rainbow-coalition": "07-rainbow-coalition",
+  "20-duel-critique": "16-duel-critique",
+};
+
 const nextConfig = {
   htmlLimitedBots: new RegExp(HTML_LIMITED_BOTS, "i"),
   typescript: {
@@ -207,6 +227,11 @@ const nextConfig = {
         "19-duel-critique": "20-duel-critique",
       }).map(([from, to]) => ({
         source: `/docs/learn/critiques/synergy-slayer-critiques/${from}`,
+        destination: `/docs/journal/synergy-slayer-critiques/${CRITIQUES_SECTION_MOVED[to] ?? to}`,
+        permanent: true,
+      })),
+      ...Object.entries(CRITIQUES_SECTION_MOVED).map(([from, to]) => ({
+        source: `/docs/journal/synergy-slayer-critiques/${from}`,
         destination: `/docs/journal/synergy-slayer-critiques/${to}`,
         permanent: true,
       })),

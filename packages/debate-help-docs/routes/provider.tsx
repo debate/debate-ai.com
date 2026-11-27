@@ -13,6 +13,11 @@ export function Provider({ children }: { children: ReactNode }) {
       search={{
         SearchDialog,
       }}
+      // The app's root layout already provides next-themes (and its "d" hotkey
+      // is gone with the light/dark switch): a second provider here would keep
+      // its own copy of the mode, apart from the one the app and the Themes
+      // menu share.
+      theme={{ enabled: false }}
     >
       {children}
     </RootProvider>
