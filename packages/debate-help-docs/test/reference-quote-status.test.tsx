@@ -118,7 +118,10 @@ describe("suggesting the full text", () => {
     expect(submit.disabled).toBe(true);
 
     await type(dialog()!.querySelector<HTMLTextAreaElement>("textarea")!, TEXT);
-    await type(dialog()!.querySelector<HTMLInputElement>("input:not([name=website])")!, "Sam");
+    expect(dialog()!.textContent).not.toContain("Your name");
+    expect(dialog()!.textContent).not.toContain("Note");
+    expect(dialog()!.querySelectorAll("textarea")).toHaveLength(1);
+    expect(dialog()!.querySelectorAll("input:not([name=website])")).toHaveLength(0);
     expect(submit.disabled).toBe(false);
 
     await act(async () => submit.click());
@@ -131,8 +134,6 @@ describe("suggesting the full text", () => {
       refId: "ref-ackerman-2020",
       title: TITLE,
       text: TEXT,
-      name: "Sam",
-      note: "",
       website: "",
     });
     expect(dialog()!.textContent).toContain("Thank you");
