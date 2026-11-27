@@ -10,7 +10,7 @@
  * rankings page shows beside its topic names. Parli has no logo and is listed
  * under Formats instead.
  *
- * Below it the cards are laid out as columns: a heading (Getting started,
+ * Below it the cards are compact pills in a 2 to 4 column grid under a heading (Getting started,
  * Strategy, Topics & ideas, Formats) with its categories listed underneath.
  * A category not named in {@link LECTURE_CATEGORY_SECTIONS} lands in a
  * trailing "More" column, so a new category never goes missing.
@@ -312,9 +312,9 @@ export function LectureCategoryGridGallery({
 
   if (!cards) return null;
 
-  const columnClass = cn(
-    "grid items-start gap-4",
-    layout === "list" ? "grid-cols-1" : "grid-cols-[repeat(auto-fill,minmax(9.5rem,12rem))]",
+  const pillListClass = cn(
+    "grid gap-1.5",
+    layout === "list" ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
   );
 
   return (
@@ -329,19 +329,18 @@ export function LectureCategoryGridGallery({
           ))}
         </ul>
       )}
-      <div className={columnClass}>
+      <div className="flex flex-col gap-3">
         {sections.map((section) => (
           <section key={section.title} aria-label={section.title} className="min-w-0">
-            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <h2 className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {section.title}
             </h2>
-            <ul className="grid grid-cols-1 gap-2">
+            <ul className={pillListClass}>
               {section.items.map((item) => (
-                <GridItem
+                <GalleryPill
                   key={item.id}
                   icon={item.icon}
                   title={item.title}
-                  description={item.description}
                   videoCount={item.videoCount}
                   isSelected={item.selected}
                   href={item.href}
@@ -364,7 +363,7 @@ function FormatBadgeLink({ badge, count }: { badge: MainFormatBadge; count?: num
         href={badge.href}
         scroll={false}
         prefetch={false}
-        className="group flex h-full flex-col items-center gap-1 rounded-lg border-[0.75px] border-border bg-background p-3 text-center shadow-sm transition-colors hover:border-primary/50 hover:bg-accent"
+        className="group flex h-full flex-col items-center gap-0.5 rounded-lg border-[0.75px] border-border bg-background p-1.5 text-center shadow-sm transition-colors hover:border-primary/50 hover:bg-accent"
       >
         {logo ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -378,6 +377,38 @@ function FormatBadgeLink({ badge, count }: { badge: MainFormatBadge; count?: num
             {count}
           </span>
         )}
+      </Link>
+    </li>
+  );
+}
+
+/** A compact pill linking to one category or collection in the bottom lists. */
+function GalleryPill({
+  icon,
+  title,
+  videoCount,
+  isSelected,
+  href,
+}: Pick<GridItemProps, "icon" | "title" | "videoCount" | "isSelected" | "href">) {
+  return (
+    <li className="min-w-0 list-none">
+      <Link
+        href={href}
+        scroll={false}
+        prefetch={false}
+        aria-current={isSelected ? "page" : undefined}
+        className={cn(
+          "flex h-full min-w-0 items-center gap-1.5 rounded-full border-[0.75px] border-border bg-background px-2 py-1 shadow-sm transition-colors hover:border-primary/50 hover:bg-accent focus-visible:bg-accent",
+          isSelected && "border-primary bg-primary/10 hover:bg-primary/15",
+        )}
+      >
+        <span className="shrink-0 text-muted-foreground">{icon}</span>
+        <span className="min-w-0 flex-1 truncate text-xs font-medium leading-tight text-foreground">
+          {title}
+        </span>
+        <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
+          {videoCount}
+        </span>
       </Link>
     </li>
   );

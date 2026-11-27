@@ -117,9 +117,18 @@ describe("lecture category sections", () => {
     expect(sectionOf(html, "Strategy")).not.toContain("round_analysis");
   });
 
-  it("lays the sections out as narrow columns", () => {
+  it("lists each section's items as compact pills in a 2 to 4 column grid", () => {
     const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
-    expect(html).toContain("minmax(9.5rem,12rem)");
+    expect(html).toContain("grid-cols-2 sm:grid-cols-3 lg:grid-cols-4");
+    expect(html).toContain("rounded-full");
+    expect(html).not.toContain("minmax(9.5rem,12rem)");
+  });
+
+  it("keeps the top badges tight but their logos full size", () => {
+    const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
+    expect(html).toContain("p-1.5");
+    expect(html).not.toContain("gap-1 rounded-lg border-[0.75px] border-border bg-background p-3");
+    expect(html.match(/h-40 w-40/g)).toHaveLength(4);
   });
 
   it("shows Open Super Debates in Formats, linked by its slug", () => {
