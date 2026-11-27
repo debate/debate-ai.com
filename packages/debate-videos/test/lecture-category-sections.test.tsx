@@ -44,13 +44,31 @@ describe("lecture category sections", () => {
     expect(sectionOf(html, "More")).toContain("Brand New");
   });
 
+  it("shows only the Formats section on the rounds scope", () => {
+    const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories, scope: "rounds" }));
+    expect(sectionOf(html, "Formats")).toContain('href="/lectures/wsd"');
+    for (const title of ["Getting started", "Strategy", "Topics &amp; ideas", "More"]) {
+      expect(html).not.toContain(`<section aria-label="${title}"`);
+    }
+  });
+
+  it("leaves the Formats section and the format badges off the lectures scope", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, { categories, scope: "lectures", formatCounts: { college: 4 } }),
+    );
+    expect(html).not.toContain('<section aria-label="Formats"');
+    expect(html).not.toContain('href="/videos/college"');
+    expect(html).not.toContain('href="/lectures/wsd"');
+    expect(sectionOf(html, "Strategy")).toContain("Negative Strategy");
+  });
+
   it("has no All Lectures card", () => {
     const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
     expect(html).not.toContain("All Lectures");
     expect(html).not.toContain('href="/lectures"');
   });
 
-  it("leads with the four main category badges, each 200px wide", () => {
+  it("leads with the four main category badges, each 350px wide", () => {
     const html = renderToStaticMarkup(
       createElement(LectureCategoryGridGallery, { categories, formatCounts: { college: 1400, parli: 15 } }),
     );
@@ -61,7 +79,7 @@ describe("lecture category sections", () => {
     expect([...hrefs].sort((a, b) => a - b)).toEqual(hrefs);
     expect(hrefs[3]).toBeLessThan(html.indexOf('<section aria-label="Getting started"'));
     expect(html.slice(0, html.indexOf('<section aria-label="Getting started"'))).not.toContain("/videos/parli");
-    expect(html.match(/w-\[200px\]/g)).toHaveLength(4);
+    expect(html.match(/w-\[350px\]/g)).toHaveLength(4);
     expect(html).toContain("College Policy");
     expect(html).toContain("Individual");
     expect(html).toContain("Forum");
@@ -87,6 +105,16 @@ describe("lecture category sections", () => {
     expect(sectionOf(html, "Topics &amp; ideas")).toContain("Forum Lectures");
     expect(sectionOf(html, "Formats")).not.toContain("public_forum");
     expect(html).not.toContain(">Public Forum<");
+  });
+
+  it("files Round Analysis under Topics & ideas, not Strategy", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, {
+        categories: [...categories, { key: "round_analysis", label: "Round Analysis", count: 17, maxViews: 1 }],
+      }),
+    );
+    expect(sectionOf(html, "Topics &amp; ideas")).toContain('href="/lectures/round_analysis"');
+    expect(sectionOf(html, "Strategy")).not.toContain("round_analysis");
   });
 
   it("lays the sections out as narrow columns", () => {

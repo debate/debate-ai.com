@@ -38,30 +38,10 @@ type QuickLink = SidebarVideoLink & QuickLinkStyle;
  * cannot exist on one surface and be missing from another.
  */
 const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
-  allVideos: {
+  rounds: {
     glyph: Clapperboard,
     gradient: "from-blue-500/20 via-cyan-500/10 to-transparent",
     iconBg: "bg-blue-500/15 ring-1 ring-blue-500/30",
-  },
-  college: {
-    logo: "https://i.imgur.com/cFmTAdJ.png",
-    gradient: "from-purple-500/20 via-violet-500/10 to-transparent",
-    iconBg: "bg-purple-500/15 ring-1 ring-purple-500/30",
-  },
-  policy: {
-    logo: "https://i.imgur.com/CMuiSKj.png",
-    gradient: "from-red-500/20 via-rose-500/10 to-transparent",
-    iconBg: "bg-red-500/15 ring-1 ring-red-500/30",
-  },
-  pf: {
-    logo: "https://i.imgur.com/92V0FBF.png",
-    gradient: "from-emerald-500/20 via-green-500/10 to-transparent",
-    iconBg: "bg-emerald-500/15 ring-1 ring-emerald-500/30",
-  },
-  ld: {
-    logo: "https://i.imgur.com/3xFjCvO.png",
-    gradient: "from-sky-500/20 via-blue-500/10 to-transparent",
-    iconBg: "bg-sky-500/15 ring-1 ring-sky-500/30",
   },
   lectures: {
     logo: IconLectures,
@@ -86,17 +66,13 @@ const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
 };
 
 /**
- * Tile order, which is the grid's own (formats first, then the lecture and
- * favorites libraries, then reference) rather than the tree's nesting order.
+ * Tile order, which is the grid's own (rounds and lectures first, then the
+ * favorites library, then reference) rather than the tree's nesting order.
  * Any id without an entry here still renders, appended in list order, so a
  * link added to `SIDEBAR_VIDEO_LINKS` shows up on this grid too.
  */
 const QUICK_LINK_ORDER = [
-  "allVideos",
-  "college",
-  "policy",
-  "pf",
-  "ld",
+  "rounds",
   "lectures",
   "history",
   "topPicks",

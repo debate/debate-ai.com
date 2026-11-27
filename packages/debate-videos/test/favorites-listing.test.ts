@@ -7,7 +7,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { isLecturesOnlyListing } from "../src/panels/lectureRouteConfig";
+import { isLecturesOnlyListing, isRoundsListing } from "../src/panels/lectureRouteConfig";
 import { favoritesFeedFilters } from "../src/hooks/useVideoFeed";
 
 describe("isLecturesOnlyListing", () => {
@@ -29,6 +29,15 @@ describe("isLecturesOnlyListing", () => {
     expect(isLecturesOnlyListing("pf", "lectures", "all", 2)).toBe(false);
     expect(isLecturesOnlyListing("topic_lectures", "lectures", "topic_lectures", "")).toBe(false);
     expect(isLecturesOnlyListing("history", "history", "all", "")).toBe(false);
+  });
+});
+
+describe("isRoundsListing", () => {
+  it("marks only the Debate Rounds route as rounds-only", () => {
+    expect(isRoundsListing("rounds")).toBe(true);
+    expect(isRoundsListing("lectures")).toBe(false);
+    expect(isRoundsListing(undefined)).toBe(false);
+    expect(isLecturesOnlyListing("rounds", "lectures", "all", "")).toBe(false);
   });
 });
 

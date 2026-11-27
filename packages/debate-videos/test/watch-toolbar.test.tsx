@@ -125,6 +125,17 @@ describe("WatchToolbar", () => {
     expect(markup).toContain('aria-label="Remove from My Favorites" aria-pressed="true"');
   });
 
+  it("offers a scales Reveal decision button only when the page gives it a handler", () => {
+    expect(labels(renderWatchToolbar())).not.toContain("Reveal decision");
+    const markup = renderWatchToolbar({ onRevealDecision: noop });
+    expect(labels(markup)).toContain("Reveal decision");
+    expect(markup).toContain("lucide-scale");
+    expect(markup).not.toContain('aria-label="Reveal decision" aria-pressed');
+    expect(renderWatchToolbar({ onRevealDecision: noop, isDecisionRevealed: true })).toContain(
+      'aria-label="Reveal decision" aria-pressed="true"',
+    );
+  });
+
   it("drops the permalink control when the browser exposes no clipboard", () => {
     expect(labels(renderWatchToolbar({ canCopyLink: false }))).not.toContain(
       "Copy link to this video",
