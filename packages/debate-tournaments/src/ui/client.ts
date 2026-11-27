@@ -333,8 +333,8 @@ export function pastDates(start?: string | null, end?: string | null): string {
   return a && b && a !== b ? `${a} – ${b}` : a || b;
 }
 
-/** The Results list's window, in days, when "results completed" is read off a tournament's end date. */
-export const RECENT_RESULTS_DAYS = 14;
+/** The homepage "Recent results" window, in days, measured back from today by a tournament's end date (its start when it has none). */
+export const RECENT_RESULTS_DAYS = 7;
 /** How much earlier than the window a tournament may have started and still have ended inside it. */
 const RECENT_RESULTS_START_PAD_DAYS = 7;
 
@@ -580,7 +580,7 @@ export function createTournamentsClient(
 
   /**
    * Tournaments whose results were completed in the last `days` days (default
-   * 14), newest first. Upstream's `publishedResults` filter says a tournament
+   * {@link RECENT_RESULTS_DAYS}, 7), newest first. Upstream's `publishedResults` filter says a tournament
    * has published results; its end date (see {@link resultsCompletedAt}) says
    * they are done and recent. A tournament still under way is left out.
    */
