@@ -61,6 +61,13 @@ describe("sidebarSectionForPath", () => {
     // News & Forums rides with the Practice Debates section, threads included.
     expect(sidebarSectionForPath("/news")).toBe("coaching");
     expect(sidebarSectionForPath("/practice/forums/t1")).toBe("coaching");
+    // Team & School Rank is Inference's first link. Rules & Glossary and
+    // All Features sit in Learning, which is the docs tree rather than a
+    // tool section, so this map does not claim them.
+    expect(sidebarSectionForPath("/rank")).toBe("insights");
+    expect(sidebarSectionForPath("/rank/VCX")).toBe("insights");
+    expect(sidebarSectionForPath("/practice/rules")).toBeNull();
+    expect(sidebarSectionForPath("/practice/features")).toBeNull();
   });
 
   it("matches nested paths under a link", () => {

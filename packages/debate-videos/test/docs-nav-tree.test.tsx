@@ -76,6 +76,19 @@ describe("DocsNavTree", () => {
     return mounted;
   }
 
+  it("pins Rules & Glossary and All Features above Introduction", async () => {
+    view = await loaded();
+    const text = view.container.textContent ?? "";
+    const rules = text.indexOf("Rules & Glossary");
+    const features = text.indexOf("All Features");
+    const intro = text.indexOf("Introduction");
+    expect(rules).toBeGreaterThanOrEqual(0);
+    expect(features).toBeGreaterThan(rules);
+    expect(intro).toBeGreaterThan(features);
+    expect(view.container.querySelector('a[href="/practice/rules"]')).not.toBeNull();
+    expect(view.container.querySelector('a[href="/practice/features"]')).not.toBeNull();
+  });
+
   it("starts open and fetches the tree", async () => {
     view = await loaded();
     expect(headingToggle(view.container).getAttribute("aria-expanded")).toBe("true");
