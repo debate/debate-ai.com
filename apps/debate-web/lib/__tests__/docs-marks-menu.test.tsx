@@ -28,6 +28,7 @@ vi.mock("../../../../packages/debate-help-docs/components/guides/auto-highlight-
 const { HIGHLIGHT_INIT_SCRIPT, MarksMenu } = await import(
   "../../../../packages/debate-help-docs/components/guides/highlight-toggle"
 )
+const { clearMarkHistory } = await import("../../../../packages/debate-help-docs/components/guides/mark-history")
 
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
@@ -37,6 +38,7 @@ let root: Root
 const html = document.documentElement
 
 beforeEach(() => {
+  clearMarkHistory()
   localStorage.clear()
   for (const name of ["highlights", "underlines", "short-highlights", "emphasis", "auto-highlight", "auto-underline", "auto-short-highlight", "auto-emphasis", "auto-frame"])
     html.removeAttribute(`data-debate-${name}`)
@@ -219,6 +221,68 @@ describe("Auto modes in the Marks menu", () => {
     click(item("Reset to default highlighting"))
     expect(page.querySelector(".reader-highlight-short")).toBeNull()
     expect(page.querySelector("mark.debate-hl")?.textContent).toBe("solves warming")
+  })
+})
+
+describe("Undo mark", () => {
+  const ORIGINAL = '<p id="p">The plan <mark class="debate-hl">solves warming</mark> now.</p>'
+  const ctrlZ = (init: KeyboardEventInit = {}) =>
+    act(() => {
+      document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "z", ctrlKey: true, bubbles: true, cancelable: true, ...init }))
+    })
+
+  it("is disabled until a mark changes, then undoes and redoes it from the menu", async () => {
+    click(trigger())
+    expect(item("Undo mark").hasAttribute("disabled")).toBe(true)
+    expect(item("Redo mark").hasAttribute("disabled")).toBe(true)
+    click(item("Auto emphasize words"))
+    await selectAndRelease(page.querySelector("#p")!.firstChild!, 4, 8)
+    expect(page.querySelector("strong.reader-emphasis")?.textContent).toBe("plan")
+
+    click(item("Undo mark"))
+    expect(page.innerHTML).toBe(ORIGINAL)
+    expect(item("Redo mark").hasAttribute("disabled")).toBe(false)
+    click(item("Redo mark"))
+    expect(page.querySelector("strong.reader-emphasis")?.textContent).toBe("plan")
+  })
+
+  it("undoes Remove all marks and Reset with Ctrl+Z, and redoes with Ctrl+Shift+Z or Ctrl+Y", () => {
+    click(item("Remove all marks"))
+    expect(page.querySelector("mark.debate-hl")?.classList.contains("debate-hl--no-highlight")).toBe(true)
+    ctrlZ()
+    expect(page.innerHTML).toBe(ORIGINAL)
+    ctrlZ({ shiftKey: true })
+    expect(page.querySelector("mark.debate-hl")?.classList.contains("debate-hl--no-highlight")).toBe(true)
+    ctrlZ()
+    ctrlZ({ key: "y" })
+    expect(page.querySelector("mark.debate-hl")?.classList.contains("debate-hl--no-highlight")).toBe(true)
+    ctrlZ({ key: "z", ctrlKey: false, metaKey: true })
+    expect(page.innerHTML).toBe(ORIGINAL)
+  })
+
+  it("leaves Ctrl+Z to text fields", () => {
+    click(item("Remove all marks"))
+    const input = document.createElement("input")
+    document.body.append(input)
+    const event = new KeyboardEvent("keydown", { key: "z", ctrlKey: true, bubbles: true, cancelable: true })
+    act(() => {
+      input.dispatchEvent(event)
+    })
+    expect(event.defaultPrevented).toBe(false)
+    expect(page.querySelector("mark.debate-hl")?.classList.contains("debate-hl--no-highlight")).toBe(true)
+  })
+
+  it("keeps at least the last 30 changes", async () => {
+    click(item("Auto highlight"))
+    const text = () => page.querySelector("#p")!
+    for (let i = 0; i < 35; i++) {
+      const walker = document.createTreeWalker(text(), NodeFilter.SHOW_TEXT)
+      const node = walker.nextNode() as Text
+      await selectAndRelease(node, 0, 1)
+    }
+    let undone = 0
+    while (document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "z", ctrlKey: true, bubbles: true, cancelable: true })) === false) undone++
+    expect(undone).toBeGreaterThanOrEqual(30)
   })
 })
 

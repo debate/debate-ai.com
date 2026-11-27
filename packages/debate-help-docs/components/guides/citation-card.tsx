@@ -45,6 +45,8 @@ export const CITATION_DATA = {
   citation: "data-citation",
   card: "data-citation-card",
   spoken: "data-citation-spoken",
+  authors: "data-citation-authors",
+  year: "data-citation-year",
 } as const
 
 export interface CitationCardProps {
@@ -58,10 +60,14 @@ export interface CitationCardProps {
   card?: string
   /** What the read-aloud button says first: last name and two-digit year, `Shanahan 93`. */
   spoken?: string
+  /** The authors for the References panel: `Galloway`, `Hansson & Reijven`, `Smith et al.`. */
+  authors?: string
+  /** The publication year as cited, `2020`. */
+  year?: string
   children?: ReactNode
 }
 
-export function CitationCard({ href, number, citation, card, spoken, children }: CitationCardProps) {
+export function CitationCard({ href, number, citation, card, spoken, authors, year, children }: CitationCardProps) {
   const style = useCitationStyle()
   const [reading, setReading] = useState(false)
   const controller = useRef<AbortController | null>(null)
@@ -99,6 +105,8 @@ export function CitationCard({ href, number, citation, card, spoken, children }:
             [CITATION_DATA.citation]: citation,
             [CITATION_DATA.card]: card ?? "",
             [CITATION_DATA.spoken]: spoken ?? "",
+            [CITATION_DATA.authors]: authors ?? "",
+            [CITATION_DATA.year]: year ?? "",
           }}
         >
           {children}
@@ -190,6 +198,8 @@ export function CitationCardsIn({ root, version }: { root: RefObject<HTMLElement
           citation: link.getAttribute(CITATION_DATA.citation) ?? "",
           card: link.getAttribute(CITATION_DATA.card) ?? "",
           spoken: link.getAttribute(CITATION_DATA.spoken) ?? "",
+          authors: link.getAttribute(CITATION_DATA.authors) ?? "",
+          year: link.getAttribute(CITATION_DATA.year) ?? "",
         },
       })
       link.replaceWith(host)

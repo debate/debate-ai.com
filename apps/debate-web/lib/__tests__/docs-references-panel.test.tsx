@@ -24,8 +24,10 @@ const SMITH = {
   href: "/docs/journal/x/references#ref-smith-2019",
   number: "7",
   citation: "Smith, Jane. <em>Book</em>. 2019.",
-  card: '<div class="debate-card"><p><em>Qual</em></p><hr /><p><u>Smith card</u></p></div>',
+  card: '<div class="debate-card"><p>Smith says X.</p><p><em>Jane Smith is a Professor of History, Harvard</em></p><hr /><p><u>Smith card</u></p></div>',
   spoken: "Smith 19",
+  authors: "Smith",
+  year: "2019",
 }
 const JONES = {
   href: "/docs/journal/x/references#ref-jones-2001",
@@ -33,6 +35,8 @@ const JONES = {
   citation: "Jones, Al. <em>Other</em>. 2001.",
   card: '<div class="debate-card"><p><u>Jones card</u></p></div>',
   spoken: "Jones 01",
+  authors: "Jones",
+  year: "2001",
 }
 
 const cite = (props: typeof SMITH, label: string) => renderToStaticMarkup(<CitationCard {...props}>{label}</CitationCard>)
@@ -95,8 +99,16 @@ describe("ReferencesPanelButton", () => {
     expect(panel.textContent).toContain("References · 2")
     const entries = panel.querySelectorAll("li[data-reference-index]")
     expect(entries).toHaveLength(2)
-    expect(entries[0]!.textContent).toContain("Jones (2001)")
+    expect(entries[0]!.textContent).toContain("Jones ’01")
     expect(entries[1]!.textContent).toContain("Smith card")
+    // Summary first, then authors ’yy — qualifications without the name, then the citation.
+    expect(entries[1]!.textContent).toContain("Smith says X.Smith ’19 — Professor of History, Harvard. Smith, Jane.")
+    expect(entries[1]!.textContent).not.toContain("Jane Smith is a")
+    expect(entries[1]!.querySelector('[data-flag="professor"]')).not.toBeNull()
+    expect(entries[1]!.querySelector('[data-flag="source-book"]')).not.toBeNull()
+    expect(entries[0]!.querySelector('[data-flag="professor"]')).toBeNull()
+    expect(panel.querySelector(".references-panel-intro")).toBeNull()
+    expect(panel.className).toContain("21rem")
     expect(entries[1]!.textContent).toContain("Cited at")
 
     // Clicking Smith twice goes to its first, then its second citation.

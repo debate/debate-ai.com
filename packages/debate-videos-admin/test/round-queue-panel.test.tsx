@@ -282,6 +282,23 @@ describe("RoundQueuePanel bulk actions", () => {
     expect(bodyText()).toContain("nope");
   });
 
+  it("re-files Super Debate videos and reports what moved", async () => {
+    mockFetch([
+      { method: "POST", match: `${LIST}/recategorize`, respond: { queued: 3, published: 2 }, once: true },
+      { method: "POST", match: `${LIST}/recategorize`, respond: { queued: 0, published: 0 }, once: true },
+      { method: "POST", match: `${LIST}/recategorize`, respond: { error: "nope" }, status: 500 },
+      { method: "GET", match: LIST, respond: { videos: [queued("a")] } },
+    ]);
+    mount(<RoundQueuePanel />);
+    await flush();
+    await clickAsync(button("Re-file Super Debates"));
+    expect(bodyText()).toContain("Filed 3 queued and 2 published videos under Open Super Debates.");
+    await clickAsync(button("Re-file Super Debates"));
+    expect(bodyText()).toContain("already under Open Super Debates");
+    await clickAsync(button("Re-file Super Debates"));
+    expect(bodyText()).toContain("nope");
+  });
+
   it("auto-detects the loaded queue five at a time and totals the outcome", async () => {
     const videos = Array.from({ length: 7 }, (_, i) => queued(`v${i}`));
     const { calls } = mockFetch([

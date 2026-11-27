@@ -9,7 +9,7 @@ import {
   autofillKeys,
   buildAutofillContent,
 } from "@/lib/videos/video-autofill";
-import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
+import { forcedLectureCategory, LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import type { ProviderKey } from "@/lib/ai/provider-key";
 
 type DB = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -50,15 +50,27 @@ const DETECT_TIMEOUT_MS = 20_000;
  * Detects one video: asks the model, then writes style/category back to its
  * queue row. A field the model left empty keeps the row's stored value, so an
  * unsure answer never turns a round into a lecture.
+ *
+ * A queued lecture whose title or channel forces a shelf (Super Debate, NSDA;
+ * see `forcedLectureCategory`) is filed there by rule, without asking the
+ * model, and a lecture the model returns is filed there too.
  */
 async function detectOne(db: DB, keys: ProviderKey[], video: QueueVideo): Promise<{ style: number | null; category: string | null }> {
+  const forced = forcedLectureCategory(video.title, video.channel);
+  if (forced && video.style == null) {
+    await db
+      .update(youtubeRoundVideos)
+      .set({ category: forced, updatedAt: new Date() })
+      .where(eq(youtubeRoundVideos.id, video.id));
+    return { style: null, category: forced };
+  }
   const content = buildAutofillContent({ title: video.title, channel: video.channel, description: video.description });
   const fields = await askModel(content, keys, DETECT_TIMEOUT_MS, DETECT_PROMPT);
   if (fields.style === undefined) {
     throw new Error("The model couldn't tell what kind of video this is; left it unchanged.");
   }
   const style = fields.style;
-  const category = style === null ? (fields.category ?? video.category ?? null) : null;
+  const category = style === null ? (forced ?? fields.category ?? video.category ?? null) : null;
   await db
     .update(youtubeRoundVideos)
     .set({ style, category, updatedAt: new Date() })
