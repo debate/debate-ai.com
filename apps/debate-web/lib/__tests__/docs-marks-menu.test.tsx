@@ -3,8 +3,9 @@
  * The Synergy Slayer marking tools
  * (`packages/debate-help-docs/components/guides/highlight-toggle.tsx`): the
  * Marks menu's separate Underlining / Highlighting / Short highlighting /
- * Emphasizing words
- * switches, the auto modes inside it that toggle each selection, AI marks and
+ * Emphasizing words / Summary tags
+ * switches, the auto modes inside it that toggle each selection, the Summary tag
+ * mode (AI-suggested, editable summaries saved on highlights), AI marks and
  * Reset to default highlighting and Remove all marks.
  *
  * Lives here because debate-help-docs is not a Vitest project of its own.
@@ -40,7 +41,7 @@ const html = document.documentElement
 beforeEach(() => {
   clearMarkHistory()
   localStorage.clear()
-  for (const name of ["highlights", "underlines", "short-highlights", "emphasis", "minimize-unread", "auto-highlight", "auto-underline", "auto-short-highlight", "auto-emphasis", "auto-frame"])
+  for (const name of ["highlights", "underlines", "short-highlights", "emphasis", "summary-tags", "auto-highlight", "auto-underline", "auto-short-highlight", "auto-emphasis", "auto-summary-tag", "auto-frame"])
     html.removeAttribute(`data-debate-${name}`)
   page = document.createElement("div")
   page.className = "synergy-slayer-doc"
@@ -82,7 +83,7 @@ async function selectAndRelease(node: Node, start: number, end: number) {
 }
 
 describe("Marks menu", () => {
-  it("lists underlining, then highlighting, then short highlighting", () => {
+  it("lists underlining, then highlighting, then short highlighting, then summary tags", () => {
     click(trigger())
     const labels = Array.from(toolbar.querySelectorAll('[role="menuitemcheckbox"] span:first-of-type')).map((el) => el.textContent)
     expect(labels).toEqual([
@@ -90,11 +91,12 @@ describe("Marks menu", () => {
       "Highlighting",
       "Short highlighting",
       "Emphasizing words",
+      "Summary tags",
       "Auto underline",
       "Auto highlight",
       "Auto short highlight",
       "Auto emphasize words",
-      "Minimize unread",
+      "Summary tag",
     ])
   })
 
@@ -112,6 +114,9 @@ describe("Marks menu", () => {
     click(item("Emphasizing words"))
     expect(html.getAttribute("data-debate-emphasis")).toBe("off")
     expect(localStorage.getItem("debate-docs-emphasis")).toBe("off")
+    click(item("Summary tags"))
+    expect(html.getAttribute("data-debate-summary-tags")).toBe("off")
+    expect(localStorage.getItem("debate-docs-summary-tags")).toBe("off")
   })
 
   it("restores both stored choices before paint", () => {
@@ -409,6 +414,198 @@ describe("Undo mark", () => {
     let undone = 0
     while (document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "z", ctrlKey: true, bubbles: true, cancelable: true })) === false) undone++
     expect(undone).toBeGreaterThanOrEqual(30)
+  })
+})
+
+describe("Summary tag", () => {
+  const MARKED =
+    '<p id="p">The plan <mark class="reader-highlight">solves warming</mark> and <mark class="reader-highlight-short">saves</mark> money <mark class="debate-hl">for everyone</mark>.</p>'
+  const card = () => document.body.querySelector<HTMLElement>('[role="dialog"][aria-label="Summary tag"]')
+  const field = () => card()!.querySelector<HTMLTextAreaElement>("textarea")!
+  const cardButton = (label: string) =>
+    Array.from(card()!.querySelectorAll("button")).find((b) => b.textContent?.trim() === label)!
+  const type = (value: string) =>
+    act(() => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!
+      setter.call(field(), value)
+      field().dispatchEvent(new Event("input", { bubbles: true }))
+    })
+  const flush = () => act(() => new Promise((resolve) => setTimeout(resolve, 5)))
+  const marks = () => Array.from(page.querySelectorAll<HTMLElement>("mark"))
+  const ctrlZ = (init: KeyboardEventInit = {}) =>
+    act(() => {
+      document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "z", ctrlKey: true, bubbles: true, cancelable: true, ...init }))
+    })
+
+  beforeEach(() => {
+    page.innerHTML = MARKED
+    click(item("Summary tag"))
+  })
+
+  it("turns on as a mode of its own, put away by the auto modes and vice versa", () => {
+    expect(item("Summary tag").getAttribute("aria-checked")).toBe("true")
+    expect(html.getAttribute("data-debate-auto-summary-tag")).toBe("on")
+    expect(trigger().textContent).toContain("Summary tag")
+    click(item("Auto highlight"))
+    expect(html.getAttribute("data-debate-auto-summary-tag")).toBe("off")
+    click(item("Summary tag"))
+    expect(html.getAttribute("data-debate-auto-highlight")).toBe("off")
+    expect(html.getAttribute("data-debate-auto-summary-tag")).toBe("on")
+  })
+
+  it("asks the AI for a summary of the selected highlight, shows it loading, then fills it in to edit and save", async () => {
+    let answer!: (text: string) => void
+    generate.mockReturnValue(new Promise<string>((resolve) => (answer = resolve)))
+    await selectAndRelease(marks()[0].firstChild!, 0, 6)
+    expect(card()).toBeTruthy()
+    expect(card()!.textContent).toContain("Suggesting a summary")
+    expect(generate).toHaveBeenCalledTimes(1)
+    expect(generate.mock.calls[0][0].prompt).toContain("solves warming")
+    expect(page.querySelector("[data-summary-tag]")).toBeNull()
+
+    await act(async () => answer('"Summary: Cuts warming."'))
+    expect(field().value).toBe("Cuts warming.")
+    expect(card()!.textContent).not.toContain("Suggesting a summary")
+
+    type("Cuts warming a lot")
+    click(cardButton("Save"))
+    expect(card()).toBeNull()
+    expect(marks()[0].getAttribute("data-summary-tag")).toBe("Cuts warming a lot")
+    expect(marks()[0].hasAttribute("data-summary-end")).toBe(true)
+    expect(marks()[0].title).toBe("Cuts warming a lot")
+    expect(page.textContent).toBe("The plan solves warming and saves money for everyone.")
+  })
+
+  it("uses every highlight a selection spans: long, short and the page's own", async () => {
+    generate.mockResolvedValue("The whole argument")
+    const p = page.querySelector("#p")!
+    await selectAndRelease(p.firstChild!, 0, 0)
+    const range = document.createRange()
+    range.setStart(p.firstChild!, 0)
+    range.setEnd(p.lastChild!, 1)
+    const selection = window.getSelection()!
+    selection.removeAllRanges()
+    selection.addRange(range)
+    document.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }))
+    await flush()
+    expect(generate.mock.calls[0][0].prompt).toContain("solves warming … saves … for everyone")
+    click(cardButton("Save"))
+    expect(marks().map((m) => m.getAttribute("data-summary-tag"))).toEqual(Array(3).fill("The whole argument"))
+    expect(new Set(marks().map((m) => m.getAttribute("data-summary-group"))).size).toBe(1)
+    expect(marks().map((m) => m.hasAttribute("data-summary-end"))).toEqual([false, false, true])
+  })
+
+  it("falls back to typing when the AI fails, and can try again", async () => {
+    generate.mockRejectedValueOnce(new Error("down")).mockResolvedValueOnce("Second try")
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+    await selectAndRelease(marks()[0].firstChild!, 0, 6)
+    await flush()
+    expect(card()!.querySelector('[role="alert"]')?.textContent).toContain("Couldn't get a suggested summary")
+    type("Mine")
+    click(cardButton("Save"))
+    expect(marks()[0].getAttribute("data-summary-tag")).toBe("Mine")
+
+    page.innerHTML = MARKED
+    await selectAndRelease(marks()[1].firstChild!, 0, 3)
+    await flush()
+    expect(field().value).toBe("Second try")
+    warn.mockRestore()
+  })
+
+  it("says to sign in when the endpoint wants it, and keeps what was typed over a late suggestion", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+    generate.mockRejectedValueOnce(Object.assign(new Error("401"), { name: "SignInRequiredError" }))
+    await selectAndRelease(marks()[0].firstChild!, 0, 6)
+    await flush()
+    expect(card()!.textContent).toContain("Sign in to get a suggested summary")
+    expect(field().value).toBe("")
+
+    let late!: (text: string) => void
+    generate.mockReturnValueOnce(new Promise<string>((resolve) => (late = resolve)))
+    click(cardButton("Suggest"))
+    type("My words")
+    await act(async () => late("AI words"))
+    expect(field().value).toBe("My words")
+    click(cardButton("Use the suggestion"))
+    expect(field().value).toBe("AI words")
+    warn.mockRestore()
+  })
+
+  it("won't save an empty summary, and Cancel and Escape save nothing", async () => {
+    generate.mockResolvedValue("")
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {})
+    await selectAndRelease(marks()[0].firstChild!, 0, 6)
+    await flush()
+    expect(cardButton("Save").hasAttribute("disabled")).toBe(true)
+    click(cardButton("Cancel"))
+    expect(card()).toBeNull()
+    await selectAndRelease(marks()[0].firstChild!, 0, 6)
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }))
+    })
+    expect(card()).toBeNull()
+    expect(page.querySelector("[data-summary-tag]")).toBeNull()
+    warn.mockRestore()
+  })
+
+  it("tells the reader when the selection holds no highlight", async () => {
+    await selectAndRelease(page.querySelector("#p")!.firstChild!, 0, 3)
+    expect(card()!.textContent).toContain("Select some highlighted text")
+    expect(generate).not.toHaveBeenCalled()
+    expect(card()!.querySelector("textarea")).toBeNull()
+  })
+
+  it("opens a tag on click to edit or delete it, and Undo mark / Redo mark take saves and removals back", async () => {
+    generate.mockResolvedValue("First")
+    await selectAndRelease(marks()[0].firstChild!, 0, 6)
+    await flush()
+    click(cardButton("Save"))
+    const tagged = () => marks()[0].getAttribute("data-summary-tag")
+    expect(tagged()).toBe("First")
+
+    click(item("Undo mark"))
+    expect(tagged()).toBeNull()
+    expect(marks()[0].hasAttribute("data-summary-end")).toBe(false)
+    click(item("Redo mark"))
+    expect(tagged()).toBe("First")
+
+    window.getSelection()!.removeAllRanges()
+    act(() => marks()[0].firstChild!.parentElement!.click())
+    expect(field().value).toBe("First")
+    expect(generate).toHaveBeenCalledTimes(1)
+    type("Edited")
+    click(cardButton("Save"))
+    expect(tagged()).toBe("Edited")
+    ctrlZ()
+    expect(tagged()).toBe("First")
+    ctrlZ({ shiftKey: true })
+    expect(tagged()).toBe("Edited")
+
+    act(() => marks()[0].click())
+    click(cardButton("Remove"))
+    expect(page.querySelector("[data-summary-tag], [data-summary-end]")).toBeNull()
+    ctrlZ()
+    expect(tagged()).toBe("Edited")
+  })
+
+  it("leaves clicks alone when summary tags are switched off, and Remove all marks clears them", async () => {
+    generate.mockResolvedValue("First")
+    await selectAndRelease(marks()[0].firstChild!, 0, 6)
+    await flush()
+    click(cardButton("Save"))
+    click(item("Summary tags"))
+    expect(html.getAttribute("data-debate-summary-tags")).toBe("off")
+    act(() => marks()[0].click())
+    expect(card()).toBeNull()
+    click(item("Summary tags"))
+    click(item("Remove all marks"))
+    expect(page.querySelector("[data-summary-tag]")).toBeNull()
+  })
+
+  it("shows the tag styling in the stylesheet, keyed to the Show switch", () => {
+    const css = readFileSync("packages/debate-help-docs/styles/docs.css", "utf8")
+    expect(css).toContain('html:not([data-debate-summary-tags="off"]) .synergy-slayer-doc [data-summary-end]::after')
+    expect(css).toContain('html[data-debate-auto-summary-tag="on"] .synergy-slayer-doc ::selection')
   })
 })
 

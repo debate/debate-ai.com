@@ -22,6 +22,14 @@
  *   run with auto underline and auto emphasize. The marking is `toggleMarks`
  *   from `@debate-ai/reading-mode/marks`. The reader's long highlights look
  *   exactly like the page's (`styles/docs.css`).
+ * - **Summary tag** (Show: "Summary tags"; mode: "Summary tag"): with the mode
+ *   on, selecting highlighted text (long or short, one highlight or several)
+ *   opens a card (`summary-tag.tsx`) with an AI-suggested one-sentence summary
+ *   the reader can edit, then Save. The summary is an annotation on those
+ *   highlights (`@debate-ai/reading-mode/summary-tags`): a badge after the
+ *   highlight, the summary as its tooltip, and a click on it opens the card
+ *   again to edit or delete. It is exclusive with the auto modes, and part of
+ *   the mark history, so Undo mark / Redo mark take it back and put it back.
  * - **Undo mark** / **Redo mark**: every change to the marks (added, removed,
  *   AI, reset, removed all) is kept, the last 50 of them (`mark-history.ts`);
  *   Cmd/Ctrl+Z undoes and Cmd/Ctrl+Shift+Z or Ctrl+Y redoes, except in text fields.
@@ -41,7 +49,7 @@
  *
  * Show/hide choices (and Minimize unread) are stored per browser, so they carry across every
  * Synergy Slayer page, and applied as `data-debate-highlights` /
- * `data-debate-underlines` / `data-debate-short-highlights` / `data-debate-emphasis` / `data-debate-minimize-unread` on `<html>`;
+ * `data-debate-underlines` / `data-debate-short-highlights` / `data-debate-emphasis` / `data-debate-summary-tags` on `<html>`;
  * `styles/docs.css` keys the styling off them, inside `.synergy-slayer-doc`
  * only. The show switches are on unless the reader turned them off and Minimize
  * unread is off unless the reader turned it on. `HIGHLIGHT_INIT_SCRIPT`
@@ -54,7 +62,7 @@
  * own marks are not saved: they last until the page changes.
  */
 import { useEffect, useRef, useState } from "react"
-import { Bold, Check, ChevronDown, Highlighter, Eraser, Loader2, Minimize2, Redo2, RotateCcw, Sparkles, Underline, Undo2, type LucideIcon } from "lucide-react"
+import { Bold, Check, ChevronDown, Highlighter, Eraser, Loader2, Redo2, RotateCcw, Sparkles, Tag, Underline, Undo2, type LucideIcon } from "lucide-react"
 import {
   AUTO_CUT_SYSTEM_PROMPT,
   autoCutPrompt,
@@ -67,10 +75,12 @@ import {
   toggleMarks,
   type MarkKind,
 } from "@debate-ai/reading-mode/marks"
+import { summaryTargets, summaryTargetsAt } from "@debate-ai/reading-mode/summary-tags"
 import { cn } from "../../lib/utils"
 import { playAutoHighlightSwoosh } from "./auto-highlight-swoosh"
 import { buttonVariants } from "../ui/button"
 import { generateWithSite, readableText } from "./docs-ai"
+import { SummaryTagCard, openSummaryTag } from "./summary-tag"
 import {
   HISTORY_EVENT,
   canRedoMark,
@@ -86,10 +96,10 @@ const CONTENT_SELECTOR = ".synergy-slayer-doc"
 /** Fired on `window` when a setting or the marks change, so every copy of the controls agrees. */
 export const CHANGE_EVENT = "debate-docs-highlights-change"
 
-type ShowSetting = "highlights" | "underlines" | "short-highlights" | "emphasis"
-/** The one view switch that is not a show/hide of a mark kind: it starts off. */
-const MINIMIZE_SETTING = "minimize-unread"
-type Setting = ShowSetting | typeof MINIMIZE_SETTING | `auto-${MarkKind}`
+type ShowSetting = "highlights" | "underlines" | "short-highlights" | "emphasis" | "summary-tags"
+/** The Summary tag mode isn't a `MarkKind`: it annotates highlights instead of toggling a mark. */
+const SUMMARY_MODE = "auto-summary-tag"
+type Setting = ShowSetting | `auto-${MarkKind}` | typeof SUMMARY_MODE
 
 const SHOW_SETTING: Record<MarkKind, ShowSetting> = {
   highlight: "highlights",
@@ -98,7 +108,8 @@ const SHOW_SETTING: Record<MarkKind, ShowSetting> = {
   emphasis: "emphasis",
 }
 const AUTO_SETTING = (kind: MarkKind): Setting => `auto-${kind}`
-const SHOW_SETTINGS = Object.values(SHOW_SETTING)
+const SUMMARY_SHOW_SETTING: ShowSetting = "summary-tags"
+const SHOW_SETTINGS: ShowSetting[] = [...Object.values(SHOW_SETTING), SUMMARY_SHOW_SETTING]
 
 /** Where each show/hide choice (and Minimize unread) is kept, in this browser. The auto modes aren't kept. */
 const storageKeyOf = (setting: Setting) =>
@@ -166,7 +177,7 @@ function useMarkHistoryState() {
 
 /** Every setting, kept in step with every other copy of the controls. */
 function useSettings(): Record<Setting, boolean> {
-  const all: Setting[] = [...SHOW_SETTINGS, MINIMIZE_SETTING, ...MARK_KINDS.map(AUTO_SETTING)]
+  const all: Setting[] = [...SHOW_SETTINGS, ...MARK_KINDS.map(AUTO_SETTING), SUMMARY_MODE]
   const read = () => Object.fromEntries(all.map((setting) => [setting, readSetting(setting)])) as Record<Setting, boolean>
   const [values, setValues] = useState(
     () => Object.fromEntries(all.map((setting) => [setting, defaultOn(setting)])) as Record<Setting, boolean>,
@@ -191,6 +202,8 @@ function setAutoMode(kind: MarkKind, on: boolean) {
   if (on) {
     const other = EXCLUSIVE[kind]
     if (other && readSetting(AUTO_SETTING(other))) writeSetting(AUTO_SETTING(other), false)
+    // Selecting would otherwise both mark the text and open the summary card.
+    if (readSetting(SUMMARY_MODE)) writeSetting(SUMMARY_MODE, false)
     writeSetting(SHOW_SETTING[kind], true)
   }
   writeSetting(AUTO_SETTING(kind), on)
@@ -199,20 +212,55 @@ function setAutoMode(kind: MarkKind, on: boolean) {
   if (on && !hadPen && autoCursorFor((k) => readSetting(AUTO_SETTING(k))) === "pen") playAutoHighlightSwoosh()
 }
 
-/** Toggles the finished selection when an auto mode is on. */
-function onSelectionEnd() {
-  // Underline first: a highlight then sits inside it, as on a cut card.
-  const kinds = MARK_KINDS.filter((kind) => readSetting(AUTO_SETTING(kind)))
-  if (kinds.length === 0) return
-  const selection = window.getSelection()
-  if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return
-  const range = selection.getRangeAt(0)
+/** Turns the Summary tag mode on or off; on shows summary tags and puts the other auto modes away. */
+function setSummaryMode(on: boolean) {
+  if (on) {
+    for (const kind of MARK_KINDS) if (readSetting(AUTO_SETTING(kind))) writeSetting(AUTO_SETTING(kind), false)
+    writeSetting(SUMMARY_SHOW_SETTING, true)
+  }
+  writeSetting(SUMMARY_MODE, on)
+}
+
+/** Whether a finished selection may be acted on: inside the doc text, away from controls and hover cards. */
+function selectionRoot(range: Range): HTMLElement | null {
   const container = range.commonAncestorContainer
   const element = container.nodeType === Node.ELEMENT_NODE ? (container as Element) : container.parentElement
   const root = element?.closest<HTMLElement>(CONTENT_SELECTOR)
-  if (!element || !root) return
-  // Leave form fields, buttons and the hover cards alone.
-  if (element.closest("input, textarea, select, button, [contenteditable], .citation-card")) return
+  if (!element || !root) return null
+  if (element.closest("input, textarea, select, button, [contenteditable], .citation-card")) return null
+  return root
+}
+
+/** A click on a tagged highlight opens its summary to edit or delete (not while text is selected). */
+function onSummaryClick(event: MouseEvent) {
+  if (!readSetting(SUMMARY_SHOW_SETTING) || !(event.target instanceof Node)) return
+  const selection = window.getSelection()
+  if (selection && !selection.isCollapsed) return
+  const start = event.target.nodeType === Node.ELEMENT_NODE ? (event.target as Element) : event.target.parentElement
+  if (!start || start.closest("input, textarea, select, button, a, [contenteditable], .citation-card")) return
+  const root = start.closest<HTMLElement>(CONTENT_SELECTOR)
+  if (!root) return
+  const elements = summaryTargetsAt(event.target, root)
+  if (elements.length === 0) return
+  const rect = elements[elements.length - 1].getBoundingClientRect()
+  openSummaryTag({ root, elements, anchor: rect })
+}
+
+/** Toggles the finished selection when an auto mode is on; with Summary tag on, opens the summary card for the highlights in it. */
+function onSelectionEnd() {
+  // Underline first: a highlight then sits inside it, as on a cut card.
+  const kinds = MARK_KINDS.filter((kind) => readSetting(AUTO_SETTING(kind)))
+  const summary = readSetting(SUMMARY_MODE)
+  if (kinds.length === 0 && !summary) return
+  const selection = window.getSelection()
+  if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return
+  const range = selection.getRangeAt(0)
+  const root = selectionRoot(range)
+  if (!root) return
+  if (summary) {
+    openSummaryTag({ root, elements: summaryTargets(range, root), anchor: range.getBoundingClientRect?.() ?? null })
+    return
+  }
   const results = recordMarkChange(root, () => toggleMarks(range, root, kinds))
   if (results.some(Boolean)) {
     selection.removeAllRanges()
@@ -237,6 +285,7 @@ function useAutoMarkListener() {
       document.addEventListener("touchend", deferredSelectionEnd)
       document.addEventListener("keyup", onKeyUp)
       document.addEventListener("keydown", onHistoryKey)
+      document.addEventListener("click", onSummaryClick)
     }
     return () => {
       if (--listeners === 0) {
@@ -244,6 +293,7 @@ function useAutoMarkListener() {
         document.removeEventListener("touchend", deferredSelectionEnd)
         document.removeEventListener("keyup", onKeyUp)
         document.removeEventListener("keydown", onHistoryKey)
+        document.removeEventListener("click", onSummaryClick)
       }
     }
   }, [])
@@ -459,9 +509,17 @@ export function MarksMenu({
   // The button names the auto mode that is on, so it's clear why selecting marks text.
   const activeAuto = MARK_KINDS.filter((kind) => settings[AUTO_SETTING(kind)])
   useAutoCursor(activeAuto.join())
-  const ButtonIcon = activeAuto.length ? KIND_LABEL[activeAuto[activeAuto.length - 1]].icon : Underline
+  const summaryMode = settings[SUMMARY_MODE]
+  const ButtonIcon = summaryMode ? Tag : activeAuto.length ? KIND_LABEL[activeAuto[activeAuto.length - 1]].icon : Underline
   const buttonLabel =
-    status ?? (activeAuto.length === 1 ? KIND_LABEL[activeAuto[0]].auto : activeAuto.length ? "Auto marking" : "Marks")
+    status ??
+    (summaryMode
+      ? "Summary tag"
+      : activeAuto.length === 1
+        ? KIND_LABEL[activeAuto[0]].auto
+        : activeAuto.length
+          ? "Auto marking"
+          : "Marks")
 
   const itemClass =
     "flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left hover:bg-fd-accent hover:text-fd-accent-foreground disabled:opacity-50"
@@ -474,7 +532,7 @@ export function MarksMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         title="Marks: show or hide underlining and highlighting, auto-mark what you select, or have the AI mark the text"
-        className={toolButton(activeAuto.length > 0)}
+        className={toolButton(activeAuto.length > 0 || summaryMode)}
         onClick={() => setOpen((value) => !value)}
       >
         {busy ? <Loader2 className="animate-spin" /> : status ? <Check /> : <ButtonIcon />}
@@ -511,6 +569,19 @@ export function MarksMenu({
               </button>
             )
           })}
+          <button
+            type="button"
+            role="menuitemcheckbox"
+            aria-checked={settings[SUMMARY_SHOW_SETTING]}
+            title="The summary tags on highlighted text: a badge after the highlight, the summary on hover, click to edit"
+            className={itemClass}
+            onClick={() => writeSetting(SUMMARY_SHOW_SETTING, !settings[SUMMARY_SHOW_SETTING])}
+          >
+            <Tag className="size-4 text-fd-muted-foreground" />
+            <span className="flex-1">Summary tags</span>
+            <span className="text-xs text-fd-muted-foreground">{settings[SUMMARY_SHOW_SETTING] ? "On" : "Off"}</span>
+            {settings[SUMMARY_SHOW_SETTING] && <Check className="size-4" />}
+          </button>
           <div role="separator" className="my-1 border-t" />
           <div className={groupLabel}>Select text to mark it, select marked text to unmark it</div>
           {MARK_KINDS.map((kind) => {
@@ -541,6 +612,19 @@ export function MarksMenu({
               </button>
             )
           })}
+          <button
+            type="button"
+            role="menuitemcheckbox"
+            aria-checked={summaryMode}
+            title="Select highlighted text (long or short) to have the AI suggest a summary tag for it, then edit and save it. Click a tagged highlight to edit or delete its tag."
+            className={itemClass}
+            onClick={() => setSummaryMode(!summaryMode)}
+          >
+            <Tag className="size-4 text-fd-muted-foreground" />
+            <span className="flex-1">Summary tag</span>
+            <span className="text-xs text-fd-muted-foreground">AI</span>
+            {summaryMode && <Check className="size-4" />}
+          </button>
           <div role="separator" className="my-1 border-t" />
           <button
             type="button"
@@ -595,6 +679,13 @@ export function MarksMenu({
           </button>
         </div>
       )}
+      <SummaryTagCard
+        getRoot={getRoot}
+        onChanged={() => {
+          writeSetting(SUMMARY_SHOW_SETTING, true)
+          window.dispatchEvent(new Event(CHANGE_EVENT))
+        }}
+      />
     </div>
   )
 }
