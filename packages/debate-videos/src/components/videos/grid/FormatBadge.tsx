@@ -11,11 +11,17 @@
 import { cn } from "../../../ui/lib/utils"
 import { DEBATE_STYLE_LABELS, STYLE_COLORS } from "../card/videoCardUtils"
 import type { VideoType } from "../../../types/videos"
+import { demoStyleOfTuple } from "../../../data/demo-style"
 
-/** The video's numeric debate format, or `undefined` for a lecture. */
+/**
+ * The video's numeric debate format, or `undefined` for a lecture. A demo
+ * debate is a lecture that has one too (its admin-picked or title-guessed
+ * format), so it is labelled like the round it shows.
+ */
 export function videoFormat(video: VideoType): number | undefined {
   const style = video[6]
-  return typeof style === "number" && style in DEBATE_STYLE_LABELS ? style : undefined
+  if (typeof style === "number") return style in DEBATE_STYLE_LABELS ? style : undefined
+  return demoStyleOfTuple(video) ?? undefined
 }
 
 /** One format chip; renders nothing for an unknown format. */

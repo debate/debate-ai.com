@@ -18,6 +18,7 @@ import {
 import { CategoryDock } from "@debate-ai/webview/components/layout/CategoryDock"
 import { SidebarAccount } from "@debate-ai/webview/components/layout/app-sidebar/sidebar-account"
 import { VideoStaffControls } from "@debate-ai/videos-admin/src/components/VideoStaffControls"
+import { isDemoTuple } from "@debate-ai/videos/src/data/demo-style"
 import { featuredSpeechDocsTabs } from "@debate-ai/round/src/panels/featuredSpeechDocsTabs"
 import {
   getRelatedVideos,
@@ -173,7 +174,7 @@ export async function VideoRoutePage({
           <>
             <SlowSpreadButton size="md" />
             {/* Renders nothing unless the viewer is an admin or moderator. */}
-            <VideoStaffControls videoId={video[0] as string} />
+            <VideoStaffControls videoId={video[0] as string} isDemo={isDemoTuple(video)} />
           </>
         }
       />

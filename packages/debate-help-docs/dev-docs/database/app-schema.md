@@ -928,6 +928,7 @@ _Drizzle export `videos`, `schema.ts:1277`._
 | `style` | integer | yes |  | Debate format: 1 Policy, 2 PF, 3 LD, 4 College; null for lectures. |
 | `category` | text | yes |  | Lecture category label; null for rounds. |
 | `category_key` | text | yes |  | Lecture category URL slug. |
+| `demo_style` | integer | yes |  | Debate format (a `DebateStyle`) of a Demo Debates lecture, picked by an admin; null guesses it from the title. |
 | `tournament` | text | yes |  | Tournament name. |
 | `round_level` | text | yes |  | Round (e.g. Finals). |
 | `aff_team` | text | yes |  | Affirmative team. |

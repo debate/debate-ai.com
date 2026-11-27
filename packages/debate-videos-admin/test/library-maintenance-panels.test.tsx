@@ -216,6 +216,68 @@ describe("VideoStaffControls", () => {
     expect(document.querySelector("[data-testid=edit-dialog]")).toBeNull();
   });
 
+  describe("demo format dropdown", () => {
+    const demoRoutes = (canEditContent: boolean, demoStyle: number | null) => [
+      { method: "GET", match: "/api/admin/me", respond: { canEditContent } },
+      { method: "GET", match: "/api/admin/videos/library/abc", respond: { video: { id: "abc", demoStyle } } },
+      { method: "PATCH", match: "/api/admin/videos/library/abc", respond: { video: { id: "abc" } } },
+    ];
+    const trigger = () => document.querySelector("[aria-label='Demo debate format']")!;
+
+    it("is offered to staff on a demo, showing the stored format", async () => {
+      mockFetch(demoRoutes(true, 2));
+      mount(<VideoStaffControls videoId="abc" isDemo />);
+      await flush();
+      expect(trigger().textContent).toContain("PF demo");
+    });
+
+    it("saves a chosen format and re-renders the page", async () => {
+      const { calls } = mockFetch(demoRoutes(true, null));
+      mount(<VideoStaffControls videoId="abc" isDemo />);
+      await flush();
+      expect(trigger().textContent).toContain("Guess from title");
+      selectOption(trigger(), "Policy demo");
+      await flush();
+      expect(calls.find((c) => c.method === "PATCH")!.body).toEqual({ demoStyle: 1 });
+      expect(nav.refresh).toHaveBeenCalled();
+    });
+
+    it("clears the pick with Guess from title", async () => {
+      const { calls } = mockFetch(demoRoutes(true, 3));
+      mount(<VideoStaffControls videoId="abc" isDemo />);
+      await flush();
+      selectOption(trigger(), "Guess from title");
+      await flush();
+      expect(calls.find((c) => c.method === "PATCH")!.body).toEqual({ demoStyle: null });
+    });
+
+    it("keeps the old format and says why when the save fails", async () => {
+      mockFetch([
+        ...demoRoutes(true, 2).slice(0, 2),
+        { method: "PATCH", match: "/api/admin/videos/library/abc", respond: { details: "DB locked" }, status: 500 },
+      ]);
+      mount(<VideoStaffControls videoId="abc" isDemo />);
+      await flush();
+      selectOption(trigger(), "LD demo");
+      await flush();
+      expect(bodyText()).toContain("DB locked");
+      expect(trigger().textContent).toContain("PF demo");
+      expect(nav.refresh).not.toHaveBeenCalled();
+    });
+
+    it("is hidden from non-staff and on videos that are not demos", async () => {
+      mockFetch(demoRoutes(false, 2));
+      mount(<VideoStaffControls videoId="abc" isDemo />);
+      await flush();
+      expect(document.querySelector("[aria-label='Demo debate format']")).toBeNull();
+      cleanup();
+      mockFetch(demoRoutes(true, 2));
+      mount(<VideoStaffControls videoId="abc" />);
+      await flush();
+      expect(document.querySelector("[aria-label='Demo debate format']")).toBeNull();
+    });
+  });
+
   async function openDialog() {
     mockFetch(routes(true));
     mount(<VideoStaffControls videoId="abc" />);
