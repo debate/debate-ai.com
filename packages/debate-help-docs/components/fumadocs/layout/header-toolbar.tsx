@@ -16,6 +16,8 @@
  * Each button sits in a `ToolbarItem`: a shadcn tooltip that names the button
  * and, when the button has a native `title`, shows that text instead (the
  * attribute is lifted off, so the browser's own tooltip doesn't show twice).
+ * Each button's icon plays the sidebar's random animation on hover, focus and
+ * click (`lib/toolbar-icon-animation.ts`).
  * The large icon + tiny label look comes from `.docs-header-toolbar` in
  * `styles/docs.css`, so the buttons keep their own markup.
  */
@@ -31,6 +33,7 @@ import {
 import { useSearchContext } from 'fumadocs-ui/contexts/search';
 import { buttonVariants } from '../../ui/button';
 import { cn } from '../../../lib/utils';
+import { toolbarIconAnimationRef } from '../../../lib/toolbar-icon-animation';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
 import { ThemesMenu } from './themes-menu';
 
@@ -52,7 +55,7 @@ export function SearchWithToolbarSlot({ hideIfDisabled }: ComponentProps<typeof 
   return (
     <>
       {!(hideIfDisabled && !enabled) && (
-        <div className="docs-header-toolbar my-auto flex shrink-0 items-center max-md:hidden">
+        <div ref={toolbarIconAnimationRef} className="docs-header-toolbar my-auto flex shrink-0 items-center max-md:hidden">
           <ToolbarItem label="Search" tip={shortcut ? `Search the docs (${shortcut})` : 'Search the docs'}>
             <button
               type="button"
@@ -76,7 +79,7 @@ export function SearchWithToolbarSlot({ hideIfDisabled }: ComponentProps<typeof 
 function ThemesToolbarButton() {
   const [open, setOpen] = useState(false);
   return (
-    <div className="docs-header-toolbar my-auto flex shrink-0 items-center max-md:hidden">
+    <div ref={toolbarIconAnimationRef} className="docs-header-toolbar my-auto flex shrink-0 items-center max-md:hidden">
       <ToolbarItem label="Themes" tip="Light, dark and color themes" suppressTip={open}>
         <ThemesMenu variant="toolbar" onOpenChange={setOpen} />
       </ToolbarItem>
@@ -136,13 +139,13 @@ export function HeaderToolbar({ children }: { children: ReactNode }) {
   }
   if (host === 'inline') {
     return (
-      <div role="toolbar" aria-label="Page tools" className="docs-header-toolbar flex flex-row flex-wrap items-center gap-0.5 border-b pt-1 pb-2">
+      <div ref={toolbarIconAnimationRef} role="toolbar" aria-label="Page tools" className="docs-header-toolbar flex flex-row flex-wrap items-center gap-0.5 border-b pt-1 pb-2">
         {children}
       </div>
     );
   }
   return createPortal(
-    <div role="toolbar" aria-label="Page tools" className="docs-header-toolbar flex flex-row items-center gap-0.5 ps-2">
+    <div ref={toolbarIconAnimationRef} role="toolbar" aria-label="Page tools" className="docs-header-toolbar flex flex-row items-center gap-0.5 ps-2">
       {children}
     </div>,
     host,

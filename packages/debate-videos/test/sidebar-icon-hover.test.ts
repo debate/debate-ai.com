@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import {
   ICON_HOVER_COLORS,
@@ -10,6 +10,8 @@ import {
   pickIconHoverColor,
   pickIconHoverDuration,
   pickIconHoverEffect,
+  playRandomIconAnimation,
+  setSidebarIconAnimations,
   sidebarIconFor,
 } from "../src/ui/layout/sidebar-icon-hover";
 
@@ -82,5 +84,34 @@ describe("sidebar icon animation setting", () => {
     document.body.append(root);
     expect(sidebarIconFor(root.querySelector("[data-no-icon-hover] svg"), root)).toBeNull();
     expect(sidebarIconFor(root.querySelector("span"), root)).not.toBeNull();
+  });
+
+  describe("playRandomIconAnimation", () => {
+    const icon = () => {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.style.color = "red";
+      document.body.append(svg);
+      return svg;
+    };
+    afterEach(() => setSidebarIconAnimations(true));
+
+    it("tints the icon, plays an icon at most once per 3s unless forced, and keeps its own color", () => {
+      const svg = icon();
+      playRandomIconAnimation(svg);
+      const tint = svg.style.color;
+      expect(tint).not.toBe("red");
+      svg.style.color = "red";
+      playRandomIconAnimation(svg);
+      expect(svg.style.color).toBe("red");
+      playRandomIconAnimation(svg, { force: true });
+      expect(svg.style.color).not.toBe("red");
+    });
+
+    it("does nothing when the reader turned the animation off", () => {
+      setSidebarIconAnimations(false);
+      const svg = icon();
+      playRandomIconAnimation(svg, { force: true });
+      expect(svg.style.color).toBe("red");
+    });
   });
 });

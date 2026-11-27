@@ -20,7 +20,7 @@
  * @module ui/layout/sidebar-icon-hover
  */
 
-import { animate, utils, type AnimationParams } from "animejs"
+import { animate, utils, type AnimationParams, type JSAnimation } from "animejs"
 import { useEffect, type RefObject } from "react"
 
 /** Colors the icon can take while it plays — chosen at random each time. */
@@ -145,39 +145,57 @@ export function sidebarIconFor(target: EventTarget | null, root: Element): { row
   return icon ? { row, icon } : null
 }
 
+/** The effect played last anywhere on the page; the next one is never the same. */
+let previousEffect: IconHoverEffect | null = null
+/** Per-icon time the last animation started, for the 3s throttle. */
+const lastPlayedAt = new WeakMap<SVGElement, number>()
+/** The icon's own color while an effect has it tinted, and the effect running on it. */
+const restColors = new WeakMap<SVGElement, string>()
+const running = new WeakMap<SVGElement, JSAnimation>()
+
+/**
+ * Plays one random effect, in a random color and for a random duration, on
+ * `icon`. Does nothing when the reader turned the animation off in Settings
+ * (read on every call, so flipping the switch applies without a reload), or,
+ * unless `force` is set, when the icon played less than 3 seconds ago. Clicks
+ * pass `force` so a press always answers, however recently the icon moved.
+ */
+export function playRandomIconAnimation(icon: SVGElement, { force = false }: { force?: boolean } = {}): void {
+  if (!readSidebarIconAnimations()) return
+
+  const now = Date.now()
+  if (!force && !iconHoverReady(lastPlayedAt.get(icon), now)) return
+  lastPlayedAt.set(icon, now)
+
+  // A forced replay stops the running effect; its colour is not the icon's own.
+  running.get(icon)?.pause()
+  if (!restColors.has(icon)) restColors.set(icon, icon.style.color)
+  icon.style.color = pickIconHoverColor()
+
+  const effect = pickIconHoverEffect(previousEffect)
+  previousEffect = effect
+  // From rest every time; anime.js remembers each transform it set, so a
+  // flip after a spin starts upright rather than wherever the last one was.
+  utils.set(icon, AT_REST)
+  const animation = animate(icon, {
+    ...effect.keyframes,
+    duration: pickIconHoverDuration() * 1000,
+    ease: "inOutSine",
+    onComplete: () => {
+      icon.style.color = restColors.get(icon) ?? ""
+      restColors.delete(icon)
+      running.delete(icon)
+    },
+  })
+  running.set(icon, animation)
+}
+
 /**
  * Animates icons in `root` on hover and focus. Returns the function that
  * detaches it.
  */
 export function attachSidebarIconHover(root: HTMLElement): () => void {
-  let previous: IconHoverEffect | null = null
-  /** Per-icon time the last animation started, for the 3s throttle. */
-  const lastPlayedAt = new WeakMap<SVGElement, number>()
-
-  const play = (icon: SVGElement) => {
-    // On unless the reader turned it off (Settings → General); read on
-    // every hover so flipping the switch applies without a reload.
-    if (!readSidebarIconAnimations()) return
-
-    const now = Date.now()
-    if (!iconHoverReady(lastPlayedAt.get(icon), now)) return
-    lastPlayedAt.set(icon, now)
-
-    const duration = pickIconHoverDuration() * 1000
-    const originalColor = icon.style.color
-    icon.style.color = pickIconHoverColor()
-    const restoreColor = () => {
-      icon.style.color = originalColor
-    }
-
-    const effect = pickIconHoverEffect(previous)
-    previous = effect
-    // From rest every time; anime.js remembers each transform it set, so a
-    // flip after a spin starts upright rather than wherever the last one was.
-    utils.set(icon, AT_REST)
-    // The throttle outlasts the longest effect, so nothing is ever cut short.
-    animate(icon, { ...effect.keyframes, duration, ease: "inOutSine", onComplete: restoreColor })
-  }
+  const play = (icon: SVGElement) => playRandomIconAnimation(icon)
 
   const onEnter = (event: PointerEvent | FocusEvent) => {
     if (event instanceof PointerEvent && event.pointerType === "touch") return
