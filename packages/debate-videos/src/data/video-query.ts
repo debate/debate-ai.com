@@ -16,6 +16,7 @@ import type {
   VideoSuggestions,
 } from "../types/videos";
 import type { VideoRow } from "./video-rows";
+import { DEMO_CATEGORY_KEY } from "./demo-style";
 import { MISCELLANEOUS_CATEGORY } from "./lecture-classifier";
 import { isUnsortedLecture, LEGACY_SEASON, MISCELLANEOUS_CATEGORY_KEY, normalizeCategoryKey } from "./video-rows";
 
