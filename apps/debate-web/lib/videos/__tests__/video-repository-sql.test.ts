@@ -20,6 +20,7 @@ import * as schema from "@/lib/database/schema";
 import { videos } from "@/lib/database/schema";
 import { freshSchemaClient } from "@/lib/database/__tests__/schema-sql";
 import { buildVideoRows, videoRowToTuple, type VideoRow, type VideoTuple } from "@debate-ai/videos/src/data/video-rows";
+import { isVideoRoundPath } from "@debate-ai/videos/src/lib/video-topic-path";
 import {
   computeLectureCategories,
   computeVideoFacets,
@@ -341,7 +342,7 @@ describe("getVideoSitemapEntries on the SQL backend", () => {
     await db.update(videos).set({ availability: "unavailable" }).where(eq(videos.videoId, "policyOld01"));
     const entries = await repo.getVideoSitemapEntries();
     expect(entries.length).toBeGreaterThan(0);
-    expect(entries.every((e) => e.path.startsWith("/videos/"))).toBe(true);
+    expect(entries.every((e) => e.path.startsWith("/videos/") || isVideoRoundPath(e.path))).toBe(true);
     expect(entries.every((e) => e.lastModified instanceof Date)).toBe(true);
     const available = await db.select({ id: videos.videoId }).from(videos).where(eq(videos.availability, "available"));
     expect(entries).toHaveLength(available.length);
