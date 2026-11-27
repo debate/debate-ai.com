@@ -9,7 +9,7 @@
 
 import { describe, expect, it, vi } from "vitest";
 import { buildVideoRows, type VideoTuple } from "@debate-ai/videos/src/data/video-rows";
-import { legacyVideoRouteHref, videoRouteHref, type VideoType } from "@debate-ai/videos";
+import { legacyVideoRouteHref, videoLibraryRouteHref, videoRouteHref, type VideoType } from "@debate-ai/videos";
 
 vi.mock("@/lib/database/context", () => ({
   getDBFromContext: () => {
@@ -73,12 +73,12 @@ describe("getVideoByRouteSegments", () => {
   it("resolves a tagged round at its four-segment and older three-segment paths", async () => {
     const page = await getVideoPage({ source: "all", limit: 200, offset: 0 });
     const round = page.videos.find((v) => {
-      const href = videoRouteHref(v as unknown as VideoType);
+      const href = videoLibraryRouteHref(v as unknown as VideoType);
       return href.split("/").length === 7;
     }) as unknown as VideoType | undefined;
     expect(round).toBeDefined();
 
-    const current = await getVideoByRouteSegments(segmentsOf(videoRouteHref(round!)));
+    const current = await getVideoByRouteSegments(segmentsOf(videoLibraryRouteHref(round!)));
     expect(current?.[0]).toBe(round![0]);
 
     const legacy = await getVideoByRouteSegments(segmentsOf(legacyVideoRouteHref(round!)));
@@ -90,9 +90,10 @@ describe("getVideoByRouteSegments", () => {
   it("resolves a round's path with the bare-year season links used before", async () => {
     const video = await getVideoByRouteSegments(["2022", "ndt", "finals", "dartmouth-sv-michigan-pr"]);
     expect(video).not.toBeNull();
-    expect(videoRouteHref(video as unknown as VideoType)).toBe(
+    expect(videoLibraryRouteHref(video as unknown as VideoType)).toBe(
       "/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr",
     );
+    expect(videoRouteHref(video as unknown as VideoType)).toBe("/cpd22/ndt/finals/dartmouth-sv-michigan-pr");
     expect(
       (await getVideoByRouteSegments(["21-22", "ndt", "finals", "dartmouth-sv-michigan-pr"]))?.[0],
     ).toBe(video?.[0]);
@@ -163,12 +164,21 @@ describe("getVideoByRouteSegments", () => {
   it("files a prelim under r3 and still resolves its old round-3 path", async () => {
     const current = await resolveVideoRoute(["26-27", "cpd", "kentucky", "r3", "michigan-gv-dartmouth-cg"]);
     expect(current?.video[0]).toBe("kyR3michDtm");
-    expect(videoRouteHref(current!.video as unknown as VideoType)).toBe(
+    expect(videoLibraryRouteHref(current!.video as unknown as VideoType)).toBe(
       "/videos/26-27/cpd/kentucky/r3/michigan-gv-dartmouth-cg",
     );
+    expect(videoRouteHref(current!.video as unknown as VideoType)).toBe("/cpd27/kentucky/r3/michigan-gv-dartmouth-cg");
     const old = await resolveVideoRoute(["26-27", "cpd", "kentucky", "round-3", "michigan-gv-dartmouth-cg", "2ac"]);
     expect(old?.video[0]).toBe("kyR3michDtm");
     expect(old?.suffix).toEqual(["2ac"]);
+  });
+
+  it("resolves the /videos segments a short /<topic code> address stands for", async () => {
+    // `app/videos/code` turns `/cpd22/ndt/finals/<teams>` into these.
+    const match = await resolveVideoRoute(["21-22", "cpd", "ndt", "finals", "dartmouth-sv-michigan-pr", "2nr", "outcomes"]);
+    expect(match?.video[0]).toBe("qx7Xx_6exzk");
+    expect(match?.suffix).toEqual(["2nr", "outcomes"]);
+    expect(videoRouteHref(match!.video as unknown as VideoType)).toBe("/cpd22/ndt/finals/dartmouth-sv-michigan-pr");
   });
 
   it("returns null for a path naming nothing", async () => {

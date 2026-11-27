@@ -1,15 +1,11 @@
 import type { Metadata } from "next"
-import { Suspense } from "react"
+import { Suspense, type ReactNode } from "react"
 import { notFound, permanentRedirect, redirect } from "next/navigation"
 import {
-  SPEECH_PARAM,
-  SPEECH_VIEW_PARAM,
   SlowSpreadButton,
   VideoWatchPage,
   loadVideoTeamRanks,
   videoComputedTitle,
-  parseSpeechRouteSuffix,
-  speechRouteSuffix,
   stackKeyOf,
   videoPageTitle,
   videoRouteHref,
@@ -28,12 +24,19 @@ import {
 } from "@/lib/videos/video-repository"
 import { getVideoSidePanelContent } from "@/lib/videos/video-content"
 import { videoListingPath } from "@/lib/redirects/video-listing"
+import { videoRedirectTarget } from "@/lib/videos/video-redirect"
 
 /**
  * One video at its canonical address, shared by every route shape:
  *
- * - `/videos/<season>/<format>/<tournament>/<round>/<teams>` for a tagged
- *   round, e.g. `/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr`;
+ * - `/<topic code>/<tournament>/<round>/<teams>` for a tagged round in a
+ *   format that has topic codes, e.g. `/cpd22/ndt/finals/dartmouth-sv-michigan-pr`
+ *   (`app/videos/code`, which hands the page the `/videos/…` segments it
+ *   stands for, and the path that was actually requested);
+ * - `/videos/<season>/<format>/<tournament>/<round>/<teams>` for the same
+ *   round before topic codes, and for a round in any other format, e.g.
+ *   `/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr`; the first
+ *   redirects to the short address;
  * - `.../<teams>/<variant>` for a video made from that round — its analysis,
  *   one part of a split upload — e.g. `.../dartmouth-sv-michigan-pr/part-2`;
  * - `/videos/<season>/<event>/<matchup>` for everything else (the event is
@@ -68,12 +71,17 @@ async function videoForSegments(segments: string[]): Promise<VideoType | null> {
   return (await getVideoByRouteSegments(segments)) as VideoType | null
 }
 
-/** Page metadata for the video at these path segments. */
-export async function videoRouteMetadata(segments: string[]): Promise<Metadata> {
+/**
+ * Page metadata for the video at these path segments.
+ *
+ * @param whenMissing - Metadata to use, in place of the noindex "not found"
+ *   ones, when no video has the address.
+ */
+export async function videoRouteMetadata(segments: string[], whenMissing?: Metadata): Promise<Metadata> {
   const video = await videoForSegments(segments)
 
   if (!video) {
-    return { title: "Video not found", robots: { index: false, follow: false } }
+    return whenMissing ?? { title: "Video not found", robots: { index: false, follow: false } }
   }
 
   const [id, title, , channel, , description] = video
@@ -101,22 +109,24 @@ export async function videoRouteMetadata(segments: string[]): Promise<Metadata> 
 /** A page's query string, as Next.js hands it over. */
 export type VideoRouteSearchParams = Promise<Record<string, string | string[] | undefined>>
 
-/** The first value of a query parameter. */
-function firstParam(value: string | string[] | undefined): string | null {
-  return (Array.isArray(value) ? value[0] : value) ?? null
-}
-
 /** Renders the watch page for these path segments, or redirects to the canonical ones. */
 export async function VideoRoutePage({
   segments,
   searchParams,
+  requestedPath = `/videos/${segments.join("/")}`,
+  onMissing,
 }: {
   segments: string[]
   searchParams?: VideoRouteSearchParams
+  /** The path the reader asked for, when it is not `/videos/<segments>`. */
+  requestedPath?: string
+  /** Rendered, instead of the not-found handling, when no video has the address. */
+  onMissing?: () => ReactNode | Promise<ReactNode>
 }) {
   const query = (await searchParams) ?? {}
   const match = await resolveVideoRoute(segments)
   if (!match) {
+    if (onMissing) return onMissing()
     // `/videos/24-25/ld/<tournament>` reads as a video's address until no
     // video has it; then it was a trimmed one, asking for that listing.
     const listing = videoListingPath(`/videos/${segments.join("/")}`, "", { allowFormatTournament: true })
@@ -125,25 +135,12 @@ export async function VideoRoutePage({
   }
   const video = match.video as unknown as VideoType
 
-  // One address per video: a link built before a retitle, a tournament fix or
-  // a team-name correction still resolves, and is sent on to the current one,
-  // carrying the speech and view it opened (from the path, or the query
-  // string older links used) along.
-  const fromPath = parseSpeechRouteSuffix(match.suffix)
-  const speech = firstParam(query[SPEECH_PARAM]) ?? fromPath?.speech
-  const tab = firstParam(query[SPEECH_VIEW_PARAM]) ?? fromPath?.tab
-  const canonical = `${videoRouteHref(video)}${speechRouteSuffix(speech, tab)}`
-  const requested = `/videos/${segments.join("/")}`
-  const hasLegacyQuery = SPEECH_PARAM in query || SPEECH_VIEW_PARAM in query
-  if (requested !== canonical || hasLegacyQuery) {
-    const rest = new URLSearchParams()
-    for (const [key, value] of Object.entries(query)) {
-      if (key === SPEECH_PARAM || key === SPEECH_VIEW_PARAM || value === undefined) continue
-      for (const item of Array.isArray(value) ? value : [value]) rest.append(key, item)
-    }
-    const search = rest.toString()
-    permanentRedirect(search ? `${canonical}?${search}` : canonical)
-  }
+  // One address per video: a link built before a retitle, a tournament fix, a
+  // team-name correction or topic codes still resolves, and is sent on to the
+  // current one, carrying the speech and view it opened (from the path, or the
+  // query string older links used) along.
+  const redirectTo = videoRedirectTarget(video, match.suffix, query, requestedPath)
+  if (redirectTo) permanentRedirect(redirectTo)
 
   const stackKey = stackKeyOf(video)
   const [related, sidePanel, stacks, titleRanks] = await Promise.all([

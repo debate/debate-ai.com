@@ -63,6 +63,7 @@ import {
   shortRoundSegment,
   untitledVideoRouteHref,
   slugifyVideoTitle,
+  videoLibraryRouteHref,
   videoRouteHref,
   type VideoRouteParts,
   type VideoType,
@@ -988,9 +989,11 @@ export async function resolveVideoRoute(segments: string[]): Promise<VideoRouteM
   // such a path is compared against every path rebuilt with that spelling.
   const spelling = /^\d{4}$/.test(season) ? "year" : "season";
   const builders: Array<(v: VideoType) => string | null> = [
-    (v) => videoRouteHref(v, spelling),
+    // A round's `/videos/…` address, which the short `/<topic code>/…` one
+    // reads as: the page turns that into these segments (`videos/code`).
+    (v) => videoLibraryRouteHref(v, spelling),
     // From before the format segment.
-    (v) => videoRouteHref(v, spelling, false),
+    (v) => videoLibraryRouteHref(v, spelling, false),
     (v) => previousVideoRouteHref(v, spelling),
     (v) => legacyVideoRouteHref(v, spelling),
     // A partial path from before titles were added, which several videos may
