@@ -7,7 +7,7 @@ shared with the docs' Synergy Slayer reading mode.
   `<mark class="reader-highlight">`, remove marks, list the marked passages.
 - `@debate-ai/reading-mode/marks`: toggle underlining, highlighting or short
   (secondary) highlighting on a selection (`toggleMark`, the docs' auto
-  modes), reset to the page's own marks (`clearMarks`),
+  modes), reset to the page's own marks (`clearMarks`), remove every mark (`removeAllMarks`),
   including taking it off authored `debate-hl` marks; mark a quoted phrase
   (`markPhrase`); and the AI prompt that cuts a passage (`autoCutPrompt`,
   `parseAutoCut`).

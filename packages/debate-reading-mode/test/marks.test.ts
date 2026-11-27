@@ -6,6 +6,7 @@ import {
   markPhrase,
   markedPassages,
   parseAutoCut,
+  removeAllMarks,
   toggleMark,
   toggleMarks,
 } from '../src/marks';
@@ -149,6 +150,32 @@ describe('toggleMark on authored marks', () => {
     clearMarks(root);
     expect(root.querySelector('.reader-underline, .debate-hl--no-highlight')).toBeNull();
     expect(root.textContent).toBe('We must act today.');
+  });
+});
+
+describe('removeAllMarks', () => {
+  beforeEach(() => setup('<p>We <mark class="debate-hl">must act</mark> and <u>say so</u> today.</p>'));
+
+  it('removes the reader’s marks and switches the authored ones off, keeping the text', () => {
+    const p = first('p');
+    toggleMark(rangeOver(p, 0, p, 2), root, 'highlight');
+    toggleMark(rangeOver(p, 0, p, 2), root, 'emphasis');
+    removeAllMarks(root);
+    expect(root.querySelector('.reader-highlight, .reader-emphasis')).toBeNull();
+    const authored = root.querySelector('mark.debate-hl')!;
+    expect(authored.classList.contains('debate-hl--no-highlight')).toBe(true);
+    expect(authored.classList.contains('debate-hl--no-underline')).toBe(true);
+    expect(root.querySelector('u')!.classList.contains('debate-u--no-underline')).toBe(true);
+    expect(root.textContent).toBe('We must act and say so today.');
+  });
+
+  it('is undone by clearMarks, and marking switched-off text marks it again', () => {
+    removeAllMarks(root);
+    const authored = first('mark');
+    expect(toggleMark(rangeOver(authored, 0, authored, 4), root, 'underline')).toBe('added');
+    clearMarks(root);
+    expect(root.querySelector('.debate-hl--no-highlight, .debate-hl--no-underline, .debate-u--no-underline')).toBeNull();
+    expect(root.querySelector('.reader-underline')).toBeNull();
   });
 });
 
