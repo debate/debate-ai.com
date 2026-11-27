@@ -164,6 +164,16 @@ describe("tupleToVideoRow", () => {
     expect(row).toMatchObject({ style: 4, category: "ACC", categoryKey: "acc" });
   });
 
+  it("files Super Debate lectures under Open Super Debates, and rounds keep their style", () => {
+    const lecture = tupleToVideoRow(
+      ["vid-sd", "Chicago Super Debate Night 1 Recap", "2026-03-02", "SuperDebate", 10, "", "Documentaries & Culture"],
+      "lecture",
+    )!;
+    expect(lecture).toMatchObject({ style: null, category: "Open Super Debates", categoryKey: "open_super_debates" });
+    const round = tupleToVideoRow(["vid-sd2", "Night 2: A vs B", "2026-03-02", "Super Debater", 10, "", 2], "round")!;
+    expect(round).toMatchObject({ style: 2, category: "Open Super Debates", categoryKey: "open_super_debates" });
+  });
+
   it("maps a lecture tuple's category and leaves the style unset", () => {
     const row = tupleToVideoRow(LECTURE_TUPLE, "lecture")!;
     expect(row.style).toBeNull();

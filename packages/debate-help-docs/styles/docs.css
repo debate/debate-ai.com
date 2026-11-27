@@ -389,8 +389,8 @@ html[data-debate-short-highlights="off"] .synergy-slayer-doc mark.reader-highlig
   font-weight: 700;
   background-color: var(--debate-reader-hl-bg);
   color: var(--color-fd-foreground);
-  border: 1.5px solid var(--color-fd-primary);
-  border-radius: 3px;
+  border: 3px solid var(--color-fd-primary);
+  border-radius: 4px;
   padding: 0 2px;
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
@@ -640,4 +640,9 @@ html[data-debate-auto-cursor="pencil"][data-debate-auto-frame="10"] .synergy-sla
 
 html[data-debate-auto-cursor="pencil"][data-debate-auto-frame="9"] .synergy-slayer-doc {
   cursor: url("data:image/x-icon;base64,AAACAAEAICAAAAAAAABeAgAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAgAAAAIAgGAAAAc3p69AAAAiVJREFUeNrFlyuP21AQhb8bBQQaBBgUGARcWGhgrQwKDAoCrShgYaB/wsKAAsOFCwqsqiAgwCDggoBqVWBQYK0MDAMNCgKs3oJssnltHk1uOtIgW5rP55wZycK787Trugy/DAX/oYR352kA13UJmjkA/nB0MxhRN2p8z9cAT/cuAGWRMy9TgmRuHKQJ8OBZOB0JgO12abUz7O4PUlraNERjKXlZ5LTaDlWRYXU+Mps9EEQWadjSxgG2qyoy7M8BWBZBZHETAH84ElkSYc8jAGbjFDopWIZVqBv1Ro97TV1/a+r6ua3rl46u/xS6fm7rca+pt9+9RjdOony1woQSOwBBMhfpCCgrqCrzh+A9aVZWLG146Rix4uDDcW8rCwYgRN2oD0uUtDSOBZa12IoigKoijaurXMqjIdzIQxGsVvNaoTwKsBPKK0Mct2CpRNjSQRf22YE7E8YUOEWJS1RoXGOVL7HiLIC9KpgO4VGIZSC7EA0ifRMLNiCWWXitcyH+OQMriKqC75JIDQj7IVLKsyAuCmGQzAVlRaQG+J98API8Pwvi5DvwXkWDSEspV8PDfri44F8TAOLHWBgFWPddSon9wUZNFGE/JPuZkef5QYir3IH1AWqiNuyIf2XmD9F6SSlRE4XbtonbFjgOvP53GAWIH2OR5/niq39XMFXQvzcfwp3yfI3jsOqyfOupEsYtYKrEaqBSbxB7hptRYF2JdaibWXBm/QVvoc7/eZnnSAAAAABJRU5ErkJggg==") 0 0, text;
+}
+
+/* The toolbar's Zoom level button scales the page content only (lib/docs-zoom.ts). */
+[data-docs-zoom] {
+  zoom: var(--debate-docs-zoom, 1);
 }
