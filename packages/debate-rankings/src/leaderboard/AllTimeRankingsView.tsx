@@ -99,9 +99,10 @@ export function HsAllTimeSchoolsList({
           Greatest of all time · high school {event} schools
         </h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          The top {event} programs of all time by program points, the same score as each school page&apos;s
-          all-time rank and the Top 20 chart: Tournament of Champions finishes back to 1972 (champion 30, runner-up 18,
-          top speaker 10), plus each season&apos;s two best top-100 entries and TOC qualifiers from 2015-16 on.
+          The top {event} programs of all time by program points, the same rank and score as each school page&apos;s
+          all-time program strength and the Top 20 chart: Tournament of Champions finishes back to 1972 (champion 30,
+          runner-up 18, semifinalist 12, top speaker 10) and NDCA, Cal and Glenbrooks finishes scored alike, plus each
+          season&apos;s two best top-100 entries and TOC qualifiers from 2015-16 on.
         </p>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">

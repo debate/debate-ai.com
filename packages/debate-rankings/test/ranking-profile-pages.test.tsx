@@ -267,7 +267,7 @@ describe("SchoolProfilePage", () => {
     const urls = fetchMock.mock.calls.map((call) => String(call[0]));
     expect(urls).toContain("/api/caselist-documents?school=Harker&limit=50");
     // The Historical legend asks for the school's past seasons.
-    expect(urls).toContain("/api/rankings/school-seasons?school=harker");
+    expect(urls).toContain("/api/rankings/school-seasons?school=harker&ranks=goat-1");
     expect(root.textContent).toContain("Historical legend");
     expect(root.textContent).toContain("Files from Harker");
   });

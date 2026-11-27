@@ -3,14 +3,47 @@
  * in-memory SQLite database. Nothing here touches the network.
  */
 import { createClient } from "@libsql/client";
+import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it, vi } from "vitest";
+import {
+  SCHOOL_SEASON_FORMATS,
+  hsProgramStrength,
+  type SchoolSeasonEvent,
+  type SchoolSeasonPoints,
+  type SchoolStrengthRank,
+} from "@debate-ai/rankings";
 import * as schema from "../../database/schema";
 import { finishedSchoolSeasons, getSchoolElite, getSchoolSeasons, runDailySchoolSeasonsRefresh } from "../school-season-store";
 
 const db = drizzle(createClient({ url: ":memory:" }), { schema }) as unknown as Parameters<
   typeof getSchoolSeasons
 >[0];
+
+/** Zed Test at #1 (5 pts) and Other at #2 in every event, `from`–`to`, as the store sums them. */
+const zedRows = (from: number, to: number): SchoolSeasonPoints[] =>
+  SCHOOL_SEASON_FORMATS.flatMap(({ event }) =>
+    Array.from({ length: to - from + 1 }, (_, i) => [
+      { school: "zed-test", year: from + i, points: 5, event },
+      { school: "other", year: from + i, points: 4.95, event },
+    ]).flat(),
+  );
+
+/** Programs ranked in `event` through `last`: every program with a national finish, plus Zed Test and Other. */
+const programs = (event: SchoolSeasonEvent, last: number) => hsProgramStrength([], event, last).ranks.size + 2;
+
+/** The school page's all-time rank is Zed Test's rank and points on the event's all-time Schools list. */
+async function expectOnAllTimeList(
+  event: SchoolSeasonEvent,
+  now: Date,
+  fetchFile: NonNullable<Parameters<typeof getSchoolElite>[2]>["fetchFile"],
+  own: SchoolStrengthRank | null,
+) {
+  const { allTime = [] } = await getSchoolElite(db, event, { now, fetchFile });
+  const row = allTime.find((r) => r.handle === "zed-test");
+  if (row) expect({ rank: row.rank, score: row.score }).toEqual({ rank: own?.rank, score: own?.score });
+  else expect(own!.rank).toBeGreaterThan(allTime.at(-1)!.rank);
+}
 
 const teams = (school: string) =>
   JSON.stringify({
@@ -40,13 +73,15 @@ describe("school season store", () => {
     const second = await getSchoolSeasons(db, "zed-test", { now, budget: 4, fetchFile });
     expect(second.pending).toBe(0);
     expect(second.seasons).toHaveLength(6);
-    // Every season built: the school's rank comes back per event, never combined (2 seasons × #1 = 10 pts each).
-    expect(second.ranks?.byEvent).toEqual({
-      Policy: { allTime: { rank: 1, score: 10, of: 2 }, decade: { rank: 1, score: 10, of: 2 } },
-      "Lincoln-Douglas": { allTime: { rank: 1, score: 10, of: 2 }, decade: { rank: 1, score: 10, of: 2 } },
-      "Public Forum": { allTime: { rank: 1, score: 10, of: 2 }, decade: { rank: 1, score: 10, of: 2 } },
-    });
+    // Every season built: the school's rank comes back per event, never combined (2 seasons × #1 = 10 pts each),
+    // ranked among every program with a national finish too, as the all-time Schools list ranks it.
+    for (const { event } of SCHOOL_SEASON_FORMATS) {
+      const own = second.ranks?.byEvent[event];
+      expect(own?.allTime).toEqual({ rank: expect.any(Number), score: 10, of: programs(event, 2017) });
+      await expectOnAllTimeList(event, now, fetchFile, own?.allTime ?? null);
+    }
     expect(second.ranks).not.toHaveProperty("allTime");
+    expect(second.ranks).not.toHaveProperty("version");
     // Ranks are there from the first request, over the seasons built so far (4 of 6).
     const firstScores = Object.values(first.ranks?.byEvent ?? {}).map((r) => r.allTime?.score ?? 0);
     expect(firstScores.reduce((a, b) => a + b, 0)).toBe(20);
@@ -78,10 +113,31 @@ describe("school season store", () => {
     await runDailySchoolSeasonsRefresh(db, { now: later, fetchFile });
     const after = await getSchoolSeasons(db, "zed-test", { now: later, fetchFile });
     expect(after).toMatchObject({ pending: 0, failures: [] });
-    // Each event: 4 seasons × #1 (5 pts each)
-    expect(after.ranks?.byEvent.Policy?.allTime).toEqual({ rank: 1, score: 20, of: 2 });
-    expect(after.ranks?.byEvent["Public Forum"]?.allTime).toEqual({ rank: 1, score: 20, of: 2 });
+    // Each event: 4 seasons × #1 (5 pts each), at its place on the all-time Schools list.
+    for (const { event } of SCHOOL_SEASON_FORMATS) {
+      const own = after.ranks?.byEvent[event];
+      expect(own?.allTime).toMatchObject({ score: 20, of: programs(event, 2019) });
+      await expectOnAllTimeList(event, later, fetchFile, own?.allTime ?? null);
+      // The decade is the same points from 2010-11 on.
+      expect(own?.decade).toEqual(hsProgramStrength(zedRows(2016, 2019), event, 2019, { decadeFrom: 2011 }).ranks.get("zed-test")?.decade);
+    }
     expect(after.ranks?.decadeFrom).toBe(2011);
+  });
+
+  it("recomputes stored ranks scored by an older version", async () => {
+    const later = new Date("2019-09-01T00:00:00Z");
+    const fetchFile = vi.fn(async (kind: string) =>
+      kind === "teams" ? { status: 200, body: teams("Zed Test") } : { status: 404, body: "" },
+    );
+    const fresh = await getSchoolSeasons(db, "zed-test", { now: later, fetchFile });
+    // A row from before ranks were the all-time list's: the build count still matches.
+    await db.run(sql`UPDATE school_strength_ranks SET ranks = ${JSON.stringify({
+      byEvent: { Policy: { allTime: { rank: 1, score: 20, of: 2 }, decade: null } },
+      decadeFrom: 2011,
+    })}`);
+    const again = await getSchoolSeasons(db, "zed-test", { now: later, fetchFile });
+    expect(again.ranks).toEqual(fresh.ranks);
+    expect(again.ranks?.byEvent.Policy?.allTime?.of).toBeGreaterThan(2);
   });
 
   it("serves each event's Top 20 from the stored seasons and the TOC history", async () => {

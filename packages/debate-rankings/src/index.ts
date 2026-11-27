@@ -69,6 +69,7 @@ export {
   SCHOOL_SEASON_TEAMS_PER_EVENT,
   SCHOOL_SEASONS_PATH,
   SCHOOL_STRENGTH_COMPONENTS,
+  SCHOOL_STRENGTH_RANKS_VERSION,
   bestTeamsBySchool,
   fetchSchoolSeasons,
   rankAllSchoolStrengths,
@@ -105,7 +106,9 @@ export {
   fetchSchoolElite,
   hsEliteAccomplishments,
   hsEliteKeys,
+  hsProgramStrength,
   type HsAllTimeSchool,
+  type HsProgramStrength,
   type SchoolEliteResponse,
 } from "./school-elite";
 export {
