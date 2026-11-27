@@ -458,9 +458,10 @@ describe("college participation point", () => {
       <HsAllTimeTeamsRankings lists={{ Policy: [team(college)], "Lincoln-Douglas": [], "Public Forum": [] }} schoolKey={null} collegeLoaded />,
     )
     expect(html).toContain("(20 NDT pts)")
-    expect(html).toContain("(participated)")
+    expect(html).toContain("(1 pt)")
+    expect(html).not.toContain("participated")
     expect(html).not.toMatch(/participation|college point/i)
-    expect(collegeNote(college[1])).toBe("participated")
+    expect(collegeNote(college[1])).toBe("1 pt")
     expect(collegeNote(college[0])).toBe("20 NDT pts")
   })
 })

@@ -46,9 +46,10 @@ function years(team: HsAllTimeTeam): string {
   return team.firstYear === team.lastYear ? String(team.firstYear) : `${team.firstYear}–${team.lastYear}`
 }
 
-/** A college debater's note as the college line reads: `participated` or `12 NDT pts`. The participation point counts in the score but is not shown. */
+/** A college debater's note as the college line reads: `1 pt` for a debater with no NDT points, or `12 NDT pts`. */
 export function collegeNote(college: HsAllTimeCollege): string {
-  return college.collegePoints > 0 ? `${college.collegePoints} NDT pts` : "participated"
+  if (college.collegePoints > 0) return `${college.collegePoints} NDT pts`
+  return `${college.participationPoints} ${college.participationPoints === 1 ? "pt" : "pts"}`
 }
 
 const TOURNAMENT_LABEL: Record<string, string> = { TOC: "TOC", NDCA: "NDCA", Barkley: "Barkley", Cal: "Cal", Glenbrooks: "Glenbrooks" }
