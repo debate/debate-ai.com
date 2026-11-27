@@ -24,18 +24,40 @@ vi.mock("../../src/session", () => ({ useReasonSession: () => session.value }));
 
 const team = vi.hoisted(() => ({
   contacts: [] as unknown[],
+  groups: [] as unknown[],
+  contactsApi: {
+    request: vi.fn(),
+    accept: vi.fn(),
+    decline: vi.fn(),
+    remove: vi.fn(),
+  },
+  groupsApi: {
+    create: vi.fn(),
+    update: vi.fn(),
+    remove: vi.fn(),
+  },
   share: vi.fn(),
   onOpen: undefined as undefined | ((share: unknown) => void),
   fetchCardShares: vi.fn(),
   markCardShareOpened: vi.fn(),
 }));
-vi.mock("@debate-ai/team-collaboration", () => ({
+vi.mock("@debate-ai/team-collaboration", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  AddContactSearch: () => <div data-add-contact-search />,
   ContactAvatar: ({ user }: { user: { name: string } }) => <span data-avatar>{user.name.charAt(0)}</span>,
   fetchCardShares: team.fetchCardShares,
   markCardShareOpened: team.markCardShareOpened,
   sortContacts: (rows: Array<{ online: boolean; user: { name: string } }>) =>
     [...rows].sort((a, b) => Number(b.online) - Number(a.online) || a.user.name.localeCompare(b.user.name)),
-  useContacts: () => ({ contacts: team.contacts }),
+  useContacts: () => ({
+    contacts: team.contacts,
+    incoming: [],
+    outgoing: [],
+    organization: null,
+    loaded: true,
+    ...team.contactsApi,
+  }),
+  useContactGroups: () => ({ groups: team.groups, loaded: true, ...team.groupsApi }),
   useCardShares: (_enabled: boolean, options: { onOpen?: (share: unknown) => void }) => {
     team.onOpen = options.onOpen;
     return { share: team.share };
@@ -86,6 +108,7 @@ beforeEach(() => {
   nav.search = new URLSearchParams();
   session.value = { isAuthenticated: true, user: { name: "Ada" } };
   team.contacts = [];
+  team.groups = [];
 });
 afterEach(() => {
   cleanup();
@@ -836,9 +859,79 @@ describe("ShareWithContacts", () => {
     click(button("Share with contacts"));
     expect(bodyText()).toContain("Starts a live co-editing session on “Untitled”");
     click(button("Add some"));
-    expect(nav.push).toHaveBeenCalledWith("/contacts");
+    expect(document.querySelector("[data-add-contact-search]")).not.toBeNull();
+    expect(nav.push).not.toHaveBeenCalled();
+  });
+
+  it("opens the manage-contacts modal over the share dialog", () => {
+    team.contacts = CONTACTS;
+    mount(<ShareWithContacts title="Case" />);
+    click(button("Share with contacts"));
     click(button("Manage contacts"));
-    expect(nav.push).toHaveBeenCalledTimes(2);
+    expect(document.querySelectorAll("[role=dialog]")).toHaveLength(2);
+    expect(bodyText()).toContain("Add people and organize them into groups");
+    expect(document.querySelector("[data-add-contact-search]")).not.toBeNull();
+    expect(document.querySelector("button[aria-label='Remove Bea']")).not.toBeNull();
+    click(document.querySelector("button[aria-label='Remove Bea']")!);
+    expect(team.contactsApi.remove).toHaveBeenCalled();
+  });
+
+  it("creates a group in the modal from the contacts it ticks", async () => {
+    team.contacts = CONTACTS;
+    team.groupsApi.create.mockResolvedValue({ id: 9, name: "Squad", memberIds: ["u1"] });
+    mount(<ShareWithContacts title="Case" />);
+    click(button("Share with contacts"));
+    click(button("Manage contacts"));
+    click(document.querySelector("[role=tab]:nth-child(2)")!);
+    click(button("New group"));
+    change(document.querySelector("input[aria-label='Group name']")!, "Squad");
+    click(document.querySelector("input[aria-label='Include Bea']")!);
+    click(button("Create group"));
+    await flush();
+    expect(team.groupsApi.create).toHaveBeenCalledWith({ name: "Squad", memberIds: ["u1"] });
+    expect(toast.success).toHaveBeenCalledWith("Group created.");
+  });
+
+  it("edits and deletes an existing group", async () => {
+    team.contacts = CONTACTS;
+    team.groups = [{ id: 4, name: "Lab", memberIds: ["u1", "gone"] }];
+    team.groupsApi.update.mockResolvedValue({ id: 4, name: "Lab 2", memberIds: ["u1", "u2"] });
+    team.groupsApi.remove.mockResolvedValue(undefined);
+    mount(<ShareWithContacts title="Case" />);
+    click(button("Share with contacts"));
+    click(button("Manage contacts"));
+    click(document.querySelector("[role=tab]:nth-child(2)")!);
+    expect(bodyText()).toContain("1 contact");
+    click(document.querySelector("button[aria-label='Edit Lab']")!);
+    change(document.querySelector("input[aria-label='Group name']")!, "Lab 2");
+    click(document.querySelector("input[aria-label='Include Zed']")!);
+    click(button("Save"));
+    await flush();
+    expect(team.groupsApi.update).toHaveBeenCalledWith({ id: 4, name: "Lab 2", memberIds: ["u1", "u2"] });
+
+    click(document.querySelector("button[aria-label='Delete Lab']")!);
+    await flush();
+    expect(team.groupsApi.remove).toHaveBeenCalledWith(4);
+  });
+
+  it("picks every member of a group with its chip, and unpicks them on a second click", () => {
+    team.contacts = CONTACTS;
+    team.groups = [
+      { id: 1, name: "Squad", memberIds: ["u1", "u2", "gone"] },
+      { id: 2, name: "Empty", memberIds: ["gone"] },
+    ];
+    mount(<ShareWithContacts title="Case" />);
+    click(button("Share with contacts"));
+    const chip = (name: string) =>
+      [...document.querySelectorAll("[aria-label='Contact groups'] button")].find((el) =>
+        el.textContent?.includes(name),
+      ) as HTMLButtonElement;
+    expect(chip("Empty").disabled).toBe(true);
+    click(chip("Squad"));
+    expect(button("Share with 2")).toBeTruthy();
+    expect(chip("Squad").getAttribute("aria-pressed")).toBe("true");
+    click(chip("Squad"));
+    expect(button("Share").disabled).toBe(true);
   });
 
   it("shares a new session with the picked contacts", async () => {
