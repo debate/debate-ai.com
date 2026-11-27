@@ -37,17 +37,20 @@ export { default as IconSchoolWesternKentucky } from "../../wordmarks/colleges/w
 export { default as IconSchoolYale } from "../../wordmarks/colleges/yale.png";
 
 // High schools
+export { default as IconSchoolBellarmine } from "../../wordmarks/high-schools/bellarmine.png";
 export { default as IconSchoolBlake } from "../../wordmarks/high-schools/blake.png";
 export { default as IconSchoolBronx } from "../../wordmarks/high-schools/bronx.png";
 export { default as IconSchoolCaddoMagnet } from "../../wordmarks/high-schools/caddo-magnet.png";
 export { default as IconSchoolCarrolltonSchoolOfTheSacredHeart } from "../../wordmarks/high-schools/carrollton-school-of-the-sacred-heart.png";
 export { default as IconSchoolCollegePrep } from "../../wordmarks/high-schools/college-prep.png";
+export { default as IconSchoolCoppell } from "../../wordmarks/high-schools/coppell.png";
 export { default as IconSchoolGlenbrookNorth } from "../../wordmarks/high-schools/glenbrook-north.png";
 export { default as IconSchoolGlenbrookSouth } from "../../wordmarks/high-schools/glenbrook-south.png";
 export { default as IconSchoolGreenhill } from "../../wordmarks/high-schools/greenhill.png";
 export { default as IconSchoolHarker } from "../../wordmarks/high-schools/harker.png";
 export { default as IconSchoolHarvardWestlake } from "../../wordmarks/high-schools/harvard-westlake.png";
 export { default as IconSchoolKinkaid } from "../../wordmarks/high-schools/kinkaid.png";
+export { default as IconSchoolLexington } from "../../wordmarks/high-schools/lexington.png";
 export { default as IconSchoolLiberalArtsAndScience } from "../../wordmarks/high-schools/liberal-arts-and-science.png";
 export { default as IconSchoolLoyola } from "../../wordmarks/high-schools/loyola.png";
 export { default as IconSchoolLynbrook } from "../../wordmarks/high-schools/lynbrook.png";
