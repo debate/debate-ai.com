@@ -62,7 +62,7 @@ describe("sidebarSectionForPath", () => {
     expect(sidebarSectionForPath("/news")).toBe("coaching");
     expect(sidebarSectionForPath("/practice/forums/t1")).toBe("coaching");
     // Team & School Rank is Inference's first link. Rules & Glossary and
-    // All Features sit in Learning, which is the docs tree rather than a
+    // Overview Home sits in Learning, which is the docs tree rather than a
     // tool section, so this map does not claim them.
     expect(sidebarSectionForPath("/rank")).toBe("insights");
     expect(sidebarSectionForPath("/rank/VCX")).toBe("insights");
