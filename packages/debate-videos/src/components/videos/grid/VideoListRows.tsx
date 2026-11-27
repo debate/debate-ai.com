@@ -417,7 +417,10 @@ export function VideoListRows({
               key={column.key}
               style={{ "--col-width": `${widths[column.key]}px` } as React.CSSProperties}
               className={cn(
-                "relative px-3 py-2 select-none sm:w-[var(--col-width)] sm:min-w-[var(--col-width)]",
+                "relative py-2 select-none sm:w-[var(--col-width)] sm:min-w-[var(--col-width)]",
+                // Date and Views share a narrow edge so the count sits next
+                // to the date instead of across a wide gap.
+                column.key === "date" ? "pl-2 pr-1" : column.key === "views" ? "pl-1 pr-2" : "px-3",
                 column.key === "tree"
                   ? "w-[min(var(--col-width),85vw)]"
                   : "w-[var(--col-width)] min-w-[var(--col-width)]",

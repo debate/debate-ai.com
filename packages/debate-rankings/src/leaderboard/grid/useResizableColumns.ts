@@ -10,7 +10,16 @@ const MIN_COLUMN_WIDTH = 60
 const MAX_COLUMN_WIDTH = 700
 
 export function useResizableColumns<K extends string>(defaultWidths: Record<K, number>) {
+  const defaultsKey = JSON.stringify(defaultWidths)
   const [widths, setWidths] = useState<Record<K, number>>(defaultWidths)
+  // A caller can swap its defaults (the video list's date column does, between
+  // the compact badge and a full date). Start over from those; a drag still
+  // wins until the next swap.
+  const defaultsKeyRef = useRef(defaultsKey)
+  if (defaultsKeyRef.current !== defaultsKey) {
+    defaultsKeyRef.current = defaultsKey
+    setWidths(defaultWidths)
+  }
   const resizingKeyRef = useRef<K | null>(null)
   const resizeStartRef = useRef({ x: 0, width: 0 })
 
