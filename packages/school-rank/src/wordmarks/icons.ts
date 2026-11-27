@@ -54,6 +54,7 @@ export { default as IconSchoolLynbrook } from "../../wordmarks/high-schools/lynb
 export { default as IconSchoolMarlborough } from "../../wordmarks/high-schools/marlborough.png";
 export { default as IconSchoolMontgomeryBell } from "../../wordmarks/high-schools/montgomery-bell.png";
 export { default as IconSchoolNewTrier } from "../../wordmarks/high-schools/new-trier.png";
+export { default as IconSchoolNorthBroward } from "../../wordmarks/high-schools/north-broward.png";
 export { default as IconSchoolNueva } from "../../wordmarks/high-schools/nueva.png";
 export { default as IconSchoolPace } from "../../wordmarks/high-schools/pace.png";
 export { default as IconSchoolPeninsula } from "../../wordmarks/high-schools/peninsula.png";

@@ -14,6 +14,8 @@ import { getMDXComponents } from '../mdx-components';
 import { AskAIButton } from 'ask-ai-button';
 import { Sparkles } from 'lucide-react';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
+import { PageNavigationMenu } from '../components/fumadocs/layout/page-navigation-menu';
+import { getPageBreadcrumbs } from '../lib/fumadocs/page-breadcrumbs';
 import { LastRevised } from '../components/fumadocs/layout/last-revised';
 import { DependencyGraph, FileTreeView } from '../components/code-graph/package-code-graph';
 import { DOCS_AI_PROVIDERS } from '../lib/fumadocs/ask-ai-providers';
@@ -34,14 +36,14 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
 
   const loaded = await page.data.load();
   const { body: MDX, toc } = loaded;
-  // Last Git commit date, from the lastModified plugin (source.config.ts).
-  const lastRevised = (loaded as { lastModified?: Date }).lastModified;
   const markdownUrl = devPageMarkdownUrl(page);
+  const breadcrumbs = getPageBreadcrumbs(devSource.pageTree, page.url);
 
   return (
     <DocsPage toc={toc} full={page.data.full} breadcrumb={{ enabled: false }}>
       <DocsBody>
         <div className="flex flex-row gap-2 items-center border-b pt-2 pb-6">
+          <PageNavigationMenu breadcrumbs={breadcrumbs} outline={toc} />
           <LLMCopyButton markdownUrl={markdownUrl} />
           <AskAIButton
             markdownUrl={markdownUrl}
@@ -51,7 +53,6 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
           />
         </div>
         <MDX components={getMDXComponents({ a: relativeLink(page), DependencyGraph, FileTreeView })} />
-        <LastRevised date={lastRevised} />
       </DocsBody>
     </DocsPage>
   );
