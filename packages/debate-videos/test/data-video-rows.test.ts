@@ -174,6 +174,19 @@ describe("tupleToVideoRow", () => {
     expect(round).toMatchObject({ style: 2, category: "Open Super Debates", categoryKey: "open_super_debates" });
   });
 
+  it("files a Congressional Debate lecture under Congress, but leaves a US Congress topic lecture alone", () => {
+    const congress = tupleToVideoRow(
+      ["vid-cg", "Congressional Debate: writing legislation", "2026-03-02", "Victory Briefs", 10, "", "Novice & Introductory"],
+      "lecture",
+    )!;
+    expect(congress).toMatchObject({ style: null, category: "Congress", categoryKey: "congress" });
+    const topic = tupleToVideoRow(
+      ["vid-cg2", "Should Congress ban TikTok? Topic analysis", "2026-03-02", "Victory Briefs", 10, "", "Topic Lectures"],
+      "lecture",
+    )!;
+    expect(topic).toMatchObject({ category: "Topic Lectures" });
+  });
+
   it("maps a lecture tuple's category and leaves the style unset", () => {
     const row = tupleToVideoRow(LECTURE_TUPLE, "lecture")!;
     expect(row.style).toBeNull();

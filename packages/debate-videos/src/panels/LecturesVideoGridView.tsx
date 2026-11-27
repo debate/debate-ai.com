@@ -289,7 +289,9 @@ export function LecturesVideoGridView({
         ? VIDEO_COLLEGE_FILTER_LINKS
         : null
     if (!links) return links
-    const nonEmpty = links.filter((link) => quickLinkCounts?.[link.id] !== 0)
+    // Congress always keeps its card: it is a format in its own right, so it
+    // is offered even before any video is filed under it.
+    const nonEmpty = links.filter((link) => link.id === "congress" || quickLinkCounts?.[link.id] !== 0)
     if (!showLectureGallery) return nonEmpty
     const inGallery = new Set(galleryCategories.map((category) => category.key.toLowerCase()))
     return nonEmpty.filter((link) => !inGallery.has(link.id))

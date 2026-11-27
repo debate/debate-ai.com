@@ -37,9 +37,41 @@ export const LECTURE_CATEGORIES = [
   "Speech",
   "NSDA Speech",
   "Open Super Debates",
+  "Miscellaneous",
 ] as const;
 
 export type LectureCategory = (typeof LECTURE_CATEGORIES)[number];
+
+/**
+ * The shelf for lectures that fit no other category: the classifier's
+ * fallback, the model's answer when nothing fits, and where a published
+ * lecture with no category (or one this app doesn't know) is counted.
+ */
+export const MISCELLANEOUS_CATEGORY = "Miscellaneous" satisfies LectureCategory;
+
+/**
+ * Category labels still found on stored lectures that the classifier no longer
+ * produces and a picker no longer offers: earlier names of today's categories
+ * ("Critical Theory", "Topic Analysis"), the two topic series, round analyses
+ * and awards. They are known shelves, so a lecture filed under one is not
+ * "unsorted".
+ */
+export const LEGACY_LECTURE_CATEGORIES = [
+  "Critical Theory",
+  "Judge Skills",
+  "Camp & Coaching",
+  "Topic Analysis",
+  "PF & LD Topic Analysis",
+  "Policy Topic Lectures",
+  "Round Analysis",
+  "Awards",
+] as const;
+
+/**
+ * How the model should file a lecture, shared by the queue's auto-detect and
+ * the library autofill prompts so the two never drift apart.
+ */
+export const LECTURE_CATEGORY_GUIDANCE = `Category notes: "Congress" is for lectures about Congressional Debate (student congress): legislation and bill writing, presiding officer, precedence and recency, chamber speeches — not for a lecture about the US Congress as a policy topic. "Open Super Debates" is for anything from the Super Debate channel or titled "Super Debate". "Miscellaneous" is the fallback: use it when no other category clearly fits, rather than guessing.`;
 
 /** Whether a label is one of the classifier's own categories. */
 export function isLectureCategory(value: unknown): value is LectureCategory {
@@ -96,6 +128,13 @@ export function isNsdaChannel(channel: string | null | undefined): boolean {
 }
 
 /**
+ * The lecture category for Congressional Debate lectures, the "Congress" shelf
+ * at `/videos/congress`. Debate *rounds* of style 9 (Congress) sit on the same
+ * shelf by style; this category is what a *lecture* (style null) is filed under.
+ */
+export const CONGRESS_LECTURE_CATEGORY = "Congress" satisfies LectureCategory;
+
+/**
  * The lecture category every Super Debate video is filed under: the "Open
  * Super Debates" shelf (`/lectures/open_super_debates`).
  */
@@ -148,6 +187,87 @@ export function forcedLectureCategory(title: string | null | undefined, channel?
 }
 
 /**
+ * Phrases that name Congressional Debate (student congress) on their own, in a
+ * title, description or channel name. Deliberately narrow: a lecture about the
+ * US Congress as a policy topic ("Congress should reform the filibuster")
+ * matches none of them.
+ */
+const CONGRESS_DEBATE_PHRASES: RegExp[] = [
+  /\bcongressional\s+debate\b/i,
+  /\bstudent\s+congress\b/i,
+  /\b(?:hs|high\s+school|nsda|ncfl|tfa)\s+congress\b/i,
+  /\bcongress\s+(?:debate|speech(?:es)?|rounds?|sessions?|chambers?|legislation|bills?|docket|tips|prelims?|finals?|semis?|rules|basics|101|po|presiding|coaching|event|workshop|camp)\b/i,
+  /\b(?:presiding\s+officer|precedence\s+and\s+recency|points?\s+of\s+(?:order|personal\s+privilege)|authorship\s+speech|sponsorship\s+speech)\b/i,
+];
+
+/** The channel names that only film Congressional Debate, e.g. "Student Congress Coach". */
+const CONGRESS_DEBATE_CHANNEL = /\bstudent\s+congress\b|\bcongressional\s+debate\b/i;
+
+/**
+ * Words that mark a lecture as Congressional Debate once "congress" is also
+ * said: the specific ones (a docket, precedence and recency, a presiding
+ * officer...) and the general ones (a bill, legislation) that a civics lecture
+ * uses too, which therefore count only alongside a specific one.
+ */
+const CONGRESS_SPECIFIC_TERMS: RegExp[] = [
+  /\bdockets?\b/i,
+  /\bpresiding\s+officer\b/i,
+  /\bprecedence\b/i,
+  /\brecency\b/i,
+  /\b(?:sponsorship|authorship)\b/i,
+  /\bpoints?\s+of\s+order\b/i,
+  /\bprevious\s+question\b/i,
+  /\bchamber\b/i,
+  /\bparliamentarian\b/i,
+];
+const CONGRESS_GENERAL_TERMS: RegExp[] = [/\bbills?\b/i, /\blegislation\b/i, /\bamendments?\b/i];
+
+/**
+ * Whether a lecture is about Congressional Debate (student congress), read
+ * conservatively from its title, description and channel:
+ *
+ * - a phrase that names the event outright ("Congressional Debate",
+ *   "Student Congress", "Congress speech", "presiding officer", "precedence
+ *   and recency"...) in the title or description, or a channel named for it;
+ * - or "congress" together with two of its specific terms, or one specific
+ *   term and a general one (a bill, legislation), e.g. a description reading
+ *   "how to write a bill, sponsor it and win the docket in Congress".
+ *
+ * A US Congress policy-topic lecture ("Congress and the filibuster", "How a
+ * bill becomes law") does not match. "American Congressional" (ACC) lectures
+ * are filed by the ACC rule ahead of this one.
+ */
+export function isCongressDebateLecture(
+  title: string | null | undefined,
+  description?: string | null,
+  channel?: string | null,
+): boolean {
+  if (channel && CONGRESS_DEBATE_CHANNEL.test(channel)) return true;
+  const text = `${title ?? ""}\n${description ?? ""}`;
+  if (CONGRESS_DEBATE_PHRASES.some((phrase) => phrase.test(text))) return true;
+  if (!/\bcongress(?:ional)?\b/i.test(text)) return false;
+  const specific = CONGRESS_SPECIFIC_TERMS.filter((term) => term.test(text)).length;
+  const general = CONGRESS_GENERAL_TERMS.filter((term) => term.test(text)).length;
+  return specific >= 2 || (specific >= 1 && general >= 1);
+}
+
+/**
+ * The shelf a lecture's title, description and channel decide by rule alone:
+ * {@link forcedLectureCategory} (Super Debate, NSDA), else "Congress" for a
+ * Congressional Debate lecture ({@link isCongressDebateLecture}), else `null`
+ * when the keyword classifier or the model decides.
+ */
+export function ruleLectureCategory(
+  title: string | null | undefined,
+  description?: string | null,
+  channel?: string | null,
+): LectureCategory | null {
+  const forced = forcedLectureCategory(title, channel);
+  if (forced) return forced;
+  return isCongressDebateLecture(title, description, channel) ? CONGRESS_LECTURE_CATEGORY : null;
+}
+
+/**
  * Files a lecture on a shelf from its title and description. When the title
  * or channel forces a shelf ({@link forcedLectureCategory}), that wins over
  * the keywords.
@@ -165,7 +285,7 @@ export function classifyLecture(title: string, description: string, channel?: st
   // "access" never lands in ACC.
   if (/\bWSD\b|\bworld\s*schools?\b/i.test(title)) return "WSD";
   if (/\bACC\b|\bamerican\s+congressional\b/i.test(title)) return "ACC";
-  if (/\bcongress\b/i.test(title)) return "Congress";
+  if (isCongressDebateLecture(title, description, channel)) return "Congress";
   if (PARLI_TITLE.test(title)) return "Parli";
 
   // Topic Lectures
@@ -313,5 +433,5 @@ export function classifyLecture(title: string, description: string, channel?: st
   )
     return "Affirmative Strategy";
 
-  return "Novice & Introductory";
+  return MISCELLANEOUS_CATEGORY;
 }
