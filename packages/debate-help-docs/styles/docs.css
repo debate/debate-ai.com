@@ -115,6 +115,13 @@
   }
 }
 
+/* Figures and images in docs pages: 800px wide at most. The Figure 1 cover
+   image of each journal paper is sized to 200px inline, which wins over this. */
+.prose img {
+  max-width: min(100%, 800px);
+  height: auto;
+}
+
 /* Typography for MDX content */
 .prose a {
   color: var(--color-fd-primary);
