@@ -41,7 +41,7 @@ export function LibrarySidebarTree() {
   const quickLinkCounts = useMemo(
     () =>
       ({
-        allVideos: counts.total,
+        rounds: counts.rounds,
         lectures: counts.lectures,
         policy: counts.byStyle[1] ?? 0,
         ld: counts.byStyle[3] ?? 0,

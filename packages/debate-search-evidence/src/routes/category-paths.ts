@@ -103,6 +103,7 @@ export const ROUND_VIDEO_SLUGS: ReadonlySet<string> = new Set([
   "ld",
   "pf",
   "college",
+  "rounds",
   "goat",
   "toppicks",
   "favoritedebates",
