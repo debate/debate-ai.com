@@ -24,6 +24,7 @@ import { Medal, X } from "lucide-react"
 import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { Button } from "../ui/primitives/button"
 import { SchoolLogo } from "../SchoolLogo"
+import { TeamSpeakerAwards } from "../TeamSpeakerAwards"
 import { pastTeamHref } from "./pastTeamHelpers"
 import { schoolHref } from "./rankingProfileHelpers"
 import {
@@ -47,6 +48,7 @@ import {
 } from "./ndtAllSeasons"
 import { rankingPoints, seasonLabel, STRENGTH_WEIGHTS } from "./programStrength"
 import { useNdtHistory } from "./ndtHistory"
+import { buildNdtTopSpeakers, ndtTeamSpeakers, type TopSpeaker } from "./topSpeakers"
 import { currentRankingSeasonYear, loadRankingDataset } from "../../extinction"
 
 /** Rows rendered at first, and added each time the list scrolls near its end. */
@@ -124,10 +126,12 @@ function RankedRows({
   rows,
   kind,
   highlight,
+  speakers,
 }: {
   rows: { row: NdtPointsRow; rank: number }[]
   kind: "teams" | "debaters" | "schools"
   highlight: string | null
+  speakers: readonly TopSpeaker[]
 }) {
   if (!rows.length) return <p className="py-6 text-center text-sm text-muted-foreground">No matches.</p>
   return (
@@ -176,10 +180,13 @@ function RankedRows({
                     >
                       {row.team}
                     </Link>
-                    <span className="inline-flex items-center gap-1 self-center text-sm text-muted-foreground">
+                    <Link
+                      href={schoolHref(ndtSchoolDisplayName(row.school))}
+                      className="inline-flex items-center gap-1 self-center text-sm text-muted-foreground hover:underline underline-offset-4"
+                    >
                       <SchoolLogo school={ndtSchoolDisplayName(row.school)} className="h-4 w-auto shrink-0" />
                       {ndtSchoolDisplayName(row.school)}
-                    </span>
+                    </Link>
                   </>
                 ) : (
                   <Link
@@ -193,6 +200,16 @@ function RankedRows({
                 <span className="text-xs tabular-nums text-muted-foreground/80">{years(row)}</span>
               </div>
               <Breakdown row={row} />
+              {kind !== "schools" && (
+                <TeamSpeakerAwards
+                  speakers={ndtTeamSpeakers(speakers, row)}
+                  href={
+                    kind === "debaters"
+                      ? row.sidePartnerships?.[0] && pastTeamHref({ school: row.sidePartnerships[0].school, name: row.sidePartnerships[0].team })
+                      : pastTeamHref({ school: row.school, name: row.team })
+                  }
+                />
+              )}
               {row.sidePartnerships && row.sidePartnerships.length > 0 && (
                 <ul className="mt-1 space-y-0.5 border-l pl-2 text-xs text-muted-foreground" aria-label={kind === "debaters" ? "Partnerships" : "Side partnerships"}>
                   {row.sidePartnerships.map((side) => (
@@ -363,6 +380,7 @@ export function NdtAllSeasonsRankings({
 
   const season = useCurrentCollegeSeason()
   const table = useMemo(() => allSeasonsTable(history, season), [history, season])
+  const speakers = useMemo(() => buildNdtTopSpeakers(history), [history])
   const seasonCounted = !!season && table.schools.some((row) => row.parts.season > 0)
 
   useEffect(() => setShown(PAGE), [tab, mode, query, onlyOwn])
@@ -516,6 +534,7 @@ export function NdtAllSeasonsRankings({
           rows={view.matches.slice(0, shown)}
           kind={tab === "schools" ? "schools" : mode === "debaters" ? "debaters" : "teams"}
           highlight={school}
+          speakers={speakers}
         />
         {total > shown && (
           <div ref={sentinelRef} className="py-3 text-center text-xs text-muted-foreground" aria-hidden>

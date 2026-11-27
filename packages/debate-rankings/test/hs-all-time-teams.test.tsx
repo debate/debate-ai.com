@@ -5,11 +5,14 @@ import {
   collegeLookupFromNdt,
   hsAllTimeSchoolKey,
   hsAllTimeTeams,
+  participationLookupFromResults,
   type HsAllTimeTeam,
 } from "../src/leaderboard/profile/hsAllTimeTeams"
-import { HsAllTimeTeamsRankings } from "../src/leaderboard/profile/ProfileHsAllTimeTeams"
+import { collegeNote, HsAllTimeTeamsRankings } from "../src/leaderboard/profile/ProfileHsAllTimeTeams"
 import { teamHref } from "../src/leaderboard/profile/rankingProfileHelpers"
 import { findBarkleySchoolResults } from "../src/sync/barkley-champions"
+import type { TocResult } from "../src/sync/toc-champions"
+import type { CollegeParticipant } from "../src/sync/college-participants"
 import type { NdtPointsRow } from "../src/leaderboard/profile/ndtAllSeasons"
 
 describe("greatest high school teams of all time", () => {
@@ -220,9 +223,10 @@ describe("greatest high school teams of all time", () => {
       ndca: [{ year: 2006, place: "Quarterfinalist", school: "Glenbrook North High School (IL)", competitors: "Matt Fisher & Stephanie Spies" }],
       college,
     })
-    // An NDCA quarterfinal is 2.5 × 1.5; college counts (100 + 40) × 0.35.
-    expect(lists.Policy[0]).toMatchObject({ nationals: 3.75, collegeCredit: 49, total: 52.75 })
+    // An NDCA quarterfinal is 2.5 × 1.5; college counts (100 + 40 + a participation point each) × 0.35.
+    expect(lists.Policy[0]).toMatchObject({ nationals: 3.75, collegeCredit: 49.7, total: 53.45 })
     expect(lists.Policy[0].college.map((c) => c.debater)).toEqual(["Matt Fisher", "Stephanie Spies"])
+    expect(lists.Policy[0].college[0]).toMatchObject({ collegePoints: 100, participationPoints: 1, participation: "ndt", credit: 35.35 })
     expect(college("Nobody Here")).toBeNull()
   })
 
@@ -285,5 +289,178 @@ describe("greatest high school teams of all time", () => {
     expect(woodward.filter((r) => r.place === "Champion").map((r) => r.year)).toEqual([2002, 2003])
     expect(findBarkleySchoolResults("Durham Academy").map((r) => r.place)).toEqual(["Finalist"])
     expect(findBarkleySchoolResults("Nowhere High")).toEqual([])
+  })
+})
+
+describe("college participation point", () => {
+  const person = (name: string, firstYear: number, lastYear: number, extra: Partial<CollegeParticipant> = {}): CollegeParticipant => ({
+    code: name.replace(/\W/g, "").toUpperCase(),
+    name,
+    school: "Emory",
+    firstYear,
+    lastYear,
+    ...extra,
+  })
+  const hs = (competitors: string, year = 2015) => ({
+    toc: [{ year, event: "Policy", place: "Champion", school: "Alpha (CA)", competitors }] satisfies TocResult[],
+    ndca: [],
+    barkley: [],
+    cal: [],
+    glenbrooks: [],
+  })
+  const years = { firstYear: 2015, lastYear: 2015 }
+
+  it("gives a debater College Debate Results lists one college point, at the college share, with no NDT points", () => {
+    const lists = buildHsAllTimeTeams({
+      ...hs("Ann One & Bea Two"),
+      participation: participationLookupFromResults([person("Ann One", 2016, 2018)]),
+    })
+    const team = lists.Policy[0]
+    // Champion 10 × 1.5 = 15 nationals; Ann's one point × 0.35; Bea isn't listed.
+    expect(team).toMatchObject({ nationals: 15, collegeCredit: 0.35, total: 15.35 })
+    expect(team.college).toEqual([
+      { debater: "Ann One", school: "Emory", collegePoints: 0, participationPoints: 1, participation: "results", credit: 0.35 },
+    ])
+  })
+
+  it("credits both debaters of a pair", () => {
+    const lists = buildHsAllTimeTeams({
+      ...hs("Ann One & Bea Two"),
+      participation: participationLookupFromResults([person("Ann One", 2016, 2018), person("Bea Two", 2017, 2019)]),
+    })
+    expect(lists.Policy[0]).toMatchObject({ collegeCredit: 0.7, total: 15.7 })
+  })
+
+  it("adds the participation point once on top of NDT points, and counts an NDT debater the site doesn't list", () => {
+    const row = (team: string, total: number) =>
+      ({ key: team, school: "Northwestern University (IL)", team, total, parts: { highSchool: 0 } }) as unknown as NdtPointsRow
+    const lists = buildHsAllTimeTeams({
+      ...hs("Ann One & Bea Two"),
+      college: collegeLookupFromNdt({ debaters: [row("Ann One", 20)] }),
+      participation: participationLookupFromResults([person("Ann One", 2016, 2018), person("Bea Two", 2016, 2018)]),
+    })
+    const [ann, bea] = [...lists.Policy[0].college].sort((a, b) => a.debater.localeCompare(b.debater))
+    // Ann: (20 NDT + 1) × 0.35, found at the NDT; the site's listing adds nothing more. Bea: 1 × 0.35.
+    expect(ann).toMatchObject({ collegePoints: 20, participation: "ndt", credit: 7.35 })
+    expect(bea).toMatchObject({ collegePoints: 0, participation: "results", credit: 0.35 })
+    expect(lists.Policy[0].collegeCredit).toBe(7.7)
+
+    const ndtOnly = buildHsAllTimeTeams({
+      ...hs("Ann One & Bea Two"),
+      college: collegeLookupFromNdt({ debaters: [row("Ann One", 20)] }),
+      participation: participationLookupFromResults([]),
+    })
+    expect(ndtOnly.Policy[0].collegeCredit).toBe(7.35)
+  })
+
+  it("leaves a team without college debaters untouched, and ties still break on titles then recency", () => {
+    const base = { ...hs("Ann One & Bea Two"), participation: participationLookupFromResults([]) }
+    const lists = buildHsAllTimeTeams(base)
+    expect(lists.Policy[0]).toMatchObject({ collegeCredit: 0, total: 15, college: [] })
+
+    const tied = buildHsAllTimeTeams({
+      toc: [
+        { year: 2015, event: "Policy", place: "Champion", school: "Alpha (CA)", competitors: "Ann One & Bea Two" },
+        { year: 2018, event: "Policy", place: "Champion", school: "Beta (FL)", competitors: "Cal Three & Dee Four" },
+      ],
+      ndca: [],
+      barkley: [],
+      cal: [],
+      glenbrooks: [],
+      participation: participationLookupFromResults([person("Ann One", 2016, 2018), person("Cal Three", 2019, 2021)]),
+    })
+    // Equal totals (15.35 each): the more recent team lists first and they share a rank.
+    expect(tied.Policy.map((t) => [t.lastNames, t.total, t.rank])).toEqual([
+      ["Three & Four", 15.35, 1],
+      ["One & Two", 15.35, 1],
+    ])
+  })
+
+  it("lets one participation point reorder close teams, never a title gap", () => {
+    const lists = buildHsAllTimeTeams({
+      toc: [
+        { year: 2018, event: "Policy", place: "Runner-up", school: "Alpha (CA)", competitors: "Ann One & Bea Two" },
+        { year: 2018, event: "Policy", place: "Champion", school: "Beta (FL)", competitors: "Cal Three & Dee Four" },
+      ],
+      ndca: [],
+      barkley: [],
+      cal: [],
+      glenbrooks: [],
+      participation: participationLookupFromResults([person("Ann One", 2019, 2020), person("Bea Two", 2019, 2020)]),
+    })
+    // Runner-up 9 + 0.7 stays under the champion's 15.
+    expect(lists.Policy.map((t) => t.lastNames)).toEqual(["Three & Four", "One & Two"])
+  })
+
+  describe("participationLookupFromResults", () => {
+    it("requires the college record to start after the last high school nationals and soon after", () => {
+      const find = (p: CollegeParticipant) => participationLookupFromResults([p])("Ann One", years)
+      expect(find(person("Ann One", 2016, 2016))?.code).toBe("ANNONE")
+      expect(find(person("Ann One", 2018, 2018))?.code).toBe("ANNONE")
+      expect(find(person("Ann One", 2015, 2017))).toBeNull()
+      expect(find(person("Ann One", 2010, 2012))).toBeNull()
+      expect(find(person("Ann One", 2019, 2020))).toBeNull()
+    })
+
+    it("rejects a record spanning decades, a coach or judge with the same name", () => {
+      const find = (last: number) => participationLookupFromResults([person("Ann One", 2016, last)])("Ann One", years)
+      expect(find(2022)).not.toBeNull()
+      expect(find(2027)).toBeNull()
+    })
+
+    it("matches spellings that drop a given name but not different first names or a bare surname", () => {
+      const lookup = participationLookupFromResults([person("Anshu Sathian", 2016, 2019)])
+      expect(lookup("Sanjena Anshu Sathian", years)?.code).toBe("ANSHUSATHIAN")
+      expect(lookup("Anshu Sathian", years)?.code).toBe("ANSHUSATHIAN")
+      expect(lookup("Priya Sathian", years)).toBeNull()
+      expect(lookup("Sathian", years)).toBeNull()
+    })
+
+    it("credits nobody when two same-named college debaters fit", () => {
+      const lookup = participationLookupFromResults([
+        person("Ann One", 2016, 2018, { code: "ANNONE1" }),
+        person("Ann One", 2017, 2019, { code: "ANNONE2" }),
+      ])
+      expect(lookup("Ann One", years)).toBeNull()
+      // One of them is too old to be this debater, so the other is unambiguous.
+      const oneFits = participationLookupFromResults([
+        person("Ann One", 2005, 2008, { code: "ANNONE1" }),
+        person("Ann One", 2017, 2019, { code: "ANNONE2" }),
+      ])
+      expect(oneFits("Ann One", years)?.code).toBe("ANNONE2")
+    })
+  })
+
+  it("renders the participation line and the list description", () => {
+    const team = (college: HsAllTimeTeam["college"]): HsAllTimeTeam => ({
+      rank: 1,
+      event: "Policy",
+      school: "Alpha",
+      schoolKey: "alpha",
+      sourceSchool: "Alpha (CA)",
+      debaters: "Ann One & Bea Two",
+      lastNames: "One & Two",
+      firstYear: 2015,
+      lastYear: 2015,
+      total: 22.7,
+      nationals: 15,
+      collegeCredit: 7.7,
+      titles: 1,
+      finishes: [],
+      college,
+      notes: [],
+    })
+    const college = [
+      { debater: "Ann One", school: "Northwestern University (IL)", collegePoints: 20, participationPoints: 1, participation: "ndt" as const, credit: 7.35 },
+      { debater: "Bea Two", school: "Emory", collegePoints: 0, participationPoints: 1, participation: "results" as const, credit: 0.35 },
+    ]
+    const html = renderToStaticMarkup(
+      <HsAllTimeTeamsRankings lists={{ Policy: [team(college)], "Lincoln-Douglas": [], "Public Forum": [] }} schoolKey={null} collegeLoaded />,
+    )
+    expect(html).toContain("(20 NDT pts + 1 pt participation)")
+    expect(html).toContain("(participated, 1 pt)")
+    expect(html).toContain("1 college point (at the same share) for each debater who competed in college")
+    expect(collegeNote(college[1])).toBe("participated, 1 pt")
+    expect(collegeNote(college[0])).toBe("20 NDT pts + 1 pt participation")
   })
 })

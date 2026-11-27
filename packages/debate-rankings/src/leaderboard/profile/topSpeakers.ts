@@ -1,6 +1,7 @@
 /**
- * @fileoverview The "Top 10 speaker awards" list on the Greatest of All Time
- * pages: the debaters with the most top speaker awards ever, per format.
+ * @fileoverview Top speaker awards on the Greatest of All Time team lists: each
+ * debater's speaker awards, shown inline on the rows of the teams they debated
+ * on ({@link hsTeamSpeakers}, {@link ndtTeamSpeakers}), ranked per format.
  * It reuses the speaker data the team lists already score: TOC, NDCA,
  * Barkley Forum, Cal Invitational and Glenbrooks top speakers (plus the TOC's
  * and NDCA's lower speaker places) for the high school events
@@ -28,18 +29,14 @@ import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { TOC_HISTORY, tocSchoolKey, type TocResult } from "../../sync/toc-champions"
 import {
   HS_ALL_TIME_EVENTS,
-  hsAllTimeTeams,
   sameHsDebater,
   splitNames,
   type HsAllTimeEvent,
   type HsAllTimeTeam,
 } from "./hsAllTimeTeams"
-import { hsNdcaPoints, hsTocPoints } from "./ndtAllSeasons"
+import { cleanTeamName, hsNdcaPoints, hsTocPoints } from "./ndtAllSeasons"
 import { speakerPoints } from "./programStrength"
 import { profileSlug } from "./rankingProfileHelpers"
-
-/** How many debaters a list shows. */
-export const TOP_SPEAKERS_LIMIT = 10
 
 /** Where a speaker award was won. */
 export type SpeakerTournament = "TOC" | "NDCA" | "Barkley" | "Cal" | "Glenbrooks" | "NDT"
@@ -56,7 +53,7 @@ export interface SpeakerAward {
   points: number
 }
 
-/** One debater in a top speakers list. */
+/** One debater with speaker awards. */
 export interface TopSpeaker {
   /** 1-based; debaters equal on every ranking key share a rank. */
   rank: number
@@ -64,8 +61,8 @@ export interface TopSpeaker {
   name: string
   /** The school as the source names it, without a state tag. */
   school: string
-  /** The team's debaters (`"A & B"`) when the debater has a team page to link to. */
-  teamName?: string
+  /** The school's key in the source's history, to match a team row's school. */
+  schoolKey: string
   /** First place awards: what the list ranks on. */
   topSpeakerAwards: number
   /** Speaker points over every award, the first tie-break. */
@@ -89,17 +86,16 @@ interface Draft {
   awards: SpeakerAward[]
 }
 
-/** Ranks `drafts` best first and returns the top `limit`, equal debaters sharing a rank. */
-function rankSpeakers(drafts: Draft[], teamFor: (draft: Draft) => string | undefined, limit: number): TopSpeaker[] {
+/** Ranks `drafts` best first (the top `limit` when given), equal debaters sharing a rank. */
+function rankSpeakers(drafts: Draft[], limit = Infinity): TopSpeaker[] {
   const rows = drafts.map((draft) => {
     const awards = [...draft.awards].sort((a, b) => a.year - b.year || a.rank - b.rank || a.tournament.localeCompare(b.tournament))
     const years = awards.map((award) => award.year)
-    const teamName = teamFor(draft)
     return {
       rank: 0,
       name: draft.name,
       school: draft.school,
-      ...(teamName && { teamName }),
+      schoolKey: draft.schoolKey,
       topSpeakerAwards: awards.filter((award) => award.rank === 1).length,
       points: awards.reduce((sum, award) => sum + award.points, 0),
       tournaments: [...new Set(awards.map((award) => award.tournament))],
@@ -145,11 +141,6 @@ export interface HsTopSpeakerSources {
   barkley?: readonly BarkleyResult[]
   cal?: readonly CalResult[]
   glenbrooks?: readonly GlenbrooksResult[]
-  /**
-   * The event's all-time teams, so a Policy or Public Forum speaker can link to
-   * their team's page. Without it only a Lincoln-Douglas debater (a team of one) links.
-   */
-  teams?: Partial<Record<HsAllTimeEvent, readonly HsAllTimeTeam[]>> | null
   limit?: number
 }
 
@@ -171,8 +162,7 @@ export function buildHsTopSpeakers(input: HsTopSpeakerSources = {}): Partial<Rec
     barkley = BARKLEY_RESULTS,
     cal = CAL_RESULTS,
     glenbrooks = GLENBROOKS_RESULTS,
-    teams = null,
-    limit = TOP_SPEAKERS_LIMIT,
+    limit,
   } = input
   const sources: HsSource[] = [
     ...toc.map((r) => ({ tournament: "TOC" as const, ...r })),
@@ -215,16 +205,7 @@ export function buildHsTopSpeakers(input: HsTopSpeakerSources = {}): Partial<Rec
   for (const event of HS_ALL_TIME_EVENTS) {
     const drafts = byEvent.get(event)
     if (!drafts?.length) continue
-    const list = rankSpeakers(
-      drafts,
-      (draft) => {
-        const team = teams?.[event]?.find(
-          (t) => t.schoolKey === draft.schoolKey && t.debaters.split(" & ").some((debater) => sameHsDebater(debater, draft.name)),
-        )
-        return team?.debaters
-      },
-      limit,
-    )
+    const list = rankSpeakers(drafts, limit)
     if (list.length) out[event] = list
   }
   return out
@@ -232,10 +213,58 @@ export function buildHsTopSpeakers(input: HsTopSpeakerSources = {}): Partial<Rec
 
 let cachedHs: Partial<Record<HsAllTimeEvent, TopSpeaker[]>> | null = null
 
-/** {@link buildHsTopSpeakers} over the bundled histories, linked to the bundled all-time teams, built once. */
+/** {@link buildHsTopSpeakers} over the bundled histories, built once. */
 export function hsTopSpeakers(): Partial<Record<HsAllTimeEvent, TopSpeaker[]>> {
-  cachedHs ??= buildHsTopSpeakers({ teams: hsAllTimeTeams() })
+  cachedHs ??= buildHsTopSpeakers()
   return cachedHs
+}
+
+const bySchoolIndexes = new WeakMap<readonly TopSpeaker[], Map<string, TopSpeaker[]>>()
+
+function speakersAtSchool(speakers: readonly TopSpeaker[], schoolKey: string): TopSpeaker[] {
+  let index = bySchoolIndexes.get(speakers)
+  if (!index) {
+    index = new Map()
+    for (const speaker of speakers) index.set(speaker.schoolKey, [...(index.get(speaker.schoolKey) ?? []), speaker])
+    bySchoolIndexes.set(speakers, index)
+  }
+  return index.get(schoolKey) ?? []
+}
+
+/**
+ * The speaker awards of the debaters on a high school all-time team, in the
+ * list's ranking order (most top speaker awards, then speaker points,
+ * tournaments, most recent award). A debater without awards is left out.
+ *
+ * @param speakers - The event's speakers ({@link hsTopSpeakers}`()[event]`).
+ * @param team - The team's school key and debaters (`"A & B"`).
+ */
+export function hsTeamSpeakers(
+  speakers: readonly TopSpeaker[] | null | undefined,
+  team: Pick<HsAllTimeTeam, "schoolKey" | "debaters">,
+): TopSpeaker[] {
+  if (!speakers?.length) return []
+  const names = team.debaters.split(" & ")
+  return speakersAtSchool(speakers, team.schoolKey).filter((speaker) => names.some((name) => sameHsDebater(name, speaker.name)))
+}
+
+/**
+ * The speaker awards of the debaters on an NDT team (or of one debater), in
+ * the list's ranking order. A debater without awards is left out.
+ *
+ * @param speakers - The NDT's speakers ({@link buildNdtTopSpeakers}).
+ * @param row - The row's NDT school and debaters (`"A B & C D"`, or one name).
+ */
+export function ndtTeamSpeakers(
+  speakers: readonly TopSpeaker[] | null | undefined,
+  row: { school: string; team: string },
+): TopSpeaker[] {
+  if (!speakers?.length || !row.team) return []
+  const slugs = cleanTeamName(row.team)
+    .split(/\s*(?:&|\/| and )\s*/i)
+    .map((name) => profileSlug(name))
+    .filter(Boolean)
+  return speakersAtSchool(speakers, row.school).filter((speaker) => slugs.includes(profileSlug(speaker.name)))
 }
 
 /**
@@ -243,9 +272,9 @@ export function hsTopSpeakers(): Partial<Record<HsAllTimeEvent, TopSpeaker[]>> {
  * awards (the top 20 speakers of every NDT since 1948). Empty when the history has none.
  *
  * @param history - The NDT school history.
- * @param limit - How many debaters to list.
+ * @param limit - How many debaters to list; all by default.
  */
-export function buildNdtTopSpeakers(history: readonly NdtSchoolHistory[], limit = TOP_SPEAKERS_LIMIT): TopSpeaker[] {
+export function buildNdtTopSpeakers(history: readonly NdtSchoolHistory[], limit?: number): TopSpeaker[] {
   const drafts = new Map<string, Draft>()
   for (const school of history) {
     for (const award of school.speakerAwards) {
@@ -258,5 +287,5 @@ export function buildNdtTopSpeakers(history: readonly NdtSchoolHistory[], limit 
       draft.awards.push({ tournament: "NDT", year: award.year, rank, label: label(rank), points: speakerPoints(rank) })
     }
   }
-  return rankSpeakers([...drafts.values()], () => undefined, limit)
+  return rankSpeakers([...drafts.values()], limit)
 }

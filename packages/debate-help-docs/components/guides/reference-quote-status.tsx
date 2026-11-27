@@ -10,7 +10,7 @@
  * - missing — no text at all (small red X, clickable)
  *
  * Clicking the red X, or the ellipsis, opens a modal where anyone — signed in
- * or not — can paste the full text, with an optional name and note. It posts
+ * or not — can paste the full text. It posts
  * to `POST /api/reference-quote-suggestions`, which stores it in D1 for the
  * admin panel's Reference text tab (limits and checks: `lib/reference-suggestions.ts`).
  *
@@ -27,7 +27,7 @@ import { useId, useState, type FormEvent, type MouseEvent } from "react"
 import { CircleX, Ellipsis, FileText, Underline } from "lucide-react"
 import { Button } from "../ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog"
-import { Input, Textarea } from "../ui/textarea"
+import { Textarea } from "../ui/textarea"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { cn } from "../../lib/utils"
 import {
@@ -38,8 +38,6 @@ import {
   type ReferenceQuoteStatus as Status,
 } from "../../lib/reference-quote-status"
 import {
-  MAX_SUGGESTION_NAME_LENGTH,
-  MAX_SUGGESTION_NOTE_LENGTH,
   MAX_SUGGESTION_TEXT_LENGTH,
   MIN_SUGGESTION_TEXT_LENGTH,
   splitReferenceHref,
@@ -125,8 +123,6 @@ type SubmitState = { kind: "idle" } | { kind: "sending" } | { kind: "sent" } | {
 /** The modal that collects a suggested card text for one entry. */
 export function SuggestTextDialog({ open, onOpenChange, page, refId, title }: DialogProps) {
   const [text, setText] = useState("")
-  const [name, setName] = useState("")
-  const [note, setNote] = useState("")
   const [website, setWebsite] = useState("")
   const [state, setState] = useState<SubmitState>({ kind: "idle" })
   const fieldId = useId()
@@ -138,7 +134,6 @@ export function SuggestTextDialog({ open, onOpenChange, page, refId, title }: Di
     onOpenChange(next)
     if (!next && state.kind === "sent") {
       setText("")
-      setNote("")
       setState({ kind: "idle" })
     }
   }
@@ -151,7 +146,7 @@ export function SuggestTextDialog({ open, onOpenChange, page, refId, title }: Di
       const res = await fetch(REFERENCE_SUGGESTIONS_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ page, refId, title, text, name, note, website }),
+        body: JSON.stringify({ page, refId, title, text, website }),
       })
       const data = (await res.json().catch(() => ({}))) as { error?: string }
       if (!res.ok) throw new Error(data.error || "Could not send your suggestion. Try again in a moment.")
@@ -206,36 +201,6 @@ export function SuggestTextDialog({ open, onOpenChange, page, refId, title }: Di
               <div id={`${fieldId}-count`} className="text-xs text-fd-muted-foreground">
                 {text.length.toLocaleString("en-US")} / {MAX_SUGGESTION_TEXT_LENGTH.toLocaleString("en-US")} characters
                 {tooShort && text.length > 0 ? ` (at least ${MIN_SUGGESTION_TEXT_LENGTH})` : ""}
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="grid gap-1.5">
-                <label htmlFor={`${fieldId}-name`} className="text-sm font-medium">
-                  Your name <span className="font-normal text-fd-muted-foreground">(optional)</span>
-                </label>
-                <Input
-                  id={`${fieldId}-name`}
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  maxLength={MAX_SUGGESTION_NAME_LENGTH}
-                  autoComplete="name"
-                  disabled={sending}
-                />
-              </div>
-              <div className="grid gap-1.5">
-                <label htmlFor={`${fieldId}-note`} className="text-sm font-medium">
-                  Note <span className="font-normal text-fd-muted-foreground">(optional)</span>
-                </label>
-                <Textarea
-                  id={`${fieldId}-note`}
-                  value={note}
-                  onChange={(event) => setNote(event.target.value)}
-                  maxLength={MAX_SUGGESTION_NOTE_LENGTH}
-                  rows={2}
-                  placeholder="Page number, link to the source…"
-                  disabled={sending}
-                />
               </div>
             </div>
 
