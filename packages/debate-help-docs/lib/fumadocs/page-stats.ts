@@ -26,7 +26,7 @@ export interface PageStats {
   citations: number;
   /** `==highlighted==` passages (the Synergy Slayer papers' underlining). */
   highlights: number;
-  /** Readability scores for the page's prose (`lib/fumadocs/readability.ts`). */
+  /** Readability score for the page's prose (`lib/fumadocs/readability.ts`). */
   readability: Readability;
 }
 
