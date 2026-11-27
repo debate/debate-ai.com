@@ -20,10 +20,12 @@
     ".": "./src/index.ts",
     "./wordmarks": "./src/wordmark-assets.ts",
     "./wordmarks/*": "./wordmarks/*",
+    "./data/*": "./data/*",
     "./package.json": "./package.json"
   },
   "files": [
     "src",
+    "data",
     "wordmarks"
   ],
   "sideEffects": false,

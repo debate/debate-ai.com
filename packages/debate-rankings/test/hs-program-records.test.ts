@@ -58,4 +58,12 @@ describe("high school program-strength records", () => {
     // The 2018 Glenbrooks title (2018-19 season) adds a champion's points.
     expect(withNationals - tocOnly).toBe(HS_STRENGTH_WEIGHTS.toc.Champion);
   });
+
+  it("ranks programs with no ranked entry alongside ranked ones by default", () => {
+    const table = schoolStrengthTable([{ school: "greenhill", year: 2019, points: 1, event: "Policy" as const }], undefined, "Policy");
+    const tocOnly = [...table.keys()].filter((key) => key.startsWith("toc:"));
+    expect(tocOnly.length).toBeGreaterThan(50);
+    expect(tocOnly).toContain(`toc:${findHsProgramRecord("Montgomery Bell Academy")!.school}`);
+    expect(tocOnly.some((key) => key.toLowerCase().includes("greenhill"))).toBe(false);
+  });
 });

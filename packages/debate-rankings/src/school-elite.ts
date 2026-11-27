@@ -31,6 +31,7 @@ import {
   type SchoolSeason,
   type SchoolSeasonEvent,
   type SchoolSeasonPoints,
+  type SchoolStrengthEventRanks,
   type SchoolStrengthRank,
 } from "./school-seasons";
 import { bundledHsProgramRecords } from "./sync/hs-program-records";
@@ -254,11 +255,43 @@ export function buildHsEliteSchools(
   return { firstYear, lastYear, rankFromYear, schools };
 }
 
+/** {@link hsProgramStrength}'s table and every program's ranks. */
+export interface HsProgramStrength {
+  /** Program points per school key and season ({@link schoolStrengthTable}). */
+  table: Map<string, Map<number, number>>;
+  /** Each program that scored by `lastYear`, by key; `toc:<name>` for a TOC-only program. */
+  ranks: Map<string, SchoolStrengthEventRanks>;
+}
+
 /**
- * The event's top programs of all time up to `lastYear`, by the same
- * program points school pages rank on ({@link schoolStrengthTable}: TOC
- * finishes back to 1972, plus top-100 entries and TOC qualifiers from 2015-16
- * on), #1 first.
+ * Every high school program's rank in one event by the greatest-of-all-time
+ * program points: TOC finishes back to 1972 and NDCA, Cal and Glenbrooks
+ * finishes ({@link bundledHsProgramRecords}), plus each season's best
+ * top-100 entries and TOC qualifiers from 2015-16 on, with programs that
+ * never had a ranked entry ranked too. All time runs through `lastYear`; the
+ * decade is the same points from `decadeFrom` through `lastYear`. The
+ * all-time Schools list and each school page's "Program strength by season"
+ * ranks both come from here, so a school's page shows its rank, points and
+ * field on the list.
+ */
+export function hsProgramStrength(
+  rows: readonly SchoolSeasonPoints[],
+  event: SchoolSeasonEvent,
+  lastYear: number,
+  { decadeFrom, records = bundledHsProgramRecords() }: { decadeFrom?: number; records?: TocSchoolRecord[] } = {},
+): HsProgramStrength {
+  const table = schoolStrengthTable(rows, records, event);
+  const allTime = rankAllSchoolStrengths(table, -Infinity, lastYear);
+  const decade = decadeFrom === undefined ? null : rankAllSchoolStrengths(table, decadeFrom, lastYear);
+  const ranks = new Map<string, SchoolStrengthEventRanks>();
+  for (const [key, rank] of allTime) ranks.set(key, { allTime: rank, decade: decade?.get(key) ?? null });
+  return { table, ranks };
+}
+
+/**
+ * The event's top programs of all time up to `lastYear`, by
+ * {@link hsProgramStrength} (the same rank and points as each school page),
+ * #1 first.
  */
 export function buildHsAllTimeSchools(
   rows: readonly SchoolSeasonPoints[],
@@ -266,9 +299,10 @@ export function buildHsAllTimeSchools(
   lastYear: number,
   { count = HS_ALL_TIME_SCHOOLS, records = bundledHsProgramRecords() }: { count?: number; records?: TocSchoolRecord[] } = {},
 ): HsAllTimeSchool[] {
-  const table = schoolStrengthTable(rows, records, event);
+  const { table, ranks } = hsProgramStrength(rows, event, lastYear, { records });
   const byKey = recordsByKey(table, records);
-  return [...rankAllSchoolStrengths(table, -Infinity, lastYear)]
+  return [...ranks]
+    .map(([key, own]) => [key, own.allTime!] as const)
     .sort((a, b) => a[1].rank - b[1].rank || a[0].localeCompare(b[0]))
     .slice(0, count)
     .map(([key, rank]) => {

@@ -361,6 +361,7 @@ export function VideoTreeRows({
       onUnhideVideo={context.onUnhideVideo}
       onSearch={context.onSearch}
       showFormat={context.showFormat}
+      topics={context.topics}
       affRanking={context.teamRanking?.(video, video[9]) ?? null}
       negRanking={context.teamRanking?.(video, video[10]) ?? null}
     />
