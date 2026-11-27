@@ -5,7 +5,8 @@
  * hover.
  *
  * Hovering or focusing a sidebar row can wiggle, bounce, pulse, spin, flip (and more)
- * its icon (`@debate-ai/videos`' `sidebar-icon-hover.ts`). That is on by
+ * its icon (`@debate-ai/videos`' `sidebar-icon-hover.ts`); the docs
+ * toolbar's buttons play the same animation on hover and click. That is on by
  * default, even when the OS asks for reduced motion; this switch turns it off. Like the sound-effect level, the choice is
  * local to this browser, applies the moment it's made and is never synced to
  * the account.
