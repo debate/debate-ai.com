@@ -10,11 +10,25 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 
 vi.mock("next/link", () => ({
-  default: ({ href, children }: { href: string; children?: unknown }) => createElement("a", { href }, children as never),
+  default: ({
+    href,
+    children,
+    className,
+    "aria-current": ariaCurrent,
+  }: {
+    href: string;
+    children?: unknown;
+    className?: string;
+    "aria-current"?: string;
+  }) => createElement("a", { href, className, "aria-current": ariaCurrent }, children as never),
 }));
 
 const { LectureCategoryGridGallery } = await import(
   "../src/components/navigation/category-gallery/LectureCategoryGridGallery"
+);
+
+const { formatBadgeIdForStyle } = await import(
+  "../src/components/navigation/category-gallery/FormatBadgeCards"
 );
 
 const categories = [
@@ -68,7 +82,7 @@ describe("lecture category sections", () => {
     expect(html).not.toContain('href="/lectures"');
   });
 
-  it("leads with the four main category badges, each 350px wide", () => {
+  it("leads with the four main category badges", () => {
     const html = renderToStaticMarkup(
       createElement(LectureCategoryGridGallery, { categories, formatCounts: { college: 1400, parli: 15 } }),
     );
@@ -79,7 +93,7 @@ describe("lecture category sections", () => {
     expect([...hrefs].sort((a, b) => a - b)).toEqual(hrefs);
     expect(hrefs[3]).toBeLessThan(html.indexOf('<section aria-label="General"'));
     expect(html.slice(0, html.indexOf('<section aria-label="General"'))).not.toContain("/videos/parli");
-    expect(html.match(/w-\[350px\]/g)).toHaveLength(4);
+    expect(html).not.toContain("w-[350px]");
     expect(html).toContain("College Policy");
     expect(html).toContain("Individual");
     expect(html).toContain("Forum");
@@ -124,11 +138,46 @@ describe("lecture category sections", () => {
     expect(html).not.toContain("minmax(9.5rem,12rem)");
   });
 
-  it("keeps the top badges tight but their logos full size", () => {
+  it("draws the top badges as just a small logo, label and count, with no padding", () => {
     const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
-    expect(html).toContain("p-1.5");
-    expect(html).not.toContain("gap-1 rounded-lg border-[0.75px] border-border bg-background p-3");
-    expect(html.match(/h-40 w-40/g)).toHaveLength(4);
+    const badges = html.slice(0, html.indexOf('<section aria-label="General"'));
+    expect(badges.match(/h-24 w-24/g)).toHaveLength(4);
+    expect(html).not.toContain("h-40 w-40");
+    expect(badges).not.toMatch(/class="[^"]*\bp-\d/);
+  });
+
+  it("draws only the four format cards on the formats scope, the active one selected", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, {
+        categories,
+        scope: "formats",
+        activeFormatId: "ld",
+        formatCounts: { ld: 321 },
+      }),
+    );
+    for (const href of ["/videos/college", "/videos/policy", "/videos/ld", "/videos/pf"]) {
+      expect(html).toContain(`href="${href}"`);
+    }
+    expect(html).not.toContain("<section");
+    expect(html).toContain(">321<");
+    expect(html.match(/aria-current="page"/g)).toHaveLength(1);
+    expect(html.indexOf('aria-current="page"')).toBeGreaterThan(html.indexOf('href="/videos/ld"'));
+    expect(html.indexOf('aria-current="page"')).toBeLessThan(html.indexOf('href="/videos/pf"'));
+  });
+
+  it("draws the format cards without any category facets, none selected by default", () => {
+    const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { scope: "formats" }));
+    expect(html.match(/<li/g)).toHaveLength(4);
+    expect(html).not.toContain("aria-current");
+  });
+
+  it("maps a debate style to its division card", () => {
+    expect(formatBadgeIdForStyle(1)).toBe("policy");
+    expect(formatBadgeIdForStyle(2)).toBe("pf");
+    expect(formatBadgeIdForStyle(3)).toBe("ld");
+    expect(formatBadgeIdForStyle(4)).toBe("college");
+    expect(formatBadgeIdForStyle(8)).toBeUndefined();
+    expect(formatBadgeIdForStyle("")).toBeUndefined();
   });
 
   it("shows Open Super Debates in Formats, linked by its slug", () => {

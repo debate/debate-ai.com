@@ -27,6 +27,7 @@ import {
   type LectureGalleryExtraLink,
 } from "../components/navigation/category-gallery/LectureCategoryGridGallery"
 import { isFormatsSectionLabel, type GalleryScope } from "../components/navigation/category-gallery/LectureCategoryGridGallery"
+import { formatBadgeIdForStyle } from "../components/navigation/category-gallery/FormatBadgeCards"
 import { QuickLinksGrid } from "../components/navigation/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/navigation/sidebar-nav/VideoSidebarTree"
 import { ToolNavTree } from "../components/navigation/sidebar-nav/ToolNavTree"
@@ -286,6 +287,16 @@ export function LecturesVideoGridView({
   const showLectureGallery =
     browsingLibrary && !browsingRoundCollection && galleryCategories.length > 0
 
+  // The division pages (College Policy, HS Policy, Individual, Forum) and the
+  // round collections (ACC, Parli, Congress) carry no category bar of their
+  // own, so they get just the four format cards, the open division selected.
+  const activeFormatId = formatBadgeIdForStyle(selectedStyle)
+  const showFormatCards =
+    !showLectureGallery &&
+    !showFavoritesOnly &&
+    currentCategory === "lectures" &&
+    (activeFormatId !== undefined || isRoundCollection(selectedCategory))
+
   // The pages that list the round collections: All Videos, Debate Rounds and
   // the Formats categories of the lecture library.
   const showsCollections = browsingAllVideos || browsingRounds || browsingFormatsCategory
@@ -471,6 +482,15 @@ export function LecturesVideoGridView({
               extraLinks={galleryExtraLinks}
               formatCounts={quickLinkCounts}
               scope={gallery}
+            />
+          </nav>
+        )}
+        {showFormatCards && (
+          <nav className="mb-6" aria-label="Debate formats">
+            <LectureCategoryGridGallery
+              scope="formats"
+              formatCounts={quickLinkCounts}
+              activeFormatId={activeFormatId}
             />
           </nav>
         )}
