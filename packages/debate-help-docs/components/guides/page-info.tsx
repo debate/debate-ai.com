@@ -85,7 +85,7 @@ export function PageInfoButton(props: PageInfoButtonProps) {
         onClick={() => setOpen((value) => !value)}
       >
         <Info />
-        Info
+        <span>Info</span>
       </button>
       {open && (
         <div
