@@ -1,6 +1,6 @@
 /**
  * @fileoverview The Videos portion of the sidebar tree — the destinations
- * under its "Videos" heading (Lectures included) plus the glossary/statistics
+ * under its "Videos" heading (Debate Rounds and Strategy Lectures first) plus the glossary/statistics
  * pair pinned below the tree — as plain data.
  *
  * Three surfaces render these links and used to each restate them: the
@@ -31,7 +31,6 @@ import {
   Vote,
   type LucideIcon,
 } from "lucide-react";
-import { IconFormatLD, IconFormatNDT, IconFormatPF, IconFormatVP } from "./FormatBadgeIcons";
 
 export interface SidebarVideoLink {
   /** Quick-link id — the `activeId` / counts key for this destination. */
@@ -48,49 +47,48 @@ export interface SidebarVideoLink {
   /**
    * Show this destination's total unabbreviated. Thousands are shortened to
    * `1.4k` elsewhere to keep a count from crowding out its title; the
-   * College Policy total is the round archive's headline number and reads
-   * as `1400`, not `1.4k`.
+   * round archive's total is its headline number.
    */
   exactCount?: boolean;
 }
 
-/** The All Videos node — every round and lecture in the library, and the
- *  app's home page (`/` renders it directly). First child under "Videos". */
-export const VIDEO_ALL_LINK: SidebarVideoLink = {
-  id: "allVideos",
-  href: "/videos",
-  title: "All Videos",
+/** Debate Rounds — the round videos of every format combined (no per-format
+ *  split), with the lecture library's Formats section (Worlds, NSDA Speech,
+ *  Demo Debates, Open Super Debates, Parli …) listed on its page. First child
+ *  under "Videos". The per-format pages (`/videos/college`, `/videos/policy`,
+ *  `/videos/ld`, `/videos/pf`) and bare `/videos` still render; the page links
+ *  to them from its format badges. */
+export const VIDEO_ROUNDS_LINK: SidebarVideoLink = {
+  id: "rounds",
+  href: "/videos/rounds",
+  title: "Debate Rounds",
   glyph: Clapperboard,
   exactCount: true,
 };
 
-/** The College Policy node — the round archive's flagship link, and the
- *  first of the peer collections it heads in the tree. */
-export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
-  id: "college",
-  href: "/videos/college",
-  title: "College Policy",
-  glyph: IconFormatNDT,
-  exactCount: true,
+/** Strategy Lectures — the lecture library without its Formats section
+ *  (Getting started, Strategy, Topics & ideas). Its id stays `lectures`, the
+ *  key the page and the per-category counts already use. */
+export const VIDEO_STRATEGY_LECTURES_LINK: SidebarVideoLink = {
+  id: "lectures",
+  href: "/lectures",
+  title: "Strategy Lectures",
+  glyph: Presentation,
 };
 
-/** The debate formats, peers of {@link VIDEO_COLLEGE_LINK} in the tree
- *  rather than children of it: they are sibling collections of the same
- *  round archive, not subsets of the college one. */
-export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
-  { id: "policy", href: "/videos/policy", title: "HS Policy", glyph: IconFormatVP },
-  { id: "ld", href: "/videos/ld", title: "HS Individual", glyph: IconFormatLD },
-  { id: "pf", href: "/videos/pf", title: "HS Forum", glyph: IconFormatPF },
-  { id: "topPicks", href: "/videos/goat", title: "Greatest of All-Time", glyph: Star },
-];
+/** The Greatest of All-Time collection, a peer of the two destinations above. */
+export const VIDEO_GOAT_LINK: SidebarVideoLink = {
+  id: "topPicks",
+  href: "/videos/goat",
+  title: "Greatest of All-Time",
+  glyph: Star,
+};
 
-/** The rest of the video library, the last rows under "Videos": My
- *  Favorites, the watch history, then Lectures — a single row whose
- *  categories live on the lectures page itself, not in the sidebar. */
+/** The viewer's own library, the last rows under "Videos": My Favorites,
+ *  then the watch history. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites", glyph: Heart },
   { id: "history", href: "/videos/history", title: "Watch History", glyph: History },
-  { id: "lectures", href: "/lectures", title: "Lectures", glyph: Presentation },
 ];
 
 /** The World Schools, Congressional and Speech collections. They are not
@@ -123,9 +121,9 @@ export const VIDEO_REFERENCE_LINKS: SidebarVideoLink[] = [
 
 /** Every videos destination the sidebar links to, in tree order. */
 export const SIDEBAR_VIDEO_LINKS: SidebarVideoLink[] = [
-  VIDEO_ALL_LINK,
-  VIDEO_COLLEGE_LINK,
-  ...VIDEO_FORMAT_LINKS,
+  VIDEO_ROUNDS_LINK,
+  VIDEO_STRATEGY_LECTURES_LINK,
+  VIDEO_GOAT_LINK,
   ...VIDEO_LIBRARY_LINKS,
   ...VIDEO_REFERENCE_LINKS,
 ];
