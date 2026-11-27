@@ -5,7 +5,7 @@
  * Marks menu's separate Underlining / Highlighting / Short highlighting /
  * Emphasizing words
  * switches, the auto modes inside it that toggle each selection, AI marks and
- * Reset to default highlighting.
+ * Reset to default highlighting and Remove all marks.
  *
  * Lives here because debate-help-docs is not a Vitest project of its own.
  */
@@ -132,6 +132,21 @@ describe("Marks menu", () => {
     click(item("Reset to default highlighting"))
     expect(page.querySelector(".reader-underline, .reader-highlight")).toBeNull()
     expect(page.querySelector("mark.debate-hl")?.textContent).toBe("solves warming")
+  })
+})
+
+describe("Remove all marks", () => {
+  it("switches off the page's own marks, and Reset brings the page's back", () => {
+    click(item("Remove all marks"))
+    const authored = page.querySelector("mark.debate-hl")!
+    expect(authored.classList.contains("debate-hl--no-highlight")).toBe(true)
+    expect(authored.classList.contains("debate-hl--no-underline")).toBe(true)
+    expect(page.querySelector(".reader-underline, .reader-highlight")).toBeNull()
+    expect(button("All marks removed")).toBeTruthy()
+
+    click(trigger())
+    click(item("Reset to default highlighting"))
+    expect(page.querySelector("mark.debate-hl")!.className).toBe("debate-hl")
   })
 })
 
