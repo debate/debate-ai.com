@@ -328,7 +328,8 @@ export function LecturesPage({ dockSlot, accountSlot, headerActionsSlot, topicAr
          wsd: lectureCategories.find((cat) => cat.label === "WSD")?.count ?? 0,
          acc: lectureCategories.find((cat) => cat.label === "ACC")?.count ?? 0,
          parli: lectureCategories.find((cat) => cat.label === "Parli")?.count ?? 0,
-         congress: lectureCategories.find((cat) => cat.label === "Congress")?.count ?? counts.byStyle[9] ?? 0,
+         // Congress rounds (style 9) and Congress lectures share the one shelf.
+         congress: (lectureCategories.find((cat) => cat.label === "Congress")?.count ?? 0) + (counts.byStyle[9] ?? 0),
          speech: lectureCategories.find((cat) => cat.label === "Speech")?.count ?? 0,
       }) as Record<string, number>,
      [counts, state.favorites, watchHistory, lectureCategories],
