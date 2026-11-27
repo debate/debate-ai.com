@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
   isPersonalDocPath,
+  isReservedUsername,
   isUsername,
   parsePersonalDocPath,
   personalDocHref,
@@ -105,5 +106,17 @@ describe("isPersonalDocPath", () => {
     expect(isPersonalDocPath("/alexgul/aff/k-aff-answers")).toBe(true)
     expect(isPersonalDocPath("/alexgul")).toBe(false)
     expect(isPersonalDocPath("/settings/preferences")).toBe(false)
+  })
+})
+
+describe("a username shaped like a video topic code", () => {
+  it("is refused, since /<code>/… is a round video's address", () => {
+    for (const handle of ["cpd27", "cpd06", "vcx24", "ldb23", "pfa27"]) {
+      expect(isReservedUsername(handle), handle).toBe(true)
+      expect(isUsername(handle), handle).toBe(false)
+    }
+    expect(isUsername("cpd")).toBe(true)
+    expect(isUsername("cpd2027")).toBe(true)
+    expect(isUsername("alexgul")).toBe(true)
   })
 })
