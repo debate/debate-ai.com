@@ -8,8 +8,9 @@
   "license": "rights.institute/prosper",
   "scripts": {
     "dev": "vinext dev",
-    "build": "node ../../.github/scripts/ensure-submodules.mjs && vinext build ",
-    "offline:gen": "node lib/offline-sw/generate.cjs && bun build lib/offline-sw/service-worker.ts --outfile app/service-worker.js --target browser --minify && cp app/service-worker.js dist/client/service-worker.js",
+    "build": "node ../../.github/scripts/ensure-submodules.mjs && vinext build && bun run build:sw",
+    "build:sw": "node lib/offline-sw/generate.cjs && bun build lib/offline-sw/service-worker.ts --outfile app/service-worker.js --target browser --minify && cp app/service-worker.js dist/client/service-worker.js",
+    "offline:gen": "bun run build:sw",
     "start": "vinext start",
     "deploy": "npm run db:migrate:d1 && npm run build && npx @vinext/cloudflare deploy --skip-build",
     "preview": "NODE_OPTIONS='--max-old-space-size=4096' vinext build  && wrangler dev",

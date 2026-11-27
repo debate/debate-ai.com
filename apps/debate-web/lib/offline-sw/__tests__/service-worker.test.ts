@@ -13,9 +13,6 @@ type Listener = (event: any) => void;
 
 class FakeCache {
   entries = new Map<string, Response>();
-  async add(url: string) {
-    this.entries.set(url, new Response("precached"));
-  }
   async put(request: Request | string, response: Response) {
     this.entries.set(typeof request === "string" ? request : request.url, response);
   }
@@ -53,8 +50,9 @@ const ORIGIN = "https://debate-ai.com";
 
 /**
  * @param windowClients how many pages are open when the worker installs
+ * @param fileList the build's precache manifest
  */
-async function loadWorker(windowClients: number) {
+async function loadWorker(windowClients: number, fileList: string[] = []) {
   const listeners = new Map<string, Listener>();
   const skipWaiting = vi.fn();
   const claim = vi.fn(async () => {});
@@ -73,6 +71,7 @@ async function loadWorker(windowClients: number) {
   vi.stubGlobal("self", scope);
   vi.stubGlobal("caches", cacheStorage);
   vi.resetModules();
+  vi.doMock("../app-file-list", () => ({ APP_FILE_LIST: fileList }));
   await import("../service-worker");
 
   /** Runs a registered listener and awaits whatever it passed to waitUntil. */
@@ -94,8 +93,10 @@ async function loadWorker(windowClients: number) {
 }
 
 beforeEach(() => {
+  vi.stubGlobal("fetch", vi.fn(async () => new Response("precached")));
   vi.spyOn(console, "info").mockImplementation(() => {});
   vi.spyOn(console, "warn").mockImplementation(() => {});
+  vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
 afterEach(() => {
@@ -127,16 +128,72 @@ describe("install", () => {
     const [cache] = [...cacheStorage.caches.values()];
     expect(cache.entries.has("/")).toBe(true);
   });
+
+  it("tolerates assets the build no longer serves, quietly", async () => {
+    // A 404 used to reject `cache.add` and log "Cache.add() failed … Response
+    // status 404" once per missing file; now the asset is simply skipped.
+    const list = ["/assets/ok.js", "/assets/gone.js", "/assets/flaky.js"];
+    const { dispatch, cacheStorage, skipWaiting } = await loadWorker(0, list);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        if (url === "/assets/gone.js") return new Response("nope", { status: 404 });
+        if (url === "/assets/flaky.js") throw new TypeError("Failed to fetch");
+        return new Response(`body:${url}`);
+      }),
+    );
+
+    await dispatch("install");
+
+    const [cache] = [...cacheStorage.caches.values()];
+    expect([...cache.entries.keys()].sort()).toEqual(["/", "/assets/ok.js"]);
+    expect(skipWaiting).toHaveBeenCalledTimes(1);
+    expect(console.warn).not.toHaveBeenCalled();
+    expect(console.error).not.toHaveBeenCalled();
+  });
+
+  it("does not precache redirects or error pages as the app shell", async () => {
+    const { dispatch, cacheStorage } = await loadWorker(0);
+    const redirected = new Response("login");
+    Object.defineProperty(redirected, "redirected", { value: true });
+    vi.stubGlobal("fetch", vi.fn(async () => redirected));
+    await dispatch("install");
+    const [cache] = [...cacheStorage.caches.values()];
+    expect(cache.entries.size).toBe(0);
+  });
+
+  it("bypasses the HTTP cache when precaching", async () => {
+    const { dispatch } = await loadWorker(0, ["/assets/a.js"]);
+    const fetchMock = vi.fn(async () => new Response("x"));
+    vi.stubGlobal("fetch", fetchMock);
+    await dispatch("install");
+    expect(fetchMock).toHaveBeenCalledWith("/assets/a.js", { cache: "reload" });
+  });
 });
 
 describe("activate", () => {
   it("drops every cache but this build's and claims the remaining pages", async () => {
     const { dispatch, claim, cacheStorage } = await loadWorker(0);
     await cacheStorage.open("debate-ai-0.0.0-previousbuild");
+    await cacheStorage.open("debate-ai-0.9.0");
     await dispatch("install");
     await dispatch("activate");
     expect([...cacheStorage.caches.keys()]).toHaveLength(1);
     expect(claim).toHaveBeenCalledTimes(1);
+  });
+
+  it("leaves caches that belong to other code alone", async () => {
+    const { dispatch, cacheStorage } = await loadWorker(0);
+    await cacheStorage.open("debate-ai-models");
+    await cacheStorage.open("transformers-cache");
+    await cacheStorage.open("debate-ai-0.0.0-previousbuild");
+    await dispatch("install");
+    await dispatch("activate");
+    const names = [...cacheStorage.caches.keys()];
+    expect(names).toContain("debate-ai-models");
+    expect(names).toContain("transformers-cache");
+    expect(names).not.toContain("debate-ai-0.0.0-previousbuild");
+    expect(names).toHaveLength(3);
   });
 });
 
@@ -149,7 +206,7 @@ describe("fetch", () => {
     // `/site.webmanifest` (like the app shell and the icons) keeps its path
     // across builds, so an origin-wide `caches.match` would answer it from
     // whichever cache was created first — the previous build's.
-    const { dispatch, cacheStorage } = await loadWorker(0);
+    const { dispatch, cacheStorage } = await loadWorker(0, ["/site.webmanifest"]);
     const stale = await cacheStorage.open("debate-ai-0.0.0-previousbuild");
     await stale.put(assetRequest(), new Response("previous build"));
 
@@ -162,7 +219,7 @@ describe("fetch", () => {
   });
 
   it("serves this build's own cache entry without hitting the network", async () => {
-    const { dispatch, cacheStorage } = await loadWorker(0);
+    const { dispatch, cacheStorage } = await loadWorker(0, ["/site.webmanifest"]);
     await dispatch("install");
     const [current] = [...cacheStorage.caches.values()];
     await current.put(assetRequest(), new Response("current build"));
@@ -181,7 +238,7 @@ describe("failed page loads", () => {
   // worker reads.
   const navigation = (aborted = false) =>
     ({
-      url: `${ORIGIN}/docs/vcx27/aff/aff-case/some-case`,
+      url: `${ORIGIN}/vcx27/aff/aff-case/some-case`,
       method: "GET",
       mode: "navigate",
       destination: "document",

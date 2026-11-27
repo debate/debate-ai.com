@@ -160,6 +160,15 @@ describe("decideChallenge", () => {
     expect(decide(pageRequest("/docsearch")).challenge).toBe(true);
   });
 
+  it("never challenges a public Topic Starter, at its new address or the old /docs one", () => {
+    for (const path of ["/vcx27", "/vcx27/aff/aff-k/case", "/lda27/neg", "/docs/vcx27/aff/aff-k"]) {
+      expect(decide(pageRequest(path)).reason, path).toBe("exempt-path");
+    }
+    // A personal file or any other page is still gated.
+    expect(decide(pageRequest("/alexgul/aff/case")).challenge).toBe(true);
+    expect(decide(pageRequest("/vcx2027/aff")).challenge).toBe(true);
+  });
+
   it("never challenges a non-document fetch", () => {
     expect(decide(pageRequest("/", { "sec-fetch-dest": "empty", "sec-fetch-mode": "cors" })).reason).toBe(
       "not-a-document",

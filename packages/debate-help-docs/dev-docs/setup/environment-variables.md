@@ -11,6 +11,35 @@ dashboard variable, a `vars` entry, or a line in `.dev.vars` locally. Never comm
 
 "Required" below means required for that feature; the app boots with none of them.
 
+## Editing them from the admin panel
+
+**Admin → Environment** (admins only) edits the production Worker's variables and secrets
+through the Cloudflare API and rebuilds from GitHub, so a change needs no dashboard or CLI.
+
+- **Credentials.** A Cloudflare API token (Account · Workers Scripts · Edit), the account ID and
+  Worker name (`d-ebate-app`), and a GitHub token with Actions read/write, Contents read, Variables
+  read/write and Metadata read on the repo (or a classic token with `repo`). They are saved
+  encrypted in D1 under the `SERVICE_LOGINS_SECRET` / `BETTER_AUTH_SECRET` key and never sent back;
+  **Test connection** names any permission that is missing.
+- **Variables.** Plain-text variables show their value, secrets only their name. Edits (including
+  bulk `.env` paste) are staged, then a diff is confirmed before anything is sent. The save is one
+  `PATCH .../workers/scripts/<name>/settings`, which replaces the whole bindings list, so every
+  binding that is not a variable (D1, R2, KV, Durable Objects, AI, assets, other secrets) is sent
+  as `{ "type": "inherit" }` and the settings are re-read afterwards to check none went missing.
+  Deleting a variable, or changing `BETTER_AUTH_SECRET`, `SERVICE_LOGINS_SECRET`, `ADMIN_EMAIL(S)`
+  or the D1 binding, needs an extra confirmation. Every change is logged by name, never by value.
+- **`wrangler.jsonc` wins.** `wrangler deploy` rewrites the `vars` in that file on every deploy, so
+  a variable listed there is flagged and an API-side edit to it is undone by the next deploy. The
+  file has `keep_vars: true`, so variables that are only in Cloudflare survive deploys; the panel
+  warns if that ever changes.
+- **Rebuild.** Runtime variables take effect as soon as they are applied. **Apply and rebuild**
+  also dispatches `.github/workflows/cloudflare-workers-deploy.yml` (`workflow_dispatch`) with the
+  GitHub token, which builds and `wrangler deploy`s. `NEXT_PUBLIC_*` variables are inlined into the
+  browser bundle at build time, so those are also written to the repository's GitHub Actions
+  variables first (the workflow exports every `NEXT_PUBLIC_*` repository variable into the build).
+  Cloudflare Workers Builds (the `d-ebate-app` check) keeps its own build variables in the
+  Cloudflare dashboard; the panel does not manage those.
+
 ## Core: URLs and auth
 
 | Variable | Purpose | Where it is used | Required |

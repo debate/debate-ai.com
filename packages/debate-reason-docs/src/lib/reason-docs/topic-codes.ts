@@ -1,6 +1,6 @@
 /**
  * @fileoverview Every resolution in `debate-topics.json`, each with the topic
- * code its Topic Starter address uses (`/docs/vcx27/...`; the scheme is in
+ * code its Topic Starter address uses (`/vcx27/...`; the scheme is in
  * `./topic-doc-paths`). This is what the format / year / topic picker above the
  * Topic Starters tree lists.
  *
@@ -38,7 +38,7 @@ export type TopicFormat = (typeof TOPIC_FORMATS)[number]["id"]
 
 /** Formats the Topic Starters format dropdown lists: every one but Big
  *  Questions. Big Questions codes (`bq27`) still resolve, so a direct
- *  `/docs/bq27` link keeps working and shows its own format while open. */
+ *  `/bq27` link keeps working and shows its own format while open. */
 export const PICKER_FORMATS = TOPIC_FORMATS.filter((item) => item.id !== "bq")
 
 /** One resolution with its code. */
@@ -206,7 +206,7 @@ export function topicsForFormat(format: TopicFormat): TopicCodeEntry[] {
 /** The oldest season (by ending year, so 2015 is 2014-15) the Topic Starters
  *  topic dropdown lists. Older resolutions, the legacy pre-2000 ones included,
  *  are browsed on the Topics & Statistics page instead; their codes still
- *  resolve, so a direct `/docs/<code>` link keeps working. */
+ *  resolve, so a direct `/<code>` link keeps working. */
 export const PICKER_MIN_YEAR = 2015
 
 /** A format's topics as the Topic Starters dropdown lists them: seasons from

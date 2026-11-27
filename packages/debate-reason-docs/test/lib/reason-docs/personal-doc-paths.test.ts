@@ -37,6 +37,15 @@ describe("pickUsername", () => {
     expect(pickUsername("admin", () => false)).toBe("admin2")
     expect(pickUsername("videos", () => false)).toBe("videos2")
   })
+
+  it("never hands out a topic code's shape, whose /<code>/… is a Topic Starter", () => {
+    expect(pickUsername(usernameBase("VCX 27"), () => false)).toBe("vcx272")
+    expect(pickUsername("lda27", () => false)).toBe("lda272")
+    expect(pickUsername("bq27", () => false)).toBe("bq272")
+    // `vcx2`'s numbers would run through `vcx22`…`vcx29`, all topic codes.
+    expect(pickUsername("vcx2", (h) => h === "vcx2")).toBe("vcx210")
+    expect(pickUsername("ld27", (h) => h === "ld27")).toBe("ld272")
+  })
 })
 
 describe("isUsername", () => {
@@ -45,6 +54,16 @@ describe("isUsername", () => {
     expect(isUsername("alexgul2")).toBe(true)
     for (const s of ["docs", "settings", "reason-editor", "@harker", "Alex", "a.b", "", null, undefined]) {
       expect(isUsername(s)).toBe(false)
+    }
+  })
+
+  it("rejects every topic-code shape, old letter-last LD / PF codes included", () => {
+    for (const s of ["vcx27", "vcx1928", "ndt26", "lda27", "lda1999", "pfb27", "bq27", "ld21b", "pf24a"]) {
+      expect(isUsername(s), s).toBe(false)
+    }
+    // Close, but not a topic code: still a handle.
+    for (const s of ["vcx", "vcx2", "vcx272", "vcx2027", "ld27", "pf2", "bq2027"]) {
+      expect(isUsername(s), s).toBe(true)
     }
   })
 })
@@ -69,7 +88,7 @@ describe("parsePersonalDocPath", () => {
   })
 
   it("returns null for pages, profiles and a bare username", () => {
-    for (const p of ["/", "/alexgul", "/alexgul/", "/docs/vcx27/aff/case", "/reason-editor/foo", "/@harker/x", "/videos/a/b", "", null]) {
+    for (const p of ["/", "/alexgul", "/alexgul/", "/docs/vcx27/aff/case", "/vcx27/aff/case", "/lda27/neg", "/reason-editor/foo", "/@harker/x", "/videos/a/b", "", null]) {
       expect(parsePersonalDocPath(p)).toBeNull()
     }
   })
