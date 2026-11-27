@@ -5,10 +5,12 @@ import {
   classifyLecture,
   classifyRoundCollection,
   forcedLectureCategory,
+  isCongressDebateLecture,
   isNsdaChannel,
   isSuperDebateVideo,
   lectureCategoryForChannel,
   LECTURE_CATEGORIES,
+  ruleLectureCategory,
 } from "@debate-ai/videos/src/data/lecture-classifier";
 
 describe("isRound", () => {
@@ -193,5 +195,62 @@ describe("Open Super Debates shelf", () => {
     expect(isSuperDebateVideo("Super duper debate", "Superb Debaters Club")).toBe(false);
     expect(forcedLectureCategory("Intro to Policy Debate", "Victory Briefs")).toBeNull();
     expect(lectureCategoryForChannel("SuperDebate")).toBe("Open Super Debates");
+  });
+});
+
+describe("Congress shelf", () => {
+  it("files Congressional Debate lectures under Congress", () => {
+    const titles = [
+      "Congressional Debate Basics: How to Give an Authorship Speech",
+      "Student Congress: presiding officer tips",
+      "How to write Congress legislation",
+      "Congress bills and docket strategy",
+      "NSDA Congress prelims explained",
+      "Precedence and recency in Congressional Debate",
+    ];
+    for (const title of titles) {
+      expect(isCongressDebateLecture(title, "")).toBe(true);
+      expect(classifyLecture(title, "", "Victory Briefs")).toBe("Congress");
+      expect(ruleLectureCategory(title, "", "Victory Briefs")).toBe("Congress");
+    }
+  });
+
+  it("reads the description and the channel", () => {
+    expect(
+      isCongressDebateLecture(
+        "Lecture 4",
+        "In Congressional Debate the presiding officer calls on speakers by precedence and recency.",
+      ),
+    ).toBe(true);
+    expect(isCongressDebateLecture("Weekly session", "", "Student Congress Network")).toBe(true);
+  });
+
+  it("does not file the US Congress as a topic", () => {
+    const titles = [
+      "Congress passes the new infrastructure bill",
+      "Should Congress ban TikTok? Topic analysis",
+      "Congress and the war powers resolution: aff ground",
+      "Politics DA: will the bill pass Congress?",
+    ];
+    for (const title of titles) {
+      expect(isCongressDebateLecture(title, "")).toBe(false);
+      expect(ruleLectureCategory(title, "", "Victory Briefs")).toBeNull();
+    }
+    expect(classifyLecture("Should Congress ban TikTok? Topic analysis", "", "Victory Briefs")).toBe("Topic Lectures");
+  });
+
+  it("keeps Super Debates and the NSDA channel on their own shelves", () => {
+    expect(ruleLectureCategory("Super Debate: Congress edition", "", "SuperDebate")).toBe("Open Super Debates");
+    expect(ruleLectureCategory("Congressional Debate Basics", "", "National Speech & Debate Association")).toBe(
+      "NSDA Speech",
+    );
+  });
+});
+
+describe("Miscellaneous shelf", () => {
+  it("is a category a person can pick, and the classifier's fallback", () => {
+    expect(LECTURE_CATEGORIES).toContain("Miscellaneous");
+    expect(classifyLecture("Random upload", "")).toBe("Miscellaneous");
+    expect(ruleLectureCategory("Random upload", "")).toBeNull();
   });
 });

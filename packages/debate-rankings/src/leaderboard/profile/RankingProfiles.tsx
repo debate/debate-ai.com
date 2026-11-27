@@ -65,6 +65,7 @@ import { EloSparkline, eloLookupKey, useEloHistory, type EloHistoryRequest } fro
 import { eloTeamKey } from "../eloHistory"
 import { fetchSchoolDirectoryEntry, type SchoolDirectoryEntry } from "../../schools/school-directory"
 import { formatSchoolLocation, type SchoolLocation } from "../../schools/school-location"
+import { schoolMapUrl } from "../../schools/school-map-link"
 import { schoolInfo, websiteLabel } from "../../schools/school-info"
 
 const SCHOOL_MASCOTS: Array<{ match: (name: string) => boolean; src: string }> = [
@@ -132,18 +133,32 @@ function ProfileFrame({ children }: { children: ReactNode }) {
 function SchoolInfoSection({ school, saved }: { school: string; saved?: Partial<SchoolLocation> | null }) {
   const info = schoolInfo(school, saved)
   const location = formatSchoolLocation(info)
+  const mapUrl = location ? schoolMapUrl(school, info) : null
   if (!location && !info.type && !info.website) return null
   return (
     <div
       data-school-info
       className="mt-1 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border bg-muted/40 px-2.5 py-1 text-sm text-muted-foreground"
     >
-      {location && (
-        <span data-school-location className="inline-flex items-center gap-1">
-          <MapPin className="h-3.5 w-3.5" aria-hidden />
-          {location}
-        </span>
-      )}
+      {location &&
+        (mapUrl ? (
+          <a
+            data-school-location
+            href={mapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={`Open ${school} on Google Maps (satellite)`}
+            className="inline-flex items-center gap-1 underline-offset-4 hover:text-foreground hover:underline"
+          >
+            <MapPin className="h-3.5 w-3.5" aria-hidden />
+            {location}
+          </a>
+        ) : (
+          <span data-school-location className="inline-flex items-center gap-1">
+            <MapPin className="h-3.5 w-3.5" aria-hidden />
+            {location}
+          </span>
+        ))}
       {info.type && (
         <span data-school-type className="inline-flex items-center gap-1">
           <School className="h-3.5 w-3.5" aria-hidden />

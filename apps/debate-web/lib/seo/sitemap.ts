@@ -55,6 +55,12 @@ export interface SitemapEntry {
 const STATIC_PAGES: ReadonlyArray<{ path: string; priority: number; changeFrequency: SitemapEntry["changeFrequency"] }> = [
   { path: "/videos", priority: 1.0, changeFrequency: "daily" },
   { path: "/lectures", priority: 0.9, changeFrequency: "weekly" },
+  // The per-format round pages have no sidebar row any more (Debate Rounds
+  // lists every format together) but are still pages in their own right.
+  { path: "/videos/college", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/videos/policy", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/videos/ld", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/videos/pf", priority: 0.8, changeFrequency: "weekly" },
   { path: "/docs", priority: 0.8, changeFrequency: "weekly" },
   { path: "/authors", priority: 0.6, changeFrequency: "monthly" },
   { path: "/about", priority: 0.3, changeFrequency: "yearly" },

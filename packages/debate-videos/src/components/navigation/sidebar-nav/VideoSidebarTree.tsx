@@ -2,24 +2,21 @@
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
  *   Videos (h1, expandable, heading-only)
- *     -> All Videos / Lectures / College Policy / Policy / PF / LD / Greatest
- *        of All-Time / My Favorites / Watch History (h2, plain links, all peers)
+ *     -> Debate Rounds / Strategy Lectures / Greatest of All-Time /
+ *        My Favorites / Watch History (h2, plain links, all peers)
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
  *   Docs (h1, starts collapsed) -> every help docs page (`DocsNavTree`)
  *
- * The round-archive links are one flat list. Policy / PF / LD / Greatest of
- * All-Time used to hang inside College Policy, which read as if they were
- * subsets of it — they are sibling collections of the same library, and the
- * extra level only bought an indent and a second chevron to fight with.
- *
- * Lectures is a single row in that list. Its categories used to be a section
- * of their own here; they now live only on the lectures page itself, as a
- * bar of category cards above the grid (`LectureCategoryGridGallery`), so
- * the sidebar stays a short list of destinations. The Lectures row lights up
- * on every lecture-library page (`browsingLectures`), category pages
- * included.
+ * Debate Rounds is every format's round videos in one listing, with the
+ * lecture library's Formats section (Worlds, NSDA Speech, Parli …) on its
+ * page; Strategy Lectures is the rest of the lecture library. The per-format
+ * round pages (`/videos/college`, `/policy`, `/ld`, `/pf`) have no row of
+ * their own but still render, and light up Debate Rounds. Lecture categories
+ * live only on the lectures page itself, as a bar of category cards
+ * (`LectureCategoryGridGallery`). The Strategy Lectures row lights up on the
+ * lecture-library pages outside the Formats section (`browsingLectures`).
  *
  * The h1 sections are groupings, not destinations: a plain click on one only
  * toggles it (a ctrl/shift/middle-click still opens its flagship page in a
@@ -41,9 +38,9 @@ import { TreeItem } from "./TreeItem";
 import { ToolNavTree } from "./ToolNavTree";
 import { DocsNavTree } from "./DocsNavTree";
 import {
-  VIDEO_ALL_LINK,
-  VIDEO_COLLEGE_LINK,
-  VIDEO_FORMAT_LINKS,
+  VIDEO_ROUNDS_LINK,
+  VIDEO_STRATEGY_LECTURES_LINK,
+  VIDEO_GOAT_LINK,
   SIDEBAR_VIDEO_LINKS_BY_ID,
 } from "./sidebar-video-links";
 import { VIDEOS_SECTION_ID, sidebarSectionForPath } from "./sidebar-active-section";
@@ -57,9 +54,9 @@ interface VideoSidebarTreeProps {
   /** Per-category video counts, keyed by quick-link id. */
   counts?: Record<string, number>;
   /**
-   * Whether the page is browsing the lecture library (`/lectures` or one of
-   * its categories). Lights the Lectures row even when `activeId` is unset,
-   * as it is on a category page.
+   * Whether the page is browsing the lecture library outside its Formats
+   * section (`/lectures` or one of its other categories). Lights the Strategy
+   * Lectures row even when `activeId` is unset, as it is on a category page.
    */
   browsingLectures?: boolean;
   /** Id of the currently active nav item, used for highlighting. */
@@ -95,50 +92,43 @@ export function VideoSidebarTree({
 
   const videosExpanded = expandedSectionIds.includes(VIDEOS_SECTION_ID);
 
-  const lecturesLink = SIDEBAR_VIDEO_LINKS_BY_ID.lectures;
-
   return (
     <nav className="flex flex-col gap-3 text-sm" aria-label="Videos">
       <TreeItem
         level={1}
         title="Videos"
         icon={Clapperboard}
-        sectionHref={VIDEO_COLLEGE_LINK.href}
+        sectionHref={VIDEO_ROUNDS_LINK.href}
         expanded={videosExpanded}
         onToggleExpand={() => toggleSection(VIDEOS_SECTION_ID)}
       >
         <TreeItem
-          key={VIDEO_ALL_LINK.id}
           level={2}
-          href={VIDEO_ALL_LINK.href}
-          title={VIDEO_ALL_LINK.title}
-          icon={VIDEO_ALL_LINK.glyph}
-          count={counts?.[VIDEO_ALL_LINK.id]}
-          exactCount={VIDEO_ALL_LINK.exactCount}
-          isActive={activeId === VIDEO_ALL_LINK.id}
+          href={VIDEO_ROUNDS_LINK.href}
+          title={VIDEO_ROUNDS_LINK.title}
+          icon={VIDEO_ROUNDS_LINK.glyph}
+          count={counts?.[VIDEO_ROUNDS_LINK.id]}
+          exactCount={VIDEO_ROUNDS_LINK.exactCount}
+          isActive={activeId === VIDEO_ROUNDS_LINK.id}
         />
 
         <TreeItem
           level={2}
-          href={lecturesLink.href}
-          title={lecturesLink.title}
-          icon={lecturesLink.glyph}
-          count={counts?.lectures}
-          isActive={activeId === "lectures" || browsingLectures}
+          href={VIDEO_STRATEGY_LECTURES_LINK.href}
+          title={VIDEO_STRATEGY_LECTURES_LINK.title}
+          icon={VIDEO_STRATEGY_LECTURES_LINK.glyph}
+          count={counts?.[VIDEO_STRATEGY_LECTURES_LINK.id]}
+          isActive={activeId === VIDEO_STRATEGY_LECTURES_LINK.id || browsingLectures}
         />
 
-        {[VIDEO_COLLEGE_LINK, ...VIDEO_FORMAT_LINKS].map((link) => (
-          <TreeItem
-            key={link.id}
-            level={2}
-            href={link.href}
-            title={link.title}
-            icon={link.glyph}
-            count={counts?.[link.id]}
-            exactCount={link.exactCount}
-            isActive={activeId === link.id}
-          />
-        ))}
+        <TreeItem
+          level={2}
+          href={VIDEO_GOAT_LINK.href}
+          title={VIDEO_GOAT_LINK.title}
+          icon={VIDEO_GOAT_LINK.glyph}
+          count={counts?.[VIDEO_GOAT_LINK.id]}
+          isActive={activeId === VIDEO_GOAT_LINK.id}
+        />
 
         <TreeItem
           level={2}

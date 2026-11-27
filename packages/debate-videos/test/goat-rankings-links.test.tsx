@@ -25,6 +25,12 @@ describe("GoatRankingsLinks", () => {
     expect(html.match(/<a /g)).toHaveLength(4);
   });
 
+  it("shows no visible \"GOAT rankings:\" label but keeps an accessible name", () => {
+    const html = renderToStaticMarkup(<GoatRankingsLinks />);
+    expect(html).not.toContain("GOAT rankings");
+    expect(html).toMatch(/<nav[^>]*aria-label="Greatest of all time rankings"/);
+  });
+
   it("wraps on narrow screens", () => {
     expect(renderToStaticMarkup(<GoatRankingsLinks />)).toMatch(/<nav[^>]*class="[^"]*flex-wrap/);
   });

@@ -22,6 +22,7 @@ const categories = [
   { key: "novice___introductory", label: "Novice & Introductory", count: 716, maxViews: 1 },
   { key: "topic_lectures", label: "Topic Lectures", count: 312, maxViews: 1 },
   { key: "wsd", label: "WSD", count: 32, maxViews: 1 },
+  { key: "nsda_speech", label: "NSDA Speech", count: 40, maxViews: 1 },
   { key: "brand_new", label: "Brand New", count: 3, maxViews: 1 },
 ];
 
@@ -38,7 +39,27 @@ describe("lecture category sections", () => {
     expect(sectionOf(html, "Strategy")).toContain("Negative Strategy");
     expect(sectionOf(html, "Topics &amp; ideas")).toContain("Topic Lectures");
     expect(sectionOf(html, "Formats")).toContain('href="/lectures/wsd"');
+    expect(sectionOf(html, "Topics &amp; ideas")).toContain('href="/lectures/nsda_speech"');
+    expect(sectionOf(html, "Formats")).not.toContain("NSDA Speech");
     expect(sectionOf(html, "More")).toContain("Brand New");
+  });
+
+  it("shows only the Formats section on the rounds scope", () => {
+    const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories, scope: "rounds" }));
+    expect(sectionOf(html, "Formats")).toContain('href="/lectures/wsd"');
+    for (const title of ["Getting started", "Strategy", "Topics &amp; ideas", "More"]) {
+      expect(html).not.toContain(`<section aria-label="${title}"`);
+    }
+  });
+
+  it("leaves the Formats section and the format badges off the lectures scope", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, { categories, scope: "lectures", formatCounts: { college: 4 } }),
+    );
+    expect(html).not.toContain('<section aria-label="Formats"');
+    expect(html).not.toContain('href="/videos/college"');
+    expect(html).not.toContain('href="/lectures/wsd"');
+    expect(sectionOf(html, "Strategy")).toContain("Negative Strategy");
   });
 
   it("has no All Lectures card", () => {
@@ -47,7 +68,7 @@ describe("lecture category sections", () => {
     expect(html).not.toContain('href="/lectures"');
   });
 
-  it("leads with the four main category badges, each 200px wide", () => {
+  it("leads with the four main category badges, each 350px wide", () => {
     const html = renderToStaticMarkup(
       createElement(LectureCategoryGridGallery, { categories, formatCounts: { college: 1400, parli: 15 } }),
     );
@@ -58,7 +79,7 @@ describe("lecture category sections", () => {
     expect([...hrefs].sort((a, b) => a - b)).toEqual(hrefs);
     expect(hrefs[3]).toBeLessThan(html.indexOf('<section aria-label="Getting started"'));
     expect(html.slice(0, html.indexOf('<section aria-label="Getting started"'))).not.toContain("/videos/parli");
-    expect(html.match(/w-\[200px\]/g)).toHaveLength(4);
+    expect(html.match(/w-\[350px\]/g)).toHaveLength(4);
     expect(html).toContain("College Policy");
     expect(html).toContain("Individual");
     expect(html).toContain("Forum");
@@ -86,6 +107,16 @@ describe("lecture category sections", () => {
     expect(html).not.toContain(">Public Forum<");
   });
 
+  it("files Round Analysis under Topics & ideas, not Strategy", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, {
+        categories: [...categories, { key: "round_analysis", label: "Round Analysis", count: 17, maxViews: 1 }],
+      }),
+    );
+    expect(sectionOf(html, "Topics &amp; ideas")).toContain('href="/lectures/round_analysis"');
+    expect(sectionOf(html, "Strategy")).not.toContain("round_analysis");
+  });
+
   it("lays the sections out as narrow columns", () => {
     const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
     expect(html).toContain("minmax(9.5rem,12rem)");
@@ -101,6 +132,19 @@ describe("lecture category sections", () => {
     expect(formats).toContain("Open Super Debates");
     expect(formats).toContain('href="/lectures/open_super_debates"');
     expect(sectionOf(html, "More")).not.toContain("Open Super Debates");
+  });
+
+  it("lists Miscellaneous as its own section, after Formats", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, {
+        categories: [...categories, { key: "miscellaneous", label: "Miscellaneous", count: 7, maxViews: 1 }],
+      }),
+    );
+    const misc = sectionOf(html, "Miscellaneous");
+    expect(misc).toContain('href="/lectures/miscellaneous"');
+    expect(misc).toContain("Miscellaneous");
+    expect(html.indexOf('aria-label="Miscellaneous"')).toBeGreaterThan(html.indexOf('aria-label="Formats"'));
+    expect(sectionOf(html, "More")).not.toContain("Miscellaneous");
   });
 
   it("adds the collection links to Formats", () => {
