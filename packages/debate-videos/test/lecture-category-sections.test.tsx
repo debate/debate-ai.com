@@ -113,6 +113,19 @@ describe("lecture category sections", () => {
     expect(sectionOf(html, "More")).not.toContain("Open Super Debates");
   });
 
+  it("lists Miscellaneous as its own section, after Formats", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, {
+        categories: [...categories, { key: "miscellaneous", label: "Miscellaneous", count: 7, maxViews: 1 }],
+      }),
+    );
+    const misc = sectionOf(html, "Miscellaneous");
+    expect(misc).toContain('href="/lectures/miscellaneous"');
+    expect(misc).toContain("Miscellaneous");
+    expect(html.indexOf('aria-label="Miscellaneous"')).toBeGreaterThan(html.indexOf('aria-label="Formats"'));
+    expect(sectionOf(html, "More")).not.toContain("Miscellaneous");
+  });
+
   it("adds the collection links to Formats", () => {
     const html = renderToStaticMarkup(
       createElement(LectureCategoryGridGallery, {
