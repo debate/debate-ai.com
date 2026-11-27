@@ -36,9 +36,10 @@ export function opensElsewhere(event: {
  * Whether `pathname` is the help docs site at /docs, which `AppShell` renders
  * with only the site sidebar around it.
  *
- * A Topic Starter's `/docs/<topic code>/...` address is not: it is the
- * Debate Editor (`lib/reason-docs/topic-doc-paths`), an app page, so it
- * gets the app shell and a link to it from the help docs is a full page load.
+ * A Topic Starter's old `/docs/<topic code>/...` address is not: it 308s to
+ * `/<topic code>/...`, the Debate Editor (`lib/reason-docs/topic-doc-paths`),
+ * an app page, so it gets the app shell and a link to it from the help docs
+ * is a full page load.
  *
  * @param pathname - The current path, as `usePathname` reports it.
  */
