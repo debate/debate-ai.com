@@ -562,7 +562,7 @@ return (
               </div>
             ) : (
               <>
-                <RankingsFieldSummary dataset={dataset} />
+                <RankingsFieldSummary dataset={dataset} seasonYear={seasonYear} />
                 {isCurrentYear && datasetId && (
                   <HeadToHeadNetworkSection datasetId={datasetId} entries={dataset.entries} formatLabel={divConfig.label} />
                 )}
