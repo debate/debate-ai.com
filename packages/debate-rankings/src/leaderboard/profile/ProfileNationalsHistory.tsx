@@ -68,17 +68,8 @@ const TOURNAMENT_TAG: Record<Tournament, string> = {
   Glenbrooks: "bg-rose-500/15 text-rose-700 dark:text-rose-300",
 }
 
-/** "TOC, NDCA & Barkley nationals", naming the Barkley, the Cal and the Glenbrooks only when the school has a finish there. */
-function nationalsTitle(hasBarkley: boolean, hasCal: boolean, hasGlenbrooks = false): string {
-  const names = [
-    "TOC",
-    "NDCA",
-    ...(hasBarkley ? ["Barkley"] : []),
-    ...(hasCal ? ["Cal"] : []),
-    ...(hasGlenbrooks ? ["Glenbrooks"] : []),
-  ]
-  return `${names.slice(0, -1).join(", ")} & ${names.at(-1)} nationals`
-}
+/** "TOC, NDCA, Barkley, Cal & Glenbrooks nationals": always names all five tournaments, whichever the school has finishes at. */
+export const NATIONALS_SECTION_TITLE = "TOC, NDCA, Barkley, Cal & Glenbrooks nationals"
 
 /** `1 TOC title`, `2 NDCA elim finishes`. */
 function count(n: number, one: string, many: string): string | null {
@@ -94,11 +85,8 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
   if (rows.length === 0) return null
 
   const showEvent = new Set(rows.map((r) => r.event)).size > 1
-  const hasBarkley = rows.some((r) => r.tournament === "Barkley")
   const barkleyTitles = barkley.filter((r) => r.place === "Champion").length
-  const hasCal = rows.some((r) => r.tournament === "Cal")
   const calTitles = cal.filter((r) => r.place === "Champion").length
-  const hasGlenbrooks = rows.some((r) => r.tournament === "Glenbrooks")
   const glenbrooksTitles = glenbrooks.filter(isGlenbrooksTitle).length
   const stats = [
     count(toc?.titles ?? 0, "TOC title", "TOC titles"),
@@ -117,7 +105,7 @@ export function ProfileNationalsHistory({ school }: { school: string }) {
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <Trophy className="h-4 w-4" aria-hidden />
-          {nationalsTitle(hasBarkley, hasCal, hasGlenbrooks)}
+          {NATIONALS_SECTION_TITLE}
         </CardTitle>
         {stats.length > 0 && <p className="text-sm tabular-nums text-foreground">{stats.join(" · ")}</p>}
       </CardHeader>

@@ -35,7 +35,7 @@ function sectionOf(html: string, title: string): string {
 describe("lecture category sections", () => {
   it("files each category under its heading, unknown ones under More", () => {
     const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
-    expect(sectionOf(html, "Getting started")).toContain("Novice &amp; Introductory");
+    expect(sectionOf(html, "General")).toContain("Novice &amp; Introductory");
     expect(sectionOf(html, "Strategy")).toContain("Negative Strategy");
     expect(sectionOf(html, "Topics &amp; ideas")).toContain("Topic Lectures");
     expect(sectionOf(html, "Formats")).toContain('href="/lectures/wsd"');
@@ -47,7 +47,7 @@ describe("lecture category sections", () => {
   it("shows only the Formats section on the rounds scope", () => {
     const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories, scope: "rounds" }));
     expect(sectionOf(html, "Formats")).toContain('href="/lectures/wsd"');
-    for (const title of ["Getting started", "Strategy", "Topics &amp; ideas", "More"]) {
+    for (const title of ["General", "Strategy", "Topics &amp; ideas", "More"]) {
       expect(html).not.toContain(`<section aria-label="${title}"`);
     }
   });
@@ -77,8 +77,8 @@ describe("lecture category sections", () => {
     );
     expect(hrefs.every((index) => index > -1)).toBe(true);
     expect([...hrefs].sort((a, b) => a - b)).toEqual(hrefs);
-    expect(hrefs[3]).toBeLessThan(html.indexOf('<section aria-label="Getting started"'));
-    expect(html.slice(0, html.indexOf('<section aria-label="Getting started"'))).not.toContain("/videos/parli");
+    expect(hrefs[3]).toBeLessThan(html.indexOf('<section aria-label="General"'));
+    expect(html.slice(0, html.indexOf('<section aria-label="General"'))).not.toContain("/videos/parli");
     expect(html.match(/w-\[350px\]/g)).toHaveLength(4);
     expect(html).toContain("College Policy");
     expect(html).toContain("Individual");
@@ -117,9 +117,18 @@ describe("lecture category sections", () => {
     expect(sectionOf(html, "Strategy")).not.toContain("round_analysis");
   });
 
-  it("lays the sections out as narrow columns", () => {
+  it("lists each section's items as compact pills in a 2 to 4 column grid", () => {
     const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
-    expect(html).toContain("minmax(9.5rem,12rem)");
+    expect(html).toContain("grid-cols-2 sm:grid-cols-3 lg:grid-cols-4");
+    expect(html).toContain("rounded-full");
+    expect(html).not.toContain("minmax(9.5rem,12rem)");
+  });
+
+  it("keeps the top badges tight but their logos full size", () => {
+    const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
+    expect(html).toContain("p-1.5");
+    expect(html).not.toContain("gap-1 rounded-lg border-[0.75px] border-border bg-background p-3");
+    expect(html.match(/h-40 w-40/g)).toHaveLength(4);
   });
 
   it("shows Open Super Debates in Formats, linked by its slug", () => {
@@ -134,16 +143,17 @@ describe("lecture category sections", () => {
     expect(sectionOf(html, "More")).not.toContain("Open Super Debates");
   });
 
-  it("lists Miscellaneous as its own section, after Formats", () => {
+  it("lists Miscellaneous in General, after the other General categories", () => {
     const html = renderToStaticMarkup(
       createElement(LectureCategoryGridGallery, {
         categories: [...categories, { key: "miscellaneous", label: "Miscellaneous", count: 7, maxViews: 1 }],
       }),
     );
-    const misc = sectionOf(html, "Miscellaneous");
-    expect(misc).toContain('href="/lectures/miscellaneous"');
-    expect(misc).toContain("Miscellaneous");
-    expect(html.indexOf('aria-label="Miscellaneous"')).toBeGreaterThan(html.indexOf('aria-label="Formats"'));
+    const general = sectionOf(html, "General");
+    expect(general).toContain('href="/lectures/miscellaneous"');
+    expect(general).toContain(">7<");
+    expect(general.indexOf("/lectures/miscellaneous")).toBeGreaterThan(general.indexOf("/lectures/novice___introductory"));
+    expect(html).not.toContain('<section aria-label="Miscellaneous"');
     expect(sectionOf(html, "More")).not.toContain("Miscellaneous");
   });
 

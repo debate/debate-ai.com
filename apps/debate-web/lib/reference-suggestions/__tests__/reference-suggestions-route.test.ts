@@ -68,6 +68,7 @@ describe("/api/reference-quote-suggestions", () => {
 
   it("stores a suggestion from a signed-out guest, with the address only hashed", async () => {
     const res = await send(suggestion({ name: "Guest", note: "page 4" }));
+    // name and note are retired: sent by an old client, they are ignored
     expect(res.status).toBe(200);
 
     staff = true;
@@ -78,12 +79,15 @@ describe("/api/reference-quote-suggestions", () => {
       page: PAGE,
       refId: "ref-ackerman-2020",
       text: textFor(1),
-      name: "Guest",
-      note: "page 4",
       status: "pending",
       userId: null,
     });
-    const [row] = (await db.all(sql`SELECT ip_hash, user_agent FROM reference_text_suggestions`)) as { ip_hash: string; user_agent: string }[];
+    expect(suggestions[0]).not.toHaveProperty("name");
+    expect(suggestions[0]).not.toHaveProperty("note");
+    const [row] = (await db.all(
+      sql`SELECT ip_hash, user_agent, name, note FROM reference_text_suggestions`,
+    )) as { ip_hash: string; user_agent: string; name: string; note: string }[];
+    expect(row).toMatchObject({ name: "", note: "" });
     expect(row!.ip_hash).toMatch(/^[0-9a-f]{64}$/);
     expect(row!.ip_hash).not.toContain("203.0.113.1");
   });

@@ -195,8 +195,6 @@ export async function listSuggestions(db: Database, status?: SuggestionStatus): 
       refId: referenceTextSuggestions.refId,
       title: referenceTextSuggestions.title,
       text: referenceTextSuggestions.text,
-      note: referenceTextSuggestions.note,
-      name: referenceTextSuggestions.name,
       status: referenceTextSuggestions.status,
       userId: referenceTextSuggestions.userId,
       userName: user.name,
