@@ -27,6 +27,8 @@ import { topicDisplayLines } from "@debate-ai/rankings/src/topics/debate-topics"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { WatchProgressBadge } from "./WatchProgressBadge"
+import { FormatBadge } from "../grid/FormatBadge"
+import { demoStyleOfTuple } from "../../../data/demo-style"
 import { VideoDuration } from "./VideoDuration"
 import { useWatchHistoryEntry } from "../../../hooks/useWatchHistory"
 import type { VideoType } from "../../../types/videos"
@@ -325,6 +327,9 @@ export function VideoCardActions({
               </div>
             </TooltipContent>
           </Tooltip>
+
+          {/* A demo debate says which format it demonstrates, as a round does */}
+          {video && <FormatBadge style={demoStyleOfTuple(video) ?? undefined} />}
 
           {/* View count */}
           <span className="inline-flex items-center gap-1 shrink-0 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">

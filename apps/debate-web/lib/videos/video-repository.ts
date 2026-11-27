@@ -52,6 +52,7 @@ import {
   videoRowToIndexTuple,
   type VideoIndexResponse,
 } from "@debate-ai/videos/src/data/video-index";
+import { DEMO_CATEGORY_KEY, DEMO_STYLE_PHRASES } from "@debate-ai/videos/src/data/demo-style";
 import { getVideoRowsFromJson } from "@debate-ai/webview/lib/videos/video-json-source";
 import {
   legacyVideoRouteHref,
@@ -288,6 +289,35 @@ function competitorCondition(phrases: string[]): SQL {
 }
 
 /**
+ * The SQL twin of `resolveDemoStyle` for an unstyled demo debate: the admin's
+ * `demo_style` pick, else the format the title names (`DEMO_STYLE_PHRASES`,
+ * first style with a phrase in the title wins). Compared against the same
+ * normalized title as `phraseCondition`, so both backends agree on every row.
+ */
+function demoStyleSql(): SQL {
+  const arms = DEMO_STYLE_PHRASES.map(({ style, phrases }) => {
+    const hit = or(...phrases.map((phrase) => sql`demo_title.padded LIKE ${literal(`% ${phrase} %`)}`))!;
+    return sql`WHEN ${hit} THEN ${sql.raw(String(style))}`;
+  });
+  // The normalized title is computed once, in a derived table, rather than
+  // once per phrase: repeating it overflows SQLite's parser stack.
+  return sql`(SELECT CASE ${sql.join(arms, sql` `)} END FROM (SELECT ' ' || ${competitorText(videos.title)} || ' ' AS padded) AS demo_title)`;
+}
+
+/** Whether a request is scoped to the demo-debate category. */
+function isDemoScope(params: VideoQueryParams): boolean {
+  return !!params.categoryKey && normalizeCategoryKey(params.categoryKey) === DEMO_CATEGORY_KEY;
+}
+
+/**
+ * The style column a request filters and counts on: the `style` column, or,
+ * inside the demo category, an unstyled demo's own format as well.
+ */
+function styleSql(params: VideoQueryParams): SQL {
+  return isDemoScope(params) ? sql`coalesce(${videos.style}, ${videos.demoStyle}, ${demoStyleSql()})` : sql`${videos.style}`;
+}
+
+/**
  * Translates {@link VideoQueryParams} into SQL predicates.
  *
  * @param params - Query parameters.
@@ -321,12 +351,18 @@ function buildConditions(
     conditions.push(sql`${videos.tournament} LIKE ${likePattern(params.tournament)} ESCAPE '\\'`);
   }
   if (params.styles && params.styles.length) {
-    conditions.push(inArray(videos.style, params.styles));
+    conditions.push(
+      isDemoScope(params)
+        ? sql`${styleSql(params)} IN (${sql.join(params.styles.map((style) => sql`${style}`), sql`, `)})`
+        : inArray(videos.style, params.styles),
+    );
   }
   const phrases = competitorPhrases(params.competitors);
   if (phrases.length) conditions.push(competitorCondition(phrases));
   if (!options.skipStyle && params.style != null) {
-    conditions.push(eq(videos.style, params.style));
+    conditions.push(
+      isDemoScope(params) ? sql`${styleSql(params)} = ${params.style}` : eq(videos.style, params.style),
+    );
   }
   if (!options.skipYear) {
     const season = parseSeasonFilter(params.year);
@@ -399,10 +435,10 @@ async function facetsFromSql(db: any, params: VideoQueryParams): Promise<VideoFa
       .where(whereClause(yearConditions))
       .groupBy(videos.seasonYear),
     db
-      .select({ style: videos.style, value: count() })
+      .select({ style: styleSql(params).as("style"), value: count() })
       .from(videos)
       .where(whereClause(styleConditions))
-      .groupBy(videos.style),
+      .groupBy(styleSql(params)),
   ]);
 
   const yearCounts: Record<string, number> = {};

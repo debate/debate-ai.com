@@ -64,6 +64,9 @@ const fixtureRows: VideoRow[] = (() => {
     if (row.videoId === "Afl7_hl-H0c") Object.assign(row, { stackKey: "qx7Xx_6exzk", stackPosition: 1 });
     if (row.videoId === "toc2024pfF1") Object.assign(row, { stackKey: "toc2024pfF1", stackPosition: 0 });
   }
+  // An admin-picked format outranks the title; the seed leaves the column
+  // alone, so `beforeAll` stores it in the database too.
+  for (const row of rows) if (row.videoId === "demoPick001") row.demoStyle = 3;
   return rows;
 })();
 
@@ -88,6 +91,7 @@ const ids = (tuples: VideoTuple[]) => tuples.map((t) => t[0]);
 beforeAll(async () => {
   db = drizzle(await freshSchemaClient(), { schema });
   await seedVideosIntoDb(db);
+  await db.update(videos).set({ demoStyle: 3 }).where(eq(videos.videoId, "demoPick001"));
 });
 
 describe("getVideoPage on the SQL backend", () => {
@@ -104,6 +108,11 @@ describe("getVideoPage on the SQL backend", () => {
     ["legacy season", { year: "legacy" }],
     ["a tournament name, any year", { tournament: "NDT" }],
     ["a category key", { categoryKey: "kritiks" }],
+    ["the demo category", { categoryKey: "demo_debates" }],
+    ["one demo format", { categoryKey: "demo_debates", style: 2 }],
+    ["a demo format the admin picked", { categoryKey: "demo_debates", style: 3 }],
+    ["several demo formats", { categoryKey: "demo_debates", styles: [1, 3] }],
+    ["a demo format outside the demo category", { categoryKey: "kritiks", style: 2 }],
     ["a category that is also a style (WSD)", { categoryKey: "wsd" }],
     ["Miscellaneous, which also lists unsorted lectures", { categoryKey: "miscellaneous" }],
     ["a one-word search", { q: "michigan" }],
@@ -156,6 +165,19 @@ describe("getVideoPage on the SQL backend", () => {
     const params: VideoQueryParams = { source: "all", style: 4, year: "2026" };
     const page = await repo.getVideoPage(params, true);
     expect(page.facets).toEqual(computeVideoFacets(fixtureRows, params));
+  });
+
+  it("counts a demo category's formats, guessed from titles or picked", async () => {
+    for (const params of [
+      { categoryKey: "demo_debates" },
+      { categoryKey: "demo_debates", style: 2 },
+      { categoryKey: "demo_debates", year: "2025" },
+    ] as VideoQueryParams[]) {
+      const page = await repo.getVideoPage({ source: "all", ...params }, true);
+      expect(page.facets).toEqual(computeVideoFacets(fixtureRows, params));
+    }
+    const facets = (await repo.getVideoPage({ categoryKey: "demo_debates" }, true)).facets!;
+    expect(facets.styleCounts).toEqual({ 1: 1, 2: 2, 3: 1 });
   });
 
   it("omits facets unless asked", async () => {

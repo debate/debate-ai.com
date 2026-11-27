@@ -25,6 +25,7 @@ export const SUGGESTABLE_FIELDS = [
   "publishedAt",
   "description",
   "style",
+  "demoStyle",
   "category",
   "tournament",
   "roundLevel",
@@ -66,9 +67,9 @@ export function sanitizeProposedChanges(input: unknown): LibraryVideoPatch {
     if (!Object.hasOwn(raw, field)) continue;
     const value = raw[field];
 
-    if (field === "style") {
-      if (value === null) patch.style = null;
-      else if (STYLES.includes(Number(value))) patch.style = Number(value);
+    if (field === "style" || field === "demoStyle") {
+      if (value === null) patch[field] = null;
+      else if (STYLES.includes(Number(value))) patch[field] = Number(value);
       continue;
     }
     if (field === "affWin") {

@@ -33,6 +33,12 @@ describe("sanitizeProposedChanges", () => {
     expect(sanitizeProposedChanges({ style: null })).toEqual({ style: null });
   });
 
+  it("accepts a demo format only when it is a known style", () => {
+    expect(sanitizeProposedChanges({ demoStyle: 2 })).toEqual({ demoStyle: 2 });
+    expect(sanitizeProposedChanges({ demoStyle: null })).toEqual({ demoStyle: null });
+    expect(sanitizeProposedChanges({ demoStyle: 99 })).toEqual({});
+  });
+
   it("ignores non-object input", () => {
     expect(sanitizeProposedChanges(null)).toEqual({});
     expect(sanitizeProposedChanges(["title"])).toEqual({});

@@ -131,6 +131,15 @@ describe("buildLibraryUpdate", () => {
     expect(update.style).toBeNull();
   });
 
+  it("stores a demo debate's format, and clears it on a blank or unknown pick", () => {
+    expect((buildLibraryUpdate(current, { demoStyle: "2" }) as any).demoStyle).toBe(2);
+    expect((buildLibraryUpdate(current, { demoStyle: 3 }) as any).demoStyle).toBe(3);
+    expect((buildLibraryUpdate(current, { demoStyle: null }) as any).demoStyle).toBeNull();
+    expect((buildLibraryUpdate(current, { demoStyle: "" }) as any).demoStyle).toBeNull();
+    expect((buildLibraryUpdate(current, { demoStyle: 99 }) as any).demoStyle).toBeNull();
+    expect(buildLibraryUpdate(current, { title: "New title" })).not.toHaveProperty("demoStyle");
+  });
+
   it("flags the row as admin-edited so a re-seed leaves it alone", () => {
     const update = buildLibraryUpdate(current, { title: "New title" }) as any;
 
