@@ -142,7 +142,7 @@ Opt-in and fail-open: with either key missing the gate never runs (`lib/turnstil
 | `D1_DATABASE_NAME` | Database name for the migration and row-count scripts. Default `debate-ai-db`. | `.github/scripts/migrate-d1.ts`, `.github/scripts/watch-counts.ts` |
 | `DEPLOY_UPLOAD_ATTEMPTS` | Retry count for `deploy:upload` (`wrangler versions upload`). | `.github/scripts/deploy-upload.mjs` |
 | `DEBATE_CARDS_ENDPOINT` / `DEBATE_ADMIN_COOKIE` | Target endpoint and admin cookie for the `debate-cards-upload` CLI (with `CARD_IMPORT_TOKEN`). | `packages/debate-search-evidence/src/lib/parquet-upload-cli-options.ts` |
-| `GITHUB_TOKEN` | GitHub API access in release workflows; on the Worker, a fallback source for the "Last revised" date on `/docs` pages when the build had no full Git history (normally the date comes from Git at build time, `lib/mdx/git-last-modified.ts`, which fetches the history itself when the build clone is shallow). | `.github/workflows/*`, `packages/debate-help-docs/routes/docs-page.tsx` |
+| `GITHUB_TOKEN` | GitHub API access in release workflows; on the Worker, a fallback source for the "last updated" date in the page Info button on `/docs` pages when the build had no full Git history (normally the date comes from Git at build time, `lib/mdx/git-last-modified.ts`, which fetches the history itself when the build clone is shallow). | `.github/workflows/*`, `packages/debate-help-docs/routes/docs-page.tsx` |
 
 `packages/debate-round-practice-ai` also contains a standalone `cf-app` and `frontend` with their
 own variables (`JWT_SECRET`, `VITE_API_URL`, `VITE_BASE_URL`, `VITE_GOOGLE_CLIENT_ID`, …; see

@@ -23,7 +23,6 @@ import { isSynergySlayerPage, SYNERGY_SLAYER_CLASS } from '../lib/mdx/remark-deb
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { getGithubLastEdit } from 'fumadocs-core/content/github';
 import { DocsPageHeader } from '../components/fumadocs/layout/docs-page-header';
-import { LastRevised } from '../components/fumadocs/layout/last-revised';
 import { getPageBreadcrumbs } from '../lib/fumadocs/page-breadcrumbs';
 import { InlinePageToc } from '../components/fumadocs/layout/inline-page-toc';
 import { hasInlineToc } from '../lib/fumadocs/inline-toc';
@@ -103,8 +102,8 @@ export default async function Page(props: {
   // Card underlining and highlights, and their toggle, are Synergy Slayer only.
   const synergySlayer = isSynergySlayerPage(page.path);
   // The Synergy-style papers (Synergy Slayer, Synergy Slayer of Critiques,
-  // Collective Consciousness) read as finished papers: no "Last revised" line.
-  const lastRevised = synergySlayer
+  // Collective Consciousness) read as finished papers: no last-edit date.
+  const lastEdited = synergySlayer
     ? undefined
     : ((loaded as { lastModified?: Date }).lastModified ?? (await lastEditFor(page.path)));
   // Reading mode shows every page of the paper (this page's folder) at once.
@@ -112,12 +111,12 @@ export default async function Page(props: {
   const readingTitle = synergySlayer ? (sectionTitle(page.path) ?? data.title) : '';
   // The Info button's counts, from the processed Markdown (no work in the browser).
   const stats = pageStats(await page.data.getText('processed'), toc);
-  const edited = (loaded as { lastModified?: Date | string }).lastModified ?? lastRevised;
+  const edited = (loaded as { lastModified?: Date | string }).lastModified ?? lastEdited;
   const lastUpdated = edited ? new Date(edited).toISOString() : undefined;
   const breadcrumbs = getPageBreadcrumbs(source.pageTree, page.url);
 
-  // Fumadocs' own header stays off: ours (breadcrumbs with hover dropdowns,
-  // then the title) replaces it, and a body `#` heading that repeats the
+  // Fumadocs' own header stays off: ours (the title; the breadcrumbs are
+  // hidden, the Navigation button has them) replaces it, and a body `#` heading that repeats the
   // title is dropped at compile time (lib/mdx/remark-drop-title-heading.ts).
   return (
     <DocsPage
@@ -195,8 +194,6 @@ export default async function Page(props: {
         ) : (
           <MDX components={getMDXComponents()} />
         )}
-        {/* At the end of every page, after the content (none on the papers). */}
-        <LastRevised date={lastRevised} />
         {synergySlayer && <PageSuggestedQuestions key={page.url} />}
       </DocsBody>
     </DocsPage>
