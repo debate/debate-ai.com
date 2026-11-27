@@ -431,7 +431,7 @@ describe("college participation point", () => {
     })
   })
 
-  it("renders the participation line and the list description", () => {
+  it("renders the college line and list description without the participation point text", () => {
     const team = (college: HsAllTimeTeam["college"]): HsAllTimeTeam => ({
       rank: 1,
       event: "Policy",
@@ -457,10 +457,10 @@ describe("college participation point", () => {
     const html = renderToStaticMarkup(
       <HsAllTimeTeamsRankings lists={{ Policy: [team(college)], "Lincoln-Douglas": [], "Public Forum": [] }} schoolKey={null} collegeLoaded />,
     )
-    expect(html).toContain("(20 NDT pts + 1 pt participation)")
-    expect(html).toContain("(participated, 1 pt)")
-    expect(html).toContain("1 college point (at the same share) for each debater who competed in college")
-    expect(collegeNote(college[1])).toBe("participated, 1 pt")
-    expect(collegeNote(college[0])).toBe("20 NDT pts + 1 pt participation")
+    expect(html).toContain("(20 NDT pts)")
+    expect(html).toContain("(participated)")
+    expect(html).not.toMatch(/participation|college point/i)
+    expect(collegeNote(college[1])).toBe("participated")
+    expect(collegeNote(college[0])).toBe("20 NDT pts")
   })
 })
