@@ -224,8 +224,10 @@ debate-ai.com's changes to it, in two forms:
   `exportDocxBlob` / `outlineOf` / `cardsOf` helpers merged in from the former
   `debate-editor-cm-adapter` package and exported from `@debate-ai/editor/engine`.
 
-The toolbar is upstream's: one strip of every panel, not paged into tabs or split into
-sections, with the dropdown `MenuBar` above it. Debate Editor's settings categories are
+The toolbar is upstream's strip of every panel, not paged into tabs, laid out as two
+balanced rows of compact buttons (`overlay/react/ribbon-template.ts`,
+`overlay/editor/ribbon-shadcn.css`) that scroll together left↔right in a narrow column,
+with the dropdown `MenuBar` above it. Debate Editor's settings categories are
 exported for host pages (`@debate-ai/editor/settings-tabs`, `@debate-ai/editor/settings-section`)
 and listed in the site's Settings sidebars.
 
