@@ -149,11 +149,12 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
       "Public Forum",
       "Philosophy & IR Theory",
       "Documentaries & Culture",
+      "NSDA Speech",
     ],
   },
   {
     title: "Formats",
-    labels: ["WSD", "NSDA Speech", "Demo Debates", "Open Super Debates", "Congress", "Speech"],
+    labels: ["WSD", "Demo Debates", "Open Super Debates", "Congress", "Speech"],
   },
   {
     title: "Miscellaneous",
