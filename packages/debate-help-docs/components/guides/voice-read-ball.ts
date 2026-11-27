@@ -1,13 +1,14 @@
 /**
  * @file voice-read-ball.ts
- * @description The little light that follows the word the Voice reader is
- * saying (`voice-read-button.tsx`): a ball under the active word that glides
- * from word to word. Styled by `[data-voice-ball]` in `styles/docs.css`.
- * It keeps the word in view, scrolling the page when the word leaves it.
+ * @description The marker that follows the word the Voice reader is saying
+ * (`voice-read-button.tsx`): a spinner (`voice-read-spinner.tsx`) under the
+ * active word that glides from word to word. Positioned by `[data-voice-ball]`
+ * in `styles/docs.css`. It keeps the word in view, scrolling the page when the
+ * word leaves it.
  */
 import type { VoiceWord } from "./voice-read-text"
 
-/** Set on the ball; `styles/docs.css` draws it. */
+/** Set on the ball; `styles/docs.css` positions it. */
 export const BALL_ATTRIBUTE = "data-voice-ball"
 /** Words nearer than this to the top or bottom of the window are scrolled back into view. */
 const VIEW_MARGIN = 96
@@ -37,12 +38,15 @@ function wordRect(word: VoiceWord): DOMRect | null {
   return rect.width > 0 || rect.height > 0 ? rect : null
 }
 
-/** Makes the ball (hidden until the first word). */
-export function createVoiceBall(doc: Document = document): VoiceBall {
+/**
+ * Makes the ball (hidden until the first word). `mount` fills it with what is
+ * drawn (the spinner) and returns the function that removes that again.
+ */
+export function createVoiceBall(doc: Document = document, mount?: (host: HTMLElement) => () => void): VoiceBall {
   const ball = doc.createElement("span")
   ball.setAttribute(BALL_ATTRIBUTE, "hidden")
-  ball.setAttribute("aria-hidden", "true")
   doc.body.appendChild(ball)
+  const unmount = mount?.(ball)
   let placed = false
   let lastScroll = 0
 
@@ -73,6 +77,7 @@ export function createVoiceBall(doc: Document = document): VoiceBall {
       placed = false
     },
     destroy() {
+      unmount?.()
       ball.remove()
     },
   }
