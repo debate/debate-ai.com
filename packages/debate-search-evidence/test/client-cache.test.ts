@@ -102,3 +102,22 @@ describe("searchNames", () => {
     expect(await mod.searchNames("alvarez")).toContain("Bob Alvarez");
   });
 });
+
+describe("searchAuthors", () => {
+  it("asks the authors endpoint for a prefix of two letters or more", async () => {
+    const { mod, fetchMock } = await loadModule(() => ({ ok: true, body: { authors: ["Chilton", "Chin"] } }));
+    expect(await mod.searchAuthors("Ch", 5)).toEqual(["Chilton", "Chin"]);
+    expect(fetchMock).toHaveBeenCalledWith("/api/search/authors?q=Ch&limit=5");
+  });
+
+  it("does not call the server for a single letter", async () => {
+    const { mod, fetchMock } = await loadModule();
+    expect(await mod.searchAuthors("C")).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("returns no suggestions when the endpoint fails", async () => {
+    const { mod } = await loadModule(() => ({ ok: false, body: {} }));
+    expect(await mod.searchAuthors("Chi")).toEqual([]);
+  });
+});

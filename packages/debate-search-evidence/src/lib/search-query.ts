@@ -14,6 +14,7 @@ export const EMPTY_FILTERS: SearchFilters = {
   year: "",
   school: "",
   team: "",
+  author: "",
   tournament: "",
   event: "",
   searchHighlighted: false,
@@ -44,6 +45,7 @@ const TEXT_FILTER_KEYS = [
   "year",
   "school",
   "team",
+  "author",
   "tournament",
 ] as const satisfies readonly (keyof SearchFilters)[];
 

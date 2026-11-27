@@ -3786,7 +3786,7 @@
     {
       "name": "searchCards",
       "title": "Search debate research cards",
-      "description": "Search debate research cards\n\nFull-text search across debate evidence cards with filtering by year, school,\nteam, tournament, and event. Supports scoped search (highlighted text only,\nunderlined text only, summaries, block/file titles, or all text). Results\ncan be sorted by relevance, read count, year, or highlight length.\n\nGET /api/search",
+      "description": "Search debate research cards\n\nFull-text search across debate evidence cards with filtering by year, school,\nteam, tournament, author, and event. Supports scoped search (highlighted text only,\nunderlined text only, summaries, block/file titles, or all text). Results\ncan be sorted by relevance, read count, year, or highlight length.\n\nGET /api/search",
       "method": "get",
       "pathTemplate": "/search",
       "executionParameters": [
@@ -3812,6 +3812,10 @@
         },
         {
           "name": "tournament",
+          "in": "query"
+        },
+        {
+          "name": "author",
           "in": "query"
         },
         {
@@ -3866,6 +3870,10 @@
           "tournament": {
             "type": "string",
             "description": "Filter by tournament name (case-insensitive partial match)."
+          },
+          "author": {
+            "type": "string",
+            "description": "Filter by the first author's last name, read from the start of each card's short cite (case-insensitive prefix match, e.g. `Chilton` matches `Chilton 18`)."
           },
           "event": {
             "type": "string",

@@ -46,6 +46,16 @@ describe("buildSearchParams", () => {
     expect(params.get("school")).toBe("Michigan");
     expect(params.has("team")).toBe(false);
     expect(params.has("tournament")).toBe(false);
+    expect(params.has("author")).toBe(false);
+  });
+
+  it("sends the author filter as a plain parameter", () => {
+    const params = buildSearchParams({
+      ...base,
+      filters: { ...EMPTY_FILTERS, author: "Chilton" },
+    });
+
+    expect(params.get("author")).toBe("Chilton");
   });
 
   it("treats the 'all' event sentinel as no event filter", () => {

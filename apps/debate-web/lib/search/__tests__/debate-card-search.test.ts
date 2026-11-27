@@ -168,6 +168,22 @@ describe("buildCardSearchWhere", () => {
     await expect(search({ query: "system", event: "CX" })).resolves.toEqual([]);
   });
 
+  it("filters by the first author's last name, completing a prefix, ignoring case", async () => {
+    await expect(search({ author: "Chilton" })).resolves.toEqual([1]);
+    await expect(search({ author: "peterson" })).resolves.toEqual([2]);
+    await expect(search({ author: "Chi" })).resolves.toEqual([1]);
+    await expect(search({ author: "Smith" })).resolves.toEqual([]);
+  });
+
+  it("does not match an author's name from the middle of a cite", async () => {
+    await expect(search({ author: "ilton" })).resolves.toEqual([]);
+  });
+
+  it("combines the author filter with a term", async () => {
+    await expect(search({ query: "deterrence", author: "Chilton" })).resolves.toEqual([1]);
+    await expect(search({ query: "deterrence", author: "Peterson" })).resolves.toEqual([]);
+  });
+
   it("matches nothing for a debater-name filter the corpus cannot answer", async () => {
     await expect(search({ team: "Yusoff" })).resolves.toEqual([]);
   });
