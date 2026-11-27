@@ -250,6 +250,13 @@ describe("SchoolProfilePage", () => {
     expect(root.querySelector("[data-trademark-info]")).toBeNull();
     // Harker's info block: city, state, type and website from the bundled top-50 list.
     expect(root.querySelector("header [data-school-location]")?.textContent).toBe("San Jose, California");
+    const mapLink = root.querySelector<HTMLAnchorElement>("header a[data-school-location]");
+    const mapUrl = new URL(mapLink!.href);
+    expect(mapUrl.origin + mapUrl.pathname).toBe("https://www.google.com/maps");
+    expect(mapUrl.searchParams.get("q")).toBe("Harker, San Jose, California");
+    expect(mapUrl.searchParams.get("t")).toBe("k");
+    expect(mapLink!.target).toBe("_blank");
+    expect(mapLink!.rel).toContain("noopener");
     expect(root.querySelector("header [data-school-type]")?.textContent).toBe("Private");
     expect(root.querySelector("header a[data-school-website]")?.getAttribute("href")).toBe("https://harker.org");
     expect(root.querySelector("header p")?.textContent).toBe("Label hsld · Label hspf");

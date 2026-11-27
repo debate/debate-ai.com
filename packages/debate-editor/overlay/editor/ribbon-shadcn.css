@@ -1,0 +1,184 @@
+/*
+ * Toolbar skin: lets the shadcn `Button` classes that `applyShadcnToRibbon`
+ * puts on every ribbon <button> actually apply, and lays the panels out as
+ * one row of 2rem controls.
+ *
+ * The engine's ribbon CSS (`style.css`) is unlayered, so it outranks the
+ * Tailwind utilities (which live in `@layer utilities`). `all: revert-layer`
+ * on the shadcn-classed controls rolls their cascade back to the layered
+ * styles — i.e. only the shadcn classes — and the doubled attribute selector
+ * out-ranks the engine's `#ribbon .x button.y` rules without `!important`.
+ * Inline styles (the shrink waterfall toggling `display`, colour bars) are
+ * not touched by the reset.
+ *
+ * Loaded after `style.css` / `icons.css` (see `singleton.ts`).
+ */
+
+.dec-cardmirror-root {
+  --ribbon-height: 3.25rem;
+}
+
+#ribbon.dec-ribbon {
+  background: color-mix(in oklab, var(--pmd-c-surface) 94%, var(--foreground));
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 8%, transparent);
+}
+
+#ribbon.dec-ribbon button[data-slot="button"][data-slot="button"],
+#ribbon.dec-ribbon input[data-slot="input"][data-slot="input"] {
+  all: revert-layer;
+}
+
+#ribbon.dec-ribbon button[hidden][data-slot="button"] {
+  display: none !important;
+}
+
+#ribbon.dec-ribbon .ribbon-strip {
+  gap: 0.25rem;
+  padding-inline: 0.5rem;
+}
+
+#ribbon.dec-ribbon .ribbon-section,
+#ribbon.dec-ribbon .ribbon-left {
+  gap: 0.25rem;
+}
+
+/* Panels: every grid becomes a single row; `display` is left to the engine
+   so its hide rules (single-doc speech stack, `.hidden`, the shrink
+   waterfall) keep working. */
+#ribbon.dec-ribbon :is(
+  .ribbon-button-stack,
+  .ribbon-formatting-panel,
+  .ribbon-cite-panel,
+  .ribbon-color-panel,
+  .ribbon-doc-ops-panel,
+  .ribbon-numbering-panel,
+  .ribbon-doc-menu-panel,
+  .ribbon-format-menu-panel,
+  .ribbon-right-grid
+) {
+  grid-template-columns: none;
+  grid-template-rows: none;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  align-items: center;
+  align-content: center;
+  gap: 0.25rem;
+  padding-left: 0.5rem;
+  margin-left: 0.125rem;
+  border-left: 1px solid var(--border);
+}
+
+#ribbon.dec-ribbon .ribbon-left > :first-child {
+  padding-left: 0;
+  margin-left: 0;
+  border-left: 0;
+}
+
+/* Split buttons: colour pickers and the font-size field share one outline. */
+#ribbon.dec-ribbon .ribbon-color-control {
+  height: 2rem;
+  align-items: stretch;
+  border: 1px solid var(--input);
+  border-radius: calc(var(--radius, 0.5rem) - 2px);
+  background: var(--background);
+  box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+
+#ribbon.dec-ribbon .ribbon-color-control:focus-within {
+  border-color: var(--ring);
+}
+
+#ribbon.dec-ribbon .ribbon-color-glyph {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+#ribbon.dec-ribbon #fontcolor-glyph {
+  font-size: 0.95rem;
+}
+
+#ribbon.dec-ribbon .ribbon-color-bar {
+  width: 1rem;
+  height: 3px;
+  margin-top: 0;
+  border-radius: 1px;
+}
+
+#ribbon.dec-ribbon .ribbon-color-main.pmd-paintbrush-active[data-slot="button"][data-slot="button"] {
+  background: color-mix(in oklab, var(--primary) 18%, transparent);
+  color: var(--primary);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--primary) 45%, transparent);
+}
+
+#ribbon.dec-ribbon .ribbon-color-main.pmd-paintbrush-active + .ribbon-color-arrow[data-slot="button"][data-slot="button"] {
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+}
+
+#ribbon.dec-ribbon .ribbon-font-size-input[data-slot="input"][data-slot="input"] {
+  font-family: inherit;
+  color: var(--foreground);
+}
+
+#ribbon.dec-ribbon .ribbon-font-size-control.pmd-font-size-direct .ribbon-font-size-input[data-slot="input"][data-slot="input"] {
+  color: var(--pmd-c-error);
+}
+
+#ribbon.dec-ribbon .ribbon-font-size-input[data-slot="input"][data-slot="input"]::-webkit-outer-spin-button,
+#ribbon.dec-ribbon .ribbon-font-size-input[data-slot="input"][data-slot="input"]::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+#ribbon.dec-ribbon .ribbon-font-size-step-arrow {
+  margin-left: 0.1rem;
+}
+
+/* Engine state hooks that the reset wipes: autosave, save flash, due dot. */
+#ribbon.dec-ribbon button.pmd-save-saving[data-slot="button"][data-slot="button"] {
+  color: var(--pmd-c-warning, var(--primary));
+  animation: pmd-save-saving-pulse 900ms ease-in-out infinite;
+}
+
+#ribbon.dec-ribbon button.pmd-save-flash[data-slot="button"][data-slot="button"] {
+  color: var(--pmd-c-success, var(--primary));
+  animation: pmd-save-flash-pulse 1400ms ease-out;
+}
+
+#ribbon.dec-ribbon .ribbon-doc-ops-btn.pmd-ribbon-due-dot[data-slot="button"][data-slot="button"] {
+  position: relative;
+}
+
+#ribbon.dec-ribbon .ribbon-doc-ops-btn.pmd-ribbon-due-dot::after {
+  top: 3px;
+  right: 3px;
+}
+
+/* Labelled buttons keep the engine's style previews (Pocket boxed, Hat
+   double-underlined, ...) — only their chrome changed. */
+#ribbon.dec-ribbon .formatting-panel-btn[data-slot="button"][data-slot="button"] {
+  font-family: var(--pmd-ui-font);
+}
+
+#ribbon.dec-ribbon .ribbon-format-inline-btn sup,
+#ribbon.dec-ribbon .ribbon-format-inline-btn sub {
+  font-size: 0.7em;
+  line-height: 0;
+}
+
+#ribbon.dec-ribbon .ribbon-doc-menu-arrow {
+  color: var(--muted-foreground);
+  font-size: 0.7rem;
+  transform: none;
+}
+
+/* The timer popover sits in the strip; keep its controls on the same row height. */
+#ribbon.dec-ribbon .pmd-timer-panel {
+  align-self: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #ribbon.dec-ribbon button[data-slot="button"][data-slot="button"] {
+    transition: none;
+  }
+}
