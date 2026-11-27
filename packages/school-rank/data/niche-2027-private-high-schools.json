@@ -1,0 +1,335 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "publisher": "Niche",
+    "list": "Niche 2027 Best High Schools in America",
+    "url": "https://www.niche.com/k12/search/best-high-schools/",
+    "listLabel": "Best Private High Schools in America"
+  },
+  "year": 2027,
+  "listType": "private-high-schools",
+  "level": "high-school",
+  "schoolType": "private",
+  "metadata": {
+    "complete": false,
+    "firstRank": 1,
+    "lastRank": 800,
+    "entryCount": 50,
+    "rankRangesPresent": [
+      {
+        "from": 1,
+        "to": 25
+      },
+      {
+        "from": 775,
+        "to": 799
+      }
+    ],
+    "knownGaps": [
+      {
+        "from": 26,
+        "to": 774,
+        "reason": "Not compiled yet (Niche page timed out or was not retrieved); rank unknown, not unranked."
+      },
+      {
+        "from": 800,
+        "to": 800,
+        "reason": "Not compiled yet (Niche page timed out or was not retrieved); rank unknown, not unranked."
+      }
+    ],
+    "notes": [
+      "Partial list: only the rank ranges in rankRangesPresent are compiled. Every rank in knownGaps is unknown, never guessed.",
+      "Location is stored as city and/or state only where the source states it (ranks 775-799 carry none)."
+    ]
+  },
+  "entries": [
+    {
+      "rank": 1,
+      "tie": false,
+      "name": "Phillips Academy Andover",
+      "state": "MA"
+    },
+    {
+      "rank": 2,
+      "tie": false,
+      "name": "Groton School",
+      "state": "MA"
+    },
+    {
+      "rank": 3,
+      "tie": false,
+      "name": "Phillips Exeter Academy",
+      "state": "NH"
+    },
+    {
+      "rank": 4,
+      "tie": false,
+      "name": "The Lawrenceville School",
+      "state": "NJ"
+    },
+    {
+      "rank": 5,
+      "tie": false,
+      "name": "Choate Rosemary Hall",
+      "state": "CT"
+    },
+    {
+      "rank": 6,
+      "tie": false,
+      "name": "The Chapin School",
+      "state": "NY"
+    },
+    {
+      "rank": 7,
+      "tie": false,
+      "name": "Harvard-Westlake School",
+      "city": "Studio City",
+      "state": "CA"
+    },
+    {
+      "rank": 8,
+      "tie": false,
+      "name": "Horace Mann School",
+      "city": "Bronx",
+      "state": "NY"
+    },
+    {
+      "rank": 9,
+      "tie": false,
+      "name": "The Hotchkiss School",
+      "city": "Lakeville",
+      "state": "CT"
+    },
+    {
+      "rank": 10,
+      "tie": false,
+      "name": "Stanford Online High School",
+      "city": "Redwood City",
+      "state": "CA"
+    },
+    {
+      "rank": 11,
+      "tie": false,
+      "name": "BASIS Independent Manhattan",
+      "state": "NY"
+    },
+    {
+      "rank": 12,
+      "tie": false,
+      "name": "St. Paul's School",
+      "city": "Concord",
+      "state": "NH"
+    },
+    {
+      "rank": 13,
+      "tie": false,
+      "name": "Princeton International School of Math and Science",
+      "state": "NJ"
+    },
+    {
+      "rank": 14,
+      "tie": false,
+      "name": "Deerfield Academy",
+      "state": "MA"
+    },
+    {
+      "rank": 15,
+      "tie": false,
+      "name": "Riverdale Country School",
+      "city": "Bronx",
+      "state": "NY"
+    },
+    {
+      "rank": 16,
+      "tie": false,
+      "name": "Noble and Greenough School",
+      "city": "Dedham",
+      "state": "MA"
+    },
+    {
+      "rank": 17,
+      "tie": false,
+      "name": "Cate School",
+      "city": "Carpinteria",
+      "state": "CA"
+    },
+    {
+      "rank": 18,
+      "tie": false,
+      "name": "Dwight Global Online School",
+      "city": "West Palm Beach",
+      "state": "FL"
+    },
+    {
+      "rank": 19,
+      "tie": false,
+      "name": "The Loomis Chaffee School",
+      "city": "Windsor",
+      "state": "CT"
+    },
+    {
+      "rank": 20,
+      "tie": false,
+      "name": "The College Preparatory School",
+      "city": "Oakland",
+      "state": "CA"
+    },
+    {
+      "rank": 21,
+      "tie": false,
+      "name": "Rye Country Day School",
+      "state": "NY"
+    },
+    {
+      "rank": 22,
+      "tie": false,
+      "name": "St. Andrew's School",
+      "city": "Middletown",
+      "state": "DE"
+    },
+    {
+      "rank": 23,
+      "tie": false,
+      "name": "Crimson Global Academy, USA",
+      "city": "Orlando",
+      "state": "FL"
+    },
+    {
+      "rank": 24,
+      "tie": false,
+      "name": "BASIS Independent Brooklyn",
+      "state": "NY"
+    },
+    {
+      "rank": 25,
+      "tie": false,
+      "name": "Boston University Academy",
+      "state": "MA"
+    },
+    {
+      "rank": 775,
+      "tie": false,
+      "name": "Santa Fe Christian Schools"
+    },
+    {
+      "rank": 776,
+      "tie": false,
+      "name": "Oakwood School"
+    },
+    {
+      "rank": 777,
+      "tie": false,
+      "name": "Parker School"
+    },
+    {
+      "rank": 778,
+      "tie": false,
+      "name": "Hyde Park Schools"
+    },
+    {
+      "rank": 779,
+      "tie": false,
+      "name": "Mercy High School"
+    },
+    {
+      "rank": 780,
+      "tie": false,
+      "name": "St. Paul VI Catholic High School"
+    },
+    {
+      "rank": 781,
+      "tie": false,
+      "name": "St. Joseph's Preparatory School"
+    },
+    {
+      "rank": 782,
+      "tie": false,
+      "name": "German International School of Silicon Valley-Mountain View"
+    },
+    {
+      "rank": 783,
+      "tie": false,
+      "name": "Torrington Christian Academy"
+    },
+    {
+      "rank": 784,
+      "tie": false,
+      "name": "Bishop Lynch High School"
+    },
+    {
+      "rank": 785,
+      "tie": false,
+      "name": "University Liggett School"
+    },
+    {
+      "rank": 786,
+      "tie": false,
+      "name": "San Francisco Waldorf School"
+    },
+    {
+      "rank": 787,
+      "tie": false,
+      "name": "Grace Christian Academy"
+    },
+    {
+      "rank": 788,
+      "tie": false,
+      "name": "Flint Hill School"
+    },
+    {
+      "rank": 789,
+      "tie": false,
+      "name": "Laurel Springs School"
+    },
+    {
+      "rank": 790,
+      "tie": false,
+      "name": "Wesleyan School"
+    },
+    {
+      "rank": 791,
+      "tie": false,
+      "name": "Paideia Classical Christian School"
+    },
+    {
+      "rank": 792,
+      "tie": false,
+      "name": "Trinity Academy Meadow View"
+    },
+    {
+      "rank": 793,
+      "tie": false,
+      "name": "Solebury School"
+    },
+    {
+      "rank": 794,
+      "tie": false,
+      "name": "Governor French Academy"
+    },
+    {
+      "rank": 795,
+      "tie": false,
+      "name": "International School of Los Angeles-Burbank"
+    },
+    {
+      "rank": 796,
+      "tie": false,
+      "name": "Juan Diego Catholic High School"
+    },
+    {
+      "rank": 797,
+      "tie": false,
+      "name": "Seacrest Country Day School"
+    },
+    {
+      "rank": 798,
+      "tie": false,
+      "name": "Abraham Joshua Heschel School"
+    },
+    {
+      "rank": 799,
+      "tie": false,
+      "name": "Falmouth Academy"
+    }
+  ]
+}

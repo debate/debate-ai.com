@@ -66,3 +66,82 @@ export interface SchoolSearchResult {
   /** Shortcut to `school.wordmark`. */
   wordmark: string | null
 }
+
+/** The bundled rank lists under `data/`. */
+export type RankListId = "us-news-2027-national-universities" | "niche-2027-public-high-schools" | "niche-2027-private-high-schools"
+
+/** An inclusive run of ranks. `reason` is set on gaps. */
+export interface RankRange {
+  from: number
+  to: number
+  reason?: string
+}
+
+/** One ranked school as a source prints it. */
+export interface RankListEntry {
+  /** The published rank. Tied schools share it and the next rank skips ahead. */
+  rank: number
+  /** `true` when another school in the list has the same rank. */
+  tie: boolean
+  /** The name as the source spells it. */
+  name: string
+  /** Only where the source states it. */
+  city?: string
+  /** Two-letter state, only where the source states it. */
+  state?: string
+  /** The raw location text when it could not be read safely as a city or state. */
+  locationRaw?: string
+}
+
+/** What a rank list does and does not cover. Partial lists say so here. */
+export interface RankListMetadata {
+  /** `true` only when every rank from `firstRank` to `lastRank` is present. */
+  complete: boolean
+  firstRank: number
+  /** The last rank of the full published list, or of the slice bundled for the U.S. News top 100. */
+  lastRank: number
+  entryCount: number
+  /** Rank runs that have entries. */
+  rankRangesPresent: readonly RankRange[]
+  /** Rank runs inside `firstRank`-`lastRank` that are not compiled: unknown, never guessed. */
+  knownGaps: readonly RankRange[]
+  notes: readonly string[]
+}
+
+/** The shape of every file under `data/`. */
+export interface RankList {
+  schemaVersion: 1
+  source: { publisher: string; list: string; url: string; publishedAt?: string; listLabel?: string }
+  year: number
+  listType: "national-universities" | "public-high-schools" | "private-high-schools"
+  level: SchoolLevel
+  schoolType?: SchoolType
+  metadata: RankListMetadata
+  entries: readonly RankListEntry[]
+}
+
+/** How a school name was tied to a list entry, strongest first. */
+export type RankMatchKind = "name" | "alias" | "loose"
+
+/** A school matched to an entry of one rank list. */
+export interface RankListMatch {
+  list: RankListId
+  entry: RankListEntry
+  matchedBy: RankMatchKind
+}
+
+/** Whether a rank is compiled in a list. */
+export type RankStatus = "present" | "gap" | "outside"
+
+/** What reconciling one school with the rank lists found. */
+export type SchoolReconcileStatus =
+  /** Entry found and, where the school already has that rank, the ranks agree. */
+  | "matched"
+  /** Entry found but the school's own rank for the same list differs. */
+  | "rank-conflict"
+  /** The school's rank falls in a gap of the list, so no entry is expected. */
+  | "in-gap"
+  /** The school's rank is in a compiled range but no entry matched its name. */
+  | "name-mismatch"
+  /** No rank for the school in this list's scope (e.g. a college outside the top 100). */
+  | "not-compiled"

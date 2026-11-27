@@ -4,7 +4,7 @@
  * Forum as a modal, one tab per event, top 100 each, the high school
  * counterpart of the college Greatest of All Time list. Teams score their
  * TOC, NDCA, Barkley Forum, Cal Invitational and Glenbrooks finishes plus a share of each debater's college
- * NDT points ({@link buildHsAllTimeTeams}). The lists open from the bundled
+ * NDT points and one college point for competing in college ({@link buildHsAllTimeTeams}). The lists open from the bundled
  * high school results at once and add the college records when the NDT
  * history has loaded. This school's teams are highlighted, its best team in
  * the open event is pinned under the list when it ranks below 100, and the
@@ -20,19 +20,23 @@ import Link from "next/link"
 import { Crown, X } from "lucide-react"
 import { Button } from "../ui/primitives/button"
 import { SchoolLogo } from "../SchoolLogo"
+import { TeamSpeakerAwards } from "../TeamSpeakerAwards"
 import {
   HS_ALL_TIME_COLLEGE_SHARE,
   HS_ALL_TIME_EVENTS,
   HS_ALL_TIME_MULTIPLIER,
+  HS_ALL_TIME_PARTICIPATION_POINTS,
   HS_ALL_TIME_POINTS,
   hsAllTimeSchoolKey,
   hsAllTimeTeams,
   loadHsAllTimeTeams,
+  type HsAllTimeCollege,
   type HsAllTimeEvent,
   type HsAllTimeTeam,
 } from "./hsAllTimeTeams"
 import { NDT_ERA_CUTOFF_YEAR, NDT_PRE_ERA_MULTIPLIER } from "./ndtAllSeasons"
-import { teamHref } from "./rankingProfileHelpers"
+import { schoolHref, teamHref } from "./rankingProfileHelpers"
+import { hsTeamSpeakers, hsTopSpeakers } from "./topSpeakers"
 
 /** How many teams each event lists. */
 export const HS_ALL_TIME_LIMIT = 100
@@ -43,9 +47,19 @@ function years(team: HsAllTimeTeam): string {
   return team.firstYear === team.lastYear ? String(team.firstYear) : `${team.firstYear}–${team.lastYear}`
 }
 
+/** A college debater's points as the college line reads: `participated, 1 pt` or `12 NDT pts + 1 participation pt`. */
+export function collegeNote(college: HsAllTimeCollege): string {
+  const participation = `${college.participationPoints} ${college.participationPoints === 1 ? "pt" : "pts"}`
+  return college.collegePoints > 0
+    ? `${college.collegePoints} NDT pts + ${participation} participation`
+    : `participated, ${participation}`
+}
+
 const TOURNAMENT_LABEL: Record<string, string> = { TOC: "TOC", NDCA: "NDCA", Barkley: "Barkley", Cal: "Cal", Glenbrooks: "Glenbrooks" }
 
-function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
+function TeamRow({ team, own, event }: { team: HsAllTimeTeam; own: boolean; event: HsAllTimeEvent }) {
+  const href = teamHref({ school: team.school, name: team.debaters })
+  const speakers = hsTeamSpeakers(hsTopSpeakers()[event], team)
   const finishes = team.finishes.map((f) => `${f.year} ${TOURNAMENT_LABEL[f.tournament]} ${f.place}`).join(" · ")
   return (
     <li
@@ -57,15 +71,19 @@ function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
         <SchoolLogo school={team.school} className="mt-0.5 h-6 w-auto max-w-[5rem] shrink-0 object-contain" />
         <span className="min-w-0">
           <Link
-            href={teamHref({ school: team.school, name: team.debaters })}
+            href={href}
             className={`text-foreground underline-offset-4 hover:underline ${own ? "font-semibold" : "font-medium"}`}
           >
             {team.debaters}
           </Link>{" "}
           <span className="text-xs text-muted-foreground">
-            {team.school} · {years(team)}
+            <Link href={schoolHref(team.school)} className="underline-offset-4 hover:underline">
+              {team.school}
+            </Link>{" "}
+            · {years(team)}
           </span>
           <span className="block text-xs text-muted-foreground">{finishes}</span>
+          <TeamSpeakerAwards speakers={speakers} href={href} />
           {team.college.length > 0 && (
             <span className="block text-xs text-sky-700 dark:text-sky-300">
               College:{" "}
@@ -74,7 +92,7 @@ function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
                   {i > 0 && " · "}
                   {c.debater}:{" "}
                   <SchoolLogo school={c.school} className="inline h-3.5 w-auto max-w-[3.5rem] align-[-2px] object-contain" />{" "}
-                  {c.school} ({c.collegePoints} NDT pts)
+                  {c.school} ({collegeNote(c)})
                 </span>
               ))}
             </span>
@@ -88,7 +106,7 @@ function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
       </span>
       <span
         className="text-right text-sm tabular-nums text-foreground"
-        title={team.collegeCredit ? `${team.nationals} nationals + ${team.collegeCredit} college` : undefined}
+        title={team.collegeCredit ? `${team.nationals} nationals + ${team.collegeCredit} college (NDT and participation points)` : undefined}
       >
         {team.total}
       </span>
@@ -142,7 +160,9 @@ export function HsAllTimeTeamsRankings({
             {HS_ALL_TIME_MULTIPLIER}× the high school points (champion {p.Champion}, finalist {p.Finalist}, semifinalist{" "}
             {p.Semifinalist}, top speaker {p["Top speaker"]}; an NDT title is 30), and {NDT_PRE_ERA_MULTIPLIER}× before{" "}
             {NDT_ERA_CUTOFF_YEAR}, plus each debater's own college NDT points
-            {HS_ALL_TIME_COLLEGE_SHARE >= 1 ? " in full" : ` at ${Math.round(HS_ALL_TIME_COLLEGE_SHARE * 100)}%`}
+            {HS_ALL_TIME_COLLEGE_SHARE >= 1 ? " in full" : ` at ${Math.round(HS_ALL_TIME_COLLEGE_SHARE * 100)}%`},
+            and {HS_ALL_TIME_PARTICIPATION_POINTS} college point{HS_ALL_TIME_PARTICIPATION_POINTS === 1 ? "" : "s"} (at the same
+            share) for each debater who competed in college (an NDT record, or a name match in College Debate Results)
             {collegeLoaded ? "" : " (loading college records…)"}. A debater's third and later partnerships fold into
             their top two with a footnote.{schoolKey ? " This school's teams are highlighted." : ""}
           </p>
@@ -173,7 +193,7 @@ export function HsAllTimeTeamsRankings({
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
         <ol aria-label={`Greatest ${event} teams of all time`} className="space-y-0.5 text-sm">
           {top.map((team) => (
-            <TeamRow key={`${team.schoolKey}-${team.debaters}`} team={team} own={team.schoolKey === schoolKey} />
+            <TeamRow key={`${team.schoolKey}-${team.debaters}`} team={team} own={team.schoolKey === schoolKey} event={event} />
           ))}
         </ol>
       </div>
@@ -181,7 +201,7 @@ export function HsAllTimeTeamsRankings({
         <div className="border-t px-3 py-2">
           <p className="px-1.5 text-xs text-muted-foreground">This school's best in {event}</p>
           <ol className="text-sm">
-            <TeamRow team={ownOutside} own />
+            <TeamRow team={ownOutside} own event={event} />
           </ol>
         </div>
       )}
