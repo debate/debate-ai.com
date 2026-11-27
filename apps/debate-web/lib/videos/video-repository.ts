@@ -53,6 +53,13 @@ import {
   type VideoIndexResponse,
 } from "@debate-ai/videos/src/data/video-index";
 import { DEMO_CATEGORY_KEY, DEMO_STYLE_PHRASES } from "@debate-ai/videos/src/data/demo-style";
+import {
+  isOpenPublicKey,
+  OPEN_PUBLIC_CATEGORY_KEY,
+  OPEN_PUBLIC_CATEGORY_LABEL,
+  SUPER_DEBATE_CATEGORY_KEY,
+  UNT_PHRASES,
+} from "@debate-ai/videos/src/data/open-public";
 import { getVideoRowsFromJson } from "@debate-ai/webview/lib/videos/video-json-source";
 import {
   legacyVideoRouteHref,
@@ -305,6 +312,20 @@ function demoStyleSql(): SQL {
   return sql`(SELECT CASE ${sql.join(arms, sql` `)} END FROM (SELECT ' ' || ${competitorText(videos.title)} || ' ' AS padded) AS demo_title)`;
 }
 
+/**
+ * The SQL twin of `isOpenPublicRow`: Super Debate's category, or an unstyled
+ * Demo Debates lecture whose channel or title names UNT. The normalized text is
+ * computed once in a derived table, as in `demoStyleSql`.
+ */
+function openPublicCondition(): SQL {
+  const untHit = or(...UNT_PHRASES.map((phrase) => sql`unt_text.padded LIKE ${literal(`% ${phrase} %`)}`))!;
+  const namesUnt = sql`EXISTS (SELECT 1 FROM (SELECT ' ' || ${competitorText(videos.channel)} || ' ' || ${competitorText(videos.title)} || ' ' AS padded) AS unt_text WHERE ${untHit})`;
+  return or(
+    eq(videos.categoryKey, SUPER_DEBATE_CATEGORY_KEY),
+    and(isNull(videos.style), eq(videos.categoryKey, DEMO_CATEGORY_KEY), namesUnt),
+  )!;
+}
+
 /** Whether a request is scoped to the demo-debate category. */
 function isDemoScope(params: VideoQueryParams): boolean {
   return !!params.categoryKey && normalizeCategoryKey(params.categoryKey) === DEMO_CATEGORY_KEY;
@@ -341,7 +362,9 @@ function buildConditions(
   // The WSD, ACC, Parli and Congress collections also take the rounds filed
   // under that style.
   if (params.categoryKey) {
-    const inCategory = inArray(videos.categoryKey, categoryKeyAliases(params.categoryKey));
+    const inCategory = isOpenPublicKey(params.categoryKey)
+      ? openPublicCondition()
+      : inArray(videos.categoryKey, categoryKeyAliases(params.categoryKey));
     const key = normalizeCategoryKey(params.categoryKey);
     const style = STYLE_FOR_CATEGORY_KEY[key];
     // Miscellaneous also lists the lectures nobody has sorted.
@@ -600,6 +623,7 @@ export async function getVideoMeta(): Promise<VideoMeta> {
         [topPicksRow],
         categoryRows,
         [unsortedRow],
+        [openPublicRow],
         suggestions,
       ] = await Promise.all([
           db.select({ value: count() }).from(videos),
@@ -624,6 +648,10 @@ export async function getVideoMeta(): Promise<VideoMeta> {
             .select({ value: count(), maxViews: sql<number>`max(${videos.viewCount})` })
             .from(videos)
             .where(unsortedLectureCondition()),
+          db
+            .select({ value: count(), maxViews: sql<number>`max(${videos.viewCount})` })
+            .from(videos)
+            .where(openPublicCondition()),
           suggestionsFromSql(db),
         ]);
 
@@ -671,6 +699,16 @@ export async function getVideoMeta(): Promise<VideoMeta> {
             maxViews,
           });
         }
+      }
+      // Open Public is a view over Open Super Debates and the UNT demos, so it
+      // counts rows the cards above already counted.
+      if ((openPublicRow?.value ?? 0) > 0) {
+        byKey.set(OPEN_PUBLIC_CATEGORY_KEY, {
+          key: OPEN_PUBLIC_CATEGORY_KEY,
+          label: OPEN_PUBLIC_CATEGORY_LABEL,
+          count: openPublicRow.value,
+          maxViews: (openPublicRow.maxViews as number) ?? 0,
+        });
       }
       const lectureCategories: LectureCategoryFacet[] = [...byKey.values()].sort(
         (a, b) => b.maxViews - a.maxViews,

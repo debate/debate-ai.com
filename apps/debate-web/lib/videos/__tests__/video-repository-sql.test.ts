@@ -40,6 +40,7 @@ const ROUNDS = [
   ["ldGlenbrook", "Glenbrooks 2023 LD Semis - Harvard-Westlake JS vs Greenhill KM", "2023-11-20", "LD Channel", 455, "semis", 3, "Glenbrooks 2023", "Semis", "Harvard-Westlake JS", "Greenhill KM", null, null, null, null, false],
   ["policyOld01", "Old Policy Round", "2008-02-01", "Archive", 50, "", 1, null, null, null, null, null, null, null, null, false],
   ["wsdWorlds01", "Worlds 2025 WSD Final - England vs Australia", "2025-08-01", "WSDC", 3000, "", 5, "Worlds 2025", "Finals", "England", "Australia", null, null, null, null, false],
+  ["sdRound0001", "Night 2: Rivera vs Okafor", "2026-03-02", "SuperDebate", 640, "", 2, null, null, null, null, null, null, null, null, false],
 ] as unknown as VideoTuple[];
 
 /** Lectures in a few categories, one also a round analysis. */
@@ -50,6 +51,12 @@ const LECTURES = [
   ["lecWsd00001", "How to give a WSD reply speech", "2025-02-02", "WSDC", 900, "", "WSD"],
   ["lecNoCat001", "An untagged talk", "2025-03-03", "Coach", 42, "", null],
   ["lecMisc0001", "Filed as miscellaneous", "2025-03-04", "Coach", 11, "", "Miscellaneous"],
+  ["untDemoCh01", "Demo round: Should the UN be reformed?", "2025-04-01", "UNT Debate", 220, "", "Demo Debates"],
+  ["untDemoTi01", "Demo at UNT, finals", "2025-04-02", "Coach", 130, "", "Demo Debates"],
+  ["untDemoLong", "Demo: University of North Texas", "2025-04-03", "Coach", 90, "", "Demo Debates"],
+  ["huntDemo001", "Demo debate at the hunt for unity", "2025-04-04", "Coach", 75, "", "Demo Debates"],
+  ["untCamp0001", "Camp advice from UNT", "2025-04-05", "UNT Debate", 60, "", "Camp & Coaching Advice"],
+  ["sdLecture01", "Welcome to our live show!", "2026-03-01", "SuperDebate", 300, "", "Documentaries & Culture"],
 ] as unknown as VideoTuple[];
 
 const fixtureRows: VideoRow[] = (() => {
@@ -115,6 +122,9 @@ describe("getVideoPage on the SQL backend", () => {
     ["several demo formats", { categoryKey: "demo_debates", styles: [1, 3] }],
     ["a demo format outside the demo category", { categoryKey: "kritiks", style: 2 }],
     ["a category that is also a style (WSD)", { categoryKey: "wsd" }],
+    ["Open Public, a view over Super Debate and the UNT demos", { categoryKey: "open_public" }],
+    ["Open Public by season", { categoryKey: "open_public", year: "2025" }],
+    ["Open Public by search", { categoryKey: "open_public", q: "demo" }],
     ["Miscellaneous, which also lists unsorted lectures", { categoryKey: "miscellaneous" }],
     ["a one-word search", { q: "michigan" }],
     ["a multi-word search (all tokens must match)", { q: "dartmouth finals" }],
@@ -135,6 +145,22 @@ describe("getVideoPage on the SQL backend", () => {
     expect(ids(page.videos)).toEqual(expected.rows.map((r) => r.videoId));
   });
 
+  it("lists Open Public as the Super Debate videos plus the UNT demos, which stay in their own categories", async () => {
+    const openPublic = await repo.getVideoPage({ limit: 50, offset: 0, categoryKey: "open_public" });
+    expect(ids(openPublic.videos).sort()).toEqual(
+      ["sdLecture01", "sdRound0001", "untDemoCh01", "untDemoLong", "untDemoTi01"],
+    );
+    const demos = await repo.getVideoPage({ limit: 50, offset: 0, categoryKey: "demo_debates" });
+    expect(ids(demos.videos)).toEqual(expect.arrayContaining(["untDemoCh01", "untDemoTi01", "untDemoLong", "huntDemo001"]));
+    const superDebates = await repo.getVideoPage({ limit: 50, offset: 0, categoryKey: "open_super_debates" });
+    expect(ids(superDebates.videos).sort()).toEqual(["sdLecture01", "sdRound0001"]);
+    const meta = await repo.getVideoMeta();
+    expect(meta.lectureCategories.find((card) => card.key === "open_public")).toMatchObject({
+      label: "Open Public",
+      count: 5,
+    });
+  });
+
   it("returns full tuples identical to the JSON backend's", async () => {
     const page = await repo.getVideoPage({ source: "all", ids: ["qx7Xx_6exzk"] });
     expect(page.videos[0]).toEqual(videoRowToTuple(fixtureRows.find((r) => r.videoId === "qx7Xx_6exzk")!));
@@ -146,7 +172,7 @@ describe("getVideoPage on the SQL backend", () => {
     expect(first.videos).toHaveLength(4);
     expect(first.hasMore).toBe(true);
 
-    const last = await repo.getVideoPage({ source: "all", limit: 8, offset: 8 });
+    const last = await repo.getVideoPage({ source: "all", limit: fixtureRows.length, offset: 8 });
     expect(last.videos).toHaveLength(fixtureRows.length - 8);
     expect(last.hasMore).toBe(false);
     expect(new Set([...ids(first.videos), ...ids(last.videos)]).size).toBe(first.videos.length + last.videos.length);
