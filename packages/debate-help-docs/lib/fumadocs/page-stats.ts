@@ -4,6 +4,7 @@
  * words, reading time, sections, links, figures and so on, worked out on the
  * server from the page's processed Markdown and its table of contents.
  */
+import { readability, type Readability } from './readability';
 
 /** Words a minute for the reading-time estimate (adult silent reading). */
 export const WORDS_PER_MINUTE = 238;
@@ -25,6 +26,8 @@ export interface PageStats {
   citations: number;
   /** `==highlighted==` passages (the Synergy Slayer papers' underlining). */
   highlights: number;
+  /** Readability scores for the page's prose (`lib/fumadocs/readability.ts`). */
+  readability: Readability;
 }
 
 const WORD = /[\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*/gu;
@@ -49,6 +52,32 @@ function proseOf(markdown: string): string {
     .replace(/\{[^{}]*\}/g, ' ')
     .replace(/`([^`]*)`/g, '$1')
     .replace(/==|[*_#>|~]/g, ' ');
+}
+
+/**
+ * The page's running prose for the readability scores: no frontmatter, code,
+ * headings, tables, links' URLs, citations or highlight marks. Each paragraph
+ * ends up on its own line so a paragraph break also ends a sentence.
+ */
+export function readableProse(markdown: string): string {
+  return markdown
+    .replace(FENCE, '\n\n')
+    .replace(/^---\n[\s\S]*?\n---\n/, '\n\n')
+    .replace(/^\s*(import|export)\s.*$/gm, '')
+    .replace(/^\s{0,3}#{1,6}\s.*$/gm, '\n')
+    .replace(/^\s*\|.*$/gm, '')
+    .replace(/^\s*[-*+]\s+|^\s*\d+[.)]\s+|^\s*>\s?/gm, '')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[\^[^\]]+\]:?/g, '')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\{[^{}]*\}/g, ' ')
+    .replace(AUTHOR_DATE, ' ')
+    .replace(/\(\s*\)/g, '')
+    .replace(/`([^`]*)`/g, '$1')
+    .replace(/==|[*_~]/g, '')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/ *\n */g, '\n');
 }
 
 /**
@@ -80,5 +109,6 @@ export function pageStats(markdown: string, toc: ReadonlyArray<{ depth: number }
     citations:
       (withoutCode.match(AUTHOR_DATE)?.length ?? 0) + (withoutCode.match(/\[\^[^\]]+\](?!:)/g)?.length ?? 0),
     highlights: withoutCode.match(/==(?=\S)[\s\S]*?\S==/g)?.length ?? 0,
+    readability: readability(readableProse(markdown)),
   };
 }

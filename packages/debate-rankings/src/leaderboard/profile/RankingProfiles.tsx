@@ -359,7 +359,7 @@ function TeamRecordCard({
       <StatBand title="Standing" tone="light">
         <RecordStat label={`Rating · ${datasetLabel}`} value={rating(entry.adjustedRating)} />
         <RecordStat label={`Rank of ${fieldSize}`} value={`#${entry.rank}`} />
-        <RecordStat label="Field percentile" value={topPercent === null ? "—" : `Top ${percent(Math.max(topPercent, 0.1))}`} />
+        <RecordStat label="Rank Nationally" value={topPercent === null ? "—" : `Top ${percent(Math.max(topPercent, 0.1))}`} />
         <RecordStat label="Matches" value={entry.matches} />
       </StatBand>
       {/* The monthly snapshots' line; hidden until the team has a saved month. */}

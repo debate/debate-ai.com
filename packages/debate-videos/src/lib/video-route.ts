@@ -1,10 +1,14 @@
 /**
  * @fileoverview The canonical address of a video.
  *
- * A tagged debate round lives at
- * `/videos/<season>/<format>/<tournament>/<round>/<aff>-<neg>`, e.g.
- * `/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr`, and a video made
- * from that round — its analysis, one part of a split upload — one segment
+ * A tagged debate round, in a format that has topic codes and with a
+ * tournament, lives at `/<topic code>/<tournament>/<round>/<aff>-<neg>`, e.g.
+ * `/cpd22/ndt/finals/dartmouth-sv-michigan-pr` (see `./video-topic-path`).
+ * Its older address, `/videos/<season>/<format>/<tournament>/<round>/<aff>-<neg>`
+ * (`/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr`), is what the
+ * rest of this module still builds as {@link videoLibraryRouteHref}, and
+ * what every other round without a topic code lives at. A video made
+ * from a round — its analysis, one part of a split upload — lives one segment
  * below it. Everything else — a lecture, or a round nobody has tagged with a
  * round and a team yet — lives at `/videos/<season>/<event>/<matchup>`, where
  * a video with a debate format spells the event as `<format>/<tournament>`
@@ -29,6 +33,7 @@
 
 import { formatSeasonLabel } from "../data/video-rows";
 import { slugifyVideoTitle } from "./video-slug";
+import { videoTopicCode } from "./video-topic-code";
 import type { DebateStyle, VideoType } from "../types/videos";
 
 /** URL word for each numeric debate style, as paths before the format segment spelled it. */
@@ -149,6 +154,13 @@ export interface VideoRouteParts {
 
 /** The path segments under `/videos`. */
 export interface VideoRouteSegments {
+  /**
+   * The topic code (`"cpd27"`) a tagged round's short address starts with in
+   * place of {@link VideoRouteSegments.season} and
+   * {@link VideoRouteSegments.format}; see {@link videoRouteHref}. Only set
+   * for a round with a format, a tournament and a topic code.
+   */
+  code?: string;
   /** Season, e.g. `"05-06"`, or {@link ARCHIVE_SEASON_SEGMENT}. */
   season: string;
   /** The debate format (`"cpd"`, `"ld"`), when the video has one. See {@link formatSegment}. */
@@ -542,7 +554,12 @@ export function videoRouteSegments(
   }
 
   const variant = joinSlugs(round.category, round.part && `part ${round.part}`);
+  const code =
+    spelling === "season" && withFormat && round.format && round.event
+      ? videoTopicCode(parts.style, parseSeasonSegment(round.season), parts.date)
+      : null;
   return {
+    ...(code ? { code } : {}),
     season: round.season,
     ...(round.format ? { format: round.format } : {}),
     event: round.event,
@@ -552,18 +569,35 @@ export function videoRouteSegments(
   };
 }
 
-/** Joins route segments into a `/videos/...` path. */
-function hrefFromSegments({ season, format, event, matchup, teams, variant }: VideoRouteSegments): string {
+/** Joins route segments into a path: `/<topic code>/…` for a round with one, else `/videos/…`. */
+function hrefFromSegments(
+  { code, season, format, event, matchup, teams, variant }: VideoRouteSegments,
+  withCode: boolean,
+): string {
+  if (code && withCode) return ["", code, event, matchup, teams, variant].filter((part, i) => i === 0 || part).join("/");
   return ["/videos", season, format, event, matchup, teams, variant].filter(Boolean).join("/");
 }
 
 /**
  * Builds a video's canonical path.
  *
+ * A tagged round in a format that has topic codes (high-school and college
+ * policy, LD, PF) with a tournament gets the short address
+ * `/<topic code>/<tournament>/<round>/<teams>`, e.g.
+ * `/cpd27/shirley/octofinals/kansas-ss-harvard-ab`: the code is the format,
+ * for LD and PF the letter of the topic the round was published under, and
+ * the two digits of the year its season ends in (see `./video-topic-path`).
+ * Every other video — a lecture, a round in another format or without a
+ * tournament, a season before 1999-2000 — keeps its `/videos/<season>/…`
+ * path ({@link videoLibraryRouteHref}), which also stays a working address
+ * for the rounds, redirecting to the short one.
+ *
  * @param video - The video, as a tuple or as named parts.
- * @param withFormat - `false` builds the path as it was before the format
- *   segment; see {@link videoRouteSegments}.
- * @returns e.g. `/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr`, or
+ * @param spelling - `"year"` builds the bare-year `/videos/…` path older
+ *   links used; it is never the short form.
+ * @param withFormat - `false` builds the `/videos/…` path as it was before the
+ *   format segment; see {@link videoRouteSegments}. Never the short form.
+ * @returns e.g. `/cpd27/shirley/octofinals/kansas-ss-harvard-ab`, or
  *   `/videos/19-20/critique-critical-theory/how-to-give-a-2nr` for a lecture.
  */
 export function videoRouteHref(
@@ -572,7 +606,24 @@ export function videoRouteHref(
   withFormat = true,
 ): string {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;
-  return hrefFromSegments(videoRouteSegments(parts, spelling, withFormat));
+  return hrefFromSegments(videoRouteSegments(parts, spelling, withFormat), true);
+}
+
+/**
+ * The `/videos/<season>/<format>/…` path of a video, the address every round
+ * had before the topic-code form, e.g.
+ * `/videos/21-22/cpd/ndt/finals/dartmouth-sv-michigan-pr`.
+ *
+ * Kept so those links still resolve and redirect to {@link videoRouteHref};
+ * `resolveVideoRoute` in the app compares requests against it.
+ */
+export function videoLibraryRouteHref(
+  video: VideoType | VideoRouteParts,
+  spelling: SeasonSpelling = "season",
+  withFormat = true,
+): string {
+  const parts = Array.isArray(video) ? videoRouteParts(video) : video;
+  return hrefFromSegments(videoRouteSegments(parts, spelling, withFormat), false);
 }
 
 /**

@@ -170,6 +170,8 @@ describe("TeamProfilePage", () => {
     expect(root.textContent).not.toContain("Elim aff win %");
     expect(root.querySelector('section[aria-label="Win rates"]')).not.toBeNull();
     expect(root.querySelector('section[aria-label="Rating model"]')).toBeNull();
+    expect(root.textContent).toContain("Rank Nationally");
+    expect(root.textContent).not.toContain("Field percentile");
     expect(root.textContent).toContain("Top 33.3%");
     expect(caselistTeamMock.mock.calls[0][0]).toBe(
       "/api/caselist-team?dataset=hspf&school=Harker&team=Kim+%26+Lee",
@@ -333,6 +335,14 @@ describe("TeamProfilePage caselist section", () => {
     expect(root.querySelector('a[href="https://opencaselist.com/hspf25/Harker/KiLe"]')).not.toBeNull();
     const download = root.querySelector('a[download="a.docx"]');
     expect(download?.getAttribute("href")).toBe("/api/caselist-team/file?path=hspf25%2FHarker%2FKiLe%2Fa.docx");
+    const editor = [...root.querySelectorAll("a")].find((a) => a.textContent === ".docx")!;
+    const editorUrl = new URL(editor.getAttribute("href")!, "http://localhost");
+    expect(editorUrl.pathname).toBe("/import/docx");
+    expect(editorUrl.searchParams.get("name")).toBe("a.docx");
+    expect(editorUrl.searchParams.get("url")).toBe(
+      `${window.location.origin}/api/caselist-team/file?path=hspf25%2FHarker%2FKiLe%2Fa.docx`,
+    );
+    expect(editor.hasAttribute("download")).toBe(false);
   });
 
   it("filters rounds by side", async () => {

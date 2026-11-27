@@ -138,6 +138,7 @@ export {
   shortRoundSegment,
   teamsSegment,
   untitledVideoRouteHref,
+  videoLibraryRouteHref,
   videoRouteHref,
   videoRouteParts,
   videoRouteSegments,
@@ -146,6 +147,26 @@ export {
   type VideoRouteSegments,
   type TitleRound,
 } from "./lib/video-route";
+export {
+  MAX_ROUND_SEGMENTS,
+  MIN_ROUND_SEGMENTS,
+  TOPIC_FORMAT_STYLE,
+  TOPIC_STARTER_ROOTS,
+  VIDEO_TOPIC_CODE_SOURCE,
+  isVideoRoundPath,
+  isVideoTopicCode,
+  parseVideoRoundPath,
+  parseVideoTopicCode,
+  type ParsedVideoTopicCode,
+  type VideoRoundPath,
+  type VideoTopicFormat,
+} from "./lib/video-topic-path";
+export {
+  FIRST_TOPIC_CODE_SEASON,
+  LAST_TOPIC_CODE_SEASON,
+  seasonalTopicLetter,
+  videoTopicCode,
+} from "./lib/video-topic-code";
 export {
   DEFAULT_SPEECH_VIEW,
   SPEECH_PARAM,

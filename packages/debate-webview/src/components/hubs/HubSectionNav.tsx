@@ -14,7 +14,9 @@
  *   localStorage as the fallback when the URL doesn't say.
  * - {@link HubSectionNav}: a sticky, keyboard-navigable tab strip
  *   (`role="tablist"`, arrow keys move between tabs) with an icon per
- *   section; scrolls horizontally on narrow screens instead of wrapping.
+ *   section; scrolls horizontally on narrow screens instead of wrapping, or, with
+ *   `rows`, splits the tabs into that many evenly sized rows that wrap further
+ *   when a row doesn't fit.
  * - {@link HubSectionIntro}: a heading card for the active section — what
  *   it's for, a chip per panel that scrolls to it, an "open as its own page"
  *   link per panel that has one, and a link to the docs guide.
@@ -106,6 +108,22 @@ export interface HubSectionNavProps<Id extends string> {
   showPanelCounts?: boolean
   /** Pin the strip to the top while scrolling (default `true`); off for a hub nested under another's strip. */
   sticky?: boolean
+  /**
+   * Lay the tabs out in this many rows (default `1`: one horizontally
+   * scrolling row). Tabs are split in order, earlier rows taking the extra
+   * tab, and a row that is too wide for its container wraps onto further
+   * lines rather than scrolling.
+   */
+  rows?: number
+}
+
+/** Splits `items` in order into `rows` chunks of near-equal size, earlier chunks larger. */
+export function splitIntoRows<T>(items: readonly T[], rows: number): T[][] {
+  const count = Math.max(1, Math.min(Math.floor(rows) || 1, items.length || 1))
+  const perRow = Math.ceil(items.length / count)
+  const chunks: T[][] = []
+  for (let start = 0; start < items.length; start += perRow) chunks.push(items.slice(start, start + perRow))
+  return chunks
 }
 
 /**
@@ -120,8 +138,11 @@ export function HubSectionNav<Id extends string>({
   label,
   showPanelCounts = true,
   sticky = true,
+  rows = 1,
 }: HubSectionNavProps<Id>) {
   const tabRefs = useRef<Map<Id, HTMLButtonElement>>(new Map())
+  const multiRow = rows > 1
+  const tabRows = multiRow ? splitIntoRows(sections, rows) : [sections]
 
   const focusTab = (id: Id) => {
     tabRefs.current.get(id)?.focus()
@@ -148,47 +169,61 @@ export function HubSectionNav<Id extends string>({
           : "py-1",
       )}
     >
-      <div role="tablist" aria-label={label} className="scrollbar-hide flex gap-1 overflow-x-auto">
-        {sections.map((section, index) => {
-          const selected = section.id === active
-          const Icon = section.icon
-          return (
-            <button
-              key={section.id}
-              ref={(node) => {
-                if (node) tabRefs.current.set(section.id, node)
-                else tabRefs.current.delete(section.id)
-              }}
-              type="button"
-              role="tab"
-              id={`hub-tab-${section.id}`}
-              aria-selected={selected}
-              aria-controls={`hub-panel-${section.id}`}
-              tabIndex={selected ? 0 : -1}
-              title={section.description}
-              onClick={() => onChange(section.id)}
-              onKeyDown={(event) => handleKeyDown(event, index)}
-              className={cn(
-                "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-                selected
-                  ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                  : "border-border bg-background text-foreground hover:bg-accent",
-              )}
-            >
-              <Icon className="h-4 w-4" aria-hidden="true" />
-              {section.label}
-              {showPanelCounts ? (
-                <span
-                  className={cn(
-                    "rounded-full px-1.5 text-[10px] tabular-nums",
-                    selected ? "bg-primary-foreground/20" : "bg-muted text-muted-foreground",
-                  )}
-                  aria-label={`${section.panels.length} panels`}
-                >
-                  {section.panels.length}
-                </span>
-              ) : null}
-            </button>
+      <div
+        role="tablist"
+        aria-label={label}
+        className={cn(multiRow ? "flex flex-col gap-1" : "scrollbar-hide flex gap-1 overflow-x-auto")}
+      >
+        {tabRows.map((row, rowIndex) => {
+          const tabs = row.map((section) => {
+            const index = sections.indexOf(section)
+            const selected = section.id === active
+            const Icon = section.icon
+            return (
+              <button
+                key={section.id}
+                ref={(node) => {
+                  if (node) tabRefs.current.set(section.id, node)
+                  else tabRefs.current.delete(section.id)
+                }}
+                type="button"
+                role="tab"
+                id={`hub-tab-${section.id}`}
+                aria-selected={selected}
+                aria-controls={`hub-panel-${section.id}`}
+                tabIndex={selected ? 0 : -1}
+                title={section.description}
+                onClick={() => onChange(section.id)}
+                onKeyDown={(event) => handleKeyDown(event, index)}
+                className={cn(
+                  "inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+                  selected
+                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                    : "border-border bg-background text-foreground hover:bg-accent",
+                )}
+              >
+                <Icon className="h-4 w-4" aria-hidden="true" />
+                {section.label}
+                {showPanelCounts ? (
+                  <span
+                    className={cn(
+                      "rounded-full px-1.5 text-[10px] tabular-nums",
+                      selected ? "bg-primary-foreground/20" : "bg-muted text-muted-foreground",
+                    )}
+                    aria-label={`${section.panels.length} panels`}
+                  >
+                    {section.panels.length}
+                  </span>
+                ) : null}
+              </button>
+            )
+          })
+          return multiRow ? (
+            <div key={rowIndex} role="presentation" data-tab-row={rowIndex} className="flex flex-wrap gap-1">
+              {tabs}
+            </div>
+          ) : (
+            tabs
           )
         })}
       </div>

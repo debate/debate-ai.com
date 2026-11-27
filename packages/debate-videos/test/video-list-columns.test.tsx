@@ -157,6 +157,15 @@ describe("the round list's columns", () => {
     ]);
   });
 
+  it("keeps the Date column wide enough for a group row's full date", () => {
+    // Group rows print "Sep 30, 2026", which the library's 64px badge column
+    // would clip. The round tree uses the wider default instead.
+    const html = renderList([identifiableRound]);
+    const headerRow = html.slice(html.indexOf("<thead"), html.indexOf("</thead>"));
+    const widths = [...headerRow.matchAll(/--col-width:\s*(\d+)px/g)].map((match) => match[1]);
+    expect(widths).toEqual(["400", "150", "150", "108", "80"]);
+  });
+
   it("gives every row exactly as many cells as there are headers", () => {
     const html = renderList([identifiableRound, bareRound]);
     const columnCount = headers(html).length;
@@ -279,6 +288,26 @@ describe("the lecture list's columns", () => {
     2025,
   ];
 
+  it("keeps Views beside Date, without a wide gap", () => {
+    const html = renderList([lecture]);
+    const headerRow = html.slice(html.indexOf("<thead"), html.indexOf("</thead>"));
+    const ths = [...headerRow.matchAll(/<th\s([^>]*)>/g)].map(([, attrs]) => attrs);
+    // Library stays wide; Date and Views are only as wide as their contents,
+    // and the padding on the edge they share is a few pixels.
+    expect(ths.map((attrs) => /--col-width:\s*(\d+)px/.exec(attrs)?.[1])).toEqual(["400", "64", "80"]);
+    expect(ths[1]).toContain("pr-1");
+    expect(ths[2]).toContain("pl-1");
+    expect(ths[2]).not.toContain("text-right");
+    const body = html.slice(html.indexOf("<tbody"));
+    const cells = [...body.matchAll(/<td([^>]*)>([\s\S]*?)<\/td>/g)];
+    const viewsCell = cells.find(([, , inner]) => inner.includes("data-view-tier"));
+    expect(viewsCell?.[1]).toContain("pl-1");
+    expect(viewsCell?.[1]).not.toContain("text-right");
+    const dateCell = cells.find(([, , inner]) => inner.includes("data-testid=\"video-date-badge\""));
+    expect(dateCell?.[1]).toContain("pl-2");
+    expect(dateCell?.[1]).toContain("pr-1");
+  });
+
   it("keeps its own set, which never had an Arguments column", () => {
     const html = renderList([lecture]);
     const columnHeaders = headers(html);
@@ -302,6 +331,24 @@ describe("the lecture list's columns", () => {
       expect(html).not.toContain("sm:table-cell");
       expect(html).toContain("overflow-x-auto");
     }
+  });
+
+  it("sits the Views cell against the Date badge, with no padding between them", () => {
+    const html = renderList([lecture]);
+    const row = html.slice(html.indexOf("<tbody"));
+    const dateCell = /<td class="([^"]*)"[^>]*>(?:(?!<\/td>)[\s\S])*video-date-badge/.exec(row);
+    expect(dateCell?.[1]).toBeDefined();
+    const dateClasses = dateCell?.[1]?.split(" ") ?? [];
+    expect(dateClasses).toContain("pr-0");
+    expect(dateClasses).not.toContain("px-3");
+
+    const viewsCell = /<\/td><td class="([^"]*)"[^>]*><span class="[^"]*rounded bg-muted/.exec(row);
+    const viewsClasses = viewsCell?.[1]?.split(" ") ?? [];
+    expect(viewsClasses).not.toContain("text-right");
+    expect(viewsClasses).toContain("pl-1.5");
+    // The header over it leaves its text on the left too, over the cell's.
+    const viewsHeader = /<th[^>]*class="([^"]*)"[^>]*>(?:(?!<\/th>)[\s\S])*Views/.exec(html);
+    expect(viewsHeader?.[1]?.split(" ")).not.toContain("text-right");
   });
 
   it("gives the video row its thumbnail, at every width", () => {
