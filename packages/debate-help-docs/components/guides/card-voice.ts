@@ -14,7 +14,7 @@
 import { cardVoiceTexts } from "./card-voice-text"
 import { VoiceQueue } from "./voice-read-queue"
 import {
-  DEFAULT_CLOUD_VOICE,
+  cloudSpeaker,
   cloudflareSpeech,
   playClip,
   readVoiceOptions,
@@ -82,11 +82,11 @@ export async function readCardsAloud(
     if (texts.every((list) => list.length === 0)) return
     const [voice, kokoro] = await Promise.all([import("@debate-ai/editor/read-voice"), import("@debate-ai/editor/kokoro")])
     if (own.aborted) return
-    const storedId = voice.readStoredVoiceId()
-    const storedChoice = voice.readVoiceChoice(storedId)
-    const cloudVoice =
-      voice.readVoiceEngine(storedId) === "cloudflare" && storedChoice !== "browser" ? storedChoice.voice : DEFAULT_CLOUD_VOICE
-    const speed = voiceSpeed(voice.readStoredSpeed(), readVoiceOptions().fastSpeech)
+    const fastSpeech = readVoiceOptions().fastSpeech
+    /** The cite (`Shanahan 93.`) is the card's author and year: it has its own voice and speed. */
+    const cites = new Set(cards.flatMap((card) => (card.spoken?.trim() ? [`${card.spoken.trim()}.`] : [])))
+    const partOf = (piece: string) => (cites.has(piece) ? "author" : "text")
+    const speedOf = (piece: string) => voiceSpeed(voice.readStoredSpeed(partOf(piece)), fastSpeech)
 
     /** Each piece, and the card it belongs to. */
     const pieces: string[] = []
@@ -99,7 +99,11 @@ export async function readCardsAloud(
     })
     const queue = new VoiceQueue(
       pieces,
-      { kokoro: null, kokoroChunks: (text) => [text], cloud: (text, cloudSignal) => cloudflareSpeech(text, cloudVoice, cloudSignal) },
+      {
+        kokoro: null,
+        kokoroChunks: (text) => [text],
+        cloud: (text, cloudSignal) => cloudflareSpeech(text, cloudSpeaker(voice, partOf(text)), cloudSignal),
+      },
       own,
     )
     queue.start()
@@ -112,11 +116,12 @@ export async function readCardsAloud(
       }
       const unit = queue.units[i]!
       for await (const clip of unit.read(own)) {
+        const speed = speedOf(pieces[i]!)
         if (!(await playClip(audio, clip.blob, speed, own)) && !own.aborted) await speakWithBrowser(clip.text, speed, own)
       }
       for (const text of unit.missing) {
         if (own.aborted) break
-        await speakWithBrowser(text, speed, own)
+        await speakWithBrowser(text, speedOf(pieces[i]!), own)
       }
     }
   } catch (error) {

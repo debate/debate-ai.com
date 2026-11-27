@@ -11,6 +11,8 @@
  * yet (the engine's own confirm), then posts the session's share code + guest
  * pass to `/api/card-shares` so the card shows up as available on each
  * contact's account — no clipboard, no pasting a `cmshare…` code.
+ * "Manage contacts" opens `ManageContactsDialog` over it (add contacts, make
+ * named groups); a group chip picks all of its members at once.
  * `?shareWith=<userId>` (from /contacts' "Share a card") opens the dialog with
  * that contact preselected, and `?shareOpen=1` (the docs sidebar's right-click
  * "Share…") opens it with nobody picked yet. Its trigger lives in the sidebar's Documents row
@@ -26,7 +28,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { Loader2, Share2, Tag, Users } from "lucide-react"
 import { toast } from "sonner"
 import {
@@ -34,7 +36,9 @@ import {
   fetchCardShares,
   markCardShareOpened,
   sortContacts,
+  togglePickedGroup,
   useCardShares,
+  useContactGroups,
   useContacts,
   type CardShareEntry,
 } from "@debate-ai/team-collaboration"
@@ -52,6 +56,7 @@ import { useReasonSession } from "../session"
 import { useReasonDocs } from "../docs/ReasonDocsProvider"
 import { urlWithoutParam } from "../lib/reason-docs/route-selection"
 import { SellFileDialog } from "../market/SellFileDialog"
+import { ManageContactsDialog } from "./ManageContactsDialog"
 
 type Bridge = typeof import("@debate-ai/editor/collab-bridge")
 
@@ -189,13 +194,13 @@ export interface ShareWithContactsProps {
 
 /** The "Share with contacts" trigger and its dialog. */
 export function ShareWithContacts({ title, variant = "button" }: ShareWithContactsProps) {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const { isAuthenticated } = useReasonSession()
   const { createDocument, updateTitle, activeId } = useReasonDocs()
   const activeIdRef = useRef(activeId)
   activeIdRef.current = activeId
   const contacts = useContacts(isAuthenticated)
+  const groups = useContactGroups(isAuthenticated)
   const shares = useCardShares(isAuthenticated, {
     onOpen: (share) => void joinSharedCard(share, { createDocument, updateTitle }, activeIdRef),
   })
@@ -206,6 +211,8 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
   const [busy, setBusy] = useState(false)
   /** The "Sell…" dialog, opened from this one for the open file. */
   const [selling, setSelling] = useState(false)
+  /** The manage-contacts modal, stacked over this dialog. */
+  const [managing, setManaging] = useState(false)
 
   // `?shareWith=<userId>` → open the dialog with that contact preselected.
   const shareWithParam = searchParams.get("shareWith")
@@ -229,6 +236,10 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
   }, [shareOpenParam])
 
   const sorted = useMemo(() => sortContacts(contacts.contacts), [contacts.contacts])
+
+  const available = useMemo(() => new Set(sorted.map((c) => c.user.id)), [sorted])
+  const toggleGroup = (memberIds: readonly string[]) =>
+    setPicked((prev) => togglePickedGroup(prev, memberIds, available))
 
   const toggle = (id: string) =>
     setPicked((prev) => {
@@ -327,7 +338,7 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
           {sorted.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               You don't have any contacts yet.{" "}
-              <button type="button" className="underline" onClick={() => router.push("/contacts")}>
+              <button type="button" className="underline" onClick={() => setManaging(true)}>
                 Add some
               </button>{" "}
               first — cards can only be shared with contacts.
@@ -356,6 +367,33 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
             </div>
           )}
 
+          {groups.groups.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Contact groups">
+              <span className="text-xs text-muted-foreground">Groups</span>
+              {groups.groups.map((g) => {
+                const ids = g.memberIds.filter((id) => available.has(id))
+                const on = ids.length > 0 && ids.every((id) => picked.has(id))
+                return (
+                  <button
+                    key={g.id}
+                    type="button"
+                    disabled={ids.length === 0}
+                    aria-pressed={on}
+                    title={ids.length === 0 ? "No contacts in this group yet" : `Pick everyone in ${g.name}`}
+                    onClick={() => toggleGroup(g.memberIds)}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs transition-colors disabled:opacity-50 ${
+                      on ? "border-primary bg-primary text-primary-foreground" : "border-border hover:bg-accent"
+                    }`}
+                  >
+                    <Users className="h-3 w-3" />
+                    {g.name}
+                    <span className="opacity-70">{ids.length}</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -365,7 +403,7 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
           />
 
           <DialogFooter className="gap-2">
-            <Button type="button" variant="ghost" onClick={() => router.push("/contacts")}>
+            <Button type="button" variant="ghost" onClick={() => setManaging(true)}>
               <Users className="h-4 w-4" /> Manage contacts
             </Button>
             {activeId != null && (
@@ -388,6 +426,7 @@ export function ShareWithContacts({ title, variant = "button" }: ShareWithContac
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <ManageContactsDialog open={managing} onOpenChange={setManaging} contacts={contacts} groups={groups} />
       <SellFileDialog documentId={selling ? activeId : null} onClose={() => setSelling(false)} />
     </>
   )
