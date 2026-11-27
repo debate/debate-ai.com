@@ -283,6 +283,7 @@ html[data-debate-highlights="off"] .synergy-slayer-doc :is(mark.debate-hl, mark.
 }
 
 .prose mark.debate-hl.debate-hl--no-underline,
+.synergy-slayer-doc u.debate-u--no-underline,
 html[data-debate-underlines="off"] .synergy-slayer-doc :is(mark.debate-hl, u.reader-underline):not(.debate-card *) {
   text-decoration: none;
 }

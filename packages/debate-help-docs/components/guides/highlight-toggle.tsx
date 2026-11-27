@@ -22,8 +22,10 @@
  *   run with auto underline and auto emphasize. The marking is `toggleMarks`
  *   from `@debate-ai/reading-mode/marks`. The reader's long highlights look
  *   exactly like the page's (`styles/docs.css`).
- * - **AI highlight & underline**, and **Reset to default highlighting**,
- *   which drops every mark the reader made and restores the page's own.
+ * - **AI highlight & underline**, **Reset to default highlighting**,
+ *   which drops every mark the reader made and restores the page's own, and
+ *   **Remove all marks**, which clears every mark and highlight of every kind
+ *   (the page's own included; Reset brings those back).
  *
  * Show/hide choices are stored per browser, so they carry across every
  * Synergy Slayer page, and applied as `data-debate-highlights` /
@@ -37,7 +39,7 @@
  * they last until the page changes.
  */
 import { useEffect, useRef, useState } from "react"
-import { Bold, Check, ChevronDown, Highlighter, Loader2, RotateCcw, Sparkles, Underline, type LucideIcon } from "lucide-react"
+import { Bold, Check, ChevronDown, Highlighter, Eraser, Loader2, RotateCcw, Sparkles, Underline, type LucideIcon } from "lucide-react"
 import {
   AUTO_CUT_SYSTEM_PROMPT,
   autoCutPrompt,
@@ -46,6 +48,7 @@ import {
   MARK_KINDS,
   markPhrase,
   parseAutoCut,
+  removeAllMarks,
   toggleMarks,
   type MarkKind,
 } from "@debate-ai/reading-mode/marks"
@@ -228,7 +231,7 @@ const PAGE_CONTENT_SELECTOR = `${CONTENT_SELECTOR}:not([data-reading-mode-conten
 
 /**
  * The Marks dropdown: show or hide each kind of mark, turn the auto modes on,
- * have the AI cut the text, reset to the page's default highlighting.
+ * have the AI cut the text, reset to the page's default highlighting, or remove every mark.
  * `contentSelector` finds the text the AI and Reset act on (looked up on use,
  * so it can be content loaded later): the page's by default, reading mode
  * passes its own.
@@ -307,6 +310,14 @@ export function MarksMenu({
     for (const setting of SHOW_SETTINGS) if (!settings[setting]) writeSetting(setting, true)
     window.dispatchEvent(new Event(CHANGE_EVENT))
     setStatus("Default highlighting")
+  }
+
+  const removeAll = () => {
+    setOpen(false)
+    const root = getRoot()
+    if (root) removeAllMarks(root)
+    window.dispatchEvent(new Event(CHANGE_EVENT))
+    setStatus("All marks removed")
   }
 
   // The button names the auto mode that is on, so it's clear why selecting marks text.
@@ -401,6 +412,10 @@ export function MarksMenu({
           <button type="button" role="menuitem" className={itemClass} onClick={reset}>
             <RotateCcw className="size-4 text-fd-muted-foreground" />
             Reset to default highlighting
+          </button>
+          <button type="button" role="menuitem" className={itemClass} onClick={removeAll}>
+            <Eraser className="size-4 text-fd-muted-foreground" />
+            Remove all marks
           </button>
         </div>
       )}

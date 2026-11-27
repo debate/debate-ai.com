@@ -26,6 +26,9 @@
  * other kind (each host's CSS drops the style). Taking out both kinds removes
  * the mark. Re-marking that text puts the authored style back.
  *
+ * `removeAllMarks` takes every mark off, authored ones included, and
+ * `clearMarks` puts the page's own back.
+ *
  * `markPhrase` marks a quoted phrase where it occurs in the text, for marks an
  * AI picked (`autoCutPrompt` / `parseAutoCut`).
  */
@@ -45,6 +48,9 @@ export const SHORT_HIGHLIGHT_CLASS = 'reader-highlight-short';
 export const EMPHASIS_CLASS = 'reader-emphasis';
 /** Class on the page's authored highlights (`==text==` in the docs). */
 export const AUTHORED_CLASS = 'debate-hl';
+
+/** Class on a plain `<u>` (card underlining) whose underline was removed; each host drops its style. */
+export const UNDERLINE_OFF_CLASS = 'debate-u--no-underline';
 
 /** The class an authored mark gets when `kind` is taken off part of it. */
 export function authoredOffClass(kind: MarkKind): string {
@@ -78,7 +84,7 @@ function markingAncestor(node: Node, kind: MarkKind, root: Element): Element | n
       if (AUTHORED_KINDS.includes(kind) && !el.classList.contains(authoredOffClass(kind))) return el;
       continue;
     }
-    if (kind === 'underline' && el.tagName === 'U') return el;
+    if (kind === 'underline' && el.tagName === 'U' && !el.classList.contains(UNDERLINE_OFF_CLASS)) return el;
     if (el === root) break;
   }
   return null;
@@ -328,6 +334,22 @@ export function clearMarks(root: HTMLElement): void {
   root
     .querySelectorAll(`mark.${AUTHORED_CLASS}`)
     .forEach((el) => el.classList.remove(authoredOffClass('highlight'), authoredOffClass('underline')));
+  root.querySelectorAll(`u.${UNDERLINE_OFF_CLASS}`).forEach((el) => el.classList.remove(UNDERLINE_OFF_CLASS));
+  root.normalize();
+}
+
+/**
+ * Takes every mark off the text, of every kind: the reader's own marks are
+ * removed, and the page's authored highlights and underlines (`debate-hl`
+ * marks, plain `<u>`) are switched off in place, so `clearMarks` brings them
+ * back.
+ */
+export function removeAllMarks(root: HTMLElement): void {
+  root.querySelectorAll(READER_SELECTOR).forEach(unwrap);
+  root
+    .querySelectorAll(`mark.${AUTHORED_CLASS}`)
+    .forEach((el) => el.classList.add(authoredOffClass('highlight'), authoredOffClass('underline')));
+  root.querySelectorAll('u').forEach((el) => el.classList.add(UNDERLINE_OFF_CLASS));
   root.normalize();
 }
 
