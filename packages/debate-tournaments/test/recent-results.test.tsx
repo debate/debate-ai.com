@@ -272,6 +272,35 @@ describe("RecentResultsSection", () => {
     expect(text(el)).toContain("aren’t available here yet");
   });
 
+  const bracketNote = "No elimination bracket has been posted.";
+  const openFirstEvent = async (client: ReturnType<typeof clientWith>) => {
+    const el = await render(<RecentResultsSection tourns={[tourn()]} state="ready" />, contextValue({ client }));
+    await click(toggle(el, "Expand tournament UCLA Invitational"));
+    await settle();
+    return el;
+  };
+
+  it("hides the no-bracket note when final places exist without a bracket", async () => {
+    const el = await openFirstEvent(clientWith((p) => (p.endsWith("/results") ? { 2: index[2] } : p.endsWith("/rounds") ? [] : finals(21))));
+    expect(el.querySelector("[data-final-places]")!.textContent).toBe("1Gold Gold One · First High2Silver Silver One · Second High");
+    expect(text(el)).not.toContain(bracketNote);
+  });
+
+  it("shows the no-bracket note when there is neither a bracket nor final places", async () => {
+    const speakerOnly = ev(2, "Public Forum", "PF", [[22, "speaker", "Speaker Awards"]]);
+    const el = await openFirstEvent(
+      clientWith((p) =>
+        p.endsWith("/results")
+          ? { 2: speakerOnly }
+          : p.endsWith("/rounds")
+            ? []
+            : [{ id: 22, label: "Speaker Awards", tag: "speaker", results: [{ place: "1", Student: { id: 7, first: "Al", last: "One" }, School: { id: 1, code: null, name: "First High" } }] }],
+      ),
+    );
+    expect(el.querySelector("[data-final-places]")).toBeNull();
+    expect(text(el)).toContain(bracketNote);
+  });
+
   it("shows an empty note, and a loading state", async () => {
     let el = await render(<RecentResultsSection tourns={[]} state="ready" />);
     expect(text(el)).toContain("No tournaments finished with results in the last 7 days.");
