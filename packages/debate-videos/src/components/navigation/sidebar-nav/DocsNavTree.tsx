@@ -1,6 +1,6 @@
 /**
  * @fileoverview The "Learning" section at the end of the sidebar tree: Rules &
- * Glossary and All Features first, then every help docs page, as an ordinary
+ * Glossary and Overview Home first, then every help docs page, as an ordinary
  * section that scrolls with the rest of the column.
  * It starts expanded to the second level: the section is open and so are its
  * top-level folders (Blog, Features, Learn), while folders nested deeper start

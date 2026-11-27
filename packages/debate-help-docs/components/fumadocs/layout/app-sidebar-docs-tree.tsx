@@ -19,7 +19,7 @@
  * folder's meta.json is ignored here.
  * Every folder can be expanded or collapsed by hand. The current page is
  * scrolled into view in the sidebar when the docs open and after each
- * navigation. Rules & Glossary and All Features are pinned above Introduction,
+ * navigation. Rules & Glossary and Overview Home are pinned above Introduction,
  * matching `DocsNavTree`. Off /docs those pages are the Learning section of
  * the tree (`DocsNavTree` in @debate-ai/videos, fed by `routes/tree-route.ts`),
  * opened to the same depth.
