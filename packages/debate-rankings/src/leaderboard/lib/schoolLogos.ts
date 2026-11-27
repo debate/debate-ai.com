@@ -10,12 +10,14 @@ import type { FC, SVGProps } from "react";
 import type { StaticImageData } from "next/image";
 
 import {
+  IconSchoolBellarmine,
   IconSchoolBlake,
   IconSchoolBronx,
   IconSchoolCaddoMagnet,
   IconSchoolCarrolltonSchoolOfTheSacredHeart,
   IconSchoolCeda,
   IconSchoolCollegePrep,
+  IconSchoolCoppell,
   IconSchoolBaylor,
   IconSchoolCsuLongBeach,
   IconSchoolDartmouth,
@@ -34,6 +36,7 @@ import {
   IconSchoolKansas,
   IconSchoolKentucky,
   IconSchoolKinkaid,
+  IconSchoolLexington,
   IconSchoolLiberty,
   IconSchoolLoyola,
   IconSchoolLoyolaChicago,
@@ -94,12 +97,14 @@ const logoSrc = (img: unknown): SchoolLogo =>
  * its file name, plus the CEDA and NDT logos from `debate-icons/organizations`.
  */
 export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
+  "bellarmine": logoSrc(IconSchoolBellarmine),
   "blake": logoSrc(IconSchoolBlake),
   "bronx": logoSrc(IconSchoolBronx),
   "caddo-magnet": logoSrc(IconSchoolCaddoMagnet),
   "carrollton-school-of-the-sacred-heart": logoSrc(IconSchoolCarrolltonSchoolOfTheSacredHeart),
   "ceda": logoSrc(IconSchoolCeda),
   "college-prep": logoSrc(IconSchoolCollegePrep),
+  "coppell": logoSrc(IconSchoolCoppell),
   "baylor": logoSrc(IconSchoolBaylor),
   "csu-long-beach": logoSrc(IconSchoolCsuLongBeach),
   "dartmouth": logoSrc(IconSchoolDartmouth),
@@ -118,6 +123,7 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "kansas": logoSrc(IconSchoolKansas),
   "kentucky": logoSrc(IconSchoolKentucky),
   "kinkaid": logoSrc(IconSchoolKinkaid),
+  "lexington": logoSrc(IconSchoolLexington),
   "liberal-arts-and-science": logoSrc(IconSchoolLiberalArtsAndScience),
   "liberty": logoSrc(IconSchoolLiberty),
   // Plain "loyola" is Loyola High School (CA) in the rankings, not Loyola Chicago.
@@ -167,6 +173,11 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
  * of", "High School" and the like; this list covers the rest.
  */
 const SCHOOL_LOGO_ALIASES: Record<string, string> = {
+  // Bellarmine College Preparatory (San Jose, CA)
+  "bellarmine-college-prep": "bellarmine",
+  "bellarmine-college-preparatory": "bellarmine",
+  "bellarmine-prep": "bellarmine",
+  bcp: "bellarmine",
   // Blake
   "blake-school": "blake",
   // Bronx Science
