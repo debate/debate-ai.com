@@ -1,3 +1,6 @@
+import { buttonVariants } from "../ui/primitives/button";
+import { cn } from "../ui/lib/utils";
+
 /**
  * The DOM markup `src/editor/index.ts` expects to already exist when it's
  * imported — ported verbatim from Debate Editor's original `index.html` body
@@ -38,8 +41,8 @@
  * outgrows the window; see `#ribbon-strip` in `editor/style.css` and
  * `initRibbonScroller` in `editor/index.ts`.
  */
-export const RIBBON_HTML = `
-<header id="ribbon">
+const RIBBON_MARKUP = `
+<header id="ribbon" class="dec-ribbon">
   <div id="ribbon-strip" class="ribbon-strip">
   <section id="timer-panel" class="ribbon-section pmd-timer-panel" hidden></section>
   <div class="ribbon-section ribbon-left">
@@ -140,7 +143,7 @@ export const RIBBON_HTML = `
       <button id="num-sub-role-btn" class="ribbon-doc-ops-btn ribbon-numbering-btn" type="button"
               aria-pressed="false" title="Mark as substructure">a)</button>
       <button id="num-restart-btn" class="ribbon-doc-ops-btn ribbon-numbering-btn" type="button"
-              aria-pressed="false" title="Restart numbering here">↻</button>
+              aria-pressed="false" title="Restart numbering here"><span class="pmd-icon pmd-icon-restart" aria-hidden="true"></span></button>
       <button id="num-visibility-btn" class="ribbon-doc-ops-btn ribbon-numbering-btn" type="button"
               aria-pressed="true" title="Show or hide card numbering"><span class="pmd-icon pmd-icon-list" aria-hidden="true"></span></button>
     </div>
@@ -148,7 +151,7 @@ export const RIBBON_HTML = `
       <button id="paragraph-integrity-btn" class="ribbon-doc-ops-btn" type="button"
               aria-pressed="true" title="Paragraph Integrity"><span class="pmd-icon pmd-icon-paragraph-integrity" aria-hidden="true"></span></button>
       <button id="plain-paste-toggle-btn" class="ribbon-doc-ops-btn" type="button"
-              aria-pressed="false" title="Paste Text (F2) — paste the clipboard as unformatted text">T</button>
+              aria-pressed="false" title="Paste Text (F2) — paste the clipboard as unformatted text"><span class="pmd-icon pmd-icon-paste-text" aria-hidden="true"></span></button>
     </div>
     <div id="view-ops-panel" class="ribbon-doc-ops-panel" role="group" aria-label="View tools">
       <button id="read-mode-btn" class="ribbon-doc-ops-btn" type="button"
@@ -229,3 +232,65 @@ export const RIBBON_HTML = `
   <button id="file-drag-mark" type="button" hidden aria-label="Debate Editor"></button>
 </div>
 `;
+
+/** Pressed toggles read as a soft primary wash with a tinted border, not a
+ *  solid fill: several toggles (paragraph integrity, card numbers) are on by
+ *  default, and a row of solid primary buttons would shout. */
+const PRESSED =
+  "aria-pressed:border-primary/50 aria-pressed:bg-primary/15 aria-pressed:text-primary aria-pressed:shadow-inner aria-pressed:hover:bg-primary/25";
+
+/** Buttons that join the split-button groups (color + font size) lose their
+ *  own border and shadow so the wrapper reads as one control. */
+const JOINED = "h-full rounded-none border-0 shadow-none";
+
+/** The shadcn `Button` look for a ribbon button, by what the button is. Built
+ *  from `buttonVariants` so it can't drift from the Button the rest of the
+ *  site uses. */
+function buttonClasses(classes: string): string {
+  const has = (name: string) => classes.split(/\s+/).includes(name);
+  const outline = (size: "icon-sm" | "sm", extra: string) =>
+    cn(buttonVariants({ variant: "outline", size }), PRESSED, extra);
+
+  if (has("formatting-panel-btn")) return outline("sm", "min-w-12 px-2.5 text-xs");
+  if (has("ribbon-numbering-btn")) return outline("icon-sm", "w-auto min-w-8 px-2 text-xs tabular-nums");
+  if (has("ribbon-doc-menu-btn")) return outline("sm", "gap-1.5 px-2.5 text-xs");
+  if (has("ribbon-color-main"))
+    return cn(buttonVariants({ variant: "ghost", size: "icon-sm" }), PRESSED, JOINED, "w-8 flex-col gap-0.5 rounded-l-md text-base");
+  if (has("ribbon-color-arrow"))
+    return cn(buttonVariants({ variant: "ghost", size: "icon-sm" }), JOINED, "w-5 rounded-r-md border-l text-xs text-muted-foreground");
+  if (has("ribbon-font-size-step"))
+    return outline("icon-sm", "w-auto gap-0 px-1.5 text-xs");
+  return outline("icon-sm", "text-base");
+}
+
+const FONT_SIZE_INPUT_CLASSES =
+  "h-8 w-11 rounded-l-md rounded-r-none border-0 bg-transparent px-0 text-center text-xs tabular-nums shadow-none outline-none " +
+  "focus-visible:bg-accent focus-visible:ring-0";
+
+/** Rewrites every `<button>` / the font-size input of the toolbar (the
+ *  `<header id="ribbon">`) to carry shadcn Button classes, leaving ids,
+ *  other classes and attributes the engine keys off untouched. The status bar,
+ *  nav pull tab and the rest of the markup keep the engine's own look. */
+export function applyShadcnToRibbon(markup: string): string {
+  const end = markup.indexOf("</header>");
+  if (end < 0) return markup;
+  const head = markup
+    .slice(0, end)
+    .replace(/<button\b([^>]*)>/g, (_whole, attrs: string) => {
+      const cls = /\bclass="([^"]*)"/.exec(attrs)?.[1];
+      const shadcn = buttonClasses(cls ?? "");
+      const withClass =
+        cls === undefined
+          ? `${attrs} class="${shadcn}"`
+          : attrs.replace(/\bclass="[^"]*"/, `class="${cls} ${shadcn}"`);
+      return `<button${withClass} data-slot="button">`;
+    })
+    .replace(/<input\b([^>]*\bid="font-size-input"[^>]*)>/, (_whole, attrs: string) =>
+      `<input${attrs
+        .replace(/\s*\/$/, "")
+        .replace(/\bclass="([^"]*)"/, `class="$1 ${FONT_SIZE_INPUT_CLASSES}"`)} data-slot="input" />`,
+    );
+  return head + markup.slice(end);
+}
+
+export const RIBBON_HTML = applyShadcnToRibbon(RIBBON_MARKUP);
