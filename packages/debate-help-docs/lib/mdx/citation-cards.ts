@@ -210,6 +210,17 @@ export function spokenCite(entry: Pick<ReferenceEntry, 'surnames' | 'year'>): st
   return [surname, twoDigits].filter(Boolean).join(' ');
 }
 
+/**
+ * The authors as the References side panel shows them: one surname, two
+ * joined with an ampersand (`Hansson & Reijven`), three or more as `Smith et al.`.
+ */
+export function citeAuthors(entry: Pick<ReferenceEntry, 'surnames' | 'etAl'>): string {
+  const names = entry.surnames.map((name) => name.trim()).filter(Boolean);
+  if (names.length === 0) return '';
+  if (entry.etAl || names.length >= 3) return `${names[0]} et al.`;
+  return names.join(' & ');
+}
+
 /** Entries grouped by year, for lookups from in-text citations. */
 export type CitationIndex = Map<string, ReferenceEntry[]>;
 

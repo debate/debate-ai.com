@@ -4,8 +4,11 @@ import { isRound } from "../src/sync/youtube/parsers/video-classifier";
 import {
   classifyLecture,
   classifyRoundCollection,
+  forcedLectureCategory,
   isNsdaChannel,
+  isSuperDebateVideo,
   lectureCategoryForChannel,
+  LECTURE_CATEGORIES,
 } from "@debate-ai/videos/src/data/lecture-classifier";
 
 describe("isRound", () => {
@@ -146,5 +149,49 @@ describe("NSDA Speech shelf", () => {
     expect(isNsdaChannel("Indiana Speech and Debate")).toBe(false);
     expect(isNsdaChannel("")).toBe(false);
     expect(lectureCategoryForChannel(null)).toBeNull();
+  });
+});
+
+describe("Open Super Debates shelf", () => {
+  it("is one of the categories a person can pick", () => {
+    expect(LECTURE_CATEGORIES).toContain("Open Super Debates");
+  });
+
+  it("files the queued Super Debate lectures under it, whatever their keywords", () => {
+    expect(classifyLecture("Chicago Super Debate Night 1 Recap", "", "SuperDebate")).toBe("Open Super Debates");
+    expect(
+      classifyLecture("Will AI Eliminate More Jobs Than It Creates? Martin Ford vs. Pedro Domingos", "research on jobs", "SuperDebate"),
+    ).toBe("Open Super Debates");
+    expect(classifyLecture("Welcome to our live show!", "", "SuperDebate")).toBe("Open Super Debates");
+  });
+
+  it("matches the channel in any spelling", () => {
+    for (const channel of ["Super Debate", "SuperDebate", "Super Debater", "@SuperDebate", "SUPER DEBATERS", "super-debate"]) {
+      expect(classifyLecture("Welcome to our live show!", "", channel)).toBe("Open Super Debates");
+      expect(isSuperDebateVideo("Welcome", channel)).toBe(true);
+    }
+  });
+
+  it("matches a title containing Super Debate in any case, on any channel", () => {
+    expect(classifyLecture("Intro to the SUPER DEBATE format", "", "Victory Briefs")).toBe("Open Super Debates");
+    expect(classifyLecture("highlights from super debate 3", "")).toBe("Open Super Debates");
+    expect(classifyLecture("Super Debater finals", "", null)).toBe("Open Super Debates");
+  });
+
+  it("wins over the NSDA channel and the other collections", () => {
+    expect(classifyLecture("Super Debate: Congress edition", "", "National Speech & Debate Association")).toBe(
+      "Open Super Debates",
+    );
+    expect(classifyRoundCollection("Super Debate Night: ACC Debate Tournament Final")).toBe("Open Super Debates");
+    expect(classifyRoundCollection("TOC Finals: A vs B", "SuperDebate")).toBe("Open Super Debates");
+  });
+
+  it("only reads the title and channel, not the description or similar words", () => {
+    expect(classifyLecture("Intro to Policy Debate", "from the super debate series", "Victory Briefs")).toBe(
+      "Novice & Introductory",
+    );
+    expect(isSuperDebateVideo("Super duper debate", "Superb Debaters Club")).toBe(false);
+    expect(forcedLectureCategory("Intro to Policy Debate", "Victory Briefs")).toBeNull();
+    expect(lectureCategoryForChannel("SuperDebate")).toBe("Open Super Debates");
   });
 });
