@@ -38,7 +38,7 @@ import {
 } from "@debate-ai/videos-admin/src/sync/youtube/youtube-api";
 import { canonicalRoundLevel } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-title";
 import { canonicalTournament, KNOWN_TOURNAMENTS } from "@debate-ai/videos-admin/src/sync/youtube/parsers/tournament-names";
-import { classifyLecture, LECTURE_CATEGORIES, lectureCategoryForChannel } from "@debate-ai/videos/src/data/lecture-classifier";
+import { classifyLecture, forcedLectureCategory, LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { getEnv } from "@/lib/env";
 import { OPENROUTER_FREE_MODEL, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
 import { logAIFailure, writeLanguageChat } from "@/lib/ai/write-language-chat";
@@ -507,9 +507,9 @@ export async function autofillVideo(input: AutofillInput): Promise<AutofillResul
     }
   }
   Object.assign(fields, parsed.fields);
-  // The NSDA channel's lectures all sit on one shelf, whatever the title or
-  // the model says (see `lectureCategoryForChannel`).
-  const channelCategory = lectureCategoryForChannel(channel);
+  // The NSDA channel's lectures and every Super Debate video sit on their own
+  // shelf, whatever the title or the model says (see `forcedLectureCategory`).
+  const channelCategory = forcedLectureCategory(title, channel);
   if (channelCategory && fields.style === null) {
     fields.style = null;
     fields.category = channelCategory;

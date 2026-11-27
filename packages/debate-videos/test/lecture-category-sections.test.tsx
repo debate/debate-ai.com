@@ -91,6 +91,18 @@ describe("lecture category sections", () => {
     expect(html).toContain("minmax(9.5rem,12rem)");
   });
 
+  it("shows Open Super Debates in Formats, linked by its slug", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, {
+        categories: [...categories, { key: "open_super_debates", label: "Open Super Debates", count: 3, maxViews: 1 }],
+      }),
+    );
+    const formats = sectionOf(html, "Formats");
+    expect(formats).toContain("Open Super Debates");
+    expect(formats).toContain('href="/lectures/open_super_debates"');
+    expect(sectionOf(html, "More")).not.toContain("Open Super Debates");
+  });
+
   it("adds the collection links to Formats", () => {
     const html = renderToStaticMarkup(
       createElement(LectureCategoryGridGallery, {
