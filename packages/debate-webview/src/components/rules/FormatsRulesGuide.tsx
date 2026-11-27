@@ -79,13 +79,24 @@ const FORMATS: { eyebrow: string; title: string; summary: string; parts: [string
   },
   {
     eyebrow: "Teams",
-    title: "World Schools / Parliamentary / BP",
+    title: "World Schools",
+    summary:
+      "A motion-based team format emphasizing fast analysis, direct refutation, teamwork, and persuasive comparative argument.",
+    parts: [
+      ["Case", "define and defend the motion"],
+      ["POIs", "brief questions during substantive speeches"],
+      ["Replies", "summarize clash and comparative reasons to win"],
+    ],
+  },
+  {
+    eyebrow: "Teams",
+    title: "Parliamentary / BP",
     summary:
       "Motion-based formats emphasizing fast analysis, direct refutation, teamwork, and persuasive comparative argument.",
     parts: [
       ["Case", "define and defend the motion"],
       ["POIs", "brief questions in many variants"],
-      ["Replies / whips", "summarize clash and comparative reasons to win"],
+      ["Whips", "summarize clash and comparative reasons to win"],
     ],
   },
 ]
@@ -310,9 +321,41 @@ const FORMAT_RULES: { title: string; badge: string; summary: string; cards: { ti
         title: "Core rules to confirm locally",
         items: [
           "Speaker times, preparation time, points of information, and new-matter limits vary by circuit.",
-          "In BP, closing teams must make a distinct, relevant extension and whips generally do not introduce new substantive material.",
-          "In World Schools and many parliamentary variants, points of information are brief questions offered during substantive speeches.",
           "Always check the invitation for evidence, electronic-device, and source-citation expectations.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "World Schools",
+    badge: "Teams",
+    summary:
+      "World Schools shares the motion-based structure above. Confirm speaker order, times, and preparation time for your circuit.",
+    cards: [
+      {
+        title: "Points of information",
+        items: [
+          "In World Schools, points of information are brief questions offered during substantive speeches.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Parliamentary & British Parliamentary (Parli)",
+    badge: "Teams",
+    summary:
+      "Parliamentary and British Parliamentary share the motion-based structure above. Confirm speaker order, times, and preparation time for your league.",
+    cards: [
+      {
+        title: "Parliamentary",
+        items: [
+          "In many parliamentary variants, points of information are brief questions offered during substantive speeches.",
+        ],
+      },
+      {
+        title: "British Parliamentary (BP)",
+        items: [
+          "In BP, closing teams must make a distinct, relevant extension and whips generally do not introduce new substantive material.",
         ],
       },
     ],
