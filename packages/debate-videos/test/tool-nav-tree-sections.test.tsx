@@ -163,7 +163,7 @@ describe("Team & School Rank", () => {
 });
 
 describe("Learning links", () => {
-  it("pins Rules & Glossary then All Features, outside the tool sections", async () => {
+  it("pins Rules & Glossary then Overview Home, outside the tool sections", async () => {
     const { SIDEBAR_TOOL_SECTIONS, LEARNING_LINKS } = await import(
       "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
     );
@@ -172,7 +172,7 @@ describe("Learning links", () => {
       title: "Rules & Glossary",
       aliases: ["/practice/glossary"],
     });
-    expect(LEARNING_LINKS[1]?.title).toBe("All Features");
+    expect(LEARNING_LINKS[1]?.title).toBe("Overview Home");
     const toolHrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href));
     expect(toolHrefs).not.toContain("/practice/rules");
     expect(toolHrefs).not.toContain("/practice/features");

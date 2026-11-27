@@ -198,7 +198,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
  */
 export const LEARNING_LINKS: readonly SidebarToolLink[] = [
   { href: "/practice/rules", title: "Rules & Glossary", icon: Scale, aliases: ["/practice/glossary"] },
-  { href: "/practice/features", title: "All Features", icon: Sparkles },
+  { href: "/practice/features", title: "Overview Home", icon: Sparkles },
 ];
 
 /** True when `pathname` is one of `link`'s destinations, or a page under it. */
