@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getPosts } from '@debate-ai/help-docs/lib/blog';
 import { blogSource } from '@debate-ai/help-docs/lib/fumadocs/source';
-import { LastRevised } from '@debate-ai/help-docs/last-revised';
 
 export function generateStaticParams() {
   return getPosts(blogSource.getPages()).map((post) => ({
@@ -22,8 +21,6 @@ export default async function BlogPostPage({
   const data = page.data as any;
   const loaded = await data.load();
   const { body: MDX } = loaded;
-  // Last Git commit date of the post (lastModified plugin, source.config.ts).
-  const lastRevised = (loaded as { lastModified?: Date }).lastModified ?? data.lastModified;
 
   return (
     <main className="mx-auto max-w-3xl py-16">
@@ -33,7 +30,6 @@ export default async function BlogPostPage({
       <article className="prose mt-10">
         <MDX />
       </article>
-      <LastRevised date={lastRevised} />
     </main>
   );
 }

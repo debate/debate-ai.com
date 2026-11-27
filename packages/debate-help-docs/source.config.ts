@@ -63,12 +63,11 @@ export const blog = defineCollections({
 
 export default defineConfig({
   // Every docs page's last Git commit date, exposed as `lastModified` on
-  // `await page.data.load()` and shown as "Last revised" (routes/docs-page.tsx,
-  // routes/dev-docs-page.tsx). Our own Git reader rather than the plugin's
+  // `await page.data.load()` and shown as the "last updated" date in the page Info
+  // button (routes/docs-page.tsx). Our own Git reader rather than the plugin's
   // `'git'` mode, so a shallow clone gives no dates instead of the build date
   // on every page, and a shallow clone (Cloudflare Workers Builds) fetches its
-  // history first (lib/mdx/git-last-modified.ts). Blog posts get it too
-  // (apps/debate-web/app/blog/[slug]/page.tsx).
+  // history first (lib/mdx/git-last-modified.ts).
   plugins: [
     lastModified({
       versionControl: gitLastModified(fileURLToPath(new URL('.', import.meta.url)), { deepen: true }),

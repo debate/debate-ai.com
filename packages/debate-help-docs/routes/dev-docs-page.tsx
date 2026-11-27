@@ -14,7 +14,6 @@ import { getMDXComponents } from '../mdx-components';
 import { AskAIButton } from 'ask-ai-button';
 import { Sparkles } from 'lucide-react';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
-import { LastRevised } from '../components/fumadocs/layout/last-revised';
 import { DependencyGraph, FileTreeView } from '../components/code-graph/package-code-graph';
 import { DOCS_AI_PROVIDERS } from '../lib/fumadocs/ask-ai-providers';
 import { devPageMarkdownUrl, devSource, type DevPage } from '../lib/fumadocs/dev-source';
@@ -34,8 +33,6 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
 
   const loaded = await page.data.load();
   const { body: MDX, toc } = loaded;
-  // Last Git commit date, from the lastModified plugin (source.config.ts).
-  const lastRevised = (loaded as { lastModified?: Date }).lastModified;
   const markdownUrl = devPageMarkdownUrl(page);
 
   return (
@@ -51,7 +48,6 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
           />
         </div>
         <MDX components={getMDXComponents({ a: relativeLink(page), DependencyGraph, FileTreeView })} />
-        <LastRevised date={lastRevised} />
       </DocsBody>
     </DocsPage>
   );
