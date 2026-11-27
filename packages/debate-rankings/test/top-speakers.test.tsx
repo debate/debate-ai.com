@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
 import { AllTimeRankingsView } from "../src/leaderboard/AllTimeRankingsView"
-import { TopSpeakersList } from "../src/leaderboard/TopSpeakersList"
-import { buildHsAllTimeTeams } from "../src/leaderboard/profile/hsAllTimeTeams"
-import { buildHsTopSpeakers, buildNdtTopSpeakers, hsTopSpeakers, TOP_SPEAKERS_LIMIT } from "../src/leaderboard/profile/topSpeakers"
+import { TeamSpeakerAwards } from "../src/leaderboard/TeamSpeakerAwards"
+import { HsAllTimeTeamsRankings } from "../src/leaderboard/profile/ProfileHsAllTimeTeams"
+import { NdtAllSeasonsRankings } from "../src/leaderboard/profile/NdtAllSeasonsDialog"
+import { hsAllTimeTeams } from "../src/leaderboard/profile/hsAllTimeTeams"
+import { buildHsTopSpeakers, buildNdtTopSpeakers, hsTeamSpeakers, hsTopSpeakers, ndtTeamSpeakers } from "../src/leaderboard/profile/topSpeakers"
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history"
 
 const none = { toc: [], ndca: [], barkley: [], cal: [], glenbrooks: [] }
@@ -74,7 +76,7 @@ describe("high school top speaker awards", () => {
     expect(lists.Policy!.every((s) => s.topSpeakerAwards === 1)).toBe(true)
   })
 
-  it("limits the list to ten and links speakers to their team when it is known", () => {
+  it("lists every debater with awards unless a limit is given", () => {
     const toc = Array.from({ length: 12 }, (_, i) => ({
       year: 2000 + i,
       event: "Policy" as const,
@@ -82,29 +84,36 @@ describe("high school top speaker awards", () => {
       school: "Big School (TX)",
       competitors: `First${String.fromCharCode(65 + i)} Last${String.fromCharCode(65 + i)}`,
     }))
-    expect(buildHsTopSpeakers({ ...none, toc }).Policy).toHaveLength(TOP_SPEAKERS_LIMIT)
+    expect(buildHsTopSpeakers({ ...none, toc }).Policy).toHaveLength(12)
+    expect(buildHsTopSpeakers({ ...none, toc, limit: 10 }).Policy).toHaveLength(10)
+  })
 
-    const sources = {
+  it("finds a team's debaters' awards in ranking order, matching name variants", () => {
+    const lists = buildHsTopSpeakers({
       ...none,
       toc: [
-        { year: 2021, event: "Policy" as const, place: "Champion" as const, school: "Bellarmine College Preparatory (CA)", competitors: "Adarsh Hiremath & Surya Midha" },
-        { year: 2021, event: "Policy" as const, place: "Top speaker" as const, school: "Bellarmine College Preparatory (CA)", competitors: "Surya Midha" },
+        { year: 2021, event: "Policy", place: "Top speaker", school: "Bellarmine College Preparatory (CA)", competitors: "Surya Midha" },
+        { year: 2022, event: "Policy", place: "Top speaker", school: "Bellarmine College Preparatory (CA)", competitors: "Adarsh Hiremath" },
+        { year: 2023, event: "Policy", place: "Top speaker", school: "Bellarmine College Preparatory (CA)", competitors: "Adarsh Hiremath" },
+        { year: 2021, event: "Policy", place: "Top speaker", school: "Other School", competitors: "Surya Midha" },
       ],
-    }
-    const teams = buildHsAllTimeTeams(sources)
-    expect(buildHsTopSpeakers({ ...sources, teams }).Policy![0].teamName).toBe("Adarsh Hiremath & Surya Midha")
-    expect(buildHsTopSpeakers(sources).Policy![0].teamName).toBeUndefined()
+    })
+    const team = { schoolKey: lists.Policy![0].schoolKey, debaters: "Surya Midha & Adarsh Hiremath" }
+    expect(hsTeamSpeakers(lists.Policy, team).map((s) => [s.name, s.topSpeakerAwards])).toEqual([
+      ["Adarsh Hiremath", 2],
+      ["Surya Midha", 1],
+    ])
+    expect(hsTeamSpeakers(lists.Policy, { ...team, debaters: "Someone Else & Nobody Here" })).toEqual([])
+    expect(hsTeamSpeakers(undefined, team)).toEqual([])
   })
 
   it("has speaker awards for every high school event in the bundled history", () => {
     const lists = hsTopSpeakers()
     for (const event of ["Policy", "Lincoln-Douglas", "Public Forum"] as const) {
-      expect(lists[event]!.length).toBe(TOP_SPEAKERS_LIMIT)
+      expect(lists[event]!.length).toBeGreaterThan(10)
       expect(lists[event]![0].rank).toBe(1)
       expect(lists[event]![0].topSpeakerAwards).toBeGreaterThanOrEqual(lists[event]![9].topSpeakerAwards)
     }
-    // Lincoln-Douglas debaters are a team of one, so each links to their own page.
-    expect(lists["Lincoln-Douglas"]!.every((s) => s.teamName === s.name)).toBe(true)
   })
 })
 
@@ -145,49 +154,94 @@ describe("NDT top speaker awards", () => {
   })
 })
 
-describe("Top 10 speaker awards card", () => {
-  it("lists each debater with awards, links their team, school and logo", () => {
-    const html = renderToStaticMarkup(
-      <TopSpeakersList
-        format="high school Policy"
-        speakers={[
-          {
-            rank: 1,
-            name: "Surya Midha",
-            school: "Bellarmine College Preparatory",
-            teamName: "Adarsh Hiremath & Surya Midha",
-            topSpeakerAwards: 2,
-            points: 8,
-            tournaments: ["TOC", "NDCA"],
-            firstYear: 2021,
-            lastYear: 2021,
-            awards: [
-              { tournament: "NDCA", year: 2021, rank: 1, label: "Top speaker", points: 4 },
-              { tournament: "TOC", year: 2021, rank: 1, label: "Top speaker", points: 4 },
-            ],
-          },
-        ]}
-      />,
-    )
-    expect(html).toContain("Top 10 speaker awards · high school Policy")
+describe("NDT team speaker awards", () => {
+  it("matches a team's debaters at their school", () => {
+    const list = buildNdtTopSpeakers([
+      {
+        school: "Baylor University (TX)",
+        years: [],
+        elims: [],
+        championships: [],
+        atLargeBids: [],
+        copelandWinners: [],
+        speakerAwards: [{ year: 1986, speaker: "Lyn Robbins", rank: 1 }],
+        coachingAwards: [],
+      },
+    ])
+    expect(ndtTeamSpeakers(list, { school: "Baylor University (TX)", team: "Lyn Robbins & Pat Lee" }).map((s) => s.name)).toEqual(["Lyn Robbins"])
+    expect(ndtTeamSpeakers(list, { school: "Baylor University (TX)", team: "Lyn Robbins" })).toHaveLength(1)
+    expect(ndtTeamSpeakers(list, { school: "Other (TX)", team: "Lyn Robbins & Pat Lee" })).toEqual([])
+    expect(ndtTeamSpeakers(list, { school: "Baylor University (TX)", team: "" })).toEqual([])
+  })
+})
+
+describe("team speaker awards on the GOAT listings", () => {
+  const speaker = {
+    rank: 1,
+    name: "Surya Midha",
+    school: "Bellarmine College Preparatory",
+    schoolKey: "bellarmine",
+    topSpeakerAwards: 2,
+    points: 8,
+    tournaments: ["TOC", "NDCA"] as ("TOC" | "NDCA")[],
+    firstYear: 2021,
+    lastYear: 2021,
+    awards: [
+      { tournament: "NDCA" as const, year: 2021, rank: 1, label: "Top speaker", points: 4 },
+      { tournament: "TOC" as const, year: 2021, rank: 1, label: "Top speaker", points: 4 },
+    ],
+  }
+
+  it("lists the debater's awards, count and a link to the team", () => {
+    const html = renderToStaticMarkup(<TeamSpeakerAwards speakers={[speaker]} href="/@team-page" />)
     expect(html).toContain("Surya Midha")
     expect(html).toContain("2021 NDCA · 2021 TOC")
-    expect(html).toContain("top speakers")
-    expect(html).toContain('href="/@bellarmine-college-preparatory"')
-    expect(html).toMatch(/href="\/@[a-z-]*midha[a-z-]*"/)
+    expect(html).toContain("2 top speakers")
+    expect(html).toContain('href="/@team-page"')
   })
 
-  it("renders nothing for a format without awards", () => {
-    expect(renderToStaticMarkup(<TopSpeakersList format="x" speakers={[]} />)).toBe("")
-    expect(renderToStaticMarkup(<TopSpeakersList format="x" speakers={undefined} />)).toBe("")
+  it("shows lower places and renders nothing without awards", () => {
+    const lower = { ...speaker, topSpeakerAwards: 0, awards: [{ tournament: "TOC" as const, year: 2019, rank: 3, label: "3rd speaker", points: 2 }] }
+    expect(renderToStaticMarkup(<TeamSpeakerAwards speakers={[lower]} />)).toContain("2019 TOC 3rd, 1 speaker award")
+    expect(renderToStaticMarkup(<TeamSpeakerAwards speakers={[]} href="/x" />)).toBe("")
   })
 
-  it("shows on each high school event's all-time Teams view, and not on Schools", () => {
+  it("is inline on each high school event's team rows, with no separate section", () => {
     for (const division of ["VCX", "VLD", "VPF"] as const) {
       const html = renderToStaticMarkup(<AllTimeRankingsView division={division} />)
-      expect(html).toContain("Top 10 speaker awards")
-      expect(html.match(/data-top-speaker="true"/g)).toHaveLength(TOP_SPEAKERS_LIMIT)
+      expect(html).not.toContain("Top 10 speaker awards")
+      expect(html).not.toContain("data-top-speaker=")
+      expect(html).toContain("data-team-speakers")
+      expect(html).toContain("top speaker")
     }
-    expect(renderToStaticMarkup(<AllTimeRankingsView division="VCX" view="schools" />)).not.toContain("Top 10 speaker awards")
+    expect(renderToStaticMarkup(<AllTimeRankingsView division="VCX" view="schools" />)).not.toContain("data-team-speakers")
+  })
+
+  it("links each team row's school and shows speakers only on teams that have them", () => {
+    const lists = hsAllTimeTeams()
+    const html = renderToStaticMarkup(
+      <HsAllTimeTeamsRankings lists={lists} schoolKey={null} collegeLoaded event="Policy" limit={5} />,
+    )
+    expect(html.match(/<li[ >]/g)).toHaveLength(5)
+    expect(html).toMatch(/href="\/@[^"]+"[^>]*>[^<]+<\/a> · /)
+  })
+
+  it("is inline on the NDT team rows", () => {
+    const history: NdtSchoolHistory[] = [
+      {
+        school: "Baylor University (TX)",
+        years: [],
+        elims: [{ year: 1986, team: "Lyn Robbins & Pat Lee", round: "Finals" }],
+        championships: [],
+        atLargeBids: [],
+        copelandWinners: [],
+        speakerAwards: [{ year: 1986, speaker: "Lyn Robbins", rank: 1 }],
+        coachingAwards: [],
+      },
+    ]
+    const html = renderToStaticMarkup(<NdtAllSeasonsRankings history={history} titleId="t" tab="teams" />)
+    expect(html).toContain("data-team-speakers")
+    expect(html).toContain("1986 NDT")
+    expect(html).toContain("1 top speaker")
   })
 })
