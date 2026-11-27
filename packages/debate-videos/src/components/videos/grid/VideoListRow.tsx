@@ -603,7 +603,7 @@ export function VideoListRow({
           </>
         )}
 
-        <td className="py-3 pl-2 pr-1 align-top text-sm text-muted-foreground whitespace-nowrap">
+        <td className="py-3 pl-3 pr-0 align-top text-sm text-muted-foreground whitespace-nowrap">
           {/* The same stacked year / month / season the watch page header
               carries; it is a few lines tall but only ~3rem wide, so the
               title column keeps its width on a phone. */}
@@ -616,7 +616,7 @@ export function VideoListRow({
           />
           {Number.isNaN(new Date(date).getTime()) && "—"}
         </td>
-        <td className="py-3 pl-1 pr-2 align-top text-sm text-muted-foreground tabular-nums whitespace-nowrap">
+<td className="py-3 pl-1.5 pr-3 align-top text-sm text-muted-foreground tabular-nums whitespace-nowrap">
           <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
             <ViewCount views={viewCount} />
           </span>

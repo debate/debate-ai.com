@@ -13,6 +13,10 @@
  * A team an admin synced from openCaselist (admin → Imports → "Sync team
  * from openCaselist") comes back with every season it was found in; a season
  * picker switches between them, and each stored `.docx` can be read inline.
+ *
+ * A `.docx` link opens the file in the in-app editor (`/import/docx`, which
+ * fetches it from `/api/caselist-team/file` into My Files › Imported); a small
+ * download button beside it keeps the original-file download.
  * @module leaderboard/profile/ProfileCaselistTeam
  */
 
@@ -172,6 +176,24 @@ function StoredDocumentText({ url }: { url: string }) {
   )
 }
 
+/** The in-app editor's import route (`DocxImportReceiver`), which fetches `url` and opens it in My Files. */
+const EDITOR_IMPORT_ROUTE = "/import/docx"
+
+function isDocx(name: string): boolean {
+  return /\.docx$/i.test(name)
+}
+
+/**
+ * Where a disclosed `.docx` opens in the editor. The receiver only takes
+ * absolute http(s) links, so the file route is resolved against this origin.
+ */
+export function editorHref(file: { name: string; url: string }): string {
+  const origin = typeof window === "undefined" ? "" : window.location.origin
+  const absolute = /^https?:\/\//i.test(file.url) ? file.url : `${origin}${file.url}`
+  const params = new URLSearchParams({ url: absolute, name: file.name })
+  return `${EDITOR_IMPORT_ROUTE}?${params.toString()}`
+}
+
 /** The rounds table: one row per disclosed round, with its report and file. */
 function RoundsTable({ rounds }: { rounds: CaselistTeamRound[] }) {
   const [openReports, setOpenReports] = useState<Set<number>>(new Set())
@@ -236,15 +258,28 @@ function RoundsTable({ rounds }: { rounds: CaselistTeamRound[] }) {
                 </td>
                 <td className="px-3 py-2">
                   {round.file ? (
-                    <a
-                      href={round.file.url}
-                      download={round.file.name}
-                      title={round.file.name}
-                      className="inline-flex items-center gap-1 rounded border px-2 py-1 text-xs hover:bg-muted"
-                    >
-                      <Download className="h-3 w-3" />
-                      .{round.file.name.split(".").pop()}
-                    </a>
+                    <span className="inline-flex items-center gap-1">
+                      {isDocx(round.file.name) && (
+                        <a
+                          href={editorHref(round.file)}
+                          title={`Open ${round.file.name} in the editor`}
+                          className="inline-flex items-center gap-1 rounded border px-2 py-1 text-xs hover:bg-muted"
+                        >
+                          <FileText className="h-3 w-3" />
+                          .docx
+                        </a>
+                      )}
+                      <a
+                        href={round.file.url}
+                        download={round.file.name}
+                        title={isDocx(round.file.name) ? `Download ${round.file.name}` : round.file.name}
+                        aria-label={`Download ${round.file.name}`}
+                        className="inline-flex items-center gap-1 rounded border px-2 py-1 text-xs hover:bg-muted"
+                      >
+                        <Download className="h-3 w-3" />
+                        {!isDocx(round.file.name) && `.${round.file.name.split(".").pop()}`}
+                      </a>
+                    </span>
                   ) : (
                     <span className="text-muted-foreground">—</span>
                   )}

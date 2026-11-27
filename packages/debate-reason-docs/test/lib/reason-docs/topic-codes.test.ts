@@ -171,8 +171,20 @@ describe("parseTopicDocsPath", () => {
     expect(parseTopicDocsPath(href)).toEqual({ code: "pfb27", ref: "aff/case one" })
   })
 
+  it("leaves a round video's short address under the same code to the video page", () => {
+    for (const path of ["/vcx27/shirley/octofinals/kansas-ss-harvard-ab", "/ldb23/ndt/finals/a-b/1nc/llm", "/pfa27/trevian/r3/x-y"]) {
+      expect(parseTopicDocsPath(path), path).toBeNull()
+      expect(isTopicStarterDocsPath(path), path).toBe(false)
+    }
+    // Under a Topic Starter root, or too short to be a round, it is still the editor.
+    for (const path of ["/vcx27/aff/aff-k/k-aff-answers", "/ldb23/neg/cp/x", "/pfa27/pro/a/b/c", "/vcx27/shirley/finals", "/vcx27/x"]) {
+      expect(parseTopicDocsPath(path), path).not.toBeNull()
+      expect(isTopicStarterDocsPath(path), path).toBe(true)
+    }
+  })
+
   it("agrees with @debate-ai/videos' copy of the code shape", () => {
-    for (const path of ["/vcx27", "/vcx27/aff/aff-k", "/lda1999", "/vcx2027", "/rank", "/alexgul/x", "/docs/vcx27", "/docs/ndt26/x", "/docs/lde27/a/b", "/docs/pfc25", "/docs", "/docs/features", "/docs/vcx2027", "/docs/vcx1928/aff", "/docs/vcx2099", "/docs/lda1999", "/docs/bq27/x", "/docs/bq2027"]) {
+    for (const path of ["/vcx27", "/vcx27/aff/aff-k", "/lda1999", "/vcx2027", "/rank", "/alexgul/x", "/docs/vcx27", "/docs/ndt26/x", "/docs/lde27/a/b", "/docs/pfc25", "/docs", "/docs/features", "/docs/vcx2027", "/docs/vcx1928/aff", "/docs/vcx2099", "/docs/lda1999", "/docs/bq27/x", "/docs/bq2027", "/vcx27/shirley/finals/a-b", "/ldb23/ndt/finals/a-b/1nc"]) {
       expect(isTopicStarterDocsPath(path)).toBe(parseTopicDocsPath(path) != null)
     }
   })

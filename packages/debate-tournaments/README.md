@@ -55,7 +55,7 @@ For each tournament there are pages for the upcoming list, the invitation,
 pairings, a single round, results and a single result set.
 
 **Recent results.** The top of the Tournaments page lists tournaments whose
-results finished in the last 14 days (published results, and an end date inside
+results finished in the last 7 days (published results, and an end date inside
 the window). Each is an expandable row in the video grid's two-tier style: a
 tournament opens onto its PF, LD, Policy and College Policy events (no other
 event is shown), and an event onto its elimination bracket, final places and

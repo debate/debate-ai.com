@@ -127,20 +127,15 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   tree: 400,
   aff: 150,
   neg: 150,
-  // The stacked year / month / season badge is about 3rem wide. The old
-  // 110px column was the empty stretch between that badge and Views.
+  // Just the stacked date badge and the cell's left padding, so Views sits
+  // right against it.
   date: 64,
-  // Left-aligned against the date. Holds the pill, including a tier icon.
-  views: 80,
+  views: 72,
   watched: 120,
 }
 
-/**
- * Round group rows still print a full date ("Sep 30, 2026"), so that tree
- * keeps a wider Date column. Lists whose dates are only the badge — the
- * library, and any ungrouped list — use {@link DEFAULT_COLUMN_WIDTHS}.date.
- */
-const ROUND_GROUP_DATE_WIDTH = 108
+/** A round table's tournament rows print a full date ("Nov 26, 2026"), which needs more than the badge does. */
+const ROUND_DATE_COLUMN_WIDTH = 88
 
 /** Widest the tree column gets on a phone, so the next column shows beside it. */
 const TREE_COLUMN_PHONE_MAX = "85vw"
@@ -280,16 +275,9 @@ export function VideoListRows({
         : baseColumns,
     [baseColumns, showWatched, watchHistory],
   )
-  // A round tree's group rows need room for "Sep 30, 2026". Everywhere else
-  // the date is the ~3rem badge, and a 110px column was a gap before Views.
-  const columnDefaults = useMemo(
-    () =>
-      isRoundMode && grouped
-        ? { ...DEFAULT_COLUMN_WIDTHS, date: ROUND_GROUP_DATE_WIDTH }
-        : DEFAULT_COLUMN_WIDTHS,
-    [isRoundMode, grouped],
+  const { widths, startResize } = useResizableColumns(
+    isRoundMode ? { ...DEFAULT_COLUMN_WIDTHS, date: ROUND_DATE_COLUMN_WIDTH } : DEFAULT_COLUMN_WIDTHS,
   )
-  const { widths, startResize } = useResizableColumns(columnDefaults)
   const tableWidth = columns.reduce((total, column) => total + widths[column.key], 0)
 
   const [sortColumn, setSortColumn] = useState<ColumnKey | null>(defaultSort?.column ?? null)
@@ -444,10 +432,7 @@ export function VideoListRows({
                   <button
                     type="button"
                     onClick={() => handleSort(column)}
-                    className={cn(
-                      "flex items-center gap-1 hover:text-foreground",
-                      column.headerClassName?.includes("text-right") && "ml-auto",
-                    )}
+                    className="flex items-center gap-1 hover:text-foreground"
                   >
                     {column.label}
                     {sortColumn === column.key &&

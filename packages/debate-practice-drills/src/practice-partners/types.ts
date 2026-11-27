@@ -33,8 +33,8 @@ export const PRACTICE_FORMATS = [
   { id: "pf", label: "Public Forum" },
   { id: "ld", label: "Lincoln-Douglas" },
   { id: "policy", label: "Policy" },
-  { id: "parli", label: "Parliamentary" },
-  { id: "worlds", label: "Worlds / BP" },
+  { id: "parli", label: "Parliamentary / BP" },
+  { id: "worlds", label: "World Schools" },
   { id: "congress", label: "Congress" },
 ] as const;
 

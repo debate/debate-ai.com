@@ -333,6 +333,24 @@ describe("the lecture list's columns", () => {
     }
   });
 
+  it("sits the Views cell against the Date badge, with no padding between them", () => {
+    const html = renderList([lecture]);
+    const row = html.slice(html.indexOf("<tbody"));
+    const dateCell = /<td class="([^"]*)"[^>]*>(?:(?!<\/td>)[\s\S])*video-date-badge/.exec(row);
+    expect(dateCell?.[1]).toBeDefined();
+    const dateClasses = dateCell?.[1]?.split(" ") ?? [];
+    expect(dateClasses).toContain("pr-0");
+    expect(dateClasses).not.toContain("px-3");
+
+    const viewsCell = /<\/td><td class="([^"]*)"[^>]*><span class="[^"]*rounded bg-muted/.exec(row);
+    const viewsClasses = viewsCell?.[1]?.split(" ") ?? [];
+    expect(viewsClasses).not.toContain("text-right");
+    expect(viewsClasses).toContain("pl-1.5");
+    // The header over it leaves its text on the left too, over the cell's.
+    const viewsHeader = /<th[^>]*class="([^"]*)"[^>]*>(?:(?!<\/th>)[\s\S])*Views/.exec(html);
+    expect(viewsHeader?.[1]?.split(" ")).not.toContain("text-right");
+  });
+
   it("gives the video row its thumbnail, at every width", () => {
     const html = renderList([lecture]);
     expect(html).toContain("https://img.youtube.com/vi/vid-lecture/mqdefault.jpg");
