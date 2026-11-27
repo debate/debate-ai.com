@@ -96,4 +96,12 @@ describe("StatisticsPage", () => {
     );
     expect(html).toContain("xl:grid-cols-4");
   });
+  it("closes the page with the championship side bias section, below the youtube charts", () => {
+    const html = renderToStaticMarkup(
+      createElement(StatisticsPage, { topics: TOPICS, youtubeStats: YOUTUBE_STATS }),
+    );
+    expect(html).toContain("Side Bias at the Championships");
+    expect(html.indexOf("Side Bias at the Championships")).toBeGreaterThan(html.indexOf("YouTube Channel Statistics"));
+    expect(html.indexOf("Side Bias at the Championships")).toBeGreaterThan(html.indexOf("700 Philosophical Resolutions"));
+  });
 });

@@ -4,7 +4,13 @@
  * @module leaderboard/RankingsFieldSummary
  */
 
-import type { RankingDataset } from "../index";
+import { currentRankingSeasonYear, type RankingDataset } from "../index";
+import {
+  SIDE_BIAS_AFF_LABELS,
+  SIDE_BIAS_CHAMPIONSHIP_NAMES,
+  SIDE_BIAS_FORMAT_BY_DATASET,
+  championshipSideBias,
+} from "../side-bias";
 
 /** Turns a tournament folder slug (`greenhill-rr`) into a label (`Greenhill RR`). */
 function tournamentLabel(slug: string): string {
@@ -26,10 +32,14 @@ function BiasLine({
   label,
   aff,
   neg,
+  affName = "Aff",
+  negName = "Neg",
 }: {
   label: string;
   aff: number | null;
   neg: number | null;
+  affName?: string;
+  negName?: string;
 }) {
   const name = label ? `${label} Bias` : "Bias";
   if (aff === null || neg === null) {
@@ -46,9 +56,9 @@ function BiasLine({
             ? "font-medium text-blue-600 dark:text-blue-400"
             : "font-medium text-red-600 dark:text-red-400"
       }`}
-      title={`${label || "Overall"}: aff ${aff.toFixed(2)}%, neg ${neg.toFixed(2)}%`}
+      title={`${label || "Overall"}: ${affName.toLowerCase()} ${aff.toFixed(2)}%, ${negName.toLowerCase()} ${neg.toFixed(2)}%`}
     >
-      {points === 0 ? `No ${name}` : `${skew > 0 ? "Aff" : "Neg"} ${name} +${points}`}
+      {points === 0 ? `No ${name}` : `${skew > 0 ? affName : negName} ${name} +${points}`}
     </div>
   );
 }
@@ -78,13 +88,40 @@ function SideBiasCard({
 }
 
 /**
+ * The side bias at the season's championship (Tournament of Champions or NDT),
+ * from the synced ballots: the lean over every round and over elims, with the
+ * round counts in the tooltip. Absent when no ballots were synced for the season.
+ */
+function ChampionshipSideBiasCard({ dataset, seasonYear }: { dataset: RankingDataset; seasonYear: number }) {
+  const format = SIDE_BIAS_FORMAT_BY_DATASET[dataset.id];
+  const bias = format ? championshipSideBias(format, seasonYear) : null;
+  if (!format || !bias) return null;
+  const affName = SIDE_BIAS_AFF_LABELS[format] === "pro" ? "Pro" : "Aff";
+  const negName = affName === "Pro" ? "Con" : "Neg";
+  return (
+    <div
+      className="col-span-2 rounded-lg border bg-card px-3 py-2 sm:col-span-1"
+      data-testid="championship-side-bias"
+      title={`${SIDE_BIAS_CHAMPIONSHIP_NAMES[format]} ${seasonYear}: ${bias.rounds} decided rounds, ${bias.elimRounds} in elims`}
+    >
+      <div className="text-xs text-muted-foreground">
+        {format === "college" ? "NDT" : "TOC"} {seasonYear} side bias
+      </div>
+      <BiasLine label="" aff={bias.affWinRate} neg={bias.negWinRate} affName={affName} negName={negName} />
+      <BiasLine label="Elims" aff={bias.elimAffWinRate} neg={bias.negElimWinRate} affName={affName} negName={negName} />
+    </div>
+  );
+}
+
+/**
  * The field-wide side bias (overall and elim aff vs. neg lean, as
  * short text lines), the entry count, and the list of tournaments that fed the ratings (majors marked, since
  * they count double).
  *
  * @param props.dataset - The loaded rankings dataset.
+ * @param props.seasonYear - The season shown (defaults to the dataset's); looks up that year's championship side bias.
  */
-export function RankingsFieldSummary({ dataset }: { dataset: RankingDataset }) {
+export function RankingsFieldSummary({ dataset, seasonYear }: { dataset: RankingDataset; seasonYear?: number }) {
   const majors = new Set(dataset.majors);
   const field = dataset.field;
   return (
@@ -96,6 +133,7 @@ export function RankingsFieldSummary({ dataset }: { dataset: RankingDataset }) {
           affElim={field?.affElimWinRate ?? null}
           negElim={field?.negElimWinRate ?? null}
         />
+        <ChampionshipSideBiasCard dataset={dataset} seasonYear={seasonYear ?? dataset.seasonYear ?? currentRankingSeasonYear()} />
         <div className="col-span-2 rounded-lg border bg-card px-3 py-2 sm:col-span-1">
           <div className="text-xs text-muted-foreground">Ranked entries</div>
           <div className="text-lg font-semibold tabular-nums">
