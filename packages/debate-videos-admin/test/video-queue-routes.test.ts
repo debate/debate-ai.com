@@ -12,6 +12,7 @@ import {
   youtubeRoundVideos,
   youtubeVideoExclusions,
 } from "@/lib/database/schema";
+import { normalizeCategoryKey } from "@debate-ai/videos/src/data/video-rows";
 import { askModel } from "@/lib/videos/video-autofill";
 import { ADMIN, MODERATOR, access } from "./helpers/access";
 import { freshDb, params, request, type DB } from "./helpers/db";
@@ -40,6 +41,7 @@ const channels = await import("../src/api/admin/youtube/channels");
 const availability = await import("../src/api/admin/videos/availability");
 const detect = await import("../src/api/admin/youtube/videos/detect");
 const recategorize = await import("../src/api/admin/youtube/videos/recategorize");
+const refileLectures = await import("../src/api/admin/youtube/videos/refile-lectures");
 
 let db: DB;
 
@@ -537,5 +539,127 @@ describe("Open Super Debates", () => {
   it("re-file is staff-only", async () => {
     access.email = "viewer@example.com";
     expect((await recategorize.POST()).status).toBe(403);
+  });
+});
+
+function publishedLecture(videoId: string, title: string, category: string | null, extra: Partial<typeof videos.$inferInsert> = {}) {
+  return {
+    videoId,
+    source: "lecture" as const,
+    title,
+    publishedAt: "2026-01-01",
+    publishedMs: Date.parse("2026-01-01"),
+    channel: "Victory Briefs",
+    viewCount: 5,
+    description: "",
+    style: null,
+    category,
+    categoryKey: category ? normalizeCategoryKey(category) : null,
+    seasonYear: 2025,
+    searchText: title.toLowerCase(),
+    ...extra,
+  };
+}
+
+describe("Congress and Miscellaneous lectures", () => {
+  const congressLectures = [
+    round("cg000000001", 1, { style: null, category: "Novice & Introductory", title: "Congressional Debate: how to write legislation", channel: "Victory Briefs" }),
+    round("cg000000002", 1, { style: null, category: "Speaking & Delivery", title: "Presiding officer tips", description: "Student Congress presiding officer drills", channel: "Victory Briefs" }),
+  ];
+  const topicLecture = round("tp000000001", 1, { style: null, category: "Topic Lectures", title: "Should Congress ban TikTok? Topic analysis", channel: "Victory Briefs" });
+  const congressRound = round("cr000000001", 9, { title: "Congress finals: Senate session", category: null });
+
+  it("auto-detect files queued Congressional Debate lectures without asking the model", async () => {
+    await db.insert(youtubeRoundVideos).values(congressLectures);
+    vi.mocked(askModel).mockClear();
+    const body = await (await detect.POST(request("/x", {
+      method: "POST",
+      body: { ids: congressLectures.map((row) => row.id) },
+    }))).json();
+    expect(body.results.map((row: { category: string }) => row.category)).toEqual(["Congress", "Congress"]);
+    expect(askModel).not.toHaveBeenCalled();
+  });
+
+  it("auto-detect leaves a US Congress topic lecture to the model", async () => {
+    await db.insert(youtubeRoundVideos).values(topicLecture);
+    vi.mocked(askModel).mockResolvedValueOnce({ style: null, category: "Topic Lectures" });
+    await detect.POST(request("/x", { method: "POST", body: { ids: [topicLecture.id] } }));
+    const [row] = await db.select().from(youtubeRoundVideos);
+    expect(row.category).toBe("Topic Lectures");
+  });
+
+  it("auto-detect files a lecture the model cannot place under Miscellaneous", async () => {
+    await db.insert(youtubeRoundVideos).values(round("ms000000001", 1, { style: null, category: null, title: "Odd talk" }));
+    vi.mocked(askModel).mockResolvedValueOnce({ style: null, category: null });
+    const body = await (await detect.POST(request("/x", { method: "POST", body: { ids: ["ms000000001"] } }))).json();
+    expect(body.results[0]).toMatchObject({ style: null, category: "Miscellaneous" });
+  });
+
+  it("publish-all files lectures under Congress or Miscellaneous", async () => {
+    await db.insert(youtubeRoundVideos).values([
+      ...congressLectures,
+      topicLecture,
+      round("ms000000002", 1, { style: null, category: null, title: "Odd talk" }),
+    ]);
+    await publishAll.POST(request("/x", { method: "POST" }));
+    const byId = new Map((await db.select().from(videos)).map((row) => [row.videoId, row]));
+    for (const row of congressLectures) {
+      expect(byId.get(row.id)).toMatchObject({ category: "Congress", categoryKey: "congress" });
+    }
+    expect(byId.get(topicLecture.id)?.category).toBe("Topic Lectures");
+    expect(byId.get("ms000000002")).toMatchObject({ category: "Miscellaneous", categoryKey: "miscellaneous" });
+  });
+
+  it("re-files queued and published lectures, and is idempotent", async () => {
+    await db.insert(youtubeRoundVideos).values([
+      ...congressLectures,
+      topicLecture,
+      congressRound,
+      round("ms000000003", 1, { style: null, category: null, title: "Odd talk" }),
+      round("ms000000004", 1, { style: null, category: "Brand New", title: "Another odd talk" }),
+    ]);
+    await db.insert(videos).values([
+      publishedLecture("pub00000011", "Student Congress: precedence and recency explained", "Novice & Introductory"),
+      publishedLecture("pub00000012", "Should Congress ban TikTok? Topic analysis", "Topic Lectures"),
+      publishedLecture("pub00000013", "Untagged talk", null),
+      publishedLecture("pub00000014", "Odd talk", "Brand New"),
+      publishedLecture("pub00000015", "Congress finals round", null, { style: 9, source: "round" }),
+    ]);
+
+    const dry = await (await refileLectures.POST(request("/x?dryRun=1", { method: "POST" }))).json();
+    expect(dry).toMatchObject({
+      ok: true,
+      dryRun: true,
+      congress: { queued: 2, published: 1 },
+      miscellaneous: { queued: 2, publishedUnsorted: 2 },
+    });
+    expect(dry.congress.samples.map((sample: { id: string }) => sample.id).sort()).toEqual(
+      ["cg000000001", "cg000000002", "pub00000011"],
+    );
+    expect((await db.select().from(youtubeRoundVideos)).find((row) => row.id === "cg000000001")?.category).toBe(
+      "Novice & Introductory",
+    );
+
+    const first = await (await refileLectures.POST(request("/x", { method: "POST" }))).json();
+    expect(first).toMatchObject({ dryRun: false, congress: { queued: 2, published: 1 }, miscellaneous: { queued: 2 } });
+    const queuedRows = new Map((await db.select().from(youtubeRoundVideos)).map((row) => [row.id, row]));
+    expect(queuedRows.get("cg000000001")?.category).toBe("Congress");
+    expect(queuedRows.get("tp000000001")?.category).toBe("Topic Lectures");
+    expect(queuedRows.get("cr000000001")?.category).toBeNull();
+    expect(queuedRows.get("ms000000003")?.category).toBe("Miscellaneous");
+    expect(queuedRows.get("ms000000004")?.category).toBe("Miscellaneous");
+    const published = new Map((await db.select().from(videos)).map((row) => [row.videoId, row]));
+    expect(published.get("pub00000011")).toMatchObject({ category: "Congress", categoryKey: "congress" });
+    expect(published.get("pub00000012")?.category).toBe("Topic Lectures");
+    expect(published.get("pub00000013")?.category).toBeNull();
+    expect(published.get("pub00000015")?.category).toBeNull();
+
+    const again = await (await refileLectures.POST(request("/x", { method: "POST" }))).json();
+    expect(again).toMatchObject({ congress: { queued: 0, published: 0 }, miscellaneous: { queued: 0 } });
+  });
+
+  it("re-file is staff-only", async () => {
+    access.email = "viewer@example.com";
+    expect((await refileLectures.POST(request("/x", { method: "POST" }))).status).toBe(403);
   });
 });
