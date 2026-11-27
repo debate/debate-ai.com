@@ -1,9 +1,11 @@
 /**
  * @file docs-page-header.tsx
- * @description The top of every docs page: a breadcrumb trail, then the
- * page's title in a modest heading.
+ * @description The top of every docs page: the page's title in a modest
+ * heading. The breadcrumb trail that used to sit above it is hidden for now
+ * (`SHOW_BREADCRUMBS`); the same trail lives in the header's Navigation button
+ * (`page-navigation-menu.tsx`).
  *
- * Hovering (or tabbing to) a crumb opens a dropdown of everything at that
+ * When the trail is shown, hovering (or tabbing to) a crumb opens a dropdown of everything at that
  * level of the tree, so a reader can jump to a sibling section or page
  * without the sidebar. Pure CSS (`group-hover` / `group-focus-within`), so
  * it renders on the server with no client JavaScript.
@@ -16,6 +18,9 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { PageBreadcrumb } from '../../../lib/fumadocs/page-breadcrumbs';
 
+/** Whether the breadcrumb trail shows above the title. Off: the Navigation button carries it. */
+export const SHOW_BREADCRUMBS = false;
+
 export function DocsPageHeader({
   title,
   breadcrumbs,
@@ -25,7 +30,7 @@ export function DocsPageHeader({
 }) {
   return (
     <header className="docs-page-header not-prose flex flex-col gap-2 pt-2">
-      {breadcrumbs.length > 0 && (
+      {SHOW_BREADCRUMBS && breadcrumbs.length > 0 && (
         <nav aria-label="Breadcrumb">
           <ol className="flex flex-wrap items-center gap-0.5 text-sm text-fd-muted-foreground">
             {breadcrumbs.map((crumb, i) => {
