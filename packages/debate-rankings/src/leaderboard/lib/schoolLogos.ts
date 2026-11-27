@@ -48,6 +48,7 @@ import {
   IconSchoolNewTrier,
   IconSchoolNorthTexas,
   IconSchoolNorthwestern,
+  IconSchoolNorthBroward,
   IconSchoolNueva,
   IconSchoolOklahoma,
   IconSchoolPace,
@@ -130,6 +131,7 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "montgomery-bell": logoSrc(IconSchoolMontgomeryBell),
   "ndt": logoSrc(IconSchoolNdt),
   "new-trier": logoSrc(IconSchoolNewTrier),
+  "north-broward": logoSrc(IconSchoolNorthBroward),
   "north-texas": logoSrc(IconSchoolNorthTexas),
   "northwestern": logoSrc(IconSchoolNorthwestern),
   "nueva": logoSrc(IconSchoolNueva),
@@ -239,6 +241,11 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "montgomery-bell-academy": "montgomery-bell",
   // New Trier
   "new-trier-township": "new-trier",
+  // North Broward Preparatory School (FL)
+  "north-broward-prep": "north-broward",
+  "north-broward-preparatory": "north-broward",
+  "north-broward-preparatory-school": "north-broward",
+  nbps: "north-broward",
   // Nueva
   "nueva-school": "nueva",
   // Oklahoma
