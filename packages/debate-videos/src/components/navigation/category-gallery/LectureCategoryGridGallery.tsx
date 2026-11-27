@@ -41,6 +41,7 @@ import {
   Presentation,
   Vote,
   Swords,
+  Megaphone,
   Archive,
 } from "lucide-react";
 import { FormatBadgeCards, MAIN_FORMAT_BADGES } from "./FormatBadgeCards";
@@ -148,7 +149,7 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
   },
   {
     title: "Formats",
-    labels: ["WSD", "Demo Debates", "Open Super Debates", "Congress", "Speech"],
+    labels: ["WSD", "Demo Debates", "Open Public", "Open Super Debates", "Congress", "Speech"],
   },
 ];
 
@@ -196,6 +197,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Congress": <Vote className="h-4 w-4" />,
   "Speech": <Mic className="h-4 w-4" />, // Example icon, adjust as needed
   "NSDA Speech": <Mic className="h-4 w-4" />,
+  "Open Public": <Megaphone className="h-4 w-4" />,
   "Open Super Debates": <Swords className="h-4 w-4" />,
   "Miscellaneous": <Archive className="h-4 w-4" />,
 };

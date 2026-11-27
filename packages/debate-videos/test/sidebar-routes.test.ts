@@ -17,6 +17,8 @@ import {
   hostsOwnSidebarDock,
   hasEmbeddedDock,
   isGenericToolSidebarRoute,
+  isTopicStarterDocsPath,
+  isVideoLibraryPath,
 } from "../src/components/navigation/sidebar-nav/sidebar-routes";
 
 describe("APP_DOCK_LINKS", () => {
@@ -311,5 +313,22 @@ describe("the REASON docs workspace", () => {
       expect(isGenericToolSidebarRoute(path)).toBe(false);
     }
     expect(ownsItsLayout("/research/cards")).toBe(false);
+  });
+});
+
+describe("a round's short /<topic code>/… address", () => {
+  const round = "/cpd27/shirley/octofinals/kansas-ss-harvard-ab/1nc/llm";
+
+  it("is a video library page, with the library's sidebar", () => {
+    expect(isVideoLibraryPath(round)).toBe(true);
+    expect(isVideoLibraryPath("/vcx27/shirley/octofinals/kansas-ss-harvard-ab")).toBe(true);
+    expect(isGenericToolSidebarRoute(round)).toBe(false);
+  });
+
+  it("is not a Topic Starter, though the code is shared with them", () => {
+    expect(isTopicStarterDocsPath("/vcx27/shirley/octofinals/kansas-ss-harvard-ab")).toBe(false);
+    expect(isTopicStarterDocsPath("/vcx27/aff/aff-k/k-aff-answers")).toBe(true);
+    expect(isVideoLibraryPath("/vcx27/aff/aff-k/k-aff-answers")).toBe(false);
+    expect(isVideoLibraryPath("/vcx27")).toBe(false);
   });
 });

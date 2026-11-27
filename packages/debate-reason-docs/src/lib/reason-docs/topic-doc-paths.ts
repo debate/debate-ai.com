@@ -33,6 +33,16 @@
  * `next.config.mjs` rewrites exactly this shape onto `/reason-editor` (in
  * `beforeFiles`, so the `[username]` route never sees it).
  *
+ * ## Round videos under the same code
+ *
+ * A round's short address — `/vcx27/shirley/octofinals/kansas-ss-harvard-ab`,
+ * see `@debate-ai/videos`' `lib/video-topic-path` — starts with the same
+ * `vcx`, `ldb` or `pfa` code, so {@link parseTopicDocsPath} reads it as no
+ * Topic Starter: a tournament, round and teams after the code, the tournament
+ * not being a Topic Starter root (`aff`, `neg`, `pro`, `con`). `next.config.mjs`
+ * serves that shape from the video page ahead of the editor rewrite, and the
+ * video page serves the editor again when no round has the address.
+ *
  * ## The old `/docs/<code>/…` addresses
  *
  * Topic Starters used to live under `/docs`, beside the Fumadocs help site.
@@ -49,6 +59,8 @@
  *
  * @module lib/reason-docs/topic-doc-paths
  */
+
+import { isVideoRoundPath } from "@debate-ai/videos/src/lib/video-topic-path"
 
 /** The prefix topic-starter addresses used to live under, still read (and
  *  308'd to the bare `/<code>/…` form by `next.config.mjs`). */
@@ -103,6 +115,7 @@ export function parseTopicDocsPath(pathname: string | null | undefined): TopicDo
   if (!pathname) return null
   let path = (pathname.split("?")[0]?.split("#")[0] ?? "").replace(/\/+$/, "")
   if (!path.startsWith("/")) return null
+  if (isVideoRoundPath(path)) return null
   if (path.startsWith(`${LEGACY_TOPIC_DOCS_PREFIX}/`)) path = path.slice(LEGACY_TOPIC_DOCS_PREFIX.length)
   const [segment, ...rest] = path.slice(1).split("/")
   const code = segment?.toLowerCase()
