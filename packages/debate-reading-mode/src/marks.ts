@@ -27,12 +27,14 @@
  * the mark. Re-marking that text puts the authored style back.
  *
  * `removeAllMarks` takes every mark off, authored ones included, and
- * `clearMarks` puts the page's own back.
+ * `clearMarks` puts the page's own back. Both also drop the summary tags
+ * (`./summary-tags`) that sat on the highlights.
  *
  * `markPhrase` marks a quoted phrase where it occurs in the text, for marks an
  * AI picked (`autoCutPrompt` / `parseAutoCut`).
  */
 import { HIGHLIGHT_CLASS } from './highlights';
+import { removeAllSummaryTags } from './summary-tags';
 
 /** What a mark does to the text. */
 export type MarkKind = 'highlight' | 'underline' | 'short-highlight' | 'emphasis';
@@ -330,6 +332,7 @@ export function markedPassages(root: HTMLElement): string[] {
  * (any kind) and restores the authored marks they took parts out of.
  */
 export function clearMarks(root: HTMLElement): void {
+  removeAllSummaryTags(root);
   root.querySelectorAll(READER_SELECTOR).forEach(unwrap);
   root
     .querySelectorAll(`mark.${AUTHORED_CLASS}`)
@@ -345,6 +348,7 @@ export function clearMarks(root: HTMLElement): void {
  * back.
  */
 export function removeAllMarks(root: HTMLElement): void {
+  removeAllSummaryTags(root);
   root.querySelectorAll(READER_SELECTOR).forEach(unwrap);
   root
     .querySelectorAll(`mark.${AUTHORED_CLASS}`)
