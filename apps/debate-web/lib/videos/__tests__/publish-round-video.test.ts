@@ -413,6 +413,26 @@ describe("roundVideoToVideoRow", () => {
   });
 });
 
+describe("roundVideoToVideoRow for Super Debate videos", () => {
+  it("files a Super Debate channel or title lecture under Open Super Debates", () => {
+    const byChannel = roundVideoToVideoRow(
+      roundRow("sd1", { style: null, category: "Documentaries & Culture", title: "Welcome to our live show!", channel: "SuperDebate" }),
+    );
+    expect(byChannel.category).toBe("Open Super Debates");
+    expect(byChannel.categoryKey).toBe("open_super_debates");
+    const byTitle = roundVideoToVideoRow(
+      roundRow("sd2", { style: null, category: "Research & Flowing", title: "Highlights: Super Debate 4", channel: "Elsewhere" }),
+    );
+    expect(byTitle.category).toBe("Open Super Debates");
+  });
+
+  it("puts a Super Debate round on the shelf too, keeping its style", () => {
+    const row = roundVideoToVideoRow(roundRow("sd3", { style: 2, title: "Super Debate Night 2: A vs B", channel: "SuperDebate" }));
+    expect(row.style).toBe(2);
+    expect(row.category).toBe("Open Super Debates");
+  });
+});
+
 describe("roundVideoToVideoRow for NSDA lectures", () => {
   it("files an NSDA channel lecture under NSDA Speech, whatever its queued category", () => {
     const row = roundVideoToVideoRow(

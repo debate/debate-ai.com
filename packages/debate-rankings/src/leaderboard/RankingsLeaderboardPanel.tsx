@@ -70,6 +70,7 @@ import { RankingsTable } from "./RankingsTable"
 import { legendaryCount } from "./rowTier"
 import { RankingsFieldSummary } from "./RankingsFieldSummary"
 import { LeaderboardFilterBar, PARLI_TAB } from "./LeaderboardFilterBar"
+import { ParliAllTimeRankings } from "./ParliAllTimeRankings"
 import { ParliRankingsSection } from "./ParliRankingsSection"
 import { CollegeHistoryTable } from "./CollegeHistoryTable"
 import { ALL_TIME_SEASON, AllTimeRankingsView } from "./AllTimeRankingsView"
@@ -194,12 +195,11 @@ export function LeaderboardPanel({
   const [parli, setParli] = useState(() => urlFormat === PARLI_TAB)
   /** The NPDL season the Parli section last showed (`"2025-26"`), so the season select can name it. */
   const [parliShown, setParliShown] = useState<string | null>(null)
-  /** Opens the Parli tab and writes `/rank/PARLI`, keeping `?by=`. The league has no all-time list. */
+  /** Opens the Parli tab and writes `/rank/PARLI`, keeping `?by=` and an "All time" season. */
   const selectParli = () => {
     setParli(true)
-    setAllTime(false)
     const params = new URLSearchParams(searchParams.toString())
-    params.delete("season")
+    if (!allTime) params.delete("season")
     replaceUrl(PARLI_TAB, params)
   }
 
@@ -426,7 +426,7 @@ return (
           <LeaderboardFilterBar
             division={division}
             view={view}
-            year={parli ? parliYear : allTime ? ALL_TIME_SEASON : year}
+            year={allTime ? ALL_TIME_SEASON : parli ? parliYear : year}
             years={parli ? NPDL_SEASON_YEARS : years}
             onChangeDivision={changeDivision}
             onChangeView={changeView}
@@ -438,7 +438,9 @@ return (
 
         <div className="flex-1 overflow-y-auto p-4">
           <div className="max-w-[1600px] mx-auto">
-            {parli && showInternalFilters ? (
+            {parli && allTime && showInternalFilters ? (
+              <ParliAllTimeRankings view={view} />
+            ) : parli && showInternalFilters ? (
               <ParliRankingsSection season={parliSeason} view={view} onSeasonShown={setParliShown} />
             ) : allTime && showInternalFilters ? (
               <AllTimeRankingsView division={division} view={view} />

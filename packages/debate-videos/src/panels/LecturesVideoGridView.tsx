@@ -299,7 +299,7 @@ export function LecturesVideoGridView({
   // so the whole list reads as one set of labeled sections.
   const galleryExtraLinks = useMemo<LectureGalleryExtraLink[] | undefined>(() => {
     if (!browsingAllVideos || !showLectureGallery || !collectionLinks) return undefined
-    // Parli has its own badge at the top of the bar.
+    // The bar lists Parli in Formats itself, from the badge counts.
     return collectionLinks.filter((link) => link.id !== "parli").map((link) => ({
       id: link.id,
       title: link.title,
@@ -469,7 +469,7 @@ export function LecturesVideoGridView({
             <ul
               className={cn(
                 "grid gap-2",
-                "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5",
+                "grid-cols-[repeat(auto-fill,minmax(9.5rem,12rem))]",
               )}
             >
               {collectionRowLinks.map((link) => {

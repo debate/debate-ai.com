@@ -9,7 +9,7 @@
  * @module data/video-rows
  */
 
-import { classifyRoundCollection, lectureCategoryForChannel } from "./lecture-classifier";
+import { classifyRoundCollection, forcedLectureCategory } from "./lecture-classifier";
 import { assignVideoStacks } from "./video-stacks";
 
 /**
@@ -279,12 +279,12 @@ export function tupleToVideoRow(
   const rawCategory = typeof styleOrCategory === "string" ? str(styleOrCategory) : null;
   const title = typeof tuple[1] === "string" ? tuple[1] : "";
   const channel = typeof tuple[3] === "string" ? tuple[3] : "";
-  const channelCategory = style === null ? lectureCategoryForChannel(channel) : null;
+  const channelCategory = style === null ? forcedLectureCategory(title, channel) : null;
   const category = channelCategory
     ?? (rawCategory
       ? canonicalCategoryLabel(rawCategory)
       : style !== null
-        ? classifyRoundCollection(title)
+        ? classifyRoundCollection(title, channel)
         : null);
   const description = typeof tuple[5] === "string" ? tuple[5] : "";
   const publishedAt = typeof tuple[2] === "string" ? tuple[2] : "";
