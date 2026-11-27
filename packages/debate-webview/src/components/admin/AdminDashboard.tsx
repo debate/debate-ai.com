@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type ComponentType } from "react";
-import { BookOpen, CreditCard, MessageSquareText, School, DatabaseBackup, Eraser, KeyRound, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, SlidersHorizontal, Sparkles, Upload, Users, Wand2 } from "lucide-react";
+import { BookOpen, CreditCard, MessageSquareQuote, MessageSquareText, School, DatabaseBackup, Eraser, KeyRound, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, SlidersHorizontal, Sparkles, Upload, Users, Wand2 } from "lucide-react";
 import { cn } from "../../ui/lib/utils";
 import { Button } from "../../ui/primitives/button";
 import { Input } from "../../ui/primitives/input";
@@ -32,6 +32,7 @@ import { TableExportPanel } from "./data/TableExportPanel";
 import { BuyersPanel } from "./users/BuyersPanel";
 import { DeletionRequestsPanel } from "./users/DeletionRequestsPanel";
 import { FeedbackPanel } from "./users/FeedbackPanel";
+import { ReferenceSuggestionsPanel } from "./docs/ReferenceSuggestionsPanel";
 import { EmailsPanel } from "./users/EmailsPanel";
 import { DebateCardParquetUpload } from "./data/DebateCardParquetUpload";
 import { ModeratorsPanel } from "./users/ModeratorsPanel";
@@ -60,7 +61,7 @@ interface Overview { stats: { users: number; sessions: number; files: number; pu
  * (the round resync and the subscribed channels) and, under Users, school
  * claims — the only part of Users a moderator sees.
  */
-type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails" | "buyers" | "deletion-requests" | "feedback" | "school-directory" | "service-logins" | "environment";
+type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails" | "buyers" | "deletion-requests" | "feedback" | "reference-text" | "school-directory" | "service-logins" | "environment";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -93,6 +94,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "buyers", name: "Buyers", description: "Users who bought a plan, topped up their wallet or bought files, with subscription status and totals", icon: CreditCard, adminOnly: true },
   { key: "deletion-requests", name: "Deletion requests", description: "Data deletion requests filed from Settings → Privacy: work them, then mark each done or declined", icon: Eraser, adminOnly: true },
   { key: "feedback", name: "Feedback", description: "Messages sent from the Feedback button in the Settings footer (one per sender an hour)", icon: MessageSquareText, adminOnly: true },
+  { key: "reference-text", name: "Reference text", description: "Card text readers suggested for journal References entries with a red X or an ellipsis, to approve, dismiss or delete", icon: MessageSquareQuote, adminOnly: false },
   { key: "school-directory", name: "Schools with missing info", description: "Colleges and high schools of the last ten seasons whose pages are missing a name or logo, and names that look like one school on two pages", icon: School, adminOnly: false },
   {
     key: "users",
@@ -438,6 +440,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
 
         {currentTab.key === "deletion-requests" && <DeletionRequestsPanel />}
         {currentTab.key === "feedback" && <FeedbackPanel />}
+
+        {currentTab.key === "reference-text" && <ReferenceSuggestionsPanel />}
 
         {currentTab.key === "library" && (
           <>

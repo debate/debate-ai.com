@@ -17,6 +17,10 @@
  * underlined text. Pressing it again stops. The reading lives in this
  * component, not the tooltip, so it keeps going after the tooltip closes.
  *
+ * The author line ends with the entry's card-text status icon
+ * (`reference-quote-status.tsx`): a red X or ellipsis opens the dialog for
+ * suggesting the missing text.
+ *
  * The link carries its entry as `data-citation-*` attributes, so reading mode
  * (`reading-mode.tsx`), which shows pages as loaded HTML rather than React,
  * turns those links back into hover cards with `CitationCardsIn`. The tooltip
@@ -30,6 +34,10 @@ import { SYNERGY_SLAYER_CLASS } from "../../lib/mdx/remark-debate-highlight"
 import { formatCitation } from "../../lib/citation-styles"
 import { useCitationStyle } from "./citation-style-switcher"
 import { readCardAloud } from "./card-voice"
+import { ReferenceQuoteIcon, SuggestTextDialog } from "./reference-quote-status"
+import { htmlToText } from "../../lib/mdx/citation-cards"
+import { referenceQuoteStatus } from "../../lib/reference-quote-status"
+import { splitReferenceHref } from "../../lib/reference-suggestions"
 
 /** The link attributes holding its entry (see the module doc). */
 export const CITATION_DATA = {
@@ -37,6 +45,8 @@ export const CITATION_DATA = {
   citation: "data-citation",
   card: "data-citation-card",
   spoken: "data-citation-spoken",
+  authors: "data-citation-authors",
+  year: "data-citation-year",
 } as const
 
 export interface CitationCardProps {
@@ -50,13 +60,21 @@ export interface CitationCardProps {
   card?: string
   /** What the read-aloud button says first: last name and two-digit year, `Shanahan 93`. */
   spoken?: string
+  /** The authors for the References panel: `Galloway`, `Hansson & Reijven`, `Smith et al.`. */
+  authors?: string
+  /** The publication year as cited, `2020`. */
+  year?: string
   children?: ReactNode
 }
 
-export function CitationCard({ href, number, citation, card, spoken, children }: CitationCardProps) {
+export function CitationCard({ href, number, citation, card, spoken, authors, year, children }: CitationCardProps) {
   const style = useCitationStyle()
   const [reading, setReading] = useState(false)
   const controller = useRef<AbortController | null>(null)
+  const [suggesting, setSuggesting] = useState(false)
+  const status = referenceQuoteStatus(card)
+  const target = splitReferenceHref(href)
+  const plainCitation = htmlToText(citation).replace(/\s+/g, " ").trim()
 
   // Leaving the page stops the reading.
   useEffect(() => () => controller.current?.abort(), [])
@@ -75,6 +93,7 @@ export function CitationCard({ href, number, citation, card, spoken, children }:
     })
   }
   return (
+    <>
     <Tooltip delayDuration={150}>
       <TooltipTrigger asChild>
         <a
@@ -86,6 +105,8 @@ export function CitationCard({ href, number, citation, card, spoken, children }:
             [CITATION_DATA.citation]: citation,
             [CITATION_DATA.card]: card ?? "",
             [CITATION_DATA.spoken]: spoken ?? "",
+            [CITATION_DATA.authors]: authors ?? "",
+            [CITATION_DATA.year]: year ?? "",
           }}
         >
           {children}
@@ -115,6 +136,11 @@ export function CitationCard({ href, number, citation, card, spoken, children }:
               {reading ? <Square /> : <Volume2 />}
             </button>
             <span dangerouslySetInnerHTML={{ __html: formatCitation(citation, style) }} />
+            <ReferenceQuoteIcon
+              status={status}
+              title={plainCitation}
+              onSuggest={target ? () => setSuggesting(true) : undefined}
+            />
           </p>
           {card ? (
             <div dangerouslySetInnerHTML={{ __html: card }} />
@@ -124,6 +150,17 @@ export function CitationCard({ href, number, citation, card, spoken, children }:
         </div>
       </TooltipContent>
     </Tooltip>
+    {/* Owned here, not by the icon: the hover card unmounts as the pointer leaves it for the modal. */}
+    {target && (
+      <SuggestTextDialog
+        open={suggesting}
+        onOpenChange={setSuggesting}
+        page={target.page}
+        refId={target.refId}
+        title={plainCitation}
+      />
+    )}
+    </>
   )
 }
 
@@ -161,6 +198,8 @@ export function CitationCardsIn({ root, version }: { root: RefObject<HTMLElement
           citation: link.getAttribute(CITATION_DATA.citation) ?? "",
           card: link.getAttribute(CITATION_DATA.card) ?? "",
           spoken: link.getAttribute(CITATION_DATA.spoken) ?? "",
+          authors: link.getAttribute(CITATION_DATA.authors) ?? "",
+          year: link.getAttribute(CITATION_DATA.year) ?? "",
         },
       })
       link.replaceWith(host)
