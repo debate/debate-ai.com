@@ -2,9 +2,8 @@
  * @fileoverview The "All time" season on the rankings page. Picking "All time"
  * at the top of the season dropdown swaps the season's rankings for the
  * greatest of all time in the event tab that is showing, as the full page,
- * with the Teams/Schools toggle picking which list; the Teams view opens with
- * a "Top 10 speaker awards" card ({@link TopSpeakersList}) for formats with
- * speaker awards on record. For College Policy (NDT)
+ * with the Teams/Schools toggle picking which list; each team's row lists its
+ * debaters' top speaker awards inline ({@link TeamSpeakerAwards}). For College Policy (NDT)
  * both are the all-seasons NDT points ranking ({@link NdtAllSeasonsRankings});
  * for the high school events Teams is the top 100 high school teams of that
  * event ({@link HsAllTimeTeamsRankings}) and Schools the top 100 programs of
@@ -26,8 +25,6 @@ import { NdtAllSeasonsRankings } from "./profile/NdtAllSeasonsDialog"
 import { HsAllTimeTeamsRankings } from "./profile/ProfileHsAllTimeTeams"
 import { hsAllTimeTeams, loadHsAllTimeTeams, type HsAllTimeEvent, type HsAllTimeTeam } from "./profile/hsAllTimeTeams"
 import { useNdtHistory } from "./profile/ndtHistory"
-import { buildNdtTopSpeakers, hsTopSpeakers } from "./profile/topSpeakers"
-import { TopSpeakersList } from "./TopSpeakersList"
 
 /** The season dropdown value (and `?season=` URL value) for the all-time view. */
 export const ALL_TIME_SEASON = "all-time"
@@ -157,15 +154,6 @@ function HighSchoolAllTimeSchools({ event }: { event: HsAllTimeEvent }) {
   return <HsAllTimeSchoolsList event={event} schools={state?.event === event ? state.schools : undefined} className={FULL_HEIGHT} />
 }
 
-/** The Top 10 speaker awards card for the format showing, when it has speaker awards on record. */
-function AllTimeTopSpeakers({ division }: { division: Division }) {
-  const history = useNdtHistory(division === "NDT")
-  const college = useMemo(() => (history ? buildNdtTopSpeakers(history) : null), [history])
-  if (division === "NDT") return <TopSpeakersList speakers={college} format="College Policy" ndt />
-  const event = HS_ALL_TIME_EVENT[division]
-  return <TopSpeakersList speakers={hsTopSpeakers()[event]} format={`high school ${event}`} />
-}
-
 /**
  * The greatest of all time for the event tab showing, inline on the page.
  * @param props.division - The rankings division showing; picks the college list or the high school event.
@@ -174,7 +162,6 @@ function AllTimeTopSpeakers({ division }: { division: Division }) {
 export function AllTimeRankingsView({ division, view = "teams" }: { division: Division; view?: LeaderboardView }) {
   return (
     <div className="space-y-3">
-      {view === "teams" && <AllTimeTopSpeakers division={division} />}
       <section aria-labelledby={TITLE_ID} className="rounded-lg border bg-background">
         {division === "NDT" ? (
           <CollegeAllTime view={view} />
