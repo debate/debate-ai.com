@@ -43,7 +43,7 @@ import {
   Swords,
   Archive,
 } from "lucide-react";
-import { DIVISION_CONFIG, type Division } from "@debate-ai/rankings/src/leaderboard/leaderboardUtils";
+import { FormatBadgeCards, MAIN_FORMAT_BADGES } from "./FormatBadgeCards";
 import { GlowingEffect } from "../../../ui/effects/glowing-effect";
 import { cn } from "../../../ui/lib/utils";
 import { lectureCategoryHref } from "../../../panels/lectureRouteConfig";
@@ -79,37 +79,21 @@ interface LectureCategoryGridGalleryProps {
   /**
    * Which part of the bar to draw: `"all"` (default) is everything,
    * `"rounds"` the format badges and the Formats section (the Debate Rounds
-   * page), `"lectures"` the sections other than Formats (Strategy Lectures).
+   * page), `"lectures"` the sections other than Formats (Strategy Lectures),
+   * `"formats"` only the four format cards (the division pages).
    */
   scope?: GalleryScope;
+  /** Id of the format card to draw selected: the division page being viewed. */
+  activeFormatId?: string;
 }
 
 /** The parts of the bar a page can ask for; see `scope`. */
-export type GalleryScope = "all" | "rounds" | "lectures";
+export type GalleryScope = "all" | "rounds" | "lectures" | "formats";
 
-/** One of the main round collections shown as a badge at the top of the bar. */
-interface MainFormatBadge {
-  id: string;
-  title: string;
-  href: string;
-  /** Rankings division whose logo the badge reuses. */
-  division: Division;
-}
-
-/** The badges, in display order. */
-export const MAIN_FORMAT_BADGES: MainFormatBadge[] = [
-  { id: "college", title: "College Policy", href: "/videos/college", division: "NDT" },
-  { id: "policy", title: "HS Policy", href: "/videos/policy", division: "VCX" },
-  { id: "ld", title: "Individual", href: "/videos/ld", division: "VLD" },
-  { id: "pf", title: "Forum", href: "/videos/pf", division: "VPF" },
-];
+export { MAIN_FORMAT_BADGES };
 
 /** Parli's card in the Formats section, ahead of any collection links. */
 const PARLI_LINK = { id: "parli", title: "Parli", href: "/videos/parli" };
-
-const DIVISION_LOGOS: Record<string, string> = Object.fromEntries(
-  DIVISION_CONFIG.map((config) => [config.value, config.logoSrc]),
-);
 
 /** A non-category card shown in the Formats section, e.g. `/videos/atlantic`. */
 export interface LectureGalleryExtraLink {
@@ -224,6 +208,7 @@ export function LectureCategoryGridGallery({
   extraLinks,
   formatCounts,
   scope = "all",
+  activeFormatId,
 }: LectureCategoryGridGalleryProps) {
   // Build category cards from the server-computed facets, most popular first.
   const selectedId = selectedCategory ?? "all";
@@ -307,6 +292,14 @@ export function LectureCategoryGridGallery({
     });
   }, [cards, extraLinks, formatCounts, selectedId, scope]);
 
+  if (scope === "formats") {
+    return (
+      <div className="w-full">
+        <FormatBadgeCards counts={formatCounts} activeId={activeFormatId} />
+      </div>
+    );
+  }
+
   if (!cards) return null;
 
   const pillListClass = cn(
@@ -316,16 +309,7 @@ export function LectureCategoryGridGallery({
 
   return (
     <div className="w-full flex flex-col gap-4">
-      {scope !== "lectures" && (
-        <ul
-          aria-label="Main categories"
-          className="flex flex-wrap gap-2"
-        >
-          {MAIN_FORMAT_BADGES.map((badge) => (
-            <FormatBadgeLink key={badge.id} badge={badge} count={formatCounts?.[badge.id]} />
-          ))}
-        </ul>
-      )}
+      {scope !== "lectures" && <FormatBadgeCards counts={formatCounts} activeId={activeFormatId} />}
       <div className="flex flex-col gap-3">
         {sections.map((section) => (
           <section key={section.title} aria-label={section.title} className="min-w-0">
@@ -348,34 +332,6 @@ export function LectureCategoryGridGallery({
         ))}
       </div>
     </div>
-  );
-}
-
-/** A main-collection badge: the rankings logo (or a glyph) over its name. */
-function FormatBadgeLink({ badge, count }: { badge: MainFormatBadge; count?: number }) {
-  const logo = badge.division ? DIVISION_LOGOS[badge.division] : undefined;
-  return (
-    <li className="w-[350px] max-w-full list-none">
-      <Link
-        href={badge.href}
-        scroll={false}
-        prefetch={false}
-        className="group flex h-full flex-col items-center gap-0.5 rounded-lg border-[0.75px] border-border bg-background p-1.5 text-center shadow-sm transition-colors hover:border-primary/50 hover:bg-accent"
-      >
-        {logo ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={logo} alt="" className="h-40 w-40 object-contain" loading="lazy" />
-        ) : (
-          <Landmark className="h-40 w-40 p-6 text-muted-foreground" aria-hidden />
-        )}
-        <span className="text-sm font-semibold leading-tight text-foreground">{badge.title}</span>
-        {count !== undefined && (
-          <span className="rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
-            {count}
-          </span>
-        )}
-      </Link>
-    </li>
   );
 }
 
