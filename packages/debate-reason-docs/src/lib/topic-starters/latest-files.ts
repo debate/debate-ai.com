@@ -5,7 +5,7 @@
  * Built from the names-only file index (`./file-index`), so picking them never
  * reads a file's content. Each file's topic is its effective topic code (its
  * own, else its nearest coded folder's, else the default — see
- * `./topic-scope`), and its link is the same `/docs/<code>/<path>` address the
+ * `./topic-scope`), and its link is the same `/<code>/<path>` address the
  * sidebar copies, built from the same path map over the whole library.
  *
  * "Across formats" is a round-robin: each format's files are taken newest
@@ -33,7 +33,7 @@ export interface LatestOutlineFile {
   formatLabel: string
   /** The resolution's short name, when the code is a known topic. */
   topicName: string | null
-  /** `/docs/<code>/<path>`. */
+  /** `/<code>/<path>`. */
   href: string
   /** ISO time the file last changed. */
   updatedAt: string | null

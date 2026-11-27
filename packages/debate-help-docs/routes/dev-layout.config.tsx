@@ -9,6 +9,7 @@ import { BookOpen, ExternalLink } from 'lucide-react';
 import { DebateAiLogo } from '@debate-ai/icons/brand';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import { withBasePath, withDevBasePath } from '../lib/fumadocs/base-path';
+import { SearchWithThemesIcon, SearchWithThemesSlot } from '../components/fumadocs/layout/header-toolbar';
 
 export const devBaseOptions: BaseLayoutProps = {
   nav: {
@@ -38,5 +39,10 @@ export const devBaseOptions: BaseLayoutProps = {
       external: true,
     },
   ],
+  // Fumadocs' own light/dark switch is replaced by the Themes menu
+  // (components/fumadocs/layout/themes-menu.tsx), which the search slots add to
+  // the header's buttons, wide and narrow.
+  themeSwitch: { enabled: false },
+  slots: { searchTrigger: { sm: SearchWithThemesIcon, full: SearchWithThemesSlot } },
 
 };

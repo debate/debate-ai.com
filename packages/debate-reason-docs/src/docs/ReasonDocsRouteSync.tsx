@@ -7,7 +7,7 @@
  *
  * The sidebar panels (`ReasonDocsSidebarPanels`) route a click to
  * `/<username>/<file path>` for an owned document (`?doc=<file path>` until the
- * username is known, and for a signed-out reader) or `/docs/<topic code>/<file
+ * username is known, and for a signed-out reader) or `/<topic code>/<file
  * path>` for a public one. Old `?doc=` and `/reason-editor/<name>` links still
  * open the file and are then rewritten to the personal address. Provider state alone already covers a client-side hop, but
  * not a reload, a pasted link, or a hard navigation — `/videos` renders its own

@@ -44,7 +44,7 @@ describe("GET /api/homepage/latest-outlines", () => {
     const res = await get();
     const body = await res.json();
     expect(body).toHaveLength(12);
-    expect(body[0]).toMatchObject({ id: 24, formatLabel: "LD", href: "/docs/lda27/aff/file-14" });
+    expect(body[0]).toMatchObject({ id: 24, formatLabel: "LD", href: "/lda27/aff/file-14" });
     expect(res.headers.get("Cache-Control")).toContain("max-age=300");
   });
 

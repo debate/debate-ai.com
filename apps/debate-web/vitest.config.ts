@@ -47,13 +47,12 @@ export default defineConfig({
   root: repoRoot,
   test: {
     // Exclude packages/README.md, which "packages/*" would otherwise match
-    // as a (non-directory, non-config) project entry. Exclude debate-help-docs
-    // too: it's a Fumadocs/Next.js site, not a tested library package (like
-    // apps/*, which this glob never reaches), and has no test/ folder.
+    // as a (non-directory, non-config) project entry. debate-help-docs is a
+    // Fumadocs/Next.js site, but its few component tests (test/) run as a
+    // project like any package's.
     projects: [
       "packages/*",
       "!packages/README.md",
-      "!packages/debate-help-docs",
       // Git submodules of upstream Debate Editor and Tabroom. Each is its own
       // app with its own toolchain and test setup; Debate Editor is rebased into
       // @debate-ai/editor, Tabroom is

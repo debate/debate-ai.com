@@ -5,6 +5,7 @@
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { createClient } from "@libsql/client";
+import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import { RESERVED_USERNAMES } from "@debate-ai/reason-docs/lib/reason-docs/personal-doc-paths";
@@ -32,6 +33,16 @@ describe("getOrCreateUserHandle", () => {
 
   it("falls back to the email when the name has no letters or digits", async () => {
     expect(await getOrCreateUserHandle(db, { id: "u5", name: "—", email: "debater.one@x.com" })).toBe("debaterone");
+  });
+
+  it("never gives out a topic code, whose /<code>/… is a Topic Starter", async () => {
+    expect(await getOrCreateUserHandle(db, { id: "u6", name: "VCX 27" })).toBe("vcx272");
+  });
+
+  it("replaces a topic-code handle given out before that shape was reserved", async () => {
+    await db.run(sql`INSERT INTO user_handles (user_id, handle) VALUES ('u7', 'lda27')`);
+    expect(await getOrCreateUserHandle(db, { id: "u7", name: "LDA 27" })).toBe("lda272");
+    expect(await getOrCreateUserHandle(db, { id: "u7", name: "Someone Else" })).toBe("lda272");
   });
 });
 
