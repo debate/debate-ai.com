@@ -18,7 +18,7 @@ const SPEAKERS_SHOWN = 10;
 const COLUMNS = 4;
 
 /**
- * Tournaments whose results were completed in the last two weeks, at the top
+ * Tournaments whose results were completed in the last week, at the top
  * of the Tournaments page. Each is an expandable row (the same two-tier
  * pattern as the video grid): a tournament opens onto its PF, LD, Policy and
  * College Policy events — no other event is listed — and an event opens onto
@@ -26,7 +26,16 @@ const COLUMNS = 4;
  * A tournament's results are requested when its row is first expanded, and an
  * event's result sets when the event is.
  */
-export function RecentResultsSection({ tourns, state }: { tourns: UpcomingTournament[]; state: "loading" | "ready" }) {
+export function RecentResultsSection({
+  tourns,
+  state,
+  onShowArchive,
+}: {
+  tourns: UpcomingTournament[];
+  state: "loading" | "ready";
+  /** Opens the full list of past tournaments with results; offered from the empty state. */
+  onShowArchive?: () => void;
+}) {
   return (
     <section aria-labelledby="recent-results-heading" className="space-y-2" data-recent-results="">
       <div>
@@ -41,7 +50,17 @@ export function RecentResultsSection({ tourns, state }: { tourns: UpcomingTourna
       {state === "loading" ? (
         <Loading label="Loading recent results…" />
       ) : tourns.length === 0 ? (
-        <p className="rounded-lg border px-4 py-3 text-sm text-muted-foreground">No tournaments finished with results in the last {RECENT_RESULTS_DAYS} days.</p>
+        <p className="rounded-lg border px-4 py-3 text-sm text-muted-foreground">
+          No tournaments finished with results in the last {RECENT_RESULTS_DAYS} days.
+          {onShowArchive ? (
+            <>
+              {" "}
+              <button type="button" onClick={onShowArchive} className="text-primary hover:underline">
+                Browse all past results
+              </button>
+            </>
+          ) : null}
+        </p>
       ) : (
         <Card className="overflow-x-auto">
           <table className="w-full text-sm" aria-label="Tournaments with recent results">
