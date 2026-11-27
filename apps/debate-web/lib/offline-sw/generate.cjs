@@ -31,8 +31,7 @@ const isExcluded = (relPath) => {
 
 function getAllFilesInDir(dir) {
   if (!fs.existsSync(dir)) {
-    console.warn(`Directory ${dir} does not exist. Creating empty file list.`);
-    return [];
+    throw new Error(`${dir} does not exist; run \`vinext build\` before generating the service worker.`);
   }
 
   const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -51,7 +50,9 @@ const staticFiles = getAllFilesInDir(folderPath)
 
 const allFiles = staticFiles;
 
-const fileList = `export const APP_FILE_LIST = [\n  ${allFiles.map((f) => `'${f}'`).join(",\n  ")}\n];\n`;
+const fileList = allFiles.length
+  ? `export const APP_FILE_LIST = [\n  ${allFiles.map((f) => `'${f}'`).join(",\n  ")}\n];\n`
+  : "export const APP_FILE_LIST: string[] = [];\n";
 fs.writeFileSync("./lib/offline-sw/app-file-list.ts", fileList);
 
 // The worker names its cache after VERSION and deletes every other cache on
