@@ -6,6 +6,7 @@
 export * from './highlights';
 export * from './marks';
 export * from './questions';
+export * from './summary-tags';
 export * from './sections';
 export * from './export';
 export * from './references';
