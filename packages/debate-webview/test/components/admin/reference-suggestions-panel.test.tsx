@@ -14,8 +14,6 @@ function row(overrides: Record<string, unknown> = {}) {
     refId: "ref-ackerman-2020",
     title: "Ackerman, Elliot, et al. “A Letter on Justice and Open Debate.”",
     text: "Change comes from power, and power comes from organized people.",
-    note: "page 4",
-    name: "",
     status: "pending",
     userId: null,
     userName: null,
@@ -41,7 +39,6 @@ describe("ReferenceSuggestionsPanel", () => {
     expect(text).toContain("Ackerman, Elliot, et al.");
     expect(text).toContain("ref-ackerman-2020");
     expect(text).toContain("Change comes from power");
-    expect(text).toContain("Note: page 4");
     expect(text).toContain("an anonymous guest");
     expect(text).toContain("Pending (1)");
     expect(text).toContain("Approved (1)");

@@ -15,8 +15,6 @@ export interface ReferenceSuggestionRow {
   refId: string;
   title: string;
   text: string;
-  note: string;
-  name: string;
   status: SuggestionStatus;
   userId: string | null;
   userName: string | null;
@@ -123,7 +121,7 @@ export function ReferenceSuggestionsPanel() {
     const q = query.trim().toLowerCase();
     if (!q) return rows ?? [];
     return (rows ?? []).filter((row) =>
-      [row.title, row.refId, row.text, row.note, row.name, row.userName ?? ""].some((field) =>
+      [row.title, row.refId, row.text, row.userName ?? ""].some((field) =>
         field.toLowerCase().includes(q),
       ),
     );
@@ -195,8 +193,7 @@ export function ReferenceSuggestionsPanel() {
                     </span>
                     <span className="text-muted-foreground text-xs">
                       {new Date(row.createdAt).toLocaleString()} · from{" "}
-                      {row.name || row.userName || "an anonymous guest"}
-                      {row.userName && row.name ? ` (${row.userName})` : ""}
+                      {row.userName || "an anonymous guest"}
                       {row.resolvedBy && row.resolvedAt
                         ? ` · ${row.status} by ${row.resolvedBy} ${new Date(row.resolvedAt).toLocaleString()}`
                         : ""}
@@ -208,12 +205,6 @@ export function ReferenceSuggestionsPanel() {
                 <p className="bg-muted/40 max-h-64 overflow-y-auto rounded-md border p-2 break-words whitespace-pre-wrap">
                   {row.text}
                 </p>
-                {row.note && (
-                  <p className="text-muted-foreground break-words whitespace-pre-wrap">
-                    <span className="font-medium">Note:</span> {row.note}
-                  </p>
-                )}
-
                 <div className="flex flex-wrap gap-2">
                   {row.status !== "approved" && (
                     <Button size="sm" onClick={() => resolve(row.id, "approved")} disabled={busyId === row.id}>
