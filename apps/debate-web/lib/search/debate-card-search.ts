@@ -74,6 +74,22 @@ export interface CardSearchScope {
   searchAllText?: boolean;
 }
 
+/**
+ * Matches cards whose first author's last name starts with `value`.
+ *
+ * The corpus has no author column, but a card's short cite leads with the
+ * author's last name (`Chilton 18`). Matching the start of `cite` as a
+ * case-insensitive range lets SQLite walk `idx_debate_cards_cite_nocase`
+ * instead of scanning every card, which a `LIKE '%…%'` over `cite` would.
+ *
+ * @param value - Last name, or its first letters, as typed in the filter.
+ * @returns A range condition on `cite`.
+ */
+export function authorCondition(value: string): SQL {
+  const cite = sql`${debateCards.cite} COLLATE NOCASE`;
+  return sql`${cite} >= ${value} AND ${cite} < ${`${value}\uffff`}`;
+}
+
 /** Everything the search endpoint filters a card list by. */
 export interface CardSearchInput extends CardSearchScope {
   /** Raw search term; blank means "no text constraint". */
@@ -86,6 +102,8 @@ export interface CardSearchInput extends CardSearchScope {
   team?: string;
   /** Tournament name fragment. */
   tournament?: string;
+  /** Last name (or start of one) of a card's first author. */
+  author?: string;
   /** Debate format, where `"all"` means no constraint. */
   event?: string;
 }
@@ -173,6 +191,9 @@ export function buildCardSearchWhere(input: CardSearchInput): SQL | undefined {
 
   const tournament = (input.tournament ?? "").trim();
   if (tournament) conditions.push(contains(debateCards.caselistDisplayName, tournament));
+
+  const author = (input.author ?? "").trim();
+  if (author) conditions.push(authorCondition(author));
 
   const event = (input.event ?? "").trim();
   if (event && event !== "all") {

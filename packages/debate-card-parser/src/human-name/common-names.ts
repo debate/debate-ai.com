@@ -762,6 +762,9 @@ larkins krantz kovacs kizer kindred karnes jaffe hubbell hosey hauck goodell fav
 doane cureton
 `;
 
+/** Lower-cased common surnames alone, for completing a last name. */
+export const COMMON_SURNAMES: readonly string[] = SURNAMES.split(/\s+/).filter(Boolean);
+
 /** Lower-cased given names and common surnames. */
 export const COMMON_HUMAN_NAMES: ReadonlySet<string> = new Set(
   `${GIVEN_NAMES} ${SURNAMES}`.split(/\s+/).filter(Boolean),

@@ -3,6 +3,7 @@ import Fuse from "fuse.js";
 const TOURNAMENTS_ENDPOINT = "/api/tournaments";
 const SCHOOLS_ENDPOINT = "/api/schools";
 const NAMES_ENDPOINT = "/api/names";
+const AUTHORS_ENDPOINT = "/api/search/authors";
 
 type SchoolsPayload = {
   all: string[];
@@ -105,6 +106,22 @@ export async function searchNames(query = "", limit = 20): Promise<string[]> {
   }
   namesFuse = buildFuse(list, namesFuse);
   return namesFuse.search(query, { limit }).map((result) => result.item);
+}
+
+/** Author last names in the card corpus starting with `query` (two letters or more), most-carded first. */
+export async function searchAuthors(query = "", limit = 8): Promise<string[]> {
+  const prefix = query.trim();
+  if (prefix.length < 2) return [];
+  try {
+    const params = new URLSearchParams({ q: prefix, limit: String(limit) });
+    const res = await fetch(`${AUTHORS_ENDPOINT}?${params}`);
+    if (!res.ok) throw new Error(`Authors API returned ${res.status}`);
+    const data = await res.json();
+    return Array.isArray(data.authors) ? data.authors : [];
+  } catch (error) {
+    console.error("Unable to load author suggestions:", error);
+    return [];
+  }
 }
 
 export async function getSchoolsByFormat(): Promise<Record<string, string[]>> {

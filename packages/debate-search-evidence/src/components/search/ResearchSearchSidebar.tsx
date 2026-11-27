@@ -15,7 +15,7 @@ import type { SearchResult } from "../../types"
 import { MultiSelect } from "../../ui/primitives/multi-select"
 import { Autocomplete } from "../../ui/primitives/autocomplete"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/primitives/tooltip"
-import { searchSchools, searchTournaments, searchNames } from "../../cache/client-cache"
+import { searchSchools, searchTournaments, searchNames, searchAuthors } from "../../cache/client-cache"
 import { resultCountLabel } from "../../lib/card-display"
 import { EMPTY_FILTERS, fetchSearchSuggestions } from "../../lib/search-query"
 import type { SetSearchTermOptions } from "../../hooks/useSearchState"
@@ -28,6 +28,7 @@ export interface SearchFilters {
   year: string
   school: string
   team: string
+  author: string
   tournament: string
   event: string
   searchHighlighted: boolean
@@ -320,6 +321,22 @@ export function ResearchSearchSidebar({
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>Search by debater&apos;s first or last name</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="w-[70px]">
+                      <Autocomplete
+                        placeholder="Author"
+                        value={filters.author}
+                        onChange={(v) => updateFilter("author", v)}
+                        fetchOptions={(q) => searchAuthors(q, SUGGESTION_LIMIT)}
+                        className="h-8 w-full text-xs"
+                        dropdownClassName={SEARCH_DROPDOWN_CLASS}
+                        optionClassName={SEARCH_OPTION_CLASS}
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Find cards by the author&apos;s last name</TooltipContent>
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
