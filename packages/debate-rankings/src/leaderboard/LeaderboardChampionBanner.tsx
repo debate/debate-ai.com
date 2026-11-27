@@ -24,6 +24,8 @@ interface ChampionBannerProps {
   topicName?: string
   /** Winning team name for the season. */
   champion?: string
+  /** Shrinks the logo so the banner fits a half-width column beside another section. */
+  compact?: boolean
 }
 
 function TopicCopy({
@@ -79,16 +81,19 @@ export function LeaderboardChampionBanner({
   topic,
   topicName,
   champion,
+  compact = false,
 }: ChampionBannerProps) {
   const divConfig = DIVISION_CONFIG.find((d) => d.value === division)!
   const hasTopic = Array.isArray(topic) ? topic.length > 0 : Boolean(topic)
   if (!hasTopic && !champion) return null
 
   return (
-    <div className="flex items-center gap-4 rounded-lg border bg-card mb-4">
+    <div className={`flex items-center gap-4 rounded-lg border bg-card ${compact ? "mb-3" : "mb-4"}`}>
       {/* Logo card with mouse-follow perspective tilt */}
       <article
-        className="p-6 w-[120px] h-[120px] sm:w-[250px] sm:h-[250px] shrink-0 rounded-lg overflow-hidden will-change-transform"
+        className={`shrink-0 rounded-lg overflow-hidden will-change-transform ${
+          compact ? "p-3 w-[96px] h-[96px] sm:w-[140px] sm:h-[140px]" : "p-6 w-[120px] h-[120px] sm:w-[250px] sm:h-[250px]"
+        }`}
         onMouseMove={(e) => {
           const el = e.currentTarget
           el.style.transition = "transform 0.1s ease-out"
@@ -108,7 +113,9 @@ export function LeaderboardChampionBanner({
           alt={divConfig.label}
           width={100}
           height={100}
-          className="w-[108px] h-[108px] sm:w-[238px] sm:h-[238px] object-contain"
+          className={`object-contain ${
+            compact ? "w-[84px] h-[84px] sm:w-[128px] sm:h-[128px]" : "w-[108px] h-[108px] sm:w-[238px] sm:h-[238px]"
+          }`}
         />
       </article>
 
