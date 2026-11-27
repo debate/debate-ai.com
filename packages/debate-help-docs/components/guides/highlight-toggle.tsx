@@ -179,7 +179,7 @@ function useMarkHistoryState() {
 
 /** Every setting, kept in step with every other copy of the controls. */
 function useSettings(): Record<Setting, boolean> {
-  const all: Setting[] = [...SHOW_SETTINGS, ...MARK_KINDS.map(AUTO_SETTING), SUMMARY_MODE]
+  const all: Setting[] = [...SHOW_SETTINGS, MINIMIZE_SETTING, ...MARK_KINDS.map(AUTO_SETTING), SUMMARY_MODE]
   const read = () => Object.fromEntries(all.map((setting) => [setting, readSetting(setting)])) as Record<Setting, boolean>
   const [values, setValues] = useState(
     () => Object.fromEntries(all.map((setting) => [setting, defaultOn(setting)])) as Record<Setting, boolean>,
