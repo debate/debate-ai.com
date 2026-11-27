@@ -6,8 +6,9 @@
  * open one is drawn selected.
  *
  * The top of the bar is a row of badges for the main round collections —
- * College Policy, HS Policy, Individual, Forum and Parli — drawn with the
- * logos the rankings page shows beside its topic names.
+ * College Policy, HS Policy, Individual and Forum — drawn with the logos the
+ * rankings page shows beside its topic names. Parli has no logo and is listed
+ * under Formats instead.
  *
  * Below it the cards are laid out as columns: a heading (Getting started,
  * Strategy, Topics & ideas, Formats) with its categories listed underneath.
@@ -63,14 +64,14 @@ interface LectureCategoryGridGalleryProps {
   layout?: "grid" | "list";
   /**
    * Round collections linked from the bar but not lecture categories
-   * (Atlantic, Parliamentary, Congress, Speech on All Videos). They are
-   * listed at the end of the Formats section.
+   * (Atlantic, Congress, Speech on All Videos). They are listed at the end of
+   * the Formats section, after Parli.
    */
   extraLinks?: LectureGalleryExtraLink[];
   /**
    * Video totals per main round collection, keyed by {@link MAIN_FORMAT_BADGES}
-   * id (`college`, `policy`, `ld`, `pf`, `parli`). A badge without a total
-   * shows none.
+   * id (`college`, `policy`, `ld`, `pf`); `parli` is the total on its Formats
+   * card. A badge without a total shows none.
    */
   formatCounts?: Record<string, number | undefined>;
 }
@@ -80,24 +81,26 @@ interface MainFormatBadge {
   id: string;
   title: string;
   href: string;
-  /** Rankings division whose logo the badge reuses; Parli has no division. */
-  division?: Division;
+  /** Rankings division whose logo the badge reuses. */
+  division: Division;
 }
 
-/** The badges, in display order: the four main categories, then Parli. */
+/** The badges, in display order. */
 export const MAIN_FORMAT_BADGES: MainFormatBadge[] = [
   { id: "college", title: "College Policy", href: "/videos/college", division: "NDT" },
   { id: "policy", title: "HS Policy", href: "/videos/policy", division: "VCX" },
   { id: "ld", title: "Individual", href: "/videos/ld", division: "VLD" },
   { id: "pf", title: "Forum", href: "/videos/pf", division: "VPF" },
-  { id: "parli", title: "Parli", href: "/videos/parli" },
 ];
+
+/** Parli's card in the Formats section, ahead of any collection links. */
+const PARLI_LINK = { id: "parli", title: "Parli", href: "/videos/parli" };
 
 const DIVISION_LOGOS: Record<string, string> = Object.fromEntries(
   DIVISION_CONFIG.map((config) => [config.value, config.logoSrc]),
 );
 
-/** A non-category card shown in the Formats section, e.g. `/videos/parli`. */
+/** A non-category card shown in the Formats section, e.g. `/videos/atlantic`. */
 export interface LectureGalleryExtraLink {
   id: string;
   title: string;
@@ -141,13 +144,14 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
       "Topic Lectures",
       "Policy Topic Lectures",
       "PF & LD Topic Analysis",
+      "Public Forum",
       "Philosophy & IR Theory",
       "Documentaries & Culture",
     ],
   },
   {
     title: "Formats",
-    labels: ["Public Forum", "WSD", "NSDA Speech", "Demo Debates", "Congress", "Speech"],
+    labels: ["WSD", "NSDA Speech", "Demo Debates", "Congress", "Speech"],
   },
 ];
 
@@ -241,39 +245,47 @@ export function LectureCategoryGridGallery({
         })),
       });
     }
-    if (extraLinks && extraLinks.length > 0) {
-      let formats = grouped.find((section) => section.title === "Formats");
-      if (!formats) {
-        formats = { title: "Formats", items: [] };
-        grouped.push(formats);
-      }
-      for (const link of extraLinks) {
-        formats.items.push({
-          id: link.id,
-          title: link.title,
-          description: link.description ?? "Debate videos",
-          videoCount: link.count,
-          icon: link.icon,
-          href: link.href,
-          selected: false,
-        });
-      }
+    let formats = grouped.find((section) => section.title === "Formats");
+    if (!formats) {
+      formats = { title: "Formats", items: [] };
+      grouped.push(formats);
+    }
+    const links = extraLinks ?? [];
+    if (!links.some((link) => link.id === PARLI_LINK.id)) {
+      formats.items.push({
+        ...PARLI_LINK,
+        description: "Parliamentary debate rounds",
+        videoCount: formatCounts?.parli ?? 0,
+        icon: <Landmark className="h-4 w-4" />,
+        selected: false,
+      });
+    }
+    for (const link of links) {
+      formats.items.push({
+        id: link.id,
+        title: link.title,
+        description: link.description ?? "Debate videos",
+        videoCount: link.count,
+        icon: link.icon,
+        href: link.href,
+        selected: false,
+      });
     }
     return grouped.filter((section) => section.items.length > 0);
-  }, [cards, extraLinks, selectedId]);
+  }, [cards, extraLinks, formatCounts, selectedId]);
 
   if (!cards) return null;
 
   const columnClass = cn(
     "grid items-start gap-4",
-    layout === "list" ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
+    layout === "list" ? "grid-cols-1" : "grid-cols-[repeat(auto-fill,minmax(9.5rem,12rem))]",
   );
 
   return (
     <div className="w-full flex flex-col gap-4">
       <ul
         aria-label="Main categories"
-        className="grid grid-cols-3 gap-2 sm:grid-cols-5"
+        className="flex flex-wrap gap-2"
       >
         {MAIN_FORMAT_BADGES.map((badge) => (
           <FormatBadgeLink key={badge.id} badge={badge} count={formatCounts?.[badge.id]} />
@@ -309,20 +321,20 @@ export function LectureCategoryGridGallery({
 function FormatBadgeLink({ badge, count }: { badge: MainFormatBadge; count?: number }) {
   const logo = badge.division ? DIVISION_LOGOS[badge.division] : undefined;
   return (
-    <li className="list-none">
+    <li className="w-[200px] max-w-full list-none">
       <Link
         href={badge.href}
         scroll={false}
         prefetch={false}
-        className="group flex h-full flex-col items-center gap-1 rounded-lg border-[0.75px] border-border bg-background p-2 text-center shadow-sm transition-colors hover:border-primary/50 hover:bg-accent"
+        className="group flex h-full flex-col items-center gap-1 rounded-lg border-[0.75px] border-border bg-background p-3 text-center shadow-sm transition-colors hover:border-primary/50 hover:bg-accent"
       >
         {logo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={logo} alt="" className="h-12 w-12 object-contain" loading="lazy" />
+          <img src={logo} alt="" className="h-24 w-24 object-contain" loading="lazy" />
         ) : (
-          <Landmark className="h-12 w-12 p-2 text-muted-foreground" aria-hidden />
+          <Landmark className="h-24 w-24 p-4 text-muted-foreground" aria-hidden />
         )}
-        <span className="text-xs font-semibold leading-tight text-foreground">{badge.title}</span>
+        <span className="text-sm font-semibold leading-tight text-foreground">{badge.title}</span>
         {count !== undefined && (
           <span className="rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
             {count}

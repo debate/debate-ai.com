@@ -279,7 +279,7 @@ describe("AdminDashboard", () => {
     await flush();
     expect(bodyText()).toContain("Moderation");
     const names = [...nav().querySelectorAll("button")].map((b) => b.textContent);
-    expect(names).toEqual(["Round queue", "Video library", "Incomplete videos", "Topic starters", "YouTube sync", "Schools with missing info", "Users"]);
+    expect(names).toEqual(["Round queue", "Video library", "Incomplete videos", "Topic starters", "YouTube sync", "Reference text", "Schools with missing info", "Users"]);
     expect(calls.some((c) => c.url.includes("/resync"))).toBe(false);
     expect(bodyText()).toContain("Queued rounds waiting to be published");
 
