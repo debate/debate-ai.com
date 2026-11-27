@@ -38,7 +38,13 @@ import {
 } from "@debate-ai/videos-admin/src/sync/youtube/youtube-api";
 import { canonicalRoundLevel } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-title";
 import { canonicalTournament, KNOWN_TOURNAMENTS } from "@debate-ai/videos-admin/src/sync/youtube/parsers/tournament-names";
-import { classifyLecture, forcedLectureCategory, LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
+import {
+  classifyLecture,
+  LECTURE_CATEGORIES,
+  LECTURE_CATEGORY_GUIDANCE,
+  MISCELLANEOUS_CATEGORY,
+  ruleLectureCategory,
+} from "@debate-ai/videos/src/data/lecture-classifier";
 import { getEnv } from "@/lib/env";
 import { OPENROUTER_FREE_MODEL, parseOwnKeyHeader, sharedProviderKeys, type ProviderKey } from "@/lib/ai/provider-key";
 import { logAIFailure, writeLanguageChat } from "@/lib/ai/write-language-chat";
@@ -193,8 +199,8 @@ Given a video's title, channel and description, fill in its library metadata. An
 {"style": "", "category": "", "tournament": "", "roundLevel": "", "affTeam": "", "negTeam": "", "winner": "", "judgeDecision": "", "speechDocsUrl": "", "affArguments": "", "negArguments": ""}
 
 Fields:
-- style: "policy" (high-school policy / CX), "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate: NPDA, NPTE, APDA, high-school parli), "congress" (congressional debate), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, round analyses and redos, documentaries, advice. Clues: a resolution with "ought" is Lincoln-Douglas; speeches named 1AC/1NC/2NR are policy or LD; "Summary" and "Final Focus" are Public Forum; a channel named for a format (e.g. "Peninsula LD Debate", "Marist Public Forum") usually films that format.
-- category: for a lecture, the single best category from the allowed list, copied exactly. For a round, "none".
+- style: "policy" (high-school policy / CX), "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate: NPDA, NPTE, APDA, high-school parli), "congress" (a recorded congressional debate round, not a lecture about it), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, round analyses and redos, documentaries, advice. Clues: a resolution with "ought" is Lincoln-Douglas; speeches named 1AC/1NC/2NR are policy or LD; "Summary" and "Final Focus" are Public Forum; a channel named for a format (e.g. "Peninsula LD Debate", "Marist Public Forum") usually films that format.
+- category: for a lecture, the single best category from the allowed list, copied exactly. For a round, "none". ${LECTURE_CATEGORY_GUIDANCE}
 - tournament: the tournament's short name without any year, using the library's name when it is one of these: ${KNOWN_TOURNAMENTS.join(", ")}. "Tournament of Champions" is "TOC"; "Cal" or "California Invitational" is "Berkeley"; "Nats" is "NSDA Nationals". For a round robin, the host's name followed by "Round Robin" (e.g. "Harvard-Westlake Round Robin"). Empty if not a round or not stated.
 - roundLevel: exactly one of "R1", "R2", … (prelim rounds: "Round 4" and "Rd 4" are "R4"), "Triples" (triple octafinals), "Doubles" (double octafinals), "Octafinals", "Quarterfinals", "Semifinals", "Finals", "Runoffs", or "Round Robin" for any round of a round robin. Empty if not stated.
 - affTeam / negTeam: the two teams or debaters as the title names them — school plus entry code (e.g. "Seven Lakes LM", "Harvard-Westlake AD"), or full names when that is all it gives. Leave out any "(Aff)"/"(Neg)" marker, round, tournament or year. When the title or description marks the sides ("(Aff)", "Aff X vs Neg Y", "X on the neg"), follow them; otherwise put the first-named team in affTeam. Never name a team the text doesn't mention.
@@ -507,13 +513,16 @@ export async function autofillVideo(input: AutofillInput): Promise<AutofillResul
     }
   }
   Object.assign(fields, parsed.fields);
-  // The NSDA channel's lectures and every Super Debate video sit on their own
-  // shelf, whatever the title or the model says (see `forcedLectureCategory`).
-  const channelCategory = forcedLectureCategory(title, channel);
+  // The NSDA channel's lectures, every Super Debate video and Congressional
+  // Debate lectures sit on their own shelf, whatever the title or the model
+  // says (see `ruleLectureCategory`).
+  const channelCategory = ruleLectureCategory(title, description, channel);
   if (channelCategory && fields.style === null) {
     fields.style = null;
     fields.category = channelCategory;
   }
+  // A lecture nothing could place goes on the fallback shelf, not unfiled.
+  if (fields.style === null && !fields.category) fields.category = MISCELLANEOUS_CATEGORY;
 
   return { fields, fromYouTube: !!youtube, fromTitle, fromAi, warnings };
 }
