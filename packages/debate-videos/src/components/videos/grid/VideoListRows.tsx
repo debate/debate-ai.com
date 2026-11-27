@@ -127,10 +127,20 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   tree: 400,
   aff: 150,
   neg: 150,
-  date: 110,
-  views: 90,
+  // The stacked year / month / season badge is about 3rem wide. The old
+  // 110px column was the empty stretch between that badge and Views.
+  date: 64,
+  // Left-aligned against the date. Holds the pill, including a tier icon.
+  views: 80,
   watched: 120,
 }
+
+/**
+ * Round group rows still print a full date ("Sep 30, 2026"), so that tree
+ * keeps a wider Date column. Lists whose dates are only the badge — the
+ * library, and any ungrouped list — use {@link DEFAULT_COLUMN_WIDTHS}.date.
+ */
+const ROUND_GROUP_DATE_WIDTH = 108
 
 /** Widest the tree column gets on a phone, so the next column shows beside it. */
 const TREE_COLUMN_PHONE_MAX = "85vw"
@@ -139,7 +149,6 @@ const DATE_COLUMN: ColumnDef = { key: "date", label: "Date", sortValue: (v) => n
 const VIEWS_COLUMN: ColumnDef = {
   key: "views",
   label: "Views",
-  headerClassName: "text-right",
   sortValue: (v) => v[4] ?? 0,
 }
 
@@ -271,7 +280,16 @@ export function VideoListRows({
         : baseColumns,
     [baseColumns, showWatched, watchHistory],
   )
-  const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
+  // A round tree's group rows need room for "Sep 30, 2026". Everywhere else
+  // the date is the ~3rem badge, and a 110px column was a gap before Views.
+  const columnDefaults = useMemo(
+    () =>
+      isRoundMode && grouped
+        ? { ...DEFAULT_COLUMN_WIDTHS, date: ROUND_GROUP_DATE_WIDTH }
+        : DEFAULT_COLUMN_WIDTHS,
+    [isRoundMode, grouped],
+  )
+  const { widths, startResize } = useResizableColumns(columnDefaults)
   const tableWidth = columns.reduce((total, column) => total + widths[column.key], 0)
 
   const [sortColumn, setSortColumn] = useState<ColumnKey | null>(defaultSort?.column ?? null)
@@ -411,7 +429,10 @@ export function VideoListRows({
               key={column.key}
               style={{ "--col-width": `${widths[column.key]}px` } as React.CSSProperties}
               className={cn(
-                "relative px-3 py-2 select-none sm:w-[var(--col-width)] sm:min-w-[var(--col-width)]",
+                "relative py-2 select-none sm:w-[var(--col-width)] sm:min-w-[var(--col-width)]",
+                // Date and Views share a narrow edge so the count sits next
+                // to the date instead of across a wide gap.
+                column.key === "date" ? "pl-2 pr-1" : column.key === "views" ? "pl-1 pr-2" : "px-3",
                 column.key === "tree"
                   ? "w-[min(var(--col-width),85vw)]"
                   : "w-[var(--col-width)] min-w-[var(--col-width)]",
