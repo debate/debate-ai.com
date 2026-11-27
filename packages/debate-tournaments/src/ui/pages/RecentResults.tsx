@@ -201,9 +201,9 @@ function EventResults({ tournId, event, rounds }: { tournId: number; event: Resu
         <ElimBracket tournId={tournId} eventAbbr={event.abbr} rounds={rounds} />
       ) : bracket ? (
         <ResultSetView set={bracket} />
-      ) : (
+      ) : placed === 0 ? (
         <p className="text-xs text-muted-foreground">No elimination bracket has been posted.</p>
-      )}
+      ) : null}
       {placed > 0 ? <FinalPlaces set={finals!} /> : null}
       {spoken > 0 ? <SpeakerAwards set={speakers!} /> : null}
       {!hasElimRounds && !bracket && placed === 0 && spoken === 0 ? (
