@@ -28,6 +28,7 @@ import { InlinePageToc } from '../components/fumadocs/layout/inline-page-toc';
 import { hasInlineToc } from '../lib/fumadocs/inline-toc';
 import { HeaderToolbar, ToolbarItem } from '../components/fumadocs/layout/header-toolbar';
 import { PageNavigationMenu } from '../components/fumadocs/layout/page-navigation-menu';
+import { DocsZoomButton } from '../components/guides/zoom-button';
 import { PageInfoButton } from '../components/guides/page-info';
 import { pageStats } from '../lib/fumadocs/page-stats';
 import { PageFlowChartButton } from '@debate-ai/videos/page-flow-chart';
@@ -170,6 +171,9 @@ export default async function Page(props: {
               </ToolbarItem>
             </>
           )}
+          <ToolbarItem label="Zoom level">
+            <DocsZoomButton />
+          </ToolbarItem>
           <ToolbarItem label="Info">
             <PageInfoButton stats={stats} lastUpdated={lastUpdated} showHighlights={synergySlayer} />
           </ToolbarItem>
@@ -187,13 +191,16 @@ export default async function Page(props: {
         {/* Debate Basics pages are long: list their sections up front, in the body. */}
         {hasInlineToc(page.slugs) && <InlinePageToc toc={toc} />}
 
-        {synergySlayer ? (
-          <div className={SYNERGY_SLAYER_CLASS}>
+        {/* The Zoom level button scales just this, not the header or sidebar. */}
+        <div data-docs-zoom="">
+          {synergySlayer ? (
+            <div className={SYNERGY_SLAYER_CLASS}>
+              <MDX components={getMDXComponents()} />
+            </div>
+          ) : (
             <MDX components={getMDXComponents()} />
-          </div>
-        ) : (
-          <MDX components={getMDXComponents()} />
-        )}
+          )}
+        </div>
         {synergySlayer && <PageSuggestedQuestions key={page.url} />}
       </DocsBody>
     </DocsPage>

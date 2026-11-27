@@ -14,6 +14,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Provider } from './provider';
 import { HIGHLIGHT_INIT_SCRIPT } from '../components/guides/highlight-toggle';
+import { DOCS_ZOOM_INIT_SCRIPT } from '../lib/docs-zoom';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
 import '../styles/docs.css';
 
@@ -30,6 +31,7 @@ export default function DocsRootLayout({ children }: { children: ReactNode }) {
     <div className="flex flex-col min-h-screen">
       {/* Before the pages paint: honour a stored "highlights off". */}
       <script dangerouslySetInnerHTML={{ __html: HIGHLIGHT_INIT_SCRIPT }} />
+      <script dangerouslySetInnerHTML={{ __html: DOCS_ZOOM_INIT_SCRIPT }} />
       <Provider>{children}</Provider>
     </div>
   );
