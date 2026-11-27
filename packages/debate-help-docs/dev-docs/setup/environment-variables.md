@@ -11,6 +11,35 @@ dashboard variable, a `vars` entry, or a line in `.dev.vars` locally. Never comm
 
 "Required" below means required for that feature; the app boots with none of them.
 
+## Editing them from the admin panel
+
+**Admin → Environment** (admins only) edits the production Worker's variables and secrets
+through the Cloudflare API and rebuilds from GitHub, so a change needs no dashboard or CLI.
+
+- **Credentials.** A Cloudflare API token (Account · Workers Scripts · Edit), the account ID and
+  Worker name (`d-ebate-app`), and a GitHub token with Actions read/write, Contents read, Variables
+  read/write and Metadata read on the repo (or a classic token with `repo`). They are saved
+  encrypted in D1 under the `SERVICE_LOGINS_SECRET` / `BETTER_AUTH_SECRET` key and never sent back;
+  **Test connection** names any permission that is missing.
+- **Variables.** Plain-text variables show their value, secrets only their name. Edits (including
+  bulk `.env` paste) are staged, then a diff is confirmed before anything is sent. The save is one
+  `PATCH .../workers/scripts/<name>/settings`, which replaces the whole bindings list, so every
+  binding that is not a variable (D1, R2, KV, Durable Objects, AI, assets, other secrets) is sent
+  as `{ "type": "inherit" }` and the settings are re-read afterwards to check none went missing.
+  Deleting a variable, or changing `BETTER_AUTH_SECRET`, `SERVICE_LOGINS_SECRET`, `ADMIN_EMAIL(S)`
+  or the D1 binding, needs an extra confirmation. Every change is logged by name, never by value.
+- **`wrangler.jsonc` wins.** `wrangler deploy` rewrites the `vars` in that file on every deploy, so
+  a variable listed there is flagged and an API-side edit to it is undone by the next deploy. The
+  file has `keep_vars: true`, so variables that are only in Cloudflare survive deploys; the panel
+  warns if that ever changes.
+- **Rebuild.** Runtime variables take effect as soon as they are applied. **Apply and rebuild**
+  also dispatches `.github/workflows/cloudflare-workers-deploy.yml` (`workflow_dispatch`) with the
+  GitHub token, which builds and `wrangler deploy`s. `NEXT_PUBLIC_*` variables are inlined into the
+  browser bundle at build time, so those are also written to the repository's GitHub Actions
+  variables first (the workflow exports every `NEXT_PUBLIC_*` repository variable into the build).
+  Cloudflare Workers Builds (the `d-ebate-app` check) keeps its own build variables in the
+  Cloudflare dashboard; the panel does not manage those.
+
 ## Core: URLs and auth
 
 | Variable | Purpose | Where it is used | Required |
@@ -63,7 +92,8 @@ dashboard variable, a `vars` entry, or a line in `.dev.vars` locally. Never comm
 | `QWKSEARCH_ORIGIN` | QwkSearch deployment for "Sign in with QwkSearch" and the embedded research workspace. Default `https://qwksearch.com`. | `packages/debate-webview/src/lib/qwksearch/connect.ts`, `app/api/qwksearch/*` | Optional |
 | `STRIPE_WEBHOOK_SECRET` | Verifies Stripe webhook signatures at `/api/stripe/webhook` (writes `stripe_subscriptions`). | `packages/debate-webview/src/lib/stripe/webhook.ts`, `app/api/stripe/webhook/route.ts` | Required for paid plans. |
 | `STRIPE_SECRET_KEY` | Lets the webhook re-fetch the live subscription from Stripe instead of trusting event order. | `app/api/stripe/webhook/route.ts` | Recommended with Stripe |
-| `TABROOM_API_KEY` | The site's Tabroom session: the value of the `TabroomToken` cookie from a browser signed in at tabroom.com, raw (`$6$…`) or URL-encoded as copied (`%246%24…`). Sent as `Cookie: TabroomToken=<value>` on every server-side Tabroom request (the `/api/tabroom-beta` proxy, paradigm search and sync) and by the rankings sync scripts. Set it as a Worker secret: `bunx wrangler secret put TABROOM_API_KEY` from `apps/debate-web`. `TABROOM_SESSION_TOKEN` is read as a fallback; `TABROOM_COOKIE_NAME` overrides the cookie name. | `apps/debate-web/lib/judge-paradigms/tabroom.ts`, `app/api/tabroom-beta/[...path]/route.ts`, `packages/debate-rankings/src/sync/sync-rankings-ndca.ts` | Recommended; without it Tabroom requests go out signed out and paradigms can't be read. |
+| `TABROOM_API_KEY` | The site's Tabroom session: the value of the `TabroomToken` cookie from a browser signed in at tabroom.com, raw (`$6$…`) or URL-encoded as copied (`%246%24…`). The Worker prefers the Tabroom login saved under **Admin → Service logins** (it signs in itself and signs in again when Tabroom rejects the session); this secret is the fallback when none is saved or it can't sign in. Sent as `Cookie: TabroomToken=<value>` on server-side Tabroom requests (the `/api/tabroom-beta` proxy, paradigm search and sync, the video results lookups) and by the rankings sync scripts. Set it as a Worker secret: `bunx wrangler secret put TABROOM_API_KEY` from `apps/debate-web`. `TABROOM_SESSION_TOKEN` is read as a fallback; `TABROOM_COOKIE_NAME` overrides the cookie name. | `apps/debate-web/lib/judge-paradigms/tabroom.ts`, `lib/service-logins/`, `app/api/tabroom-beta/[...path]/route.ts`, `packages/debate-rankings/src/sync/sync-rankings-ndca.ts` | Optional with a saved Tabroom login; otherwise recommended, or Tabroom requests go out signed out and paradigms and round results can't be read. |
+| `SERVICE_LOGINS_SECRET` | Encrypts (AES-GCM) the Tabroom and openCaselist passwords and session tokens saved under **Admin → Service logins** in the `service_logins` table. Falls back to `BETTER_AUTH_SECRET`. Changing it makes saved logins unreadable; re-enter them in the panel. | `apps/debate-web/lib/service-logins/` | Optional; set it to keep these keys independent of `BETTER_AUTH_SECRET`. |
 
 ## Webcam rooms
 

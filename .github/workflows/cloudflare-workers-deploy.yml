@@ -225,6 +225,19 @@ jobs:
       # the Worker in Cloudflare reaches server code at runtime, never the
       # browser. The key is Amplitude's public, ingestion-scoped project key; a
       # repo variable of the same name overrides it.
+      # Every NEXT_PUBLIC_* repository variable reaches the build, not just the
+      # two named below, so Admin → Environment can add a client-side variable
+      # (it writes the variable here, then dispatches this workflow) without a
+      # workflow edit. The two named below keep their step-level defaults.
+      - name: Export NEXT_PUBLIC_ repository variables
+        env:
+          REPO_VARS: ${{ toJSON(vars) }}
+        run: |
+          delimiter="EOF_$(openssl rand -hex 8)"
+          echo "${REPO_VARS}" | jq -r --arg d "${delimiter}" \
+            'to_entries[] | select(.key | test("^NEXT_PUBLIC_[A-Za-z0-9_]+$")) | "\(.key)<<\($d)\n\(.value)\n\($d)"' \
+            >> "${GITHUB_ENV}"
+
       - name: Build app
         env:
           NEXT_PUBLIC_AMPLITUDE_API_KEY: ${{ vars.NEXT_PUBLIC_AMPLITUDE_API_KEY || 'b23bf3283bf5a81e2802bf01c1c0b8bb' }}

@@ -239,7 +239,7 @@ function networkError(request: Request, err: unknown): Response {
  * A navigation that fails while the browser is online is nearly always a
  * dropped connection — a pooled HTTP/2 or QUIC connection that died while
  * the tab sat idle — and the second request opens a fresh one. Without this,
- * one such drop on `/docs/<topic>/…` went straight to `Response.error()` and
+ * one such drop on `/<topic>/…` went straight to `Response.error()` and
  * the tab showed Chrome's "This site can't be reached" page. Only real
  * navigations are retried (never subresources, RSC payloads or API calls,
  * which their callers retry themselves), and only once.

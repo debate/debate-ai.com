@@ -166,3 +166,27 @@ export function button(container: HTMLElement, text: string): HTMLButtonElement 
   }
   return match;
 }
+
+/**
+ * Sets the value of a controlled `<input>`, `<textarea>` or `<select>` the way
+ * React expects (through the prototype's native setter, so its value tracker
+ * sees the change) and fires the event React listens to for that element.
+ */
+export async function setValue(
+  field: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
+  value: string,
+): Promise<void> {
+  const prototype =
+    field instanceof HTMLSelectElement
+      ? HTMLSelectElement.prototype
+      : field instanceof HTMLTextAreaElement
+        ? HTMLTextAreaElement.prototype
+        : HTMLInputElement.prototype;
+  const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
+  await flush(() => {
+    setter?.call(field, value);
+    field.dispatchEvent(
+      new Event(field instanceof HTMLSelectElement ? "change" : "input", { bubbles: true }),
+    );
+  });
+}

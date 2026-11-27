@@ -14,7 +14,7 @@
  * Next's `alternates: { canonical: "./" }` in the root layout would resolve
  * against the *route* pathname, which after a `next.config` rewrite is the
  * internal one (`/@harker-ll` renders `/teams/harker-ll`, every Topic Starter
- * under `/docs/<code>/…` renders `/reason-editor`). The Worker holds the
+ * at `/<code>/…` renders `/reason-editor`). The Worker holds the
  * address the visitor actually asked for, so it is the one place the canonical
  * cannot name an internal path.
  *

@@ -11,8 +11,8 @@
  * database first, with no openCaselist session needed.
  */
 import { NextResponse } from "next/server"
-import { CaselistApiError, createCaselistClient } from "@debate-ai/research-evidence/src/caselist/caselist-api"
-import { caselistCredentials, emptyPayload, lookupTeamCaselist } from "@/lib/caselist/team-caselist"
+import { CaselistApiError } from "@debate-ai/research-evidence/src/caselist/caselist-api"
+import { emptyPayload, lookupTeamCaselist, openCaselistClient } from "@/lib/caselist/team-caselist"
 import { readStoredTeamCaselist } from "@/lib/caselist/team-caselist-sync"
 import { getDBFromContext } from "@/lib/database/context"
 
@@ -39,8 +39,8 @@ export async function GET(request: Request) {
     return NextResponse.json(stored, { headers: { "Cache-Control": "public, max-age=300" } })
   }
 
-  const credentials = caselistCredentials()
-  if (!credentials) {
+  const client = await openCaselistClient()
+  if (!client) {
     return NextResponse.json(emptyPayload(false), { headers: { "Cache-Control": "no-store" } })
   }
 
@@ -50,7 +50,7 @@ export async function GET(request: Request) {
   if (cached) return new Response(cached.body, cached)
 
   try {
-    const payload = await lookupTeamCaselist(createCaselistClient(credentials), { dataset, school, team })
+    const payload = await lookupTeamCaselist(client, { dataset, school, team })
     const response = NextResponse.json(payload, {
       headers: { "Cache-Control": `public, max-age=${CACHE_SECONDS}` },
     })

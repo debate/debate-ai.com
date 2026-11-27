@@ -35,7 +35,7 @@ import {
 } from "@debate-ai/research-evidence/src/caselist/caselist-discovery";
 import { listArchives } from "@debate-ai/research-evidence/src/caselist/downloads-page-parser";
 import { authorizeCardImport } from "@/lib/admin/debate-card-import";
-import { caselistCredentials } from "@/lib/caselist/team-caselist";
+import { openCaselistClient } from "@/lib/caselist/team-caselist";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCardImports } from "@/lib/database/schema";
 
@@ -66,19 +66,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: `Unknown caselist: ${requested}` }, { status: 400 });
   }
 
-  const credentials = caselistCredentials();
-  if (!credentials) {
+  const client = await openCaselistClient();
+  if (!client) {
     return NextResponse.json(
       {
         error:
-          "openCaselist is not configured: set the OPENCASELIST_API_KEY secret to your Tabroom login as username:password (or a caselist_token cookie).",
+          "openCaselist is not configured: save an openCaselist login under Admin → Service logins, or set the OPENCASELIST_API_KEY secret to your Tabroom login as username:password (or a caselist_token cookie).",
       },
       { status: 503 },
     );
   }
 
   try {
-    const downloads = await fetchCaselistDownloads(caselist.slug, credentials);
+    const downloads = await fetchCaselistDownloads(caselist.slug, { client });
 
     const db = await getDBFromContext();
     const imported = await db

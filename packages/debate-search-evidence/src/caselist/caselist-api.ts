@@ -159,6 +159,12 @@ export interface CaselistClientOptions {
   /** API root; defaults to {@link CASELIST_API_ORIGIN}. */
   origin?: string;
   fetch?: typeof fetch;
+  /**
+   * A `fetch` that signs each request in itself (sets the session cookie and
+   * logs in again when it is rejected). The client then sends no cookie and
+   * never logs in; `token` and the login are ignored.
+   */
+  authenticatedFetch?: typeof fetch;
 }
 
 /** A small typed client over the openCaselist read API. */
@@ -270,11 +276,13 @@ export function createCaselistClient(rawOptions: CaselistClientOptions = {}): Ca
   }
 
   async function request(path: string, retried = false): Promise<Response> {
-    const response = await fetchImpl(`${origin}${path}`, {
-      headers: { Cookie: `${CASELIST_TOKEN_COOKIE}=${await token()}`, Accept: "application/json" },
-    });
+    const response = options.authenticatedFetch
+      ? await options.authenticatedFetch(`${origin}${path}`, { headers: { Accept: "application/json" } })
+      : await fetchImpl(`${origin}${path}`, {
+          headers: { Cookie: `${CASELIST_TOKEN_COOKIE}=${await token()}`, Accept: "application/json" },
+        });
     // An expired or missing session: log in again once, when a login is set.
-    if ((response.status === 401 || response.status === 403) && canLogin && !retried) {
+    if ((response.status === 401 || response.status === 403) && canLogin && !retried && !options.authenticatedFetch) {
       tokenPromise = null;
       mintedTokens.delete(sessionKey);
       return request(path, true);

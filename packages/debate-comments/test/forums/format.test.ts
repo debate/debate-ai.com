@@ -14,6 +14,7 @@ import {
   formatAbsoluteTime,
   formatRelativeTime,
   getInitials,
+  likeCountLabel,
   replyCountLabel,
 } from "../../src/forums/format";
 
@@ -70,5 +71,16 @@ describe("replyCountLabel", () => {
   it("agrees with itself about the singular", () => {
     expect(replyCountLabel(1)).toBe("1 reply");
     expect(replyCountLabel(2)).toBe("2 replies");
+  });
+});
+
+describe("likeCountLabel", () => {
+  it("says so when nobody has liked it", () => {
+    expect(likeCountLabel(0)).toBe("No likes yet");
+  });
+
+  it("agrees with itself about the singular", () => {
+    expect(likeCountLabel(1)).toBe("1 like");
+    expect(likeCountLabel(7)).toBe("7 likes");
   });
 });

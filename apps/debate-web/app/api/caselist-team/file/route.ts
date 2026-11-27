@@ -10,8 +10,8 @@
  * from the CARD_TEXT R2 bucket instead, without touching openCaselist.
  */
 import { NextResponse } from "next/server"
-import { CaselistApiError, createCaselistClient } from "@debate-ai/research-evidence/src/caselist/caselist-api"
-import { caselistCredentials, isOpenSourcePath } from "@/lib/caselist/team-caselist"
+import { CaselistApiError } from "@debate-ai/research-evidence/src/caselist/caselist-api"
+import { isOpenSourcePath, openCaselistClient } from "@/lib/caselist/team-caselist"
 import { type CaselistFileBucket, caselistFileKey } from "@/lib/caselist/team-caselist-sync"
 import { getCardTextBucket } from "@/lib/search/card-text-store"
 
@@ -48,8 +48,8 @@ export async function GET(request: Request) {
     })
   }
 
-  const credentials = caselistCredentials()
-  if (!credentials) {
+  const client = await openCaselistClient()
+  if (!client) {
     return NextResponse.json({ error: "openCaselist downloads are not configured on this server" }, { status: 503 })
   }
 
@@ -59,7 +59,7 @@ export async function GET(request: Request) {
   if (cached) return new Response(cached.body, cached)
 
   try {
-    const upstream = await createCaselistClient(credentials).download(path)
+    const upstream = await client.download(path)
     const fileName = path.split("/").pop() ?? "file"
     const extension = fileName.split(".").pop()?.toLowerCase() ?? ""
     const response = new Response(await upstream.arrayBuffer(), {

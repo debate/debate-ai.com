@@ -4,7 +4,7 @@
  * Replay records the page as rrweb DOM snapshots, and Amplitude drops any
  * single event over its size limit. A Topic Starter or a personal document
  * open in the card editor is a ProseMirror tree of thousands of cards, so the
- * full snapshot of a `/docs/<topic>/…` or `/reason-editor` page came out at
+ * full snapshot of a `/<topic>/…` or `/reason-editor` page came out at
  * ~26 MB and every one was dropped ("Session replay event dropped: serialized
  * size 26350 KB exceeds maximum allowed event size"), leaving those sessions
  * with no replay at all.

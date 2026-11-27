@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, type ComponentType } from "react";
-import { BookOpen, CreditCard, MessageSquareText, School, DatabaseBackup, Eraser, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, Sparkles, Upload, Users, Wand2 } from "lucide-react";
+import { BookOpen, CreditCard, MessageSquareText, School, DatabaseBackup, Eraser, KeyRound, Mail, FileSearch, Film, FolderTree, Globe, ListVideo, RefreshCw, SlidersHorizontal, Sparkles, Upload, Users, Wand2 } from "lucide-react";
 import { cn } from "../../ui/lib/utils";
 import { Button } from "../../ui/primitives/button";
 import { Input } from "../../ui/primitives/input";
@@ -26,6 +26,8 @@ import { CardTextR2Panel } from "./data/CardTextR2Panel";
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
 import { CaselistTeamSyncPanel } from "./data/CaselistTeamSyncPanel";
 import { DbBackupPanel } from "./data/DbBackupPanel";
+import { ServiceLoginsPanel } from "./data/ServiceLoginsPanel";
+import { EnvironmentPanel } from "./env/EnvironmentPanel";
 import { TableExportPanel } from "./data/TableExportPanel";
 import { BuyersPanel } from "./users/BuyersPanel";
 import { DeletionRequestsPanel } from "./users/DeletionRequestsPanel";
@@ -58,7 +60,7 @@ interface Overview { stats: { users: number; sessions: number; files: number; pu
  * (the round resync and the subscribed channels) and, under Users, school
  * claims — the only part of Users a moderator sees.
  */
-type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails" | "buyers" | "deletion-requests" | "feedback" | "school-directory";
+type AdminTabKey = "users" | "library" | "incomplete" | "queue" | "topic-starters" | "speech-ai" | "youtube" | "cards" | "imports" | "url-detection" | "backups" | "emails" | "buyers" | "deletion-requests" | "feedback" | "school-directory" | "service-logins" | "environment";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -85,6 +87,8 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Debate card Parquet shards and openCaselist scraping, this season or earlier ones", icon: Upload, adminOnly: true },
   { key: "emails", name: "Emails", description: "Previews of the welcome, invite and coach emails, and sending the welcome email to a list", icon: Mail, adminOnly: true },
+  { key: "service-logins", name: "Service logins", description: "The Tabroom and openCaselist accounts the site signs in as: saved encrypted, signed in again only when a session is rejected", icon: KeyRound, adminOnly: true },
+  { key: "environment", name: "Environment", description: "The Cloudflare Worker's environment variables and secrets: connect API tokens, edit with a reviewed diff, then rebuild from GitHub", icon: SlidersHorizontal, adminOnly: true },
   { key: "backups", name: "Backups & exports", description: "Export tables like videos, teams and tournament records as CSV/JSON, and SQL dumps — download or store in R2", icon: DatabaseBackup, adminOnly: true },
   { key: "buyers", name: "Buyers", description: "Users who bought a plan, topped up their wallet or bought files, with subscription status and totals", icon: CreditCard, adminOnly: true },
   { key: "deletion-requests", name: "Deletion requests", description: "Data deletion requests filed from Settings → Privacy: work them, then mark each done or declined", icon: Eraser, adminOnly: true },
@@ -738,6 +742,10 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             <CaselistTeamSyncPanel />
           </>
         )}
+
+        {currentTab.key === "service-logins" && <ServiceLoginsPanel />}
+
+        {currentTab.key === "environment" && <EnvironmentPanel />}
 
         {currentTab.key === "backups" && (
           <>
