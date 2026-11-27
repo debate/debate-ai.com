@@ -76,11 +76,11 @@ describe("DocsNavTree", () => {
     return mounted;
   }
 
-  it("pins Rules & Glossary and All Features above Introduction", async () => {
+  it("pins Rules & Glossary and Overview Home above Introduction", async () => {
     view = await loaded();
     const text = view.container.textContent ?? "";
     const rules = text.indexOf("Rules & Glossary");
-    const features = text.indexOf("All Features");
+    const features = text.indexOf("Overview Home");
     const intro = text.indexOf("Introduction");
     expect(rules).toBeGreaterThanOrEqual(0);
     expect(features).toBeGreaterThan(rules);
