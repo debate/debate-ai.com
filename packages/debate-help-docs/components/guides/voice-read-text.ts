@@ -31,10 +31,34 @@ export function isFigureCaption(text: string): boolean {
   return FIGURE_CAPTION.test(text.trim())
 }
 
+/** Where a word begins or ends in the page: a text node and the offset in it. */
+export interface VoicePoint {
+  node: Text
+  offset: number
+}
+
+/** One word of a passage, with where it sits in the page (for the moving ball and click-to-seek). */
+export interface VoiceWord {
+  text: string
+  start: VoicePoint | null
+  end: VoicePoint | null
+}
+
 /** One passage Voice reads, with the element it scrolls to and outlines. */
 export interface VoiceBlock {
   element: Element
+  /** What is spoken: `words` from `first` on, joined with single spaces. */
   text: string
+  /** Every word of the passage, in order. */
+  words: VoiceWord[]
+  /** Index in `words` of the first spoken word (above 0 when reading starts mid-passage). */
+  first: number
+}
+
+/** The passage with only its words from `index` on spoken. */
+export function blockFromWord(block: VoiceBlock, index: number): VoiceBlock {
+  const first = Math.min(Math.max(0, index), Math.max(0, block.words.length - 1))
+  return { ...block, first, text: block.words.slice(first).map((word) => word.text).join(" ") }
 }
 
 /** Highlighted text: the `==text==` marks and the References cards' highlights. */
@@ -45,6 +69,34 @@ export interface CollectVoiceOptions {
   highlightedOnly?: boolean
 }
 
+/** The words of `raw` (the passage's parts joined), each located in the text node its parts came from. */
+function wordsOf(raw: string, parts: string[], sources: Array<Text | null>): VoiceWord[] {
+  /** Index in `raw` where each part starts. */
+  const starts: number[] = []
+  let at = 0
+  for (const part of parts) {
+    starts.push(at)
+    at += part.length
+  }
+  const locate = (index: number, atEnd: boolean): VoicePoint | null => {
+    for (let i = 0; i < parts.length; i++) {
+      const begin = starts[i]!
+      const end = begin + parts[i]!.length
+      const inside = atEnd ? index > begin && index <= end : index >= begin && index < end
+      if (!inside) continue
+      const source = sources[i]
+      return source ? { node: source, offset: index - begin } : null
+    }
+    return null
+  }
+  const words: VoiceWord[] = []
+  for (const match of raw.matchAll(/\S+/g)) {
+    const begin = match.index ?? 0
+    words.push({ text: match[0], start: locate(begin, false), end: locate(begin + match[0].length, true) })
+  }
+  return words
+}
+
 /** The passages under `root` that Voice reads, in page order (see the module doc). */
 export function collectVoiceBlocks(root: Element, options: CollectVoiceOptions = {}): VoiceBlock[] {
   const { highlightedOnly = false } = options
@@ -53,14 +105,18 @@ export function collectVoiceBlocks(root: Element, options: CollectVoiceOptions =
   const blocks: VoiceBlock[] = []
   let currentElement: Element | null = null
   let parts: string[] = []
+  /** Which text node each part came from (null for the spaces added between highlighted runs). */
+  let sources: Array<Text | null> = []
   let lastMark: Element | null = null
   const flush = () => {
-    const text = parts.join("").replace(/\s+/g, " ").trim()
+    const raw = parts.join("")
+    const text = raw.replace(/\s+/g, " ").trim()
     if (currentElement && text && /[\p{L}\p{N}]/u.test(text) && !isFigureCaption(text)) {
-      blocks.push({ element: currentElement, text })
+      blocks.push({ element: currentElement, text, words: wordsOf(raw, parts, sources), first: 0 })
     }
     currentElement = null
     parts = []
+    sources = []
   }
 
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
@@ -76,9 +132,13 @@ export function collectVoiceBlocks(root: Element, options: CollectVoiceOptions =
       lastMark = null
     }
     // Separate highlighted runs read as separate words.
-    if (mark && lastMark && mark !== lastMark) parts.push(" ")
+    if (mark && lastMark && mark !== lastMark) {
+      parts.push(" ")
+      sources.push(null)
+    }
     lastMark = mark
     parts.push(node.nodeValue ?? "")
+    sources.push(node as Text)
   }
   flush()
   return blocks
