@@ -272,7 +272,7 @@ describe("LatestOutlinesStrip", () => {
     format: "vcx",
     formatLabel: "Policy",
     topicName: "Health",
-    href: "/docs/vcx27/aff/warming-1ac",
+    href: "/vcx27/aff/warming-1ac",
     updatedAt: "2026-11-13T12:00:00Z",
     author: null,
     quoteCount: 12,
@@ -281,14 +281,14 @@ describe("LatestOutlinesStrip", () => {
 
   it("renders a linked tile per file with its format, topic and stats", () => {
     const html = renderToStaticMarkup(
-      <LatestOutlinesStrip files={[base, { ...base, id: 2, topicName: null, formatLabel: "LD", topicCode: "lda27", href: "/docs/lda27/x" }]} now={now} />,
+      <LatestOutlinesStrip files={[base, { ...base, id: 2, topicName: null, formatLabel: "LD", topicCode: "lda27", href: "/lda27/x" }]} now={now} />,
     );
     expect(html).toContain('data-testid="latest-outlines"');
     expect(html).toContain("Latest outline files");
-    expect(html).toContain('href="/docs/vcx27/aff/warming-1ac"');
+    expect(html).toContain('href="/vcx27/aff/warming-1ac"');
     expect(html).toContain('title="Warming 1AC (Health)"');
     expect(html).toContain("12 cards · 3 days ago");
-    expect(html).toContain('href="/docs/lda27/x"');
+    expect(html).toContain('href="/lda27/x"');
     expect(html).toContain("Topic Starters");
   });
 

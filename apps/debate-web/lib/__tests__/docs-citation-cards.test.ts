@@ -190,7 +190,7 @@ describe("Synergy Slayer of Critiques", () => {
       findCitations(readFileSync(join(SLAYER_DIR, page), "utf8"), slayerIndex).map((m) => m.entry.id),
     )
     expect(linked.length).toBeGreaterThan(100)
-    expect(linked).toContain("ref-shanahan-1993")
+    expect(linked).toContain("ref-shanahan-2004")
   })
 })
 
@@ -210,7 +210,7 @@ describe("Synergy Slayer of Non-Intrinsic Concerns", () => {
       findCitations(readFileSync(join(INTRINSICNESS_DIR, page), "utf8"), index).map((m) => m.entry.id),
     )
     expect(linked.length).toBeGreaterThan(40)
-    expect(linked).toContain("ref-kant-2002")
+    expect(linked).toContain("ref-feaver-2001")
     expect(linked).toContain("ref-sartre-2007")
   })
 
@@ -241,7 +241,7 @@ describe("Synergy Slayer of Non-Intrinsic Concerns", () => {
   })
 })
 
-describe("Debate AI Collective Consciousness", () => {
+describe("The Debate AI Singularity and Collective Consciousness", () => {
   const references = parseReferences(readFileSync(join(COLLECTIVE_DIR, "references.mdx"), "utf8"))
   const index = buildCitationIndex(references)
   const pages = readdirSync(COLLECTIVE_DIR).filter((f) => /\.mdx?$/.test(f) && !f.startsWith("references"))
