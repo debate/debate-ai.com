@@ -75,7 +75,7 @@ Extracts from title/description:
 
 #### Lecture Classifier ([debate-videos/src/data/lecture-classifier.ts](../debate-videos/src/data/lecture-classifier.ts))
 
-Categorizes lectures into 17 topics:
+Categorizes lectures into topics (plus channel/title-forced shelves such as NSDA Speech and Open Super Debates; see `forcedLectureCategory`):
 
 - Topic Lectures
 - Novice & Introductory

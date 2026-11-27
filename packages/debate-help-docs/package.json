@@ -33,6 +33,8 @@
     "./docs-ai": "./components/guides/docs-ai.ts",
     "./saved-answers": "./components/guides/saved-answers.ts",
     "./lib/blog": "./lib/blog.ts",
+    "./lib/reference-suggestions": "./lib/reference-suggestions.ts",
+    "./lib/reference-quote-status": "./lib/reference-quote-status.ts",
     "./lib/fumadocs/source": "./lib/fumadocs/source.tsx",
     "./package.json": "./package.json"
   },

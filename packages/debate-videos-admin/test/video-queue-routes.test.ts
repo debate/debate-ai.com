@@ -39,6 +39,7 @@ const publishAll = await import("../src/api/admin/youtube/videos/publish-all");
 const channels = await import("../src/api/admin/youtube/channels");
 const availability = await import("../src/api/admin/videos/availability");
 const detect = await import("../src/api/admin/youtube/videos/detect");
+const recategorize = await import("../src/api/admin/youtube/videos/recategorize");
 
 let db: DB;
 
@@ -427,5 +428,114 @@ describe("/api/admin/videos/availability", () => {
     expect((await availability.GET(request("/x"))).status).toBe(500);
     expect((await availability.POST(request("/x", { method: "POST", body: { videoId: "fine0000000" } }))).status).toBe(500);
     expect((await availability.DELETE(request("/x", { method: "DELETE", body: { states: ["removed"] } }))).status).toBe(500);
+  });
+});
+
+describe("Open Super Debates", () => {
+  const superLectures = [
+    round("sd000000001", 1, { style: null, category: "Documentaries & Culture", title: "Chicago Super Debate Night 1 Recap", channel: "SuperDebate" }),
+    round("sd000000002", 1, {
+      style: null,
+      category: "Research & Flowing",
+      title: "Will AI Eliminate More Jobs Than It Creates? Martin Ford vs. Pedro Domingos",
+      channel: "SuperDebate",
+    }),
+    round("sd000000003", 1, { style: null, category: "Novice & Introductory", title: "Welcome to our live show!", channel: "Super Debater" }),
+    round("sd000000004", 1, { style: null, category: "Topic Lectures", title: "Highlights from SUPER DEBATE 4", channel: "Other" }),
+  ];
+
+  it("auto-detect files queued Super Debate lectures without asking the model", async () => {
+    await db.insert(youtubeRoundVideos).values(superLectures);
+    vi.mocked(askModel).mockClear();
+    const body = await (await detect.POST(request("/api/admin/youtube/videos/detect", {
+      method: "POST",
+      body: { ids: superLectures.slice(0, 3).map((row) => row.id) },
+    }))).json();
+    expect(body.errors).toEqual([]);
+    expect(body.results.map((row: { category: string }) => row.category)).toEqual(Array(3).fill("Open Super Debates"));
+    expect(askModel).not.toHaveBeenCalled();
+    const rows = await db.select().from(youtubeRoundVideos);
+    expect(rows.filter((row) => row.category === "Open Super Debates")).toHaveLength(3);
+  });
+
+  it("auto-detect overrides the model's category when it calls a Super Debate video a lecture", async () => {
+    await db.insert(youtubeRoundVideos).values(round("sd000000005", 1, { title: "Super Debate Final: A vs B", channel: "SuperDebate" }));
+    vi.mocked(askModel).mockResolvedValueOnce({ style: null, category: "Demo Debates" });
+    await detect.POST(request("/x", { method: "POST", body: { ids: ["sd000000005"] } }));
+    const [row] = await db.select().from(youtubeRoundVideos);
+    expect(row).toMatchObject({ style: null, category: "Open Super Debates" });
+  });
+
+  it("publish-all files them under Open Super Debates in the library", async () => {
+    await db.insert(youtubeRoundVideos).values([...superLectures, round("other000001", 1, { style: null, category: "Demo Debates", title: "Demo", channel: "Victory Briefs" })]);
+    await publishAll.POST(request("/x", { method: "POST" }));
+    const rows = await db.select().from(videos);
+    const byId = new Map(rows.map((row) => [row.videoId, row]));
+    for (const row of superLectures) {
+      expect(byId.get(row.id)).toMatchObject({ category: "Open Super Debates", categoryKey: "open_super_debates", source: "lecture" });
+    }
+    expect(byId.get("other000001")).toMatchObject({ category: "Demo Debates" });
+  });
+
+  it("publishes one queued Super Debate round on the shelf while keeping its style", async () => {
+    await db.insert(youtubeRoundVideos).values(round("sd000000006", 2, { title: "Super Debate Night 2: A vs B", channel: "SuperDebate" }));
+    await queued.POST(request("/x", { method: "POST" }), params({ id: "sd000000006" }));
+    const [row] = await db.select().from(videos);
+    expect(row).toMatchObject({ style: 2, category: "Open Super Debates", categoryKey: "open_super_debates" });
+  });
+
+  it("re-files queued and published videos, and is idempotent", async () => {
+    await db.insert(youtubeRoundVideos).values([...superLectures, round("other000001", 1, { style: null, category: "Demo Debates", title: "Demo", channel: "Victory Briefs" })]);
+    await db.insert(videos).values({
+      videoId: "pub00000001",
+      source: "lecture",
+      title: "Super Debate Night 0 Recap",
+      publishedAt: "2026-01-01",
+      publishedMs: Date.parse("2026-01-01"),
+      channel: "SuperDebate",
+      viewCount: 5,
+      description: "",
+      style: null,
+      category: "Documentaries & Culture",
+      categoryKey: "documentaries___culture",
+      seasonYear: 2025,
+      searchText: "super debate night 0 recap",
+    });
+    await db.insert(videos).values({
+      videoId: "pub00000002",
+      source: "lecture",
+      title: "Intro to Policy",
+      publishedAt: "2026-01-01",
+      publishedMs: Date.parse("2026-01-01"),
+      channel: "Victory Briefs",
+      viewCount: 5,
+      description: "",
+      style: null,
+      category: "Novice & Introductory",
+      categoryKey: "novice___introductory",
+      seasonYear: 2025,
+      searchText: "intro to policy",
+    });
+
+    const first = await (await recategorize.POST()).json();
+    expect(first).toEqual({ ok: true, queued: 4, published: 1 });
+    const queuedRows = await db.select().from(youtubeRoundVideos);
+    expect(queuedRows.filter((row) => row.category === "Open Super Debates").map((row) => row.id).sort()).toEqual(
+      superLectures.map((row) => row.id).sort(),
+    );
+    expect(queuedRows.find((row) => row.id === "other000001")?.category).toBe("Demo Debates");
+    const published = await db.select().from(videos);
+    expect(published.find((row) => row.videoId === "pub00000001")).toMatchObject({
+      category: "Open Super Debates",
+      categoryKey: "open_super_debates",
+    });
+    expect(published.find((row) => row.videoId === "pub00000002")?.category).toBe("Novice & Introductory");
+
+    expect(await (await recategorize.POST()).json()).toEqual({ ok: true, queued: 0, published: 0 });
+  });
+
+  it("re-file is staff-only", async () => {
+    access.email = "viewer@example.com";
+    expect((await recategorize.POST()).status).toBe(403);
   });
 });

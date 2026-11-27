@@ -202,7 +202,7 @@ export function ToolbarItem({
       {!suppressTip && (
         <TooltipContent side="bottom" className="max-w-64">
           <span className="block font-semibold">{label}</span>
-          {detail && detail !== label && <span className="block text-slate-300">{detail}</span>}
+          {detail && detail !== label && <span className="block whitespace-pre-line text-slate-300">{detail}</span>}
         </TooltipContent>
       )}
     </Tooltip>
