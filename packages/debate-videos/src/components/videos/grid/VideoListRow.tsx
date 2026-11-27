@@ -29,7 +29,9 @@ import { TournamentNameBadge } from "../card/TournamentNameBadge"
 import { cn } from "../../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
-import { STYLE_COLORS, getRoundBadgeColor, formatVideoDate, isYouTubePlaceholder } from "../card/videoCardUtils"
+import { STYLE_COLORS, getRoundBadgeColor, isYouTubePlaceholder } from "../card/videoCardUtils"
+import { VideoDateBadge } from "../card/VideoDateBadge"
+import { seasonYearForDate } from "../../../data/video-rows"
 import { ViewCount } from "@debate-ai/rankings/src/view-count"
 import { TopPickBadge } from "../card/TopPickBadge"
 import { WatchProgressBadge } from "../card/WatchProgressBadge"
@@ -45,12 +47,12 @@ import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
 import { displayRoundLevel } from "../card/round-level"
 import { TOC_TOURNAMENT_IMAGE } from "../card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
-import { FormatBadge } from "./FormatBadge"
+import { FormatBadge, videoFormat } from "./FormatBadge"
 import { teamHref } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
 import { pastTeamHref } from "@debate-ai/rankings/src/leaderboard/profile/pastTeamHelpers"
 import { isPastSeasonRanking, type VideoTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import { TeamCodeLabel, type TeamSide } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
-import type { VideoType } from "../../../types/videos"
+import type { TopicType, VideoType } from "../../../types/videos"
 import { hasDecision } from "../../../lib/decision-summary"
 import { useDecisionReveal } from "../../../hooks/useDecisionReveal"
 import { isDescriptionHidden } from "../card/HiddenDescription"
@@ -209,6 +211,7 @@ export function VideoListRow({
   affRanking,
   negRanking,
   showFormat = false,
+  topics,
 }: {
   video: VideoType
   /** Tree depth, for the row's indent. */
@@ -237,6 +240,8 @@ export function VideoListRow({
   negRanking?: VideoTeamRanking | null
   /** Badges the tournament name with the round's debate format. */
   showFormat?: boolean
+  /** `debate-topics.json`, for the season's hover topic in the date badge. */
+  topics?: TopicType[]
 }) {
   const [
     videoId,
@@ -277,6 +282,9 @@ export function VideoListRow({
   const styleNumber = typeof style === "number" ? style : undefined
   const categoryLabel = videoCategoryLabel(video)
   const year = new Date(date).getFullYear()
+  const storedSeason = video[17]
+  const seasonYear =
+    typeof storedSeason === "number" && storedSeason > 0 ? storedSeason : seasonYearForDate(date)
   const cleanTournament = cleanTournamentName(tournament)
   const roundLabel = displayRoundLevel(roundLevel)
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
@@ -596,7 +604,17 @@ export function VideoListRow({
         )}
 
         <td className="px-3 py-3 align-top text-sm text-muted-foreground whitespace-nowrap">
-          {formatVideoDate(date, "full", "—")}
+          {/* The same stacked year / month / season the watch page header
+              carries; it is a few lines tall but only ~3rem wide, so the
+              title column keeps its width on a phone. */}
+          <VideoDateBadge
+            date={date}
+            seasonYear={seasonYear}
+            style={videoFormat(video)}
+            topics={topics}
+            className="w-fit"
+          />
+          {Number.isNaN(new Date(date).getTime()) && "—"}
         </td>
 <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
           <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
