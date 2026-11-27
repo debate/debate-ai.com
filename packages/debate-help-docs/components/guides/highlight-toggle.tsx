@@ -25,17 +25,27 @@
  * - **Undo mark** / **Redo mark**: every change to the marks (added, removed,
  *   AI, reset, removed all) is kept, the last 50 of them (`mark-history.ts`);
  *   Cmd/Ctrl+Z undoes and Cmd/Ctrl+Shift+Z or Ctrl+Y redoes, except in text fields.
+ * - **Minimize unread**: a view switch, off by default (and so not under Show,
+ *   which are all on by default). While on, the body text of the page (and of
+ *   the References cards) that is not underlined, highlighted (long or short)
+ *   or emphasized renders at 8pt, so only what was marked reads at full size.
+ *   Pure CSS (`styles/docs.css`) keyed off `data-debate-minimize-unread` and
+ *   the mark elements themselves, so marks added by hand, by an auto mode, by
+ *   the AI, or brought back by Undo / Redo shrink or grow with no extra work.
+ *   Reset to default highlighting and Remove all marks switch it off (with no
+ *   marks left to read, a page of 8pt text would only be unreadable).
  * - **AI highlight & underline**, **Reset to default highlighting**,
  *   which drops every mark the reader made and restores the page's own, and
  *   **Remove all marks**, which clears every mark and highlight of every kind
  *   (the page's own included; Reset brings those back).
  *
- * Show/hide choices are stored per browser, so they carry across every
+ * Show/hide choices (and Minimize unread) are stored per browser, so they carry across every
  * Synergy Slayer page, and applied as `data-debate-highlights` /
- * `data-debate-underlines` / `data-debate-short-highlights` / `data-debate-emphasis` on `<html>`;
+ * `data-debate-underlines` / `data-debate-short-highlights` / `data-debate-emphasis` / `data-debate-minimize-unread` on `<html>`;
  * `styles/docs.css` keys the styling off them, inside `.synergy-slayer-doc`
- * only. All are on unless the reader turned them off. `HIGHLIGHT_INIT_SCRIPT`
- * applies a stored "off" before first paint, so it never flashes on. The auto
+ * only. The show switches are on unless the reader turned them off and Minimize
+ * unread is off unless the reader turned it on. `HIGHLIGHT_INIT_SCRIPT`
+ * applies a stored "off" (or, for Minimize unread, "on") before first paint, so it never flashes. The auto
  * modes last for the visit and set `data-debate-auto-<kind>` (the selection is
  * tinted, and the pointer over the content is an animated pen or pencil
  * cursor from `styles/cursors/`, while one is on; the pen arrives with a swoosh,
@@ -44,7 +54,7 @@
  * own marks are not saved: they last until the page changes.
  */
 import { useEffect, useRef, useState } from "react"
-import { Bold, Check, ChevronDown, Highlighter, Eraser, Loader2, Redo2, RotateCcw, Sparkles, Underline, Undo2, type LucideIcon } from "lucide-react"
+import { Bold, Check, ChevronDown, Highlighter, Eraser, Loader2, Minimize2, Redo2, RotateCcw, Sparkles, Underline, Undo2, type LucideIcon } from "lucide-react"
 import {
   AUTO_CUT_SYSTEM_PROMPT,
   autoCutPrompt,
@@ -77,7 +87,9 @@ const CONTENT_SELECTOR = ".synergy-slayer-doc"
 export const CHANGE_EVENT = "debate-docs-highlights-change"
 
 type ShowSetting = "highlights" | "underlines" | "short-highlights" | "emphasis"
-type Setting = ShowSetting | `auto-${MarkKind}`
+/** The one view switch that is not a show/hide of a mark kind: it starts off. */
+const MINIMIZE_SETTING = "minimize-unread"
+type Setting = ShowSetting | typeof MINIMIZE_SETTING | `auto-${MarkKind}`
 
 const SHOW_SETTING: Record<MarkKind, ShowSetting> = {
   highlight: "highlights",
@@ -88,12 +100,12 @@ const SHOW_SETTING: Record<MarkKind, ShowSetting> = {
 const AUTO_SETTING = (kind: MarkKind): Setting => `auto-${kind}`
 const SHOW_SETTINGS = Object.values(SHOW_SETTING)
 
-/** Where each show/hide choice is kept, in this browser. The auto modes aren't kept. */
+/** Where each show/hide choice (and Minimize unread) is kept, in this browser. The auto modes aren't kept. */
 const storageKeyOf = (setting: Setting) =>
-  (SHOW_SETTINGS as string[]).includes(setting) ? `debate-docs-${setting}` : null
+  (SHOW_SETTINGS as string[]).includes(setting) || setting === MINIMIZE_SETTING ? `debate-docs-${setting}` : null
 const attributeOf = (setting: Setting) => `data-debate-${setting}`
-/** The show switches start on, the auto modes off. */
-const defaultOn = (setting: Setting) => !setting.startsWith("auto-")
+/** The show switches start on, the auto modes and Minimize unread off. */
+const defaultOn = (setting: Setting) => !setting.startsWith("auto-") && setting !== MINIMIZE_SETTING
 
 /** How each kind reads in the menu, in its order: underlining, long and short highlighting, emphasis. */
 const KIND_LABEL: Record<MarkKind, { show: string; auto: string; icon: LucideIcon; nested?: boolean }> = {
@@ -105,11 +117,13 @@ const KIND_LABEL: Record<MarkKind, { show: string; auto: string; icon: LucideIco
 /** Long and short auto highlighting are either-or: turning one on turns the other off. */
 const EXCLUSIVE: Partial<Record<MarkKind, MarkKind>> = { highlight: "short-highlight", "short-highlight": "highlight" }
 
-/** Inline script for the docs layout: restores a stored "off" before paint. */
-export const HIGHLIGHT_INIT_SCRIPT = `try{${SHOW_SETTINGS.map(
-  (setting) =>
-    `if(localStorage.getItem(${JSON.stringify(storageKeyOf(setting))})==="off")document.documentElement.setAttribute(${JSON.stringify(attributeOf(setting))},"off");`,
-).join("")}}catch(e){}`
+/** Inline script for the docs layout: restores a stored "off" (Minimize unread: "on") before paint. */
+export const HIGHLIGHT_INIT_SCRIPT = `try{${([...SHOW_SETTINGS, MINIMIZE_SETTING] as Setting[])
+  .map((setting) => {
+    const stored = defaultOn(setting) ? "off" : "on"
+    return `if(localStorage.getItem(${JSON.stringify(storageKeyOf(setting))})===${JSON.stringify(stored)})document.documentElement.setAttribute(${JSON.stringify(attributeOf(setting))},${JSON.stringify(stored)});`
+  })
+  .join("")}}catch(e){}`
 
 function readSetting(setting: Setting): boolean {
   const attribute = document.documentElement.getAttribute(attributeOf(setting))
@@ -118,7 +132,7 @@ function readSetting(setting: Setting): boolean {
   if (!key) return defaultOn(setting)
   try {
     const stored = localStorage.getItem(key)
-    return stored ? stored !== "off" : defaultOn(setting)
+    return stored === "on" ? true : stored === "off" ? false : defaultOn(setting)
   } catch {
     return defaultOn(setting)
   }
@@ -152,7 +166,7 @@ function useMarkHistoryState() {
 
 /** Every setting, kept in step with every other copy of the controls. */
 function useSettings(): Record<Setting, boolean> {
-  const all: Setting[] = [...SHOW_SETTINGS, ...MARK_KINDS.map(AUTO_SETTING)]
+  const all: Setting[] = [...SHOW_SETTINGS, MINIMIZE_SETTING, ...MARK_KINDS.map(AUTO_SETTING)]
   const read = () => Object.fromEntries(all.map((setting) => [setting, readSetting(setting)])) as Record<Setting, boolean>
   const [values, setValues] = useState(
     () => Object.fromEntries(all.map((setting) => [setting, defaultOn(setting)])) as Record<Setting, boolean>,
@@ -416,6 +430,7 @@ export function MarksMenu({
     const root = getRoot()
     if (root) recordMarkChange(root, () => clearMarks(root))
     for (const setting of SHOW_SETTINGS) if (!settings[setting]) writeSetting(setting, true)
+    if (settings[MINIMIZE_SETTING]) writeSetting(MINIMIZE_SETTING, false)
     window.dispatchEvent(new Event(CHANGE_EVENT))
     setStatus("Default highlighting")
   }
@@ -436,6 +451,7 @@ export function MarksMenu({
     setOpen(false)
     const root = getRoot()
     if (root) recordMarkChange(root, () => removeAllMarks(root))
+    if (settings[MINIMIZE_SETTING]) writeSetting(MINIMIZE_SETTING, false)
     window.dispatchEvent(new Event(CHANGE_EVENT))
     setStatus("All marks removed")
   }
@@ -549,6 +565,20 @@ export function MarksMenu({
             <Redo2 className="size-4 text-fd-muted-foreground" />
             <span className="flex-1">Redo mark</span>
             <kbd className="text-xs text-fd-muted-foreground">Ctrl/⌘ Shift Z</kbd>
+          </button>
+          <div role="separator" className="my-1 border-t" />
+          <button
+            type="button"
+            role="menuitemcheckbox"
+            aria-checked={settings[MINIMIZE_SETTING]}
+            title="Shrink the text that is not underlined, highlighted or emphasized to 8pt, so only what was marked reads at full size"
+            className={itemClass}
+            onClick={() => writeSetting(MINIMIZE_SETTING, !settings[MINIMIZE_SETTING])}
+          >
+            <Minimize2 className="size-4 text-fd-muted-foreground" />
+            <span className="flex-1">Minimize unread</span>
+            <span className="text-xs text-fd-muted-foreground">{settings[MINIMIZE_SETTING] ? "On" : "Off"}</span>
+            {settings[MINIMIZE_SETTING] && <Check className="size-4" />}
           </button>
           <div role="separator" className="my-1 border-t" />
           <button type="button" role="menuitem" disabled={busy} className={itemClass} onClick={runAi}>

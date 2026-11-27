@@ -40,7 +40,7 @@ const html = document.documentElement
 beforeEach(() => {
   clearMarkHistory()
   localStorage.clear()
-  for (const name of ["highlights", "underlines", "short-highlights", "emphasis", "auto-highlight", "auto-underline", "auto-short-highlight", "auto-emphasis", "auto-frame"])
+  for (const name of ["highlights", "underlines", "short-highlights", "emphasis", "minimize-unread", "auto-highlight", "auto-underline", "auto-short-highlight", "auto-emphasis", "auto-frame"])
     html.removeAttribute(`data-debate-${name}`)
   page = document.createElement("div")
   page.className = "synergy-slayer-doc"
@@ -94,6 +94,7 @@ describe("Marks menu", () => {
       "Auto highlight",
       "Auto short highlight",
       "Auto emphasize words",
+      "Minimize unread",
     ])
   })
 
@@ -156,6 +157,131 @@ describe("Remove all marks", () => {
     click(trigger())
     click(item("Reset to default highlighting"))
     expect(page.querySelector("mark.debate-hl")!.className).toBe("debate-hl")
+  })
+})
+
+describe("Minimize unread", () => {
+  const css = readFileSync("packages/debate-help-docs/styles/docs.css", "utf8")
+  const block = css.slice(css.indexOf(" * Minimize unread"))
+  const rules = Array.from(block.matchAll(/\n(html\[data-debate-minimize-unread="on"\][^{]*)\{([^}]*)\}/g)).map((m) => ({
+    selector: m[1].replace(/\s+/g, " ").trim(),
+    body: m[2].trim(),
+  }))
+  const shrink = rules.find((rule) => rule.body === "font-size: 8pt;")!
+  const restore = rules.find((rule) => rule.body === "font-size: var(--debate-read-size);")!
+  const inner = (rule: { selector: string }) => rule.selector.replace('html[data-debate-minimize-unread="on"] ', "")
+
+  it("is an accessible, keyboard-reachable checkbox item that starts off", () => {
+    const minimize = item("Minimize unread")
+    expect(minimize.tagName).toBe("BUTTON")
+    expect(minimize.getAttribute("type")).toBe("button")
+    expect(minimize.getAttribute("role")).toBe("menuitemcheckbox")
+    expect(minimize.getAttribute("aria-checked")).toBe("false")
+    expect(minimize.getAttribute("title")).toMatch(/8pt/)
+    expect(html.getAttribute("data-debate-minimize-unread")).not.toBe("on")
+  })
+
+  it("switches on and off, keeps the menu open, and remembers it in this browser", () => {
+    click(item("Minimize unread"))
+    expect(toolbar.querySelector('[role="menu"]')).not.toBeNull()
+    expect(html.getAttribute("data-debate-minimize-unread")).toBe("on")
+    expect(item("Minimize unread").getAttribute("aria-checked")).toBe("true")
+    expect(localStorage.getItem("debate-docs-minimize-unread")).toBe("on")
+    click(item("Minimize unread"))
+    expect(html.getAttribute("data-debate-minimize-unread")).toBe("off")
+    expect(item("Minimize unread").getAttribute("aria-checked")).toBe("false")
+    expect(localStorage.getItem("debate-docs-minimize-unread")).toBe("off")
+  })
+
+  it("leaves the other switches alone", () => {
+    click(item("Minimize unread"))
+    for (const name of ["highlights", "underlines", "short-highlights", "emphasis"]) {
+      expect(html.getAttribute(`data-debate-${name}`)).toBe("on")
+    }
+  })
+
+  it("restores a stored \"on\" before paint, and ignores anything else", () => {
+    localStorage.setItem("debate-docs-minimize-unread", "on")
+    new Function(HIGHLIGHT_INIT_SCRIPT)()
+    expect(html.getAttribute("data-debate-minimize-unread")).toBe("on")
+    html.removeAttribute("data-debate-minimize-unread")
+    localStorage.setItem("debate-docs-minimize-unread", "off")
+    new Function(HIGHLIGHT_INIT_SCRIPT)()
+    expect(html.hasAttribute("data-debate-minimize-unread")).toBe(false)
+  })
+
+  it("reads a stored \"on\" into the menu on mount", () => {
+    act(() => root.unmount())
+    localStorage.setItem("debate-docs-minimize-unread", "on")
+    html.removeAttribute("data-debate-minimize-unread")
+    new Function(HIGHLIGHT_INIT_SCRIPT)()
+    root = createRoot(toolbar)
+    act(() => root.render(<MarksMenu />))
+    expect(item("Minimize unread").getAttribute("aria-checked")).toBe("true")
+    expect(html.getAttribute("data-debate-minimize-unread")).toBe("on")
+  })
+
+  it("stays on while marks are added, and is switched off by Reset and Remove all marks", async () => {
+    click(item("Minimize unread"))
+    click(item("Auto highlight"))
+    await selectAndRelease(page.querySelector("#p")!.firstChild!, 4, 8)
+    expect(page.querySelector("mark.reader-highlight")?.textContent).toBe("plan")
+    expect(html.getAttribute("data-debate-minimize-unread")).toBe("on")
+
+    click(item("Reset to default highlighting"))
+    expect(html.getAttribute("data-debate-minimize-unread")).toBe("off")
+    expect(localStorage.getItem("debate-docs-minimize-unread")).toBe("off")
+
+    click(item("Minimize unread"))
+    click(item("Remove all marks"))
+    expect(html.getAttribute("data-debate-minimize-unread")).toBe("off")
+    expect(item("Minimize unread").getAttribute("aria-checked")).toBe("false")
+  })
+
+  it("shrinks unmarked body text to 8pt in CSS, with marks restored to the normal size", () => {
+    expect(shrink).toBeTruthy()
+    expect(restore).toBeTruthy()
+    expect(inner(shrink)).toMatch(/^\.synergy-slayer-doc :is\(p, li/)
+    expect(inner(restore)).toBe(
+      ".synergy-slayer-doc :is(p, li) :is(u, mark, strong.reader-emphasis):not(.debate-u--no-underline, .citation-card *)",
+    )
+    expect(rules.some((rule) => rule.body.includes("--debate-read-size: 0.9rem"))).toBe(true)
+    // Not 0.7rem-style card shrinking, and not px: 8pt is the Verbatim convention.
+    expect(block).not.toMatch(/font-size:\s*8px/)
+  })
+
+  it("never shrinks headings, citation lines, card headers, stats or hover cards", () => {
+    const excluded = inner(shrink)
+    for (const keep of ["summary *", ".citation-card *", ".debate-card .stats", ".debate-card:has(hr) > p:nth-child(-n + 2)"]) {
+      expect(excluded).toContain(keep)
+    }
+    expect(excluded).not.toMatch(/\bh[1-6]\b/)
+  })
+
+  it("restores every kind of mark the tools produce, including auto and undone ones", async () => {
+    const restores = (el: Element) => el.matches(inner(restore))
+    expect(restores(page.querySelector("mark.debate-hl")!)).toBe(true)
+    for (const [label, selector] of [
+      ["Auto underline", "u.reader-underline"],
+      ["Auto highlight", "mark.reader-highlight"],
+      ["Auto short highlight", "mark.reader-highlight-short"],
+      ["Auto emphasize words", "strong.reader-emphasis"],
+    ] as const) {
+      click(item(label))
+      await selectAndRelease(page.querySelector("#p")!.firstChild!, 4, 8)
+      const made = page.querySelector(selector)!
+      expect(restores(made)).toBe(true)
+      click(item(label))
+      click(item("Undo mark"))
+      expect(page.querySelector(selector)).toBeNull()
+      click(item("Redo mark"))
+      expect(restores(page.querySelector(selector)!)).toBe(true)
+      click(item("Undo mark"))
+    }
+    const unmarked = document.createElement("u")
+    unmarked.className = "debate-u--no-underline"
+    page.querySelector("#p")!.append(unmarked)
+    expect(restores(unmarked)).toBe(false)
   })
 })
 
