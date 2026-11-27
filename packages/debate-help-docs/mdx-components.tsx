@@ -7,6 +7,7 @@ import { FormatCard, FormatRules, RuleCard, RuleGrid } from './components/guides
 import { ExpandAllDetails } from './components/guides/expand-all-details';
 import { MovedAnchors } from './components/guides/moved-anchors';
 import { CitationCard } from './components/guides/citation-card';
+import { ReferenceQuoteLegend, ReferenceQuoteStatus } from './components/guides/reference-quote-status';
 import { CitationStyleSwitcher } from './components/guides/citation-style-switcher';
 import { BibleCitation, BibleQuote } from './components/guides/bible-citation';
 import { JournalMasthead } from './components/guides/journal-masthead';
@@ -31,6 +32,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     MovedAnchors,
     CitationCard,
     CitationStyleSwitcher,
+    ReferenceQuoteLegend,
+    ReferenceQuoteStatus,
     BibleCitation,
     BibleQuote,
     JournalMasthead,
