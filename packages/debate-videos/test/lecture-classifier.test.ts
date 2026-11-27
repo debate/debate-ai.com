@@ -85,7 +85,7 @@ describe("classifyLecture", () => {
     ["A debate documentary", "", "Documentaries & Culture"],
     ["DebateDrills Academy session one", "", "Affirmative Strategy"],
     ["Debate technique roundup", "", "Affirmative Strategy"],
-    ["Random upload", "", "Novice & Introductory"],
+    ["Random upload", "", "Miscellaneous"],
   ]
 
   it.each(cases)("files %j on %s", (title, description, shelf) => {
@@ -94,7 +94,7 @@ describe("classifyLecture", () => {
 
   it("lets the description decide when the title is silent", () => {
     expect(classifyLecture("Lesson 4", "all about the negative block")).toBe("Negative Strategy")
-    expect(classifyLecture("Lesson 5", undefined as unknown as string)).toBe("Novice & Introductory")
+    expect(classifyLecture("Lesson 5", undefined as unknown as string)).toBe("Miscellaneous")
   })
 
   it("puts format collections ahead of skill shelves", () => {

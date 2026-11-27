@@ -121,12 +121,17 @@ async function waitForView(getActiveView: () => EditorView | null): Promise<Edit
  *  the HTML bridge and never mount an editor. Loading it here keeps the sheet
  *  off those pages, and lands it before the engine builds any chrome, so
  *  nothing paints unstyled. */
-function loadEngineStyles(): Promise<unknown> {
-  return Promise.all([
+async function loadEngineStyles(): Promise<void> {
+  await Promise.all([
     import('../editor/style.css'),
     import('../editor/icons.css'),
     import('../editor/embed-containment.css'),
   ]);
+  // After the engine sheets: ribbon-shadcn.css re-skins the toolbar and has to
+  // win ties against them, and bundlers inject sheets in import-resolution order.
+  await import('../editor/ribbon-shadcn.css');
+  const { installRibbonLucideIcons } = await import('../editor/ribbon-lucide-icons.js');
+  installRibbonLucideIcons();
 }
 
 async function boot(): Promise<void> {
@@ -154,6 +159,8 @@ async function boot(): Promise<void> {
   container = el;
 
   engineModule = await import('../editor/index.js');
+  const { installRibbonTooltips } = await import('./RibbonTooltips.js');
+  installRibbonTooltips();
   bridgeModule = await import('./html-bridge.js');
   readModeModule = await import('../editor/read-mode-plugin.js');
   settingsModule = await import('../editor/settings.js');
