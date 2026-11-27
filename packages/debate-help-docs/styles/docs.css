@@ -445,6 +445,40 @@ html[data-debate-emphasis="off"] .synergy-slayer-doc strong.reader-emphasis {
   }
 }
 
+/*
+ * A docked References panel (references-panel.tsx, references-panel-dock.ts)
+ * is a fixed column at the right edge. While it is open, `<html>` carries
+ * `data-references-docked` and `--references-panel-width`: the page gives the
+ * panel that much of the window (the docs scroll inside a box as wide as
+ * <body>, so padding on <body> narrows everything in it and the content
+ * reflows), and the "On this page" outline is hidden and its column closed,
+ * so it takes no space. Both come back when the panel closes. Windows too
+ * narrow to dock (< 1024px) never get the attribute: the panel is a drawer.
+ */
+html[data-references-docked] body {
+  padding-right: var(--references-panel-width, 21rem);
+}
+
+html[data-references-docked] #nd-toc {
+  display: none;
+}
+
+html[data-references-docked] #nd-notebook-layout {
+  --fd-toc-width: 0px !important;
+}
+
+/* Reading mode's full-screen reader is fixed to the window, so it makes room too. */
+html[data-references-docked] [role="dialog"][aria-label^="Reading mode"] {
+  right: var(--references-panel-width, 21rem);
+}
+
+/* While the panel's handle is dragged, the text under the pointer is not selected. */
+html[data-references-resizing],
+html[data-references-resizing] * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
 .citation-tooltip svg {
   fill: var(--color-fd-popover);
 }
