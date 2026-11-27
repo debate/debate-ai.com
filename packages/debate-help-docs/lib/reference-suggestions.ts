@@ -19,8 +19,6 @@ export const MAX_SUGGESTION_TEXT_LENGTH = 20_000;
 /** Shortest text worth reviewing: a sentence, not a word. */
 export const MIN_SUGGESTION_TEXT_LENGTH = 40;
 export const MIN_SUGGESTION_WORDS = 8;
-export const MAX_SUGGESTION_NOTE_LENGTH = 1_000;
-export const MAX_SUGGESTION_NAME_LENGTH = 80;
 export const MAX_SUGGESTION_TITLE_LENGTH = 500;
 /** Links allowed in one suggestion; a pasted card rarely needs more than its source. */
 export const MAX_SUGGESTION_LINKS = 3;
@@ -51,8 +49,6 @@ export interface ReferenceSuggestionInput {
   /** The entry's bibliography line as plain text, so the admin can recognise it. */
   title: string;
   text: string;
-  note: string;
-  name: string;
 }
 
 export type ParsedSuggestion =
@@ -120,17 +116,9 @@ export function parseReferenceSuggestion(body: unknown): ParsedSuggestion {
     return { ok: false, error: 'Too many links in the text. Paste only the card text.' };
   }
 
-  const note = field(raw, 'note');
-  if (note.length > MAX_SUGGESTION_NOTE_LENGTH) {
-    return { ok: false, error: `The note is limited to ${MAX_SUGGESTION_NOTE_LENGTH.toLocaleString('en-US')} characters.` };
-  }
-  const name = field(raw, 'name').replace(/\s+/g, ' ');
-  if (name.length > MAX_SUGGESTION_NAME_LENGTH) {
-    return { ok: false, error: `The name is limited to ${MAX_SUGGESTION_NAME_LENGTH} characters.` };
-  }
   const title = field(raw, 'title').replace(/\s+/g, ' ').slice(0, MAX_SUGGESTION_TITLE_LENGTH);
 
-  return { ok: true, value: { page, refId, title, text, note, name } };
+  return { ok: true, value: { page, refId, title, text } };
 }
 
 /** "in 1 hour" / "in 12 minutes" / "in a minute" for a wait of `seconds`. */
@@ -149,8 +137,6 @@ export interface AdminReferenceSuggestion {
   refId: string;
   title: string;
   text: string;
-  note: string;
-  name: string;
   status: SuggestionStatus;
   userId: string | null;
   userName: string | null;

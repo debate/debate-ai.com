@@ -1767,7 +1767,9 @@ export const referenceTextSuggestions = sqliteTable(
     /** The entry's bibliography line as plain text, as the sender saw it. */
     title: text("title").notNull().default(""),
     text: text("text").notNull(),
+    /** No longer written or read (the dialog dropped its note field); kept so rows already stored survive. */
     note: text("note").notNull().default(""),
+    /** No longer written or read (the dialog dropped its name field); kept so rows already stored survive. */
     name: text("name").notNull().default(""),
     /** `pending`, `approved` or `dismissed`. */
     status: text("status").notNull().default("pending"),
