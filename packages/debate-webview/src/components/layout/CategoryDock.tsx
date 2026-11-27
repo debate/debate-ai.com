@@ -173,7 +173,7 @@ function usePaletteChord(): string {
 
 /**
  * The site-nav rows at the top of {@link SettingsMenu}: the search palette
- * plus one submenu per sidebar section (Videos, Research, Debates, Inference).
+ * plus one submenu per sidebar section (Videos, Research, Debates, Inference, Learning).
  * They sit above Theme, so the gear opens one menu for "where do I go" and
  * "how do I configure this". The Practice vs AI dock icon used to open these
  * as a menu of its own; it is a plain link to `/practice/versus-ai` again.
@@ -193,8 +193,8 @@ function NavMenuItems() {
           md+ only, so on a phone this is the only place its Videos links and
           the glossary/rankings pair below its tree can be reached — see
           `lib/nav/dock-menu-sections.ts`, which derives these from the same
-          data the sidebar renders. The feature catalog is *not* restated
-          here: it is the `/practice/features` row in Site Links. */}
+          data the sidebar renders. Rules & Glossary and All Features are the
+          Learning submenu. */}
       {SIDEBAR_MENU_SECTIONS.map((section) => (
         <DropdownMenuSub key={section.id}>
           <DropdownMenuSubTrigger>

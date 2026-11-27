@@ -146,14 +146,15 @@ describe("describing a reference for the server", () => {
 });
 
 describe("Reading mode on the References panel", () => {
-  it("puts a Reading mode button at the top of every reference card", async () => {
+  it("puts an icon-only Reading mode button at the top of every reference card", async () => {
     await openPanel(vi.fn());
     const buttons = readerButtons();
     expect(buttons).toHaveLength(2);
     for (const button of buttons) {
       const card = button.closest("li")!;
-      expect(card.firstElementChild?.nextElementSibling?.contains(button)).toBe(true);
-      expect(button.textContent).toContain("Reading mode");
+      expect(card.querySelector("[data-reference-card-toolbar]")!.contains(button)).toBe(true);
+      expect(button.textContent).toBe("");
+      expect(button.querySelector("svg")).not.toBeNull();
       expect(button.getAttribute("aria-label")).toContain("Reading mode");
     }
     expect(buttons[0]!.getAttribute("aria-label")).toContain("Ackerman 2020");

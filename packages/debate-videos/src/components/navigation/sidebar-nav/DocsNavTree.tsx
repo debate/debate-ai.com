@@ -1,6 +1,7 @@
 /**
- * @fileoverview The "Learning" section at the end of the sidebar tree: every help
- * docs page, as an ordinary section that scrolls with the rest of the column.
+ * @fileoverview The "Learning" section at the end of the sidebar tree: Rules &
+ * Glossary and All Features first, then every help docs page, as an ordinary
+ * section that scrolls with the rest of the column.
  * It starts expanded to the second level: the section is open and so are its
  * top-level folders (Blog, Features, Learn), while folders nested deeper start
  * collapsed. Any of them can still be collapsed by hand.
@@ -24,6 +25,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { BookOpen } from "lucide-react";
 import { TreeItem } from "./TreeItem";
+import { LEARNING_LINKS, matchesLearningLink } from "./sidebar-tool-sections";
 
 /** Where the app serves the docs' page tree (`app/docs/api/docs-tree`). */
 export const DOCS_TREE_URL = "/docs/api/docs-tree";
@@ -60,16 +62,23 @@ function loadDocsTree(): Promise<DocsTreeNode[]> {
   return treeRequest;
 }
 
-export function DocsNavTree() {
+export function DocsNavTree({ defaultExpanded = true }: { defaultExpanded?: boolean } = {}) {
   const pathname = usePathname();
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const [tree, setTree] = useState<DocsTreeNode[] | null>(null);
   const [failed, setFailed] = useState(false);
   const onDocs = isDocsRoute(pathname);
 
-  // Load on mount; a failed request is retried when the section is reopened.
+  // Following one of the pinned links re-opens Learning if it was collapsed.
   useEffect(() => {
-    if (onDocs || tree || (failed && !expanded)) return;
+    if (LEARNING_LINKS.some((link) => matchesLearningLink(pathname, link))) {
+      setExpanded(true);
+    }
+  }, [pathname]);
+
+  // Load once the section is open; a failed request is retried when reopened.
+  useEffect(() => {
+    if (!expanded || onDocs || tree) return;
     let cancelled = false;
     setFailed(false);
     loadDocsTree().then(
@@ -79,8 +88,6 @@ export function DocsNavTree() {
     return () => {
       cancelled = true;
     };
-    // `failed` is left out on purpose: clearing it must not start another request.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onDocs, expanded, tree]);
 
   if (onDocs) return null;
@@ -94,6 +101,16 @@ export function DocsNavTree() {
       expanded={expanded}
       onToggleExpand={() => setExpanded((value) => !value)}
     >
+      {LEARNING_LINKS.map((link) => (
+        <TreeItem
+          key={link.href}
+          level={3}
+          href={link.href}
+          title={link.title}
+          icon={link.icon}
+          isActive={matchesLearningLink(pathname, link)}
+        />
+      ))}
       {tree ? (
         tree.map((node, i) => <DocsTreeRow key={`${node.type}:${node.name}:${i}`} node={node} depth={1} />)
       ) : (

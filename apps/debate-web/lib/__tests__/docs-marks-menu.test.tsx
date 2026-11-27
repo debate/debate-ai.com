@@ -41,7 +41,7 @@ const html = document.documentElement
 beforeEach(() => {
   clearMarkHistory()
   localStorage.clear()
-  for (const name of ["highlights", "underlines", "short-highlights", "emphasis", "summary-tags", "auto-highlight", "auto-underline", "auto-short-highlight", "auto-emphasis", "auto-summary-tag", "auto-frame"])
+  for (const name of ["highlights", "underlines", "short-highlights", "emphasis", "summary-tags", "minimize-unread", "auto-highlight", "auto-underline", "auto-short-highlight", "auto-emphasis", "auto-summary-tag", "auto-frame"])
     html.removeAttribute(`data-debate-${name}`)
   page = document.createElement("div")
   page.className = "synergy-slayer-doc"
@@ -97,6 +97,7 @@ describe("Marks menu", () => {
       "Auto short highlight",
       "Auto emphasize words",
       "Summary tag",
+      "Minimize unread",
     ])
   })
 

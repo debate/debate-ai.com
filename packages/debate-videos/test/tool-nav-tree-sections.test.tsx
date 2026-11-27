@@ -117,8 +117,10 @@ describe("ToolNavTree sectionIds", () => {
 
     expect(html).not.toContain(">Performance<");
     expect(html).not.toContain(">Data &amp; Reference<");
+    expect(html).toContain("/rank");
     expect(html).toContain("/practice/statistics");
-    expect(html).toContain("/practice/rules");
+    expect(html).not.toContain("/practice/rules");
+    expect(html).not.toContain("/practice/features");
   });
 
   it("ignores an id no section carries rather than throwing", () => {
@@ -142,6 +144,38 @@ describe("SIDEBAR_TOOL_SECTIONS", () => {
     // Every link appears in exactly one section.
     const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href));
     expect(new Set(hrefs).size).toBe(hrefs.length);
+  });
+});
+
+describe("Team & School Rank", () => {
+  it("is the first Inference link, and nowhere else", async () => {
+    const { SIDEBAR_TOOL_SECTIONS, INSIGHTS_SECTION_ID, LEARNING_LINKS } = await import(
+      "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
+    );
+    const inference = SIDEBAR_TOOL_SECTIONS.find((entry) => entry.id === INSIGHTS_SECTION_ID);
+    expect(inference?.tools[0]).toMatchObject({ href: "/rank", title: "Team & School Rank" });
+    const elsewhere = SIDEBAR_TOOL_SECTIONS.filter((entry) => entry.id !== INSIGHTS_SECTION_ID);
+    for (const section of elsewhere) {
+      expect(section.tools.some((tool) => tool.href === "/rank")).toBe(false);
+    }
+    expect(LEARNING_LINKS.some((link) => link.href === "/rank")).toBe(false);
+  });
+});
+
+describe("Learning links", () => {
+  it("pins Rules & Glossary then All Features, outside the tool sections", async () => {
+    const { SIDEBAR_TOOL_SECTIONS, LEARNING_LINKS } = await import(
+      "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
+    );
+    expect(LEARNING_LINKS.map((link) => link.href)).toEqual(["/practice/rules", "/practice/features"]);
+    expect(LEARNING_LINKS[0]).toMatchObject({
+      title: "Rules & Glossary",
+      aliases: ["/practice/glossary"],
+    });
+    expect(LEARNING_LINKS[1]?.title).toBe("All Features");
+    const toolHrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href));
+    expect(toolHrefs).not.toContain("/practice/rules");
+    expect(toolHrefs).not.toContain("/practice/features");
   });
 });
 

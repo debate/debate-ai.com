@@ -35,6 +35,7 @@ import { BookOpen } from "lucide-react";
 import {
   APP_DOCK_LINKS,
   FOOTER_LINKS,
+  LEARNING_LINKS,
   SIDEBAR_TOOL_SECTIONS,
   type FooterLink,
 } from "@debate-ai/videos";
@@ -88,6 +89,14 @@ const SECTIONS: { title: string; links: FooterSectionLink[] }[] = [
       icon: tool.icon,
     })),
   })),
+  {
+    title: "Learning",
+    links: LEARNING_LINKS.map((link) => ({
+      href: link.href,
+      label: link.title,
+      icon: link.icon,
+    })),
+  },
   { title: "Site", links: toLinks(FOOTER_LINKS) },
 ];
 

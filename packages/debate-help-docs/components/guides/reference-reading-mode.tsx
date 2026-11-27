@@ -1,7 +1,7 @@
 "use client"
 /**
  * @file reference-reading-mode.tsx
- * @description The "Reading mode" button at the top of every card in the
+ * @description The "Reading mode" icon button in the row at the top of every card in the
  * References side panel (`references-panel.tsx`), and the reader it opens: the
  * same reading mode modal as the Synergy Slayer pages (`reading-mode-frame.tsx`
  * — highlighting, Voice, Questions, Ask AI, Export), showing the source
@@ -32,6 +32,7 @@ import {
   type ReferenceDescription,
 } from "@debate-ai/reading-mode/references"
 import { ReadingModeFrame } from "./reading-mode-frame"
+import { ReferenceIconButton } from "./reference-icon-button"
 import type { ReferenceItem } from "./references-panel-items"
 
 /** The app route that finds and reads a reference's article. */
@@ -314,24 +315,21 @@ export function ReferenceReadingMode({ item, onClose }: { item: ReferenceItem; o
   )
 }
 
-/** The button at the top of a References panel card; it opens the reader. */
+/** The icon button on a References panel card; it opens the reader. */
 export function ReferenceReadingModeButton({ item }: { item: ReferenceItem }) {
   const [open, setOpen] = useState(false)
   const who = [item.authors, item.year].filter(Boolean).join(" ")
   return (
     <>
-      <button
-        type="button"
+      <ReferenceIconButton
         {...{ [REFERENCE_READING_MODE_ATTRIBUTE]: "" }}
         aria-haspopup="dialog"
-        aria-label={who ? `Reading mode: open the source article for ${who}` : "Reading mode: open the source article"}
-        title="Read this source's article in reading mode (its own link, or found by search)"
-        className="inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium hover:bg-fd-accent [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground"
+        label={who ? `Reading mode: open the source article for ${who}` : "Reading mode: open the source article"}
+        tooltip="Reading mode: read the source article (from its link, or found by search)"
         onClick={() => setOpen(true)}
       >
         <BookOpen aria-hidden />
-        Reading mode
-      </button>
+      </ReferenceIconButton>
       {open && <ReferenceReadingMode item={item} onClose={() => setOpen(false)} />}
     </>
   )

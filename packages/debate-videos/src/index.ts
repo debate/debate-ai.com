@@ -290,6 +290,7 @@ export { sidebarSectionForPath } from "./components/navigation/sidebar-nav/sideb
 export { QuickLinksGrid } from "./components/navigation/category-gallery/QuickLinksGrid";
 export {
   SIDEBAR_TOOL_SECTIONS,
+  LEARNING_LINKS,
   APP_DOCK_LINKS,
   RESEARCH_SECTION_ID,
   TOOLS_ROOT_HREF,

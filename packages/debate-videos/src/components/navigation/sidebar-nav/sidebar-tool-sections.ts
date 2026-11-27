@@ -110,7 +110,7 @@ export const RESEARCH_SECTION_ID = "research";
 /**
  * Id of the Practice Debates section (formerly Coaching): the Practice Debates
  * page (Online Challenges, Practice Drills and Practice Partners), Tournaments,
- * Team Rankings, the Coach Workspace and News & Forums.
+ * the Coach Workspace and News & Forums.
  */
 export const PRACTICE_DEBATES_SECTION_ID = "coaching";
 
@@ -160,7 +160,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
         icon: Award,
         aliases: ["/practice/challenges", "/practice/drills", "/practice/partners"],
       },
-      { href: "/rank", title: "Team & School Rank", icon: Medal },
       // Coach Workspace, AI Coach Mode, Coaching Programs, Team Calendar, Coach
       // Materials and the Laptop-less Debating guide, one tab each.
       { href: "/coaching", title: "Coach Workspace", icon: Presentation },
@@ -171,20 +170,43 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     ],
   },
   {
-    // Individual and team standing, debate-wide data, rules, terminology,
-    // and product reference information — in two labelled subgroups.
+    // Team and school standings, then debate-wide data and prediction markets.
+    // `/rank` is this section's flagship, so it is also the first link.
     id: INSIGHTS_SECTION_ID,
     title: "Inference",
     href: "/rank",
     icon: ChartColumn,
     tools: [
+      { href: "/rank", title: "Team & School Rank", icon: Medal },
       { href: "/practice/statistics", title: "Topics & Statistics", icon: BarChart3 },
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
-      // Formats & Rules and the Glossary of Terms, one tabbed page. The old
-      // `/practice/glossary` address redirects to its Glossary tab, so that
-      // prefix is this row's too.
-      { href: "/practice/rules", title: "Rules & Glossary", icon: Scale, aliases: ["/practice/glossary"] },
-      { href: "/practice/features", title: "All Features", icon: Sparkles },
     ],
   },
 ];
+
+/**
+ * Pinned at the top of the sidebar's Learning section, above the docs tree's
+ * Introduction page. Learning is that docs tree (`DocsNavTree`, and the
+ * `/docs` portal that replaces it on `/docs`), not one of
+ * {@link SIDEBAR_TOOL_SECTIONS}, so these rows live here only as the list
+ * those two trees render first.
+ *
+ * Rules & Glossary is Formats & Rules and the Glossary of Terms on one
+ * tabbed page. The old `/practice/glossary` address redirects to its
+ * Glossary tab, so that prefix stays with the row.
+ */
+export const LEARNING_LINKS: readonly SidebarToolLink[] = [
+  { href: "/practice/rules", title: "Rules & Glossary", icon: Scale, aliases: ["/practice/glossary"] },
+  { href: "/practice/features", title: "All Features", icon: Sparkles },
+];
+
+/** True when `pathname` is one of `link`'s destinations, or a page under it. */
+export function matchesLearningLink(
+  pathname: string | null | undefined,
+  link: SidebarToolLink,
+): boolean {
+  if (!pathname) return false;
+  return [link.href, ...(link.aliases ?? [])].some(
+    (href) => pathname === href || pathname.startsWith(`${href}/`),
+  );
+}

@@ -34,7 +34,17 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
     expect(SIDEBAR_MENU_SECTIONS.map((section) => section.id)).toEqual([
       "videos",
       ...SIDEBAR_TOOL_SECTIONS.map((section) => section.id),
+      "learning",
     ])
+  })
+
+  it("lists Rules & Glossary and All Features under Learning, above nothing else in that submenu", () => {
+    const learning = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "learning")!
+    expect(learning.links.map((link) => link.href)).toEqual(["/practice/rules", "/practice/features"])
+    const insights = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "insights")!
+    expect(insights.links.map((link) => link.href)[0]).toBe("/rank")
+    expect(insights.links.map((link) => link.href)).not.toContain("/practice/rules")
+    expect(insights.links.map((link) => link.href)).not.toContain("/practice/features")
   })
 
   it("reaches every videos destination the sidebar links to", () => {

@@ -34,6 +34,11 @@
  * otherwise those requests counted against the daily plan limit even with a
  * key saved. `AppShell`'s `OwnAiKeyDialog` installs that fetch wrapper on app
  * pages; its dialog is app UI, so only the wrapper is installed here.
+ *
+ * The References panel's star saves a source to the reader's favorites in
+ * `localStorage`; the account mirror (`ToolRecordSyncProvider`) is mounted
+ * here too, so for a signed-in reader the star reaches their account from the
+ * docs rather than at the next app page.
  */
 
 import type React from "react"
@@ -43,6 +48,8 @@ import { CategoryDockProvider } from "@debate-ai/videos"
 import { AppSidebarShell } from "./AppSidebarShell"
 import { docsExitTarget, opensElsewhere } from "../../lib/layout/frame-navigation"
 import { attachOwnAiKey } from "../../lib/ai/own-ai-key"
+import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
+import { ToolRecordSyncProvider } from "./providers/ToolRecordSyncProvider"
 
 export function DocsAppChrome({ children }: { children: React.ReactNode }) {
   useEffect(() => attachOwnAiKey(), [])
@@ -69,6 +76,9 @@ export function DocsAppChrome({ children }: { children: React.ReactNode }) {
     <CategoryDockProvider>
       <div className="h-screen w-full overflow-y-auto" onClickCapture={handleClickCapture}>
         <AppSidebarShell always>{children}</AppSidebarShell>
+        <ChromeErrorBoundary label="ToolRecordSyncProvider">
+          <ToolRecordSyncProvider />
+        </ChromeErrorBoundary>
       </div>
     </CategoryDockProvider>
   )

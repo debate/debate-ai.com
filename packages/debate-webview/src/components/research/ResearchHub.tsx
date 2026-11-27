@@ -65,6 +65,7 @@ import {
 import { ContributorAwardsPanel, DebaterLevelPanel, QuestStreaksPanel } from "@debate-ai/community"
 import { TopicSprintPanel } from "@debate-ai/team-collaboration"
 import { useSession } from "../../lib/hooks/useSession"
+import { FavoriteReferencesPanel } from "./FavoriteReferencesPanel"
 import { TaskInboxWithIdentity } from "./identity/TaskInboxWithIdentity"
 import { ContributionLeaderboardWithIdentity } from "./identity/ContributionLeaderboardWithIdentity"
 import { ContributionsFeedWithIdentity } from "./identity/ContributionsFeedWithIdentity"
@@ -114,9 +115,9 @@ export const RESEARCH_SECTIONS: readonly HubSection<ResearchSectionId>[] = [
     id: "library",
     label: "Library",
     icon: FolderTree,
-    description: "Browse shared research by topic folder, case area, and tag-based collection.",
+    description: "Browse shared research by topic folder, case area, and tag-based collection, and the reference sources you starred in the docs.",
     guide: "research-collaboration",
-    panels: [panel("Argument Library", "/research/cards/argument-library")],
+    panels: [panel("Argument Library", "/research/cards/argument-library"), panel("Favorite References")],
   },
   {
     id: "evidence",
@@ -334,9 +335,14 @@ export function ResearchHub({ initialSection }: ResearchHubProps = {}) {
         ) : null}
 
         {section === "library" ? (
-          <HubPanelAnchor anchor={ANCHORS["Argument Library"]}>
-            <ArgumentLibraryPanel />
-          </HubPanelAnchor>
+          <>
+            <HubPanelAnchor anchor={ANCHORS["Argument Library"]}>
+              <ArgumentLibraryPanel />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Favorite References"]}>
+              <FavoriteReferencesPanel />
+            </HubPanelAnchor>
+          </>
         ) : null}
 
         {section === "evidence" ? (
