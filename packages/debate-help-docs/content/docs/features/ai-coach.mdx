@@ -72,16 +72,188 @@ predictions checked against real ballots.
 The [Team Rankings](/docs/features/team-collaboration#team-rankings) rate
 every team from ==every decided ballot of the season at once==, so beating
 strong opponents counts for more than beating weak ones, and the order rounds
-happened in doesn't matter.
+happened in doesn't matter. The number is on the familiar **Elo scale**
+(1500 is an average team, 400 points is 10-to-1 odds), but it is ==not a
+round-by-round Elo updater==: there is no starting rating that moves by a
+K-factor after each round, and no decay. The header tooltip on the **Rating**
+column is the short version; this is the full one.
 
 - ==Aff and neg are balanced==, so a team isn't credited for drawing the
   favored side.
 - Each judge's ballot counts on its own (a 3–0 beats a 2–1), and ==major
-  tournaments count double==. Byes and forfeits are skipped.
+  tournaments count double==. Byes are skipped.
 - ==Teams with few rounds are pulled toward average==, so one hot weekend
   can't top the table.
 - Ratings show on a ==0.0–9.9 scale==; the whole number is the team's tier,
   shaded gold at the top down to gray.
+
+### Where the number comes from [#rating-sources]
+
+The Rating column has two sources, and which one you see depends on the list:
+
+- **Extinction.GG's Elo** (the default for PF, LD, Policy and college policy,
+  every season from 2015-16): the site reads each team's `OverallELO`, takes
+  ==450 points off== it, and applies the display scale below. Extinction.GG
+  computes that Elo upstream from Tabroom results and openCaselist; ==its
+  internals (K-factor, decay and so on) are not in this site's code==, so they
+  are not described here. Ranks are the order of `OverallELO`, ties broken by
+  TOC bid count and then school name.
+- **The bundled ballot fit** (the `debate-rankings` project's `src/main.py`):
+  used for the current season's aff/neg win rates, round counts and aff
+  advantage on every list, for the rating itself on the Sep–Oct LD slice,
+  and as the fallback if Extinction.GG can't be reached. It is the model
+  described in the rest of this section.
+
+### From Tabroom rounds to ballots [#rating-ballots]
+
+For each tournament in a format's config, every round file (prelims and elims)
+becomes rows of *aff team, neg team, winner*. A row counts when it names a
+decided winner (`Aff`/`Pro` or `Neg`/`Con`) for two real entries. Rows with a
+==bye== or a blank entry, and rows with no winner, ==are skipped==; a
+forfeit is not detected specially, so one counts like any other win if Tabroom
+lists a winner. ==Margins and speaker points aren't used==.
+
+A row with panel votes (a `Votes` column such as `Aff Neg Aff`) adds one
+ballot per judge; otherwise it adds one ballot for the winner. Tournaments the
+config lists as **majors** (for HS LD: Heart of Texas, Glenbrooks, Greenhill,
+Emory, Cal, Harvard, Harvard-Westlake, NDCA and TOC) multiply every ballot by
+two. Eliminations are weighted the same as prelims, with ==no extra
+multiplier== for later rounds; they are only split out for the Aff/Neg Elim
+win rates (a round is an elim if its file name says runoff, double, triple,
+quad, octo, quarter, semi or final, or it has `Judges` and `Votes` columns).
+
+$$
+n^{\mathrm{aff}}_k = w_k\,a_k, \qquad n^{\mathrm{neg}}_k = w_k\,b_k, \qquad w_k = \begin{cases} 2 & \text{major tournament} \\ 1 & \text{otherwise} \end{cases}
+$$
+
+Here $$a_k$$ and $$b_k$$ are the aff and neg ballots of round $$k$$ (from the
+panel's votes, or 1 and 0 / 0 and 1 from the winner).
+
+Entries are matched across tournaments by a hash of school and name (LD) or
+school and the sorted pair of debaters (team formats). A short list per format
+of debaters or partnerships who switch schools are matched by name alone.
+
+### The model [#rating-model]
+
+Every team $$i$$ gets one skill $$\lambda_i$$ on the log-odds scale, and the whole
+field shares one **aff side effect** $$\beta$$. With team $$i$$ on aff against $$j$$:
+
+$$
+p_k = P(\text{aff wins round } k) = \frac{1}{1 + e^{-(\lambda_i - \lambda_j + \beta)}}
+$$
+
+The skills and $$\beta$$ are the ==penalized maximum-likelihood fit== to all ballots,
+found by Fisher scoring (`BradleyTerry(use_bias=True, l2=1.0)` from the
+`fisher-scoring` package). The penalty is a ridge (a standard-normal prior)
+on every skill and on $$\beta$$, so a team with few ballots is pulled toward
+the field average and an unbeaten team's rating stays finite:
+
+$$
+(\hat\lambda, \hat\beta) = \arg\max_{\lambda,\beta} \; \sum_k \Bigl[ n^{\mathrm{aff}}_k \ln p_k + n^{\mathrm{neg}}_k \ln (1 - p_k) \Bigr] - \frac{\tau}{2} \Bigl( \beta^2 + \sum_i \lambda_i^2 \Bigr), \qquad \tau = 1
+$$
+
+The fitted skills are centered so they sum to zero across the teams that
+played a decided round.
+
+### From skill to rating [#rating-elo-scale]
+
+Skills are converted to the Elo scale, where 400 points is a factor of 10 in
+odds. The **deviation** is the skill's standard error (from the inverse of the
+penalized Fisher information) on the same scale:
+
+$$
+R_i = 1500 + \frac{400}{\ln 10}\,\hat\lambda_i, \qquad D_i = \frac{400}{\ln 10}\,\mathrm{SE}(\hat\lambda_i)
+$$
+
+A team with no decided round is at the prior: skill 0 and standard error 1,
+so $$R = 1500$$ and $$D \approx 173.7$$. The **adjusted rating** subtracts two
+deviations, so a team with a short record has to earn its place:
+
+$$
+A_i = R_i - 2\,D_i
+$$
+
+There is ==no minimum-rounds cutoff==. Instead the deviation does the work: a
+team with 3 rounds has a wide $$D$$ and sinks, one with 30 has a narrow one.
+Rounds played is shown as the **Matches** count (aff plus neg rounds with a
+decided winner).
+
+### Ranks, ties and the 0–9.9 scale [#rating-sort]
+
+Ranks are $$A_i$$ sorted high to low (the **Rank** column of the CSV). The site
+then shifts and scales it for display and clamps it to 0 through 99:
+
+$$
+S_i = \min\!\Bigl(99,\ \max\!\Bigl(0,\ \frac{A_i - 1000}{8.2/1.2}\Bigr)\Bigr), \qquad \text{shown as } S_i / 10
+$$
+
+so $$S = 96$$ prints as **9.6**. The whole number is the tier. The clamp is
+only for display: when you sort the Rating column, teams tied at the 9.9 cap
+are ordered by their unclamped value, strongest first. Sorting any other
+column leaves ties in rank order.
+
+### Expected score [#rating-expected-score]
+
+Because the ratings are on the Elo scale, the chance that $$i$$ beats $$j$$,
+ignoring side, is the usual Elo expected score:
+
+$$
+E_{ij} = \frac{1}{1 + 10^{(R_j - R_i)/400}}
+$$
+
+The fitted aff effect is published as the format's **Aff Rating
+Advantage** $$\Delta_{\mathrm{aff}}$$ (about 45 points in the example below), added to whoever is
+aff:
+
+$$
+E^{\mathrm{aff}}_{ij} = \frac{1}{1 + 10^{-(R_i - R_j + \Delta_{\mathrm{aff}})/400}}, \qquad \Delta_{\mathrm{aff}} = \frac{400}{\ln 10}\,\hat\beta
+$$
+
+The head-to-head **matchup simulator** is separate: it starts from the
+site-scale ratings, undoes the display scale, and softens the gap by the
+opponent's uncertainty, as Glicko-2 does (it then adds side and school effects
+of its own):
+
+$$
+P(a \text{ beats } b) = \frac{1}{1 + \exp\!\bigl(-g(\varphi_b)\,(\mu_a - \mu_b)\bigr)}, \qquad g(\varphi) = \frac{1}{\sqrt{1 + 3\varphi^2/\pi^2}}
+$$
+
+### Worked example [#rating-worked-example]
+
+A made-up PF tournament with three teams (not a major), run through the real
+`main.py`:
+
+| Round | Pro | Con | Result | Ballots (pro–con) |
+| --- | --- | --- | --- | --- |
+| 1 | Alpha | Beta | Pro wins | 1–0 |
+| 1 | Gamma | *bye* | skipped | none |
+| 2 | Beta | Gamma | Pro wins | 1–0 |
+| 3 | Gamma | Alpha | Con wins | 0–1 |
+| Final | Alpha | Beta | panel Pro, Con, Pro | 2–1 |
+
+At a major, the final would be 4–2 and every other round would count 2. The
+fit gives:
+
+| Team | Rounds | $$R$$ | $$D$$ | $$A = R - 2D$$ | $$S$$ | Shown |
+| --- | --- | --- | --- | --- | --- | --- |
+| Alpha | 3 | 1596.0 | 94.9 | 1406.2 | 59.4 | **5.9** |
+| Beta | 3 | 1505.9 | 94.9 | 1316.1 | 46.3 | **4.6** |
+| Gamma | 2 | 1398.1 | 111.4 | 1175.4 | 25.7 | **2.6** |
+
+Gamma's bye is not a round, so it has one fewer ballot and a wider deviation.
+Alpha is first in rank order. Alpha's side-neutral chance against Beta is
+$$1 / (1 + 10^{-90.1/400}) \approx 62.7\%$$ (their gap is $$1596.0 - 1505.9$$), and
+with Alpha on aff and $$\Delta_{\mathrm{aff}} = 45.0$$ it is
+$$1 / (1 + 10^{-135.1/400}) \approx 68.5\%$$.
+
+### What is not used [#rating-not-used]
+
+- ==No K-factor, starting-rating drift or time decay==: all ballots of the
+  season are fit together, so the order of rounds and tournaments doesn't
+  matter. Ratings start over each season.
+- ==No margins, speaker points or opponent records==, only who won each ballot.
+- ==No minimum number of rounds==; the deviation penalty handles thin records.
+- ==Forfeits are not special-cased==; only byes and blank entries are skipped.
 
 ## Coach Materials [#coach-materials]
 

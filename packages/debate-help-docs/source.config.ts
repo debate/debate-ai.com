@@ -6,6 +6,8 @@ import {
   defineCollections,
 } from 'fumadocs-mdx/config';
 import lastModified from 'fumadocs-mdx/plugins/last-modified';
+import rehypeKatex from 'rehype-katex';
+import remarkMath from 'remark-math';
 import { remarkMdxFiles } from 'fumadocs-core/mdx-plugins/remark-mdx-files';
 import { fileURLToPath } from 'node:url';
 import { blogPageSchema } from './lib/blog';
@@ -75,10 +77,18 @@ export default defineConfig({
     }),
   ],
   mdxOptions: {
-    remarkPlugins: [remarkMdxFiles, remarkDebateHighlight, remarkDropTitleHeading],
-    // After the defaults, so the processed Markdown (llms.txt, Copy Markdown)
-    // keeps citations as plain text.
-    rehypePlugins: [rehypeCitationCards],
+    // Math is `$$…$$` only (a block on its own lines, or inline). A single `$`
+    // stays plain text, so prices and the like in the docs are never math.
+    remarkPlugins: [
+      remarkMdxFiles,
+      remarkDebateHighlight,
+      remarkDropTitleHeading,
+      [remarkMath, { singleDollarTextMath: false }],
+    ],
+    // KaTeX goes first, as Fumadocs documents, so the code highlighter never
+    // sees its output. Citation cards stay after the defaults, so the
+    // processed Markdown (llms.txt, Copy Markdown) keeps citations as plain text.
+    rehypePlugins: (defaults) => [rehypeKatex, ...defaults, rehypeCitationCards],
     remarkImageOptions: {
       onError: 'ignore',
     },
