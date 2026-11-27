@@ -10,6 +10,7 @@ import {
   queryVideoIndexStacks,
   refreshVideoIndex,
   stackKeyOf,
+  videoLibraryRouteHref,
   videoRouteHref,
   type VideoType,
 } from "@debate-ai/videos"
@@ -28,7 +29,8 @@ import { isDemoTuple } from "@debate-ai/videos/src/data/demo-style"
  * (`app/videos/_watch/video-route-page.tsx`). A host without the Worker
  * resolves it from the video library cached in this browser (fetched from
  * `/api/videos/index` if it isn't cached yet), matching the path the same
- * way: a video's canonical `videoRouteHref`. The related-videos row and the
+ * way: a video's canonical `videoRouteHref` (a round's short
+ * `/<topic code>/<tournament>/<round>/<teams>`, or its `/videos/…` form). The related-videos row and the
  * side panel's documents are server lookups and are left out here.
  */
 /** Whether `pathname` is `href` followed by a speech and view (`…/2ar/alternatives`). */
@@ -58,10 +60,15 @@ export default function VideoWatchRoute() {
     for (const row of rows) {
       const tuple = videoRowToTuple(row) as VideoType
       const href = videoRouteHref(tuple)
-      // The same address from before the format segment.
-      const unformatted = videoRouteHref(tuple, "season", false)
-      if (pathname === href || pathname === unformatted) return tuple
-      if (!underAddress && (isUnderVideoPath(pathname, href) || isUnderVideoPath(pathname, unformatted))) {
+      // A round's `/videos/…` address from before topic codes, and the same
+      // address from before the format segment.
+      const library = videoLibraryRouteHref(tuple)
+      const unformatted = videoLibraryRouteHref(tuple, "season", false)
+      if (pathname === href || pathname === library || pathname === unformatted) return tuple
+      if (
+        !underAddress &&
+        (isUnderVideoPath(pathname, href) || isUnderVideoPath(pathname, library) || isUnderVideoPath(pathname, unformatted))
+      ) {
         underAddress = tuple
       }
       // The legacy `/videos/watch/<slug>-<id>` address ends in the id.
