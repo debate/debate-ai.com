@@ -155,6 +155,9 @@ export const CLIENT_ROUTES: AppRoute[] = [
   { pattern: "/videos/watch/[slug]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/mini/[id]", load: () => import("./_client/VideoMiniRoute") },
   { pattern: "/videos/live/[id]", load: () => import("./_client/LiveRoundRoute") },
+  // A round's short address is served by `/[username]/[...path]` below, which
+  // hands it to the same watch page; this is the web app's own server route.
+  { pattern: "/videos/code/[code]/[...segments]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]", load: () => import("./_client/VideoWatchRoute") },
   { pattern: "/videos/[category]/[event]/[matchup]/[teams]/[variant]", load: () => import("./_client/VideoWatchRoute") },

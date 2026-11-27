@@ -29,6 +29,7 @@
  * @module lib/reason-docs/personal-doc-paths
  */
 
+import { isVideoTopicCode } from "@debate-ai/videos/src/lib/video-topic-path"
 import { isTopicCode } from "./topic-doc-paths"
 
 /**
@@ -57,9 +58,10 @@ export const MAX_USERNAME_LENGTH = 30
 const USERNAME_PATTERN = /^[a-z0-9]{1,40}$/
 
 /** Whether `handle` may never be a username: a reserved page name, or the
- *  shape of a topic code, whose `/<code>/…` is a Topic Starter's address. */
+ *  shape of a topic code, whose `/<code>/…` is a Topic Starter's address — or
+ *  a round video's (`cpd27`, which `@debate-ai/videos` serves the same way). */
 export function isReservedUsername(handle: string): boolean {
-  return RESERVED_USERNAMES.has(handle) || isTopicCode(handle)
+  return RESERVED_USERNAMES.has(handle) || isTopicCode(handle) || isVideoTopicCode(handle)
 }
 
 /** Whether `segment` is shaped like a handle and not a reserved page name or
