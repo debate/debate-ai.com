@@ -9,7 +9,9 @@
  * opens a tooltip with the entry's number, bibliography line, author
  * qualifications and full card text (`components/guides/citation-card.tsx`).
  * Citations with no entry stay plain text. On the References page itself,
- * each list item gets the `id` those links point at.
+ * each list item gets the `id` those links point at, and a `<ReferenceQuoteStatus>`
+ * icon on its summary line saying whether the entry's card text is there
+ * (`lib/reference-quote-status.ts`, `components/guides/reference-quote-status.tsx`).
  *
  * Runs as a rehype plugin, after Fumadocs has taken each page's processed
  * Markdown, so the "Copy Markdown" / llms.txt exports keep the citations as
@@ -26,11 +28,13 @@ import {
   buildCitationIndex,
   citeAuthors,
   findCitations,
+  htmlToText,
   parseReferences,
   spokenCite,
   type CitationIndex,
   type ReferenceEntry,
 } from './citation-cards';
+import { referenceQuoteStatus } from '../reference-quote-status';
 import {
   COLLECTIVE_CONSCIOUSNESS_DIR,
   SYNERGY_SLAYER_DIR,
@@ -168,13 +172,49 @@ function findOrderedList(node: HastNode): HastNode | undefined {
   return undefined;
 }
 
-/** Puts each entry's anchor id on its list item of the References page. */
-function addAnchors(tree: HastNode, entries: ReferenceEntry[]): void {
+/** The MDX component each References entry's summary line ends with. */
+export const QUOTE_STATUS_COMPONENT = 'ReferenceQuoteStatus';
+
+/** The first `<summary>` under a node: an entry's citation line. */
+function findSummary(node: HastNode): HastNode | undefined {
+  if (node.tagName === 'summary' || node.name === 'summary') return node;
+  for (const child of node.children ?? []) {
+    const found = findSummary(child);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+/** The `<ReferenceQuoteStatus>` element for one entry. */
+function quoteStatusElement(entry: ReferenceEntry, href: string): HastNode {
+  const attribute = (name: string, value: string) => ({ type: 'mdxJsxAttribute', name, value });
+  return {
+    type: 'mdxJsxTextElement',
+    name: QUOTE_STATUS_COMPONENT,
+    attributes: [
+      attribute('href', `${href}#${entry.id}`),
+      attribute('status', referenceQuoteStatus(entry.cardHtml)),
+      attribute('title', htmlToText(entry.citationHtml).replace(/\s+/g, ' ').trim()),
+    ],
+    children: [],
+  };
+}
+
+/**
+ * Puts each entry's anchor id on its list item of the References page, and
+ * its card-text status icon on the end of the summary line. An entry written
+ * as plain Markdown, with no `<details>` card, has no summary and gets the
+ * icon at the end of the item.
+ */
+function addAnchors(tree: HastNode, entries: ReferenceEntry[], href: string): void {
   const list = findOrderedList(tree);
   const items = (list?.children ?? []).filter((child) => child.type === 'element' && child.tagName === 'li');
   items.forEach((item, i) => {
     const entry = entries[i];
-    if (entry) item.properties = { ...item.properties, id: entry.id };
+    if (!entry) return;
+    item.properties = { ...item.properties, id: entry.id };
+    const host = findSummary(item) ?? item;
+    host.children = [...(host.children ?? []), quoteStatusElement(entry, href)];
   });
 }
 
@@ -211,7 +251,7 @@ export function rehypeCitationCards(options: { collections?: CitationCollection[
     const loaded = loadReferences(resolved.referencesFile);
     if (!loaded) return;
     if (path.resolve(filePath) === path.resolve(resolved.referencesFile)) {
-      addAnchors(tree, loaded.entries);
+      addAnchors(tree, loaded.entries, referencesUrl(resolved.collection));
       return;
     }
     walkCitations(tree, loaded.index, referencesUrl(resolved.collection));

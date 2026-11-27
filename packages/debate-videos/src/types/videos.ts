@@ -283,6 +283,7 @@ export const DEBATE_STYLE_LABELS: Record<DebateStyle, string> = {
  */
 export const LECTURE_CATEGORY_DISPLAY_LABELS: Readonly<Record<string, string>> = {
   WSD: "Worlds",
+  "Public Forum": "Forum Lectures",
 };
 
 /**
