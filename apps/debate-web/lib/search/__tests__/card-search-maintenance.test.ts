@@ -6,6 +6,7 @@ import { applySchema } from "@/lib/database/__tests__/schema-sql";
 import * as schema from "@/lib/database/schema";
 import { debateCards } from "@/lib/database/schema";
 import { cardFtsStatus, createCardFts, resetCardFtsMemo, searchCardsRanked, buildFtsMatch } from "../card-fts";
+import { authorCondition } from "../debate-card-search";
 import { ensureCardSortIndexes } from "../card-search-indexes";
 import { maintainCardSearchIndexes } from "../card-search-maintenance";
 
@@ -32,6 +33,7 @@ describe("card search index maintenance", () => {
     expect(names).toContain("idx_debate_cards_imported_at");
     expect(names).toContain("idx_debate_cards_recent_popular");
     expect(names).toContain("idx_debate_cards_read_count");
+    expect(names).toContain("idx_debate_cards_cite_nocase");
 
     const planFor = async (sqlText: string) =>
       (
@@ -50,6 +52,19 @@ describe("card search index maintenance", () => {
     expect(
       await planFor(`SELECT id FROM debate_cards ORDER BY duplicate_count DESC, id ASC LIMIT 10`),
     ).not.toContain("TEMP B-TREE");
+  });
+
+  it("serves the author filter's cite range from an index", async () => {
+    const db = await freshDb();
+    await ensureCardSortIndexes(db);
+    const plan = (
+      await db.all<{ detail: string }>(
+        sql`EXPLAIN QUERY PLAN SELECT id FROM debate_cards WHERE ${authorCondition("Chi")}`,
+      )
+    )
+      .map((row) => row.detail)
+      .join(" ");
+    expect(plan).toContain("idx_debate_cards_cite_nocase");
   });
 
   it("backfills cards the FTS index is missing and marks it complete", async () => {

@@ -41,6 +41,9 @@ export const CARD_SORT_INDEX_STATEMENTS = [
   // "Most read": `ORDER BY duplicate_count DESC, id ASC`. Mixed directions
   // cannot be served by a plain index, so `duplicate_count` is declared DESC.
   "CREATE INDEX IF NOT EXISTS idx_debate_cards_read_count ON debate_cards(duplicate_count DESC, id ASC)",
+  // The author filter: `cite COLLATE NOCASE` in a range (`authorCondition`),
+  // and the author suggestions' prefix scan, both read this in order.
+  "CREATE INDEX IF NOT EXISTS idx_debate_cards_cite_nocase ON debate_cards(cite COLLATE NOCASE)",
 ] as const;
 
 type RawDB = { run(query: ReturnType<typeof sql.raw>): Promise<unknown> };

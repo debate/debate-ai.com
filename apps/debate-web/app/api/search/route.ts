@@ -146,6 +146,7 @@ export async function GET(request: NextRequest) {
     school: searchParams.get("school") || "",
     team: searchParams.get("team") || "",
     tournament: searchParams.get("tournament") || "",
+    author: searchParams.get("author") || "",
     event: searchParams.get("event") || "",
     ...scope,
   };

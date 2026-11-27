@@ -238,7 +238,7 @@ paths:
       summary: Search debate research cards
       description: |
         Full-text search across debate evidence cards with filtering by year, school,
-        team, tournament, and event. Supports scoped search (highlighted text only,
+        team, tournament, author, and event. Supports scoped search (highlighted text only,
         underlined text only, summaries, block/file titles, or all text). Results
         can be sorted by relevance, read count, year, or highlight length.
       parameters:
@@ -273,6 +273,11 @@ paths:
           schema:
             type: string
           description: Filter by tournament name (case-insensitive partial match).
+        - name: author
+          in: query
+          schema:
+            type: string
+          description: Filter by the first author's last name, read from the start of each card's short cite (case-insensitive prefix match, e.g. `Chilton` matches `Chilton 18`).
         - name: event
           in: query
           schema:
