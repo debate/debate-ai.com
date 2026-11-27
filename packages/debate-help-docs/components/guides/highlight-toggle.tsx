@@ -34,9 +34,10 @@
  * only. All are on unless the reader turned them off. `HIGHLIGHT_INIT_SCRIPT`
  * applies a stored "off" before first paint, so it never flashes on. The auto
  * modes last for the visit and set `data-debate-auto-<kind>` (the selection is
- * tinted while one is on). The page's and reading mode's copies of the menu
- * stay in step through `CHANGE_EVENT`. The reader's own marks are not saved:
- * they last until the page changes.
+ * tinted, and the pointer over the content is an animated pen or pencil
+ * cursor from `styles/cursors/`, while one is on). The page's and reading
+ * mode's copies of the menu stay in step through `CHANGE_EVENT`. The reader's
+ * own marks are not saved: they last until the page changes.
  */
 import { useEffect, useRef, useState } from "react"
 import { Bold, Check, ChevronDown, Highlighter, Eraser, Loader2, RotateCcw, Sparkles, Underline, type LucideIcon } from "lucide-react"
@@ -197,6 +198,67 @@ function useAutoMarkListener() {
   }, [])
 }
 
+/**
+ * The animated cursors of the auto modes (frames in `styles/docs.css`): a pen
+ * for auto highlight and auto short highlight, a pencil for auto underline,
+ * which wins when both are on. Each lists how long its frames last, in
+ * jiffies (1/60s), as the .ani files give them.
+ */
+export const AUTO_CURSORS = {
+  pen: [4, 4, 4, 4],
+  pencil: [3, 3, 3, 3, 3, 3, 3, 3, 3, 6, 6, 6],
+} as const
+export type AutoCursor = keyof typeof AUTO_CURSORS
+export const JIFFY_MS = 1000 / 60
+export const AUTO_CURSOR_ATTRIBUTE = "data-debate-auto-cursor"
+export const AUTO_CURSOR_FRAME_ATTRIBUTE = "data-debate-auto-frame"
+
+/** The cursor for the auto modes that are on, or null for none (auto emphasize has its own selection tint only). */
+export function autoCursorFor(on: (kind: MarkKind) => boolean): AutoCursor | null {
+  if (on("underline")) return "pencil"
+  return on("highlight") || on("short-highlight") ? "pen" : null
+}
+
+/** Every copy of the menu shares one cursor timer, started by the first and stopped with the last. */
+let menus = 0
+let shownCursor: AutoCursor | null = null
+let cursorTimer: ReturnType<typeof setTimeout> | undefined
+function syncAutoCursor() {
+  const html = document.documentElement
+  const cursor = menus > 0 ? autoCursorFor((kind) => readSetting(AUTO_SETTING(kind))) : null
+  if (cursor === shownCursor) return
+  clearTimeout(cursorTimer)
+  shownCursor = cursor
+  if (!cursor) {
+    html.removeAttribute(AUTO_CURSOR_ATTRIBUTE)
+    html.removeAttribute(AUTO_CURSOR_FRAME_ATTRIBUTE)
+    return
+  }
+  html.setAttribute(AUTO_CURSOR_ATTRIBUTE, cursor)
+  html.setAttribute(AUTO_CURSOR_FRAME_ATTRIBUTE, "0")
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return
+  const rates = AUTO_CURSORS[cursor]
+  let frame = 0
+  const next = () => {
+    cursorTimer = setTimeout(() => {
+      frame = (frame + 1) % rates.length
+      html.setAttribute(AUTO_CURSOR_FRAME_ATTRIBUTE, String(frame))
+      next()
+    }, rates[frame] * JIFFY_MS)
+  }
+  next()
+}
+function useAutoCursor(activeKinds: string) {
+  useEffect(() => {
+    menus++
+    return () => {
+      menus--
+      syncAutoCursor()
+    }
+  }, [])
+  useEffect(syncAutoCursor, [activeKinds])
+}
+
 const toolButton = (active: boolean) =>
   cn(
     buttonVariants({ size: "sm", className: "gap-2 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground" }),
@@ -322,6 +384,7 @@ export function MarksMenu({
 
   // The button names the auto mode that is on, so it's clear why selecting marks text.
   const activeAuto = MARK_KINDS.filter((kind) => settings[AUTO_SETTING(kind)])
+  useAutoCursor(activeAuto.join())
   const ButtonIcon = activeAuto.length ? KIND_LABEL[activeAuto[activeAuto.length - 1]].icon : Underline
   const buttonLabel =
     status ?? (activeAuto.length === 1 ? KIND_LABEL[activeAuto[0]].auto : activeAuto.length ? "Auto marking" : "Marks")

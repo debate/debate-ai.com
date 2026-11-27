@@ -11,6 +11,7 @@
  */
 import { act } from "react"
 import { createRoot, type Root } from "react-dom/client"
+import { readFileSync } from "node:fs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 const generate = vi.fn()
@@ -32,7 +33,7 @@ const html = document.documentElement
 
 beforeEach(() => {
   localStorage.clear()
-  for (const name of ["highlights", "underlines", "short-highlights", "emphasis", "auto-highlight", "auto-underline", "auto-short-highlight", "auto-emphasis"])
+  for (const name of ["highlights", "underlines", "short-highlights", "emphasis", "auto-highlight", "auto-underline", "auto-short-highlight", "auto-emphasis", "auto-frame"])
     html.removeAttribute(`data-debate-${name}`)
   page = document.createElement("div")
   page.className = "synergy-slayer-doc"
@@ -212,5 +213,73 @@ describe("Auto modes in the Marks menu", () => {
     click(item("Reset to default highlighting"))
     expect(page.querySelector(".reader-highlight-short")).toBeNull()
     expect(page.querySelector("mark.debate-hl")?.textContent).toBe("solves warming")
+  })
+})
+
+describe("Auto mode cursors", () => {
+  const frame = () => html.getAttribute("data-debate-auto-frame")
+  const cursor = () => html.getAttribute("data-debate-auto-cursor")
+
+  afterEach(() => vi.useRealTimers())
+
+  it("is a pen for auto highlight and short highlight, animated at the .ani's rate", () => {
+    vi.useFakeTimers()
+    expect(cursor()).toBeNull()
+    click(item("Auto highlight"))
+    expect([cursor(), frame()]).toEqual(["pen", "0"])
+    act(() => vi.advanceTimersByTime(67))
+    expect(frame()).toBe("1")
+    act(() => vi.advanceTimersByTime(67 * 3))
+    expect(frame()).toBe("0")
+    click(item("Auto short highlight"))
+    expect(cursor()).toBe("pen")
+    click(item("Auto short highlight"))
+    expect([cursor(), frame()]).toEqual([null, null])
+    act(() => vi.advanceTimersByTime(500))
+    expect(frame()).toBeNull()
+  })
+
+  it("is a pencil for auto underline, which wins over the pen and keeps the file's frame lengths", () => {
+    vi.useFakeTimers()
+    click(item("Auto underline"))
+    expect([cursor(), frame()]).toEqual(["pencil", "0"])
+    act(() => vi.advanceTimersByTime(50))
+    expect(frame()).toBe("1")
+    act(() => vi.advanceTimersByTime(50 * 8))
+    expect(frame()).toBe("9")
+    act(() => vi.advanceTimersByTime(99))
+    expect(frame()).toBe("9")
+    act(() => vi.advanceTimersByTime(1))
+    expect(frame()).toBe("10")
+    click(item("Auto highlight"))
+    expect(cursor()).toBe("pencil")
+    click(item("Auto underline"))
+    expect(cursor()).toBe("pen")
+    click(item("Auto highlight"))
+    expect(cursor()).toBeNull()
+  })
+
+  it("auto emphasize alone keeps the normal cursor, and unmounting clears it", () => {
+    click(item("Auto emphasize words"))
+    expect(cursor()).toBeNull()
+    click(item("Auto underline"))
+    expect(cursor()).toBe("pencil")
+    act(() => root.unmount())
+    expect(cursor()).toBeNull()
+    root = createRoot(toolbar)
+  })
+
+  it("has every frame of both .ani files inlined, as 32x32 cursors with the tip as hotspot", () => {
+    const css = readFileSync("packages/debate-help-docs/styles/docs.css", "utf8")
+    const frames = new Map<string, Buffer>()
+    for (const m of css.matchAll(/((?:html\[data-debate-auto-cursor="(\w+)"\]\[data-debate-auto-frame="(\d+)"\] \.synergy-slayer-doc,?\s*)+)\{\s*cursor: url\("data:image\/x-icon;base64,([^"]+)"\) 0 0, text;/g)) {
+      for (const sel of m[1].matchAll(/cursor="(\w+)"\]\[data-debate-auto-frame="(\d+)"/g))
+        frames.set(`${sel[1]}-${sel[2]}`, Buffer.from(m[4], "base64"))
+    }
+    expect([...frames.keys()].filter((k) => k.startsWith("pen-")).length).toBe(4)
+    expect([...frames.keys()].filter((k) => k.startsWith("pencil-")).length).toBe(12)
+    for (const cur of frames.values()) {
+      expect([cur.readUInt16LE(2), cur.readUInt16LE(4), cur[6], cur[7], cur.readUInt16LE(10), cur.readUInt16LE(12)]).toEqual([2, 1, 32, 32, 0, 0])
+    }
   })
 })
