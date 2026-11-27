@@ -179,8 +179,6 @@ describe("parseReferenceSuggestion", () => {
       ...valid,
       page: "/docs/journal/x/references/",
       text: `  ${TEXT}\r\n\u0000\u200B  `,
-      name: "  Sam   Q ",
-      note: "p. 4",
       title: "Doe, Jane.   2020.",
     })
     expect(parsed).toEqual({
@@ -190,9 +188,14 @@ describe("parseReferenceSuggestion", () => {
         refId: "ref-doe-2020",
         title: "Doe, Jane. 2020.",
         text: TEXT,
-        note: "p. 4",
-        name: "Sam Q",
       },
+    })
+  })
+
+  it("ignores the retired name and note fields", () => {
+    expect(parseReferenceSuggestion({ ...valid, name: "Sam", note: "n".repeat(5000) })).toEqual({
+      ok: true,
+      value: { page: valid.page, refId: valid.refId, title: "", text: TEXT },
     })
   })
 
@@ -209,8 +212,6 @@ describe("parseReferenceSuggestion", () => {
     expect(parseReferenceSuggestion({ ...valid, text: "Too short to be a card." }).ok).toBe(false)
     expect(parseReferenceSuggestion({ ...valid, text: "word ".repeat(MAX_SUGGESTION_TEXT_LENGTH) }).ok).toBe(false)
     expect(parseReferenceSuggestion({ ...valid, text: 42 }).ok).toBe(false)
-    expect(parseReferenceSuggestion({ ...valid, note: "n".repeat(1001) }).ok).toBe(false)
-    expect(parseReferenceSuggestion({ ...valid, name: "n".repeat(81) }).ok).toBe(false)
   })
 
   it("turns away link spam", () => {

@@ -20,6 +20,7 @@ import Link from "next/link"
 import { Crown, X } from "lucide-react"
 import { Button } from "../ui/primitives/button"
 import { SchoolLogo } from "../SchoolLogo"
+import { TeamSpeakerAwards } from "../TeamSpeakerAwards"
 import {
   HS_ALL_TIME_COLLEGE_SHARE,
   HS_ALL_TIME_EVENTS,
@@ -34,7 +35,8 @@ import {
   type HsAllTimeTeam,
 } from "./hsAllTimeTeams"
 import { NDT_ERA_CUTOFF_YEAR, NDT_PRE_ERA_MULTIPLIER } from "./ndtAllSeasons"
-import { teamHref } from "./rankingProfileHelpers"
+import { schoolHref, teamHref } from "./rankingProfileHelpers"
+import { hsTeamSpeakers, hsTopSpeakers } from "./topSpeakers"
 
 /** How many teams each event lists. */
 export const HS_ALL_TIME_LIMIT = 100
@@ -55,7 +57,9 @@ export function collegeNote(college: HsAllTimeCollege): string {
 
 const TOURNAMENT_LABEL: Record<string, string> = { TOC: "TOC", NDCA: "NDCA", Barkley: "Barkley", Cal: "Cal", Glenbrooks: "Glenbrooks" }
 
-function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
+function TeamRow({ team, own, event }: { team: HsAllTimeTeam; own: boolean; event: HsAllTimeEvent }) {
+  const href = teamHref({ school: team.school, name: team.debaters })
+  const speakers = hsTeamSpeakers(hsTopSpeakers()[event], team)
   const finishes = team.finishes.map((f) => `${f.year} ${TOURNAMENT_LABEL[f.tournament]} ${f.place}`).join(" · ")
   return (
     <li
@@ -67,15 +71,19 @@ function TeamRow({ team, own }: { team: HsAllTimeTeam; own: boolean }) {
         <SchoolLogo school={team.school} className="mt-0.5 h-6 w-auto max-w-[5rem] shrink-0 object-contain" />
         <span className="min-w-0">
           <Link
-            href={teamHref({ school: team.school, name: team.debaters })}
+            href={href}
             className={`text-foreground underline-offset-4 hover:underline ${own ? "font-semibold" : "font-medium"}`}
           >
             {team.debaters}
           </Link>{" "}
           <span className="text-xs text-muted-foreground">
-            {team.school} · {years(team)}
+            <Link href={schoolHref(team.school)} className="underline-offset-4 hover:underline">
+              {team.school}
+            </Link>{" "}
+            · {years(team)}
           </span>
           <span className="block text-xs text-muted-foreground">{finishes}</span>
+          <TeamSpeakerAwards speakers={speakers} href={href} />
           {team.college.length > 0 && (
             <span className="block text-xs text-sky-700 dark:text-sky-300">
               College:{" "}
@@ -185,7 +193,7 @@ export function HsAllTimeTeamsRankings({
       <div className="min-h-0 flex-1 overflow-y-auto px-3 py-2">
         <ol aria-label={`Greatest ${event} teams of all time`} className="space-y-0.5 text-sm">
           {top.map((team) => (
-            <TeamRow key={`${team.schoolKey}-${team.debaters}`} team={team} own={team.schoolKey === schoolKey} />
+            <TeamRow key={`${team.schoolKey}-${team.debaters}`} team={team} own={team.schoolKey === schoolKey} event={event} />
           ))}
         </ol>
       </div>
@@ -193,7 +201,7 @@ export function HsAllTimeTeamsRankings({
         <div className="border-t px-3 py-2">
           <p className="px-1.5 text-xs text-muted-foreground">This school's best in {event}</p>
           <ol className="text-sm">
-            <TeamRow team={ownOutside} own />
+            <TeamRow team={ownOutside} own event={event} />
           </ol>
         </div>
       )}

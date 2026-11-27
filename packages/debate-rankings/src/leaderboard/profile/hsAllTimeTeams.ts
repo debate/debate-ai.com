@@ -200,7 +200,8 @@ export function canonicalHsDebater(name: string): string {
   return NDCA_NAME_ALIASES[trimmed] ?? trimmed
 }
 
-const splitNames = (competitors: string) =>
+/** The debaters a source's competitors string names, spellings canonicalized. */
+export const splitNames = (competitors: string) =>
   competitors
     .split(/\s*(?:&|\/|,| and )\s*/i)
     .map((name) => canonicalHsDebater(name.trim()))
