@@ -47,6 +47,8 @@ const LECTURES = [
   ["lecKritik01", "Kritik basics 100% explained_with_underscores", "2024-09-01", "Coach", 7000, "kritik lecture", "Kritiks"],
   ["lecKritik02", "Advanced kritik answers", "2025-01-01", "Coach", 300, "framework", "Kritiks"],
   ["lecWsd00001", "How to give a WSD reply speech", "2025-02-02", "WSDC", 900, "", "WSD"],
+  ["lecNoCat001", "An untagged talk", "2025-03-03", "Coach", 42, "", null],
+  ["lecMisc0001", "Filed as miscellaneous", "2025-03-04", "Coach", 11, "", "Miscellaneous"],
 ] as unknown as VideoTuple[];
 
 const fixtureRows: VideoRow[] = (() => {
@@ -103,6 +105,7 @@ describe("getVideoPage on the SQL backend", () => {
     ["a tournament name, any year", { tournament: "NDT" }],
     ["a category key", { categoryKey: "kritiks" }],
     ["a category that is also a style (WSD)", { categoryKey: "wsd" }],
+    ["Miscellaneous, which also lists unsorted lectures", { categoryKey: "miscellaneous" }],
     ["a one-word search", { q: "michigan" }],
     ["a multi-word search (all tokens must match)", { q: "dartmouth finals" }],
     ["a search holding a LIKE wildcard", { q: "100%" }],
@@ -133,7 +136,7 @@ describe("getVideoPage on the SQL backend", () => {
     expect(first.videos).toHaveLength(4);
     expect(first.hasMore).toBe(true);
 
-    const last = await repo.getVideoPage({ source: "all", limit: 4, offset: 8 });
+    const last = await repo.getVideoPage({ source: "all", limit: 8, offset: 8 });
     expect(last.videos).toHaveLength(fixtureRows.length - 8);
     expect(last.hasMore).toBe(false);
     expect(new Set([...ids(first.videos), ...ids(last.videos)]).size).toBe(first.videos.length + last.videos.length);
