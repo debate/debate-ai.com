@@ -86,7 +86,7 @@ import {
   DEBATE_STYLE_LABELS,
   TOURNAMENT_COLORS,
   getRoundBadgeColor,
-  formatElimBadgeLabel,
+  splitElimBadgeLabel,
   formatVideoDate,
   getMonthBadgeColor,
   getTournamentBadge,
@@ -1102,8 +1102,8 @@ export function VideoWatchPage({
                     tournament so style / views / duration can stack after the
                     year, before Aff. */}
                 {(tournament || year || roundLabel) && (
-                  <div className="flex flex-col items-start gap-1">
-                    <div className="flex items-center gap-1.5">
+                  <div className="flex items-start gap-1.5">
+                    <div className="flex flex-col items-start gap-0">
                       {tournament && (() => {
                         const cleanT = tournament.replace(/\d+/g, "").trim();
                         const logo = getTournamentLogo(cleanT);
@@ -1157,7 +1157,31 @@ export function VideoWatchPage({
                           </button>
                         );
                       })()}
-                      {year && (
+                      {roundLabel && (
+                        <div className="flex items-center gap-1">
+                          {roundLabel === "Final" && <span className="text-sm">🏆</span>}
+                          <span
+                            className={cn(
+                              "text-xs font-semibold px-1.5 py-0.5 rounded border backdrop-blur-md shadow-sm",
+                              getRoundBadgeColor(roundLabel),
+                            )}
+                          >
+                            {(() => {
+                              const { top, name } = splitElimBadgeLabel(roundLabel)
+                              return top ? (
+                                <span className="flex flex-col items-center leading-tight">
+                                  <span>{top}</span>
+                                  <span>{name}</span>
+                                </span>
+                              ) : (
+                                name
+                              )
+                            })()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    {year && (
                         <span className="flex flex-col items-center gap-0.5">
                           <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
                             '{String(year).slice(-2)}
@@ -1184,20 +1208,6 @@ export function VideoWatchPage({
                           />
                         </span>
                       )}
-                    </div>
-                    {roundLabel && (
-                      <div className="flex items-center gap-1">
-                        {roundLabel === "Final" && <span className="text-sm">🏆</span>}
-                        <span
-                          className={cn(
-                            "text-xs font-semibold px-1.5 py-0.5 rounded border backdrop-blur-md shadow-sm",
-                            getRoundBadgeColor(roundLabel),
-                          )}
-                        >
-                          {formatElimBadgeLabel(roundLabel)}
-                        </span>
-                      </div>
-                    )}
                   </div>
                 )}
                 {/* Style, views and duration — stacked vertically after the
