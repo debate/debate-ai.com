@@ -5,6 +5,7 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { DebateAiLogo } from '@debate-ai/icons/brand';
 import { withBasePath } from '../lib/fumadocs/base-path';
+import { SearchWithThemesIcon, SearchWithThemesSlot } from '../components/fumadocs/layout/header-toolbar';
 
 export const baseOptions: BaseLayoutProps = {
   nav: {
@@ -18,5 +19,10 @@ export const baseOptions: BaseLayoutProps = {
     ),
     url: withBasePath('/'),
   },
+  // Fumadocs' own light/dark switch is replaced by the Themes menu
+  // (components/fumadocs/layout/themes-menu.tsx), which the search slots add to
+  // the header's buttons, wide and narrow.
+  themeSwitch: { enabled: false },
+  slots: { searchTrigger: { sm: SearchWithThemesIcon, full: SearchWithThemesSlot } },
 
 };
