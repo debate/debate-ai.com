@@ -22,6 +22,7 @@ const categories = [
   { key: "novice___introductory", label: "Novice & Introductory", count: 716, maxViews: 1 },
   { key: "topic_lectures", label: "Topic Lectures", count: 312, maxViews: 1 },
   { key: "wsd", label: "WSD", count: 32, maxViews: 1 },
+  { key: "nsda_speech", label: "NSDA Speech", count: 40, maxViews: 1 },
   { key: "brand_new", label: "Brand New", count: 3, maxViews: 1 },
 ];
 
@@ -38,6 +39,8 @@ describe("lecture category sections", () => {
     expect(sectionOf(html, "Strategy")).toContain("Negative Strategy");
     expect(sectionOf(html, "Topics &amp; ideas")).toContain("Topic Lectures");
     expect(sectionOf(html, "Formats")).toContain('href="/lectures/wsd"');
+    expect(sectionOf(html, "Topics &amp; ideas")).toContain('href="/lectures/nsda_speech"');
+    expect(sectionOf(html, "Formats")).not.toContain("NSDA Speech");
     expect(sectionOf(html, "More")).toContain("Brand New");
   });
 
