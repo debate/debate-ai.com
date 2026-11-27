@@ -261,7 +261,6 @@ const round2 = (n: number) => Math.round(n * 100) / 100
 export function collegeLookupFromNdt(table: Pick<NdtAllSeasonsTable, "debaters">): HsCollegeLookup {
   const bySlug = new Map<string, { school: string; points: number }>()
   for (const row of table.debaters) {
-    if (row.highSchoolOnly) continue
     const points = round2(row.total - (row.parts.highSchool ?? 0))
     if (points <= 0) continue
     const slug = profileSlug(row.team)
