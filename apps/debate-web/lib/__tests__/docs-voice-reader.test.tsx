@@ -264,6 +264,53 @@ describe("the Voice menu and reading", () => {
     expect(menuButton("Read this page")).toBeTruthy()
   })
 
+  it("shows the injected grab.js spinner on the active word and removes it on stop", async () => {
+    const mod = await import("../../../../packages/debate-help-docs/components/guides/voice-read-button")
+    const pick = vi.fn(() => "bars" as const)
+    await act(async () => app.render(<mod.VoiceReadButton pickSpinner={pick} />))
+    await press(trigger())
+    await settle()
+    await press(menuButton("Read this page"))
+    await settle()
+    expect(pick).toHaveBeenCalledTimes(1)
+    const status = ball()!.querySelector("[role=status]")!
+    expect(status.getAttribute("aria-label")).toBe("Reading aloud")
+    expect(status.getAttribute("data-voice-spinner")).toBe("bars")
+    expect(status.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true")
+    expect(ball()?.hasAttribute("aria-hidden")).toBe(false)
+
+    await press(menuButton("Stop"))
+    expect(ball()).toBeNull()
+    expect(document.querySelector("[data-voice-spinner]")).toBeNull()
+  })
+
+  it("picks a spinner again for each new reading but keeps it when a click restarts one", async () => {
+    const mod = await import("../../../../packages/debate-help-docs/components/guides/voice-read-button")
+    const variants = ["ring", "infinite"] as const
+    const pick = vi.fn(() => variants[pick.mock.calls.length - 1]!)
+    await act(async () => app.render(<mod.VoiceReadButton pickSpinner={pick} />))
+    const shown = () => ball()?.querySelector("[data-voice-spinner]")?.getAttribute("data-voice-spinner")
+    await press(trigger())
+    await settle()
+    await press(menuButton("Read this page"))
+    await settle()
+    expect(shown()).toBe("ring")
+
+    const doc = document as unknown as { caretPositionFromPoint?: () => unknown }
+    doc.caretPositionFromPoint = () => ({ offsetNode: page.querySelector("#a")!.firstChild!, offset: 24 })
+    await act(async () => void page.querySelector("#a")!.dispatchEvent(new MouseEvent("click", { bubbles: true, button: 0 })))
+    await settle()
+    expect(pick).toHaveBeenCalledTimes(1)
+    expect(shown()).toBe("ring")
+    delete doc.caretPositionFromPoint
+
+    await press(menuButton("Stop"))
+    await press(menuButton("Read this page"))
+    await settle()
+    expect(pick).toHaveBeenCalledTimes(2)
+    expect(shown()).toBe("infinite")
+  })
+
   it("restarts from the start of the clicked sentence while reading", async () => {
     await press(trigger())
     await settle()

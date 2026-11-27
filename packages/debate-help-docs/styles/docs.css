@@ -299,7 +299,8 @@ html[data-debate-underlines="off"] .synergy-slayer-doc :is(mark.debate-hl, u.rea
 html[data-debate-auto-highlight="on"] .synergy-slayer-doc ::selection,
 html[data-debate-auto-underline="on"] .synergy-slayer-doc ::selection,
 html[data-debate-auto-short-highlight="on"] .synergy-slayer-doc ::selection,
-html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection {
+html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection,
+html[data-debate-auto-summary-tag="on"] .synergy-slayer-doc ::selection {
   background-color: var(--debate-reader-hl-bg);
 }
 
@@ -314,9 +315,10 @@ html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection {
 }
 
 /*
- * The ball that follows the word Voice is saying
- * (components/guides/voice-read-ball.ts): it sits under the active word and
- * glides to the next.
+ * The marker that follows the word Voice is saying
+ * (components/guides/voice-read-ball.ts): a grab.js loading spinner
+ * (components/guides/voice-read-spinner.tsx) that sits under the active word
+ * and glides to the next. It draws in the theme's primary colour.
  */
 [data-voice-ball] {
   position: absolute;
@@ -326,20 +328,18 @@ html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection {
   width: 0;
   height: 0;
   pointer-events: none;
+  color: var(--color-fd-primary);
 }
-[data-voice-ball]::after {
-  content: "";
+[data-voice-ball] .voice-spinner {
   position: absolute;
-  left: -5px;
-  top: 1px;
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  background: var(--color-fd-primary);
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--color-fd-primary) 25%, transparent),
-    0 0 12px 2px color-mix(in srgb, var(--color-fd-primary) 55%, transparent);
-  animation: voice-ball-pulse 1.2s ease-in-out infinite;
+  left: -9px;
+  top: 2px;
+  display: block;
+  width: 18px;
+  height: 18px;
+  line-height: 0;
+  color: inherit;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--color-fd-primary) 45%, transparent));
 }
 [data-voice-ball="hidden"] {
   display: none;
@@ -347,21 +347,13 @@ html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection {
 [data-voice-ball="moving"] {
   transition: transform 150ms cubic-bezier(0.3, 0.8, 0.3, 1);
 }
-@keyframes voice-ball-pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.25);
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   [data-voice-ball="moving"] {
     transition: none;
   }
-  [data-voice-ball]::after {
-    animation: none;
+  [data-voice-ball] .voice-spinner,
+  [data-voice-ball] .voice-spinner * {
+    animation: none !important;
   }
 }
 
@@ -416,6 +408,34 @@ html[data-debate-emphasis="off"] .synergy-slayer-doc strong.reader-emphasis {
 }
 
 /*
+ * Summary tags (components/guides/summary-tag.tsx, `@debate-ai/reading-mode/summary-tags`):
+ * highlights carrying `data-summary-tag` get a dotted underline and are
+ * clickable; the last highlight of each tag (`data-summary-end`) ends in a
+ * small "Tag" badge. The summary is the highlight's `title`. "Summary tags" in
+ * the Marks menu switches it off.
+ */
+html:not([data-debate-summary-tags="off"]) .synergy-slayer-doc [data-summary-tag] {
+  cursor: pointer;
+  box-shadow: 0 2px 0 -1px var(--color-fd-primary);
+}
+
+html:not([data-debate-summary-tags="off"]) .synergy-slayer-doc [data-summary-end]::after {
+  content: "Tag";
+  display: inline-block;
+  margin-left: 3px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--color-fd-primary);
+  color: var(--color-fd-primary-foreground);
+  font-size: 0.6em;
+  font-weight: 600;
+  line-height: 1.5;
+  vertical-align: super;
+  text-decoration: none;
+  user-select: none;
+}
+
+/*
  * In-text citations on the Synergy Slayer pages that match a References entry
  * (lib/mdx/rehype-citation-cards.ts). They read as prose with a dotted
  * underline, link to the entry, and show its card in a tooltip on hover
@@ -452,6 +472,40 @@ html[data-debate-emphasis="off"] .synergy-slayer-doc strong.reader-emphasis {
     background-color: transparent;
     box-shadow: 0 0 0 3px transparent;
   }
+}
+
+/*
+ * A docked References panel (references-panel.tsx, references-panel-dock.ts)
+ * is a fixed column at the right edge. While it is open, `<html>` carries
+ * `data-references-docked` and `--references-panel-width`: the page gives the
+ * panel that much of the window (the docs scroll inside a box as wide as
+ * <body>, so padding on <body> narrows everything in it and the content
+ * reflows), and the "On this page" outline is hidden and its column closed,
+ * so it takes no space. Both come back when the panel closes. Windows too
+ * narrow to dock (< 1024px) never get the attribute: the panel is a drawer.
+ */
+html[data-references-docked] body {
+  padding-right: var(--references-panel-width, 21rem);
+}
+
+html[data-references-docked] #nd-toc {
+  display: none;
+}
+
+html[data-references-docked] #nd-notebook-layout {
+  --fd-toc-width: 0px !important;
+}
+
+/* Reading mode's full-screen reader is fixed to the window, so it makes room too. */
+html[data-references-docked] [role="dialog"][aria-label^="Reading mode"] {
+  right: var(--references-panel-width, 21rem);
+}
+
+/* While the panel's handle is dragged, the text under the pointer is not selected. */
+html[data-references-resizing],
+html[data-references-resizing] * {
+  cursor: col-resize !important;
+  user-select: none !important;
 }
 
 .citation-tooltip svg {
