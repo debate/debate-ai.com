@@ -2,7 +2,8 @@
  * @fileoverview The four format cards (College Policy, HS Policy, Individual,
  * Forum) lead every division page — `/videos/college`, `/videos/policy`,
  * `/videos/ld`, `/videos/pf` — and the round collection pages, with the
- * current division selected. Pages that already carry the full category bar,
+ * current division selected. The division pages also list the other formats
+ * (Worlds, Demo Debates, Parli, Atlantic, Congress) under the cards. Pages that already carry the full category bar,
  * and the favorites and history views, do not repeat them.
  */
 
@@ -41,6 +42,7 @@ const lectureCategories = [
   { key: "wsd", label: "WSD", count: 25, maxViews: 10 },
   { key: "acc", label: "ACC", count: 39, maxViews: 10 },
   { key: "demo_debates", label: "Demo Debates", count: 5, maxViews: 10 },
+  { key: "negative_strategy", label: "Negative Strategy", count: 75, maxViews: 10 },
 ];
 
 function render(overrides: Record<string, unknown>): string {
@@ -92,6 +94,12 @@ function render(overrides: Record<string, unknown>): string {
 
 const CARD_HREFS = ["/videos/college", "/videos/policy", "/videos/ld", "/videos/pf"];
 
+function sectionOf(html: string, title: string): string {
+  const start = html.indexOf(`<section aria-label="${title}"`);
+  expect(start).toBeGreaterThan(-1);
+  return html.slice(start, html.indexOf("</section>", start));
+}
+
 function formatNav(html: string): string | null {
   const start = html.indexOf('<nav class="mb-6" aria-label="Debate formats">');
   if (start === -1) return null;
@@ -131,5 +139,62 @@ describe("format cards on division pages", () => {
   it("leaves favorites and history pages without the cards", () => {
     expect(formatNav(render({ selectedStyle: 3, showFavoritesOnly: true }))).toBeNull();
     expect(formatNav(render({ selectedStyle: 3, currentCategory: "history" }))).toBeNull();
+  });
+
+  describe("Formats list on division pages", () => {
+    const FORMAT_HREFS = [
+      "/lectures/wsd",
+      "/lectures/demo_debates",
+      "/videos/parli",
+      "/videos/acc",
+      "/videos/congress",
+    ];
+    const counts = { wsd: 25, acc: 39, parli: 15, congress: 7, ld: 42 };
+
+    it.each([
+      [4, "college"],
+      [1, "policy"],
+      [3, "ld"],
+      [2, "pf"],
+    ])("lists the other formats under the cards on style %i with none selected", (style, id) => {
+      const nav = formatNav(render({ selectedStyle: style, quickLinkCounts: counts }))!;
+      expect(nav).not.toBeNull();
+      const formats = sectionOf(nav, "Formats");
+      for (const href of FORMAT_HREFS) expect(formats).toContain(`href="${href}"`);
+      expect(formats).not.toContain("aria-current");
+      expect(nav).not.toContain('<section aria-label="Strategy"');
+      expect(nav).not.toContain("Negative Strategy");
+      expect(nav.match(/aria-current="page"/g)).toHaveLength(1);
+      expect(nav.indexOf(`href="/videos/${id}" aria-current="page"`)).toBeGreaterThan(-1);
+      expect(nav.indexOf('<section aria-label="Formats"')).toBeGreaterThan(nav.indexOf('href="/videos/pf"'));
+    });
+
+    it("shows each format's count", () => {
+      const formats = sectionOf(formatNav(render({ selectedStyle: 3, quickLinkCounts: counts }))!, "Formats");
+      for (const count of [25, 39, 15, 7]) expect(formats).toContain(`>${count}<`);
+    });
+
+    it("lists each format once, with no separate collection row on College Policy", () => {
+      const html = render({ selectedStyle: 4, quickLinkCounts: counts });
+      expect(html.match(/href="\/videos\/acc"/g)).toHaveLength(1);
+      expect(html.match(/href="\/videos\/parli"/g)).toHaveLength(1);
+    });
+
+    it("keeps the round collection pages to just the cards", () => {
+      const nav = formatNav(render({ selectedCategory: "acc", quickLinkCounts: counts }))!;
+      expect(nav).not.toContain("<section");
+    });
+
+    it("falls back to just the cards before the categories load", () => {
+      const nav = formatNav(render({ selectedStyle: 3, lectureCategories: [] }))!;
+      expect(nav).not.toBeNull();
+      expect(nav).not.toContain("<section");
+    });
+
+    it("leaves the division's own video list in place", () => {
+      const html = render({ selectedStyle: 3, quickLinkCounts: counts, isLoading: true });
+      expect(html).toContain("Loading videos...");
+      expect(html.indexOf("Loading videos...")).toBeGreaterThan(html.indexOf('<section aria-label="Formats"'));
+    });
   });
 });

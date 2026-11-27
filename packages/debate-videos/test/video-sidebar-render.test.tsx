@@ -238,7 +238,7 @@ describe("the sidebar's heading structure", () => {
     const statistics = html.indexOf("Topics &amp; Statistics");
     const learning = html.indexOf(">Learning<");
     const rules = html.indexOf("Rules &amp; Glossary");
-    const features = html.indexOf("All Features");
+    const features = html.indexOf("Overview Home");
     expect(inference).toBeGreaterThan(-1);
     expect(rank).toBeGreaterThan(inference);
     expect(statistics).toBeGreaterThan(rank);

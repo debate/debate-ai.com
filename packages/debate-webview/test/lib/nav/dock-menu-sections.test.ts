@@ -38,7 +38,7 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
     ])
   })
 
-  it("lists Rules & Glossary and All Features under Learning, above nothing else in that submenu", () => {
+  it("lists Rules & Glossary and Overview Home under Learning, above nothing else in that submenu", () => {
     const learning = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "learning")!
     expect(learning.links.map((link) => link.href)).toEqual(["/practice/rules", "/practice/features"])
     const debates = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "coaching")!
