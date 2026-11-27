@@ -59,6 +59,8 @@ const { VideoWatchPage } = await import("../src/panels/watch/VideoWatchPage")
 const { useVideoPlayerStore, videoPlayerIframeRef } = await import("../src/state/videoPlayerStore")
 const { saveVideoTimestamp } = await import("../src/state/videoPlayerPersistence")
 const { videoWatchHref } = await import("../src/lib/video-slug")
+const { resetRevealedDecisions } = await import("../src/hooks/useDecisionReveal")
+const { resetRoundDecisions } = await import("../src/hooks/useRoundDecision")
 import type { VideoType } from "../src/types/videos"
 
 const VIDEO_ID = "OXdffJy8HIs"
@@ -294,35 +296,112 @@ describe("VideoWatchPage round badge", () => {
   })
 });
 
-describe("VideoWatchPage demo debates", () => {
-  const lecture = (title: string, category: string, demoStyle?: number) => {
-    const tuple: unknown[] = [VIDEO_ID, title, "2024-03-25", "Coach", 1234, "A demo.", category]
-    if (demoStyle !== undefined) tuple[21] = demoStyle
-    return tuple as unknown as VideoType
+describe("VideoWatchPage reveal decision", () => {
+  const SPOILER_TEAM = "Kentucky AB";
+  const round = (affWin: boolean | null, decision: string | null) =>
+    [VIDEO_ID, "Round", "2022-03-25", "NDT", 1234, "A debate round.", 1, "Harvard", "Finals", "Harker LL", SPOILER_TEAM, affWin, decision] as unknown as VideoType;
+  const lecture = [VIDEO_ID, "Lecture", "2022-03-25", "NDT", 1234, "A lecture.", "Kritiks"] as unknown as VideoType;
+
+  let decisionRequests: string[];
+  function stubDecision(body: unknown) {
+    decisionRequests = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: string | URL | Request) => {
+        const url = String(input);
+        if (url.startsWith("/api/videos/decision")) {
+          decisionRequests.push(url);
+          return new Response(JSON.stringify(body), { status: 200 });
+        }
+        throw new Error("offline");
+      }),
+    );
   }
-  const badge = () => container.querySelector("[data-testid=format-badge]")?.textContent
+  const scales = () => container.querySelector<HTMLButtonElement>('[aria-label="Reveal decision"]');
+  const click = async (el: HTMLElement) => {
+    await act(async () => {
+      el.click();
+    });
+  };
 
-  it("takes the round page's format treatment, guessed from the title", () => {
-    mount(createElement(VideoWatchPage, { video: lecture("PF demo round", "Demo Debates") }))
-    expect(badge()).toContain("PF")
-    unmount()
-  })
+  beforeEach(() => {
+    resetRevealedDecisions();
+    resetRoundDecisions();
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
 
-  it("prefers the admin's pick over the title", () => {
-    mount(createElement(VideoWatchPage, { video: lecture("PF demo round", "Demo Debates", 1) }))
-    expect(badge()).toContain("Policy")
-    unmount()
-  })
+  it("offers the scales button on a round with no stored decision, and asks nothing until it is clicked", async () => {
+    stubDecision({ status: "unknown", source: null, affWin: null, decision: null, judges: [], url: null });
+    mount(createElement(VideoWatchPage, { video: round(null, null) }));
+    expect(scales()).not.toBeNull();
+    expect(container.querySelector('[data-testid="watch-decision"]')).toBeNull();
+    expect(decisionRequests).toEqual([]);
+    unmount();
+  });
 
-  it("leaves other lectures as plain lectures", () => {
-    mount(createElement(VideoWatchPage, { video: lecture("PF theory talk", "Theory") }))
-    expect(badge()).toBeUndefined()
-    unmount()
-  })
+  it("shows ? when no result can be found", async () => {
+    stubDecision({ status: "unknown", source: null, affWin: null, decision: null, judges: [], url: null });
+    mount(createElement(VideoWatchPage, { video: round(null, null) }));
+    await click(scales()!);
+    expect(decisionRequests).toEqual([`/api/videos/decision?id=${VIDEO_ID}`]);
+    expect(container.querySelector('[data-testid="decision-unknown"]')?.textContent).toContain("?");
+    expect(container.querySelector('[data-testid="decision-summary"]')).toBeNull();
+    unmount();
+  });
 
-  it("leaves a demo that names no format as a plain lecture", () => {
-    mount(createElement(VideoWatchPage, { video: lecture("A demonstration", "Demo Debates") }))
-    expect(badge()).toBeUndefined()
-    unmount()
-  })
-})
+  it("shows a looked-up decision with each judge's vote, and rings the winner", async () => {
+    stubDecision({
+      status: "known",
+      source: "tabroom",
+      affWin: false,
+      decision: "2-1",
+      judges: [
+        { name: "Ann Lee", side: "neg", squirreled: false },
+        { name: "Bo Kim", side: "neg", squirreled: false },
+        { name: "Cy Diaz", side: "aff", squirreled: true },
+      ],
+      url: "https://www.tabroom.com/index/tourn/results/round_results.mhtml?tourn_id=1&round_id=2",
+    });
+    mount(createElement(VideoWatchPage, { video: round(null, null) }));
+    await click(scales()!);
+    const text = container.querySelector('[data-testid="watch-decision"]')?.textContent ?? "";
+    expect(text).toContain(`${SPOILER_TEAM} (Neg)`);
+    expect(text).toContain("2-1");
+    const judges = [...container.querySelectorAll('[data-testid="decision-judges"] li')].map((li) => li.textContent);
+    expect(judges).toEqual([
+      `Ann Lee voted ${SPOILER_TEAM} (Neg)`,
+      `Bo Kim voted ${SPOILER_TEAM} (Neg)`,
+      "Cy Diaz voted Harker LL (Aff)*",
+    ]);
+    expect(container.querySelector('a[href*="tabroom.com"]')?.textContent).toContain("Tabroom");
+    const negBadge = container.querySelector<HTMLButtonElement>(`button[title="Negative: ${SPOILER_TEAM}"]`);
+    expect(negBadge?.className).toContain("border-amber-400");
+    unmount();
+  });
+
+  it("uses the stored decision right away and the server only for the judges", async () => {
+    stubDecision({
+      status: "known",
+      source: "stored",
+      affWin: true,
+      decision: "3-0 Aff",
+      judges: [{ name: "Ann Lee", side: "aff", squirreled: false }],
+      url: null,
+    });
+    mount(createElement(VideoWatchPage, { video: round(true, "3-0 Aff") }));
+    expect(container.textContent).not.toContain("3-0");
+    await click(scales()!);
+    expect(container.querySelector('[data-testid="decision-summary"]')?.textContent).toBe("Harker LL (Aff)  3-0");
+    expect(container.querySelector('[data-testid="decision-judges"]')?.textContent).toContain("Ann Lee voted Harker LL (Aff)");
+    unmount();
+  });
+
+  it("is not offered on a lecture", () => {
+    stubDecision({});
+    mount(createElement(VideoWatchPage, { video: lecture }));
+    expect(scales()).toBeNull();
+    unmount();
+  });
+});
