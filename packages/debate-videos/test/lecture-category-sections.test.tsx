@@ -44,6 +44,24 @@ describe("lecture category sections", () => {
     expect(sectionOf(html, "More")).toContain("Brand New");
   });
 
+  it("shows only the Formats section on the rounds scope", () => {
+    const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories, scope: "rounds" }));
+    expect(sectionOf(html, "Formats")).toContain('href="/lectures/wsd"');
+    for (const title of ["Getting started", "Strategy", "Topics &amp; ideas", "More"]) {
+      expect(html).not.toContain(`<section aria-label="${title}"`);
+    }
+  });
+
+  it("leaves the Formats section and the format badges off the lectures scope", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, { categories, scope: "lectures", formatCounts: { college: 4 } }),
+    );
+    expect(html).not.toContain('<section aria-label="Formats"');
+    expect(html).not.toContain('href="/videos/college"');
+    expect(html).not.toContain('href="/lectures/wsd"');
+    expect(sectionOf(html, "Strategy")).toContain("Negative Strategy");
+  });
+
   it("has no All Lectures card", () => {
     const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
     expect(html).not.toContain("All Lectures");
