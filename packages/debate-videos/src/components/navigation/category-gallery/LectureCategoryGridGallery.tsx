@@ -76,7 +76,16 @@ interface LectureCategoryGridGalleryProps {
    * card. A badge without a total shows none.
    */
   formatCounts?: Record<string, number | undefined>;
+  /**
+   * Which part of the bar to draw: `"all"` (default) is everything,
+   * `"rounds"` the format badges and the Formats section (the Debate Rounds
+   * page), `"lectures"` the sections other than Formats (Strategy Lectures).
+   */
+  scope?: GalleryScope;
 }
+
+/** The parts of the bar a page can ask for; see `scope`. */
+export type GalleryScope = "all" | "rounds" | "lectures";
 
 /** One of the main round collections shown as a badge at the top of the bar. */
 interface MainFormatBadge {
@@ -137,7 +146,6 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
       "Topicality & Framework",
       "Critique / Critical Theory",
       "Impact Calculus & Evidence",
-      "Round Analysis",
     ],
   },
   {
@@ -147,19 +155,34 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
       "Policy Topic Lectures",
       "PF & LD Topic Analysis",
       "Public Forum",
+      "Round Analysis",
       "Philosophy & IR Theory",
       "Documentaries & Culture",
+      "NSDA Speech",
     ],
   },
   {
     title: "Formats",
-    labels: ["WSD", "NSDA Speech", "Demo Debates", "Open Super Debates", "Congress", "Speech"],
+    labels: ["WSD", "Demo Debates", "Open Super Debates", "Congress", "Speech"],
   },
   {
     title: "Miscellaneous",
     labels: ["Miscellaneous"],
   },
 ];
+
+/** Title of the section holding the formats: Worlds, Parli, Demo Debates … */
+const FORMATS_SECTION_TITLE = "Formats";
+
+/**
+ * Whether a stored lecture category label sits in the Formats section — the
+ * categories Debate Rounds lists, rather than Strategy Lectures.
+ */
+export function isFormatsSectionLabel(label: string): boolean {
+  return LECTURE_CATEGORY_SECTIONS.some(
+    (section) => section.title === FORMATS_SECTION_TITLE && section.labels.includes(label),
+  );
+}
 
 /** Heading for categories no section names. */
 const OTHER_SECTION_TITLE = "More";
@@ -203,6 +226,7 @@ export function LectureCategoryGridGallery({
   layout = "grid",
   extraLinks,
   formatCounts,
+  scope = "all",
 }: LectureCategoryGridGalleryProps) {
   // Build category cards from the server-computed facets, most popular first.
   const selectedId = selectedCategory ?? "all";
@@ -253,9 +277,9 @@ export function LectureCategoryGridGallery({
         })),
       });
     }
-    let formats = grouped.find((section) => section.title === "Formats");
+    let formats = grouped.find((section) => section.title === FORMATS_SECTION_TITLE);
     if (!formats) {
-      formats = { title: "Formats", items: [] };
+      formats = { title: FORMATS_SECTION_TITLE, items: [] };
       grouped.push(formats);
     }
     const links = extraLinks ?? [];
@@ -279,8 +303,12 @@ export function LectureCategoryGridGallery({
         selected: false,
       });
     }
-    return grouped.filter((section) => section.items.length > 0);
-  }, [cards, extraLinks, formatCounts, selectedId]);
+    return grouped.filter((section) => {
+      if (section.items.length === 0) return false;
+      if (scope === "all") return true;
+      return (section.title === FORMATS_SECTION_TITLE) === (scope === "rounds");
+    });
+  }, [cards, extraLinks, formatCounts, selectedId, scope]);
 
   if (!cards) return null;
 
@@ -291,14 +319,16 @@ export function LectureCategoryGridGallery({
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <ul
-        aria-label="Main categories"
-        className="flex flex-wrap gap-2"
-      >
-        {MAIN_FORMAT_BADGES.map((badge) => (
-          <FormatBadgeLink key={badge.id} badge={badge} count={formatCounts?.[badge.id]} />
-        ))}
-      </ul>
+      {scope !== "lectures" && (
+        <ul
+          aria-label="Main categories"
+          className="flex flex-wrap gap-2"
+        >
+          {MAIN_FORMAT_BADGES.map((badge) => (
+            <FormatBadgeLink key={badge.id} badge={badge} count={formatCounts?.[badge.id]} />
+          ))}
+        </ul>
+      )}
       <div className={columnClass}>
         {sections.map((section) => (
           <section key={section.title} aria-label={section.title} className="min-w-0">
@@ -329,7 +359,7 @@ export function LectureCategoryGridGallery({
 function FormatBadgeLink({ badge, count }: { badge: MainFormatBadge; count?: number }) {
   const logo = badge.division ? DIVISION_LOGOS[badge.division] : undefined;
   return (
-    <li className="w-[200px] max-w-full list-none">
+    <li className="w-[350px] max-w-full list-none">
       <Link
         href={badge.href}
         scroll={false}
@@ -338,9 +368,9 @@ function FormatBadgeLink({ badge, count }: { badge: MainFormatBadge; count?: num
       >
         {logo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={logo} alt="" className="h-24 w-24 object-contain" loading="lazy" />
+          <img src={logo} alt="" className="h-40 w-40 object-contain" loading="lazy" />
         ) : (
-          <Landmark className="h-24 w-24 p-4 text-muted-foreground" aria-hidden />
+          <Landmark className="h-40 w-40 p-6 text-muted-foreground" aria-hidden />
         )}
         <span className="text-sm font-semibold leading-tight text-foreground">{badge.title}</span>
         {count !== undefined && (

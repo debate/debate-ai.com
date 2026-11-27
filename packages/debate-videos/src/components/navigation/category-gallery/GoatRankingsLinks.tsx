@@ -4,7 +4,8 @@
  * Policy, Forum and Individual. Each goes to the rankings page's "All time"
  * season (`/rank/<format>?season=all-time`) and is labelled as that page's
  * event tab is. The links wrap onto a second line on narrow screens, with
- * touch-sized targets.
+ * touch-sized targets. The row has no visible label: the crown marks it and
+ * the nav's accessible name says what it is.
  *
  * @module components/category-gallery/GoatRankingsLinks
  */
@@ -27,10 +28,7 @@ export function GoatRankingsLinks() {
       aria-label="Greatest of all time rankings"
       className="mb-6 flex flex-wrap items-center justify-center gap-2 text-sm"
     >
-      <span className="inline-flex items-center gap-1.5 font-medium text-muted-foreground">
-        <Crown className="h-4 w-4 text-amber-500" aria-hidden />
-        GOAT rankings:
-      </span>
+      <Crown className="h-4 w-4 text-amber-500" aria-hidden />
       {LEADERBOARD_TABS.map((tab) => (
         <Link
           key={tab.value}

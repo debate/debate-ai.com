@@ -90,7 +90,9 @@ describe("the md:hidden block, which is what a phone sees", () => {
 
   it("carries the video quick links, minus the glossary/statistics tiles", () => {
     const mobile = mobileMarkup();
-    expect(mobile).toContain('href="/videos/college"');
+    expect(mobile).toContain('href="/videos/rounds"');
+    expect(mobile).toContain('href="/lectures"');
+    expect(mobile).not.toContain('href="/videos/college"');
     expect(mobile).not.toContain('href="/practice/rules"');
     expect(mobile).not.toContain('href="/practice/statistics"');
   });

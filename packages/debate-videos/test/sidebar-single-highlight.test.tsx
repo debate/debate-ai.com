@@ -2,9 +2,10 @@
  * @fileoverview Pins that exactly one collection in the videos sidebar reads
  * as selected.
  *
- * The Lectures row lights up from `browsingLectures` (any lecture-library
- * page, category pages included) as well as `activeId`, so the assertions
- * below pin that it never lights alongside a round collection.
+ * The Strategy Lectures row lights up from `browsingLectures` (any
+ * lecture-library page outside the Formats section, category pages included)
+ * as well as `activeId`, so the assertions below pin that it never lights
+ * alongside Debate Rounds.
  */
 
 import { describe, it, expect, vi } from "vitest";
@@ -56,15 +57,16 @@ function activeRows(markup: string): string[] {
 }
 
 describe("VideoSidebarTree highlighting", () => {
-  it("highlights only College Policy on a round collection", () => {
-    const rows = activeRows(render({ activeId: "college" }));
+  it("highlights only Debate Rounds on a round page", () => {
+    const rows = activeRows(render({ activeId: "rounds" }));
 
-    expect(rows).toEqual(["College Policy"]);
-    expect(rows).not.toContain("Lectures");
+    expect(rows).toEqual(["Debate Rounds"]);
+    expect(rows).not.toContain("Strategy Lectures");
   });
 
-  it("highlights Lectures while the lecture library is what is open", () => {
-    expect(activeRows(render({ browsingLectures: true }))).toEqual(["Lectures"]);
+  it("highlights Strategy Lectures while the lecture library is what is open", () => {
+    expect(activeRows(render({ browsingLectures: true }))).toEqual(["Strategy Lectures"]);
+    expect(activeRows(render({ activeId: "lectures" }))).toEqual(["Strategy Lectures"]);
   });
 
   it("highlights nothing on the rankings and glossary pages", () => {
