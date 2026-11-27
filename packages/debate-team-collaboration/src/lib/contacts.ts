@@ -253,3 +253,36 @@ export function sortContacts<T extends { user: ContactUser; online: boolean }>(r
     return byName !== 0 ? byName : a.user.id.localeCompare(b.user.id);
   });
 }
+
+/** Personal contact groups: how many one account may keep, and how many contacts one group holds. */
+export const MAX_CONTACT_GROUPS = 50;
+export const MAX_CONTACT_GROUP_MEMBERS = 200;
+export const MAX_CONTACT_GROUP_NAME_LENGTH = 40;
+
+/** A group name trimmed and collapsed to single spaces, or null when it is not a usable name. */
+export function normalizeContactGroupName(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const name = value.replace(/\s+/g, " ").trim().slice(0, MAX_CONTACT_GROUP_NAME_LENGTH).trim();
+  return name || null;
+}
+
+/**
+ * The picked set after toggling a whole group: if every member is already
+ * picked they all come off, otherwise every member goes on. Members who are
+ * no longer contacts (`available`) are ignored. Returns a new set.
+ */
+export function togglePickedGroup(
+  picked: ReadonlySet<string>,
+  memberIds: readonly string[],
+  available: ReadonlySet<string>,
+): Set<string> {
+  const ids = memberIds.filter((id) => available.has(id));
+  const next = new Set(picked);
+  if (ids.length === 0) return next;
+  const allOn = ids.every((id) => next.has(id));
+  for (const id of ids) {
+    if (allOn) next.delete(id);
+    else next.add(id);
+  }
+  return next;
+}
