@@ -25,6 +25,7 @@ import type { NdtSchoolHistory } from "../../sync/ndt-school-history"
 import { Button } from "../ui/primitives/button"
 import { SchoolLogo } from "../SchoolLogo"
 import { TeamSpeakerAwards } from "../TeamSpeakerAwards"
+import { highSchoolPairHref } from "./nationalsHistory"
 import { pastTeamHref } from "./pastTeamHelpers"
 import { schoolHref } from "./rankingProfileHelpers"
 import {
@@ -43,6 +44,7 @@ import {
   rowRanks,
   type NdtAllSeasonsTable,
   type NdtCurrentSeason,
+  type NdtHighSchoolResult,
   type NdtPointsRow,
   type NdtRankingMode,
 } from "./ndtAllSeasons"
@@ -119,6 +121,24 @@ function Breakdown({ row }: { row: NdtPointsRow }) {
         </span>
       ))}
     </div>
+  )
+}
+
+/** A high school result's debater and partner(s), linked to the pair's team page when it has one. */
+function HighSchoolPair({ result }: { result: NdtHighSchoolResult }) {
+  const href = highSchoolPairHref(result.school, [result.debater, ...result.partners])
+  const text = (
+    <>
+      <span className="text-foreground">{result.debater}</span>
+      {result.partners.length > 0 && <> with {result.partners.join(" & ")}</>}
+    </>
+  )
+  return href ? (
+    <Link href={href} className="hover:underline underline-offset-4">
+      {text}
+    </Link>
+  ) : (
+    text
   )
 }
 
@@ -237,8 +257,7 @@ function RankedRows({
                     >
                       <span className="tabular-nums">{result.year}</span>
                       <span>
-                        {result.tournament} {highSchoolPlaceLabel(result)}: <span className="text-foreground">{result.debater}</span>
-                        {result.partners.length > 0 && <> with {result.partners.join(" & ")}</>}
+                        {result.tournament} {highSchoolPlaceLabel(result)}: <HighSchoolPair result={result} />
                       </span>
                       <span>{result.school}</span>
                       <span className="tabular-nums">

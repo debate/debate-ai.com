@@ -32,6 +32,7 @@ import {
   ndcaPlaceLabel,
 } from "../src/sync/ndca-champions";
 import { findTocSchoolRecord } from "../src/sync/toc-champions";
+import { highSchoolPairHref } from "../src/leaderboard/profile/nationalsHistory";
 import { NdtAllSeasonsButton, NdtAllSeasonsRankings } from "../src/leaderboard/profile/NdtAllSeasonsDialog";
 import history from "../data/ndt-school-history.json";
 import { click, flush, mount, type Mounted } from "./helpers/mount";
@@ -523,5 +524,45 @@ describe("NdtAllSeasonsRankings", () => {
     expect(root.querySelectorAll("[data-own-school]").length).toBe(0);
     expect(root.querySelector('[aria-label="Close"]')).toBeNull();
     expect(root.textContent).not.toContain("Only ");
+  });
+});
+
+describe("high school partner links", () => {
+  let mounted: Mounted | null = null;
+  afterEach(async () => {
+    await mounted?.unmount();
+    mounted = null;
+  });
+
+  it("links a high school pair to its team page, in the order the records list it", () => {
+    expect(highSchoolPairHref("The Bronx High School of Science", ["Andrew Markoff", "Zack Elias"])).toBe(
+      "/@the-bronx-high-school-of-science-elias-markoff",
+    );
+    expect(highSchoolPairHref("The Bronx High School of Science", ["Zack Elias", "Andrew Markoff"])).toBe(
+      "/@the-bronx-high-school-of-science-elias-markoff",
+    );
+    expect(highSchoolPairHref("St. Mark's School of Texas (TX)", ["Alex Miles", "Rishi Batra"])).toBe("/@st-mark-s-school-of-texas-tx-miles-batra");
+    expect(highSchoolPairHref("Lexington High School (MA)", ["Arjun Vellayappan", "Tyler Engler"])).toBe(
+      "/@lexington-high-school-ma-vellayappan-engler",
+    );
+  });
+
+  it("has no link for a lone debater or a pair the records don't list at that school", () => {
+    expect(highSchoolPairHref("The Bronx High School of Science", ["Andrew Markoff"])).toBeNull();
+    expect(highSchoolPairHref("The Bronx High School of Science", ["Andrew Markoff", "Nobody Atall"])).toBeNull();
+    expect(highSchoolPairHref("Robinson", ["Michael Laurence", "Shelly Coleman"])).toBeNull();
+  });
+
+  it("links each 'with partner' pair in the high school results, keeping the text", async () => {
+    mounted = await mount(<NdtAllSeasonsRankings history={history as NdtSchoolHistory[]} titleId="t" />);
+    const root = mounted.container;
+    const pairs = [...root.querySelectorAll<HTMLElement>('[aria-label="High school results"]')]
+      .flatMap((ul) => [...ul.querySelectorAll("a")])
+      .filter((a) => a.textContent?.includes(" with "));
+    const markoff = pairs.find((a) => a.textContent === "Andrew Markoff with Zack Elias")!;
+    expect(markoff.getAttribute("href")).toBe("/@the-bronx-high-school-of-science-elias-markoff");
+    expect(markoff.closest("li")?.textContent).toContain("NDCA champion: Andrew Markoff with Zack Elias");
+    const miles = [...root.querySelectorAll("a")].find((a) => a.textContent === "Alex Miles with Rishi Batra");
+    expect(miles?.getAttribute("href")).toBe("/@st-mark-s-school-of-texas-tx-miles-batra");
   });
 });
