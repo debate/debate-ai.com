@@ -3,6 +3,7 @@ import { act } from "react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AdminDashboard } from "../../../src/components/admin/AdminDashboard";
+import { resetAdminUserCountCache } from "../../../src/lib/admin/use-admin-user-count";
 import {
   bodyText,
   button,
@@ -50,6 +51,7 @@ beforeAll(() => {
   } as unknown as typeof IntersectionObserver;
 });
 beforeEach(() => {
+  resetAdminUserCountCache();
   observers = [];
   window.history.replaceState(null, "", "/admin");
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -111,6 +113,36 @@ describe("AdminDashboard", () => {
     expect(bodyText()).toContain("Export tables");
     expect(bodyText()).toContain("videos");
     expect(bodyText()).toContain("1,234 rows");
+  });
+
+  it("shows the total user count beside Users in the nav, for admins only", async () => {
+    const overview: Route = {
+      method: "GET",
+      match: "/api/admin/overview",
+      respond: { stats: { users: 1249, sessions: 3, files: 4, publishedVideos: 5, stagedVideos: 6 }, recentUsers: [] },
+    };
+    const { calls } = adminRoutes([overview]);
+    mount(<AdminDashboard />);
+    await flush();
+    expect(button("Users", nav()).textContent).toBe("Users1,249");
+    expect(nav().querySelectorAll("[data-testid='user-count-badge']")).toHaveLength(1);
+    expect(calls.filter((c) => c.url.includes("/api/admin/overview"))).toHaveLength(1);
+    cleanup();
+
+    resetAdminUserCountCache();
+    const moderator = adminRoutes([overview]);
+    mount(<AdminDashboard isAdmin={false} />);
+    await flush();
+    expect(button("Users", nav()).textContent).toBe("Users");
+    expect(moderator.calls.some((c) => c.url.includes("/api/admin/overview"))).toBe(false);
+  });
+
+  it("leaves the Users entry without a badge when the count request fails", async () => {
+    adminRoutes([{ method: "GET", match: "/api/admin/overview", respond: { error: "boom" }, status: 500 }]);
+    mount(<AdminDashboard />);
+    await flush();
+    expect(button("Users", nav()).textContent).toBe("Users");
+    expect(document.querySelector("[data-testid='user-count-badge']")).toBeNull();
   });
 
   it("follows the URL hash, including later hash changes", async () => {
