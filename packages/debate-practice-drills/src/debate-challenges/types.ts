@@ -27,8 +27,8 @@ export const CHALLENGE_FORMATS = [
   { id: "ld", label: "Lincoln-Douglas" },
   { id: "policy", label: "Policy" },
   { id: "ndt", label: "College Policy (NDT)" },
-  { id: "parli", label: "Parliamentary" },
-  { id: "worlds", label: "Worlds / BP" },
+  { id: "parli", label: "Parliamentary / BP" },
+  { id: "worlds", label: "World Schools" },
 ] as const;
 
 export type ChallengeFormat = (typeof CHALLENGE_FORMATS)[number]["id"];

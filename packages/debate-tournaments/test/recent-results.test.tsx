@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
-import { createTournamentsClient, resultsCompletedAt, type PublishedRound, type ResultsIndexEvent, type RoundSchematic, type UpcomingTournament } from "../src/ui/client";
+import { createTournamentsClient, RECENT_RESULTS_DAYS, resultsCompletedAt, type PublishedRound, type ResultsIndexEvent, type RoundSchematic, type UpcomingTournament } from "../src/ui/client";
 import { RecentResultsSection } from "../src/ui/pages/RecentResults";
 import { UpcomingTournamentsPage } from "../src/ui/pages/UpcomingTournamentsPage";
 import { pickResultSets, topFormatEvents, topFormatOf } from "../src/ui/top-formats";
@@ -95,7 +95,7 @@ describe("recentResults client", () => {
     return { client, calls };
   }
 
-  it("keeps tournaments that ended in the last 14 days, newest first, and drops ongoing or older ones", async () => {
+  it("keeps tournaments that ended in the last 7 days, newest first, and drops ongoing or older ones", async () => {
     const { client, calls } = fake([
       row(1, "2026-11-13 14:00:00", "2026-11-14 23:00:00"),
       row(2, "2026-11-20 14:00:00", "2026-11-22 23:00:00"),
@@ -103,12 +103,25 @@ describe("recentResults client", () => {
       row(4, "2026-11-26 14:00:00", "2026-11-29 23:00:00"),
       row(5, "2026-11-12 08:00:00", "2026-11-13 11:00:00"),
       row(6, "2026-11-25 14:00:00", null),
+      row(7, "2026-11-20 11:00:00", "2026-11-20 11:59:59"),
+      row(8, "2026-11-18 10:00:00", "2026-11-20 12:00:00"),
     ]);
+    expect(RECENT_RESULTS_DAYS).toBe(7);
     const rows = await client.recentResults({ now: NOW });
-    expect(rows.map((r) => r.tournId)).toEqual([6, 2, 1]);
+    expect(rows.map((r) => r.tournId)).toEqual([6, 2, 8]);
     const query = new URL(calls[0], "http://x").searchParams;
     expect(query.get("publishedResults")).toBe("true");
-    expect(query.get("startAfter")).toBe("2026-11-06T12:00:00.000Z");
+    expect(query.get("startAfter")).toBe("2026-11-13T12:00:00.000Z");
+  });
+
+  it("measures the window by end date, falling back to start date, with a fixed clock", async () => {
+    const { client } = fake([
+      row(1, "2026-11-01 14:00:00", "2026-11-26 23:00:00"),
+      row(2, "2026-11-19 14:00:00", null),
+      row(3, "2026-11-21 14:00:00", null),
+    ]);
+    const rows = await client.recentResults({ now: NOW });
+    expect(rows.map((r) => r.tournId)).toEqual([1, 3]);
   });
 
   it("falls back to the start date when a row has no end", () => {
@@ -261,7 +274,13 @@ describe("RecentResultsSection", () => {
 
   it("shows an empty note, and a loading state", async () => {
     let el = await render(<RecentResultsSection tourns={[]} state="ready" />);
-    expect(text(el)).toContain("No tournaments finished with results in the last 14 days.");
+    expect(text(el)).toContain("No tournaments finished with results in the last 7 days.");
+    expect(el.querySelector("button")).toBeNull();
+    let opened = 0;
+    el = await render(<RecentResultsSection tourns={[]} state="ready" onShowArchive={() => opened++} />);
+    await click(el.querySelector("button")!);
+    expect(text(el)).toContain("Browse all past results");
+    expect(opened).toBe(1);
     el = await render(<RecentResultsSection tourns={[]} state="loading" />);
     expect(text(el)).toContain("Loading recent results…");
   });

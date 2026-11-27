@@ -291,10 +291,10 @@ function GroupRows({
             table still has exactly as many cells as there are headers. */}
         {context.isRoundMode && <td colSpan={2} />}
 
-        <td className="px-3 py-2 align-middle text-xs text-muted-foreground whitespace-nowrap">
+        <td className="py-2 pl-3 pr-0 align-middle text-xs text-muted-foreground whitespace-nowrap">
           {group.latestDate ? formatVideoDate(group.latestDate, "full", "—") : "—"}
         </td>
-        <td className="px-3 py-2 align-middle text-xs text-muted-foreground text-right tabular-nums whitespace-nowrap">
+        <td className="py-2 pl-1.5 pr-3 align-middle text-xs text-muted-foreground tabular-nums whitespace-nowrap">
           <span className="inline-flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] font-medium tabular-nums">
             <ViewCount views={group.viewCount} />
           </span>
