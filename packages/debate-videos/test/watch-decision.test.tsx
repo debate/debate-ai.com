@@ -27,13 +27,22 @@ const known: RoundDecision = {
 };
 
 describe("WatchDecision", () => {
-  it("shows the winner and ballots, then each judge with the side they voted for", () => {
+  it("shows the winner and ballots, then each judge under the team they voted for", () => {
     const html = render({ decision: known });
     expect(html).toContain("Harker LL (Aff)  2-1");
-    expect(html).toContain('data-side="aff"');
-    expect(html).toContain("Cy Diaz");
-    expect(html).toContain("Gunn AB (Neg)*");
     expect(html).toContain("Results on College Debate Results");
+    const aff = html.match(/data-testid="decision-judges-aff"[\s\S]*?<\/ul>/)?.[0] ?? "";
+    const neg = html.match(/data-testid="decision-judges-neg"[\s\S]*?<\/ul>/)?.[0] ?? "";
+    expect(aff).toContain("blue");
+    expect(aff).toContain("Harker LL (Aff)");
+    expect(aff).toContain("Ann Lee");
+    expect(aff).toContain("Bo Kim");
+    expect(aff).not.toContain("Cy Diaz");
+    expect(neg).toContain("red");
+    expect(neg).toContain("Gunn AB (Neg)");
+    expect(neg).toContain("Cy Diaz*");
+    expect(neg).not.toContain("Ann Lee");
+    expect(html).not.toContain("decision-judges-unknown");
   });
 
   it("shows ? for a round with no findable result", () => {
@@ -51,8 +60,27 @@ describe("WatchDecision", () => {
     expect(stored).not.toContain("Looking up");
   });
 
-  it("leaves a judge's side as ? when the ballots don't say", () => {
+  it("lists a judge whose side the ballots don't say apart from the teams, never under one", () => {
+    const html = render({
+      decision: {
+        ...known,
+        judges: [
+          { name: "Ann Lee", side: null, squirreled: false },
+          { name: "Bo Kim", side: "neg", squirreled: false },
+        ],
+      },
+    });
+    const section = (side: string) => html.match(new RegExp(`data-testid="decision-judges-${side}"[\\s\\S]*?</ul>`))?.[0] ?? "";
+    expect(section("unknown")).toContain("Ann Lee");
+    expect(section("unknown")).toContain("side unknown");
+    expect(section("aff")).not.toContain("Ann Lee");
+    expect(section("neg")).not.toContain("Ann Lee");
+    expect(section("neg")).toContain("Bo Kim");
+  });
+
+  it("shows no team columns when no judge's side is known", () => {
     const html = render({ decision: { ...known, judges: [{ name: "Ann Lee", side: null, squirreled: false }] } });
-    expect(html).toContain('data-side="unknown"');
+    expect(html).not.toContain("decision-judges-aff");
+    expect(html).toContain("decision-judges-unknown");
   });
 });
