@@ -25,11 +25,14 @@
  * @module lib/nav/dock-menu-sections
  */
 
-import { Clapperboard, type LucideIcon } from "lucide-react"
+import { BookOpen, Clapperboard, type LucideIcon } from "lucide-react"
 // Deep imports rather than the package root: these three modules are plain
 // data (no React, no image assets), which is what lets the Vitest project for
 // `lib/` load them in a Node environment.
-import { SIDEBAR_TOOL_SECTIONS } from "@debate-ai/videos/src/components/navigation/sidebar-nav/sidebar-tool-sections"
+import {
+  LEARNING_LINKS,
+  SIDEBAR_TOOL_SECTIONS,
+} from "@debate-ai/videos/src/components/navigation/sidebar-nav/sidebar-tool-sections"
 import {
   SIDEBAR_VIDEO_LINKS,
   VIDEO_REFERENCE_LINKS,
@@ -64,7 +67,9 @@ const REFERENCE_HREFS = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.href))
 
 /**
  * One submenu per sidebar section, in tree order: Videos, then the
- * Coaching / Research / Practice tool sections.
+ * tool sections, then Learning. Learning's docs pages are loaded at
+ * runtime, so this submenu carries only the two links pinned above
+ * Introduction.
  */
 export const SIDEBAR_MENU_SECTIONS: DockMenuSection[] = [
   {
@@ -81,6 +86,12 @@ export const SIDEBAR_MENU_SECTIONS: DockMenuSection[] = [
     icon: section.icon,
     links: section.tools.map(({ href, title, icon }) => ({ href, title, icon })),
   })),
+  {
+    id: "learning",
+    title: "Learning",
+    icon: BookOpen,
+    links: LEARNING_LINKS.map(({ href, title, icon }) => ({ href, title, icon })),
+  },
 ]
 
 /** The footer's own links, all in the menu's one Site Links submenu. */

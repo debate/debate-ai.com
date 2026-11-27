@@ -19,9 +19,10 @@
  * folder's meta.json is ignored here.
  * Every folder can be expanded or collapsed by hand. The current page is
  * scrolled into view in the sidebar when the docs open and after each
- * navigation. Off /docs the same pages are a "Docs" section of the tree
- * (`DocsNavTree` in @debate-ai/videos, fed by `routes/tree-route.ts`), opened
- * to the same depth.
+ * navigation. Rules & Glossary and All Features are pinned above Introduction,
+ * matching `DocsNavTree`. Off /docs those pages are the Learning section of
+ * the tree (`DocsNavTree` in @debate-ai/videos, fed by `routes/tree-route.ts`),
+ * opened to the same depth.
  */
 
 import { useEffect, useState, type ReactNode } from 'react';
@@ -30,6 +31,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BookOpen, ChevronRight } from 'lucide-react';
 import type { Folder, Node, Root } from 'fumadocs-core/page-tree';
+import { LEARNING_LINKS, matchesLearningLink } from '@debate-ai/videos/src/components/navigation/sidebar-nav/sidebar-tool-sections';
 
 /** Folders at this depth or shallower start expanded (0 = none by depth). */
 export const DOCS_TREE_OPEN_DEPTH = 0;
@@ -78,6 +80,19 @@ export function AppSidebarDocsTree({ tree }: { tree: Root }) {
       </button>
       {open && (
         <ul className="ms-3 flex flex-col gap-0.5 border-s border-border/60 ps-2">
+          {LEARNING_LINKS.map((link) => {
+            const Icon = link.icon;
+            return (
+              <li key={link.href}>
+                <PageLink
+                  url={link.href}
+                  name={link.title}
+                  icon={<Icon className="size-4" />}
+                  active={matchesLearningLink(pathname, link)}
+                />
+              </li>
+            );
+          })}
           {tree.children.map((node, i) => (
             <TreeNode key={node.$id ?? i} node={node} depth={1} />
           ))}
