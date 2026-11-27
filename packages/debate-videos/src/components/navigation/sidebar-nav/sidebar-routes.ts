@@ -193,14 +193,15 @@ export function matchesToolSidebarHref(pathname: string): boolean {
 }
 
 /**
- * A Topic Starter's `/docs/<topic code>/...` address (`/docs/vcx27/neg/cp/x`)
- * — Debate Editor, served at the same page as `/reason-editor`, so it
- * gets the same generic sidebar. Only a first segment shaped like a topic code
- * counts; the rest of `/docs` is the help docs. Mirrors `TOPIC_CODE_SOURCE` in
- * `@debate-ai/webview`'s `lib/reason-docs/topic-doc-paths` (which depends on this
- * package, not the other way round); a test there keeps the two agreeing.
+ * A Topic Starter's `/<topic code>/...` address (`/vcx27/neg/cp/x`, and the
+ * old `/docs/vcx27/...` it 308s from) — Debate Editor, served at the same page
+ * as `/reason-editor`, so it gets the same generic sidebar. Only a first
+ * segment shaped like a topic code counts; the rest of `/docs` is the help
+ * docs. Mirrors `TOPIC_CODE_SOURCE` in `@debate-ai/reason-docs`'
+ * `lib/reason-docs/topic-doc-paths` (which depends on this package, not the
+ * other way round); a test there keeps the two agreeing.
  */
-const TOPIC_STARTER_DOCS_PATH = /^\/docs\/(?:vcx19\d{2}|ld[a-z]19\d{2}|(?:vcx|ndt|bq)\d{2}|(?:ld|pf)[a-z]\d{2}|(?:ld|pf)\d{2}[a-z])(?:\/|$)/;
+const TOPIC_STARTER_DOCS_PATH = /^(?:\/docs)?\/(?:vcx19\d{2}|ld[a-z]19\d{2}|(?:vcx|ndt|bq)\d{2}|(?:ld|pf)[a-z]\d{2}|(?:ld|pf)\d{2}[a-z])(?:\/|$)/;
 
 export function isTopicStarterDocsPath(pathname: string): boolean {
   return TOPIC_STARTER_DOCS_PATH.test(pathname);

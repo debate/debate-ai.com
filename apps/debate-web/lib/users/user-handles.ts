@@ -14,7 +14,7 @@
  */
 
 import { sql } from "drizzle-orm";
-import { pickUsername, usernameBase } from "@debate-ai/reason-docs/lib/reason-docs/personal-doc-paths";
+import { isUsername, pickUsername, usernameBase } from "@debate-ai/reason-docs/lib/reason-docs/personal-doc-paths";
 import type { getDBFromContext } from "@/lib/database/context";
 
 type Database = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -66,7 +66,11 @@ export async function getOrCreateUserHandle(
 ): Promise<string> {
   await ensureTable(db);
   const existing = await readHandle(db, user.id);
-  if (existing) return existing;
+  if (existing && isUsername(existing)) return existing;
+  // A handle given out before its shape was reserved (one that reads as a
+  // Topic Starter's `/<topic code>/…`) can no longer address a personal file,
+  // so it is replaced by the next free one.
+  if (existing) await db.run(sql`DELETE FROM user_handles WHERE user_id = ${user.id}`);
 
   const base = usernameBase(user.name, user.email);
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {

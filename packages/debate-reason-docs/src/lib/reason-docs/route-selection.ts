@@ -54,7 +54,7 @@ export function paramForKind(kind: ReasonDocsSelection["kind"]): "doc" | "topic"
 }
 
 /** True on `/reason-editor`, on the named-document paths below it, and on a
- *  topic starter's `/docs/<topic code>/...` address (`./topic-doc-paths`),
+ *  topic starter's `/<topic code>/...` address (`./topic-doc-paths`),
  *  which `next.config.mjs` rewrites onto the same page. */
 export function isEditorPathname(pathname: string | null | undefined): boolean {
   if (!pathname) return false
@@ -64,7 +64,7 @@ export function isEditorPathname(pathname: string | null | undefined): boolean {
   return isPersonalDocPath(path)
 }
 
-/** The topic code the address is under (`vcx27` on `/docs/vcx27/...`), or
+/** The topic code the address is under (`vcx27` on `/vcx27/...`), or
  *  `null` anywhere else. */
 export function topicCodeFromPathname(pathname: string | null | undefined): string | null {
   return parseTopicDocsPath(pathname)?.code ?? null
@@ -87,7 +87,7 @@ export function editorSlugFromPathname(pathname: string | null | undefined): str
  * a path. Without it (or when the row has no sluggable name) the link falls
  * back to the id — still a working URL, just not a readable one.
  *
- * A topic starter links to its `/docs/<topic code>/<path>` address, under
+ * A topic starter links to its `/<topic code>/<path>` address, under
  * `topicCode` (the code the reader is browsing) or the default topic's. One of
  * the reader's own files links to `/<username>/<path>` (`./personal-doc-paths`)
  * once their username is known, and to `?doc=<path>` until then.
@@ -113,7 +113,7 @@ export function editorHrefForSelection(
 export interface SelectionParams {
   doc: string | null
   topic: string | null
-  /** The topic code on a `/docs/<code>/...` address. Optional so callers
+  /** The topic code on a `/<code>/...` address. Optional so callers
    *  built before topic codes still type-check. */
   topicCode?: string | null
 }
@@ -135,7 +135,7 @@ export function parseSelectionParams(
   pathname?: string | null,
 ): SelectionParams {
   const read = (key: string) => params.get(key)?.trim() || null
-  // `/docs/<topic code>/<path>` names a public file by its path, the same
+  // `/<topic code>/<path>` names a public file by its path, the same
   // statement as `?topic=<path>`; a `?topic=` the reader followed still wins.
   const topicPath = parseTopicDocsPath(pathname)
   // `/<username>/<path>` names a personal file by its path, the same
@@ -215,7 +215,7 @@ export function resolveSelection(input: ResolveSelectionInput): SelectionOutcome
     // shared link has no documents at all. Ask the server before giving up.
     const unresolved = topic ?? doc
     if (allowLookup && unresolved) return { kind: "lookup", ref: unresolved }
-    // A bare `/docs/<topic code>` — what the topic picker navigates to —
+    // A bare `/<topic code>` — what the topic picker navigates to —
     // asks for that topic's starters, so it opens the first of them rather
     // than one of the reader's own files.
     if (topicCode && !topic && !doc) {
@@ -300,8 +300,9 @@ export function canonicalEditorUrl(
   const rest = params.toString()
   // Segment-wise, like `editorHrefForSelection` — `URLSearchParams` would
   // percent-encode the path's own slashes into an unreadable `%2F`.
-  // A public file's address is `/docs/<topic code>/<path>`, which is also
-  // what turns an old `?topic=<path>` link into the new form. The code is the
+  // A public file's address is `/<topic code>/<path>`, which is also
+  // what turns an old `?topic=<path>` or `/docs/<topic code>/<path>` link
+  // into the new form. The code is the
   // one the reader is already under, else the default topic's.
   // One of the reader's own files goes to `/<username>/<path>` — the
   // username already in the address while it names this file (someone else's

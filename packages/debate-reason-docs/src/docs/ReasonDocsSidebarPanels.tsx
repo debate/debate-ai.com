@@ -21,7 +21,7 @@
  *
  * Picking a file anywhere routes to `/<username>/<file path>` for one of the
  * reader's own files (`/reason-editor?doc=<file path>` before the username is
- * known), or `/docs/<topic code>/<file path>` for a public topic starter, which brings Debate Editor up
+ * known), or `/<topic code>/<file path>` for a public topic starter, which brings Debate Editor up
  * in the main column with that file loaded — see `ReasonDocsRouteSync` for why
  * the selection travels in the URL and not only in provider state, and
  * `lib/reason-docs/doc-path.ts` for how the file's own name becomes that URL.
@@ -484,7 +484,7 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
   }, [])
 
   const onEditorRoute = isEditorPathname(pathname)
-  // The topic the reader is browsing (`vcx27` on `/docs/vcx27/...`), which
+  // The topic the reader is browsing (`vcx27` on `/vcx27/...`), which
   // every starter link keeps; `null` off a topic address, for the default.
   const topicCode = topicCodeFromPathname(pathname)
   // Each format / year / topic has its own tree: the rows filed under the
