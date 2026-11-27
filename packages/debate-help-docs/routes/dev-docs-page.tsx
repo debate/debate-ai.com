@@ -36,8 +36,6 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
 
   const loaded = await page.data.load();
   const { body: MDX, toc } = loaded;
-  // Last Git commit date, from the lastModified plugin (source.config.ts).
-  const lastRevised = (loaded as { lastModified?: Date }).lastModified;
   const markdownUrl = devPageMarkdownUrl(page);
   const breadcrumbs = getPageBreadcrumbs(devSource.pageTree, page.url);
 
@@ -55,7 +53,6 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
           />
         </div>
         <MDX components={getMDXComponents({ a: relativeLink(page), DependencyGraph, FileTreeView })} />
-        <LastRevised date={lastRevised} />
       </DocsBody>
     </DocsPage>
   );

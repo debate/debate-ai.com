@@ -1,19 +1,17 @@
 /**
- * "Last revised: <date>" on docs pages: the Git log parser behind the
- * fumadocs-mdx lastModified plugin, the shallow-clone guard, the rendered
- * line, and both page routes wiring it in.
+ * The docs last-edit date: the Git log parser behind the fumadocs-mdx
+ * lastModified plugin and the shallow-clone guard. The date feeds the page Info
+ * button; no page shows a "Last revised" line at the bottom.
  */
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import {
   gitLastModified,
   parseGitLog,
 } from '../../../../packages/debate-help-docs/lib/mdx/git-last-modified';
-import { LastRevised } from '../../../../packages/debate-help-docs/components/fumadocs/layout/last-revised';
 
 const docsPkg = resolve(__dirname, '../../../../packages/debate-help-docs');
 
@@ -96,46 +94,22 @@ describe('gitLastModified', () => {
   });
 });
 
-describe('LastRevised', () => {
-  it('renders the label with a machine-readable date', () => {
-    const html = renderToStaticMarkup(<LastRevised date={new Date('2026-11-14T23:00:00Z')} />);
-    expect(html).toContain('Last revised:');
-    expect(html).toContain('<time dateTime="2026-11-14T23:00:00.000Z">November 14, 2026</time>');
-  });
-
-  it('renders nothing without a valid date', () => {
-    expect(renderToStaticMarkup(<LastRevised date={undefined} />)).toBe('');
-    expect(renderToStaticMarkup(<LastRevised date="garbage" />)).toBe('');
-  });
-});
-
 describe('docs routes', () => {
   for (const file of ['docs-page.tsx', 'dev-docs-page.tsx']) {
-    it(`${file} renders the last revised line from the loaded page`, () => {
+    it(`${file} shows no "Last revised" line at the bottom`, () => {
       const route = readFileSync(resolve(docsPkg, 'routes', file), 'utf8');
-      expect(route).toContain('<LastRevised date={lastRevised} />');
-      expect(route).toMatch(/lastModified/);
+      expect(route).not.toMatch(/LastRevised|Last revised/);
     });
   }
 
-  for (const file of ['docs-page.tsx', 'dev-docs-page.tsx']) {
-    it(`${file} puts the line at the bottom of the page, after the content`, () => {
-      const route = readFileSync(resolve(docsPkg, 'routes', file), 'utf8');
-      const lines = route.split('<LastRevised date={lastRevised} />');
-      expect(lines).toHaveLength(2);
-      expect(route.lastIndexOf('<MDX')).toBeLessThan(route.indexOf('<LastRevised date={lastRevised} />'));
-    });
-  }
-
-  it('docs-page.tsx leaves the line off the Synergy-style papers', () => {
+  it('docs-page.tsx leaves the last-edit date off the Synergy-style papers', () => {
     const route = readFileSync(resolve(docsPkg, 'routes', 'docs-page.tsx'), 'utf8');
-    expect(route).toMatch(/const lastRevised = synergySlayer\s*\?\s*undefined/);
+    expect(route).toMatch(/const lastEdited = synergySlayer\s*\?\s*undefined/);
   });
 
-  it('blog posts render the last revised line after the post', () => {
+  it('blog posts show no "Last revised" line after the post', () => {
     const route = readFileSync(resolve(docsPkg, '../../apps/debate-web/app/blog/[slug]/page.tsx'), 'utf8');
-    expect(route).toContain('<LastRevised date={lastRevised} />');
-    expect(route.lastIndexOf('<MDX')).toBeLessThan(route.indexOf('<LastRevised date={lastRevised} />'));
+    expect(route).not.toMatch(/LastRevised|Last revised/);
   });
 
   it('source.config.ts enables the lastModified plugin', () => {

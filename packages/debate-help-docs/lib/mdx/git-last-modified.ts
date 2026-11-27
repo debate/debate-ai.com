@@ -78,7 +78,7 @@ async function isShallow(dir: string): Promise<boolean> {
  * contents). Returns whether the checkout now has full history.
  */
 async function deepenHistory(dir: string): Promise<boolean> {
-  console.info('[docs] Shallow Git checkout: fetching history for "Last revised" dates.');
+  console.info('[docs] Shallow Git checkout: fetching history for last-edit dates.');
   await git(dir, ['fetch', '--quiet', '--no-tags', '--unshallow', '--filter=blob:none'], DEEPEN_TIMEOUT_MS);
   return !(await isShallow(dir));
 }
@@ -88,7 +88,7 @@ async function readDates(dir: string, deepen: boolean): Promise<Map<string, Date
   if (!root) return new Map();
   if ((await isShallow(dir)) && !(deepen && (await deepenHistory(dir)))) {
     console.warn(
-      '[docs] Shallow or unreadable Git checkout: pages get no "Last revised" date from Git. ' +
+      '[docs] Shallow or unreadable Git checkout: pages get no last-edit date from Git. ' +
         'Check out full history (fetch-depth: 0) to enable it.',
     );
     return new Map();
