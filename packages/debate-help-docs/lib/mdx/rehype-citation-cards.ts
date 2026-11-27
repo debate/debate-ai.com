@@ -24,6 +24,7 @@ import path from 'node:path';
 import { DOCS_BASE_PATH } from '../fumadocs/base-path';
 import {
   buildCitationIndex,
+  citeAuthors,
   findCitations,
   parseReferences,
   spokenCite,
@@ -117,6 +118,8 @@ function citationElement(entry: ReferenceEntry, label: string, href: string): Ha
       attribute('citation', entry.citationHtml),
       attribute('card', entry.cardHtml),
       attribute('spoken', spokenCite(entry)),
+      attribute('authors', citeAuthors(entry)),
+      attribute('year', entry.year),
     ],
     children: [{ type: 'text', value: label }],
   };
