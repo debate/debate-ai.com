@@ -60,7 +60,7 @@ import { SpeechStartsDialog, type SpeechDetectionControl } from "@debate-ai/time
 import { ViewCount } from "@debate-ai/rankings/src/view-count"
 
 import { WatchToolbar } from "../../components/videos/watch/WatchToolbar"
-import { WatchSeasonTopic } from "../../components/videos/watch/WatchSeasonTopic"
+import { VideoDateBadge } from "../../components/videos/card/VideoDateBadge"
 import { seasonYearForDate } from "../../data/video-rows"
 import { WatchSidePanel, type WatchSideTab } from "../../components/videos/watch/WatchSidePanel"
 import type { LinkedVideo } from "../../components/videos/watch/WatchAnalysisPanel"
@@ -1190,32 +1190,13 @@ export function VideoWatchPage({
                       )}
                     </div>
                     {year && (
-                        <span className="flex flex-col items-center gap-0.5">
-                          <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
-                            '{String(year).slice(-2)}
-                          </span>
-                          {/* The year already says when, so the upload date
-                              under it is just the month, colored per month. */}
-                          {monthLabel && (
-                            <span
-                              title={formatVideoDate(date, "full")}
-                              className={cn(
-                                "text-[11px] font-semibold leading-none backdrop-blur-md border px-1.5 py-0.5 rounded shadow-sm",
-                                getMonthBadgeColor(date),
-                              )}
-                            >
-                              {monthLabel}
-                            </span>
-                          )}
-                          {/* The topic season, with the resolution debated
-                              that season on hover. */}
-                          <WatchSeasonTopic
-                            seasonYear={seasonYear}
-                            style={formatStyle}
-                            topics={videoLibraryMeta?.topics}
-                          />
-                        </span>
-                      )}
+                      <VideoDateBadge
+                        date={date}
+                        seasonYear={seasonYear}
+                        style={formatStyle}
+                        topics={videoLibraryMeta?.topics}
+                      />
+                    )}
                   </div>
                 )}
                 {/* Style, views and duration — stacked vertically after the

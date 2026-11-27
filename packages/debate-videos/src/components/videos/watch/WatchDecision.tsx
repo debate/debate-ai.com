@@ -2,8 +2,8 @@
 
 /**
  * @fileoverview What the watch page shows once "Reveal decision" is clicked:
- * the overall decision (winner and ballot count) and, underneath, each judge
- * with the team they voted for. A round whose result can't be found shows a
+ * the overall decision (winner and ballot count) and, underneath, the judges
+ * listed under the team they voted for (blue Aff, red Neg). A round whose result can't be found shows a
  * "?" — unknown, not an error.
  *
  * Rendered only after the click; nothing in it exists in the initial markup.
@@ -53,6 +53,12 @@ export function WatchDecision({
   })
   const known = summary !== null
   const waiting = loading && !known
+  const judgesBySide = {
+    aff: decision.judges.filter((judge) => judge.side === "aff"),
+    neg: decision.judges.filter((judge) => judge.side === "neg"),
+    unknown: decision.judges.filter((judge) => judge.side === null),
+  }
+  const sidesWithVotes = [...judgesBySide.aff, ...judgesBySide.neg]
 
   return (
     <div className={cn("flex flex-col gap-1 text-xs", className)} data-testid="watch-decision">
@@ -79,27 +85,40 @@ export function WatchDecision({
       )}
 
       {decision.judges.length > 0 && (
-        <ul className="flex flex-col gap-0.5" aria-label="Judges and their votes" data-testid="decision-judges">
-          {decision.judges.map((judge, index) => (
-            <li key={`${judge.name}-${index}`} className="flex flex-wrap items-baseline gap-1">
-              <span className="font-medium text-foreground">{judge.name}</span>{" "}
-              <span className="text-muted-foreground">voted</span>{" "}
-              {judge.side ? (
-                <span
-                  className={cn("font-medium", SIDE_TEXT[judge.side])}
-                  data-side={judge.side}
-                >
-                  {sideLabel(judge.side, judge.side === "aff" ? affTeam : negTeam)}
-                  {judge.squirreled ? "*" : ""}
-                </span>
-              ) : (
-                <span className="font-medium text-muted-foreground" data-side="unknown">
-                  ?
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
+        <div className="flex flex-col gap-1" aria-label="Judges and their votes" data-testid="decision-judges">
+          {sidesWithVotes.length > 0 && (
+            <div className="grid grid-cols-2 gap-x-4">
+              {(["aff", "neg"] as const).map((side) => (
+                <div key={side} className="flex flex-col gap-0.5" data-testid={`decision-judges-${side}`}>
+                  <span className={cn("font-medium", SIDE_TEXT[side])}>
+                    {sideLabel(side, side === "aff" ? affTeam : negTeam)}
+                  </span>
+                  <ul className="flex flex-col gap-0.5" aria-label={`Judges who voted ${side === "aff" ? "Aff" : "Neg"}`}>
+                    {judgesBySide[side].map((judge, index) => (
+                      <li key={`${judge.name}-${index}`} className="font-medium text-foreground">
+                        {judge.name}
+                        {judge.squirreled ? "*" : ""}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
+          {judgesBySide.unknown.length > 0 && (
+            <ul
+              className="flex flex-wrap gap-x-1.5 text-muted-foreground"
+              aria-label="Judges whose vote is unknown"
+              data-testid="decision-judges-unknown"
+            >
+              {judgesBySide.unknown.map((judge, index) => (
+                <li key={`${judge.name}-${index}`}>
+                  <span className="font-medium text-foreground">{judge.name}</span> (side unknown)
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
 
       {decision.url && decision.source && (
