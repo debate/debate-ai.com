@@ -16,7 +16,6 @@ import { Sparkles } from 'lucide-react';
 import { LLMCopyButton } from '../components/fumadocs/ai/llm-copy-button';
 import { PageNavigationMenu } from '../components/fumadocs/layout/page-navigation-menu';
 import { getPageBreadcrumbs } from '../lib/fumadocs/page-breadcrumbs';
-import { LastRevised } from '../components/fumadocs/layout/last-revised';
 import { DependencyGraph, FileTreeView } from '../components/code-graph/package-code-graph';
 import { DOCS_AI_PROVIDERS } from '../lib/fumadocs/ask-ai-providers';
 import { devPageMarkdownUrl, devSource, type DevPage } from '../lib/fumadocs/dev-source';
