@@ -13,9 +13,13 @@
  *
  * The history is one list for the page and reading mode's copy of it: an
  * entry whose text is no longer on the page (reading mode closed) is dropped
- * when it comes up. The last `MARK_HISTORY_LIMIT` changes are kept; a new
- * change clears what could be redone.
+ * when it comes up. Summary tags (`@debate-ai/reading-mode/summary-tags`) are
+ * attributes on the highlights, so they are undone and redone the same way;
+ * every recorded change ends by syncing their badges. The last
+ * `MARK_HISTORY_LIMIT` changes are kept; a new change clears what could be redone.
  */
+
+import { syncSummaryTags } from "@debate-ai/reading-mode/summary-tags"
 
 /** How many changes are kept (the menu promises at least 30). */
 export const MARK_HISTORY_LIMIT = 50
@@ -83,7 +87,11 @@ function revert(records: MutationRecord[]) {
  * Pass the same `group` for consecutive calls that are one change to the reader.
  */
 export function recordMarkChange<T>(root: HTMLElement, action: () => T, group?: string): T {
-  const { result, records } = capture(root, action)
+  const { result, records } = capture(root, () => {
+    const done = action()
+    syncSummaryTags(root)
+    return done
+  })
   if (records.length === 0) return result
   const last = undoStack[undoStack.length - 1]
   if (group && last && last.group === group && last.root === root) {
