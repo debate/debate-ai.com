@@ -49,7 +49,7 @@ function isUnder(normalized: string, root: string): boolean {
 export function showsReasonDocsPanels(pathname: string | null | undefined): boolean {
   if (!pathname) return false
   const normalized = normalize(pathname)
-  // A topic starter's `/docs/<topic code>/...` or a personal file's
+  // A topic starter's `/<topic code>/...` or a personal file's
   // `/<username>/<path>` address is the editor too.
   return (
     REASON_DOCS_SIDEBAR_ROOTS.some((root) => isUnder(normalized, root)) ||

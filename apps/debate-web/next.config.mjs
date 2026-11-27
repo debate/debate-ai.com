@@ -14,6 +14,14 @@ const monoRoot = resolve(__dirname, "../..");
  */
 const HTML_LIMITED_BOTS = String.raw`Googlebot|(?:^|[^\w-])[\w-]+-Google|Google-[\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|meta-externalagent|meta-externalfetcher|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight`;
 
+/**
+ * A Topic Starter's topic code (`vcx27`, `lda27`, `pfb27`, …) as a path
+ * segment pattern. The same shape as `TOPIC_CODE_SOURCE` in
+ * @debate-ai/reason-docs' lib/reason-docs/topic-doc-paths, which a test keeps
+ * this copy equal to (this file is plain JS loaded before the TS packages).
+ */
+export const TOPIC_CODE_SOURCE = "vcx19\\d{2}|ld[a-z]19\\d{2}|(?:vcx|ndt|bq)\\d{2}|(?:ld|pf)[a-z]\\d{2}|(?:ld|pf)\\d{2}[a-z]";
+
 /** @type {import('next').NextConfig} */
 /** Sections of the old Framework page that now live on LD Philosophers (ld-ethics). */
 const LD_PHILOSOPHER_SECTIONS = [
@@ -51,6 +59,26 @@ const FEATURES_GROUP_PAGE = {
   "tournaments-judge": "tournaments-debaters",
   "ui-navigation": "app-ui",
   "video-library": "videos",
+};
+
+// The November 2026 Synergy Slayer of Critiques revision merged sections 4–6
+// and 11 into their neighbours and moved The Alternative ahead of the
+// critical theories; each old section slug maps to the page that holds it now.
+const CRITIQUES_SECTION_MOVED = {
+  "04-exigency-and-moral-negligence": "03-nirvana-fallacy",
+  "05-mindset-fiat-is-not-solvency": "03-nirvana-fallacy",
+  "06-selling-vs-debating": "02-original-sin",
+  "07-equal-epistemic-standing": "04-equal-epistemic-standing",
+  "11-fear-of-death": "10-security-discourse",
+  "12-heidegger-calculative-thinking": "11-heidegger-calculative-thinking",
+  "13-biopolitics": "12-biopolitics",
+  "14-discursive-sound-bite-sophistry": "13-discursive-sound-bite-sophistry",
+  "15-nietzsche": "14-nietzsche",
+  "16-settler-colonialism": "15-settler-colonialism",
+  "17-vote-synergy-or-die": "05-vote-synergy-or-die",
+  "18-theory-into-action": "06-theory-into-action",
+  "19-rainbow-coalition": "07-rainbow-coalition",
+  "20-duel-critique": "16-duel-critique",
 };
 
 const nextConfig = {
@@ -147,16 +175,29 @@ const nextConfig = {
         destination: "/@:handle",
         permanent: true,
       },
-      // High-school policy topic codes were `vcs<yy>` before they became
-      // `vcx<yy>`; old Topic Starter links 308 to the new code.
+      // Topic Starters moved from `/docs/<topic code>/…` to `/<topic code>/…`
+      // (see `rewrites` below); every old link 308s to the new address with
+      // its path and query string, and the browser carries a `#hash` over.
+      // High-school policy codes were `vcs<yy>` before they became `vcx<yy>`,
+      // so those old links go straight to the new code in one hop.
       {
         source: "/docs/vcs:yy(\\d{2})",
-        destination: "/docs/vcx:yy",
+        destination: "/vcx:yy",
         permanent: true,
       },
       {
         source: "/docs/vcs:yy(\\d{2})/:path*",
-        destination: "/docs/vcx:yy/:path*",
+        destination: "/vcx:yy/:path*",
+        permanent: true,
+      },
+      {
+        source: `/docs/:code(${TOPIC_CODE_SOURCE})`,
+        destination: "/:code",
+        permanent: true,
+      },
+      {
+        source: `/docs/:code(${TOPIC_CODE_SOURCE})/:path*`,
+        destination: "/:code/:path*",
         permanent: true,
       },
       // The October 2026 Synergy Slayer of Critiques revision renumbered
@@ -186,6 +227,11 @@ const nextConfig = {
         "19-duel-critique": "20-duel-critique",
       }).map(([from, to]) => ({
         source: `/docs/learn/critiques/synergy-slayer-critiques/${from}`,
+        destination: `/docs/journal/synergy-slayer-critiques/${CRITIQUES_SECTION_MOVED[to] ?? to}`,
+        permanent: true,
+      })),
+      ...Object.entries(CRITIQUES_SECTION_MOVED).map(([from, to]) => ({
+        source: `/docs/journal/synergy-slayer-critiques/${from}`,
         destination: `/docs/journal/synergy-slayer-critiques/${to}`,
         permanent: true,
       })),
@@ -501,19 +547,18 @@ const nextConfig = {
       })),
     ];
   },
-  // A public Topic Starter's address is `/docs/<topic code>/<file path>`
-  // (`/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026`), served by the
-  // Debate Editor page, which reads the code and file back off the
-  // address bar. `beforeFiles`, because `/docs/[[...slug]]` (the help docs)
-  // would otherwise claim it; only a first segment shaped like a topic code is
-  // rewritten, so every help page keeps its URL. The shape is
-  // `TOPIC_CODE_SOURCE` in @debate-ai/webview's lib/reason-docs/topic-doc-paths.
+  // A public Topic Starter's address is `/<topic code>/<file path>`
+  // (`/vcx27/neg/cp/aca-expansion-cp-cndi-2026`), served by the Debate Editor
+  // page, which reads the code and file back off the address bar.
+  // `beforeFiles`, because `app/[username]/[...path]` (personal files) would
+  // otherwise claim it. Only a first segment shaped like a topic code is
+  // rewritten, a shape no top-level page, static file or username can take
+  // (`lib/__tests__/topic-starter-routes.test.ts`), so nothing else is shadowed.
   async rewrites() {
-    const topicCode = "vcx19\\d{2}|ld[a-z]19\\d{2}|(?:vcx|ndt|bq)\\d{2}|(?:ld|pf)[a-z]\\d{2}|(?:ld|pf)\\d{2}[a-z]";
     return {
       beforeFiles: [
-        { source: `/docs/:code(${topicCode})`, destination: "/reason-editor" },
-        { source: `/docs/:code(${topicCode})/:path*`, destination: "/reason-editor" },
+        { source: `/:code(${TOPIC_CODE_SOURCE})`, destination: "/reason-editor" },
+        { source: `/:code(${TOPIC_CODE_SOURCE})/:path*`, destination: "/reason-editor" },
       ],
       afterFiles: [
         { source: "/@:handle", destination: "/teams/:handle" },

@@ -1,6 +1,6 @@
 /**
  * @file journal-masthead.tsx
- * @description The masthead at the top of the Research Journal page
+ * @description The masthead at the top of the Debate Argument Intelligence Journal page
  * (`content/docs/journal/index.mdx`), laid out like an academic journal's home
  * page: a typeset cover, the journal's title block (publisher, ISSN,
  * format, coverage, indexing) and a row of section links.
@@ -14,8 +14,9 @@ import type { ReactNode } from "react"
 
 /** The journal's own details. Replace a "pending" value once it is real. */
 export const JOURNAL = {
-  name: "Debate AI Research Journal",
-  shortName: "DARJ",
+  name: "Debate Argument Intelligence Journal",
+  tagline: "Research Journal",
+  shortName: "DAIJ",
   publisher: "Debate AI Institute",
   publisherUrl: "https://debate-ai.com",
   issnOnline: "Pending assignment",
@@ -32,6 +33,7 @@ const NAV: { label: string; href: string }[] = [
   { label: "Home", href: "/docs/journal" },
   { label: "Issue Contents", href: "#issue-contents" },
   { label: "Contributor Notes", href: "#contributor-notes" },
+  { label: "Site Format", href: "#site-format" },
   { label: "Submissions", href: "#submissions" },
   { label: "Call for Papers", href: "#call-for-papers" },
 ]
@@ -77,7 +79,7 @@ export function JournalMasthead() {
             {JOURNAL.shortName}
           </span>
           <span className="border-t border-fd-primary pt-1 text-[0.6rem] uppercase tracking-[0.15em] text-fd-muted-foreground">
-            Research Journal
+            {JOURNAL.tagline}
             <br />
             Vol. 1 · 2026
           </span>
@@ -87,6 +89,9 @@ export function JournalMasthead() {
           <h2 className="font-serif text-2xl font-bold leading-tight text-fd-foreground">
             {JOURNAL.name}
           </h2>
+          <p className="mt-0.5 font-serif text-base italic text-fd-muted-foreground">
+            {JOURNAL.tagline}
+          </p>
           <p className="mt-1 text-sm text-fd-muted-foreground">
             Published by{" "}
             <a href={JOURNAL.publisherUrl} className="text-fd-primary hover:underline">
