@@ -55,6 +55,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "build-ndt-history": "bun run src/sync/ndt-school-history-cli.ts",
+    "sync-college-participants": "bun run src/sync/college-participants-cli.ts",
     "sync-npdl": "bun run src/sync/npdl-rankings-cli.ts"
   },
   "dependencies": {

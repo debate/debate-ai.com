@@ -13,8 +13,13 @@
  * PF finals and top speakers (2017–2019, 2022, 2024), and the Glenbrooks'
  * Policy, LD and PF finals, named semifinalists and top speakers (1980 on).
  * On top of that, each debater who went on to debate in college adds a share
- * of their own all-seasons NDT points ({@link HS_ALL_TIME_COLLEGE_SHARE}),
- * high school credit left out so it isn't counted twice.
+ * ({@link HS_ALL_TIME_COLLEGE_SHARE}) of their own all-seasons NDT points,
+ * high school credit left out so it isn't counted twice, plus one college
+ * point just for participating ({@link HS_ALL_TIME_PARTICIPATION_POINTS}):
+ * a debater with an NDT record, or one College Debate Results lists
+ * (`sync/college-participants`) under a matching name who first debated after
+ * their last high school nationals, counts once, at the same share, with or
+ * without NDT points.
  *
  * A "team" is a pair in Policy and Public Forum and one debater in
  * Lincoln-Douglas, at one school, across every year it debated. Sources
@@ -35,6 +40,7 @@
  * @module leaderboard/profile/hsAllTimeTeams
  */
 
+import type { CollegeParticipant } from "../../sync/college-participants"
 import { BARKLEY_RESULTS, type BarkleyResult } from "../../sync/barkley-champions"
 import { CAL_RESULTS, type CalResult } from "../../sync/berkeley-champions"
 import { GLENBROOKS_RESULTS, type GlenbrooksResult } from "../../sync/glenbrooks-champions"
@@ -62,6 +68,27 @@ export type HsAllTimeTournament = "TOC" | "NDCA" | "Barkley" | "Cal" | "Glenbroo
  * not buried under a single large college score.
  */
 export const HS_ALL_TIME_COLLEGE_SHARE = 0.35
+
+/**
+ * College points a debater gets just for debating in college, in the same
+ * unit as NDT points (so it counts at {@link HS_ALL_TIME_COLLEGE_SHARE}), added
+ * once on top of any NDT points.
+ */
+export const HS_ALL_TIME_PARTICIPATION_POINTS = 1
+
+/**
+ * How many years after a high school debater's last nationals the first
+ * college season in College Debate Results may end and still be them, so a
+ * same-named debater from another generation isn't credited.
+ */
+export const HS_COLLEGE_MAX_GAP_YEARS = 3
+
+/**
+ * The longest a college record may run (first season to last, in years) and
+ * still be a student's: a record spanning decades is a coach or judge who
+ * shares the name.
+ */
+export const HS_COLLEGE_MAX_CAREER_YEARS = 6
 
 /**
  * Base points per national finish, TOC, NDCA, Barkley Forum, Cal and Glenbrooks alike: the
@@ -110,14 +137,27 @@ export interface HsAllTimeCollege {
   debater: string
   /** Their NDT school, e.g. `"Northwestern University (IL)"`. */
   school: string
-  /** Their own all-seasons NDT points, high school credit left out. */
+  /** Their own all-seasons NDT points, high school credit left out; 0 for a debater only College Debate Results lists. */
   collegePoints: number
-  /** What it adds to the team: {@link collegePoints} times {@link HS_ALL_TIME_COLLEGE_SHARE}. */
+  /** The participation point ({@link HS_ALL_TIME_PARTICIPATION_POINTS}); every listed college debater has it. */
+  participationPoints: number
+  /** Where the participation comes from: an NDT record, or College Debate Results alone. */
+  participation: "ndt" | "results"
+  /** What it adds to the team: ({@link collegePoints} + {@link participationPoints}) times {@link HS_ALL_TIME_COLLEGE_SHARE}. */
   credit: number
 }
 
 /** A debater's college NDT points by name, or `null` for one who didn't debate at the NDT. */
 export type HsCollegeLookup = (debater: string) => { school: string; points: number } | null
+
+/** The years a high school team debated, to tell its debaters from same-named college debaters. */
+export interface HsDebaterYears {
+  firstYear: number
+  lastYear: number
+}
+
+/** The college debater College Debate Results lists under a high school debater's name, or `null`. */
+export type HsParticipationLookup = (debater: string, years: HsDebaterYears) => CollegeParticipant | null
 
 /** One team in an event's all-time list. */
 export interface HsAllTimeTeam {
@@ -230,6 +270,35 @@ export function collegeLookupFromNdt(table: Pick<NdtAllSeasonsTable, "debaters">
   return (debater) => bySlug.get(profileSlug(NDCA_NAME_ALIASES[debater] ?? debater)) ?? null
 }
 
+/**
+ * A lookup of the college debaters College Debate Results lists, by name. A
+ * name matches on {@link sameHsDebater} (same surname, given names that
+ * agree) and counts only when the college debater's first season ended after
+ * the high school debater's last nationals and within
+ * {@link HS_COLLEGE_MAX_GAP_YEARS} of it, their record spans at most
+ * {@link HS_COLLEGE_MAX_CAREER_YEARS} years, and exactly one such college debater
+ * has the name; two same-named candidates are left uncredited, since they
+ * can't be told apart.
+ */
+export function participationLookupFromResults(participants: readonly CollegeParticipant[]): HsParticipationLookup {
+  const bySurname = new Map<string, CollegeParticipant[]>()
+  for (const participant of participants) {
+    const key = nameKey(lastWord(canonicalHsDebater(participant.name)))
+    bySurname.set(key, [...(bySurname.get(key) ?? []), participant])
+  }
+  return (debater, { lastYear }) => {
+    const name = canonicalHsDebater(debater)
+    const matches = (bySurname.get(nameKey(lastWord(name))) ?? []).filter(
+      (p) =>
+        sameHsDebater(name, p.name) &&
+        p.firstYear > lastYear &&
+        p.firstYear <= lastYear + HS_COLLEGE_MAX_GAP_YEARS &&
+        p.lastYear - p.firstYear <= HS_COLLEGE_MAX_CAREER_YEARS,
+    )
+    return matches.length === 1 ? matches[0] : null
+  }
+}
+
 /** Inputs to {@link buildHsAllTimeTeams}; each defaults to the bundled history, college to none. */
 export interface HsAllTimeSources {
   toc?: readonly TocResult[]
@@ -238,6 +307,8 @@ export interface HsAllTimeSources {
   cal?: readonly CalResult[]
   glenbrooks?: readonly GlenbrooksResult[]
   college?: HsCollegeLookup | null
+  /** The college debaters College Debate Results lists; each gets {@link HS_ALL_TIME_PARTICIPATION_POINTS}. */
+  participation?: HsParticipationLookup | null
 }
 
 interface Building {
@@ -258,7 +329,7 @@ interface Building {
  * @param input - The results to score and the college lookup ({@link HsAllTimeSources}).
  */
 export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllTimeEvent, HsAllTimeTeam[]> {
-  const { toc = TOC_HISTORY, ndca = NDCA_HISTORY, barkley = BARKLEY_RESULTS, cal = CAL_RESULTS, glenbrooks = GLENBROOKS_RESULTS, college = null } = input
+  const { toc = TOC_HISTORY, ndca = NDCA_HISTORY, barkley = BARKLEY_RESULTS, cal = CAL_RESULTS, glenbrooks = GLENBROOKS_RESULTS, college = null, participation = null } = input
   const events = new Set<string>(HS_ALL_TIME_EVENTS)
   const rows = sources(toc, ndca, barkley, cal, glenbrooks).filter(
     (r) => events.has(r.event) && !r.partialNames && HS_ALL_TIME_POINTS[r.place] !== undefined,
@@ -353,20 +424,31 @@ export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllT
   >
   for (const team of [...teams.values()].flat()) {
     const finishes = [...team.finishes].sort((a, b) => a.year - b.year)
-    const years = finishes.map((f) => f.year)
+    const finishYears = finishes.map((f) => f.year)
+    const years = { firstYear: Math.min(...finishYears), lastYear: Math.max(...finishYears) }
     const nationals = round2(finishes.reduce((sum, f) => sum + f.points, 0))
-    const collegeRecords: HsAllTimeCollege[] = college
-      ? team.names
-          .map((debater, i) => {
-            // Any spelling the sources used; the NDT may know only one.
-            const record = [debater, ...team.spellings[i]].map(college).find((found) => found) ?? null
-            return record
-              ? { debater, school: record.school, collegePoints: record.points, credit: round2(record.points * HS_ALL_TIME_COLLEGE_SHARE) }
-              : null
-          })
-          .filter((record): record is HsAllTimeCollege => record !== null)
-          .sort((a, b) => b.credit - a.credit)
-      : []
+    const collegeRecords: HsAllTimeCollege[] =
+      college || participation
+        ? team.names
+            .map((debater, i): HsAllTimeCollege | null => {
+              // Any spelling the sources used; the college sources may know only one.
+              const spellings = [debater, ...team.spellings[i]]
+              const ndt = college ? (spellings.map(college).find(Boolean) ?? null) : null
+              const listed = ndt || !participation ? null : (spellings.map((name) => participation(name, years)).find(Boolean) ?? null)
+              if (!ndt && !listed) return null
+              const collegePoints = ndt?.points ?? 0
+              return {
+                debater,
+                school: ndt?.school ?? listed?.school ?? "",
+                collegePoints,
+                participationPoints: HS_ALL_TIME_PARTICIPATION_POINTS,
+                participation: ndt ? "ndt" : "results",
+                credit: round2((collegePoints + HS_ALL_TIME_PARTICIPATION_POINTS) * HS_ALL_TIME_COLLEGE_SHARE),
+              }
+            })
+            .filter((record): record is HsAllTimeCollege => record !== null)
+            .sort((a, b) => b.credit - a.credit)
+        : []
     const collegeCredit = round2(collegeRecords.reduce((sum, r) => sum + r.credit, 0))
     out[team.event].push({
       rank: 0,
@@ -376,8 +458,8 @@ export function buildHsAllTimeTeams(input: HsAllTimeSources = {}): Record<HsAllT
       sourceSchool: team.sourceSchool,
       debaters: team.names.join(" & "),
       lastNames: team.names.map(lastWord).join(" & "),
-      firstYear: Math.min(...years),
-      lastYear: Math.max(...years),
+      firstYear: years.firstYear,
+      lastYear: years.lastYear,
       total: round2(nationals + collegeCredit),
       nationals,
       collegeCredit,
@@ -483,13 +565,20 @@ export function hsAllTimeTeams(): Record<HsAllTimeEvent, HsAllTimeTeam[]> {
 let loading: Promise<Record<HsAllTimeEvent, HsAllTimeTeam[]>> | null = null
 
 /**
- * {@link buildHsAllTimeTeams} with every debater's college record, once the
- * bundled NDT history has loaded (shared with the college all-seasons table).
+ * {@link buildHsAllTimeTeams} with every debater's college record (NDT points
+ * and College Debate Results participation), once the bundled NDT history has
+ * loaded (shared with the college all-seasons table).
  */
 export function loadHsAllTimeTeams(): Promise<Record<HsAllTimeEvent, HsAllTimeTeam[]>> {
   loading ??= import("./ndtAllTimeRanks")
     .then(({ loadNdtAllSeasonsTable }) => loadNdtAllSeasonsTable())
-    .then(({ table }) => buildHsAllTimeTeams({ college: collegeLookupFromNdt(table) }))
+    .then(async ({ table }) => {
+      const results = await import("../../../data/college-results-participants.json")
+      return buildHsAllTimeTeams({
+        college: collegeLookupFromNdt(table),
+        participation: participationLookupFromResults(results.default as CollegeParticipant[]),
+      })
+    })
     .catch((error) => {
       loading = null
       throw error
