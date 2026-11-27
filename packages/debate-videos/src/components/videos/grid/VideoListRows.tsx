@@ -127,10 +127,15 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   tree: 400,
   aff: 150,
   neg: 150,
-  date: 110,
-  views: 90,
+  // Just the stacked date badge and the cell's left padding, so Views sits
+  // right against it.
+  date: 64,
+  views: 72,
   watched: 120,
 }
+
+/** A round table's tournament rows print a full date ("Nov 26, 2026"), which needs more than the badge does. */
+const ROUND_DATE_COLUMN_WIDTH = 88
 
 /** Widest the tree column gets on a phone, so the next column shows beside it. */
 const TREE_COLUMN_PHONE_MAX = "85vw"
@@ -139,7 +144,6 @@ const DATE_COLUMN: ColumnDef = { key: "date", label: "Date", sortValue: (v) => n
 const VIEWS_COLUMN: ColumnDef = {
   key: "views",
   label: "Views",
-  headerClassName: "text-right",
   sortValue: (v) => v[4] ?? 0,
 }
 
@@ -271,7 +275,9 @@ export function VideoListRows({
         : baseColumns,
     [baseColumns, showWatched, watchHistory],
   )
-  const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
+  const { widths, startResize } = useResizableColumns(
+    isRoundMode ? { ...DEFAULT_COLUMN_WIDTHS, date: ROUND_DATE_COLUMN_WIDTH } : DEFAULT_COLUMN_WIDTHS,
+  )
   const tableWidth = columns.reduce((total, column) => total + widths[column.key], 0)
 
   const [sortColumn, setSortColumn] = useState<ColumnKey | null>(defaultSort?.column ?? null)
@@ -423,10 +429,7 @@ export function VideoListRows({
                   <button
                     type="button"
                     onClick={() => handleSort(column)}
-                    className={cn(
-                      "flex items-center gap-1 hover:text-foreground",
-                      column.headerClassName?.includes("text-right") && "ml-auto",
-                    )}
+                    className="flex items-center gap-1 hover:text-foreground"
                   >
                     {column.label}
                     {sortColumn === column.key &&

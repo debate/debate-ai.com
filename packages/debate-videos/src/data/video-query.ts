@@ -18,6 +18,12 @@ import type {
 import type { VideoRow } from "./video-rows";
 import { DEMO_CATEGORY_KEY } from "./demo-style";
 import { MISCELLANEOUS_CATEGORY } from "./lecture-classifier";
+import {
+  isOpenPublicKey,
+  isOpenPublicRow,
+  OPEN_PUBLIC_CATEGORY_KEY,
+  OPEN_PUBLIC_CATEGORY_LABEL,
+} from "./open-public";
 import { isUnsortedLecture, LEGACY_SEASON, MISCELLANEOUS_CATEGORY_KEY, normalizeCategoryKey } from "./video-rows";
 
 export type {
@@ -164,6 +170,7 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
   // mapped onto the shelf it was folded into.
   const categoryKey = params.categoryKey ? normalizeCategoryKey(params.categoryKey) : null;
   const categoryStyle = categoryKey ? STYLE_FOR_CATEGORY_KEY[categoryKey] : undefined;
+  const openPublic = isOpenPublicKey(categoryKey);
   // An empty allow-list matches nothing (an empty history or favourites list),
   // exactly as the API answers it; only `null` means "no id filter".
   const idSet = params.ids ? new Set(params.ids) : null;
@@ -182,6 +189,7 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
       categoryKey &&
       row.categoryKey !== categoryKey &&
       (categoryStyle === undefined || row.style !== categoryStyle) &&
+      !(openPublic && isOpenPublicRow(row)) &&
       !(categoryKey === MISCELLANEOUS_CATEGORY_KEY && isUnsortedLecture(row))
     ) {
       return false;
@@ -314,7 +322,20 @@ export const HIDDEN_LECTURE_CATEGORIES = new Set(["Awards"]);
 export function computeLectureCategories(rows: VideoRow[]): LectureCategoryFacet[] {
   const byLabel = new Map<string, LectureCategoryFacet>();
 
+  const openPublic: LectureCategoryFacet = {
+    key: OPEN_PUBLIC_CATEGORY_KEY,
+    label: OPEN_PUBLIC_CATEGORY_LABEL,
+    count: 0,
+    maxViews: 0,
+  };
+
   for (const row of rows) {
+    // Open Public is a view over two other categories, so a row counts toward
+    // its own card and this one.
+    if (isOpenPublicRow(row)) {
+      openPublic.count += 1;
+      openPublic.maxViews = Math.max(openPublic.maxViews, row.viewCount);
+    }
     // A round normally has no category; one filed under a collection too (an
     // ACC tournament round) counts toward that collection's card, matching
     // what `/videos/<category>` lists.
@@ -334,7 +355,9 @@ export function computeLectureCategories(rows: VideoRow[]): LectureCategoryFacet
     }
   }
 
-  return [...byLabel.values()].sort((a, b) => b.maxViews - a.maxViews);
+  const facets = [...byLabel.values()];
+  if (openPublic.count > 0) facets.push(openPublic);
+  return facets.sort((a, b) => b.maxViews - a.maxViews);
 }
 
 export type { VideoSuggestionKind, VideoSuggestion, VideoSuggestions } from "../types/videos";

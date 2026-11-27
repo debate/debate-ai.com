@@ -170,6 +170,8 @@ describe("TeamProfilePage", () => {
     expect(root.textContent).not.toContain("Elim aff win %");
     expect(root.querySelector('section[aria-label="Win rates"]')).not.toBeNull();
     expect(root.querySelector('section[aria-label="Rating model"]')).toBeNull();
+    expect(root.textContent).toContain("Rank Nationally");
+    expect(root.textContent).not.toContain("Field percentile");
     expect(root.textContent).toContain("Top 33.3%");
     expect(caselistTeamMock.mock.calls[0][0]).toBe(
       "/api/caselist-team?dataset=hspf&school=Harker&team=Kim+%26+Lee",

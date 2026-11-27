@@ -22,6 +22,18 @@ const HTML_LIMITED_BOTS = String.raw`Googlebot|(?:^|[^\w-])[\w-]+-Google|Google-
  */
 export const TOPIC_CODE_SOURCE = "vcx19\\d{2}|ld[a-z]19\\d{2}|(?:vcx|ndt|bq)\\d{2}|(?:ld|pf)[a-z]\\d{2}|(?:ld|pf)\\d{2}[a-z]";
 
+/**
+ * A round video's topic code (`cpd27`, `vcx24`, `ldb23`, `pfa27`) as a path
+ * segment pattern. The same shape as `VIDEO_TOPIC_CODE_SOURCE` in
+ * `@debate-ai/videos`' lib/video-topic-path, which a test keeps this copy
+ * equal to.
+ */
+export const VIDEO_TOPIC_CODE_SOURCE = "(?:vcx|cpd)\\d{2}|ld[a-f]\\d{2}|pf[a-j]\\d{2}";
+
+/** The first path segments of a Topic Starter's files, as a pattern; never a
+ *  tournament. `TOPIC_STARTER_ROOTS` in `@debate-ai/videos`' lib/video-topic-path. */
+export const TOPIC_STARTER_ROOTS = "aff|neg|pro|con";
+
 /** @type {import('next').NextConfig} */
 /** Sections of the old Framework page that now live on LD Philosophers (ld-ethics). */
 const LD_PHILOSOPHER_SECTIONS = [
@@ -554,9 +566,26 @@ const nextConfig = {
   // otherwise claim it. Only a first segment shaped like a topic code is
   // rewritten, a shape no top-level page, static file or username can take
   // (`lib/__tests__/topic-starter-routes.test.ts`), so nothing else is shadowed.
+  //
+  // A round video's short address, `/<topic code>/<tournament>/<round>/<teams>`
+  // (`/cpd27/shirley/octofinals/kansas-ss-harvard-ab`), shares the first
+  // segment with Topic Starters. Rules match in order, so a path under a Topic
+  // Starter root (`aff`, `neg`, `pro`, `con`) goes to the editor first; then
+  // three to six segments after a video code (tournament, round, teams, then
+  // the variant, speech and view) go to the video page (`app/videos/code`),
+  // which serves the editor again when no round has the address; the rest are
+  // Topic Starters. The root list and the segment counts are
+  // `TOPIC_STARTER_ROOTS`, `MIN_ROUND_SEGMENTS` and `MAX_ROUND_SEGMENTS` in
+  // `@debate-ai/videos`' lib/video-topic-path; a test keeps them in step.
   async rewrites() {
+    const videoPath = [":tournament", ":round", ":teams", ":variant", ":speech", ":view"];
     return {
       beforeFiles: [
+        { source: `/:code(${TOPIC_CODE_SOURCE})/:path((?:${TOPIC_STARTER_ROOTS})(?:/.*)?)`, destination: "/reason-editor" },
+        ...[3, 4, 5, 6].map((count) => ({
+          source: `/:code(${VIDEO_TOPIC_CODE_SOURCE})/${videoPath.slice(0, count).join("/")}`,
+          destination: `/videos/code/:code/${videoPath.slice(0, count).join("/")}`,
+        })),
         { source: `/:code(${TOPIC_CODE_SOURCE})`, destination: "/reason-editor" },
         { source: `/:code(${TOPIC_CODE_SOURCE})/:path*`, destination: "/reason-editor" },
       ],
