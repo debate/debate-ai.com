@@ -565,36 +565,9 @@ return (
               </div>
             ) : (
               <>
-                {forumSplit && datasetId ? (
-                  <div className="flex flex-col gap-4 lg:flex-row lg:items-start" data-testid="forum-split">
-                    <div className="min-w-0 flex-1" data-testid="forum-split-left">
-                      {!championsLoading && (
-                        <LeaderboardChampionBanner
-                          compact
-                          division={division}
-                          year={year}
-                          topic={topic}
-                          topicName={topicName}
-                          champion={champion}
-                        />
-                      )}
-                      <RankingsFieldSummary dataset={dataset} />
-                    </div>
-                    <div className="min-w-0 empty:hidden lg:w-7/12" data-testid="forum-split-right">
-                      <HeadToHeadNetworkSection
-                        datasetId={datasetId}
-                        entries={dataset.entries}
-                        formatLabel={divConfig.label}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <RankingsFieldSummary dataset={dataset} />
-                    {isCurrentYear && datasetId && (
-                      <HeadToHeadNetworkSection datasetId={datasetId} entries={dataset.entries} formatLabel={divConfig.label} />
-                    )}
-                  </>
+                <RankingsFieldSummary dataset={dataset} seasonYear={seasonYear} />
+                {isCurrentYear && datasetId && (
+                  <HeadToHeadNetworkSection datasetId={datasetId} entries={dataset.entries} formatLabel={divConfig.label} />
                 )}
                 {dataset.source === "extinction" && (
                   <p className="mb-3 text-xs text-muted-foreground">
