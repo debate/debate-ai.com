@@ -36,6 +36,7 @@ export const LECTURE_CATEGORIES = [
   "Congress",
   "Speech",
   "NSDA Speech",
+  "Open Super Debates",
 ] as const;
 
 export type LectureCategory = (typeof LECTURE_CATEGORIES)[number];
@@ -63,10 +64,15 @@ export const PARLI_TITLE = /\b(?:parli|parliamentary|NPDA|NPTE|APDA|NPDL|NPDI)\b
  * way, and congressional-debate rounds file under the Congress shelf,
  * `/videos/congress`.
  *
+ * Open Super Debates ({@link isSuperDebateVideo}) win over every other
+ * collection, rounds included.
+ *
  * @param title - The video's title.
- * @returns `"ACC"`, `"Congress"`, `"Parli"`, or `null` when the round belongs to no collection.
+ * @param channel - The video's YouTube channel, when known.
+ * @returns `"Open Super Debates"`, `"ACC"`, `"Congress"`, `"Parli"`, or `null` when the round belongs to no collection.
  */
-export function classifyRoundCollection(title: string): LectureCategory | null {
+export function classifyRoundCollection(title: string, channel?: string | null): LectureCategory | null {
+  if (isSuperDebateVideo(title, channel)) return OPEN_SUPER_DEBATES_CATEGORY;
   if (/\bACC\s+Debate\s+Tournament\b/i.test(title)) return "ACC";
   if (/\bcongress\b/i.test(title)) return "Congress";
   if (PARLI_TITLE.test(title)) return "Parli";
@@ -90,21 +96,65 @@ export function isNsdaChannel(channel: string | null | undefined): boolean {
 }
 
 /**
+ * The lecture category every Super Debate video is filed under: the "Open
+ * Super Debates" shelf (`/lectures/open_super_debates`).
+ */
+export const OPEN_SUPER_DEBATES_CATEGORY = "Open Super Debates" satisfies LectureCategory;
+
+/**
+ * Matches "Super Debate", "Super Debater(s)", "SuperDebate", "Super-Debate"
+ * and "super_debate" in any case, in a title or a channel name or handle
+ * (`@SuperDebate`).
+ */
+export const SUPER_DEBATE_PATTERN = /super[\s_-]*debate/i;
+
+/** Whether a YouTube channel is the Super Debate(r) channel. */
+export function isSuperDebateChannel(channel: string | null | undefined): boolean {
+  return !!channel && SUPER_DEBATE_PATTERN.test(channel);
+}
+
+/** Whether a title names Super Debate, e.g. "Chicago Super Debate Night 1 Recap". */
+export function isSuperDebateTitle(title: string | null | undefined): boolean {
+  return !!title && SUPER_DEBATE_PATTERN.test(title);
+}
+
+/**
+ * Whether a video belongs on the Open Super Debates shelf: it comes from the
+ * Super Debate channel, or its title says "Super Debate".
+ */
+export function isSuperDebateVideo(title: string | null | undefined, channel?: string | null): boolean {
+  return isSuperDebateChannel(channel) || isSuperDebateTitle(title);
+}
+
+/**
  * The lecture category a channel forces on its lectures, or `null` when the
- * title decides. Only the NSDA channel does today ({@link isNsdaChannel}).
+ * title decides: the NSDA channel ({@link isNsdaChannel}) and the Super
+ * Debate channel ({@link isSuperDebateChannel}).
  */
 export function lectureCategoryForChannel(channel: string | null | undefined): LectureCategory | null {
+  if (isSuperDebateChannel(channel)) return OPEN_SUPER_DEBATES_CATEGORY;
   return isNsdaChannel(channel) ? NSDA_LECTURE_CATEGORY : null;
 }
 
 /**
- * Files a lecture on a shelf from its title and description. When the
- * channel is given and it forces a shelf ({@link lectureCategoryForChannel}),
- * that wins over the title.
+ * The lecture category a video's channel or title forces on it, or `null`
+ * when the keyword classifier decides. Super Debate videos (see
+ * {@link isSuperDebateVideo}) and NSDA channel lectures are filed on their
+ * own shelves whatever else the title or description says.
+ */
+export function forcedLectureCategory(title: string | null | undefined, channel?: string | null): LectureCategory | null {
+  if (isSuperDebateTitle(title)) return OPEN_SUPER_DEBATES_CATEGORY;
+  return lectureCategoryForChannel(channel);
+}
+
+/**
+ * Files a lecture on a shelf from its title and description. When the title
+ * or channel forces a shelf ({@link forcedLectureCategory}), that wins over
+ * the keywords.
  */
 export function classifyLecture(title: string, description: string, channel?: string | null): string {
-  const byChannel = lectureCategoryForChannel(channel);
-  if (byChannel) return byChannel;
+  const forced = forcedLectureCategory(title, channel);
+  if (forced) return forced;
   const t = title.toLowerCase();
   const d = (description || "").toLowerCase();
   const both = t + " " + d;
