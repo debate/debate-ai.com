@@ -18,7 +18,7 @@ describe("toPaletteVideo", () => {
   it("describes a round by tournament, round and teams, and links its watch page", () => {
     const row = toPaletteVideo(ROUND)
     expect(row).toMatchObject({ id: "abc123", title: "NDT Finals 2022", kind: "round", detail: "NDT · Finals · Dartmouth SV vs Michigan PR" })
-    expect(row.href.startsWith("/videos/")).toBe(true)
+    expect(row.href).toMatch(/^\/cpd22\/ndt\/finals\//)
   })
 
   it("describes a lecture by its channel", () => {

@@ -192,6 +192,23 @@ describe("lecture category sections", () => {
     expect(sectionOf(html, "More")).not.toContain("Open Super Debates");
   });
 
+  it("shows Open Public in Formats after Demo Debates, linked by its slug", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, {
+        categories: [
+          ...categories,
+          { key: "demo_debates", label: "Demo Debates", count: 78, maxViews: 1 },
+          { key: "open_public", label: "Open Public", count: 5, maxViews: 1 },
+        ],
+      }),
+    );
+    const formats = sectionOf(html, "Formats");
+    expect(formats).toContain("Open Public");
+    expect(formats).toContain('href="/lectures/open_public"');
+    expect(formats.indexOf("Open Public")).toBeGreaterThan(formats.indexOf("Demo Debates"));
+    expect(sectionOf(html, "More")).not.toContain("Open Public");
+  });
+
   it("lists Miscellaneous in General, after the other General categories", () => {
     const html = renderToStaticMarkup(
       createElement(LectureCategoryGridGallery, {
