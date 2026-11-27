@@ -19,6 +19,7 @@ import { featuredSpeechDocsTabs } from "@debate-ai/round/src/panels/featuredSpee
 import { CategoryDock } from "../../components/layout/CategoryDock"
 import { SidebarAccount } from "../../components/layout/app-sidebar/sidebar-account"
 import { VideoStaffControls } from "@debate-ai/videos-admin/src/components/VideoStaffControls"
+import { isDemoTuple } from "@debate-ai/videos/src/data/demo-style"
 
 /**
  * A video's watch page outside Next.
@@ -88,7 +89,7 @@ export default function VideoWatchRoute() {
         extraControls={
           <>
             <SlowSpreadButton size="md" />
-            <VideoStaffControls videoId={video[0] as string} />
+            <VideoStaffControls videoId={video[0] as string} isDemo={isDemoTuple(video)} />
           </>
         }
       />

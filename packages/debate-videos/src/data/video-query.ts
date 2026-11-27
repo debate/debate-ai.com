@@ -139,6 +139,17 @@ export function parseSeasonFilter(year?: string | null): number | null {
 export const STYLE_FOR_CATEGORY_KEY: Readonly<Record<string, number>> = { wsd: 5, acc: 6, parli: 8, congress: 9 };
 
 /**
+ * The format a row is filtered and counted under. A round has its own; a demo
+ * debate has one too, but only inside the demo category, where the style
+ * dropdown picks between PF demos, Policy demos and so on. Elsewhere a demo is
+ * a lecture and a style filter does not reach it.
+ */
+function styleWithin(row: VideoRow, categoryKey: string | null): number | null {
+  if (row.style !== null) return row.style;
+  return categoryKey === DEMO_CATEGORY_KEY ? (row.demoStyle ?? null) : null;
+}
+
+/**
  * Applies every filter in {@link VideoQueryParams} except pagination.
  *
  * @param rows - Candidate rows.
@@ -174,11 +185,14 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
     ) {
       return false;
     }
-    if (params.style != null && row.style !== params.style) return false;
+    if (params.style != null && styleWithin(row, categoryKey) !== params.style) return false;
     if (season !== null && row.seasonYear !== season) return false;
     if (idSet && !idSet.has(row.videoId)) return false;
     if (excludeSet && excludeSet.has(row.videoId)) return false;
-    if (styles && (row.style === null || !styles.has(row.style))) return false;
+    if (styles) {
+      const style = styleWithin(row, categoryKey);
+      if (style === null || !styles.has(style)) return false;
+    }
     if (phrases.length && !competitorMatches(row, phrases)) return false;
     if (tokens.length && !tokens.every((token) => row.searchText.includes(token))) return false;
     if (
@@ -268,7 +282,9 @@ export function computeVideoFacets(rows: VideoRow[], params: VideoQueryParams): 
   const yearCounts: Record<string, number> = {};
   const styleCounts: Record<number, number> = {};
 
-  const forYears = params.style != null ? base.filter((r) => r.style === params.style) : base;
+  const categoryKey = params.categoryKey ? normalizeCategoryKey(params.categoryKey) : null;
+  const forYears =
+    params.style != null ? base.filter((r) => styleWithin(r, categoryKey) === params.style) : base;
   for (const row of forYears) {
     const key = row.seasonYear === LEGACY_SEASON ? "legacy" : String(row.seasonYear);
     yearCounts[key] = (yearCounts[key] ?? 0) + 1;
@@ -277,8 +293,9 @@ export function computeVideoFacets(rows: VideoRow[], params: VideoQueryParams): 
   const season = parseSeasonFilter(params.year);
   const forStyles = season !== null ? base.filter((r) => r.seasonYear === season) : base;
   for (const row of forStyles) {
-    if (row.style == null) continue;
-    styleCounts[row.style] = (styleCounts[row.style] ?? 0) + 1;
+    const style = styleWithin(row, categoryKey);
+    if (style === null) continue;
+    styleCounts[style] = (styleCounts[style] ?? 0) + 1;
   }
 
   return { yearCounts, styleCounts };

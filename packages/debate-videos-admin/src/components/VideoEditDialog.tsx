@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { parseYouTubeVideoId } from "@debate-ai/videos";
 import { LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
 import { canonicalCategoryLabel } from "@debate-ai/videos/src/data/video-rows";
+import { guessDemoStyle, isDemoCategory } from "@debate-ai/videos/src/data/demo-style";
+import { DEBATE_STYLE_LABELS, DEBATE_STYLE_ORDER } from "@debate-ai/videos/src/types/videos";
 import { JudgeVotes } from "@debate-ai/videos/src/components/videos/watch/JudgeVotes";
 import { VideoContentEditor } from "./VideoContentDialog";
 import { parseJudgePanel, roundKey, type CollegeResultsLookup } from "../lib/college-results";
@@ -38,6 +40,11 @@ export interface LibraryVideo {
   viewCount: number;
   description: string;
   style: number | null;
+  /**
+   * The debate format of a "Demo Debates" lecture, which gives its watch page
+   * the round experience; `null` guesses it from the title.
+   */
+  demoStyle?: number | null;
   category: string | null;
   categoryKey: string | null;
   tournament: string | null;
@@ -73,6 +80,9 @@ const EDIT_STYLE_OPTIONS = [
   { value: "7", label: "Misc" },
 ];
 
+/** Select value for a demo whose format is left to the title's guess. */
+const AUTO_DEMO_STYLE = "auto";
+
 /** Select value for "no lecture category" — Radix Select can't hold `""`. */
 const NO_CATEGORY = "none";
 
@@ -85,6 +95,12 @@ function categoryOptions(current: string): string[] {
   const options: string[] = [...LECTURE_CATEGORIES];
   if (current && !options.includes(current)) options.push(current);
   return options;
+}
+
+/** The demo-format picker's "no pick" option, naming what the title currently guesses. */
+function autoDemoStyleLabel(title: string): string {
+  const guess = guessDemoStyle(title);
+  return guess === null ? "Guess from title (none found)" : `Guess from title (${DEBATE_STYLE_LABELS[guess]})`;
 }
 
 const WINNER_OPTIONS = [
@@ -100,6 +116,8 @@ export interface EditForm {
   publishedAt: string;
   viewCount: string;
   style: string;
+  /** A demo debate's format: a style number, or {@link AUTO_DEMO_STYLE}. */
+  demoStyle: string;
   category: string;
   tournament: string;
   roundLevel: string;
@@ -127,6 +145,7 @@ export function toForm(video: LibraryVideo): EditForm {
     publishedAt: video.publishedAt ?? "",
     viewCount: String(video.viewCount ?? 0),
     style: video.style === null || video.style === undefined ? "none" : String(video.style),
+    demoStyle: video.demoStyle == null ? AUTO_DEMO_STYLE : String(video.demoStyle),
     category: video.category ? canonicalCategoryLabel(video.category) : "",
     tournament: video.tournament ?? "",
     roundLevel: video.roundLevel ?? "",
@@ -197,6 +216,7 @@ function toPatch(form: EditForm) {
     publishedAt: form.publishedAt.trim(),
     viewCount: Number(form.viewCount) || 0,
     style: form.style === "none" ? null : Number(form.style),
+    demoStyle: form.demoStyle === AUTO_DEMO_STYLE ? null : Number(form.demoStyle),
     category: form.category.trim() || null,
     categoryKey: categoryKeyFor(form.category),
     tournament: form.tournament.trim() || null,
@@ -221,6 +241,7 @@ const SUGGESTABLE_FIELDS = [
   "publishedAt",
   "description",
   "style",
+  "demoStyle",
   "category",
   "tournament",
   "roundLevel",
@@ -260,6 +281,7 @@ export function emptyLibraryVideo(): LibraryVideo {
     viewCount: 0,
     description: "",
     style: null,
+    demoStyle: null,
     category: null,
     categoryKey: null,
     tournament: null,
@@ -896,6 +918,31 @@ export function VideoEditDialog({
                   </SelectContent>
                 </Select>
               </div>
+              {isDemoCategory(form.category) && form.style === "none" && (
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="video-demo-style">Demo format</Label>
+                  <Select
+                    value={form.demoStyle}
+                    onValueChange={(value) =>
+                      setForm((current) => (current ? { ...current, demoStyle: value } : current))
+                    }
+                  >
+                    <SelectTrigger id="video-demo-style">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={AUTO_DEMO_STYLE}>
+                        {autoDemoStyleLabel(form.title)}
+                      </SelectItem>
+                      {DEBATE_STYLE_ORDER.map((style) => (
+                        <SelectItem key={style} value={String(style)}>
+                          {DEBATE_STYLE_LABELS[style]} demo
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="video-category">Lecture category</Label>
                 <Select

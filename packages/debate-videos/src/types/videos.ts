@@ -11,7 +11,7 @@ export type {
 
 /**
  * Video data tuple:
- * [videoId, title, date, channel, viewCount, description, style?, tournament?, roundLevel?, affTeam?, negTeam?, affWin?, judgeDecision?, arg1AC?, arg2NR?, isTopPick?, speechDocsUrl?, seasonYear?, stackKey?, stackPosition?, computedTitle?]
+ * [videoId, title, date, channel, viewCount, description, style?, tournament?, roundLevel?, affTeam?, negTeam?, affWin?, judgeDecision?, arg1AC?, arg2NR?, isTopPick?, speechDocsUrl?, seasonYear?, stackKey?, stackPosition?, computedTitle?, demoStyle?]
  *
  * For lectures, index 6 can be either a {@link VideoDebateStyle} number OR a category string.
  * `seasonYear` (index 17) is the competition season the video's publish date
@@ -20,7 +20,10 @@ export type {
  * grid slot with and `stackPosition` (index 19) is its place in it; both are
  * null — and usually absent, since the tuple is trimmed — for a video that
  * stands on its own. `computedTitle` (index 20) is the round's standardized
- * title (see `computed-title.ts` in `@debate-ai/videos`).
+ * title (see `computed-title.ts` in `@debate-ai/videos`). `demoStyle` (index
+ * 21) is the {@link VideoDebateStyle} of a "Demo Debates" lecture, resolved
+ * from the admin's pick or the title (see `data/demo-style.ts`); absent for
+ * every other video.
  */
 export type VideoType = [
   /** 0 — YouTube video id. */
@@ -69,6 +72,11 @@ export type VideoType = [
    * for a lecture, or a round the fill hasn't reached yet.
    */
   (string | null)?,
+  /**
+   * 21 — Format of a "Demo Debates" lecture; makes its watch page a round
+   * page. Absent for rounds and other lectures.
+   */
+  (VideoDebateStyle | null)?,
 ];
 
 /** A topic year with its year coerced to a number. */

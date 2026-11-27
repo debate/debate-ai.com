@@ -98,6 +98,7 @@ import { TopPickBadge } from "../../components/videos/card/TopPickBadge"
 import { ArgumentLabels } from "../../components/videos/card/ArgumentLabels"
 import { isTopPickVideo } from "../../lib/topPickBadges"
 import { FormatBadge, videoFormat } from "../../components/videos/grid/FormatBadge"
+import { demoStyleOfTuple } from "../../data/demo-style"
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
@@ -304,7 +305,11 @@ export function VideoWatchPage({
     [video, affRanking, negRanking, titleRanks],
   )
 
-  const styleNumber = typeof style === "number" ? style : undefined
+  // A demo debate is a lecture with a debate format of its own (the admin's
+  // pick, else its title's guess), and that format is what makes this a round
+  // page: speech detection, the timeline and the per-speech tabs all key off
+  // it, exactly as for a round.
+  const styleNumber = typeof style === "number" ? style : (demoStyleOfTuple(video) ?? undefined)
   const categoryLabel = typeof style === "string" ? lectureCategoryDisplayLabel(style) : undefined
   const roundLabel = displayRoundLevel(roundLevel)
   const formatStyle = videoFormat(video)
@@ -459,7 +464,7 @@ export function VideoWatchPage({
    * widens only once it is settled that there is nothing to show.
    */
   /** The round's speeches as written up, or its format's standard order — empty for a lecture. */
-  const baseSpeeches = useMemo(() => resolveRoundSpeeches(documents, style), [documents, style])
+  const baseSpeeches = useMemo(() => resolveRoundSpeeches(documents, styleNumber ?? style), [documents, styleNumber, style])
   /**
    * Speech timing is public per video (`state/sharedVideoAi.ts`): the
    * latest "Detect speeches" run and the hand-marked starts any viewer
