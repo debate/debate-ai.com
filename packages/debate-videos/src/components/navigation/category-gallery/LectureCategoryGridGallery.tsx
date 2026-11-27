@@ -1,14 +1,18 @@
 /**
- * @fileoverview Grid-based lecture category gallery with icons and video
- * counts — the category bar at the top of the lecture library, and the only
- * place the categories are listed (the sidebar has a single Lectures row).
- * Each card highlights its background on hover and links straight to its
- * category; the open one is drawn selected.
+ * @fileoverview Lecture category gallery with icons and video counts — the
+ * category bar at the top of the lecture library, and the only place the
+ * categories are listed (the sidebar has a single Lectures row). Each card
+ * highlights its background on hover and links straight to its category; the
+ * open one is drawn selected.
  *
- * The cards are grouped under a few headings (Getting started, Strategy,
- * Topics & ideas, Formats) so the list reads as sections rather than one
- * long run. A category not named in {@link LECTURE_CATEGORY_SECTIONS} lands
- * in a trailing "More" section, so a new category never goes missing.
+ * The top of the bar is a row of badges for the main round collections —
+ * College Policy, HS Policy, Individual, Forum and Parli — drawn with the
+ * logos the rankings page shows beside its topic names.
+ *
+ * Below it the cards are laid out as columns: a heading (Getting started,
+ * Strategy, Topics & ideas, Formats) with its categories listed underneath.
+ * A category not named in {@link LECTURE_CATEGORY_SECTIONS} lands in a
+ * trailing "More" column, so a new category never goes missing.
  */
 
 "use client";
@@ -32,10 +36,11 @@ import {
   Film,
   Users,
   GraduationCap,
-  LayoutGrid,
+  Landmark,
   Presentation,
   Vote,
 } from "lucide-react";
+import { DIVISION_CONFIG, type Division } from "@debate-ai/rankings/src/leaderboard/leaderboardUtils";
 import { GlowingEffect } from "../../../ui/effects/glowing-effect";
 import { cn } from "../../../ui/lib/utils";
 import { lectureCategoryHref } from "../../../panels/lectureRouteConfig";
@@ -62,7 +67,35 @@ interface LectureCategoryGridGalleryProps {
    * listed at the end of the Formats section.
    */
   extraLinks?: LectureGalleryExtraLink[];
+  /**
+   * Video totals per main round collection, keyed by {@link MAIN_FORMAT_BADGES}
+   * id (`college`, `policy`, `ld`, `pf`, `parli`). A badge without a total
+   * shows none.
+   */
+  formatCounts?: Record<string, number | undefined>;
 }
+
+/** One of the main round collections shown as a badge at the top of the bar. */
+interface MainFormatBadge {
+  id: string;
+  title: string;
+  href: string;
+  /** Rankings division whose logo the badge reuses; Parli has no division. */
+  division?: Division;
+}
+
+/** The badges, in display order: the four main categories, then Parli. */
+export const MAIN_FORMAT_BADGES: MainFormatBadge[] = [
+  { id: "college", title: "College Policy", href: "/videos/college", division: "NDT" },
+  { id: "policy", title: "HS Policy", href: "/videos/policy", division: "VCX" },
+  { id: "ld", title: "Individual", href: "/videos/ld", division: "VLD" },
+  { id: "pf", title: "Forum", href: "/videos/pf", division: "VPF" },
+  { id: "parli", title: "Parli", href: "/videos/parli" },
+];
+
+const DIVISION_LOGOS: Record<string, string> = Object.fromEntries(
+  DIVISION_CONFIG.map((config) => [config.value, config.logoSrc]),
+);
 
 /** A non-category card shown in the Formats section, e.g. `/videos/parli`. */
 export interface LectureGalleryExtraLink {
@@ -141,7 +174,6 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Impact Calculus & Evidence": <Zap className="h-4 w-4" />,
   "Philosophy & IR Theory": <Globe className="h-4 w-4" />,
   "Public Forum": <MessageSquare className="h-4 w-4" />,
-  "All Lectures": <LayoutGrid className="h-4 w-4" />,
   "Documentaries & Culture": <Film className="h-4 w-4" />,
   "Camp & Coaching Advice": <Users className="h-4 w-4" />,
   "Novice & Introductory": <GraduationCap className="h-4 w-4" />,
@@ -158,6 +190,7 @@ export function LectureCategoryGridGallery({
   categories,
   layout = "grid",
   extraLinks,
+  formatCounts,
 }: LectureCategoryGridGalleryProps) {
   // Build category cards from the server-computed facets, most popular first.
   const selectedId = selectedCategory ?? "all";
@@ -176,17 +209,7 @@ export function LectureCategoryGridGallery({
       maxViews: category.maxViews,
     }));
 
-    const totalCount = categoryCards.reduce((sum, c) => sum + c.videoCount, 0);
-    const allLecturesCard = {
-      id: "all",
-      title: "All Lectures",
-      description: "Browse every debate lecture across all categories",
-      videoCount: totalCount,
-      icon: CATEGORY_ICONS["All Lectures"],
-      maxViews: Infinity,
-    };
-
-    return { allLecturesCard, categoryCards };
+    return { categoryCards };
   }, [categories]);
 
   // Group the category cards under their section headings. Empty sections
@@ -241,48 +264,72 @@ export function LectureCategoryGridGallery({
 
   if (!cards) return null;
 
-  const gridClass = cn(
-    "grid gap-2",
-    layout === "list" ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
+  const columnClass = cn(
+    "grid items-start gap-4",
+    layout === "list" ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
   );
 
-  // A plain link per category: this is the page's category bar, so a click
-  // always lands on that category ("All Lectures" is its own card, above the
-  // sections).
-  const all = cards.allLecturesCard;
   return (
     <div className="w-full flex flex-col gap-4">
-      <ul className={gridClass}>
-        <GridItem
-          icon={all.icon}
-          title={all.title}
-          description={all.description}
-          videoCount={all.videoCount}
-          isSelected={selectedId === all.id}
-          href={lectureCategoryHref(all.id)}
-        />
+      <ul
+        aria-label="Main categories"
+        className="grid grid-cols-3 gap-2 sm:grid-cols-5"
+      >
+        {MAIN_FORMAT_BADGES.map((badge) => (
+          <FormatBadgeLink key={badge.id} badge={badge} count={formatCounts?.[badge.id]} />
+        ))}
       </ul>
-      {sections.map((section) => (
-        <section key={section.title} aria-label={section.title}>
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {section.title}
-          </h2>
-          <ul className={gridClass}>
-            {section.items.map((item) => (
-              <GridItem
-                key={item.id}
-                icon={item.icon}
-                title={item.title}
-                description={item.description}
-                videoCount={item.videoCount}
-                isSelected={item.selected}
-                href={item.href}
-              />
-            ))}
-          </ul>
-        </section>
-      ))}
+      <div className={columnClass}>
+        {sections.map((section) => (
+          <section key={section.title} aria-label={section.title} className="min-w-0">
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {section.title}
+            </h2>
+            <ul className="grid grid-cols-1 gap-2">
+              {section.items.map((item) => (
+                <GridItem
+                  key={item.id}
+                  icon={item.icon}
+                  title={item.title}
+                  description={item.description}
+                  videoCount={item.videoCount}
+                  isSelected={item.selected}
+                  href={item.href}
+                />
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
     </div>
+  );
+}
+
+/** A main-collection badge: the rankings logo (or a glyph) over its name. */
+function FormatBadgeLink({ badge, count }: { badge: MainFormatBadge; count?: number }) {
+  const logo = badge.division ? DIVISION_LOGOS[badge.division] : undefined;
+  return (
+    <li className="list-none">
+      <Link
+        href={badge.href}
+        scroll={false}
+        prefetch={false}
+        className="group flex h-full flex-col items-center gap-1 rounded-lg border-[0.75px] border-border bg-background p-2 text-center shadow-sm transition-colors hover:border-primary/50 hover:bg-accent"
+      >
+        {logo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logo} alt="" className="h-12 w-12 object-contain" loading="lazy" />
+        ) : (
+          <Landmark className="h-12 w-12 p-2 text-muted-foreground" aria-hidden />
+        )}
+        <span className="text-xs font-semibold leading-tight text-foreground">{badge.title}</span>
+        {count !== undefined && (
+          <span className="rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
+            {count}
+          </span>
+        )}
+      </Link>
+    </li>
   );
 }
 

@@ -5,6 +5,7 @@ import {
   TOURNAMENT_COLORS,
   formatElimBadgeLabel,
   formatVideoDate,
+  splitElimBadgeLabel,
   getMonthBadgeColor,
   getRoundBadgeColor,
   getYearTopic,
@@ -126,6 +127,22 @@ describe("formatElimBadgeLabel", () => {
 
   it("keeps the badge colour of the underlying round", () => {
     expect(getRoundBadgeColor(formatElimBadgeLabel("Doubles"))).toBe(getRoundBadgeColor("Doubles"));
+  });
+});
+
+describe("splitElimBadgeLabel", () => {
+  it.each([
+    ["Semis", "Top 4", "Semis"],
+    ["Quarters", "Top 8", "Quarters"],
+    ["Octas", "Top 16", "Octos"],
+    ["Doubles", "Top 32", "Doubles"],
+  ])("%s stacks %s over %s", (input, top, name) => {
+    expect(splitElimBadgeLabel(input)).toEqual({ top, name });
+  });
+
+  it("leaves finals and prelims on one row", () => {
+    expect(splitElimBadgeLabel("Final")).toEqual({ top: null, name: "Final" });
+    expect(splitElimBadgeLabel("R3")).toEqual({ top: null, name: "R3" });
   });
 });
 

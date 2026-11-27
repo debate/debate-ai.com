@@ -299,7 +299,8 @@ export function LecturesVideoGridView({
   // so the whole list reads as one set of labeled sections.
   const galleryExtraLinks = useMemo<LectureGalleryExtraLink[] | undefined>(() => {
     if (!browsingAllVideos || !showLectureGallery || !collectionLinks) return undefined
-    return collectionLinks.map((link) => ({
+    // Parli has its own badge at the top of the bar.
+    return collectionLinks.filter((link) => link.id !== "parli").map((link) => ({
       id: link.id,
       title: link.title,
       href: link.href,
@@ -446,6 +447,7 @@ export function LecturesVideoGridView({
               categories={galleryCategories}
               selectedCategory={selectedCategory}
               extraLinks={galleryExtraLinks}
+              formatCounts={quickLinkCounts}
             />
           </nav>
         )}

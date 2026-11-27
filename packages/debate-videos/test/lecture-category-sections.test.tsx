@@ -26,7 +26,7 @@ const categories = [
 ];
 
 function sectionOf(html: string, title: string): string {
-  const start = html.indexOf(`<section aria-label="${title}">`);
+  const start = html.indexOf(`<section aria-label="${title}"`);
   expect(start).toBeGreaterThan(-1);
   return html.slice(start, html.indexOf("</section>", start));
 }
@@ -34,14 +34,39 @@ function sectionOf(html: string, title: string): string {
 describe("lecture category sections", () => {
   it("files each category under its heading, unknown ones under More", () => {
     const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
-    expect(html).toContain('href="/lectures"');
     expect(sectionOf(html, "Getting started")).toContain("Novice &amp; Introductory");
     expect(sectionOf(html, "Strategy")).toContain("Negative Strategy");
     expect(sectionOf(html, "Topics &amp; ideas")).toContain("Topic Lectures");
     expect(sectionOf(html, "Formats")).toContain('href="/lectures/wsd"');
     expect(sectionOf(html, "More")).toContain("Brand New");
-    // The total stays the sum of every category.
-    expect(html).toContain(">1138<");
+  });
+
+  it("has no All Lectures card", () => {
+    const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
+    expect(html).not.toContain("All Lectures");
+    expect(html).not.toContain('href="/lectures"');
+  });
+
+  it("leads with the main category badges, Parli last", () => {
+    const html = renderToStaticMarkup(
+      createElement(LectureCategoryGridGallery, { categories, formatCounts: { college: 1400, parli: 15 } }),
+    );
+    const hrefs = ["/videos/college", "/videos/policy", "/videos/ld", "/videos/pf", "/videos/parli"].map((href) =>
+      html.indexOf(`href="${href}"`),
+    );
+    expect(hrefs.every((index) => index > -1)).toBe(true);
+    expect([...hrefs].sort((a, b) => a - b)).toEqual(hrefs);
+    expect(hrefs[4]).toBeLessThan(html.indexOf('<section aria-label="Getting started"'));
+    expect(html).toContain("College Policy");
+    expect(html).toContain("Individual");
+    expect(html).toContain("Forum");
+    expect(html).toContain(">1400<");
+  });
+
+  it("lays the sections out as columns, at most 4 across", () => {
+    const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
+    expect(html).toContain("lg:grid-cols-4");
+    expect(html).not.toMatch(/lg:grid-cols-([5-9]|1\d)/);
   });
 
   it("adds the collection links to Formats", () => {
@@ -54,11 +79,5 @@ describe("lecture category sections", () => {
     const formats = sectionOf(html, "Formats");
     expect(formats).toContain('href="/videos/parli"');
     expect(formats).toContain(">15<");
-  });
-
-  it("never lays a section out more than 4 tabs across", () => {
-    const html = renderToStaticMarkup(createElement(LectureCategoryGridGallery, { categories }));
-    expect(html).toContain("lg:grid-cols-4");
-    expect(html).not.toMatch(/grid-cols-([5-9]|1\d)/);
   });
 });
