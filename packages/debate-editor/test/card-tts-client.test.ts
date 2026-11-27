@@ -158,22 +158,53 @@ describe("read speed storage", () => {
   });
 });
 
-describe("per-part voice and speed (tag / cite vs highlighted text)", () => {
-  it("keeps the cite voice and speed apart, following the highlighted text's until set", async () => {
+describe("per-part voice and speed (tag, author & year, highlighted text)", () => {
+  it("keeps the tag voice and speed apart, following the highlighted text's until set", async () => {
     const { readStoredSpeed, readStoredVoiceId, storeReadSpeed, storeVoiceId } = await import("../src/editor/card-tts-client");
     localStorage.clear();
     storeVoiceId("deepgram:aura-luna-en");
     storeReadSpeed(1.5);
-    expect(readStoredVoiceId("cite")).toBe("deepgram:aura-luna-en");
-    expect(readStoredSpeed("cite")).toBe(1.5);
-    storeVoiceId("kokoro:am_puck", "cite");
-    storeReadSpeed(3, "cite");
-    expect(readStoredVoiceId("cite")).toBe("kokoro:am_puck");
-    expect(readStoredSpeed("cite")).toBe(3);
+    expect(readStoredVoiceId("tag")).toBe("deepgram:aura-luna-en");
+    expect(readStoredSpeed("tag")).toBe(1.5);
+    storeVoiceId("kokoro:am_puck", "tag");
+    storeReadSpeed(3, "tag");
+    expect(readStoredVoiceId("tag")).toBe("kokoro:am_puck");
+    expect(readStoredSpeed("tag")).toBe(3);
     // The highlighted text keeps its own (and the old single setting's keys).
     expect(readStoredVoiceId()).toBe("deepgram:aura-luna-en");
     expect(readStoredVoiceId("text")).toBe("deepgram:aura-luna-en");
     expect(readStoredSpeed("text")).toBe(1.5);
+    localStorage.clear();
+  });
+
+  it("has the author & year follow the tag until set", async () => {
+    const { readStoredSpeed, readStoredVoiceId, storeReadSpeed, storeVoiceId } = await import("../src/editor/card-tts-client");
+    localStorage.clear();
+    storeVoiceId("deepgram:aura-luna-en");
+    storeVoiceId("kokoro:am_puck", "tag");
+    storeReadSpeed(3, "tag");
+    expect(readStoredVoiceId("author")).toBe("kokoro:am_puck");
+    expect(readStoredSpeed("author")).toBe(3);
+    storeVoiceId("deepgram:aura-orion-en", "author");
+    storeReadSpeed(1, "author");
+    expect(readStoredVoiceId("author")).toBe("deepgram:aura-orion-en");
+    expect(readStoredSpeed("author")).toBe(1);
+    expect(readStoredVoiceId("tag")).toBe("kokoro:am_puck");
+    expect(readStoredSpeed("tag")).toBe(3);
+    localStorage.clear();
+  });
+
+  it("keeps settings saved for the former combined tag-author-year part (migration)", async () => {
+    const { readStoredSpeed, readStoredVoiceId } = await import("../src/editor/card-tts-client");
+    localStorage.clear();
+    localStorage.setItem("pmd-card-actions-read-voice", "deepgram:aura-luna-en");
+    localStorage.setItem("pmd-card-actions-read-voice-cite", "kokoro:am_puck");
+    localStorage.setItem("pmd-card-actions-read-speed-cite", "2.5");
+    expect(readStoredVoiceId("tag")).toBe("kokoro:am_puck");
+    expect(readStoredVoiceId("author")).toBe("kokoro:am_puck");
+    expect(readStoredSpeed("tag")).toBe(2.5);
+    expect(readStoredSpeed("author")).toBe(2.5);
+    expect(readStoredVoiceId("text")).toBe("deepgram:aura-luna-en");
     localStorage.clear();
   });
 

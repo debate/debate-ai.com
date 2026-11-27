@@ -8,8 +8,8 @@
  * - **Keep reading the next files**: when the whole document has been read,
  *   go on to the next file (the host opens it on `READ_NEXT_FILE_EVENT`) and
  *   keep going, file after file.
- * - **Voice and speed**, twice: once for the tag, author and year, once for
- *   the highlighted text (`ReadVoicePart`). These are the same settings as
+ * - **Voice and speed**, three times: for the tag, for the author and year,
+ *   and for the highlighted text (`ReadVoicePart`). These are the same settings as
  *   Settings → Sound & speech, stored by `card-tts-client.ts`, so a change in
  *   either place shows in the other and reaches a card that is playing.
  *
@@ -200,14 +200,12 @@ export function openReadAloudPlayer(actions: ReadAloudPlayerActions): HTMLElemen
   play.style.borderTop = '0';
   play.style.marginTop = '4px';
 
-  const cite = partControls('cite');
-  const text = partControls('text');
-  dialog.append(close, title, el('p', undefined, 'Voices and speeds are shared with Settings → Sound & speech.'), play, cite.section, text.section);
+  const sections = READ_VOICE_PARTS.map((p) => partControls(p.id));
+  dialog.append(close, title, el('p', undefined, 'Voices and speeds are shared with Settings → Sound & speech.'), play, ...sections.map((c) => c.section));
   backdrop.appendChild(dialog);
 
   const refresh = () => {
-    cite.refresh();
-    text.refresh();
+    for (const controls of sections) controls.refresh();
   };
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key !== 'Escape') return;

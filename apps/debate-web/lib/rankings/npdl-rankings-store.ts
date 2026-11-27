@@ -24,7 +24,8 @@
  * `lib/database/ensure-columns.ts`).
  */
 
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
+import { integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import {
   fetchNpdlSeason,
   NPDL_SEASONS,
@@ -67,6 +68,38 @@ const CREATE_ROWS_SQL = `CREATE TABLE IF NOT EXISTS "npdl_rankings" (
   "points" real NOT NULL,
   PRIMARY KEY ("season", "tab", "position")
 )`;
+
+/*
+ * Drizzle mirrors of the two tables above, for the statements that go into a
+ * `db.batch()`. D1's driver binds each batched statement through the prepared
+ * statement a query builder carries; a raw `db.run(sql…)` has none, so a batch
+ * of them throws on D1 (`reading 'bind'`) while libsql runs it fine.
+ */
+const seasonsTable = sqliteTable("npdl_rankings_seasons", {
+  season: text("season").primaryKey(),
+  pageUrl: text("page_url").notNull().default(""),
+  fetchedAt: text("fetched_at").notNull().default(""),
+  hash: text("hash").notNull().default(""),
+  teamRows: integer("team_rows").notNull().default(0),
+  schoolRows: integer("school_rows").notNull().default(0),
+  checkedAt: integer("checked_at").notNull(),
+});
+
+const rankingsTable = sqliteTable(
+  "npdl_rankings",
+  {
+    season: text("season").notNull(),
+    tab: text("tab").notNull(),
+    position: integer("position").notNull(),
+    rank: integer("rank").notNull(),
+    school: text("school").notNull(),
+    region: text("region"),
+    debater1: text("debater1"),
+    debater2: text("debater2"),
+    points: real("points").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.season, t.tab, t.position] })],
+);
 
 let tablesReady: Promise<void> | null = null;
 
@@ -170,34 +203,47 @@ export async function listSavedNpdlSeasons(db: Database): Promise<string[]> {
 export async function saveNpdlSeason(db: Database, rankings: NpdlSeasonRankings): Promise<void> {
   await ensureTables(db);
   const { season } = rankings;
-  const tagged = [
+  const rows = [
     ...rankings.teams.map((row, position) => ({ tab: "team", position, row })),
     ...rankings.schools.map((row, position) => ({ tab: "school", position, row })),
-  ];
-  const statements = [db.run(sql`DELETE FROM npdl_rankings WHERE season = ${season}`)];
-  for (let start = 0; start < tagged.length; start += ROWS_PER_INSERT) {
-    const values = tagged
-      .slice(start, start + ROWS_PER_INSERT)
-      .map(
-        ({ tab, position, row }) =>
-          sql`(${season}, ${tab}, ${position}, ${row.rank}, ${row.school}, ${row.region}, ${row.debater1}, ${row.debater2}, ${row.points})`,
-      );
-    statements.push(
-      db.run(
-        sql`INSERT INTO npdl_rankings (season, tab, position, rank, school, region, debater1, debater2, points)
-            VALUES ${sql.join(values, sql`, `)}`,
-      ),
-    );
+  ].map(({ tab, position, row }) => ({
+    season,
+    tab,
+    position,
+    rank: row.rank,
+    school: row.school,
+    region: row.region,
+    debater1: row.debater1,
+    debater2: row.debater2,
+    points: row.points,
+  }));
+  const statements: unknown[] = [db.delete(rankingsTable).where(eq(rankingsTable.season, season))];
+  for (let start = 0; start < rows.length; start += ROWS_PER_INSERT) {
+    statements.push(db.insert(rankingsTable).values(rows.slice(start, start + ROWS_PER_INSERT)));
   }
   statements.push(
-    db.run(
-      sql`INSERT INTO npdl_rankings_seasons (season, page_url, fetched_at, hash, team_rows, school_rows, checked_at)
-          VALUES (${season}, ${rankings.pageUrl}, ${rankings.fetchedAt}, ${npdlRankingsHash(rankings)},
-                  ${rankings.teams.length}, ${rankings.schools.length}, unixepoch())
-          ON CONFLICT (season) DO UPDATE SET
-            page_url = excluded.page_url, fetched_at = excluded.fetched_at, hash = excluded.hash,
-            team_rows = excluded.team_rows, school_rows = excluded.school_rows, checked_at = excluded.checked_at`,
-    ),
+    db
+      .insert(seasonsTable)
+      .values({
+        season,
+        pageUrl: rankings.pageUrl,
+        fetchedAt: rankings.fetchedAt,
+        hash: npdlRankingsHash(rankings),
+        teamRows: rankings.teams.length,
+        schoolRows: rankings.schools.length,
+        checkedAt: sql`unixepoch()`,
+      })
+      .onConflictDoUpdate({
+        target: seasonsTable.season,
+        set: {
+          pageUrl: sql`excluded.page_url`,
+          fetchedAt: sql`excluded.fetched_at`,
+          hash: sql`excluded.hash`,
+          teamRows: sql`excluded.team_rows`,
+          schoolRows: sql`excluded.school_rows`,
+          checkedAt: sql`excluded.checked_at`,
+        },
+      }),
   );
   if (typeof db.batch === "function") {
     await db.batch(statements as unknown as Parameters<typeof db.batch>[0]);
@@ -222,33 +268,54 @@ const scrapeLive: NpdlSeasonFetcher = (season) => {
   return fetchNpdlSeason(season, opts);
 };
 
+/** What {@link refreshNpdlSeason} did; `"unsaved"` means the scrape had rows but D1 refused the write. */
+export type NpdlRefreshStatus = "updated" | "unchanged" | "empty" | "unsaved";
+
+const errorMessage = (error: unknown) => (error instanceof Error ? error.message : String(error));
+
 /**
- * Scrapes `season` and saves it when its rows changed. A scrape that fails or
- * finds no rows only marks the season checked, keeping any earlier copy.
+ * Scrapes `season` and saves it when its rows changed, returning the scraped
+ * rows too, so a request can serve them even when the save fails. A scrape
+ * that fails or finds no rows only marks the season checked, keeping any
+ * earlier copy.
  */
-export async function refreshNpdlSeason(
+async function scrapeAndSave(
   db: Database,
   season: string,
-  fetchSeason: NpdlSeasonFetcher = scrapeLive,
-): Promise<"updated" | "unchanged" | "empty"> {
-  await ensureTables(db);
+  fetchSeason: NpdlSeasonFetcher,
+): Promise<{ status: NpdlRefreshStatus; rankings: NpdlSeasonRankings | null }> {
   let fresh: NpdlSeasonRankings | null = null;
   try {
     fresh = await fetchSeason(season);
   } catch (error) {
-    console.error(`[npdl-rankings] ${season} scrape failed:`, error instanceof Error ? error.message : String(error));
+    console.error(`[npdl-rankings] ${season} scrape failed:`, errorMessage(error));
   }
   if (!fresh || (fresh.teams.length === 0 && fresh.schools.length === 0)) {
     await markChecked(db, season);
-    return "empty";
+    return { status: "empty", rankings: null };
   }
-  const saved = await readSeasonRow(db, season);
-  if (saved && hasRows(saved) && saved.hash === npdlRankingsHash(fresh)) {
-    await markChecked(db, season);
-    return "unchanged";
+  try {
+    const saved = await readSeasonRow(db, season);
+    if (saved && hasRows(saved) && saved.hash === npdlRankingsHash(fresh)) {
+      await markChecked(db, season);
+      return { status: "unchanged", rankings: fresh };
+    }
+    await saveNpdlSeason(db, fresh);
+    return { status: "updated", rankings: fresh };
+  } catch (error) {
+    console.error(`[npdl-rankings] ${season} save failed:`, errorMessage(error));
+    return { status: "unsaved", rankings: fresh };
   }
-  await saveNpdlSeason(db, fresh);
-  return "updated";
+}
+
+/** Scrapes `season` and saves it when its rows changed; see {@link scrapeAndSave}. */
+export async function refreshNpdlSeason(
+  db: Database,
+  season: string,
+  fetchSeason: NpdlSeasonFetcher = scrapeLive,
+): Promise<NpdlRefreshStatus> {
+  await ensureTables(db);
+  return (await scrapeAndSave(db, season, fetchSeason)).status;
 }
 
 /** What the route serves for a season, or for the newest season with rows when `season` is null. */
@@ -267,8 +334,9 @@ async function mayScrape(db: Database, season: string, nowSeconds: number): Prom
 
 /**
  * Reads rankings from D1. Scrapes only what was never saved: an asked season
- * missing from D1, or (with no season asked and nothing saved yet) the newest
- * {@link REFRESH_SEASONS} seasons, as the very first request does.
+ * missing from D1, or (with no season asked) each of the newest
+ * {@link REFRESH_SEASONS} seasons not saved yet, newest first, so an older
+ * season someone happened to open first never stands in for the current one.
  */
 export async function getNpdlRankings(
   db: Database,
@@ -281,20 +349,18 @@ export async function getNpdlRankings(
     const saved = await readSavedNpdlSeason(db, season);
     if (saved) return { rankings: saved, source: "database" };
     if (!(await mayScrape(db, season, nowSeconds))) return { rankings: null, source: "database" };
-    await refreshNpdlSeason(db, season, fetchSeason);
-    return { rankings: await readSavedNpdlSeason(db, season), source: "live" };
+    return { rankings: (await scrapeAndSave(db, season, fetchSeason)).rankings, source: "live" };
   }
-
-  const newest = (await listSavedNpdlSeasons(db))[0];
-  if (newest) return { rankings: await readSavedNpdlSeason(db, newest), source: "database" };
 
   for (const candidate of NPDL_SEASONS.slice(0, REFRESH_SEASONS)) {
+    const saved = await readSavedNpdlSeason(db, candidate);
+    if (saved) return { rankings: saved, source: "database" };
     if (!(await mayScrape(db, candidate, nowSeconds))) continue;
-    if ((await refreshNpdlSeason(db, candidate, fetchSeason)) !== "empty") {
-      return { rankings: await readSavedNpdlSeason(db, candidate), source: "live" };
-    }
+    const { rankings } = await scrapeAndSave(db, candidate, fetchSeason);
+    if (rankings) return { rankings, source: "live" };
   }
-  return { rankings: null, source: "database" };
+  const newest = (await listSavedNpdlSeasons(db))[0];
+  return { rankings: newest ? await readSavedNpdlSeason(db, newest) : null, source: "database" };
 }
 
 /**
@@ -302,7 +368,8 @@ export async function getNpdlRankings(
  * older season that was never saved (or whose empty marker has expired), one
  * after another. Past seasons are final, so once saved they are left alone;
  * the backfill means every season's rankings are in D1 without waiting for
- * someone to pick that year on the Parli tab.
+ * someone to pick that year on the Parli tab. One season failing does not
+ * stop the others.
  */
 export async function runDailyNpdlRankingsRefresh(
   db: Database,
@@ -311,12 +378,16 @@ export async function runDailyNpdlRankingsRefresh(
 ): Promise<void> {
   await ensureTables(db);
   const results: string[] = [];
-  for (const season of NPDL_SEASONS.slice(0, REFRESH_SEASONS)) {
-    results.push(`${season} ${await refreshNpdlSeason(db, season, fetchSeason)}`);
-  }
+  const refresh = async (season: string, label = "") => {
+    try {
+      results.push(`${season} ${(await scrapeAndSave(db, season, fetchSeason)).status}${label}`);
+    } catch (error) {
+      results.push(`${season} failed (${errorMessage(error)})${label}`);
+    }
+  };
+  for (const season of NPDL_SEASONS.slice(0, REFRESH_SEASONS)) await refresh(season);
   for (const season of NPDL_SEASONS.slice(REFRESH_SEASONS)) {
-    if (!(await mayScrape(db, season, nowSeconds))) continue;
-    results.push(`${season} ${await refreshNpdlSeason(db, season, fetchSeason)} (backfill)`);
+    if (await mayScrape(db, season, nowSeconds)) await refresh(season, " (backfill)");
   }
   console.log(`[npdl-rankings] ${results.join(", ")}`);
 }

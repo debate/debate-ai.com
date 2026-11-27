@@ -4,8 +4,10 @@
  * @fileoverview Settings → Sound & speech: how fast, and in which engine and
  * voice, the card editor's **Read aloud** button speaks — Kokoro on this
  * device, Cloudflare Workers AI (Deepgram Aura), or the browser's own speech.
- * Two sections, each with its own voice and speed: one for the tag and the
- * author's name and year, one for the highlighted card text.
+ * Three sections, each with its own voice and speed: one for the tag, one for
+ * the author's name and year, one for the highlighted card text. The author &
+ * year section follows the tag's voice and speed until set, and the tag's
+ * follows the highlighted text's.
  *
  * Rendered as a shadcn Dialog modal (opened from the Sound & speech tab) with a
  * standard X close button, instead of an inline section.
@@ -65,11 +67,11 @@ function isEngine(value: string): value is ReadVoiceEngine {
 
 /** Element ids per part; the highlighted text keeps the ids the single setting had. */
 function partIds(part: ReadVoicePart) {
-  const prefix = part === "text" ? "settings-read" : "settings-read-cite"
+  const prefix = part === "text" ? "settings-read" : `settings-read-${part}`
   return { speed: `${prefix}-speed`, engine: `${prefix}-engine`, voice: `${prefix}-voice` }
 }
 
-/** Engine, voice and speed for one part of the card (tag / cite, or highlighted text). */
+/** Engine, voice and speed for one part of the card (tag, author & year, or highlighted text). */
 function VoicePartControls({ part }: { part: ReadVoicePart }) {
   // The defaults until mounted, so the server and first client render agree.
   const [voiceId, setVoiceId] = useState(DEFAULT_READ_VOICE_ID)
@@ -170,7 +172,7 @@ export function ReadAloudVoiceSection() {
           <DialogTitle>Read aloud voice & speed</DialogTitle>
           <DialogDescription>
             How fast, and with which engine and voice, the card editor's Read aloud button speaks: one
-            voice for the tag, author and year, another for the highlighted text.
+            voice for the tag, another for the author and year, another for the highlighted text.
           </DialogDescription>
         </DialogHeader>
         {READ_VOICE_PARTS.map((p) => (
