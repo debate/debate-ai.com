@@ -299,13 +299,15 @@ export interface SchoolStrengthEventRanks {
  * Every high school's score per season in one event (or, without `event`,
  * all three summed): its ranked-entry points plus its TOC finishes (and,
  * with the default records, its NDCA, Cal and Glenbrooks finishes). A school
- * that never had a ranked entry is its own row, keyed `toc:<name>`.
+ * that never had a ranked entry is its own row, keyed `toc:<name>`, so it
+ * counts in every rank and field size.
  * Programs are ranked per event — the #1 Policy school, the #1 PF school —
  * so pages pass `event`.
  *
  * @param rows - Ranked-entry points per school and season.
- * @param tocRecords - Records to match by school key; ranked schools match
- *   the program-strength records ({@link bundledHsProgramRecords}) when omitted.
+ * @param tocRecords - Records to match by school key and to list unmatched
+ *   programs from; the program-strength records ({@link bundledHsProgramRecords})
+ *   when omitted.
  * @param event - Keep only this event's rows and TOC finishes.
  */
 export function schoolStrengthTable(
@@ -322,7 +324,8 @@ export function schoolStrengthTable(
   };
   for (const row of rows) if (!event || !row.event || row.event === event) add(row.school, row.year, row.points);
 
-  const match = tocSchoolMatcher(tocRecords ?? bundledHsProgramRecords());
+  const records = tocRecords ?? bundledHsProgramRecords();
+  const match = tocSchoolMatcher(records);
   const matched = new Set<TocSchoolRecord>();
   for (const key of [...table.keys()]) {
     const record = match(key.replace(/-/g, " "));
@@ -330,7 +333,7 @@ export function schoolStrengthTable(
     matched.add(record);
     for (const [year, points] of tocSeasonPoints(record, event)) add(key, year, points);
   }
-  for (const record of tocRecords ?? []) {
+  for (const record of records) {
     if (matched.has(record)) continue;
     for (const [year, points] of tocSeasonPoints(record, event)) add(`toc:${record.school}`, year, points);
   }
@@ -399,17 +402,26 @@ export function rankAllSchoolStrengths(
 /** Same-origin route serving one school's finished seasons. */
 export const SCHOOL_SEASONS_PATH = "/api/rankings/school-seasons";
 
+/**
+ * Version of how school pages' ranks are scored. The server recomputes stored
+ * ranks from another version, and the page asks with it so responses cached
+ * before a change are never served. Bump it whenever the ranking changes.
+ */
+export const SCHOOL_STRENGTH_RANKS_VERSION = "goat-1";
+
 /** Body of {@link SCHOOL_SEASONS_PATH}. */
 export interface SchoolSeasonsResponse {
   school: string;
   seasons: SchoolSeason[];
   /**
    * The school's rank in each event (Policy, LD, PF) among every high school
-   * program in that event, over all finished seasons (TOC results back to
-   * 1972, rankings from 2015-16) and the last ten seasons. There is no
-   * combined ranking across events. Precomputed daily, so while seasons are
-   * still pending they cover only the seasons built so far. An event the
-   * school never scored in is left out.
+   * program in that event, by the greatest-of-all-time program points
+   * (`hsProgramStrength` in `school-elite`): all finished seasons (national
+   * finishes back to 1972, rankings from 2015-16), the same rank, points and
+   * field as the event's all-time Schools list, and the same points over the
+   * last decade. There is no combined ranking across events. Precomputed
+   * daily, so while seasons are still pending they cover only the seasons
+   * built so far. An event the school never scored in is left out.
    */
   ranks?: { byEvent: Partial<Record<SchoolSeasonEvent, SchoolStrengthEventRanks>>; decadeFrom: number };
   /** Finished seasons that failed to build last time, with why. */
@@ -442,7 +454,7 @@ export function fetchSchoolSeasons(school: string, maxRequests = 12): Promise<Sc
     pending = (async () => {
       let result: SchoolSeasonsResult = { seasons: [], ranks: null, pending: 0 };
       for (let attempt = 0; attempt < maxRequests; attempt++) {
-        const res = await fetch(`${SCHOOL_SEASONS_PATH}?school=${encodeURIComponent(key)}`);
+        const res = await fetch(`${SCHOOL_SEASONS_PATH}?school=${encodeURIComponent(key)}&ranks=${SCHOOL_STRENGTH_RANKS_VERSION}`);
         if (!res.ok) throw new Error(`School seasons failed: ${res.status}`);
         const body = (await res.json()) as SchoolSeasonsResponse;
         result = { seasons: body.seasons ?? [], ranks: body.ranks ?? null, pending: body.pending ?? 0 };

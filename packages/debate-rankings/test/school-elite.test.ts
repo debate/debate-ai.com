@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { buildHsAllTimeSchools, buildHsEliteSchools, hsEliteAccomplishments, hsEliteKeys, HS_ELITE_COUNT } from "../src/school-elite";
+import {
+  buildHsAllTimeSchools,
+  buildHsEliteSchools,
+  hsEliteAccomplishments,
+  hsEliteKeys,
+  hsProgramStrength,
+  HS_ELITE_COUNT,
+} from "../src/school-elite";
 import type { SchoolSeasonPoints } from "../src/school-seasons";
 import { tocRecordsBySchool, type TocResult } from "../src/sync/toc-champions";
 
@@ -70,6 +77,40 @@ describe("buildHsEliteSchools", () => {
   });
 });
 
+describe("hsProgramStrength", () => {
+  const records = tocRecordsBySchool([
+    toc(1990, "Alpha High School (TX)", "Champion"),
+    toc(2021, "Beta Prep (CA)", "Runner-up"),
+    toc(2021, "Beta Prep (CA)", "Champion", "Public Forum"),
+  ]);
+  const rows: SchoolSeasonPoints[] = [
+    { school: "alpha", year: 2022, points: 5, event: "Policy" },
+    { school: "gamma", year: 2022, points: 40, event: "Policy" },
+    { school: "gamma", year: 2023, points: 99, event: "Policy" },
+  ];
+
+  it("ranks every program all time and over the decade, TOC-only programs counted in the field", () => {
+    const { ranks } = hsProgramStrength(rows, "Policy", 2022, { decadeFrom: 2014, records });
+    expect(Object.fromEntries(ranks)).toEqual({
+      gamma: { allTime: { rank: 1, score: 40, of: 3 }, decade: { rank: 1, score: 40, of: 3 } },
+      alpha: { allTime: { rank: 2, score: 35, of: 3 }, decade: { rank: 3, score: 5, of: 3 } },
+      "toc:Beta Prep (CA)": { allTime: { rank: 3, score: 18, of: 3 }, decade: { rank: 2, score: 18, of: 3 } },
+    });
+  });
+
+  it("leaves the decade out without a start", () => {
+    const { ranks } = hsProgramStrength(rows, "Policy", 2022, { records });
+    expect(ranks.get("alpha")).toEqual({ allTime: { rank: 2, score: 35, of: 3 }, decade: null });
+  });
+
+  it("matches the all-time Schools list's rank and points", () => {
+    const { ranks } = hsProgramStrength(rows, "Policy", 2022, { records });
+    for (const row of buildHsAllTimeSchools(rows, "Policy", 2022, { records })) {
+      expect(ranks.get(row.handle ?? `toc:${row.school}`)?.allTime).toMatchObject({ rank: row.rank, score: row.score });
+    }
+  });
+});
+
 describe("buildHsAllTimeSchools", () => {
   it("ranks every program of all time in the event, TOC-only programs included", () => {
     const records = tocRecordsBySchool([
@@ -88,6 +129,22 @@ describe("buildHsAllTimeSchools", () => {
       { rank: 3, school: "Beta Prep (CA)", handle: undefined, score: 18, titles: 0 },
     ]);
     expect(buildHsAllTimeSchools(rows, "Policy", 2022, { records, count: 1 })).toHaveLength(1);
+  });
+
+  it("lists each program at its school page rank and points, in every event", () => {
+    const rows: SchoolSeasonPoints[] = [
+      { school: "montgomery-bell-academy", year: 2024, points: 9.9, event: "Policy" },
+      { school: "harker", year: 2024, points: 13.2, event: "Lincoln-Douglas" },
+      { school: "blake", year: 2024, points: 8, event: "Public Forum" },
+      { school: "nowhere-prep", year: 2025, points: 3, event: "Policy" },
+    ];
+    for (const event of ["Policy", "Lincoln-Douglas", "Public Forum"] as const) {
+      const { ranks } = hsProgramStrength(rows, event, 2026, { decadeFrom: 2018 });
+      const list = buildHsAllTimeSchools(rows, event, 2026);
+      for (const row of list) {
+        expect(ranks.get(row.handle ?? `toc:${row.school}`)?.allTime, row.school).toMatchObject({ rank: row.rank, score: row.score });
+      }
+    }
   });
 
   it("covers the bundled TOC history in each event", () => {
