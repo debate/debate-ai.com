@@ -292,7 +292,8 @@ html[data-debate-underlines="off"] .synergy-slayer-doc :is(mark.debate-hl, u.rea
 html[data-debate-auto-highlight="on"] .synergy-slayer-doc ::selection,
 html[data-debate-auto-underline="on"] .synergy-slayer-doc ::selection,
 html[data-debate-auto-short-highlight="on"] .synergy-slayer-doc ::selection,
-html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection {
+html[data-debate-auto-emphasis="on"] .synergy-slayer-doc ::selection,
+html[data-debate-auto-summary-tag="on"] .synergy-slayer-doc ::selection {
   background-color: var(--debate-reader-hl-bg);
 }
 
@@ -406,6 +407,34 @@ html[data-debate-emphasis="off"] .synergy-slayer-doc strong.reader-emphasis {
   border-color: transparent;
   padding: 0;
   text-decoration: none;
+}
+
+/*
+ * Summary tags (components/guides/summary-tag.tsx, `@debate-ai/reading-mode/summary-tags`):
+ * highlights carrying `data-summary-tag` get a dotted underline and are
+ * clickable; the last highlight of each tag (`data-summary-end`) ends in a
+ * small "Tag" badge. The summary is the highlight's `title`. "Summary tags" in
+ * the Marks menu switches it off.
+ */
+html:not([data-debate-summary-tags="off"]) .synergy-slayer-doc [data-summary-tag] {
+  cursor: pointer;
+  box-shadow: 0 2px 0 -1px var(--color-fd-primary);
+}
+
+html:not([data-debate-summary-tags="off"]) .synergy-slayer-doc [data-summary-end]::after {
+  content: "Tag";
+  display: inline-block;
+  margin-left: 3px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--color-fd-primary);
+  color: var(--color-fd-primary-foreground);
+  font-size: 0.6em;
+  font-weight: 600;
+  line-height: 1.5;
+  vertical-align: super;
+  text-decoration: none;
+  user-select: none;
 }
 
 /*
