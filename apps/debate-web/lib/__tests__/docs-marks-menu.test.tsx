@@ -20,6 +20,11 @@ vi.mock("../../../../packages/debate-help-docs/components/guides/docs-ai", () =>
   readableText: (root: Element | null) => root?.textContent ?? "",
 }))
 
+const swoosh = vi.fn()
+vi.mock("../../../../packages/debate-help-docs/components/guides/auto-highlight-swoosh", () => ({
+  playAutoHighlightSwoosh: () => swoosh(),
+}))
+
 const { HIGHLIGHT_INIT_SCRIPT, MarksMenu } = await import(
   "../../../../packages/debate-help-docs/components/guides/highlight-toggle"
 )
@@ -48,6 +53,7 @@ afterEach(() => {
   act(() => root.unmount())
   document.body.innerHTML = ""
   generate.mockReset()
+  swoosh.mockReset()
 })
 
 const button = (text: string) =>
@@ -213,6 +219,75 @@ describe("Auto modes in the Marks menu", () => {
     click(item("Reset to default highlighting"))
     expect(page.querySelector(".reader-highlight-short")).toBeNull()
     expect(page.querySelector("mark.debate-hl")?.textContent).toBe("solves warming")
+  })
+})
+
+describe("Auto highlight swoosh", () => {
+  it("plays when the pen cursor first appears", () => {
+    click(item("Auto highlight"))
+    expect(swoosh).toHaveBeenCalledTimes(1)
+  })
+
+  it("stays quiet when the pen is already there, when turning a mode off, and for the pencil", () => {
+    click(item("Auto highlight"))
+    swoosh.mockClear()
+    click(item("Auto short highlight"))
+    click(item("Auto short highlight"))
+    expect(swoosh).not.toHaveBeenCalled()
+    click(item("Auto emphasize words"))
+    expect(swoosh).not.toHaveBeenCalled()
+    click(item("Auto emphasize words"))
+    click(item("Auto underline"))
+    expect(swoosh).not.toHaveBeenCalled()
+  })
+
+  it("plays again after the pen was put away", () => {
+    click(item("Auto highlight"))
+    click(item("Auto highlight"))
+    click(item("Auto highlight"))
+    expect(swoosh).toHaveBeenCalledTimes(2)
+  })
+
+  it("stays quiet on mount with an auto mode already on", () => {
+    html.setAttribute("data-debate-auto-highlight", "on")
+    act(() => root.render(<MarksMenu key="again" />))
+    expect(swoosh).not.toHaveBeenCalled()
+  })
+})
+
+describe("playAutoHighlightSwoosh", () => {
+  const originalAudio = globalThis.Audio
+  afterEach(() => {
+    globalThis.Audio = originalAudio
+  })
+
+  it("rewinds and plays one shared, quieter-than-full-volume clip, and survives a blocked play", async () => {
+    const { playAutoHighlightSwoosh } = await vi.importActual<
+      typeof import("../../../../packages/debate-help-docs/components/guides/auto-highlight-swoosh")
+    >("../../../../packages/debate-help-docs/components/guides/auto-highlight-swoosh")
+    const play = vi.fn().mockReturnValueOnce(Promise.reject(new Error("blocked"))).mockReturnValue(Promise.resolve())
+    const made: { src: string; currentTime: number; volume: number }[] = []
+    globalThis.Audio = vi.fn(function (this: object, src: string) {
+      Object.assign(this, { src, currentTime: 9, volume: 1, play })
+      made.push(this as (typeof made)[number])
+    }) as unknown as typeof Audio
+    playAutoHighlightSwoosh()
+    playAutoHighlightSwoosh()
+    await Promise.resolve()
+    expect(made).toHaveLength(1)
+    expect(made[0].src).toMatch(/^data:audio\/mpeg;base64,/)
+    expect(made[0].volume).toBeLessThan(1)
+    expect(made[0].currentTime).toBe(0)
+    expect(play).toHaveBeenCalledTimes(2)
+  })
+
+  it("does nothing without audio support", async () => {
+    const { playAutoHighlightSwoosh } = await vi.importActual<
+      typeof import("../../../../packages/debate-help-docs/components/guides/auto-highlight-swoosh")
+    >("../../../../packages/debate-help-docs/components/guides/auto-highlight-swoosh")
+    // @ts-expect-error simulating a runtime without Audio
+    delete globalThis.Audio
+    expect(() => playAutoHighlightSwoosh()).not.toThrow()
   })
 })
 
