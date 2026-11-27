@@ -9,7 +9,13 @@ import {
   autofillKeys,
   buildAutofillContent,
 } from "@/lib/videos/video-autofill";
-import { forcedLectureCategory, LECTURE_CATEGORIES } from "@debate-ai/videos/src/data/lecture-classifier";
+import {
+  isLectureCategory,
+  LECTURE_CATEGORIES,
+  LECTURE_CATEGORY_GUIDANCE,
+  MISCELLANEOUS_CATEGORY,
+  ruleLectureCategory,
+} from "@debate-ai/videos/src/data/lecture-classifier";
 import type { ProviderKey } from "@/lib/ai/provider-key";
 
 type DB = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -29,8 +35,8 @@ const DETECT_PROMPT = `You catalogue YouTube videos for a competitive debate vid
 Given a video's title, channel and description, say what kind of video it is. Answer with a single JSON object and nothing else — no prose, no code fence — with exactly these keys:
 {"style": "", "category": ""}
 
-style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate: NPDA, NPTE, APDA, high-school parli), "congress" (congressional debate), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
-category: for a lecture, the single best category from the allowed list. For a round, "none".
+style: "policy", "pf" (Public Forum), "ld" (Lincoln-Douglas), "college" (NDT/CEDA/college policy), "wsd" (World Schools), "acc" (the ACC Debate Tournament), "parli" (parliamentary debate: NPDA, NPTE, APDA, high-school parli), "congress" (a recorded congressional debate round, not a lecture about it), "misc" (any other debate round format) when the video is a recorded debate round. "lecture" for anything else — lectures, drills, demo explanations, documentaries, advice.
+category: for a lecture, the single best category from the allowed list. For a round, "none". ${LECTURE_CATEGORY_GUIDANCE}
 
 Allowed values: style is one of "policy", "pf", "ld", "college", "wsd", "acc", "parli", "congress", "misc", "lecture". category is "none" or one of: ${LECTURE_CATEGORIES.map((c) => `"${c}"`).join(", ")}.
 
@@ -51,12 +57,13 @@ const DETECT_TIMEOUT_MS = 20_000;
  * queue row. A field the model left empty keeps the row's stored value, so an
  * unsure answer never turns a round into a lecture.
  *
- * A queued lecture whose title or channel forces a shelf (Super Debate, NSDA;
- * see `forcedLectureCategory`) is filed there by rule, without asking the
- * model, and a lecture the model returns is filed there too.
+ * A queued lecture a rule places (Super Debate, NSDA, Congressional Debate;
+ * see `ruleLectureCategory`) is filed there without asking the model, and a
+ * lecture the model returns is filed there too. A lecture neither the rules
+ * nor the model can place goes to Miscellaneous rather than staying unfiled.
  */
 async function detectOne(db: DB, keys: ProviderKey[], video: QueueVideo): Promise<{ style: number | null; category: string | null }> {
-  const forced = forcedLectureCategory(video.title, video.channel);
+  const forced = ruleLectureCategory(video.title, video.description, video.channel);
   if (forced && video.style == null) {
     await db
       .update(youtubeRoundVideos)
@@ -70,7 +77,10 @@ async function detectOne(db: DB, keys: ProviderKey[], video: QueueVideo): Promis
     throw new Error("The model couldn't tell what kind of video this is; left it unchanged.");
   }
   const style = fields.style;
-  const category = style === null ? (forced ?? fields.category ?? video.category ?? null) : null;
+  const category =
+    style === null
+      ? (forced ?? fields.category ?? (isLectureCategory(video.category) ? video.category : MISCELLANEOUS_CATEGORY))
+      : null;
   await db
     .update(youtubeRoundVideos)
     .set({ style, category, updatedAt: new Date() })

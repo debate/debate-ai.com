@@ -299,6 +299,35 @@ describe("RoundQueuePanel bulk actions", () => {
     expect(bodyText()).toContain("nope");
   });
 
+  it("re-files Congress and Miscellaneous lectures and reports what moved", async () => {
+    mockFetch([
+      {
+        method: "POST",
+        match: `${LIST}/refile-lectures`,
+        respond: { congress: { queued: 2, published: 4 }, miscellaneous: { queued: 5 } },
+        once: true,
+      },
+      {
+        method: "POST",
+        match: `${LIST}/refile-lectures`,
+        respond: { congress: { queued: 0, published: 0 }, miscellaneous: { queued: 0 } },
+        once: true,
+      },
+      { method: "POST", match: `${LIST}/refile-lectures`, respond: { error: "nope" }, status: 500 },
+      { method: "GET", match: LIST, respond: { videos: [queued("a")] } },
+    ]);
+    mount(<RoundQueuePanel />);
+    await flush();
+    await clickAsync(button("Re-file Congress & Misc."));
+    expect(bodyText()).toContain(
+      "Filed 2 queued and 4 published lectures under Congress, and 5 queued lectures under Miscellaneous.",
+    );
+    await clickAsync(button("Re-file Congress & Misc."));
+    expect(bodyText()).toContain("already under Congress");
+    await clickAsync(button("Re-file Congress & Misc."));
+    expect(bodyText()).toContain("nope");
+  });
+
   it("auto-detects the loaded queue five at a time and totals the outcome", async () => {
     const videos = Array.from({ length: 7 }, (_, i) => queued(`v${i}`));
     const { calls } = mockFetch([

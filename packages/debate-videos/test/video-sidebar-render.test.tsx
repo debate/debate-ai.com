@@ -58,7 +58,7 @@ const { QuickLinksGrid } = await import(
 function renderSidebar(overrides: Partial<ComponentProps<typeof VideoSidebarTree>> = {}): string {
   return renderToStaticMarkup(
     createElement(VideoSidebarTree, {
-      counts: { college: 12, favorites: 3, lectures: 40 },
+      counts: { rounds: 12, favorites: 3, lectures: 40 },
       activeId: "lectures",
       ...overrides,
     }),
@@ -109,63 +109,56 @@ describe("VideoSidebarTree", () => {
 
   it("draws every row in gray", () => {
     const html = renderSidebar();
-    // No baked-color image icons: Favorites and Lectures are plain glyphs.
+    // No baked-color image icons: Favorites and Strategy Lectures are plain glyphs.
     expect(html).not.toContain("<img");
     expect(html).toMatch(/<svg[^>]*text-muted-foreground[^>]*>(?:(?!<\/svg>).)*<\/svg><h2[^>]*>My Favorites/s);
-    expect(html).toMatch(/<svg[^>]*text-muted-foreground[^>]*>(?:(?!<\/svg>).)*<\/svg><h2[^>]*>Lectures/s);
+    expect(html).toMatch(/<svg[^>]*text-muted-foreground[^>]*>(?:(?!<\/svg>).)*<\/svg><h2[^>]*>Strategy Lectures/s);
     expect(html).not.toMatch(/<svg[^>]*text-lime-600/);
   });
 
-  it("does not select Lectures while a debate-video tab is active", () => {
-    const html = renderSidebar({ activeId: "pf" });
-    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">HS Forum/);
-    expect(html).not.toMatch(/<h2 class="[^"]*text-primary[^"]*">Lectures/);
+  it("does not select Strategy Lectures while Debate Rounds is active", () => {
+    const html = renderSidebar({ activeId: "rounds" });
+    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">Debate Rounds/);
+    expect(html).not.toMatch(/<h2 class="[^"]*text-primary[^"]*">Strategy Lectures/);
   });
 });
 
 describe("the sidebar's heading structure", () => {
-  it("puts College Policy and My Favorites under a Videos h1", () => {
+  it("puts Debate Rounds and My Favorites under a Videos h1", () => {
     const html = renderSidebar();
     expect(html).toMatch(/<h1[^>]*>Videos<\/h1>/);
-    expect(html).toMatch(/<h2[^>]*>College Policy<\/h2>/);
+    expect(html).toMatch(/<h2[^>]*>Debate Rounds<\/h2>/);
     expect(html).toMatch(/<h2[^>]*>My Favorites<\/h2>/);
     // The h1 comes first: both are nested inside it, not siblings of it.
-    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">College Policy<"));
-    expect(html.indexOf(">College Policy<")).toBeLessThan(html.indexOf(">My Favorites<"));
+    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">Debate Rounds<"));
+    expect(html.indexOf(">Debate Rounds<")).toBeLessThan(html.indexOf(">My Favorites<"));
   });
 
-  it("keeps every round-archive link on one level under Videos", () => {
-    // Policy / PF / LD / Greatest of All-Time used to be h3 leaves inside a
-    // College Policy node, one indent deeper than it. They are peers of it:
-    // same heading level, same indent, and no chevron on College Policy to
-    // collapse them out of view.
+  it("keeps every video link on one level under Videos", () => {
     const html = renderSidebar();
-    for (const title of [
-      "College Policy",
-      "HS Policy",
-      "HS Individual",
-      "HS Forum",
-      "Greatest of All-Time",
-      "My Favorites",
-    ]) {
+    for (const title of ["Debate Rounds", "Strategy Lectures", "Greatest of All-Time", "My Favorites"]) {
       expect(html).toMatch(new RegExp(`<h2[^>]*>${title}</h2>`));
       expect(html).not.toMatch(new RegExp(`<span[^>]*>${title}</span>`));
     }
     // One expand control in the section — the Videos heading itself.
-    expect(html).not.toContain("Collapse College Policy");
-    expect(html).not.toContain("Expand College Policy");
+    expect(html).not.toContain("Collapse Debate Rounds");
+    expect(html).not.toContain("Expand Debate Rounds");
   });
 
-  it("lists Lectures as a single row under Videos, with no categories", () => {
+  it("lists exactly two library destinations, Debate Rounds then Strategy Lectures", () => {
     // The lecture categories live on the lectures page as a card bar; the
-    // sidebar carries one Lectures link, between All Videos and College Policy.
+    // sidebar carries one Strategy Lectures link, right after Debate Rounds,
+    // and no All Videos or per-format rows.
     const html = renderSidebar();
-    expect(html).toMatch(/<h2[^>]*>Lectures<\/h2>/);
-    expect(html).not.toMatch(/<h1[^>]*>Lectures<\/h1>/);
+    expect(html).toMatch(/<h2[^>]*>Strategy Lectures<\/h2>/);
+    expect(html).not.toMatch(/<h1[^>]*>Strategy Lectures<\/h1>/);
     expect(html).toMatch(/<a[^>]*href="\/lectures"/);
-    expect(html.indexOf(">All Videos<")).toBeLessThan(html.indexOf(">Lectures<"));
-    expect(html.indexOf(">Lectures<")).toBeLessThan(html.indexOf(">College Policy<"));
-    expect(html).not.toContain("All Lectures");
+    expect(html).toMatch(/<a[^>]*href="\/videos\/rounds"/);
+    expect(html.indexOf(">Debate Rounds<")).toBeLessThan(html.indexOf(">Strategy Lectures<"));
+    expect(html.indexOf(">Strategy Lectures<")).toBeLessThan(html.indexOf(">Greatest of All-Time<"));
+    for (const gone of ["All Videos", "All Lectures", "College Policy", "HS Policy", "HS Individual", "HS Forum"]) {
+      expect(html).not.toContain(gone);
+    }
   });
 
   it("renders Research / Debates / Inference as h1 sections", () => {
@@ -226,13 +219,13 @@ describe("the sidebar's heading structure", () => {
     expect(html).toContain("Research Workspace");
     expect(html).toContain("Prep Workspace");
     // ...alongside the Videos node's own links, which were never in doubt.
-    expect(html).toContain("HS Forum");
+    expect(html).toContain("Debate Rounds");
     expect(html).toContain("My Favorites");
   });
 
   it("prints all totals in k format in the tree", () => {
     // All counts now use k format consistently.
-    const html = renderSidebar({ counts: { college: 1400, policy: 1346 } });
+    const html = renderSidebar({ counts: { rounds: 1400, lectures: 1346 } });
     expect(html).toContain(">1.4k<");
     expect(html).toContain(">1.3k<");
     expect(html).not.toContain("1400");
@@ -255,12 +248,12 @@ describe("QuickLinksGrid", () => {
     for (const layout of ["grid", "list"] as const) {
       const html = renderToStaticMarkup(
         createElement(QuickLinksGrid, {
-          counts: { college: 4, policy: 2 },
-          activeId: "college",
+          counts: { rounds: 4, lectures: 2 },
+          activeId: "rounds",
           layout,
         }),
       );
-      expect(html).toContain("College Policy");
+      expect(html).toContain("Debate Rounds");
       expect(html).not.toContain('src="undefined"');
       for (const [, src] of html.matchAll(/<img[^>]*\ssrc="([^"]*)"/g)) {
         expect(src.length).toBeGreaterThan(0);
@@ -272,7 +265,7 @@ describe("QuickLinksGrid", () => {
     for (const layout of ["grid", "list"] as const) {
       const html = renderToStaticMarkup(
         createElement(QuickLinksGrid, {
-          counts: { college: 1400, policy: 1346 },
+          counts: { rounds: 1400, lectures: 1346 },
           layout,
         }),
       );

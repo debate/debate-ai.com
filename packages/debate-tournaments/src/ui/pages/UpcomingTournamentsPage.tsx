@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, Sele
 import { Empty, Loaded, useApi, useTournaments, type LinkLike } from "../shared";
 import type { ActiveCircuit, OwnedTournament, UpcomingTournament } from "../client";
 import type { TournamentHrefs } from "../../routes";
+import { RecentResultsSection } from "./RecentResults";
 
 /**
  * Upcoming tournaments, as on Tournament Admin's front page (`/pages/invite/upcoming`):
@@ -19,7 +20,9 @@ import type { TournamentHrefs } from "../../routes";
  * while it is underway. Tabroom's own site has its own sidebar row, so it is not
  * framed from here.
  *
- * The top bar filters by state and by circuit, and its Results button swaps
+ * Above the list, in upcoming mode, sits "Recent results": the tournaments
+ * whose results finished in the last two weeks, as expandable rows (see
+ * `RecentResults`). The top bar filters by state and by circuit, and its Results button swaps
  * the list for past tournaments with published results (the last 60 days).
  * Upcoming rows carry their circuits, so that filter runs here; past rows do
  * not, so a circuit there is sent upstream by id (see `pastTournaments`).
@@ -48,14 +51,32 @@ export function UpcomingTournamentsPage() {
         : client.pastTournaments({ circuit: activeCircuit, signal })
       : Promise.resolve([] as UpcomingTournament[]),
   );
+  // Tournaments whose results finished in the last two weeks, listed first.
+  // Like the Results list, a circuit is sent upstream by id.
+  const recent = useApi(`recent:${circuit}:${circuits.status}`, (signal) =>
+    circuit && circuits.status === "loading"
+      ? new Promise<UpcomingTournament[]>(() => undefined)
+      : circuit && !activeCircuit
+        ? Promise.resolve([] as UpcomingTournament[])
+        : client.recentResults({ circuit: activeCircuit, signal }).catch(() => [] as UpcomingTournament[]),
+  );
+  const recentRows = useMemo(
+    () => (recent.status === "ready" ? filterTournaments(recent.data.filter((t) => t.tournId !== DEMO_TOURN_ID), { query, state }) : []),
+    [recent, query, state],
+  );
   const rows = showResults ? past : upcoming;
   const circuitOptions = useMemo(
     () => circuitChoices(circuits.status === "ready" ? circuits.data : [], upcoming.status === "ready" ? upcoming.data : []),
     [circuits, upcoming],
   );
   const stateOptions = useMemo(
-    () => stateChoices([...(upcoming.status === "ready" ? upcoming.data : []), ...(past.status === "ready" ? past.data : [])]),
-    [upcoming, past],
+    () =>
+      stateChoices([
+        ...(upcoming.status === "ready" ? upcoming.data : []),
+        ...(past.status === "ready" ? past.data : []),
+        ...(recent.status === "ready" ? recent.data : []),
+      ]),
+    [upcoming, past, recent],
   );
 
   return (
@@ -141,9 +162,12 @@ export function UpcomingTournamentsPage() {
           />
         </label>
       </div>
+      {showResults ? null : <RecentResultsSection tourns={recentRows} state={recent.status === "ready" ? "ready" : "loading"} />}
       {showResults ? (
         <h2 className="text-sm font-medium text-muted-foreground">Results · past tournaments, last 60 days</h2>
-      ) : null}
+      ) : (
+        <h2 className="text-base font-semibold">Upcoming tournaments</h2>
+      )}
       <Loaded state={rows}>
         {(tourns) => (
           <UpcomingList

@@ -25,6 +25,11 @@ export interface SlugState {
    * favorites one. Favorites routes otherwise list rounds and lectures alike.
    */
   lecturesOnly?: boolean
+  /**
+   * When `true`, the listing is every debate round of every format combined
+   * (`/videos/rounds`, "Debate Rounds"): no style filter, rounds only.
+   */
+  roundsOnly?: boolean
 }
 
 /**
@@ -36,6 +41,7 @@ export const SLUG_MAP: Record<string, SlugState> = {
   ld: { style: 3 },
   pf: { style: 2 },
   college: { style: 4 },
+  rounds: { view: "lectures", roundsOnly: true },
   "goat": { view: "topPicks" },
   // The old address; the Worker redirects it to `/videos/goat`, and this
   // keeps any casing the redirect does not match rendering the same view.
@@ -129,6 +135,15 @@ export function isLecturesOnlyListing(
 ): boolean {
   if (slug === undefined || view !== "lectures" || selectedCategory !== "all" || style) return false
   const slugState = SLUG_MAP[slug]
+  if (slugState?.roundsOnly) return false
   if (slugState?.favorites) return slugState.lecturesOnly === true
   return true
+}
+
+/**
+ * Whether the slug is Debate Rounds (`/videos/rounds`): the round videos of all
+ * formats in one listing, the lecture library's Formats section above it.
+ */
+export function isRoundsListing(slug: string | undefined): boolean {
+  return slug !== undefined && SLUG_MAP[slug]?.roundsOnly === true
 }
