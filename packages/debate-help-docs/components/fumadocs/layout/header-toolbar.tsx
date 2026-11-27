@@ -22,11 +22,17 @@
 import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Search } from 'lucide-react';
-import type { FullSearchTrigger } from 'fumadocs-ui/layouts/shared/slots/search-trigger';
+import {
+  FullSearchTrigger,
+  SearchTrigger,
+  type FullSearchTriggerProps,
+  type SearchTriggerProps,
+} from 'fumadocs-ui/layouts/shared/slots/search-trigger';
 import { useSearchContext } from 'fumadocs-ui/contexts/search';
 import { buttonVariants } from '../../ui/button';
 import { cn } from '../../../lib/utils';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../../ui/tooltip';
+import { ThemesMenu } from './themes-menu';
 
 /** The element in the docs header the page toolbar is portaled into. */
 export const HEADER_TOOLBAR_ID = 'docs-header-toolbar';
@@ -36,8 +42,9 @@ export const HEADER_TOOLBAR_QUERY = '(min-width: 1024px)';
 /**
  * The layout's `searchTrigger.full` slot: a Search button styled like the
  * toolbar's buttons (large icon over a tiny label, named again with its
- * hotkey in a tooltip), then the toolbar's spot. Like fumadocs' own search
- * box it shows from `md` up; below that the header keeps its search icon.
+ * hotkey in a tooltip), then the toolbar's spot, then the Themes menu, so
+ * Themes sits in the same button group. Like fumadocs' own search box it shows
+ * from `md` up; below that the header keeps its icons (`SearchWithThemesIcon`).
  */
 export function SearchWithToolbarSlot({ hideIfDisabled }: ComponentProps<typeof FullSearchTrigger>) {
   const { enabled, hotKey, setOpenSearch } = useSearchContext();
@@ -60,6 +67,46 @@ export function SearchWithToolbarSlot({ hideIfDisabled }: ComponentProps<typeof 
         </div>
       )}
       <div id={HEADER_TOOLBAR_ID} className="flex shrink-0 items-center max-lg:hidden" />
+      <ThemesToolbarButton />
+    </>
+  );
+}
+
+/** The Themes menu as one more toolbar button, from `md` up (the narrow header has `SearchWithThemesIcon`). */
+function ThemesToolbarButton() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="docs-header-toolbar my-auto flex shrink-0 items-center max-md:hidden">
+      <ToolbarItem label="Themes" tip="Light, dark and color themes" suppressTip={open}>
+        <ThemesMenu variant="toolbar" onOpenChange={setOpen} />
+      </ToolbarItem>
+    </div>
+  );
+}
+
+/**
+ * The layout's `searchTrigger.full` slot where there is no page toolbar (the
+ * welcome page, the developer docs): fumadocs' own search box followed by the
+ * Themes button.
+ */
+export function SearchWithThemesSlot(props: FullSearchTriggerProps) {
+  return (
+    <>
+      <FullSearchTrigger {...props} />
+      <ThemesToolbarButton />
+    </>
+  );
+}
+
+/**
+ * The layout's `searchTrigger.sm` slot, the narrow header's icons: the Themes
+ * menu beside the search icon, in the same group as the sidebar button.
+ */
+export function SearchWithThemesIcon(props: SearchTriggerProps) {
+  return (
+    <>
+      <ThemesMenu variant="icon" />
+      <SearchTrigger {...props} />
     </>
   );
 }
@@ -107,7 +154,20 @@ export function HeaderToolbar({ children }: { children: ReactNode }) {
  * the first button inside (often state-dependent, e.g. "Stop reading aloud")
  * replaces `tip` while it is set.
  */
-export function ToolbarItem({ label, tip, className, children }: { label: string; tip?: string; className?: string; children: ReactNode }) {
+export function ToolbarItem({
+  label,
+  tip,
+  className,
+  suppressTip,
+  children,
+}: {
+  label: string;
+  tip?: string;
+  className?: string;
+  /** Hide the tooltip, e.g. while the button's own menu is open over it. */
+  suppressTip?: boolean;
+  children: ReactNode;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const [lifted, setLifted] = useState<string | null>(null);
 
@@ -136,10 +196,12 @@ export function ToolbarItem({ label, tip, className, children }: { label: string
           {children}
         </span>
       </TooltipTrigger>
-      <TooltipContent side="bottom" className="max-w-64">
-        <span className="block font-semibold">{label}</span>
-        {detail && detail !== label && <span className="block text-slate-300">{detail}</span>}
-      </TooltipContent>
+      {!suppressTip && (
+        <TooltipContent side="bottom" className="max-w-64">
+          <span className="block font-semibold">{label}</span>
+          {detail && detail !== label && <span className="block text-slate-300">{detail}</span>}
+        </TooltipContent>
+      )}
     </Tooltip>
   );
 }
