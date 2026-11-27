@@ -369,12 +369,10 @@ describe("VideoWatchPage reveal decision", () => {
     const text = container.querySelector('[data-testid="watch-decision"]')?.textContent ?? "";
     expect(text).toContain(`${SPOILER_TEAM} (Neg)`);
     expect(text).toContain("2-1");
-    const judges = [...container.querySelectorAll('[data-testid="decision-judges"] li')].map((li) => li.textContent);
-    expect(judges).toEqual([
-      `Ann Lee voted ${SPOILER_TEAM} (Neg)`,
-      `Bo Kim voted ${SPOILER_TEAM} (Neg)`,
-      "Cy Diaz voted Harker LL (Aff)*",
-    ]);
+    const names = (side: string) =>
+      [...container.querySelectorAll(`[data-testid="decision-judges-${side}"] li`)].map((li) => li.textContent);
+    expect(names("neg")).toEqual(["Ann Lee", "Bo Kim"]);
+    expect(names("aff")).toEqual(["Cy Diaz*"]);
     expect(container.querySelector('a[href*="tabroom.com"]')?.textContent).toContain("Tabroom");
     const negBadge = container.querySelector<HTMLButtonElement>(`button[title="Negative: ${SPOILER_TEAM}"]`);
     expect(negBadge?.className).toContain("border-amber-400");
@@ -394,7 +392,8 @@ describe("VideoWatchPage reveal decision", () => {
     expect(container.textContent).not.toContain("3-0");
     await click(scales()!);
     expect(container.querySelector('[data-testid="decision-summary"]')?.textContent).toBe("Harker LL (Aff)  3-0");
-    expect(container.querySelector('[data-testid="decision-judges"]')?.textContent).toContain("Ann Lee voted Harker LL (Aff)");
+    expect(container.querySelector('[data-testid="decision-judges"]')?.textContent).toContain("Ann Lee");
+    expect(container.querySelector('[data-testid="decision-judges-aff"]')?.textContent).toContain("Ann Lee");
     unmount();
   });
 
