@@ -17,6 +17,8 @@ const DATA = {
   citation: "data-citation",
   card: "data-citation-card",
   spoken: "data-citation-spoken",
+  authors: "data-citation-authors",
+  year: "data-citation-year",
 } as const
 
 /** Marks the panel, whose own content is never collected. */
@@ -40,6 +42,10 @@ export interface ReferenceItem {
   card: string
   /** What the voice says for the cite, `Shanahan 93`. */
   spoken: string
+  /** The authors, `Galloway` or `Hansson & Reijven` (from the in-text label when the entry has none). */
+  authors: string
+  /** The publication year as cited, `2020`. */
+  year: string
   /** The in-text label of the first citation, `Shanahan (1993)`. */
   label: string
   /** Every link citing it, in page order. */
@@ -51,6 +57,11 @@ export interface ReferenceItem {
 /** Spaces collapsed, ends trimmed. */
 function tidy(text: string): string {
   return text.replace(/\s+/g, " ").trim()
+}
+
+/** `Galloway (2020)` or `Alinsky 1971, 66` → `Galloway` / `Alinsky`. */
+function authorsFromLabel(label: string): string {
+  return label.replace(/^\(?(?:cf\.|see|e\.g\.,?)\s+/i, "").replace(/['’]s\b/, "").split(/\s*\(|,?\s+(?:\[\d{4}\]\s*|\d{4}\/)?\d{4}|,?\s+n\.d\./)[0]?.trim() ?? ""
 }
 
 /** The sources cited under `root`, in order of first citation (see the module doc). */
@@ -71,6 +82,8 @@ export function collectReferenceItems(root: ParentNode): ReferenceItem[] {
       citation: link.getAttribute(DATA.citation) ?? "",
       card: link.getAttribute(DATA.card) ?? "",
       spoken: link.getAttribute(DATA.spoken) ?? "",
+      authors: link.getAttribute(DATA.authors) || authorsFromLabel(tidy(link.textContent ?? "")),
+      year: link.getAttribute(DATA.year) ?? "",
       label: tidy(link.textContent ?? ""),
       links: [link],
       paragraph: link.closest(PARAGRAPH_SELECTOR),

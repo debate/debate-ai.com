@@ -3,7 +3,8 @@
 /**
  * @fileoverview The admin "Round queue" section: rounds the YouTube sync found,
  * waiting for staff to publish or delete them, filterable by style, with
- * "Publish all", "Deduplicate" and "Auto-detect all" for the loaded queue. Each
+ * "Publish all", "Deduplicate" and "Auto-detect all" for the loaded queue, and
+ * "Re-file Super Debates" for the whole queue and library. Each
  * row also has per-video "Publish", "Delete", "Auto-detect" (auto-detect lecture or
  * debate format with OpenRouter's free model) and "Edit" (metadata editor).
  * Pages through `/api/admin/youtube/videos` as the list scrolls.
@@ -48,6 +49,7 @@ export function RoundQueuePanel() {
   const [publishAllError, setPublishAllError] = useState<string | null>(null);
   const [isDeduping, setIsDeduping] = useState(false);
   const [isDetectingAll, setIsDetectingAll] = useState(false);
+  const [isRefiling, setIsRefiling] = useState(false);
   const [detectAllError, setDetectAllError] = useState<string | null>(null);
   const [detectAllNotice, setDetectAllNotice] = useState<string | null>(null);
   const [detectProgress, setDetectProgress] = useState<{ done: number; total: number } | null>(null);
@@ -276,6 +278,31 @@ export function RoundQueuePanel() {
   };
 
   /**
+   * Files every Super Debate video, queued or already published, under the
+   * Open Super Debates category. Covers the whole queue, not just the loaded page.
+   */
+  const handleRefileSuperDebates = async () => {
+    setIsRefiling(true);
+    setPublishAllError(null);
+    try {
+      const res = await fetch("/api/admin/youtube/videos/recategorize", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Re-file failed");
+      const moved = (data.queued ?? 0) + (data.published ?? 0);
+      setQueueNotice(
+        moved
+          ? `Filed ${data.queued ?? 0} queued and ${data.published ?? 0} published video${moved === 1 ? "" : "s"} under Open Super Debates.`
+          : "Every Super Debate video is already under Open Super Debates.",
+      );
+      await loadFirstPage(style);
+    } catch (error) {
+      setPublishAllError((error as Error).message);
+    } finally {
+      setIsRefiling(false);
+    }
+  };
+
+  /**
    * Drops queued rounds that duplicate a published video or an older queued
    * round (same YouTube id or same title), always keeping the older copy.
    */
@@ -348,6 +375,14 @@ export function RoundQueuePanel() {
             {isDetectingAll
               ? `Detecting${detectProgress ? ` ${detectProgress.done}/${detectProgress.total}` : ""}…`
               : "Auto-detect all"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleRefileSuperDebates}
+            disabled={isRefiling || isDeduping || isPublishingAll || isDetectingAll}
+            title="File every video from the Super Debate channel, or with Super Debate in its title, under the Open Super Debates category, in the queue and in the published library"
+          >
+            {isRefiling ? "Filing…" : "Re-file Super Debates"}
           </Button>
           <Select value={style} onValueChange={setStyle}>
             <SelectTrigger className="w-40">
