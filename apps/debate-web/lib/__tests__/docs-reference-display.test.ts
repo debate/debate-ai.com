@@ -69,6 +69,15 @@ describe("stripAuthorFromQualification", () => {
     ).toBe("Professor of International Relations; Senior Lecturer")
   })
 
+  it("drops every co-author's name when the byline is `et al.`", () => {
+    expect(
+      stripAuthorFromQualification(
+        "Lisa Schwartz — Professor of Health Care Ethics, McMaster University; Paul E. Preece — qualifications not verified; Robert A. Hendry — Chief Member Officer, Medical Protection",
+        "Schwartz et al.",
+      ),
+    ).toBe("Professor of Health Care Ethics, McMaster University; qualifications not verified; Chief Member Officer, Medical Protection")
+  })
+
   it("leaves names that are not the author's", () => {
     expect(stripAuthorFromQualification("Professor of History, Harvard", "Smith")).toBe("Professor of History, Harvard")
     expect(stripAuthorFromQualification("Foucault is a philosopher", "Smith")).toBe("Foucault is a philosopher")
@@ -81,6 +90,11 @@ describe("classifySource", () => {
     expect(kind('Wu, Jade. “Why We Fear Death.” <em>Journal of Ethics</em> 12, no. 3 (2020): 1–20.')).toBe("journal")
     expect(kind('Smith, Jane. “Title.” <em>Argumentation</em> 5 (2019): 1–9. https://doi.org/10.1/x.')).toBe("journal")
     expect(kind("Smith, Jane. <em>The Book</em>. Cambridge: Cambridge University Press, 2019.")).toBe("book")
+    expect(
+      kind(
+        'Schwartz, Lisa, Paul E. Preece, and Robert A. Hendry. <em>Medical Ethics: A Case-Based Approach</em>. Edinburgh: W. B. Saunders, 2002. <a href="https://archive.org/details/medicalethicscas0000schw">archive.org/details/medicalethicscas0000schw</a>.',
+      ),
+    ).toBe("book")
     expect(kind('Hall, Stuart. “Essay.” In <em>Collected Essays</em>, edited by A. Lee. London: Verso, 1990.')).toBe("book")
     expect(kind('Lee, Al. “Piece.” <em>The New Yorker</em>, March 3, 2019.')).toBe("news")
     expect(kind('Galloway, Ryan. “Go Vegetarian.” <em>Wyoming Debate Roundup</em>, March 27, 2020.')).toBe("blog")

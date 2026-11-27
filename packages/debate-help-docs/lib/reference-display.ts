@@ -89,7 +89,8 @@ function upperFirst(text: string): string {
  * The qualification line without the author's own name, so it reads
  * `Longtime college debate coach, Samford University` after `Galloway ’20 —`.
  * Strips `Ryan Galloway is a …` and `Roland Bleiker — …; Amy Kay — …` leads, but
- * only names that contain one of the authors' surnames.
+ * only names that contain one of the authors' surnames (for `Smith et al.`,
+ * every `Name — ` lead).
  */
 export function stripAuthorFromQualification(qualification: string, authors: string): string {
   const surnames = authors
@@ -97,9 +98,11 @@ export function stripAuthorFromQualification(qualification: string, authors: str
     .split(/\s*&\s*|,\s*/)
     .map((name) => name.trim().toLowerCase())
     .filter(Boolean);
+  // "Smith et al." names only the first author, so every `Name — ` lead of a multi-author line is a co-author.
+  const coAuthored = /\bet al\b/i.test(authors);
   const isAuthor = (name: string) => {
     const lower = name.toLowerCase();
-    return surnames.some((surname) => lower.includes(surname));
+    return coAuthored || surnames.some((surname) => lower.includes(surname));
   };
   let text = tidy(qualification);
   text = text.replace(new RegExp(`(^|;\\s*)(?:edited by\\s+)?(${NAME_WORDS})\\s+[—–-]\\s+`, 'gu'), (whole, lead: string, name: string) =>
@@ -135,7 +138,7 @@ const REPORT =
 const JOURNAL_VOLUME = /\b\d+\s*\((?:\d{4}|[A-Z][a-z]+\.?(?:\s\d{4})?)\)\s*:\s*\d|\bvol\.\s*\d|\bno\.\s*\d+\b|\b\d+,\s*no\.\s*\d|doi\.org|\bdoi:/i;
 const JOURNAL_NAME = /<em>[^<]*\b(?:Journal|Review|Quarterly|Studies|Annals|Transactions|Proceedings|Argumentation|Alternatives|Philosophy|Affairs|Politics|Sociology|Theory|Ethics|Science|Nature|Law|Economics)\b[^<]*<\/em>/;
 const CHAPTER = /(?:^|\.\s|”\s)In\s+<em>/;
-const PUBLISHER = /\b(?:Press|Books|Publishers?|Publishing|Routledge|Penguin|Random House|Viking|Littlefield|Verso|Polity|Basic Books|Wiley|Springer)\b/;
+const PUBLISHER = /\b(?:Press|Books|Publishers?|Publishing|Routledge|Penguin|Random House|Viking|Littlefield|Verso|Polity|Basic Books|Wiley|Springer|Saunders|Elsevier)\b/;
 const BLOG = /\b(?:blog|substack|medium\.com|wordpress|blogspot|slowboring|lesswrong|debate roundup|roundup)\b/i;
 const NEWS =
   /<em>[^<]*\b(?:New Yorker|Harper|Atlantic|Times|Post|Guardian|Tablet|Magazine|Mondoweiss|Wired|Vox|Politico|Economist|Forbes|Jacobin|Nation|Dispatch|Tribune|Herald|Gazette|News|BBC|CNN|NPR)\b[^<]*<\/em>/i;
