@@ -13,6 +13,7 @@
 
 import {
   APP_DOCK_LINKS,
+  LEARNING_LINKS,
   SIDEBAR_TOOL_SECTIONS,
   TOOLS_ROOT_HREF,
 } from "./sidebar-tool-sections";
@@ -83,6 +84,7 @@ export const TOOL_SIDEBAR_HREFS: ReadonlySet<string> = new Set<string>([
     section.href,
     ...section.tools.flatMap((tool) => [tool.href, ...(tool.aliases ?? [])]),
   ]),
+  ...LEARNING_LINKS.flatMap((link) => [link.href, ...(link.aliases ?? [])]),
 ]);
 
 /**

@@ -30,6 +30,7 @@ import { isFormatsSectionLabel, type GalleryScope } from "../components/navigati
 import { formatBadgeIdForStyle } from "../components/navigation/category-gallery/FormatBadgeCards"
 import { QuickLinksGrid } from "../components/navigation/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/navigation/sidebar-nav/VideoSidebarTree"
+import { DocsNavTree } from "../components/navigation/sidebar-nav/DocsNavTree"
 import { ToolNavTree } from "../components/navigation/sidebar-nav/ToolNavTree"
 import { GoatSparklesHeading } from "../components/navigation/category-gallery/GoatSparklesHeading"
 import { GoatRankingsLinks } from "../components/navigation/category-gallery/GoatRankingsLinks"
@@ -458,15 +459,15 @@ export function LecturesVideoGridView({
             activeId={activeQuickLinkId}
           />
 
-          {/* The rest of the sidebar tree — Apps / Coaching / Research /
-              Practice and the glossary/rankings pair. The tiles above cover
-              only its Videos section, so without this the tool sections had
-              no counterpart on a phone anywhere on the page (the dock's
-              Settings menu carries them too, as its Videos/Apps/… submenus).
+          {/* The rest of the sidebar tree — Research / Debates / Inference,
+              then Learning. The tiles above cover only its Videos section, so
+              without this the tool sections had no counterpart on a phone
+              anywhere on the page (the dock's Settings menu carries them too).
               Sections start collapsed here: expanded, forty rows would push
               the video grid off the screen. */}
           <nav className="mb-6 flex flex-col gap-3 text-sm" aria-label="Tools">
             <ToolNavTree defaultExpanded={false} />
+            <DocsNavTree defaultExpanded={false} />
           </nav>
 
           <Footer />

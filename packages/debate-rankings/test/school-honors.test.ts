@@ -4,6 +4,7 @@ import { findTocSchoolRecord } from "../src/sync/toc-champions";
 import { findNdcaSchoolRecord } from "../src/sync/ndca-champions";
 import { findListedShirleyResults } from "../src/sync/shirley-results";
 import { findCedaSchoolTitles } from "../src/sync/ceda-champions";
+import { findBarkleySchoolResults } from "../src/sync/barkley-champions";
 import { CAL_RESULTS, findCalSchoolResults } from "../src/sync/berkeley-champions";
 import { GLENBROOKS_RESULTS, findGlenbrooksSchoolResults, isGlenbrooksTitle } from "../src/sync/glenbrooks-champions";
 import type { NdtSchoolHistory } from "../src/sync/ndt-school-history";
@@ -17,12 +18,23 @@ describe("highSchoolHonors", () => {
     const toc = findTocSchoolRecord(school)!;
     const ndca = findNdcaSchoolRecord(school)!;
     const glenbrooks = findGlenbrooksSchoolResults(school);
+    const barkley = findBarkleySchoolResults(school);
+    const cal = findCalSchoolResults(school);
     const honors = highSchoolHonors(school);
     const g = (place: string) => glenbrooks.filter((r) => r.place === place).length;
-    expect(honors.championships.total).toBe(toc.titles + ndca.titles + glenbrooks.filter(isGlenbrooksTitle).length);
-    expect(honors.finalists.total).toBe(toc.runnerUps + ndca.results.filter((r) => r.place === "Finalist").length + g("Finalist"));
-    expect(honors.topSpeakers.total).toBe(toc.topSpeakers + ndca.topSpeakers + g("Top speaker"));
-    expect(honors.championships.parts.map((p) => p.label)).toEqual(["TOC", "NDCA", "Cal", "Glenbrooks"]);
+    const b = (place: string) => barkley.filter((r) => r.place === place).length;
+    const c = (place: string) => cal.filter((r) => r.place === place).length;
+    expect(honors.championships.total).toBe(
+      toc.titles + ndca.titles + b("Champion") + c("Champion") + glenbrooks.filter(isGlenbrooksTitle).length,
+    );
+    expect(honors.finalists.total).toBe(
+      toc.runnerUps + ndca.results.filter((r) => r.place === "Finalist").length + b("Finalist") + c("Finalist") + g("Finalist"),
+    );
+    expect(honors.topSpeakers.total).toBe(toc.topSpeakers + ndca.topSpeakers + b("Top speaker") + c("Top speaker") + g("Top speaker"));
+    for (const total of [honors.championships, honors.finalists, honors.topSpeakers]) {
+      expect(total.parts.map((p) => p.label)).toEqual(["TOC", "NDCA", "Barkley", "Cal", "Glenbrooks"]);
+      expect(total.total).toBe(total.parts.reduce((sum, p) => sum + p.count, 0));
+    }
   });
 
   it("counts Cal Invitational (UC Berkeley) LD and PF wins as championships", () => {
@@ -31,7 +43,8 @@ describe("highSchoolHonors", () => {
     const ndca = findNdcaSchoolRecord(school);
     const honors = highSchoolHonors(school);
     expect(honors.championships.parts.find((p) => p.label === "Cal")?.count).toBe(3);
-    expect(honors.championships.total).toBe((toc?.titles ?? 0) + (ndca?.titles ?? 0) + 3 + 1);
+    const barkleyTitles = findBarkleySchoolResults(school).filter((r) => r.place === "Champion").length;
+    expect(honors.championships.total).toBe((toc?.titles ?? 0) + (ndca?.titles ?? 0) + barkleyTitles + 3 + 1);
     expect(honorHint(honors.championships)).toContain("3 Cal");
     const nueva = highSchoolHonors("Nueva School");
     expect(nueva.championships.parts.find((p) => p.label === "Cal")?.count).toBe(2);
@@ -93,6 +106,28 @@ describe("Glenbrooks results", () => {
     const probable = GLENBROOKS_RESULTS.filter((r) => r.probable).map((r) => `${r.year} ${r.event} ${r.place}`);
     expect(probable).toEqual(expect.arrayContaining(["2025 Policy Champion", "2024 Lincoln-Douglas Champion", "2015 Policy Champion"]));
     expect(GLENBROOKS_RESULTS.find((r) => r.year === 2024 && r.event === "Lincoln-Douglas" && r.place === "Finalist")?.probable).toBeUndefined();
+  });
+});
+
+describe("Barkley Forum honors", () => {
+  it("counts Barkley champions, finalists and top speakers on high school pages", () => {
+    const strake = highSchoolHonors("Strake Jesuit College Preparatory");
+    // PF 2022, 2023, 2026 and LD 2023 champions; PF top speakers 2024 and 2025.
+    expect(strake.championships.parts.find((p) => p.label === "Barkley")?.count).toBe(4);
+    expect(strake.topSpeakers.parts.find((p) => p.label === "Barkley")?.count).toBe(2);
+    expect(honorHint(strake.championships)).toContain("4 Barkley");
+    const durham = highSchoolHonors("Durham Academy");
+    expect(durham.finalists.parts.find((p) => p.label === "Barkley")?.count).toBe(1);
+    expect(honorHint(durham.finalists)).toContain("1 Barkley");
+  });
+
+  it("lists the breakdown in tournament order and omits tournaments with none", () => {
+    const hint = honorHint(highSchoolHonors("Harvard-Westlake School").championships)!;
+    const labels = hint.split(" · ").map((part) => part.split(" ")[1]);
+    const order = ["TOC", "NDCA", "Barkley", "Cal", "Glenbrooks"];
+    expect(labels.map((l) => order.indexOf(l))).toEqual([...labels.map((l) => order.indexOf(l))].sort((x, y) => x - y));
+    expect(labels).toContain("Barkley");
+    expect(highSchoolHonors("Greenhill").championships.parts.map((p) => p.label)).toContain("Barkley");
   });
 });
 
