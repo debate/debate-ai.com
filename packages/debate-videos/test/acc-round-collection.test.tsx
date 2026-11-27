@@ -36,7 +36,7 @@ const accRound = [
 
 const lectureCategories = [
   { key: "acc", label: "ACC", count: 39, maxViews: 10 },
-  { key: "demo_debates", label: "Demo Debates", count: 5, maxViews: 10 },
+  { key: "topic_lectures", label: "Topic Lectures", count: 5, maxViews: 10 },
 ];
 
 function render(overrides: Record<string, unknown>): string {
@@ -98,7 +98,7 @@ describe("the ACC collection", () => {
   it("is left out of the lecture category bar", () => {
     const html = render({ viewMode: "grid" });
     expect(html).toContain('aria-label="Lecture categories"');
-    expect(html).toContain("Demo Debates");
+    expect(html).toContain("Topic Lectures");
     expect(html).not.toContain("/lectures/acc");
     expect(html).not.toContain('href="/videos/acc"');
   });
