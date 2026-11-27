@@ -62,7 +62,7 @@
  * own marks are not saved: they last until the page changes.
  */
 import { useEffect, useRef, useState } from "react"
-import { Bold, Check, ChevronDown, Highlighter, Eraser, Loader2, Redo2, RotateCcw, Sparkles, Tag, Underline, Undo2, type LucideIcon } from "lucide-react"
+import { Bold, Check, ChevronDown, Highlighter, Eraser, Loader2, Minimize2, Redo2, RotateCcw, Sparkles, Tag, Underline, Undo2, type LucideIcon } from "lucide-react"
 import {
   AUTO_CUT_SYSTEM_PROMPT,
   autoCutPrompt,
@@ -99,7 +99,9 @@ export const CHANGE_EVENT = "debate-docs-highlights-change"
 type ShowSetting = "highlights" | "underlines" | "short-highlights" | "emphasis" | "summary-tags"
 /** The Summary tag mode isn't a `MarkKind`: it annotates highlights instead of toggling a mark. */
 const SUMMARY_MODE = "auto-summary-tag"
-type Setting = ShowSetting | `auto-${MarkKind}` | typeof SUMMARY_MODE
+/** Not a mark either: dims the unmarked body text. */
+const MINIMIZE_SETTING = "minimize-unread"
+type Setting = ShowSetting | `auto-${MarkKind}` | typeof SUMMARY_MODE | typeof MINIMIZE_SETTING
 
 const SHOW_SETTING: Record<MarkKind, ShowSetting> = {
   highlight: "highlights",
