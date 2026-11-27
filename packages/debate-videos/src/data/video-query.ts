@@ -16,8 +16,8 @@ import type {
   VideoSuggestions,
 } from "../types/videos";
 import type { VideoRow } from "./video-rows";
-import { LEGACY_SEASON, normalizeCategoryKey } from "./video-rows";
-import { DEMO_CATEGORY_KEY } from "./demo-style";
+import { MISCELLANEOUS_CATEGORY } from "./lecture-classifier";
+import { isUnsortedLecture, LEGACY_SEASON, MISCELLANEOUS_CATEGORY_KEY, normalizeCategoryKey } from "./video-rows";
 
 export type {
   VideoSortOrder,
@@ -177,7 +177,12 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
     if (params.source && params.source !== "all" && row.source !== params.source) return false;
     if (params.lecturesOnly && row.style !== null) return false;
     if (params.topPicksOnly && !row.isTopPick) return false;
-    if (categoryKey && row.categoryKey !== categoryKey && (categoryStyle === undefined || row.style !== categoryStyle)) {
+    if (
+      categoryKey &&
+      row.categoryKey !== categoryKey &&
+      (categoryStyle === undefined || row.style !== categoryStyle) &&
+      !(categoryKey === MISCELLANEOUS_CATEGORY_KEY && isUnsortedLecture(row))
+    ) {
       return false;
     }
     if (params.style != null && styleWithin(row, categoryKey) !== params.style) return false;
@@ -312,19 +317,19 @@ export function computeLectureCategories(rows: VideoRow[]): LectureCategoryFacet
     // A round normally has no category; one filed under a collection too (an
     // ACC tournament round) counts toward that collection's card, matching
     // what `/videos/<category>` lists.
-    if (!row.category || !row.categoryKey) continue;
-    if (HIDDEN_LECTURE_CATEGORIES.has(row.category)) continue;
-    const existing = byLabel.get(row.category);
+    // A lecture with no category, or an unknown one, is counted under
+    // Miscellaneous instead of being left out (see `isUnsortedLecture`).
+    const unsorted = isUnsortedLecture(row);
+    const label = unsorted ? MISCELLANEOUS_CATEGORY : row.category;
+    const key = unsorted ? MISCELLANEOUS_CATEGORY_KEY : row.categoryKey;
+    if (!label || !key) continue;
+    if (HIDDEN_LECTURE_CATEGORIES.has(label)) continue;
+    const existing = byLabel.get(label);
     if (existing) {
       existing.count += 1;
       existing.maxViews = Math.max(existing.maxViews, row.viewCount);
     } else {
-      byLabel.set(row.category, {
-        key: row.categoryKey,
-        label: row.category,
-        count: 1,
-        maxViews: row.viewCount,
-      });
+      byLabel.set(label, { key, label, count: 1, maxViews: row.viewCount });
     }
   }
 

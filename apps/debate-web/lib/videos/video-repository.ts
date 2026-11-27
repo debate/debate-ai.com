@@ -11,11 +11,15 @@
 
 import { and, asc, count, desc, eq, gt, inArray, isNotNull, isNull, notInArray, or, sql, type SQL, type SQLWrapper } from "drizzle-orm";
 import { videos } from "@/lib/database/schema";
+import { unsortedLectureCondition } from "./unsorted-lecture";
+import { MISCELLANEOUS_CATEGORY } from "@debate-ai/videos/src/data/lecture-classifier";
 import { getDBFromContext } from "@/lib/database/context";
 import { ensureTableColumns } from "@/lib/database/ensure-columns";
 import {
   canonicalCategoryLabel,
   categoryKeyAliases,
+  KNOWN_LECTURE_CATEGORY_KEYS,
+  MISCELLANEOUS_CATEGORY_KEY,
   normalizeCategoryKey,
   stripTournamentYear,
   videoRowToTuple,
@@ -337,8 +341,11 @@ function buildConditions(
   // under that style.
   if (params.categoryKey) {
     const inCategory = inArray(videos.categoryKey, categoryKeyAliases(params.categoryKey));
-    const style = STYLE_FOR_CATEGORY_KEY[normalizeCategoryKey(params.categoryKey)];
-    conditions.push(style === undefined ? inCategory : or(inCategory, eq(videos.style, style))!);
+    const key = normalizeCategoryKey(params.categoryKey);
+    const style = STYLE_FOR_CATEGORY_KEY[key];
+    // Miscellaneous also lists the lectures nobody has sorted.
+    const withExtras = key === MISCELLANEOUS_CATEGORY_KEY ? or(inCategory, unsortedLectureCondition())! : inCategory;
+    conditions.push(style === undefined ? withExtras : or(withExtras, eq(videos.style, style))!);
   }
   if (params.tournament) {
     conditions.push(sql`${videos.tournament} LIKE ${likePattern(params.tournament)} ESCAPE '\\'`);
@@ -591,6 +598,7 @@ export async function getVideoMeta(): Promise<VideoMeta> {
         [lecturesOnlyRow],
         [topPicksRow],
         categoryRows,
+        [unsortedRow],
         suggestions,
       ] = await Promise.all([
           db.select({ value: count() }).from(videos),
@@ -611,6 +619,10 @@ export async function getVideoMeta(): Promise<VideoMeta> {
             // lists.
             .where(isNotNull(videos.categoryKey))
             .groupBy(videos.categoryKey, videos.category),
+          db
+            .select({ value: count(), maxViews: sql<number>`max(${videos.viewCount})` })
+            .from(videos)
+            .where(unsortedLectureCondition()),
           suggestionsFromSql(db),
         ]);
 
@@ -626,8 +638,13 @@ export async function getVideoMeta(): Promise<VideoMeta> {
       // Rows stored under a merged category (e.g. "Topic Analysis") fold into
       // the category that replaced it, so it shows as one card.
       const byKey = new Map<string, LectureCategoryFacet>();
+      // Lectures with no category or an unknown one count as Miscellaneous,
+      // whatever label they carry, so their own label gets no card.
+      const unsortedCount = unsortedRow?.value ?? 0;
+      const knownKeys = new Set<string>(KNOWN_LECTURE_CATEGORY_KEYS);
       for (const row of categoryRows as any[]) {
         if (!row.key || !row.label || row.label === "Awards") continue;
+        if (!knownKeys.has(normalizeCategoryKey(row.key as string))) continue;
         const key = normalizeCategoryKey(row.key as string);
         const count = row.value as number;
         const maxViews = (row.maxViews as number) ?? 0;
@@ -637,6 +654,21 @@ export async function getVideoMeta(): Promise<VideoMeta> {
           existing.maxViews = Math.max(existing.maxViews, maxViews);
         } else {
           byKey.set(key, { key, label: canonicalCategoryLabel(row.label as string), count, maxViews });
+        }
+      }
+      if (unsortedCount > 0) {
+        const misc = byKey.get(MISCELLANEOUS_CATEGORY_KEY);
+        const maxViews = (unsortedRow?.maxViews as number) ?? 0;
+        if (misc) {
+          misc.count += unsortedCount;
+          misc.maxViews = Math.max(misc.maxViews, maxViews);
+        } else {
+          byKey.set(MISCELLANEOUS_CATEGORY_KEY, {
+            key: MISCELLANEOUS_CATEGORY_KEY,
+            label: MISCELLANEOUS_CATEGORY,
+            count: unsortedCount,
+            maxViews,
+          });
         }
       }
       const lectureCategories: LectureCategoryFacet[] = [...byKey.values()].sort(

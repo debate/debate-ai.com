@@ -9,7 +9,13 @@
  * @module data/video-rows
  */
 
-import { classifyRoundCollection, forcedLectureCategory } from "./lecture-classifier";
+import {
+  classifyRoundCollection,
+  LECTURE_CATEGORIES,
+  LEGACY_LECTURE_CATEGORIES,
+  MISCELLANEOUS_CATEGORY,
+  ruleLectureCategory,
+} from "./lecture-classifier";
 import { assignVideoStacks } from "./video-stacks";
 import { asDebateStyle, DEMO_STYLE_TUPLE_SLOT, resolveDemoStyle } from "./demo-style";
 
@@ -152,6 +158,33 @@ export function canonicalCategoryLabel(label: string): string {
   return CATEGORY_LABEL_ALIASES[label] ?? label;
 }
 
+/** The slug of the Miscellaneous shelf, `miscellaneous` (`/lectures/miscellaneous`). */
+export const MISCELLANEOUS_CATEGORY_KEY = normalizeCategoryKey(MISCELLANEOUS_CATEGORY);
+
+/**
+ * The slug of every lecture category the library knows: the classifier's own
+ * ({@link LECTURE_CATEGORIES}) and the older ones still stored
+ * ({@link LEGACY_LECTURE_CATEGORIES}). A lecture whose stored key is not one of
+ * these is unsorted and is counted under Miscellaneous.
+ */
+export const KNOWN_LECTURE_CATEGORY_KEYS: readonly string[] = [
+  ...new Set([...LECTURE_CATEGORIES, ...LEGACY_LECTURE_CATEGORIES].map((label) => normalizeCategoryKey(label))),
+];
+
+const KNOWN_KEY_SET: ReadonlySet<string> = new Set(KNOWN_LECTURE_CATEGORY_KEYS);
+
+/**
+ * Whether a lecture (a row with no debate style) is unsorted: it has no
+ * category, or one that is not a known shelf. Rounds are never unsorted — they
+ * live under their format. These lectures show on the Miscellaneous shelf and
+ * in its count, though their stored category stays as it is, so the watch
+ * paths already built from it keep working.
+ */
+export function isUnsortedLecture(row: { style: number | null; categoryKey: string | null }): boolean {
+  if (row.style !== null) return false;
+  return !row.categoryKey || !KNOWN_KEY_SET.has(normalizeCategoryKey(row.categoryKey));
+}
+
 /**
  * Every stored `category_key` that belongs to a (canonical) category key —
  * the key itself plus any old keys merged into it — so a filter on
@@ -288,14 +321,14 @@ export function tupleToVideoRow(
   const rawCategory = typeof styleOrCategory === "string" ? str(styleOrCategory) : null;
   const title = typeof tuple[1] === "string" ? tuple[1] : "";
   const channel = typeof tuple[3] === "string" ? tuple[3] : "";
-  const channelCategory = style === null ? forcedLectureCategory(title, channel) : null;
+  const description = typeof tuple[5] === "string" ? tuple[5] : "";
+  const channelCategory = style === null ? ruleLectureCategory(title, description, channel) : null;
   const category = channelCategory
     ?? (rawCategory
       ? canonicalCategoryLabel(rawCategory)
       : style !== null
         ? classifyRoundCollection(title, channel)
         : null);
-  const description = typeof tuple[5] === "string" ? tuple[5] : "";
   const publishedAt = typeof tuple[2] === "string" ? tuple[2] : "";
   const computedTitle = typeof tuple[20] === "string" && tuple[20] !== "" ? tuple[20] : null;
   const demoStyle = resolveDemoStyle({

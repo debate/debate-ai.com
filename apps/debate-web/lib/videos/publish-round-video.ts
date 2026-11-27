@@ -11,7 +11,12 @@
 
 import { eq, inArray } from "drizzle-orm";
 import { normalizeCategoryKey, publishedMsForDate, seasonYearForDate, stripTournamentYear } from "@debate-ai/videos/src/data/video-rows";
-import { classifyRoundCollection, forcedLectureCategory, isLectureCategory } from "@debate-ai/videos/src/data/lecture-classifier";
+import {
+  classifyRoundCollection,
+  isLectureCategory,
+  MISCELLANEOUS_CATEGORY,
+  ruleLectureCategory,
+} from "@debate-ai/videos/src/data/lecture-classifier";
 import { parseQueuedRoundArgs } from "@debate-ai/videos-admin/src/sync/youtube/parsers/round-arguments";
 import { chunkBoundParams } from "@/lib/database/bound-params";
 import { chunkStatements } from "@/lib/database/query-budget";
@@ -33,7 +38,7 @@ export function queuedVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert 
   const { arg1ac, arg2nr } = parseQueuedRoundArgs(row.description);
   const isLecture = row.style == null;
   const category = isLecture
-    ? (forcedLectureCategory(row.title, row.channel) ?? (isLectureCategory(row.category) ? row.category : null))
+    ? (ruleLectureCategory(row.title, row.description, row.channel) ?? (isLectureCategory(row.category) ? row.category : MISCELLANEOUS_CATEGORY))
     : classifyRoundCollection(row.title, row.channel);
   return {
     videoId: row.id,
