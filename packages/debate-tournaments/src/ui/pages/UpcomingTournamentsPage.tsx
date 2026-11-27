@@ -21,7 +21,7 @@ import { RecentResultsSection } from "./RecentResults";
  * framed from here.
  *
  * Above the list, in upcoming mode, sits "Recent results": the tournaments
- * whose results finished in the last two weeks, as expandable rows (see
+ * whose results finished in the last week, as expandable rows (see
  * `RecentResults`). The top bar filters by state and by circuit, and its Results button swaps
  * the list for past tournaments with published results (the last 60 days).
  * Upcoming rows carry their circuits, so that filter runs here; past rows do
@@ -51,7 +51,7 @@ export function UpcomingTournamentsPage() {
         : client.pastTournaments({ circuit: activeCircuit, signal })
       : Promise.resolve([] as UpcomingTournament[]),
   );
-  // Tournaments whose results finished in the last two weeks, listed first.
+  // Tournaments whose results finished in the last week, listed first.
   // Like the Results list, a circuit is sent upstream by id.
   const recent = useApi(`recent:${circuit}:${circuits.status}`, (signal) =>
     circuit && circuits.status === "loading"
@@ -162,7 +162,7 @@ export function UpcomingTournamentsPage() {
           />
         </label>
       </div>
-      {showResults ? null : <RecentResultsSection tourns={recentRows} state={recent.status === "ready" ? "ready" : "loading"} />}
+      {showResults ? null : <RecentResultsSection tourns={recentRows} state={recent.status === "ready" ? "ready" : "loading"} onShowArchive={() => setShowResults(true)} />}
       {showResults ? (
         <h2 className="text-sm font-medium text-muted-foreground">Results · past tournaments, last 60 days</h2>
       ) : (

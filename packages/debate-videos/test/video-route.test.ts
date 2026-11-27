@@ -1,6 +1,7 @@
 /**
- * @fileoverview The canonical video address: `/videos/<season>/<tournament>/<round>/<teams>`
- * for a tagged round, `/videos/<season>/<event>/<matchup>` for anything else.
+ * @fileoverview The canonical video address: `/<topic code>/<tournament>/<round>/<teams>`
+ * for a tagged round with a topic code, `/videos/<season>/<format>/<tournament>/<round>/<teams>`
+ * for any other, `/videos/<season>/<event>/<matchup>` for anything else.
  *
  * What is pinned here is what a URL scheme has to guarantee to be worth
  * changing to:
@@ -26,6 +27,7 @@ import {
   seasonSegment,
   teamsSegment,
   untitledVideoRouteHref,
+  videoLibraryRouteHref,
   videoRouteHref,
   videoRouteParts,
   videoRouteSegments,
@@ -57,6 +59,7 @@ const ndtFinal: VideoType = [
 describe("videoRouteSegments", () => {
   it("files a round under its season, format, tournament, round and teams", () => {
     expect(videoRouteSegments(videoRouteParts(ndtFinal))).toEqual({
+      code: "cpd06",
       season: "05-06",
       format: "cpd",
       event: "ndt",
@@ -65,8 +68,12 @@ describe("videoRouteSegments", () => {
     });
   });
 
-  it("builds the whole path from a tuple", () => {
-    expect(videoRouteHref(ndtFinal)).toBe("/videos/05-06/cpd/ndt/finals/northwestern-gw-michigan-state-bp");
+  it("builds the whole path from a tuple, starting with the topic code", () => {
+    expect(videoRouteHref(ndtFinal)).toBe("/cpd06/ndt/finals/northwestern-gw-michigan-state-bp");
+  });
+
+  it("keeps the /videos path a round had before topic codes", () => {
+    expect(videoLibraryRouteHref(ndtFinal)).toBe("/videos/05-06/cpd/ndt/finals/northwestern-gw-michigan-state-bp");
   });
 
   it("rebuilds the path with the bare-year season links used before", () => {
@@ -83,7 +90,7 @@ describe("videoRouteSegments", () => {
 
   it("spells each format the way debaters name the division", () => {
     const formatOf = (style: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9) =>
-      videoRouteHref({ videoId: "x", title: "t", seasonYear: 2027, style, tournament: "Trevian", roundLevel: "Octafinals", affTeam: "New Trier MY" }).split("/")[3];
+      videoLibraryRouteHref({ videoId: "x", title: "t", seasonYear: 2027, style, tournament: "Trevian", roundLevel: "Octafinals", affTeam: "New Trier MY" }).split("/")[3];
     expect(([1, 2, 3, 4, 5, 6, 7, 8, 9] as const).map(formatOf)).toEqual(["vcx", "pf", "ld", "cpd", "wsd", "acc", "misc", "parli", "congress"]);
     expect(parseFormatSegment("CPD")).toBe(4);
     expect(parseFormatSegment("ndt")).toBeNull();
@@ -101,6 +108,18 @@ describe("videoRouteSegments", () => {
       }),
     ).toBe("/videos/21-22/cpd/semifinals/dartmouth-sv");
   });
+
+  it("keeps the /videos path for a round with no tournament, which has no short address", () => {
+    expect(
+      videoRouteSegments({
+        videoId: "abcdefghijk",
+        title: "t",
+        seasonYear: 2022,
+        style: 4,
+        roundLevel: "Semifinals",
+        affTeam: "Dartmouth SV",
+      }).code,
+    ).toBeUndefined();  });
 
   it("keeps three segments for a video with no round or no teams", () => {
     expect(
@@ -188,8 +207,8 @@ describe("videoRouteHref for untagged videos", () => {
         affTeam: "Emory GS",
         negTeam: "Kansas LS",
       });
-    expect(part(1)).toBe("/videos/24-25/cpd/shirley/finals/emory-gs-kansas-ls/part-1");
-    expect(part(2)).toBe("/videos/24-25/cpd/shirley/finals/emory-gs-kansas-ls/part-2");
+    expect(part(1)).toBe("/cpd25/shirley/finals/emory-gs-kansas-ls/part-1");
+    expect(part(2)).toBe("/cpd25/shirley/finals/emory-gs-kansas-ls/part-2");
   });
 
   it("drops a year trailing the tournament name", () => {
@@ -204,7 +223,7 @@ describe("videoRouteHref for untagged videos", () => {
         affTeam: "Michigan State GL",
         negTeam: "Dartmouth CG",
       }),
-    ).toBe("/videos/25-26/cpd/ndt/octafinals/michigan-state-gl-dartmouth-cg");
+    ).toBe("/cpd26/ndt/octafinals/michigan-state-gl-dartmouth-cg");
   });
 });
 
@@ -228,7 +247,7 @@ describe("shortRoundSegment", () => {
         affTeam: "Michigan GV",
         negTeam: "Dartmouth CG",
       }),
-    ).toBe("/videos/26-27/cpd/kentucky/r3/michigan-gv-dartmouth-cg");
+    ).toBe("/cpd27/kentucky/r3/michigan-gv-dartmouth-cg");
   });
 });
 
