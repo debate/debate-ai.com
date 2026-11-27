@@ -25,6 +25,8 @@
     "./summary-tags": "./src/summary-tags.ts",
     "./sections": "./src/sections.ts",
     "./export": "./src/export.ts",
+    "./references": "./src/references.ts",
+    "./article-html": "./src/article-html.ts",
     "./package.json": "./package.json"
   },
   "files": [

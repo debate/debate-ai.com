@@ -23,6 +23,15 @@ shared with the docs' Synergy Slayer reading mode.
 - `@debate-ai/reading-mode/export`: rendered HTML to Markdown (`htmlToMarkdown`),
   a cleaned copy (`exportableHtml`) and a standalone, printable HTML document
   (`standaloneHtmlDocument`), for the docs' Export menu.
+- `@debate-ai/reading-mode/references`: find the source article of a bibliography
+  entry. Pure logic shared by the docs' References panel and its server route:
+  `describeReferenceCitation` (title, authors, year, publication, link),
+  `isSafeArticleUrl` (the gate every URL passes before it is fetched),
+  `referenceSearchQueries` and `rankSearchResults` (quick-search queries and
+  ranking), and `verifyArticle` (accepts an extracted page only when its title
+  and author match the entry, so a wrong article is never shown as the right one).
+- `@debate-ai/reading-mode/article-html`: `sanitizeArticleHtml`, an allowlist
+  sanitizer for HTML extracted from the web, run in the browser before it is shown.
 
 ```ts
 import { suggestQuestions } from "@debate-ai/reading-mode/questions"
