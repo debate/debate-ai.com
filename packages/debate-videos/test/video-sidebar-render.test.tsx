@@ -231,15 +231,23 @@ describe("the sidebar's heading structure", () => {
     expect(html).not.toContain("1400");
   });
 
-  it("keeps the glossary and rankings pair inside the Inference section", () => {
-    // They used to hang below the tree, outside every section. They now sit
-    // in Inference, and Inference — like every section — starts
-    // expanded, so they render with the tools they sit with rather than
-    // below the whole tree.
-    // `tool-nav-tree-sections.test.tsx` pins which section they belong to.
+  it("lists Team & School Rank under Inference and the reference rows under Learning", () => {
     const html = renderSidebar();
-    expect(html).toContain("Rules &amp; Glossary");
-    expect(html).toContain("/practice/rules");
+    const inference = html.indexOf(">Inference<");
+    const rank = html.indexOf("Team &amp; School Rank");
+    const statistics = html.indexOf("Topics &amp; Statistics");
+    const learning = html.indexOf(">Learning<");
+    const rules = html.indexOf("Rules &amp; Glossary");
+    const features = html.indexOf("All Features");
+    expect(inference).toBeGreaterThan(-1);
+    expect(rank).toBeGreaterThan(inference);
+    expect(statistics).toBeGreaterThan(rank);
+    expect(learning).toBeGreaterThan(statistics);
+    expect(rules).toBeGreaterThan(learning);
+    expect(features).toBeGreaterThan(rules);
+    expect(html).toContain('href="/rank"');
+    expect(html).toContain('href="/practice/rules"');
+    expect(html).toContain('href="/practice/features"');
   });
 });
 

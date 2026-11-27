@@ -33,6 +33,7 @@
 import type React from "react"
 
 import { QuickLinksGrid } from "../components/navigation/category-gallery/QuickLinksGrid"
+import { DocsNavTree } from "../components/navigation/sidebar-nav/DocsNavTree"
 import { ToolNavTree } from "../components/navigation/sidebar-nav/ToolNavTree"
 import { VideoSidebarTree } from "../components/navigation/sidebar-nav/VideoSidebarTree"
 import { Footer } from "../ui/layout/footer"
@@ -90,6 +91,7 @@ export function LecturesSidebarShell({
 
         <nav className="mb-6 flex flex-col gap-3 text-sm" aria-label="Tools">
           <ToolNavTree defaultExpanded={false} />
+          <DocsNavTree defaultExpanded={false} />
         </nav>
 
         <Footer />

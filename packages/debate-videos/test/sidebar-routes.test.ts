@@ -131,6 +131,14 @@ describe("the features catalog", () => {
     expect(hasEmbeddedDock("/practice/features")).toBe(true);
   });
 
+  it("keeps Rules & Glossary a sidebar route, including the old glossary address", () => {
+    expect(TOOL_SIDEBAR_HREFS.has("/practice/rules")).toBe(true);
+    expect(TOOL_SIDEBAR_HREFS.has("/practice/glossary")).toBe(true);
+    expect(isGenericToolSidebarRoute("/practice/rules")).toBe(true);
+    expect(isGenericToolSidebarRoute("/practice/glossary")).toBe(true);
+    expect(hasEmbeddedDock("/practice/rules")).toBe(true);
+  });
+
   it("is the homepage too, so the site's front door is not its one bare page", () => {
     // `app/page.tsx` re-exports this same page, so `/` renders the catalog.
     expect(isGenericToolSidebarRoute("/")).toBe(true);
