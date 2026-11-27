@@ -65,6 +65,7 @@ import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { NdtAllSeasonsSection } from "./profile/NdtAllSeasonsDialog"
 import { HsEliteSchoolsSection, NdtEliteSchoolsSection } from "./profile/NdtEliteSchoolsChart"
 import { HeadToHeadNetworkSection } from "./network/HeadToHeadNetworkChart"
+import { HeadToHeadNetworkEmpty } from "./network/HeadToHeadNetworkEmpty"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
 import { legendaryCount } from "./rowTier"
@@ -414,8 +415,8 @@ export function LeaderboardPanel({
       ? (yearData[divConfig.championKey] as string)
       : undefined
 
-  /** Forum puts its topic and side bias beside the "Who debated whom" graph instead of stacking them. */
-  const forumSplit = division === "VPF" && !isSchools && isCurrentYear && !!datasetId && !loading && !error && !!dataset
+  /** Every ranked division puts its topic and side bias beside the "Who debated whom" graph instead of stacking them. */
+  const networkSplit = !isSchools && isCurrentYear && !!datasetId && !loading && !error && !!dataset
 
   // ---------------------------------------------------------------------------
   // Render
@@ -444,13 +445,22 @@ return (
             {parli && allTime && showInternalFilters ? (
               <ParliAllTimeRankings view={view} />
             ) : parli && showInternalFilters ? (
-              <ParliRankingsSection season={parliSeason} view={view} onSeasonShown={setParliShown} />
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start" data-testid="rankings-split">
+                <div className="min-w-0 flex-1" data-testid="rankings-split-left">
+                  <ParliRankingsSection season={parliSeason} view={view} onSeasonShown={setParliShown} />
+                </div>
+                {view === "teams" && (
+                  <div className="min-w-0 lg:w-7/12" data-testid="rankings-split-right">
+                    <HeadToHeadNetworkEmpty />
+                  </div>
+                )}
+              </div>
             ) : allTime && showInternalFilters ? (
               <AllTimeRankingsView division={division} view={view} />
             ) : (
             <>
             {/* Champion / topic banner */}
-            {!championsLoading && !isSchools && !forumSplit && (
+            {!championsLoading && !isSchools && !networkSplit && (
               <LeaderboardChampionBanner
                 division={division}
                 year={year}
@@ -565,9 +575,36 @@ return (
               </div>
             ) : (
               <>
-                <RankingsFieldSummary dataset={dataset} seasonYear={seasonYear} />
-                {isCurrentYear && datasetId && (
-                  <HeadToHeadNetworkSection datasetId={datasetId} entries={dataset.entries} formatLabel={divConfig.label} />
+                {networkSplit && datasetId ? (
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-start" data-testid="rankings-split">
+                    <div className="min-w-0 flex-1" data-testid="rankings-split-left">
+                      {!championsLoading && (
+                        <LeaderboardChampionBanner
+                          compact
+                          division={division}
+                          year={year}
+                          topic={topic}
+                          topicName={topicName}
+                          champion={champion}
+                        />
+                      )}
+                      <RankingsFieldSummary dataset={dataset} seasonYear={seasonYear} />
+                    </div>
+                    <div className="min-w-0 empty:hidden lg:w-7/12" data-testid="rankings-split-right">
+                      <HeadToHeadNetworkSection
+                        datasetId={datasetId}
+                        entries={dataset.entries}
+                        formatLabel={divConfig.label}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <RankingsFieldSummary dataset={dataset} seasonYear={seasonYear} />
+                    {isCurrentYear && datasetId && (
+                      <HeadToHeadNetworkSection datasetId={datasetId} entries={dataset.entries} formatLabel={divConfig.label} />
+                    )}
+                  </>
                 )}
                 {dataset.source === "extinction" && (
                   <p className="mb-3 text-xs text-muted-foreground">

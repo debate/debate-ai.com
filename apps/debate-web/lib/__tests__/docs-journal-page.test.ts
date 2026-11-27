@@ -1,8 +1,9 @@
 /**
  * @fileoverview Pins the Debate Argument Intelligence Journal landing page
  * (`packages/debate-help-docs/content/docs/journal/index.mdx`): the journal's
- * name and "Research Journal" subtitle, the retired names staying out of
- * user-facing text, and the Site format section with its citation rules.
+ * name and "Research Journal" subtitle, the short "Debate AI Journal" sidebar
+ * label, the retired names staying out of the landing page and masthead, and
+ * the Site format section with its citation rules.
  *
  * Lives here because debate-help-docs is not a Vitest project of its own.
  */
@@ -24,8 +25,8 @@ describe("journal name", () => {
     expect(JOURNAL.tagline).toBe("Research Journal")
   })
 
-  it("labels the sidebar folder with the new name", () => {
-    expect(JSON.parse(read("meta.json")).title).toBe(NAME)
+  it("labels the sidebar folder with the short name", () => {
+    expect(JSON.parse(read("meta.json")).title).toBe("Debate AI Journal")
   })
 
   it("no longer uses the old names on the landing page or masthead", () => {
@@ -33,7 +34,7 @@ describe("journal name", () => {
       join(REPO_ROOT, "packages/debate-help-docs/components/guides/journal-masthead.tsx"),
       "utf8",
     )
-    for (const text of [read("index.mdx"), read("meta.json"), mastheadSource]) {
+    for (const text of [read("index.mdx"), mastheadSource]) {
       expect(text).not.toMatch(/Debate AI (Research )?Journal/)
     }
   })

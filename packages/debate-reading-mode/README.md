@@ -11,6 +11,11 @@ shared with the docs' Synergy Slayer reading mode.
   including taking it off authored `debate-hl` marks; mark a quoted phrase
   (`markPhrase`); and the AI prompt that cuts a passage (`autoCutPrompt`,
   `parseAutoCut`).
+- `@debate-ai/reading-mode/summary-tags`: a summary tag (an AI-suggested, reader-edited
+  note) stored as `data-summary-tag` on the highlights it covers: find the highlights a
+  selection touches (`summaryTargets`), set or remove the tag (`setSummaryTag`,
+  `removeSummaryTag`), keep its badge attributes in step (`syncSummaryTags`), and the
+  prompt and reply parsing (`summaryPrompt`, `parseSummary`).
 - `@debate-ai/reading-mode/questions`: the Ask and Questions prompts
   and reply parsing. Pass your own `generate({ system, prompt, maxTokens })`.
 - `@debate-ai/reading-mode/sections`: load several rendered pages and keep one
