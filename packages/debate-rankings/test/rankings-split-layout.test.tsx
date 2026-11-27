@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 /**
- * @fileoverview The Forum rankings page puts the topic and side bias in a left
- * column and the "Who debated whom" graph in a right one; other formats keep
- * the stacked layout.
+ * @fileoverview Every ranked division's page puts the topic and side bias in a
+ * left column and the "Who debated whom" graph in a right one. Parli has no
+ * ballots to draw, so its right column says so.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -121,15 +121,15 @@ async function settle() {
   for (let i = 0; i < 5; i++) await flush();
 }
 
-describe("Forum rankings split layout", () => {
+describe("Rankings split layout", () => {
   it("shows the topic and side bias on the left and the network graph on the right", async () => {
     view = await mount(<LeaderboardPanel />);
     await settle();
     const root = view.container;
 
-    const split = root.querySelector('[data-testid="forum-split"]');
-    const left = root.querySelector('[data-testid="forum-split-left"]');
-    const right = root.querySelector('[data-testid="forum-split-right"]');
+    const split = root.querySelector('[data-testid="rankings-split"]');
+    const left = root.querySelector('[data-testid="rankings-split-left"]');
+    const right = root.querySelector('[data-testid="rankings-split-right"]');
     expect(split).not.toBeNull();
     expect(left?.textContent).toContain(RESOLUTION);
     expect(left?.textContent).toContain("Harker KL");
@@ -145,13 +145,23 @@ describe("Forum rankings split layout", () => {
     expect(root.textContent?.split(RESOLUTION).length).toBe(2);
   });
 
-  it("keeps the stacked layout for other formats", async () => {
-    m.search = "";
-    m.pathname = "/rank/VCX";
-    view = await mount(<LeaderboardPanel controlledDivision="VCX" />);
+  it.each([
+    ["NDT", "cpd"],
+    ["VCX", "hscx"],
+    ["VPF", "hspf"],
+    ["VLD", "hsld"],
+  ])("shows the graph beside the division info on %s", async (division, datasetId) => {
+    m.pathname = `/rank/${division}`;
+    view = await mount(<LeaderboardPanel controlledDivision={division as never} />);
     await settle();
+    const root = view.container;
 
-    expect(view.container.querySelector('[data-testid="forum-split"]')).toBeNull();
+    expect(m.loadRounds).toHaveBeenCalledWith(datasetId);
+    expect(root.querySelector('[data-testid="rankings-split-left"]')).not.toBeNull();
+    expect(root.querySelector('[data-testid="rankings-split-right"] #h2h-network-title')?.textContent).toBe(
+      "Who debated whom",
+    );
+    expect(root.querySelectorAll("#h2h-network-title").length).toBe(1);
   });
 
   it("keeps the left column when the graph has no rounds to draw", async () => {
@@ -160,8 +170,8 @@ describe("Forum rankings split layout", () => {
     await settle();
     const root = view.container;
 
-    expect(root.querySelector('[data-testid="forum-split-left"]')?.textContent).toContain(RESOLUTION);
+    expect(root.querySelector('[data-testid="rankings-split-left"]')?.textContent).toContain(RESOLUTION);
     expect(root.querySelector("#h2h-network-title")).toBeNull();
-    expect(root.querySelector('[data-testid="forum-split-right"]')?.childElementCount).toBe(0);
+    expect(root.querySelector('[data-testid="rankings-split-right"]')?.childElementCount).toBe(0);
   });
 });

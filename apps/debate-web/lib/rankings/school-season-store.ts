@@ -21,6 +21,7 @@ import {
   SCHOOL_SEASON_FIRST_YEAR,
   SCHOOL_SEASON_FORMATS,
   SCHOOL_SEASON_TEAMS_PER_EVENT,
+  SCHOOL_STRENGTH_RANKS_VERSION,
   HS_STRENGTH_WEIGHTS,
   bestTeamsBySchool,
   schoolNamesBySeasonKey,
@@ -28,8 +29,7 @@ import {
   buildHsEliteSchools,
   combineDebateData,
   hsEliteKeys,
-  rankAllSchoolStrengths,
-  schoolStrengthTable,
+  hsProgramStrength,
   currentRankingSeasonYear,
   extinctionFileName,
   extinctionSeasonCode,
@@ -314,10 +314,16 @@ function rankSpans(now?: Date): { last: number; decadeFrom: number } {
   return { last, decadeFrom: last - 8 };
 }
 
+/** Stored ranks JSON carries this; rows without it were scored another way and are recomputed. */
+const RANKS_VERSION_MARK = `"version":"${SCHOOL_STRENGTH_RANKS_VERSION}"`;
+
 /**
  * Recomputes every high school's all-time and last-decade rank in each event
  * (Policy, LD, PF; programs are never ranked across events combined) from the
- * seasons built so far and stores one row per school.
+ * seasons built so far and stores one row per school. Ranks are the
+ * greatest-of-all-time list's ({@link hsProgramStrength}), so a school's page
+ * shows its place on that list; TOC-only programs count in every rank and
+ * field size but get no row, since no school page reads one.
  *
  * @returns How many schools were ranked.
  */
@@ -327,18 +333,16 @@ export async function refreshSchoolStrengthRanks(db: Database, builds: number, n
   const { last, decadeFrom } = rankSpans(now);
   const byEvent = new Map<string, Partial<Record<SchoolSeasonEvent, SchoolStrengthEventRanks>>>();
   for (const { event } of SCHOOL_SEASON_FORMATS) {
-    const table = schoolStrengthTable(points, undefined, event);
-    const allTime = rankAllSchoolStrengths(table, -Infinity, last);
-    const decade = rankAllSchoolStrengths(table, decadeFrom, last);
-    for (const [school, rank] of allTime) {
+    for (const [school, ranks] of hsProgramStrength(points, event, last, { decadeFrom }).ranks) {
+      if (school.startsWith("toc:")) continue;
       const own = byEvent.get(school) ?? {};
-      own[event] = { allTime: rank, decade: decade.get(school) ?? null };
+      own[event] = ranks;
       byEvent.set(school, own);
     }
   }
   const rows = [...byEvent].map(([school, ranks]) => ({
     s: school,
-    r: JSON.stringify({ byEvent: ranks, decadeFrom }),
+    r: JSON.stringify({ byEvent: ranks, decadeFrom, version: SCHOOL_STRENGTH_RANKS_VERSION }),
   }));
   await db.run(sql`DELETE FROM school_strength_ranks`);
   for (let i = 0; i < rows.length; i += INSERT_CHUNK) {
@@ -401,20 +405,21 @@ export async function getSchoolSeasons(
     }
   }
 
-  // Any stored row says which build count the ranks were computed at; rows
-  // from before ranks were split by event lack `byEvent` and are redone.
+  // Any stored row says which build count and scoring version the ranks were
+  // computed at; rows from an older version are redone.
   const stamp = (await db.all(sql`SELECT builds, ranks FROM school_strength_ranks LIMIT 1`)) as {
     builds: number;
     ranks: string;
   }[];
-  if (!stamp.length || Number(stamp[0]!.builds) !== builds || !String(stamp[0]!.ranks).includes('"byEvent"')) {
+  if (!stamp.length || Number(stamp[0]!.builds) !== builds || !String(stamp[0]!.ranks).includes(RANKS_VERSION_MARK)) {
     await refreshSchoolStrengthRanks(db, builds, options.now);
   }
   const own = (await db.all(sql`SELECT ranks FROM school_strength_ranks WHERE school = ${school}`)) as { ranks: string }[];
   let ranks: SchoolSeasonsResponse["ranks"] = { byEvent: {}, decadeFrom: rankSpans(options.now).decadeFrom };
   if (own.length) {
     try {
-      ranks = JSON.parse(own[0]!.ranks) as NonNullable<SchoolSeasonsResponse["ranks"]>;
+      const { byEvent, decadeFrom } = JSON.parse(own[0]!.ranks) as NonNullable<SchoolSeasonsResponse["ranks"]>;
+      ranks = { byEvent, decadeFrom };
     } catch {
       // Recomputed on the next build.
     }

@@ -61,6 +61,97 @@ wordmarkSrc(searchSchools("yale")[0].school)                      // "/assets/ya
 Each school is a `RankedSchool`: `id`, `name`, `level`, `type`, `division`,
 `city`, `state`, `aliases`, `usNewsRank`, `nicheRank`, `wordmark`.
 
+## Compiled rank lists (`data/*.json`)
+
+Three JSON files hold the lists exactly as they were compiled from the
+sources, ties and gaps included. They are the raw record: `SCHOOLS` and the
+search still use the rows above, and the helpers below check the two against
+each other.
+
+| File | List | Entries | Ranks compiled | Known gaps |
+| --- | --- | ---: | --- | --- |
+| `data/us-news-2027-national-universities.json` | U.S. News 2027 Best National Universities | 108 | 1-100 (complete, 9-way tie at No. 100) | none; ranks past 100 are out of scope |
+| `data/niche-2027-public-high-schools.json` | Niche 2027 public high schools, national | 200 | 1-50, 76-100, 126-150, 176-250, 601-625 | 51-75, 101-125, 151-175, 251-600, 626-1001 |
+| `data/niche-2027-private-high-schools.json` | Niche 2027 private high schools, national | 50 | 1-25, 775-799 | 26-774, 800 |
+
+Schema (`RankList`, exported as a type; `schemaVersion` 1):
+
+```jsonc
+{
+  "schemaVersion": 1,
+  "source": { "publisher": "Niche", "list": "…", "url": "https://…", "publishedAt": "optional", "listLabel": "optional" },
+  "year": 2027,
+  "listType": "national-universities" | "public-high-schools" | "private-high-schools",
+  "level": "college" | "high-school",
+  "schoolType": "public" | "private",             // high school lists only
+  "metadata": {
+    "complete": false,                            // true only when knownGaps is empty
+    "firstRank": 1, "lastRank": 1001, "entryCount": 200,
+    "rankRangesPresent": [{ "from": 1, "to": 50 }],
+    "knownGaps": [{ "from": 51, "to": 75, "reason": "…" }],
+    "notes": ["…"]
+  },
+  "entries": [
+    { "rank": 5, "tie": true, "name": "Stanford University", "city": "optional", "state": "optional", "locationRaw": "optional" }
+  ]
+}
+```
+
+- `tie` is `true` when another entry shares the rank; the next rank skips
+  the tied schools (5, 5, 7).
+- `city` and `state` appear only where the source states them. The college
+  list has neither. `locationRaw` keeps text that could not be read safely:
+  the source's "(LA)" for Girls Academic Leadership Academy means Los
+  Angeles, so it is not stored as Louisiana.
+- A rank inside a `knownGaps` range is **unknown, not unranked**. Nothing is
+  guessed; `rankStatus(id, rank)` returns `"present"`, `"gap"` or `"outside"`.
+
+```ts
+import {
+  NICHE_2027_PUBLIC_HIGH_SCHOOLS, RANK_LISTS, entriesAtRank, entriesInRankRange,
+  findRankEntry, rankStatus, reconcileSchool, wordmarkRankCoverage,
+} from "@debate-ai/school-rank"
+
+rankStatus("niche-2027-public-high-schools", 300)            // "gap"
+entriesAtRank("us-news-2027-national-universities", 5)       // Caltech and Stanford
+findRankEntry("us-news-2027-national-universities", "University of California, Berkeley")
+// → { list, entry: { rank: 20, tie: true, … }, matchedBy: "name" }
+reconcileSchool(searchSchools("bronx science")[0].school).status // "matched"
+wordmarkRankCoverage("college")                              // { total: 29, matched: 15, unmatched: [14 colleges] }
+```
+
+| Export | What it does |
+| --- | --- |
+| `US_NEWS_2027_NATIONAL_UNIVERSITIES`, `NICHE_2027_PUBLIC_HIGH_SCHOOLS`, `NICHE_2027_PRIVATE_HIGH_SCHOOLS`, `RANK_LISTS`, `RANK_LIST_IDS`, `getRankList(id)` | The typed lists. The JSON is also importable as `@debate-ai/school-rank/data/<file>.json`. |
+| `rankStatus(id, rank)`, `entriesAtRank(id, rank)`, `entriesInRankRange(id, from, to)` | Look up a rank. A gap or out-of-range rank returns `"gap"` / `"outside"` or `[]`, never a guess. |
+| `findRankEntry(id, name, { state?, city?, aliases?, rank? })` | Match a name to one entry. Tiers: `"name"` (same `nameKey`), `"alias"` (school aliases, or the pairs in `src/data/rank-entry-aliases.ts`), `"loose"` (`schoolMatchKey`: ignores "HS" / "High School", "Senior", "Prep" / "Preparatory", "The", "of"). A tier wins only when it names exactly one entry. State and city must agree where both are given. An entry with no state shared by several bundled schools matches only when `rank` equals it. |
+| `schoolMatchKey(name)` | The loose key. It builds on `nameKey`, the normalization the package already uses. |
+| `matchSchoolToRankList(school)`, `rankListIdForSchool(school)` | The entry for a `RankedSchool` on its own list (colleges: U.S. News; high schools: Niche public or private). |
+| `reconcileSchool(school)`, `rankListCoverage(id)`, `wordmarkRankCoverage(level?)` | `matched`, `rank-conflict` (name matched, the school's own rank differs), `in-gap` (its rank is in an uncompiled range), `name-mismatch` (rank is compiled but no name matched), `not-compiled` (no rank in this list's scope). |
+
+### Match coverage
+
+- **Colleges:** all 108 compiled schools match a bundled college with the
+  same rank. 15 of the 29 wordmark colleges match; the other **14 are outside
+  the top 100 and not compiled yet**: Cal State Long Beach, George Mason,
+  Houston, Kansas, Kentucky, Liberty, Loyola Chicago, Macalester, North
+  Texas, Oklahoma, Redlands, Towson, UT Dallas and Western Kentucky.
+- **Private high schools:** all 50 compiled entries match a bundled school
+  with the same Niche rank. Of the bundled private schools, 750 sit in
+  ranges that are not compiled.
+- **Public high schools:** 199 of 200 entries match. "Lincoln HS" (605) has no
+  state and several bundled Lincolns, so it stays unmatched.
+- **Wordmark high schools:** 9 of 30 match (Bronx Science, Payton, Whitney
+  Young, LASA, Westwood, Caddo Magnet, Palos Verdes Peninsula, Harvard-Westlake,
+  The College Preparatory School). The other **21 are in uncompiled rank
+  ranges** (for example New Trier 70, Westminster 69, Harker 218), so they are
+  gaps, not mismatches. No wordmark school has a name mismatch.
+- **Rank disagreement:** 24 bundled public schools sit one place lower in the
+  older Niche list than in the compiled one (602-626 vs 601-625, Mission Vista
+  to Riverside). The older list has Lassiter High School at 601. The compiled
+  lists do not change the bundled ranks; check the two sources before
+  trusting either side of that range.
+
 ## Top 10 in each division
 
 ### Colleges: U.S. News 2027 Best National Universities
@@ -256,6 +347,10 @@ wordmark in a button, page header or ad as if it were your own brand.
 - **U.S. News high schools:** add ranks to `src/data/high-schools-usnews.ts`
   as you source them. Set the fifth column when the Niche list spells the
   school differently.
+- **Compiled lists:** edit the JSON in `data/` and keep `metadata` honest:
+  move ranks from `knownGaps` to `rankRangesPresent` only when you add their
+  entries (the tests fail if the two disagree with the entries). Add a pair to
+  `src/data/rank-entry-aliases.ts` only after checking both spellings.
 - **Niche high schools:** these come from
   `@debate-ai/rankings/src/schools/academic-category-data`, so update them
   there.
