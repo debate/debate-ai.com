@@ -56,6 +56,7 @@ const STATIC_PAGES: ReadonlyArray<{ path: string; priority: number; changeFreque
   { path: "/videos", priority: 1.0, changeFrequency: "daily" },
   { path: "/lectures", priority: 0.9, changeFrequency: "weekly" },
   { path: "/docs", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/authors", priority: 0.6, changeFrequency: "monthly" },
   { path: "/about", priority: 0.3, changeFrequency: "yearly" },
   { path: "/legal/privacy", priority: 0.3, changeFrequency: "yearly" },
 ];
@@ -77,6 +78,7 @@ const PRIORITY = {
   lectureCategory: 0.7,
   video: 0.6,
   docs: 0.7,
+  author: 0.5,
 } as const;
 
 /**
@@ -148,6 +150,22 @@ export function docsSitemapEntries(urls: readonly string[]): SitemapEntry[] {
 }
 
 /**
+ * One entry per author page, `/authors/<slug>`.
+ *
+ * Deduplicated by path, since a sitemap that names a URL twice is malformed.
+ *
+ * @param entries - Rows from `getAuthorSitemapEntries()`.
+ */
+export function authorSitemapEntries(entries: readonly { path: string }[]): SitemapEntry[] {
+  const paths = new Set(entries.map((entry) => entry?.path).filter((path): path is string => !!path && path.startsWith("/authors/")));
+  return [...paths].map((path) => ({
+    url: absoluteUrl(path),
+    changeFrequency: "monthly" as const,
+    priority: PRIORITY.author,
+  }));
+}
+
+/**
  * One entry per video, at its canonical path.
  *
  * Deduplicated by path, because a round whose videos share a title slug can
@@ -199,11 +217,14 @@ export function buildSitemap(input: {
   videos: readonly VideoSitemapEntry[];
   lectureCategories: readonly string[];
   docsPages: readonly string[];
+  /** Author pages; optional so a caller without the authors index still builds a sitemap. */
+  authors?: readonly { path: string }[];
 }): SitemapEntry[] {
   const entries = [
     ...staticSitemapEntries(),
     ...lectureCategorySitemapEntries(input.lectureCategories),
     ...docsSitemapEntries(input.docsPages),
+    ...authorSitemapEntries(input.authors ?? []),
     ...videoSitemapEntries(input.videos),
   ];
 
