@@ -1,7 +1,8 @@
 /**
- * @fileoverview Pins the `/docs/<topic code>/<file path>` address of a Topic
- * Starter: the code scheme read off `debate-topics.json`, the paths that are
- * the editor rather than the help docs, and the copy of the code's shape that
+ * @fileoverview Pins the `/<topic code>/<file path>` address of a Topic
+ * Starter (and the old `/docs/<topic code>/…` it 308s from): the code scheme
+ * read off `debate-topics.json`, the paths that are the editor rather than the
+ * help docs, a page or a personal file, and the copy of the code's shape that
  * `@debate-ai/videos` keeps for its sidebar check.
  */
 
@@ -130,6 +131,13 @@ describe("topic codes", () => {
 
 describe("parseTopicDocsPath", () => {
   it("reads the code and file path off a topic starter address", () => {
+    expect(parseTopicDocsPath("/vcx27/aff/aff-k/k-aff-answers")).toEqual({ code: "vcx27", ref: "aff/aff-k/k-aff-answers" })
+    expect(parseTopicDocsPath("/lda27")).toEqual({ code: "lda27", ref: null })
+    expect(parseTopicDocsPath("/pfb27/aff/case%20one?share=1#x")).toEqual({ code: "pfb27", ref: "aff/case one" })
+    expect(parseTopicDocsPath("/VCX27/Aff")).toEqual({ code: "vcx27", ref: "Aff" })
+  })
+
+  it("still reads the old /docs/<code> addresses", () => {
     expect(parseTopicDocsPath("/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026")).toEqual({
       code: "vcx27",
       ref: "neg/cp/aca-expansion-cp-cndi-2026",
@@ -137,15 +145,20 @@ describe("parseTopicDocsPath", () => {
     expect(parseTopicDocsPath("/docs/lda27/")).toEqual({ code: "lda27", ref: null })
   })
 
-  it("leaves the help docs alone", () => {
-    for (const path of ["/docs", "/docs/features/drill-sets", "/docs/learn", "/docs/vcx2027/x", "/reason-editor", null]) {
-      expect(parseTopicDocsPath(path)).toBeNull()
+  it("leaves the help docs, pages and personal files alone", () => {
+    for (const path of [
+      "/docs", "/docs/features/drill-sets", "/docs/learn", "/docs/vcx2027/x", "/reason-editor", null,
+      "/", "/rank", "/rank/vcx", "/api/docs-tree", "/admin", "/alexgul/aff/case", "/vcx2027/x",
+      "/docs/docs/vcx27", "vcx27/aff", "/favicon.ico",
+    ]) {
+      expect(parseTopicDocsPath(path), String(path)).toBeNull()
     }
   })
 
   it("reads the old letter-last LD / PF addresses as the new codes", () => {
     expect(parseTopicDocsPath("/docs/pf24a/aff")).toEqual({ code: "pfa24", ref: "aff" })
     expect(parseTopicDocsPath("/docs/ld21b")).toEqual({ code: "ldb21", ref: null })
+    expect(parseTopicDocsPath("/ld21b/neg")).toEqual({ code: "ldb21", ref: "neg" })
     expect(normalizeTopicCode("ld21b")).toBe("ldb21")
     expect(normalizeTopicCode("vcx27")).toBe("vcx27")
     expect(findTopicByCode("ld21b")?.code).toBe("ldb21")
@@ -153,12 +166,13 @@ describe("parseTopicDocsPath", () => {
 
   it("round-trips topicDocsHref", () => {
     const href = topicDocsHref("pfb27", "aff/case one")
-    expect(href).toBe("/docs/pfb27/aff/case%20one")
+    expect(href).toBe("/pfb27/aff/case%20one")
+    expect(topicDocsHref("vcx27")).toBe("/vcx27")
     expect(parseTopicDocsPath(href)).toEqual({ code: "pfb27", ref: "aff/case one" })
   })
 
   it("agrees with @debate-ai/videos' copy of the code shape", () => {
-    for (const path of ["/docs/vcx27", "/docs/ndt26/x", "/docs/lde27/a/b", "/docs/pfc25", "/docs", "/docs/features", "/docs/vcx2027", "/docs/vcx1928/aff", "/docs/vcx2099", "/docs/lda1999", "/docs/bq27/x", "/docs/bq2027"]) {
+    for (const path of ["/vcx27", "/vcx27/aff/aff-k", "/lda1999", "/vcx2027", "/rank", "/alexgul/x", "/docs/vcx27", "/docs/ndt26/x", "/docs/lde27/a/b", "/docs/pfc25", "/docs", "/docs/features", "/docs/vcx2027", "/docs/vcx1928/aff", "/docs/vcx2099", "/docs/lda1999", "/docs/bq27/x", "/docs/bq2027"]) {
       expect(isTopicStarterDocsPath(path)).toBe(parseTopicDocsPath(path) != null)
     }
   })

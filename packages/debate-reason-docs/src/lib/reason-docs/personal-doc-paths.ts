@@ -7,7 +7,7 @@
  * their name, numbered when two people share one (`alexgul`, `alexgul2`, …) —
  * and then the file's own path: the same folder-and-file slugs `./doc-path`
  * builds for `?doc=`. It is the personal twin of a public Topic Starter's
- * `/docs/<topic code>/<path>` (`./topic-doc-paths`), and replaces the old
+ * `/<topic code>/<path>` (`./topic-doc-paths`), and replaces the old
  * `/reason-editor?doc=<path>` link, which still opens the file and is then
  * rewritten to this form (`canonicalEditorUrl` in `./route-selection`).
  *
@@ -15,8 +15,10 @@
  * against the reader's own documents (then the public library), so a link a
  * reader follows opens their copy of that name.
  *
- * Usernames share the site's first path segment with every top-level page, so
- * a handle can never be one of {@link RESERVED_USERNAMES} — those get a number
+ * Usernames share the site's first path segment with every top-level page and
+ * every Topic Starter, so a handle can never be one of
+ * {@link RESERVED_USERNAMES} nor shaped like a topic code (`vcx27`, `lda27`,
+ * `pfb27`, … — `isTopicCode`) — those get a number, or the next free one,
  * like any other taken handle — and an address whose first segment is one of
  * them is never read as a personal file. Handles are `[a-z0-9]` only, so they
  * never collide with `/@<handle>` profiles or a file like `/favicon.ico`.
@@ -26,6 +28,8 @@
  *
  * @module lib/reason-docs/personal-doc-paths
  */
+
+import { isTopicCode } from "./topic-doc-paths"
 
 /**
  * First path segments that belong to a page, not a person: every top-level
@@ -52,9 +56,16 @@ export const MAX_USERNAME_LENGTH = 30
 
 const USERNAME_PATTERN = /^[a-z0-9]{1,40}$/
 
-/** Whether `segment` is shaped like a handle and not a reserved page name. */
+/** Whether `handle` may never be a username: a reserved page name, or the
+ *  shape of a topic code, whose `/<code>/…` is a Topic Starter's address. */
+export function isReservedUsername(handle: string): boolean {
+  return RESERVED_USERNAMES.has(handle) || isTopicCode(handle)
+}
+
+/** Whether `segment` is shaped like a handle and not a reserved page name or
+ *  topic code. */
 export function isUsername(segment: string | null | undefined): segment is string {
-  return typeof segment === "string" && USERNAME_PATTERN.test(segment) && !RESERVED_USERNAMES.has(segment)
+  return typeof segment === "string" && USERNAME_PATTERN.test(segment) && !isReservedUsername(segment)
 }
 
 /**
@@ -75,10 +86,12 @@ export function usernameBase(name: string | null | undefined, email?: string | n
 
 /**
  * The first free handle for `base`: `base` itself, else `base2`, `base3`, …
- * Reserved page names count as taken, so `Admin` becomes `admin2`.
+ * Reserved page names and topic-code shapes count as taken, so `Admin`
+ * becomes `admin2`, `VCX 27` becomes `vcx272`, and `vcx2`'s next number skips
+ * `vcx22`.
  */
 export function pickUsername(base: string, isTaken: (handle: string) => boolean): string {
-  const free = (handle: string) => !RESERVED_USERNAMES.has(handle) && !isTaken(handle)
+  const free = (handle: string) => !isReservedUsername(handle) && !isTaken(handle)
   if (free(base)) return base
   for (let n = 2; ; n++) {
     const handle = `${base}${n}`

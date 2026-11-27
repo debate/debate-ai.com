@@ -10,6 +10,8 @@
  * to Googlebot is a deindexed site.
  */
 
+import { isTopicDocsPath } from "@debate-ai/reason-docs/lib/reason-docs/topic-doc-paths";
+
 /**
  * Mobile is exempt by product decision: the interstitial costs a phone user an
  * extra tap on a connection where the page load is already the slow part.
@@ -135,6 +137,10 @@ export function isDocumentNavigation(request: Request, url: URL): boolean {
 /** True when the path is one the gate must never interrupt. */
 export function isExemptPath(pathname: string): boolean {
   if (EXEMPT_PATHS.has(pathname)) return true;
+  // Public Topic Starters were ungated under `/docs/<topic code>/…` and stay
+  // so at the `/<topic code>/…` address they moved to: shared links to them
+  // are reading, like the help docs.
+  if (isTopicDocsPath(pathname)) return true;
   if (EXEMPT_PREFIXES.some((prefix) => pathname.startsWith(prefix))) return true;
   return ASSET_EXTENSION_PATTERN.test(pathname);
 }

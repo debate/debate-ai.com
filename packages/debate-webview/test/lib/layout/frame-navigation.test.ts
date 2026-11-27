@@ -46,6 +46,7 @@ describe("isDocsPath", () => {
     expect(isDocsPath("/docsearch")).toBe(false)
     expect(isDocsPath("/docs/vcx27/neg/cp/aca-expansion-cp-cndi-2026")).toBe(false)
     expect(isDocsPath("/docs/lda27")).toBe(false)
+    expect(isDocsPath("/vcx27/neg/cp/aca-expansion-cp-cndi-2026")).toBe(false)
     expect(isDocsPath("/videos")).toBe(false)
     expect(isDocsPath(null)).toBe(false)
   })
