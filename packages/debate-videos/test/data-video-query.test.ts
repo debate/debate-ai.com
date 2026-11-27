@@ -313,6 +313,36 @@ describe("computeLectureCategories", () => {
   });
 });
 
+describe("Miscellaneous (unsorted lectures)", () => {
+  const unsorted = row({ id: "no-category", date: "2025-02-02", source: "lecture", views: 40, title: "Untagged talk" });
+  const unknown = row({ id: "odd-category", date: "2025-02-03", source: "lecture", views: 60, title: "Odd talk" });
+  unknown.category = "Brand New";
+  unknown.categoryKey = "brand_new";
+  const filed = row({ id: "filed", date: "2025-02-04", category: "Demo Debates", views: 10, title: "Filed demo" });
+  const explicit = row({ id: "explicit", date: "2025-02-05", category: "Miscellaneous", views: 5, title: "Explicit misc" });
+  const legacy = row({ id: "legacy-cat", date: "2025-02-06", category: "Critical Theory", views: 8, title: "Old label" });
+  const pool = [...ROWS, unsorted, unknown, filed, explicit, legacy];
+
+  it("lists lectures with no or an unknown category under /lectures/miscellaneous", () => {
+    expect(unsorted.category).toBeNull();
+    const ids = filterVideoRows(pool, { categoryKey: "miscellaneous" }).map((r) => r.videoId);
+    expect(ids.sort()).toEqual(["explicit", "no-category", "odd-category"]);
+  });
+
+  it("does not take rounds, known shelves or legacy labels", () => {
+    const ids = filterVideoRows(pool, { categoryKey: "miscellaneous" }).map((r) => r.videoId);
+    for (const id of ["policy-new", "lecture-round", "lecture-k", "filed", "legacy-cat", "lecture-award"]) {
+      expect(ids).not.toContain(id);
+    }
+  });
+
+  it("counts them in one Miscellaneous card", () => {
+    const misc = computeLectureCategories(pool).find((c) => c.key === "miscellaneous");
+    expect(misc).toMatchObject({ label: "Miscellaneous", count: 3, maxViews: 60 });
+    expect(computeLectureCategories(pool).map((c) => c.label)).not.toContain("Brand New");
+  });
+});
+
 /** Builds a round row carrying a tournament name and a searchable title. */
 function tournamentRow(id: string, tournament: string | null, title = id): VideoRow {
   return tupleToVideoRow(

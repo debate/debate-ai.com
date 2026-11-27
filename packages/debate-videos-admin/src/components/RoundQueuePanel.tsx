@@ -4,7 +4,8 @@
  * @fileoverview The admin "Round queue" section: rounds the YouTube sync found,
  * waiting for staff to publish or delete them, filterable by style, with
  * "Publish all", "Deduplicate" and "Auto-detect all" for the loaded queue, and
- * "Re-file Super Debates" for the whole queue and library. Each
+ * "Re-file Super Debates" and "Re-file Congress & Misc." for the whole queue
+ * and library. Each
  * row also has per-video "Publish", "Delete", "Auto-detect" (auto-detect lecture or
  * debate format with OpenRouter's free model) and "Edit" (metadata editor).
  * Pages through `/api/admin/youtube/videos` as the list scrolls.
@@ -303,6 +304,33 @@ export function RoundQueuePanel() {
   };
 
   /**
+   * Files Congressional Debate lectures (queued and published) under Congress
+   * and unplaced queued lectures under Miscellaneous. Covers the whole queue,
+   * not just the loaded page.
+   */
+  const handleRefileLectures = async () => {
+    setIsRefiling(true);
+    setPublishAllError(null);
+    try {
+      const res = await fetch("/api/admin/youtube/videos/refile-lectures", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Re-file failed");
+      const congress = (data.congress?.queued ?? 0) + (data.congress?.published ?? 0);
+      const misc = data.miscellaneous?.queued ?? 0;
+      setQueueNotice(
+        congress || misc
+          ? `Filed ${data.congress?.queued ?? 0} queued and ${data.congress?.published ?? 0} published lecture${congress === 1 ? "" : "s"} under Congress, and ${misc} queued lecture${misc === 1 ? "" : "s"} under Miscellaneous.`
+          : "Every Congress lecture is already under Congress, and no queued lecture is unplaced.",
+      );
+      await loadFirstPage(style);
+    } catch (error) {
+      setPublishAllError((error as Error).message);
+    } finally {
+      setIsRefiling(false);
+    }
+  };
+
+  /**
    * Drops queued rounds that duplicate a published video or an older queued
    * round (same YouTube id or same title), always keeping the older copy.
    */
@@ -383,6 +411,14 @@ export function RoundQueuePanel() {
             title="File every video from the Super Debate channel, or with Super Debate in its title, under the Open Super Debates category, in the queue and in the published library"
           >
             {isRefiling ? "Filing…" : "Re-file Super Debates"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleRefileLectures}
+            disabled={isRefiling || isDeduping || isPublishingAll || isDetectingAll}
+            title="File every Congressional Debate lecture, in the queue and in the published library, under Congress, and every queued lecture with no valid category under Miscellaneous"
+          >
+            {isRefiling ? "Filing…" : "Re-file Congress & Misc."}
           </Button>
           <Select value={style} onValueChange={setStyle}>
             <SelectTrigger className="w-40">
