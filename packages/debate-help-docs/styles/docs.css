@@ -389,8 +389,8 @@ html[data-debate-short-highlights="off"] .synergy-slayer-doc mark.reader-highlig
   font-weight: 700;
   background-color: var(--debate-reader-hl-bg);
   color: var(--color-fd-foreground);
-  border: 1.5px solid var(--color-fd-primary);
-  border-radius: 3px;
+  border: 3px solid var(--color-fd-primary);
+  border-radius: 4px;
   padding: 0 2px;
   text-decoration: underline;
   text-decoration-thickness: 1.5px;

@@ -22,6 +22,9 @@
  *   run with auto underline and auto emphasize. The marking is `toggleMarks`
  *   from `@debate-ai/reading-mode/marks`. The reader's long highlights look
  *   exactly like the page's (`styles/docs.css`).
+ * - **Undo mark** / **Redo mark**: every change to the marks (added, removed,
+ *   AI, reset, removed all) is kept, the last 50 of them (`mark-history.ts`);
+ *   Cmd/Ctrl+Z undoes and Cmd/Ctrl+Shift+Z or Ctrl+Y redoes, except in text fields.
  * - **AI highlight & underline**, **Reset to default highlighting**,
  *   which drops every mark the reader made and restores the page's own, and
  *   **Remove all marks**, which clears every mark and highlight of every kind
@@ -41,7 +44,7 @@
  * own marks are not saved: they last until the page changes.
  */
 import { useEffect, useRef, useState } from "react"
-import { Bold, Check, ChevronDown, Highlighter, Eraser, Loader2, RotateCcw, Sparkles, Underline, type LucideIcon } from "lucide-react"
+import { Bold, Check, ChevronDown, Highlighter, Eraser, Loader2, Redo2, RotateCcw, Sparkles, Underline, Undo2, type LucideIcon } from "lucide-react"
 import {
   AUTO_CUT_SYSTEM_PROMPT,
   autoCutPrompt,
@@ -58,6 +61,15 @@ import { cn } from "../../lib/utils"
 import { playAutoHighlightSwoosh } from "./auto-highlight-swoosh"
 import { buttonVariants } from "../ui/button"
 import { generateWithSite, readableText } from "./docs-ai"
+import {
+  HISTORY_EVENT,
+  canRedoMark,
+  canUndoMark,
+  handleMarkHistoryKey,
+  recordMarkChange,
+  redoMark,
+  undoMark,
+} from "./mark-history"
 
 /** The element marking works inside (`SYNERGY_SLAYER_CLASS` in routes/docs-page.tsx; reading mode's text too). */
 const CONTENT_SELECTOR = ".synergy-slayer-doc"
@@ -125,6 +137,19 @@ function writeSetting(setting: Setting, on: boolean) {
   window.dispatchEvent(new Event(CHANGE_EVENT))
 }
 
+/** Whether there is a mark change to undo or redo, kept up to date. */
+function useMarkHistoryState() {
+  const read = () => ({ canUndo: canUndoMark(), canRedo: canRedoMark() })
+  const [state, setState] = useState({ canUndo: false, canRedo: false })
+  useEffect(() => {
+    const onChange = () => setState(read())
+    onChange()
+    window.addEventListener(HISTORY_EVENT, onChange)
+    return () => window.removeEventListener(HISTORY_EVENT, onChange)
+  }, [])
+  return state
+}
+
 /** Every setting, kept in step with every other copy of the controls. */
 function useSettings(): Record<Setting, boolean> {
   const all: Setting[] = [...SHOW_SETTINGS, ...MARK_KINDS.map(AUTO_SETTING)]
@@ -174,7 +199,7 @@ function onSelectionEnd() {
   if (!element || !root) return
   // Leave form fields, buttons and the hover cards alone.
   if (element.closest("input, textarea, select, button, [contenteditable], .citation-card")) return
-  const results = toggleMarks(range, root, kinds)
+  const results = recordMarkChange(root, () => toggleMarks(range, root, kinds))
   if (results.some(Boolean)) {
     selection.removeAllRanges()
     window.dispatchEvent(new Event(CHANGE_EVENT))
@@ -187,18 +212,24 @@ const deferredSelectionEnd = () => setTimeout(onSelectionEnd, 0)
 const onKeyUp = (event: KeyboardEvent) => {
   if (event.key === "Shift" || (event.shiftKey && event.key.startsWith("Arrow"))) deferredSelectionEnd()
 }
+/** Cmd/Ctrl+Z undoes the latest mark change, Cmd/Ctrl+Shift+Z or Ctrl+Y redoes it (`mark-history.ts`). */
+const onHistoryKey = (event: KeyboardEvent) => {
+  if (handleMarkHistoryKey(event)) window.dispatchEvent(new Event(CHANGE_EVENT))
+}
 function useAutoMarkListener() {
   useEffect(() => {
     if (listeners++ === 0) {
       document.addEventListener("mouseup", deferredSelectionEnd)
       document.addEventListener("touchend", deferredSelectionEnd)
       document.addEventListener("keyup", onKeyUp)
+      document.addEventListener("keydown", onHistoryKey)
     }
     return () => {
       if (--listeners === 0) {
         document.removeEventListener("mouseup", deferredSelectionEnd)
         document.removeEventListener("touchend", deferredSelectionEnd)
         document.removeEventListener("keyup", onKeyUp)
+        document.removeEventListener("keydown", onHistoryKey)
       }
     }
   }, [])
@@ -275,6 +306,7 @@ const toolButton = (active: boolean) =>
 async function aiCut(root: HTMLElement, signal: AbortSignal, progress: (done: number, total: number) => void) {
   const chunks = chunkPassages(readableText(root))
   let marked = 0
+  const group = `ai-${Date.now()}`
   progress(0, chunks.length)
   for (let i = 0; i < chunks.length; i++) {
     if (signal.aborted) return marked
@@ -286,8 +318,15 @@ async function aiCut(root: HTMLElement, signal: AbortSignal, progress: (done: nu
     })
     const cut = parseAutoCut(answer)
     // Underline first: the highlighting sits inside it.
-    for (const phrase of cut.underline) if (markPhrase(root, phrase, "underline")) marked++
-    for (const phrase of cut.highlight) if (markPhrase(root, phrase, "highlight")) marked++
+    // One undo takes back the whole AI cut, chunk after chunk.
+    recordMarkChange(
+      root,
+      () => {
+        for (const phrase of cut.underline) if (markPhrase(root, phrase, "underline")) marked++
+        for (const phrase of cut.highlight) if (markPhrase(root, phrase, "highlight")) marked++
+      },
+      group,
+    )
     window.dispatchEvent(new Event(CHANGE_EVENT))
     progress(i + 1, chunks.length)
   }
@@ -315,6 +354,7 @@ export function MarksMenu({
   const getRoot = () => document.querySelector<HTMLElement>(contentSelector)
   const [open, setOpen] = useState(false)
   const settings = useSettings()
+  const history = useMarkHistoryState()
   const [status, setStatus] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const wrapperRef = useRef<HTMLDivElement | null>(null)
@@ -374,16 +414,28 @@ export function MarksMenu({
   const reset = () => {
     setOpen(false)
     const root = getRoot()
-    if (root) clearMarks(root)
+    if (root) recordMarkChange(root, () => clearMarks(root))
     for (const setting of SHOW_SETTINGS) if (!settings[setting]) writeSetting(setting, true)
     window.dispatchEvent(new Event(CHANGE_EVENT))
     setStatus("Default highlighting")
   }
 
+  const undo = () => {
+    setOpen(false)
+    setStatus(undoMark() ? "Mark undone" : "Nothing to undo")
+    window.dispatchEvent(new Event(CHANGE_EVENT))
+  }
+
+  const redo = () => {
+    setOpen(false)
+    setStatus(redoMark() ? "Mark redone" : "Nothing to redo")
+    window.dispatchEvent(new Event(CHANGE_EVENT))
+  }
+
   const removeAll = () => {
     setOpen(false)
     const root = getRoot()
-    if (root) removeAllMarks(root)
+    if (root) recordMarkChange(root, () => removeAllMarks(root))
     window.dispatchEvent(new Event(CHANGE_EVENT))
     setStatus("All marks removed")
   }
@@ -473,6 +525,31 @@ export function MarksMenu({
               </button>
             )
           })}
+          <div role="separator" className="my-1 border-t" />
+          <button
+            type="button"
+            role="menuitem"
+            disabled={!history.canUndo}
+            title="Take back the latest mark you added or removed (the last 50 changes are kept)"
+            className={itemClass}
+            onClick={undo}
+          >
+            <Undo2 className="size-4 text-fd-muted-foreground" />
+            <span className="flex-1">Undo mark</span>
+            <kbd className="text-xs text-fd-muted-foreground">Ctrl/⌘ Z</kbd>
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            disabled={!history.canRedo}
+            title="Put back the mark change you just undid"
+            className={itemClass}
+            onClick={redo}
+          >
+            <Redo2 className="size-4 text-fd-muted-foreground" />
+            <span className="flex-1">Redo mark</span>
+            <kbd className="text-xs text-fd-muted-foreground">Ctrl/⌘ Shift Z</kbd>
+          </button>
           <div role="separator" className="my-1 border-t" />
           <button type="button" role="menuitem" disabled={busy} className={itemClass} onClick={runAi}>
             <Sparkles className="size-4 text-fd-muted-foreground" />
