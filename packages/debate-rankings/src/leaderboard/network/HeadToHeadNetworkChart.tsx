@@ -29,6 +29,7 @@ import {
 } from "./headToHeadNetwork"
 import { HeadToHeadVideos } from "./HeadToHeadVideosSlot"
 import { loadHeadToHeadRounds } from "./loadHeadToHeadRounds"
+import { wheelZoomFactor, zoomAbout, type NetworkView } from "./networkZoom"
 
 /** Video library style each rankings dataset covers (Policy / PF / LD / College). */
 const DATASET_VIDEO_STYLE: Partial<Record<RankingDatasetId, DebateStyle>> = {
@@ -261,9 +262,12 @@ export function HeadToHeadNetworkChart({
   const [hovered, setHovered] = useState<Focus | null>(null)
   const [pinned, setPinned] = useState<Focus | null>(null)
   const [hiddenCategories, setHiddenCategories] = useState<Set<number>>(() => new Set())
-  const [view, setView] = useState({ x: 0, y: 0, k: 1 })
+  const [view, setView] = useState<NetworkView>({ x: 0, y: 0, k: 1 })
   const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
+  const svgRef = useRef<SVGSVGElement>(null)
+  const touches = useRef(new Map<number, { x: number; y: number }>())
+  const pinch = useRef<number | null>(null)
   const drag = useRef<{ x: number; y: number; vx: number; vy: number; moved: boolean } | null>(null)
   const focus = hovered ?? pinned
 
@@ -317,21 +321,59 @@ export function HeadToHeadNetworkChart({
       return next
     })
 
-  const zoom = (factor: number) =>
-    setView((v) => {
-      const k = Math.min(4, Math.max(0.6, v.k * factor))
-      // Zoom about the center of the box.
-      const cx = network.width / 2
-      const cy = network.height / 2
-      return { k, x: cx - ((cx - v.x) * k) / v.k, y: cy - ((cy - v.y) * k) / v.k }
-    })
+  const zoom = (factor: number) => setView((v) => zoomAbout(v, factor, network.width / 2, network.height / 2))
+
+  /** A client-space point in the graph's own (viewBox) coordinates. */
+  const toGraph = (clientX: number, clientY: number) => {
+    const rect = svgRef.current?.getBoundingClientRect()
+    if (!rect || !rect.width) return { x: network.width / 2, y: network.height / 2 }
+    const scale = network.width / rect.width
+    return { x: (clientX - rect.left) * scale, y: (clientY - rect.top) * scale }
+  }
+
+  // React attaches wheel listeners as passive, which cannot stop the page from scrolling.
+  useEffect(() => {
+    const svg = svgRef.current
+    if (!svg) return
+    const onWheel = (event: WheelEvent) => {
+      event.preventDefault()
+      const rect = svg.getBoundingClientRect()
+      const scale = rect.width ? network.width / rect.width : 1
+      const x = (event.clientX - rect.left) * scale
+      const y = (event.clientY - rect.top) * scale
+      setView((v) => zoomAbout(v, wheelZoomFactor(event), x, y))
+    }
+    svg.addEventListener("wheel", onWheel, { passive: false })
+    return () => svg.removeEventListener("wheel", onWheel)
+  }, [network.width, network.nodes.length])
 
   const onPointerDown = (event: ReactPointerEvent<SVGSVGElement>) => {
+    if (event.pointerType === "touch") {
+      touches.current.set(event.pointerId, { x: event.clientX, y: event.clientY })
+      if (touches.current.size === 2) {
+        const [a, b] = [...touches.current.values()]
+        pinch.current = Math.hypot(a.x - b.x, a.y - b.y)
+        drag.current = null
+        return
+      }
+    }
     drag.current = { x: event.clientX, y: event.clientY, vx: view.x, vy: view.y, moved: false }
   }
   const onPointerMove = (event: ReactPointerEvent<SVGSVGElement>) => {
     const rect = wrapRef.current?.getBoundingClientRect()
     if (rect) setPointer({ x: event.clientX - rect.left, y: event.clientY - rect.top })
+    if (touches.current.has(event.pointerId)) {
+      touches.current.set(event.pointerId, { x: event.clientX, y: event.clientY })
+      if (touches.current.size === 2 && pinch.current) {
+        const [a, b] = [...touches.current.values()]
+        const distance = Math.hypot(a.x - b.x, a.y - b.y)
+        const mid = toGraph((a.x + b.x) / 2, (a.y + b.y) / 2)
+        const factor = distance / pinch.current
+        pinch.current = distance
+        setView((v) => zoomAbout(v, factor, mid.x, mid.y))
+        return
+      }
+    }
     const d = drag.current
     if (!d || !rect) return
     const scale = network.width / rect.width
@@ -342,7 +384,9 @@ export function HeadToHeadNetworkChart({
     ;(event.currentTarget as SVGSVGElement).setPointerCapture?.(event.pointerId)
     setView((v) => ({ ...v, x: d.vx + dx, y: d.vy + dy }))
   }
-  const onPointerUp = () => {
+  const onPointerUp = (event: ReactPointerEvent<SVGSVGElement>) => {
+    touches.current.delete(event.pointerId)
+    if (touches.current.size < 2) pinch.current = null
     drag.current = null
   }
   /** A click pins its card in the corner until another entry or link is clicked (or it is closed). */
@@ -363,19 +407,12 @@ export function HeadToHeadNetworkChart({
 
   return (
     <section aria-labelledby="h2h-network-title" className={`mb-4 rounded-lg border p-3 sm:p-4 ${className}`}>
-      <div className="mb-1 flex items-center gap-2">
+      <div className="mb-3 flex items-center gap-2">
         <Network className="h-4 w-4 text-violet-500" aria-hidden />
         <h2 id="h2h-network-title" className="text-base font-semibold">
           Who debated whom
         </h2>
       </div>
-      <p className="mb-3 text-xs text-muted-foreground">
-        This season&apos;s top {network.nodes.length} {formatLabel} entries, linked by every round two of them
-        debated each other; thicker links are more meetings and bigger dots higher ratings. Hover or tap an entry to
-        see who it met and its record against each, or a link for that pairing; click to keep the card open, follow an
-        opponent to the round on Tabroom, and see matching videos when the library has them. Drag to pan.
-      </p>
-
       <div className="mb-2 flex flex-wrap items-center gap-1.5" role="group" aria-label="Rank bands">
         {network.categories.map((category, c) =>
           counts[c] ? (
@@ -414,6 +451,7 @@ export function HeadToHeadNetworkChart({
 
       <div ref={wrapRef} className="relative rounded-md bg-muted/20" onMouseLeave={() => setHovered(null)}>
         <svg
+          ref={svgRef}
           viewBox={`0 0 ${network.width} ${network.height}`}
           className="block h-auto w-full touch-none select-none"
           role="img"
@@ -421,7 +459,10 @@ export function HeadToHeadNetworkChart({
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
-          onPointerLeave={() => {
+          onPointerCancel={onPointerUp}
+          onPointerLeave={(event) => {
+            touches.current.delete(event.pointerId)
+            pinch.current = null
             drag.current = null
             setPointer(null)
           }}
