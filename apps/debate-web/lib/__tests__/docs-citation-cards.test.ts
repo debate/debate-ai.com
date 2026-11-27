@@ -10,8 +10,10 @@ import { readdirSync, readFileSync } from "node:fs"
 import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
+import { referenceQuoteStatus } from "../../../../packages/debate-help-docs/lib/reference-quote-status"
 import {
   buildCitationIndex,
+  citeAuthors,
   findCitations,
   parseByline,
   parseReferences,
@@ -191,6 +193,23 @@ describe("Synergy Slayer of Critiques", () => {
     )
     expect(linked.length).toBeGreaterThan(100)
     expect(linked).toContain("ref-shanahan-2004")
+  })
+
+  it("files Schwartz, Preece and Hendry (2002) between Schultz and Schwitzgebel, cited as Schwartz 2002", () => {
+    const at = references.findIndex((e) => e.id === "ref-schwartz-2002")
+    expect(at).toBeGreaterThan(0)
+    const entry = references[at]!
+    expect(entry.number).toBe(at + 1)
+    expect(entry.surnames).toEqual(["Schwartz", "Preece", "Hendry"])
+    expect(entry.etAl).toBe(false)
+    expect(references[at - 1]!.surnames[0]).toBe("Schultz")
+    expect(references[at + 1]!.surnames[0]).toBe("Schwitzgebel")
+    expect(citeAuthors(entry)).toBe("Schwartz et al.")
+    const cited = findCitations("“Patients must decide” (Schwartz 2002).", slayerIndex)
+    expect(cited.map((m) => m.entry.id)).toEqual(["ref-schwartz-2002"])
+    expect(referenceQuoteStatus(entry.cardHtml)).toBe("full")
+    expect(entry.cardHtml).toContain("Katherine Lewis made this decision for herself")
+    expect(entry.cardHtml).toContain("112")
   })
 })
 
