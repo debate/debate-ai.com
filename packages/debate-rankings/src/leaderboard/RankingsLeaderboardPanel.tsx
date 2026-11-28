@@ -62,12 +62,17 @@ import { rankBaselineTooltip } from "./rankBaseline"
 import { buildRankChanges, buildTeamRankChanges, schoolRankChangeKey, teamRankChangeKey } from "./rankChange"
 import { useTocBids } from "./hooks/useTocBids"
 import { matchTocBids, rankedTeamKey, type TocBidTeam } from "../sync/sync-toc-bids-sheet"
-import { NPDL_SEASON_YEARS, npdlSeasonEndYear, npdlSeasonForYear } from "../sync/sync-npdl-rankings"
+import {
+  NPDL_SEASON_YEARS,
+  npdlSeasonEndYear,
+  npdlSeasonForYear,
+  type NpdlSeasonRankings,
+} from "../sync/sync-npdl-rankings"
 import { SchoolRankingsTable } from "./SchoolRankingsTable"
 import { NdtAllSeasonsSection } from "./profile/NdtAllSeasonsDialog"
 import { HsEliteSchoolsSection, NdtEliteSchoolsSection } from "./profile/NdtEliteSchoolsChart"
 import { HeadToHeadNetworkSection } from "./network/HeadToHeadNetworkChart"
-import { HeadToHeadNetworkEmpty } from "./network/HeadToHeadNetworkEmpty"
+import { ParliRecordSheets } from "./network/ParliRecordSheets"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
 import { legendaryCount } from "./rowTier"
@@ -198,6 +203,8 @@ export function LeaderboardPanel({
   const [parli, setParli] = useState(() => urlFormat === PARLI_TAB)
   /** The NPDL season the Parli section last showed (`"2025-26"`), so the season select can name it. */
   const [parliShown, setParliShown] = useState<string | null>(null)
+  /** The Parli table's rankings, which the "Who debated whom" record sheets beside it are built for. */
+  const [parliRankings, setParliRankings] = useState<NpdlSeasonRankings | null | undefined>(undefined)
   /** Opens the Parli tab and writes `/rank/PARLI`, keeping `?by=` and an "All time" season. */
   const selectParli = () => {
     setParli(true)
@@ -449,11 +456,16 @@ return (
             ) : parli && showInternalFilters ? (
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start" data-testid="rankings-split">
                 <div className="min-w-0 flex-1" data-testid="rankings-split-left">
-                  <ParliRankingsSection season={parliSeason} view={view} onSeasonShown={setParliShown} />
+                  <ParliRankingsSection
+                    season={parliSeason}
+                    view={view}
+                    onSeasonShown={setParliShown}
+                    onRankingsChange={setParliRankings}
+                  />
                 </div>
                 {view === "teams" && (
                   <div className="min-w-0 lg:w-7/12" data-testid="rankings-split-right">
-                    <HeadToHeadNetworkEmpty />
+                    <ParliRecordSheets rankings={parliRankings} />
                   </div>
                 )}
               </div>

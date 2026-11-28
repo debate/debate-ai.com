@@ -17,6 +17,7 @@ import { videoRouteHref } from "../../../lib/video-route"
 import { videoWatchHref } from "../../../lib/video-slug"
 import { getTournamentBadge, getTournamentLogo } from "./tournamentLogos"
 import { TournamentNameBadge } from "./TournamentNameBadge"
+import { TeamNameLink } from "./TeamNameLink"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import { useContextTeamRanking } from "../../../hooks/useVideoTeamRankings"
 import type { VideoType } from "../../../types/videos"
@@ -274,7 +275,10 @@ export function VideoCardThumbnail({
                 <div className="flex flex-wrap items-start justify-center gap-2">
                   {affTeam && (
                     <div className="flex flex-col items-center gap-0.5">
-                      <span
+                      <TeamNameLink
+                        team={affTeam}
+                        ranking={affRanking}
+                        raised
                         className={cn(
                           "text-xs font-bold backdrop-blur-md px-1.5 py-0.5 rounded",
                           TEAM_SIDE_SURFACE_CLASS.aff,
@@ -284,7 +288,7 @@ export function VideoCardThumbnail({
                         )}
                       >
                         <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" year={year} bare showRank />
-                      </span>
+                      </TeamNameLink>
                       {arg1AC && (
                         <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm text-center max-w-[120px] leading-tight">
                           <ArgumentLabels text={arg1AC} tone="overlay" className="justify-center" />
@@ -294,7 +298,10 @@ export function VideoCardThumbnail({
                   )}
                   {negTeam && (
                     <div className="flex flex-col items-center gap-0.5">
-                      <span
+                      <TeamNameLink
+                        team={negTeam}
+                        ranking={negRanking}
+                        raised
                         className={cn(
                           "text-xs font-bold backdrop-blur-md px-1.5 py-0.5 rounded",
                           TEAM_SIDE_SURFACE_CLASS.neg,
@@ -304,7 +311,7 @@ export function VideoCardThumbnail({
                         )}
                       >
                         <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" year={year} bare showRank />
-                      </span>
+                      </TeamNameLink>
                       {arg2NR && (
                         <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm text-center max-w-[120px] leading-tight">
                           <ArgumentLabels text={arg2NR} tone="overlay" className="justify-center" />

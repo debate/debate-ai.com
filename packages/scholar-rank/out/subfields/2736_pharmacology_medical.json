@@ -1,0 +1,3378 @@
+{
+  "kind": "subfield",
+  "id": 2736,
+  "name": "Pharmacology (medical)",
+  "total_in_scrape": 171,
+  "count": 171,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Pharmacology (medical) -- 9.9",
+      "id": "https://openalex.org/A5007484138",
+      "display_name": "Vincenzo Di Marzo",
+      "orcid": "https://orcid.org/0000-0002-1490-3070",
+      "h_index": 171,
+      "i10_index": 823,
+      "works_count": 1280,
+      "cited_by_count": 111158,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Pharmacology (medical) -- 9.9",
+      "id": "https://openalex.org/A5013246959",
+      "display_name": "Augustus John Rush",
+      "orcid": "https://orcid.org/0000-0003-2004-2382",
+      "h_index": 169,
+      "i10_index": 808,
+      "works_count": 1131,
+      "cited_by_count": 137738,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Pharmacology (medical) -- 9.9",
+      "id": "https://openalex.org/A5008134404",
+      "display_name": "Myrna M. Weissman",
+      "orcid": "https://orcid.org/0000-0003-3490-3075",
+      "h_index": 159,
+      "i10_index": 617,
+      "works_count": 1047,
+      "cited_by_count": 131158,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Pharmacology (medical) -- 9.9",
+      "id": "https://openalex.org/A5054637908",
+      "display_name": "Benjamin F. Cravatt",
+      "orcid": "https://orcid.org/0000-0001-5330-3492",
+      "h_index": 156,
+      "i10_index": 580,
+      "works_count": 834,
+      "cited_by_count": 90271,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Pharmacology (medical) -- 9.9",
+      "id": "https://openalex.org/A5024624058",
+      "display_name": "Shuh Narumiya",
+      "orcid": "https://orcid.org/0000-0001-8062-6529",
+      "h_index": 151,
+      "i10_index": 515,
+      "works_count": 843,
+      "cited_by_count": 84672,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Pharmacology (medical) -- 9.9",
+      "id": "https://openalex.org/A5084024326",
+      "display_name": "Maurizio Fava",
+      "orcid": "https://orcid.org/0000-0002-4635-0458",
+      "h_index": 150,
+      "i10_index": 892,
+      "works_count": 1335,
+      "cited_by_count": 107393,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5028802207",
+      "display_name": "Garret A. FitzGerald",
+      "orcid": "https://orcid.org/0000-0002-5885-6819",
+      "h_index": 139,
+      "i10_index": 454,
+      "works_count": 723,
+      "cited_by_count": 77395,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5002118289",
+      "display_name": "Gustavo Turecki",
+      "orcid": "https://orcid.org/0000-0003-4075-2736",
+      "h_index": 135,
+      "i10_index": 622,
+      "works_count": 1065,
+      "cited_by_count": 83122,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5029257842",
+      "display_name": "Wayne Curtis Drevets",
+      "orcid": "https://orcid.org/0000-0002-5097-3930",
+      "h_index": 133,
+      "i10_index": 333,
+      "works_count": 457,
+      "cited_by_count": 78707,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5084119264",
+      "display_name": "Pál Pacher",
+      "orcid": "https://orcid.org/0000-0001-7036-8108",
+      "h_index": 132,
+      "i10_index": 367,
+      "works_count": 504,
+      "cited_by_count": 63376,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5081426855",
+      "display_name": "Madhukar H. Trivedi",
+      "orcid": "https://orcid.org/0000-0002-2983-1110",
+      "h_index": 130,
+      "i10_index": 622,
+      "works_count": 1071,
+      "cited_by_count": 90254,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5065631892",
+      "display_name": "Raphael Mechoulam",
+      "orcid": "https://orcid.org/0000-0002-6122-5698",
+      "h_index": 126,
+      "i10_index": 387,
+      "works_count": 522,
+      "cited_by_count": 64923,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5041759678",
+      "display_name": "Sidney H. Kennedy",
+      "orcid": "https://orcid.org/0000-0001-5339-7185",
+      "h_index": 125,
+      "i10_index": 501,
+      "works_count": 915,
+      "cited_by_count": 62979,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5025755881",
+      "display_name": "Ken Mackie",
+      "orcid": "https://orcid.org/0000-0001-8501-6199",
+      "h_index": 124,
+      "i10_index": 370,
+      "works_count": 512,
+      "cited_by_count": 62832,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5045877490",
+      "display_name": "Siegfried F. Kasper",
+      "orcid": "https://orcid.org/0000-0001-8278-191X",
+      "h_index": 120,
+      "i10_index": 736,
+      "works_count": 1919,
+      "cited_by_count": 58407,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5112759205",
+      "display_name": "Bengt O. Samuelsson",
+      "orcid": null,
+      "h_index": 120,
+      "i10_index": 386,
+      "works_count": 503,
+      "cited_by_count": 61485,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Pharmacology (medical) -- 9.8",
+      "id": "https://openalex.org/A5056450962",
+      "display_name": "Alan F. Schatzberg",
+      "orcid": "https://orcid.org/0000-0001-9421-8278",
+      "h_index": 119,
+      "i10_index": 411,
+      "works_count": 738,
+      "cited_by_count": 72449,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5031084817",
+      "display_name": "Bernhard Theodor Baune",
+      "orcid": "https://orcid.org/0000-0001-6548-426X",
+      "h_index": 117,
+      "i10_index": 482,
+      "works_count": 789,
+      "cited_by_count": 85851,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5085107940",
+      "display_name": "Michael E. Thase",
+      "orcid": "https://orcid.org/0000-0002-6403-0861",
+      "h_index": 117,
+      "i10_index": 470,
+      "works_count": 731,
+      "cited_by_count": 54764,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Psychology",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5064701201",
+      "display_name": "Osamu Hayaishi",
+      "orcid": null,
+      "h_index": 117,
+      "i10_index": 465,
+      "works_count": 692,
+      "cited_by_count": 40868,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5031213755",
+      "display_name": "Daniele Piomelli",
+      "orcid": "https://orcid.org/0000-0002-2983-774X",
+      "h_index": 117,
+      "i10_index": 412,
+      "works_count": 724,
+      "cited_by_count": 60636,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5077439065",
+      "display_name": "Edward J. Goetzl",
+      "orcid": "https://orcid.org/0000-0002-0706-5371",
+      "h_index": 116,
+      "i10_index": 381,
+      "works_count": 556,
+      "cited_by_count": 39406,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5089031929",
+      "display_name": "Lawrence J. Marnett",
+      "orcid": "https://orcid.org/0000-0002-7834-6285",
+      "h_index": 114,
+      "i10_index": 485,
+      "works_count": 755,
+      "cited_by_count": 51499,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5027937626",
+      "display_name": "John Lawrence Wallace",
+      "orcid": "https://orcid.org/0000-0002-4853-1682",
+      "h_index": 114,
+      "i10_index": 354,
+      "works_count": 509,
+      "cited_by_count": 44097,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5023209431",
+      "display_name": "Philip J. Cowen",
+      "orcid": "https://orcid.org/0000-0001-5518-6138",
+      "h_index": 111,
+      "i10_index": 530,
+      "works_count": 1029,
+      "cited_by_count": 48352,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5103471337",
+      "display_name": "John A. Oates",
+      "orcid": null,
+      "h_index": 111,
+      "i10_index": 317,
+      "works_count": 464,
+      "cited_by_count": 47925,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5066789024",
+      "display_name": "Jeffrey Lipman",
+      "orcid": "https://orcid.org/0000-0002-5965-9876",
+      "h_index": 108,
+      "i10_index": 511,
+      "works_count": 886,
+      "cited_by_count": 48380,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Pharmacology (medical) -- 9.7",
+      "id": "https://openalex.org/A5068074539",
+      "display_name": "Rex N. Brogden",
+      "orcid": null,
+      "h_index": 108,
+      "i10_index": 246,
+      "works_count": 284,
+      "cited_by_count": 27319,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5037468542",
+      "display_name": "Jason Alexander Roberts",
+      "orcid": "https://orcid.org/0000-0001-6218-435X",
+      "h_index": 107,
+      "i10_index": 552,
+      "works_count": 1008,
+      "cited_by_count": 59592,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5013077524",
+      "display_name": "Andrew J. Dannenberg",
+      "orcid": "https://orcid.org/0000-0002-1901-6497",
+      "h_index": 107,
+      "i10_index": 273,
+      "works_count": 620,
+      "cited_by_count": 38041,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5103004624",
+      "display_name": "Husseini K. Manji",
+      "orcid": "https://orcid.org/0009-0007-1679-8749",
+      "h_index": 107,
+      "i10_index": 217,
+      "works_count": 307,
+      "cited_by_count": 45253,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5062759333",
+      "display_name": "Roger Ho",
+      "orcid": "https://orcid.org/0000-0001-9629-4493",
+      "h_index": 105,
+      "i10_index": 570,
+      "works_count": 1124,
+      "cited_by_count": 80788,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5036308969",
+      "display_name": "Rudolf Uher",
+      "orcid": "https://orcid.org/0000-0002-2998-0546",
+      "h_index": 105,
+      "i10_index": 308,
+      "works_count": 530,
+      "cited_by_count": 46428,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5066903927",
+      "display_name": "Kamil Kuča",
+      "orcid": "https://orcid.org/0000-0001-9664-1109",
+      "h_index": 104,
+      "i10_index": 814,
+      "works_count": 1368,
+      "cited_by_count": 55965,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5108459067",
+      "display_name": "Billy R. Martin",
+      "orcid": null,
+      "h_index": 104,
+      "i10_index": 382,
+      "works_count": 504,
+      "cited_by_count": 43126,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5090373031",
+      "display_name": "Raymond N. DuBois",
+      "orcid": "https://orcid.org/0000-0002-6385-7154",
+      "h_index": 104,
+      "i10_index": 223,
+      "works_count": 464,
+      "cited_by_count": 55067,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5086116359",
+      "display_name": "Angelo Antonio Izzo",
+      "orcid": "https://orcid.org/0000-0002-8557-2133",
+      "h_index": 102,
+      "i10_index": 289,
+      "works_count": 409,
+      "cited_by_count": 39898,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5023263973",
+      "display_name": "Beat Lutz",
+      "orcid": "https://orcid.org/0000-0002-1062-6889",
+      "h_index": 102,
+      "i10_index": 264,
+      "works_count": 418,
+      "cited_by_count": 37590,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Pharmacology (medical) -- 9.6",
+      "id": "https://openalex.org/A5044968672",
+      "display_name": "Roger G. Pertwee",
+      "orcid": "https://orcid.org/0000-0003-3227-2783",
+      "h_index": 102,
+      "i10_index": 242,
+      "works_count": 386,
+      "cited_by_count": 52979,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5084489352",
+      "display_name": "Mauro Maccarrone",
+      "orcid": "https://orcid.org/0000-0002-3990-2963",
+      "h_index": 101,
+      "i10_index": 456,
+      "works_count": 938,
+      "cited_by_count": 35187,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5026132845",
+      "display_name": "George Kunos",
+      "orcid": "https://orcid.org/0000-0003-1788-4976",
+      "h_index": 100,
+      "i10_index": 260,
+      "works_count": 388,
+      "cited_by_count": 38487,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5000540926",
+      "display_name": "Alexandros Makriyannis",
+      "orcid": "https://orcid.org/0000-0003-3272-3687",
+      "h_index": 96,
+      "i10_index": 469,
+      "works_count": 732,
+      "cited_by_count": 36130,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5015501263",
+      "display_name": "Stephen M. Stahl",
+      "orcid": "https://orcid.org/0000-0002-6536-6973",
+      "h_index": 96,
+      "i10_index": 416,
+      "works_count": 1898,
+      "cited_by_count": 35437,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5072437852",
+      "display_name": "George S. Alexopoulos",
+      "orcid": "https://orcid.org/0000-0001-5677-7001",
+      "h_index": 96,
+      "i10_index": 325,
+      "works_count": 545,
+      "cited_by_count": 46661,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5111588120",
+      "display_name": "Harvey R. Herschman",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 308,
+      "works_count": 425,
+      "cited_by_count": 34208,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5058978596",
+      "display_name": "Cecilia J. Hillard",
+      "orcid": "https://orcid.org/0000-0002-9678-748X",
+      "h_index": 95,
+      "i10_index": 256,
+      "works_count": 385,
+      "cited_by_count": 28769,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5090658899",
+      "display_name": "Raymond Wing Moon Lam",
+      "orcid": "https://orcid.org/0000-0001-7142-4669",
+      "h_index": 94,
+      "i10_index": 397,
+      "works_count": 750,
+      "cited_by_count": 36373,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5040129792",
+      "display_name": "Eugene S. Paykel",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 231,
+      "works_count": 362,
+      "cited_by_count": 32158,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5053388087",
+      "display_name": "Giovanni Marsicano",
+      "orcid": "https://orcid.org/0000-0003-3804-1951",
+      "h_index": 94,
+      "i10_index": 195,
+      "works_count": 376,
+      "cited_by_count": 32860,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5061436981",
+      "display_name": "Manuel Guzmán",
+      "orcid": "https://orcid.org/0000-0001-7475-118X",
+      "h_index": 92,
+      "i10_index": 177,
+      "works_count": 283,
+      "cited_by_count": 27182,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Pharmacology (medical) -- 9.5",
+      "id": "https://openalex.org/A5031601763",
+      "display_name": "Lawrence H. Price",
+      "orcid": "https://orcid.org/0000-0002-2074-4520",
+      "h_index": 91,
+      "i10_index": 237,
+      "works_count": 399,
+      "cited_by_count": 28622,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5037185919",
+      "display_name": "Gerard Sanacora",
+      "orcid": "https://orcid.org/0000-0003-3722-8829",
+      "h_index": 91,
+      "i10_index": 183,
+      "works_count": 291,
+      "cited_by_count": 39508,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5003680413",
+      "display_name": "Hermona Soreq",
+      "orcid": "https://orcid.org/0000-0002-0955-526X",
+      "h_index": 90,
+      "i10_index": 370,
+      "works_count": 685,
+      "cited_by_count": 31453,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5073211217",
+      "display_name": "Werner J. Pichler",
+      "orcid": "https://orcid.org/0000-0002-8117-359X",
+      "h_index": 90,
+      "i10_index": 283,
+      "works_count": 542,
+      "cited_by_count": 30385,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5021913455",
+      "display_name": "Júlio Licinio",
+      "orcid": "https://orcid.org/0000-0001-6905-5884",
+      "h_index": 90,
+      "i10_index": 276,
+      "works_count": 600,
+      "cited_by_count": 43570,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5033025249",
+      "display_name": "A. B. Bennett",
+      "orcid": "https://orcid.org/0000-0002-3684-4307",
+      "h_index": 90,
+      "i10_index": 274,
+      "works_count": 540,
+      "cited_by_count": 24740,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5062572691",
+      "display_name": "Tiziana Bisogno",
+      "orcid": "https://orcid.org/0000-0002-5567-2272",
+      "h_index": 90,
+      "i10_index": 140,
+      "works_count": 184,
+      "cited_by_count": 28467,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5073046394",
+      "display_name": "Roger L. Nation",
+      "orcid": "https://orcid.org/0000-0003-1492-8590",
+      "h_index": 89,
+      "i10_index": 313,
+      "works_count": 443,
+      "cited_by_count": 31296,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5076395210",
+      "display_name": "Luciano De PETROCELLIS",
+      "orcid": "https://orcid.org/0000-0002-6131-0470",
+      "h_index": 89,
+      "i10_index": 209,
+      "works_count": 293,
+      "cited_by_count": 31296,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5102785969",
+      "display_name": "Jaime E. C. Hallak",
+      "orcid": "https://orcid.org/0000-0002-8784-0189",
+      "h_index": 88,
+      "i10_index": 338,
+      "works_count": 583,
+      "cited_by_count": 29819,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5012818091",
+      "display_name": "Catherine J. Harmer",
+      "orcid": "https://orcid.org/0000-0002-1609-8335",
+      "h_index": 88,
+      "i10_index": 312,
+      "works_count": 673,
+      "cited_by_count": 26692,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Pharmacology (medical) -- 9.4",
+      "id": "https://openalex.org/A5052009573",
+      "display_name": "Iain S. McGregor",
+      "orcid": "https://orcid.org/0000-0002-9307-7159",
+      "h_index": 87,
+      "i10_index": 321,
+      "works_count": 462,
+      "cited_by_count": 25194,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5080985934",
+      "display_name": "Elizabeth Jane Phillips",
+      "orcid": "https://orcid.org/0000-0002-7623-3383",
+      "h_index": 87,
+      "i10_index": 289,
+      "works_count": 533,
+      "cited_by_count": 38975,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5036189795",
+      "display_name": "Javier Fernández‐Ruíz",
+      "orcid": "https://orcid.org/0000-0002-4490-0604",
+      "h_index": 87,
+      "i10_index": 257,
+      "works_count": 364,
+      "cited_by_count": 24351,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5013628008",
+      "display_name": "Beverly H. Koller",
+      "orcid": "https://orcid.org/0000-0002-1433-359X",
+      "h_index": 87,
+      "i10_index": 187,
+      "works_count": 256,
+      "cited_by_count": 34843,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5045362944",
+      "display_name": "Erich Seifritz",
+      "orcid": "https://orcid.org/0000-0002-7311-4426",
+      "h_index": 86,
+      "i10_index": 434,
+      "works_count": 1058,
+      "cited_by_count": 28150,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5002934725",
+      "display_name": "Johan Willem Mouton",
+      "orcid": "https://orcid.org/0000-0001-6736-4149",
+      "h_index": 86,
+      "i10_index": 345,
+      "works_count": 448,
+      "cited_by_count": 31544,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5025933576",
+      "display_name": "Israel Silman",
+      "orcid": "https://orcid.org/0000-0003-1923-0829",
+      "h_index": 85,
+      "i10_index": 255,
+      "works_count": 542,
+      "cited_by_count": 35268,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5084604101",
+      "display_name": "Marc L. Peters-Golden",
+      "orcid": "https://orcid.org/0000-0002-9768-0262",
+      "h_index": 85,
+      "i10_index": 254,
+      "works_count": 375,
+      "cited_by_count": 23843,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5036512885",
+      "display_name": "George L. Drusano",
+      "orcid": "https://orcid.org/0000-0001-9162-7332",
+      "h_index": 84,
+      "i10_index": 339,
+      "works_count": 483,
+      "cited_by_count": 28749,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5083948964",
+      "display_name": "Katherine L. Narr",
+      "orcid": "https://orcid.org/0000-0002-9396-7936",
+      "h_index": 84,
+      "i10_index": 236,
+      "works_count": 395,
+      "cited_by_count": 25184,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5113616205",
+      "display_name": "Yoshihiro Urade",
+      "orcid": "https://orcid.org/0000-0002-6356-5223",
+      "h_index": 83,
+      "i10_index": 293,
+      "works_count": 457,
+      "cited_by_count": 23337,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Pharmacology (medical) -- 9.3",
+      "id": "https://openalex.org/A5030014983",
+      "display_name": "Thomas B. Cooper",
+      "orcid": "https://orcid.org/0000-0001-6048-3479",
+      "h_index": 83,
+      "i10_index": 274,
+      "works_count": 401,
+      "cited_by_count": 27814,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5025677580",
+      "display_name": "William L. Smith",
+      "orcid": "https://orcid.org/0000-0001-8946-9400",
+      "h_index": 83,
+      "i10_index": 164,
+      "works_count": 241,
+      "cited_by_count": 31772,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5010294016",
+      "display_name": "Richard Charles Shelton",
+      "orcid": "https://orcid.org/0000-0002-3806-4208",
+      "h_index": 82,
+      "i10_index": 269,
+      "works_count": 415,
+      "cited_by_count": 30466,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5053545534",
+      "display_name": "Yukihiko Sugimoto",
+      "orcid": "https://orcid.org/0000-0001-6973-932X",
+      "h_index": 82,
+      "i10_index": 223,
+      "works_count": 332,
+      "cited_by_count": 30584,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5088467690",
+      "display_name": "Anthony James Cleare",
+      "orcid": "https://orcid.org/0000-0002-6990-939X",
+      "h_index": 82,
+      "i10_index": 222,
+      "works_count": 450,
+      "cited_by_count": 23489,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5022995099",
+      "display_name": "Aron H. Lichtman",
+      "orcid": "https://orcid.org/0000-0001-5601-985X",
+      "h_index": 82,
+      "i10_index": 211,
+      "works_count": 307,
+      "cited_by_count": 22634,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5065813510",
+      "display_name": "Linda L. Carpenter",
+      "orcid": "https://orcid.org/0000-0002-9651-3307",
+      "h_index": 82,
+      "i10_index": 198,
+      "works_count": 411,
+      "cited_by_count": 26662,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5067007569",
+      "display_name": "Richard Osborne Day",
+      "orcid": "https://orcid.org/0000-0002-6045-6937",
+      "h_index": 81,
+      "i10_index": 415,
+      "works_count": 753,
+      "cited_by_count": 33661,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5077848496",
+      "display_name": "Antônio Waldo Zuardi",
+      "orcid": "https://orcid.org/0000-0002-0479-6670",
+      "h_index": 81,
+      "i10_index": 214,
+      "works_count": 350,
+      "cited_by_count": 24562,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5088376776",
+      "display_name": "Patrick J. McGrath",
+      "orcid": "https://orcid.org/0000-0001-7217-7321",
+      "h_index": 81,
+      "i10_index": 192,
+      "works_count": 259,
+      "cited_by_count": 39489,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5113601965",
+      "display_name": "Rennie C. Heel",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 118,
+      "works_count": 132,
+      "cited_by_count": 16483,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Pharmacology (medical) -- 9.2",
+      "id": "https://openalex.org/A5054036019",
+      "display_name": "José Alexandre S. Crippa",
+      "orcid": "https://orcid.org/0000-0001-9520-6746",
+      "h_index": 80,
+      "i10_index": 270,
+      "works_count": 426,
+      "cited_by_count": 25378,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5064125146",
+      "display_name": "Thomas E. Eling",
+      "orcid": "https://orcid.org/0009-0006-5980-1189",
+      "h_index": 79,
+      "i10_index": 263,
+      "works_count": 352,
+      "cited_by_count": 19243,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5019823948",
+      "display_name": "John S. Bradley",
+      "orcid": "https://orcid.org/0000-0002-3835-5064",
+      "h_index": 79,
+      "i10_index": 258,
+      "works_count": 508,
+      "cited_by_count": 37797,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5061200799",
+      "display_name": "H. Valerie Curran",
+      "orcid": "https://orcid.org/0000-0001-6011-6978",
+      "h_index": 79,
+      "i10_index": 221,
+      "works_count": 454,
+      "cited_by_count": 23254,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5082058707",
+      "display_name": "Jonathan E. Alpert",
+      "orcid": "https://orcid.org/0000-0002-4332-908X",
+      "h_index": 78,
+      "i10_index": 205,
+      "works_count": 338,
+      "cited_by_count": 20866,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5110729669",
+      "display_name": "G.S. Avery",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 126,
+      "works_count": 147,
+      "cited_by_count": 14176,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5111792102",
+      "display_name": "T.M. Speight",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 118,
+      "works_count": 134,
+      "cited_by_count": 13879,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5045395183",
+      "display_name": "Oliver Werz",
+      "orcid": "https://orcid.org/0000-0002-5064-4379",
+      "h_index": 77,
+      "i10_index": 389,
+      "works_count": 587,
+      "cited_by_count": 22616,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Nursing",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5002162783",
+      "display_name": "Stuart Montgomery",
+      "orcid": "https://orcid.org/0000-0002-5983-0063",
+      "h_index": 77,
+      "i10_index": 310,
+      "works_count": 657,
+      "cited_by_count": 38146,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5046094471",
+      "display_name": "Mahmoud A. ElSohly",
+      "orcid": "https://orcid.org/0000-0002-0019-2001",
+      "h_index": 77,
+      "i10_index": 297,
+      "works_count": 418,
+      "cited_by_count": 24863,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5053095971",
+      "display_name": "Eric J. Lenze",
+      "orcid": "https://orcid.org/0000-0002-0471-9368",
+      "h_index": 77,
+      "i10_index": 290,
+      "works_count": 554,
+      "cited_by_count": 24187,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Pharmacology (medical) -- 9.1",
+      "id": "https://openalex.org/A5050740394",
+      "display_name": "Joshua Daniel Rosenblat",
+      "orcid": "https://orcid.org/0000-0002-4773-2191",
+      "h_index": 77,
+      "i10_index": 257,
+      "works_count": 430,
+      "cited_by_count": 24642,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Pharmacology (medical) -- 9.0",
+      "id": "https://openalex.org/A5027670892",
+      "display_name": "Oksana Lockridge",
+      "orcid": "https://orcid.org/0000-0002-8345-3640",
+      "h_index": 77,
+      "i10_index": 241,
+      "works_count": 364,
+      "cited_by_count": 18939,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Pharmacology (medical) -- 9.0",
+      "id": "https://openalex.org/A5048498728",
+      "display_name": "Dan Vlad Iosifescu",
+      "orcid": "https://orcid.org/0000-0002-2512-2835",
+      "h_index": 77,
+      "i10_index": 218,
+      "works_count": 359,
+      "cited_by_count": 24767,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Pharmacology (medical) -- 9.0",
+      "id": "https://openalex.org/A5018211312",
+      "display_name": "Witte J.G. Hoogendijk",
+      "orcid": "https://orcid.org/0000-0002-0225-4966",
+      "h_index": 77,
+      "i10_index": 180,
+      "works_count": 316,
+      "cited_by_count": 25448,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Pharmacology (medical) -- 9.0",
+      "id": "https://openalex.org/A5103120178",
+      "display_name": "Matthew N. Hill",
+      "orcid": "https://orcid.org/0000-0001-7144-9209",
+      "h_index": 77,
+      "i10_index": 170,
+      "works_count": 263,
+      "cited_by_count": 19369,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Pharmacology (medical) -- 9.0",
+      "id": "https://openalex.org/A5027292872",
+      "display_name": "Kay Brune",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 277,
+      "works_count": 487,
+      "cited_by_count": 20924,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5004434922",
+      "display_name": "Paul M. Tulkens",
+      "orcid": "https://orcid.org/0000-0002-7121-3623",
+      "h_index": 76,
+      "i10_index": 270,
+      "works_count": 656,
+      "cited_by_count": 23741,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5046106672",
+      "display_name": "Jay D. Amsterdam",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 208,
+      "works_count": 307,
+      "cited_by_count": 21286,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5090740872",
+      "display_name": "David P. Nicolau",
+      "orcid": "https://orcid.org/0000-0002-4148-0165",
+      "h_index": 75,
+      "i10_index": 572,
+      "works_count": 942,
+      "cited_by_count": 27573,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5043802370",
+      "display_name": "Jian‐Yong Wu",
+      "orcid": "https://orcid.org/0000-0002-5392-5686",
+      "h_index": 75,
+      "i10_index": 224,
+      "works_count": 321,
+      "cited_by_count": 15169,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5083929738",
+      "display_name": "Robert A. Newman",
+      "orcid": "https://orcid.org/0000-0001-5661-5846",
+      "h_index": 75,
+      "i10_index": 222,
+      "works_count": 379,
+      "cited_by_count": 26609,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5086727096",
+      "display_name": "Yong‐Ku Kim",
+      "orcid": "https://orcid.org/0000-0001-5694-7840",
+      "h_index": 75,
+      "i10_index": 217,
+      "works_count": 334,
+      "cited_by_count": 18639,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5015678331",
+      "display_name": "James W. Murrough",
+      "orcid": "https://orcid.org/0000-0001-6286-1242",
+      "h_index": 75,
+      "i10_index": 163,
+      "works_count": 309,
+      "cited_by_count": 26417,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5077054820",
+      "display_name": "Yvette I. Sheline",
+      "orcid": "https://orcid.org/0000-0002-6929-9659",
+      "h_index": 75,
+      "i10_index": 140,
+      "works_count": 262,
+      "cited_by_count": 34573,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5064675740",
+      "display_name": "Sándor Bátkai",
+      "orcid": "https://orcid.org/0000-0002-1867-9619",
+      "h_index": 75,
+      "i10_index": 126,
+      "works_count": 187,
+      "cited_by_count": 25230,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5078634243",
+      "display_name": "Hartmut Derendorf",
+      "orcid": "https://orcid.org/0000-0003-4016-1370",
+      "h_index": 74,
+      "i10_index": 330,
+      "works_count": 475,
+      "cited_by_count": 22667,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5031221345",
+      "display_name": "Ana Lúcia S. Rodrigues",
+      "orcid": "https://orcid.org/0000-0001-6285-8780",
+      "h_index": 74,
+      "i10_index": 243,
+      "works_count": 292,
+      "cited_by_count": 17201,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Pharmacology (medical) -- 8.9",
+      "id": "https://openalex.org/A5110573592",
+      "display_name": "Kenneth V. Honn",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 225,
+      "works_count": 348,
+      "cited_by_count": 18195,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5005456741",
+      "display_name": "Ma‐Li Wong",
+      "orcid": "https://orcid.org/0000-0003-1512-3073",
+      "h_index": 74,
+      "i10_index": 207,
+      "works_count": 376,
+      "cited_by_count": 22078,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5109531112",
+      "display_name": "Lesley J. Scott",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 266,
+      "works_count": 398,
+      "cited_by_count": 19671,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5084949673",
+      "display_name": "David Mischoulon",
+      "orcid": "https://orcid.org/0000-0001-7233-5860",
+      "h_index": 73,
+      "i10_index": 259,
+      "works_count": 482,
+      "cited_by_count": 20130,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5027004349",
+      "display_name": "Alan Forrest",
+      "orcid": "https://orcid.org/0000-0003-2752-4819",
+      "h_index": 73,
+      "i10_index": 243,
+      "works_count": 358,
+      "cited_by_count": 21540,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5056267366",
+      "display_name": "Jerome J. Schentag",
+      "orcid": "https://orcid.org/0009-0009-1107-8691",
+      "h_index": 73,
+      "i10_index": 220,
+      "works_count": 302,
+      "cited_by_count": 20551,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5022694312",
+      "display_name": "Arun V Ravindran",
+      "orcid": "https://orcid.org/0000-0002-1655-2753",
+      "h_index": 73,
+      "i10_index": 177,
+      "works_count": 324,
+      "cited_by_count": 24051,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5070181938",
+      "display_name": "Lawrence Levine",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 246,
+      "works_count": 339,
+      "cited_by_count": 21673,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5001249292",
+      "display_name": "Steven P. Roose",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 211,
+      "works_count": 389,
+      "cited_by_count": 17435,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5045819737",
+      "display_name": "George I. Papakostas",
+      "orcid": "https://orcid.org/0000-0002-8886-1416",
+      "h_index": 72,
+      "i10_index": 208,
+      "works_count": 346,
+      "cited_by_count": 18222,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5032227480",
+      "display_name": "William A. Craig",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 161,
+      "works_count": 228,
+      "cited_by_count": 23175,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5082257614",
+      "display_name": "Olof Rådmark",
+      "orcid": "https://orcid.org/0000-0002-3424-3890",
+      "h_index": 72,
+      "i10_index": 147,
+      "works_count": 204,
+      "cited_by_count": 25714,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5109974847",
+      "display_name": "Giovanni Ciabattoni",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 137,
+      "works_count": 220,
+      "cited_by_count": 16068,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5067672486",
+      "display_name": "Stefania Petrosino",
+      "orcid": "https://orcid.org/0000-0002-4263-3987",
+      "h_index": 72,
+      "i10_index": 108,
+      "works_count": 135,
+      "cited_by_count": 15028,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5013987157",
+      "display_name": "Eugenie Nepovimová",
+      "orcid": "https://orcid.org/0000-0003-0281-246X",
+      "h_index": 71,
+      "i10_index": 201,
+      "works_count": 312,
+      "cited_by_count": 23889,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5057475035",
+      "display_name": "Wen‐Hung Chung",
+      "orcid": "https://orcid.org/0000-0001-6531-5538",
+      "h_index": 70,
+      "i10_index": 200,
+      "works_count": 326,
+      "cited_by_count": 20166,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5047319177",
+      "display_name": "Leo E. Hollister",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 296,
+      "works_count": 606,
+      "cited_by_count": 16799,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5109139788",
+      "display_name": "Merle A. Sande",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 199,
+      "works_count": 281,
+      "cited_by_count": 18957,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5067962994",
+      "display_name": "Ian Muir Anderson",
+      "orcid": "https://orcid.org/0000-0003-2205-9209",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 372,
+      "cited_by_count": 19924,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5044367072",
+      "display_name": "Maxwell Finland",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 391,
+      "works_count": 683,
+      "cited_by_count": 18793,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5031573079",
+      "display_name": "Lisardo Boscá",
+      "orcid": "https://orcid.org/0000-0002-0253-5469",
+      "h_index": 68,
+      "i10_index": 244,
+      "works_count": 372,
+      "cited_by_count": 17149,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5027992433",
+      "display_name": "Philip M. Boyce",
+      "orcid": "https://orcid.org/0000-0002-9816-7356",
+      "h_index": 68,
+      "i10_index": 204,
+      "works_count": 358,
+      "cited_by_count": 17757,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Pharmacology (medical) -- 8.8",
+      "id": "https://openalex.org/A5074185770",
+      "display_name": "Partha Mukhopadhyay",
+      "orcid": "https://orcid.org/0000-0002-1178-1274",
+      "h_index": 68,
+      "i10_index": 89,
+      "works_count": 140,
+      "cited_by_count": 14105,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5100696610",
+      "display_name": "Peng Xie",
+      "orcid": "https://orcid.org/0000-0002-0081-6048",
+      "h_index": 67,
+      "i10_index": 241,
+      "works_count": 387,
+      "cited_by_count": 20053,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5113913633",
+      "display_name": "Susan M. Fischer",
+      "orcid": "https://orcid.org/0000-0001-8594-7882",
+      "h_index": 67,
+      "i10_index": 205,
+      "works_count": 360,
+      "cited_by_count": 13914,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5012154899",
+      "display_name": "Bernard J. Carroll",
+      "orcid": "https://orcid.org/0000-0002-1976-8269",
+      "h_index": 67,
+      "i10_index": 195,
+      "works_count": 328,
+      "cited_by_count": 19367,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5026006129",
+      "display_name": "Jonathan W. Stewart",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 159,
+      "works_count": 212,
+      "cited_by_count": 21626,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5009644987",
+      "display_name": "Frederic M. Quitkin",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 155,
+      "works_count": 223,
+      "cited_by_count": 13688,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5082516184",
+      "display_name": "Richard M. Breyer",
+      "orcid": "https://orcid.org/0000-0001-5828-4403",
+      "h_index": 67,
+      "i10_index": 131,
+      "works_count": 176,
+      "cited_by_count": 13515,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5024695885",
+      "display_name": "Derek William Gilroy",
+      "orcid": "https://orcid.org/0000-0003-3476-0844",
+      "h_index": 67,
+      "i10_index": 121,
+      "works_count": 210,
+      "cited_by_count": 35268,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5027639379",
+      "display_name": "Peter C. Isakson",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 119,
+      "works_count": 151,
+      "cited_by_count": 23754,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5056370132",
+      "display_name": "Kotha Subbaramaiah",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 117,
+      "works_count": 210,
+      "cited_by_count": 17724,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5100388909",
+      "display_name": "Zhijun Zhang",
+      "orcid": "https://orcid.org/0000-0001-5480-0888",
+      "h_index": 66,
+      "i10_index": 284,
+      "works_count": 451,
+      "cited_by_count": 16715,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5036189941",
+      "display_name": "Atsushi Ichikawa",
+      "orcid": "https://orcid.org/0009-0000-2175-2963",
+      "h_index": 66,
+      "i10_index": 232,
+      "works_count": 390,
+      "cited_by_count": 18184,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5015502825",
+      "display_name": "Russell T. Joffe",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 194,
+      "works_count": 297,
+      "cited_by_count": 14830,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5006321692",
+      "display_name": "Ákos Heinemann",
+      "orcid": "https://orcid.org/0000-0002-8554-2372",
+      "h_index": 66,
+      "i10_index": 186,
+      "works_count": 287,
+      "cited_by_count": 12134,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5083198014",
+      "display_name": "Yena L. Lee",
+      "orcid": "https://orcid.org/0000-0003-0629-9456",
+      "h_index": 66,
+      "i10_index": 180,
+      "works_count": 250,
+      "cited_by_count": 16971,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5110171202",
+      "display_name": "James H. Kocsis",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 171,
+      "works_count": 263,
+      "cited_by_count": 17710,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5055497986",
+      "display_name": "Sanjay J. Mathew",
+      "orcid": "https://orcid.org/0000-0002-2715-6641",
+      "h_index": 66,
+      "i10_index": 167,
+      "works_count": 279,
+      "cited_by_count": 18899,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5071758568",
+      "display_name": "Paola Patrignani",
+      "orcid": "https://orcid.org/0000-0003-1419-2691",
+      "h_index": 66,
+      "i10_index": 157,
+      "works_count": 267,
+      "cited_by_count": 15001,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5109180561",
+      "display_name": "Jean Massoulié",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 150,
+      "works_count": 241,
+      "cited_by_count": 12847,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5012489562",
+      "display_name": "Andrea G. Hohmann",
+      "orcid": "https://orcid.org/0000-0003-0941-6435",
+      "h_index": 66,
+      "i10_index": 125,
+      "works_count": 177,
+      "cited_by_count": 15047,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5111503131",
+      "display_name": "David L. DeWitt",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 105,
+      "works_count": 127,
+      "cited_by_count": 23343,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5040500968",
+      "display_name": "Krishnendu Acharya",
+      "orcid": "https://orcid.org/0000-0003-1193-1823",
+      "h_index": 65,
+      "i10_index": 266,
+      "works_count": 499,
+      "cited_by_count": 16422,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Pharmacology (medical) -- 8.7",
+      "id": "https://openalex.org/A5003663904",
+      "display_name": "Qiuhui Hu",
+      "orcid": "https://orcid.org/0000-0001-5714-4492",
+      "h_index": 65,
+      "i10_index": 209,
+      "works_count": 275,
+      "cited_by_count": 12594,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5023657474",
+      "display_name": "Maurizio Bifulco",
+      "orcid": "https://orcid.org/0000-0002-1771-4531",
+      "h_index": 65,
+      "i10_index": 208,
+      "works_count": 330,
+      "cited_by_count": 15935,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5066244229",
+      "display_name": "Brendan J.R. Whittle",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 194,
+      "works_count": 288,
+      "cited_by_count": 15585,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5110273945",
+      "display_name": "Ying Yu",
+      "orcid": "https://orcid.org/0000-0002-6476-1752",
+      "h_index": 65,
+      "i10_index": 191,
+      "works_count": 281,
+      "cited_by_count": 17014,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5051629235",
+      "display_name": "Giulio G. Muccioli",
+      "orcid": "https://orcid.org/0000-0002-1600-9259",
+      "h_index": 65,
+      "i10_index": 184,
+      "works_count": 270,
+      "cited_by_count": 24309,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5012132569",
+      "display_name": "Marcel O. Bonn‐Miller",
+      "orcid": "https://orcid.org/0000-0001-5088-5386",
+      "h_index": 65,
+      "i10_index": 177,
+      "works_count": 238,
+      "cited_by_count": 12424,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5051043505",
+      "display_name": "Louis J. Aronne",
+      "orcid": "https://orcid.org/0000-0002-9890-9401",
+      "h_index": 65,
+      "i10_index": 173,
+      "works_count": 303,
+      "cited_by_count": 30083,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5083430244",
+      "display_name": "Ian A. Cook",
+      "orcid": "https://orcid.org/0000-0002-8991-3804",
+      "h_index": 65,
+      "i10_index": 129,
+      "works_count": 209,
+      "cited_by_count": 12380,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5015709474",
+      "display_name": "Patrick Masson",
+      "orcid": "https://orcid.org/0000-0002-7837-3662",
+      "h_index": 64,
+      "i10_index": 298,
+      "works_count": 501,
+      "cited_by_count": 17238,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5032329666",
+      "display_name": "Massimo Gennarelli",
+      "orcid": "https://orcid.org/0000-0003-4192-945X",
+      "h_index": 64,
+      "i10_index": 219,
+      "works_count": 477,
+      "cited_by_count": 17970,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5105416609",
+      "display_name": "Thomas Simmet",
+      "orcid": "https://orcid.org/0000-0002-8027-2617",
+      "h_index": 64,
+      "i10_index": 185,
+      "works_count": 401,
+      "cited_by_count": 21217,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5033133499",
+      "display_name": "Rocío Martín‐Santos",
+      "orcid": "https://orcid.org/0000-0003-4150-4726",
+      "h_index": 64,
+      "i10_index": 174,
+      "works_count": 355,
+      "cited_by_count": 16660,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5005661088",
+      "display_name": "Thomas James Carmody",
+      "orcid": "https://orcid.org/0000-0003-3256-8269",
+      "h_index": 64,
+      "i10_index": 169,
+      "works_count": 266,
+      "cited_by_count": 17925,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5045236281",
+      "display_name": "Jaime L. Masferrer",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 120,
+      "works_count": 162,
+      "cited_by_count": 22595,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5109990436",
+      "display_name": "Pierre G. Braquet",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 322,
+      "works_count": 771,
+      "cited_by_count": 16802,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Pharmacology (medical) -- 8.6",
+      "id": "https://openalex.org/A5083151551",
+      "display_name": "Qinglong Guo",
+      "orcid": "https://orcid.org/0000-0001-5165-2592",
+      "h_index": 63,
+      "i10_index": 289,
+      "works_count": 389,
+      "cited_by_count": 14316,
+      "discipline": "Pharmacology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    }
+  ]
+}

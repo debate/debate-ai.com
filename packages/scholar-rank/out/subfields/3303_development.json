@@ -1,0 +1,283 @@
+{
+  "kind": "subfield",
+  "id": 3303,
+  "name": "Development",
+  "total_in_scrape": 14,
+  "count": 14,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Development -- 9.9",
+      "id": "https://openalex.org/A5075195476",
+      "display_name": "Jere Richard Behrman",
+      "orcid": "https://orcid.org/0000-0001-7835-6283",
+      "h_index": 105,
+      "i10_index": 399,
+      "works_count": 738,
+      "cited_by_count": 43121,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Development -- 9.9",
+      "id": "https://openalex.org/A5015565298",
+      "display_name": "Esther Duflo",
+      "orcid": "https://orcid.org/0000-0001-6105-617X",
+      "h_index": 105,
+      "i10_index": 254,
+      "works_count": 664,
+      "cited_by_count": 95186,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Development -- 9.9",
+      "id": "https://openalex.org/A5068321541",
+      "display_name": "Miguel Angel Altieri",
+      "orcid": "https://orcid.org/0000-0001-8573-4334",
+      "h_index": 89,
+      "i10_index": 248,
+      "works_count": 471,
+      "cited_by_count": 42026,
+      "discipline": "Development",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Development -- 9.9",
+      "id": "https://openalex.org/A5058545794",
+      "display_name": "Ian Scoones",
+      "orcid": "https://orcid.org/0000-0001-8547-4464",
+      "h_index": 89,
+      "i10_index": 231,
+      "works_count": 437,
+      "cited_by_count": 44503,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Development -- 9.9",
+      "id": "https://openalex.org/A5035113852",
+      "display_name": "Michael R. Kremer",
+      "orcid": "https://orcid.org/0000-0001-7914-5269",
+      "h_index": 87,
+      "i10_index": 223,
+      "works_count": 609,
+      "cited_by_count": 40722,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Nursing",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Development -- 9.9",
+      "id": "https://openalex.org/A5016757546",
+      "display_name": "Paul Gertler",
+      "orcid": "https://orcid.org/0000-0003-0280-7513",
+      "h_index": 82,
+      "i10_index": 217,
+      "works_count": 443,
+      "cited_by_count": 31210,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Development -- 9.8",
+      "id": "https://openalex.org/A5035683065",
+      "display_name": "Axel Dreher",
+      "orcid": "https://orcid.org/0000-0002-7227-3599",
+      "h_index": 80,
+      "i10_index": 217,
+      "works_count": 514,
+      "cited_by_count": 29503,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Development -- 9.8",
+      "id": "https://openalex.org/A5036912381",
+      "display_name": "William Russell Easterly",
+      "orcid": "https://orcid.org/0000-0002-1207-2840",
+      "h_index": 79,
+      "i10_index": 164,
+      "works_count": 266,
+      "cited_by_count": 55163,
+      "discipline": "Development",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Development",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Development -- 9.8",
+      "id": "https://openalex.org/A5049590493",
+      "display_name": "John Frederick Hoddinott",
+      "orcid": "https://orcid.org/0000-0002-0590-3917",
+      "h_index": 77,
+      "i10_index": 256,
+      "works_count": 448,
+      "cited_by_count": 27837,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Nursing",
+        "Economics, Econometrics and Finance",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Development -- 9.8",
+      "id": "https://openalex.org/A5077506130",
+      "display_name": "Edward A. Miguel",
+      "orcid": "https://orcid.org/0000-0001-6927-709X",
+      "h_index": 76,
+      "i10_index": 196,
+      "works_count": 779,
+      "cited_by_count": 46299,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Development -- 9.8",
+      "id": "https://openalex.org/A5084984335",
+      "display_name": "Terry Marsden",
+      "orcid": "https://orcid.org/0000-0003-0503-2039",
+      "h_index": 71,
+      "i10_index": 197,
+      "works_count": 430,
+      "cited_by_count": 27353,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Development -- 9.8",
+      "id": "https://openalex.org/A5001571880",
+      "display_name": "David Hulme",
+      "orcid": "https://orcid.org/0000-0002-4111-1589",
+      "h_index": 70,
+      "i10_index": 212,
+      "works_count": 548,
+      "cited_by_count": 22357,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Development -- 9.8",
+      "id": "https://openalex.org/A5103280398",
+      "display_name": "Robert Chambers",
+      "orcid": "https://orcid.org/0000-0003-2852-1011",
+      "h_index": 69,
+      "i10_index": 207,
+      "works_count": 614,
+      "cited_by_count": 35216,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Development -- 9.8",
+      "id": "https://openalex.org/A5083893213",
+      "display_name": "Lant H. Pritchett",
+      "orcid": "https://orcid.org/0000-0002-3736-3118",
+      "h_index": 67,
+      "i10_index": 176,
+      "works_count": 302,
+      "cited_by_count": 37536,
+      "discipline": "Development",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Development",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    }
+  ]
+}

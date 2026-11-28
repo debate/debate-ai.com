@@ -1,0 +1,87 @@
+{
+  "kind": "subfield",
+  "id": 1410,
+  "name": "Industrial relations",
+  "total_in_scrape": 4,
+  "count": 4,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Industrial relations -- 9.9",
+      "id": "https://openalex.org/A5051656604",
+      "display_name": "Richard Barry Freeman",
+      "orcid": "https://orcid.org/0000-0002-0738-5893",
+      "h_index": 108,
+      "i10_index": 438,
+      "works_count": 1203,
+      "cited_by_count": 45584,
+      "discipline": "Industrial relations",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Industrial relations",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Industrial relations -- 9.9",
+      "id": "https://openalex.org/A5055245667",
+      "display_name": "Adrian John Wilkinson",
+      "orcid": "https://orcid.org/0000-0001-7231-2861",
+      "h_index": 76,
+      "i10_index": 267,
+      "works_count": 568,
+      "cited_by_count": 22300,
+      "discipline": "Industrial relations",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Industrial relations",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Industrial relations -- 9.9",
+      "id": "https://openalex.org/A5087078271",
+      "display_name": "Arne L. Kalleberg",
+      "orcid": "https://orcid.org/0000-0002-1590-7583",
+      "h_index": 75,
+      "i10_index": 161,
+      "works_count": 333,
+      "cited_by_count": 29901,
+      "discipline": "Industrial relations",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Industrial relations",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Industrial relations -- 9.9",
+      "id": "https://openalex.org/A5086530950",
+      "display_name": "Mark Graham",
+      "orcid": "https://orcid.org/0000-0001-8370-9848",
+      "h_index": 64,
+      "i10_index": 145,
+      "works_count": 292,
+      "cited_by_count": 22030,
+      "discipline": "Industrial relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Industrial relations",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6220 @@
+{
+  "kind": "subfield",
+  "id": 1602,
+  "name": "Analytical Chemistry",
+  "total_in_scrape": 311,
+  "count": 311,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Analytical Chemistry -- 9.9",
+      "id": "https://openalex.org/A5100668859",
+      "display_name": "Joseph Wang",
+      "orcid": "https://orcid.org/0000-0002-4921-9674",
+      "h_index": 207,
+      "i10_index": 1236,
+      "works_count": 1601,
+      "cited_by_count": 170368,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Analytical Chemistry -- 9.9",
+      "id": "https://openalex.org/A5082461938",
+      "display_name": "Da‐Wen Sun",
+      "orcid": "https://orcid.org/0000-0002-3634-9963",
+      "h_index": 161,
+      "i10_index": 875,
+      "works_count": 1074,
+      "cited_by_count": 90922,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Analytical Chemistry -- 9.9",
+      "id": "https://openalex.org/A5100459366",
+      "display_name": "Ki‐Hyun Kim",
+      "orcid": "https://orcid.org/0000-0003-0487-4242",
+      "h_index": 158,
+      "i10_index": 1092,
+      "works_count": 1768,
+      "cited_by_count": 114775,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Analytical Chemistry -- 9.9",
+      "id": "https://openalex.org/A5012861155",
+      "display_name": "Yuehe Lin",
+      "orcid": "https://orcid.org/0000-0003-3791-7587",
+      "h_index": 153,
+      "i10_index": 569,
+      "works_count": 728,
+      "cited_by_count": 87610,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Analytical Chemistry -- 9.9",
+      "id": "https://openalex.org/A5027346868",
+      "display_name": "Martin Pumera",
+      "orcid": "https://orcid.org/0000-0001-5846-2951",
+      "h_index": 136,
+      "i10_index": 907,
+      "works_count": 1220,
+      "cited_by_count": 84633,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Energy",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Analytical Chemistry -- 9.9",
+      "id": "https://openalex.org/A5035360447",
+      "display_name": "Shaojun Dong",
+      "orcid": "https://orcid.org/0000-0002-0263-6577",
+      "h_index": 135,
+      "i10_index": 878,
+      "works_count": 1145,
+      "cited_by_count": 81155,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5045312004",
+      "display_name": "Janusz B. Pawliszyn",
+      "orcid": "https://orcid.org/0000-0002-9975-5811",
+      "h_index": 127,
+      "i10_index": 718,
+      "works_count": 1156,
+      "cited_by_count": 72761,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Social Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5100759494",
+      "display_name": "Hong‐Yuan Chen",
+      "orcid": "https://orcid.org/0000-0001-5217-668X",
+      "h_index": 124,
+      "i10_index": 961,
+      "works_count": 1228,
+      "cited_by_count": 68746,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5013551777",
+      "display_name": "Lingxin Chen",
+      "orcid": "https://orcid.org/0000-0002-3764-3515",
+      "h_index": 120,
+      "i10_index": 559,
+      "works_count": 758,
+      "cited_by_count": 54387,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5100601538",
+      "display_name": "Imran Ali",
+      "orcid": "https://orcid.org/0000-0001-6511-8374",
+      "h_index": 118,
+      "i10_index": 471,
+      "works_count": 784,
+      "cited_by_count": 49269,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5031281108",
+      "display_name": "Mustafa Soylak",
+      "orcid": "https://orcid.org/0000-0002-1017-0244",
+      "h_index": 114,
+      "i10_index": 761,
+      "works_count": 1059,
+      "cited_by_count": 45719,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5079684636",
+      "display_name": "Otto S. Wolfbeis",
+      "orcid": "https://orcid.org/0000-0002-6124-2842",
+      "h_index": 112,
+      "i10_index": 483,
+      "works_count": 670,
+      "cited_by_count": 48357,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5045621149",
+      "display_name": "J. Justin Gooding",
+      "orcid": "https://orcid.org/0000-0002-5398-0597",
+      "h_index": 110,
+      "i10_index": 520,
+      "works_count": 897,
+      "cited_by_count": 48105,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5079462468",
+      "display_name": "Dan Du",
+      "orcid": "https://orcid.org/0000-0003-1952-4042",
+      "h_index": 110,
+      "i10_index": 390,
+      "works_count": 500,
+      "cited_by_count": 44761,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5005437626",
+      "display_name": "Adam Heller",
+      "orcid": "https://orcid.org/0000-0003-0181-1246",
+      "h_index": 109,
+      "i10_index": 287,
+      "works_count": 402,
+      "cited_by_count": 38761,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5100451640",
+      "display_name": "Yibin B. Ying",
+      "orcid": "https://orcid.org/0000-0002-3392-9380",
+      "h_index": 107,
+      "i10_index": 433,
+      "works_count": 683,
+      "cited_by_count": 36377,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Analytical Chemistry -- 9.8",
+      "id": "https://openalex.org/A5074214331",
+      "display_name": "Jacek Namieśnik",
+      "orcid": "https://orcid.org/0000-0001-9598-2198",
+      "h_index": 106,
+      "i10_index": 669,
+      "works_count": 1155,
+      "cited_by_count": 53614,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5077242280",
+      "display_name": "Daniel Wayne Armstrong",
+      "orcid": "https://orcid.org/0000-0003-0501-6231",
+      "h_index": 106,
+      "i10_index": 632,
+      "works_count": 855,
+      "cited_by_count": 46672,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5038193861",
+      "display_name": "František Švec",
+      "orcid": "https://orcid.org/0000-0001-6574-1537",
+      "h_index": 105,
+      "i10_index": 387,
+      "works_count": 592,
+      "cited_by_count": 33941,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5006953226",
+      "display_name": "Craig Edward Banks",
+      "orcid": "https://orcid.org/0000-0002-0756-9764",
+      "h_index": 104,
+      "i10_index": 604,
+      "works_count": 824,
+      "cited_by_count": 52568,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5007955463",
+      "display_name": "Klaus Mosbach",
+      "orcid": null,
+      "h_index": 104,
+      "i10_index": 372,
+      "works_count": 516,
+      "cited_by_count": 38966,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5088287584",
+      "display_name": "Hassan Karimi‐Maleh",
+      "orcid": "https://orcid.org/0000-0002-1027-481X",
+      "h_index": 103,
+      "i10_index": 411,
+      "works_count": 522,
+      "cited_by_count": 36777,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5100603495",
+      "display_name": "Shen‐Ming Chen",
+      "orcid": "https://orcid.org/0000-0002-0132-9161",
+      "h_index": 100,
+      "i10_index": 1170,
+      "works_count": 1440,
+      "cited_by_count": 56565,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5100342968",
+      "display_name": "Yong He",
+      "orcid": "https://orcid.org/0000-0001-6752-1757",
+      "h_index": 100,
+      "i10_index": 676,
+      "works_count": 1480,
+      "cited_by_count": 42005,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5089250649",
+      "display_name": "Georges A. Guiochon",
+      "orcid": null,
+      "h_index": 99,
+      "i10_index": 871,
+      "works_count": 1116,
+      "cited_by_count": 47995,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5024476785",
+      "display_name": "Mustafa Tüzen",
+      "orcid": "https://orcid.org/0000-0001-8522-6620",
+      "h_index": 98,
+      "i10_index": 346,
+      "works_count": 501,
+      "cited_by_count": 30207,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5084607536",
+      "display_name": "Mohammad Reza Ganjali",
+      "orcid": "https://orcid.org/0000-0002-2968-0981",
+      "h_index": 97,
+      "i10_index": 1040,
+      "works_count": 1339,
+      "cited_by_count": 51078,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Analytical Chemistry -- 9.7",
+      "id": "https://openalex.org/A5028971743",
+      "display_name": "Miloš V. Novotný",
+      "orcid": "https://orcid.org/0000-0001-5530-7059",
+      "h_index": 97,
+      "i10_index": 431,
+      "works_count": 564,
+      "cited_by_count": 31419,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5090486781",
+      "display_name": "Xiu‐Ping Yan",
+      "orcid": "https://orcid.org/0000-0001-9953-7681",
+      "h_index": 97,
+      "i10_index": 364,
+      "works_count": 503,
+      "cited_by_count": 34147,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5001472060",
+      "display_name": "Guonan Chen",
+      "orcid": null,
+      "h_index": 96,
+      "i10_index": 609,
+      "works_count": 758,
+      "cited_by_count": 41968,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5111566187",
+      "display_name": "Shouzhuo Yao",
+      "orcid": null,
+      "h_index": 96,
+      "i10_index": 606,
+      "works_count": 745,
+      "cited_by_count": 35063,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5057438542",
+      "display_name": "Arben Merkoçi",
+      "orcid": "https://orcid.org/0000-0003-2486-8085",
+      "h_index": 96,
+      "i10_index": 314,
+      "works_count": 491,
+      "cited_by_count": 36033,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5019599015",
+      "display_name": "Lanqun Mao",
+      "orcid": "https://orcid.org/0000-0001-8286-9321",
+      "h_index": 95,
+      "i10_index": 370,
+      "works_count": 500,
+      "cited_by_count": 29056,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5090106395",
+      "display_name": "Nagaraj P. Shetti",
+      "orcid": "https://orcid.org/0000-0002-5233-7911",
+      "h_index": 95,
+      "i10_index": 313,
+      "works_count": 401,
+      "cited_by_count": 26778,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5111709519",
+      "display_name": "Li Niu",
+      "orcid": "https://orcid.org/0000-0003-3652-2903",
+      "h_index": 94,
+      "i10_index": 498,
+      "works_count": 667,
+      "cited_by_count": 34779,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5041221432",
+      "display_name": "Lo G. O. Gorton",
+      "orcid": "https://orcid.org/0000-0002-7278-0478",
+      "h_index": 94,
+      "i10_index": 437,
+      "works_count": 566,
+      "cited_by_count": 32148,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5050637382",
+      "display_name": "Bansi Dhar Malhotra",
+      "orcid": "https://orcid.org/0000-0002-0957-2684",
+      "h_index": 94,
+      "i10_index": 346,
+      "works_count": 456,
+      "cited_by_count": 29593,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5077772038",
+      "display_name": "Josep Maria Bayona",
+      "orcid": "https://orcid.org/0000-0001-5042-837X",
+      "h_index": 94,
+      "i10_index": 301,
+      "works_count": 356,
+      "cited_by_count": 26330,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Analytical Chemistry -- 9.6",
+      "id": "https://openalex.org/A5076366428",
+      "display_name": "Quansheng Chen",
+      "orcid": "https://orcid.org/0000-0003-2498-3278",
+      "h_index": 93,
+      "i10_index": 590,
+      "works_count": 762,
+      "cited_by_count": 35149,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5061761689",
+      "display_name": "Ian D. Wilson",
+      "orcid": "https://orcid.org/0000-0002-8558-7394",
+      "h_index": 93,
+      "i10_index": 435,
+      "works_count": 706,
+      "cited_by_count": 51068,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5015095882",
+      "display_name": "Reinhard Nießner",
+      "orcid": "https://orcid.org/0000-0002-3781-0248",
+      "h_index": 93,
+      "i10_index": 422,
+      "works_count": 729,
+      "cited_by_count": 38243,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Chemical Engineering",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5012390032",
+      "display_name": "Ajeet Kumar Kaushik",
+      "orcid": "https://orcid.org/0000-0003-4206-1541",
+      "h_index": 93,
+      "i10_index": 354,
+      "works_count": 474,
+      "cited_by_count": 29301,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5062875366",
+      "display_name": "Hadi Beitollahi",
+      "orcid": "https://orcid.org/0000-0002-0669-5216",
+      "h_index": 93,
+      "i10_index": 351,
+      "works_count": 459,
+      "cited_by_count": 23501,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5100749480",
+      "display_name": "Junhong Chen",
+      "orcid": "https://orcid.org/0000-0002-2615-1347",
+      "h_index": 93,
+      "i10_index": 252,
+      "works_count": 388,
+      "cited_by_count": 30685,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5049334550",
+      "display_name": "Massimo Morbidelli",
+      "orcid": "https://orcid.org/0000-0002-0112-414X",
+      "h_index": 92,
+      "i10_index": 561,
+      "works_count": 900,
+      "cited_by_count": 31700,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5004925266",
+      "display_name": "Xing‐Hua Xia",
+      "orcid": "https://orcid.org/0000-0001-9831-4048",
+      "h_index": 92,
+      "i10_index": 435,
+      "works_count": 572,
+      "cited_by_count": 38066,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5025255835",
+      "display_name": "Mojtaba Shamsipur",
+      "orcid": "https://orcid.org/0000-0001-6560-4815",
+      "h_index": 90,
+      "i10_index": 762,
+      "works_count": 1006,
+      "cited_by_count": 37132,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5007972777",
+      "display_name": "Miguel de la Guárdia",
+      "orcid": "https://orcid.org/0000-0002-9982-1663",
+      "h_index": 90,
+      "i10_index": 612,
+      "works_count": 871,
+      "cited_by_count": 36241,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5013971426",
+      "display_name": "Cristina Maria Delerue-Matos",
+      "orcid": "https://orcid.org/0000-0002-3924-776X",
+      "h_index": 89,
+      "i10_index": 521,
+      "works_count": 918,
+      "cited_by_count": 32234,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5060498869",
+      "display_name": "Shelley D. Minteer",
+      "orcid": "https://orcid.org/0000-0002-5788-2249",
+      "h_index": 89,
+      "i10_index": 372,
+      "works_count": 796,
+      "cited_by_count": 33124,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Analytical Chemistry -- 9.5",
+      "id": "https://openalex.org/A5077618800",
+      "display_name": "Jinghua Yu",
+      "orcid": "https://orcid.org/0000-0001-5043-0322",
+      "h_index": 88,
+      "i10_index": 479,
+      "works_count": 640,
+      "cited_by_count": 32503,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5001747071",
+      "display_name": "Alberto Fernández‐Gutiérrez",
+      "orcid": "https://orcid.org/0000-0003-3647-2598",
+      "h_index": 88,
+      "i10_index": 307,
+      "works_count": 403,
+      "cited_by_count": 23605,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5100420053",
+      "display_name": "Jianhua Wang",
+      "orcid": "https://orcid.org/0000-0003-2175-3610",
+      "h_index": 87,
+      "i10_index": 721,
+      "works_count": 1075,
+      "cited_by_count": 38268,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5030722559",
+      "display_name": "Mohammed Muzibur Rahman",
+      "orcid": "https://orcid.org/0000-0003-2773-1244",
+      "h_index": 87,
+      "i10_index": 552,
+      "works_count": 854,
+      "cited_by_count": 33899,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5114377704",
+      "display_name": "Sabine Szunerits",
+      "orcid": "https://orcid.org/0000-0002-1567-4943",
+      "h_index": 87,
+      "i10_index": 437,
+      "works_count": 692,
+      "cited_by_count": 27878,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5010594818",
+      "display_name": "Sergey A. Piletsky",
+      "orcid": "https://orcid.org/0000-0003-2052-5763",
+      "h_index": 87,
+      "i10_index": 307,
+      "works_count": 461,
+      "cited_by_count": 26748,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5013458820",
+      "display_name": "Shun Mao",
+      "orcid": "https://orcid.org/0000-0003-3319-4203",
+      "h_index": 87,
+      "i10_index": 208,
+      "works_count": 247,
+      "cited_by_count": 24173,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5101739601",
+      "display_name": "Hongbin Pu",
+      "orcid": "https://orcid.org/0000-0002-7977-1902",
+      "h_index": 87,
+      "i10_index": 183,
+      "works_count": 218,
+      "cited_by_count": 18980,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5100347181",
+      "display_name": "Ying Wang",
+      "orcid": "https://orcid.org/0000-0002-9847-4655",
+      "h_index": 86,
+      "i10_index": 440,
+      "works_count": 753,
+      "cited_by_count": 39560,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5100462464",
+      "display_name": "Xiaobo Zou",
+      "orcid": "https://orcid.org/0000-0001-5719-7025",
+      "h_index": 86,
+      "i10_index": 384,
+      "works_count": 573,
+      "cited_by_count": 25030,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5015048249",
+      "display_name": "Hian Kee Lee",
+      "orcid": "https://orcid.org/0000-0002-5664-9509",
+      "h_index": 86,
+      "i10_index": 376,
+      "works_count": 503,
+      "cited_by_count": 24367,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Analytical Chemistry -- 9.4",
+      "id": "https://openalex.org/A5033248981",
+      "display_name": "J. Calvin Giddings",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 350,
+      "works_count": 441,
+      "cited_by_count": 32083,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5088015370",
+      "display_name": "Ashok Mulchandani",
+      "orcid": "https://orcid.org/0000-0002-2831-4154",
+      "h_index": 86,
+      "i10_index": 333,
+      "works_count": 422,
+      "cited_by_count": 27248,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5100723780",
+      "display_name": "Chunming Wang",
+      "orcid": "https://orcid.org/0000-0001-9185-9678",
+      "h_index": 86,
+      "i10_index": 315,
+      "works_count": 495,
+      "cited_by_count": 24337,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5058182064",
+      "display_name": "Anthony P.F. Turner",
+      "orcid": "https://orcid.org/0000-0002-1815-9699",
+      "h_index": 86,
+      "i10_index": 291,
+      "works_count": 687,
+      "cited_by_count": 31292,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5006376053",
+      "display_name": "Vojtěch Adam",
+      "orcid": "https://orcid.org/0000-0002-8527-286X",
+      "h_index": 85,
+      "i10_index": 558,
+      "works_count": 1279,
+      "cited_by_count": 34142,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5059396262",
+      "display_name": "Yun Suk Huh",
+      "orcid": "https://orcid.org/0000-0003-1612-4473",
+      "h_index": 85,
+      "i10_index": 437,
+      "works_count": 624,
+      "cited_by_count": 28503,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5048992309",
+      "display_name": "Romá Tauler",
+      "orcid": "https://orcid.org/0000-0001-8559-9670",
+      "h_index": 85,
+      "i10_index": 414,
+      "works_count": 643,
+      "cited_by_count": 32549,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5048098703",
+      "display_name": "Serge Cosnier",
+      "orcid": "https://orcid.org/0000-0002-8290-4374",
+      "h_index": 85,
+      "i10_index": 373,
+      "works_count": 556,
+      "cited_by_count": 26690,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5016418669",
+      "display_name": "Eric Bakker",
+      "orcid": "https://orcid.org/0000-0001-8970-4343",
+      "h_index": 85,
+      "i10_index": 335,
+      "works_count": 486,
+      "cited_by_count": 30606,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5050123820",
+      "display_name": "John H. T. Luong",
+      "orcid": "https://orcid.org/0000-0002-1709-1223",
+      "h_index": 85,
+      "i10_index": 334,
+      "works_count": 467,
+      "cited_by_count": 28623,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5053670657",
+      "display_name": "Kishor Kumar Sadasivuni",
+      "orcid": "https://orcid.org/0000-0003-2730-6483",
+      "h_index": 85,
+      "i10_index": 329,
+      "works_count": 548,
+      "cited_by_count": 24427,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Analytical Chemistry -- 9.3",
+      "id": "https://openalex.org/A5000989467",
+      "display_name": "Adil Denizli",
+      "orcid": "https://orcid.org/0000-0001-7548-5741",
+      "h_index": 84,
+      "i10_index": 621,
+      "works_count": 947,
+      "cited_by_count": 31179,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5100738881",
+      "display_name": "Jin‐Ming Lin",
+      "orcid": "https://orcid.org/0000-0001-8891-0655",
+      "h_index": 84,
+      "i10_index": 533,
+      "works_count": 718,
+      "cited_by_count": 29276,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5063486606",
+      "display_name": "Gangfeng Ouyang",
+      "orcid": "https://orcid.org/0000-0002-0797-6036",
+      "h_index": 84,
+      "i10_index": 439,
+      "works_count": 671,
+      "cited_by_count": 26593,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5076172522",
+      "display_name": "Subhas Chandra Mukhopadhyay",
+      "orcid": "https://orcid.org/0000-0002-8600-5907",
+      "h_index": 84,
+      "i10_index": 373,
+      "works_count": 844,
+      "cited_by_count": 29493,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Physics and Astronomy",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5087269305",
+      "display_name": "Dermot Diamond",
+      "orcid": "https://orcid.org/0000-0003-2944-4839",
+      "h_index": 84,
+      "i10_index": 337,
+      "works_count": 851,
+      "cited_by_count": 24961,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5100400182",
+      "display_name": "Shuo Wang",
+      "orcid": "https://orcid.org/0000-0002-7990-7515",
+      "h_index": 83,
+      "i10_index": 666,
+      "works_count": 973,
+      "cited_by_count": 33364,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5045698298",
+      "display_name": "Guo‐Li Shen",
+      "orcid": "https://orcid.org/0009-0007-9800-5481",
+      "h_index": 83,
+      "i10_index": 428,
+      "works_count": 515,
+      "cited_by_count": 25579,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5080256942",
+      "display_name": "Yadollah Yamini",
+      "orcid": "https://orcid.org/0000-0002-2484-9477",
+      "h_index": 83,
+      "i10_index": 412,
+      "works_count": 512,
+      "cited_by_count": 26626,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5049458746",
+      "display_name": "Francesc Borrull",
+      "orcid": "https://orcid.org/0000-0003-2718-9336",
+      "h_index": 83,
+      "i10_index": 389,
+      "works_count": 477,
+      "cited_by_count": 23799,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5110132936",
+      "display_name": "Lloyd Robert Snyder",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 239,
+      "works_count": 363,
+      "cited_by_count": 22678,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5054861168",
+      "display_name": "Eugenii Yu. Katz",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 197,
+      "works_count": 235,
+      "cited_by_count": 28779,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Analytical Chemistry -- 9.2",
+      "id": "https://openalex.org/A5017451457",
+      "display_name": "Osvaldo N. Oliveira",
+      "orcid": "https://orcid.org/0000-0002-5399-5860",
+      "h_index": 82,
+      "i10_index": 546,
+      "works_count": 992,
+      "cited_by_count": 29977,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5065441900",
+      "display_name": "Nicole J. Jaffrezic-Renault",
+      "orcid": "https://orcid.org/0000-0003-1354-9273",
+      "h_index": 82,
+      "i10_index": 540,
+      "works_count": 1120,
+      "cited_by_count": 27753,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5100673976",
+      "display_name": "Hua Wang",
+      "orcid": "https://orcid.org/0000-0003-0728-8986",
+      "h_index": 82,
+      "i10_index": 452,
+      "works_count": 646,
+      "cited_by_count": 23933,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5081388761",
+      "display_name": "Jingfu Liu",
+      "orcid": "https://orcid.org/0000-0001-7134-7026",
+      "h_index": 82,
+      "i10_index": 358,
+      "works_count": 535,
+      "cited_by_count": 26669,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5056773737",
+      "display_name": "Shigeru Terabe",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 227,
+      "works_count": 289,
+      "cited_by_count": 23420,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5108419076",
+      "display_name": "Udo A. Th. Brinkman",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 578,
+      "works_count": 803,
+      "cited_by_count": 30999,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5019364289",
+      "display_name": "Bin Hu",
+      "orcid": "https://orcid.org/0000-0003-2171-2202",
+      "h_index": 81,
+      "i10_index": 426,
+      "works_count": 532,
+      "cited_by_count": 23892,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5006211659",
+      "display_name": "Desire Luc Massart",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 377,
+      "works_count": 626,
+      "cited_by_count": 29172,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5109275481",
+      "display_name": "Jacob H. Masliyah",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 323,
+      "works_count": 438,
+      "cited_by_count": 22234,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Chemical Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5001491891",
+      "display_name": "Davy Guillarme",
+      "orcid": "https://orcid.org/0000-0001-7883-5823",
+      "h_index": 81,
+      "i10_index": 310,
+      "works_count": 442,
+      "cited_by_count": 21073,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5009688692",
+      "display_name": "Luigi Mondello",
+      "orcid": "https://orcid.org/0000-0002-8890-675X",
+      "h_index": 80,
+      "i10_index": 553,
+      "works_count": 992,
+      "cited_by_count": 27040,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Analytical Chemistry -- 9.1",
+      "id": "https://openalex.org/A5047135919",
+      "display_name": "Ru‐Qin Yu",
+      "orcid": "https://orcid.org/0000-0001-9440-8899",
+      "h_index": 80,
+      "i10_index": 549,
+      "works_count": 724,
+      "cited_by_count": 28185,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Analytical Chemistry -- 9.0",
+      "id": "https://openalex.org/A5071473009",
+      "display_name": "Serge L. Rudaz",
+      "orcid": "https://orcid.org/0000-0002-4180-5417",
+      "h_index": 80,
+      "i10_index": 388,
+      "works_count": 612,
+      "cited_by_count": 26508,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Analytical Chemistry -- 9.0",
+      "id": "https://openalex.org/A5071571442",
+      "display_name": "Lauro T. Kubota",
+      "orcid": "https://orcid.org/0000-0001-8189-2618",
+      "h_index": 80,
+      "i10_index": 353,
+      "works_count": 447,
+      "cited_by_count": 22385,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Analytical Chemistry -- 9.0",
+      "id": "https://openalex.org/A5082263870",
+      "display_name": "Peter W. Carr",
+      "orcid": "https://orcid.org/0000-0002-5403-1369",
+      "h_index": 80,
+      "i10_index": 341,
+      "works_count": 469,
+      "cited_by_count": 23006,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Analytical Chemistry -- 9.0",
+      "id": "https://openalex.org/A5113487817",
+      "display_name": "Wilhelm Simon",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 313,
+      "works_count": 474,
+      "cited_by_count": 22672,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Analytical Chemistry -- 9.0",
+      "id": "https://openalex.org/A5033062699",
+      "display_name": "Jean‐Louis Marty",
+      "orcid": "https://orcid.org/0000-0002-1425-9887",
+      "h_index": 80,
+      "i10_index": 296,
+      "works_count": 408,
+      "cited_by_count": 20502,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5065574589",
+      "display_name": "Ernö Pretsch",
+      "orcid": "https://orcid.org/0000-0003-1298-0854",
+      "h_index": 80,
+      "i10_index": 222,
+      "works_count": 399,
+      "cited_by_count": 26839,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5042221033",
+      "display_name": "Miguel Valcárcel",
+      "orcid": "https://orcid.org/0000-0002-3516-2072",
+      "h_index": 79,
+      "i10_index": 654,
+      "works_count": 946,
+      "cited_by_count": 29582,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5100390651",
+      "display_name": "Xun Zhang",
+      "orcid": "https://orcid.org/0000-0003-3586-9921",
+      "h_index": 79,
+      "i10_index": 539,
+      "works_count": 1004,
+      "cited_by_count": 28428,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5040331037",
+      "display_name": "Yu‐Qi Feng",
+      "orcid": "https://orcid.org/0000-0003-1107-5385",
+      "h_index": 79,
+      "i10_index": 480,
+      "works_count": 639,
+      "cited_by_count": 25987,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5042520154",
+      "display_name": "Mark E. Meyerhoff",
+      "orcid": "https://orcid.org/0000-0002-7841-281X",
+      "h_index": 79,
+      "i10_index": 334,
+      "works_count": 440,
+      "cited_by_count": 20152,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5100728718",
+      "display_name": "Aihua Liu",
+      "orcid": "https://orcid.org/0000-0003-4260-1982",
+      "h_index": 79,
+      "i10_index": 302,
+      "works_count": 574,
+      "cited_by_count": 19202,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5091816154",
+      "display_name": "Giuseppe Palleschi",
+      "orcid": "https://orcid.org/0000-0002-4223-3094",
+      "h_index": 79,
+      "i10_index": 277,
+      "works_count": 439,
+      "cited_by_count": 21126,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5011363152",
+      "display_name": "Rosa María Marcé",
+      "orcid": "https://orcid.org/0000-0002-5667-2899",
+      "h_index": 79,
+      "i10_index": 252,
+      "works_count": 314,
+      "cited_by_count": 18890,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5018915846",
+      "display_name": "Ingo Klimant",
+      "orcid": "https://orcid.org/0000-0001-6065-3140",
+      "h_index": 79,
+      "i10_index": 211,
+      "works_count": 401,
+      "cited_by_count": 16769,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5051788483",
+      "display_name": "Necip Atar",
+      "orcid": "https://orcid.org/0000-0001-8779-1412",
+      "h_index": 79,
+      "i10_index": 144,
+      "works_count": 156,
+      "cited_by_count": 15208,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5010404445",
+      "display_name": "M. D. Luque de Castro",
+      "orcid": "https://orcid.org/0000-0003-2326-284X",
+      "h_index": 78,
+      "i10_index": 574,
+      "works_count": 807,
+      "cited_by_count": 30310,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Analytical Chemistry -- 8.9",
+      "id": "https://openalex.org/A5009012536",
+      "display_name": "Isao Karube",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 480,
+      "works_count": 771,
+      "cited_by_count": 25623,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5014476523",
+      "display_name": "José Manuel Pingarrón",
+      "orcid": "https://orcid.org/0000-0003-2271-1383",
+      "h_index": 78,
+      "i10_index": 449,
+      "works_count": 649,
+      "cited_by_count": 24753,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5100344573",
+      "display_name": "Wei Chen",
+      "orcid": "https://orcid.org/0000-0003-3233-8877",
+      "h_index": 78,
+      "i10_index": 435,
+      "works_count": 638,
+      "cited_by_count": 26634,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5005726838",
+      "display_name": "Torsten Claus Schmidt",
+      "orcid": "https://orcid.org/0000-0003-1107-4403",
+      "h_index": 78,
+      "i10_index": 382,
+      "works_count": 783,
+      "cited_by_count": 24818,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Economics, Econometrics and Finance",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5072788860",
+      "display_name": "Arūnas Ramanavičius",
+      "orcid": "https://orcid.org/0000-0002-0885-3556",
+      "h_index": 78,
+      "i10_index": 354,
+      "works_count": 480,
+      "cited_by_count": 22029,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5056444485",
+      "display_name": "Cristina Nerín",
+      "orcid": "https://orcid.org/0000-0003-2685-5739",
+      "h_index": 78,
+      "i10_index": 333,
+      "works_count": 467,
+      "cited_by_count": 21578,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5089696496",
+      "display_name": "Daniel Cozzolino",
+      "orcid": "https://orcid.org/0000-0001-6247-8817",
+      "h_index": 78,
+      "i10_index": 322,
+      "works_count": 573,
+      "cited_by_count": 21049,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5101847866",
+      "display_name": "Nobuo Tanaka",
+      "orcid": "https://orcid.org/0000-0002-8850-2448",
+      "h_index": 78,
+      "i10_index": 281,
+      "works_count": 705,
+      "cited_by_count": 19702,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Engineering",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Engineering",
+        "Chemistry",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5019110925",
+      "display_name": "Svante Wold",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 267,
+      "works_count": 409,
+      "cited_by_count": 64285,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Mathematics",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5060532105",
+      "display_name": "Wenrong R. Yang",
+      "orcid": "https://orcid.org/0000-0001-8815-1951",
+      "h_index": 78,
+      "i10_index": 249,
+      "works_count": 344,
+      "cited_by_count": 22947,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5074841263",
+      "display_name": "Ke‐Jing Huang",
+      "orcid": "https://orcid.org/0000-0002-9332-0497",
+      "h_index": 78,
+      "i10_index": 238,
+      "works_count": 304,
+      "cited_by_count": 17199,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5048964142",
+      "display_name": "Mehmet Lütfi Yola",
+      "orcid": "https://orcid.org/0000-0001-7424-3425",
+      "h_index": 78,
+      "i10_index": 157,
+      "works_count": 201,
+      "cited_by_count": 15098,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5072603330",
+      "display_name": "Bogusław Buszewski",
+      "orcid": "https://orcid.org/0000-0002-5482-7500",
+      "h_index": 77,
+      "i10_index": 543,
+      "works_count": 831,
+      "cited_by_count": 31764,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5028477000",
+      "display_name": "Ali Asghar Ensafi",
+      "orcid": "https://orcid.org/0000-0002-1193-4090",
+      "h_index": 77,
+      "i10_index": 493,
+      "works_count": 621,
+      "cited_by_count": 22898,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5100433836",
+      "display_name": "Lei Zhang",
+      "orcid": "https://orcid.org/0000-0001-7584-0184",
+      "h_index": 77,
+      "i10_index": 442,
+      "works_count": 699,
+      "cited_by_count": 26915,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5100714562",
+      "display_name": "Beibei Chen",
+      "orcid": "https://orcid.org/0000-0001-7772-5171",
+      "h_index": 77,
+      "i10_index": 426,
+      "works_count": 631,
+      "cited_by_count": 24266,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5082948890",
+      "display_name": "Paola Dugo",
+      "orcid": "https://orcid.org/0000-0002-9432-1782",
+      "h_index": 77,
+      "i10_index": 360,
+      "works_count": 555,
+      "cited_by_count": 20721,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5077640750",
+      "display_name": "Pat J. F. Sandra",
+      "orcid": "https://orcid.org/0000-0002-9476-7565",
+      "h_index": 77,
+      "i10_index": 348,
+      "works_count": 497,
+      "cited_by_count": 21908,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5074011702",
+      "display_name": "Minoru Tanaka",
+      "orcid": "https://orcid.org/0000-0001-9100-1487",
+      "h_index": 77,
+      "i10_index": 345,
+      "works_count": 683,
+      "cited_by_count": 24099,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5079241702",
+      "display_name": "Jean‐Luc Veuthey",
+      "orcid": "https://orcid.org/0000-0002-7513-3241",
+      "h_index": 77,
+      "i10_index": 334,
+      "works_count": 451,
+      "cited_by_count": 22949,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5021362767",
+      "display_name": "Eiichi Tamiya",
+      "orcid": "https://orcid.org/0000-0002-7646-4827",
+      "h_index": 77,
+      "i10_index": 315,
+      "works_count": 663,
+      "cited_by_count": 19819,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5076197765",
+      "display_name": "Søren Balling Engelsen",
+      "orcid": "https://orcid.org/0000-0003-4124-4338",
+      "h_index": 77,
+      "i10_index": 276,
+      "works_count": 551,
+      "cited_by_count": 22933,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Analytical Chemistry -- 8.8",
+      "id": "https://openalex.org/A5056811527",
+      "display_name": "Orawon Chailapakul",
+      "orcid": "https://orcid.org/0000-0002-2151-7370",
+      "h_index": 77,
+      "i10_index": 268,
+      "works_count": 438,
+      "cited_by_count": 22037,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5083251527",
+      "display_name": "Age K. Smilde",
+      "orcid": "https://orcid.org/0000-0002-3052-4644",
+      "h_index": 77,
+      "i10_index": 251,
+      "works_count": 461,
+      "cited_by_count": 32115,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Mathematics",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5026269519",
+      "display_name": "Marco Mascini",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 250,
+      "works_count": 401,
+      "cited_by_count": 20550,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5037624766",
+      "display_name": "Xing‐Jiu Huang",
+      "orcid": "https://orcid.org/0000-0002-0395-4892",
+      "h_index": 77,
+      "i10_index": 234,
+      "works_count": 311,
+      "cited_by_count": 18864,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5031999645",
+      "display_name": "Rasmus Bro",
+      "orcid": "https://orcid.org/0000-0002-7641-4854",
+      "h_index": 77,
+      "i10_index": 220,
+      "works_count": 383,
+      "cited_by_count": 42070,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5083964165",
+      "display_name": "Danila Moscone",
+      "orcid": "https://orcid.org/0000-0002-3351-6359",
+      "h_index": 77,
+      "i10_index": 200,
+      "works_count": 291,
+      "cited_by_count": 16320,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5044035098",
+      "display_name": "Jianfeng F Ping",
+      "orcid": "https://orcid.org/0000-0002-0579-9830",
+      "h_index": 77,
+      "i10_index": 158,
+      "works_count": 200,
+      "cited_by_count": 18989,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5037912990",
+      "display_name": "Abbas Afkhami",
+      "orcid": "https://orcid.org/0000-0002-3559-2080",
+      "h_index": 76,
+      "i10_index": 334,
+      "works_count": 463,
+      "cited_by_count": 20687,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5000872317",
+      "display_name": "Shenguang Ge",
+      "orcid": "https://orcid.org/0000-0002-0537-6491",
+      "h_index": 76,
+      "i10_index": 309,
+      "works_count": 388,
+      "cited_by_count": 18852,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5112634621",
+      "display_name": "Olivier François Xavier Donard",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 267,
+      "works_count": 441,
+      "cited_by_count": 17791,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5024537436",
+      "display_name": "Ryan P. Rodgers",
+      "orcid": "https://orcid.org/0000-0003-1302-2850",
+      "h_index": 76,
+      "i10_index": 180,
+      "works_count": 270,
+      "cited_by_count": 19595,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5100367586",
+      "display_name": "Chun Wang",
+      "orcid": "https://orcid.org/0000-0002-9366-3668",
+      "h_index": 75,
+      "i10_index": 498,
+      "works_count": 729,
+      "cited_by_count": 23415,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5033267596",
+      "display_name": "Wolfgang F. Lindner",
+      "orcid": "https://orcid.org/0000-0002-7473-7596",
+      "h_index": 75,
+      "i10_index": 425,
+      "works_count": 543,
+      "cited_by_count": 23819,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5040771650",
+      "display_name": "Shiyun Ai",
+      "orcid": "https://orcid.org/0000-0003-0449-3677",
+      "h_index": 75,
+      "i10_index": 380,
+      "works_count": 451,
+      "cited_by_count": 21380,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5112146733",
+      "display_name": "Guobao Xu",
+      "orcid": "https://orcid.org/0000-0001-9747-0575",
+      "h_index": 75,
+      "i10_index": 329,
+      "works_count": 488,
+      "cited_by_count": 22432,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5067114512",
+      "display_name": "Ryszard Łobiński",
+      "orcid": "https://orcid.org/0000-0003-1908-2029",
+      "h_index": 75,
+      "i10_index": 313,
+      "works_count": 459,
+      "cited_by_count": 19295,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5089938348",
+      "display_name": "Grzegorz Boczkaj",
+      "orcid": "https://orcid.org/0000-0002-5874-7591",
+      "h_index": 75,
+      "i10_index": 206,
+      "works_count": 326,
+      "cited_by_count": 22097,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5010482825",
+      "display_name": "Börje Sellergren",
+      "orcid": "https://orcid.org/0000-0002-2392-3305",
+      "h_index": 75,
+      "i10_index": 192,
+      "works_count": 270,
+      "cited_by_count": 17613,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5056766839",
+      "display_name": "Steven B. Hawthorne",
+      "orcid": "https://orcid.org/0000-0002-4173-1796",
+      "h_index": 75,
+      "i10_index": 185,
+      "works_count": 242,
+      "cited_by_count": 16892,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5111816937",
+      "display_name": "Johan Sjöblom",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 342,
+      "works_count": 506,
+      "cited_by_count": 19402,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5087480048",
+      "display_name": "Yi‐Zeng Liang",
+      "orcid": "https://orcid.org/0000-0001-8692-3030",
+      "h_index": 74,
+      "i10_index": 339,
+      "works_count": 476,
+      "cited_by_count": 25406,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5064713546",
+      "display_name": "Stig Pedersen‐Bjergaard",
+      "orcid": "https://orcid.org/0000-0002-1666-8043",
+      "h_index": 74,
+      "i10_index": 225,
+      "works_count": 555,
+      "cited_by_count": 18822,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Social Sciences",
+        "Engineering",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Analytical Chemistry -- 8.7",
+      "id": "https://openalex.org/A5107939182",
+      "display_name": "Parviz Norouzi",
+      "orcid": "https://orcid.org/0000-0002-3332-6280",
+      "h_index": 73,
+      "i10_index": 455,
+      "works_count": 618,
+      "cited_by_count": 21523,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5039449480",
+      "display_name": "Xiandeng Hou",
+      "orcid": "https://orcid.org/0000-0003-2488-2063",
+      "h_index": 73,
+      "i10_index": 395,
+      "works_count": 508,
+      "cited_by_count": 20104,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5065251379",
+      "display_name": "Willy Baeyens",
+      "orcid": "https://orcid.org/0000-0002-5281-903X",
+      "h_index": 73,
+      "i10_index": 344,
+      "works_count": 575,
+      "cited_by_count": 18663,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5008428607",
+      "display_name": "Rafael Cela",
+      "orcid": "https://orcid.org/0000-0003-3076-5007",
+      "h_index": 73,
+      "i10_index": 330,
+      "works_count": 390,
+      "cited_by_count": 18618,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5078914568",
+      "display_name": "Quan Shi",
+      "orcid": "https://orcid.org/0000-0002-1363-1237",
+      "h_index": 73,
+      "i10_index": 320,
+      "works_count": 506,
+      "cited_by_count": 19182,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Chemical Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5100336161",
+      "display_name": "Li Wang",
+      "orcid": "https://orcid.org/0000-0003-0510-7985",
+      "h_index": 73,
+      "i10_index": 274,
+      "works_count": 353,
+      "cited_by_count": 15939,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5089514392",
+      "display_name": "Alain Walcarius",
+      "orcid": "https://orcid.org/0000-0003-3633-200X",
+      "h_index": 73,
+      "i10_index": 266,
+      "works_count": 450,
+      "cited_by_count": 19129,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5032132815",
+      "display_name": "Dongxue Han",
+      "orcid": "https://orcid.org/0000-0002-7343-2221",
+      "h_index": 73,
+      "i10_index": 264,
+      "works_count": 351,
+      "cited_by_count": 21641,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5041745640",
+      "display_name": "James W. Jorgenson",
+      "orcid": "https://orcid.org/0000-0003-2754-9995",
+      "h_index": 73,
+      "i10_index": 177,
+      "works_count": 215,
+      "cited_by_count": 21116,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5023076826",
+      "display_name": "Constant M.G. van den Berg",
+      "orcid": "https://orcid.org/0000-0003-2234-9345",
+      "h_index": 73,
+      "i10_index": 164,
+      "works_count": 198,
+      "cited_by_count": 14862,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5082433323",
+      "display_name": "Xiaoquan Lu",
+      "orcid": "https://orcid.org/0000-0003-2375-668X",
+      "h_index": 72,
+      "i10_index": 431,
+      "works_count": 667,
+      "cited_by_count": 19536,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5027877032",
+      "display_name": "Sam Fong Yau Li",
+      "orcid": "https://orcid.org/0000-0002-2092-9226",
+      "h_index": 72,
+      "i10_index": 385,
+      "works_count": 567,
+      "cited_by_count": 20654,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5088511245",
+      "display_name": "Yvan Vander Heyden",
+      "orcid": "https://orcid.org/0000-0002-7788-9886",
+      "h_index": 72,
+      "i10_index": 383,
+      "works_count": 930,
+      "cited_by_count": 21905,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5058356398",
+      "display_name": "Purnendu Κ. Dasgupta",
+      "orcid": "https://orcid.org/0000-0002-8831-7920",
+      "h_index": 72,
+      "i10_index": 368,
+      "works_count": 494,
+      "cited_by_count": 19984,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5101519399",
+      "display_name": "Zonghua Wang",
+      "orcid": "https://orcid.org/0000-0002-9120-4089",
+      "h_index": 72,
+      "i10_index": 307,
+      "works_count": 435,
+      "cited_by_count": 22371,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5111502463",
+      "display_name": "Ping Yu",
+      "orcid": "https://orcid.org/0000-0002-6096-1933",
+      "h_index": 72,
+      "i10_index": 243,
+      "works_count": 388,
+      "cited_by_count": 17585,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5035750388",
+      "display_name": "Hassan Youssef Aboul-Enein",
+      "orcid": "https://orcid.org/0000-0003-0249-7009",
+      "h_index": 71,
+      "i10_index": 633,
+      "works_count": 1197,
+      "cited_by_count": 28085,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5031465355",
+      "display_name": "Izaak Maurits Kolthoff",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 442,
+      "works_count": 896,
+      "cited_by_count": 22165,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5055252822",
+      "display_name": "Joseph A. Caruso",
+      "orcid": "https://orcid.org/0000-0002-4043-3762",
+      "h_index": 71,
+      "i10_index": 393,
+      "works_count": 529,
+      "cited_by_count": 20192,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5056170822",
+      "display_name": "Corrado Di Natale",
+      "orcid": "https://orcid.org/0000-0002-0543-4348",
+      "h_index": 71,
+      "i10_index": 330,
+      "works_count": 715,
+      "cited_by_count": 19600,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Engineering",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Engineering",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5085158732",
+      "display_name": "Orlando Fatibello‐Filho",
+      "orcid": "https://orcid.org/0000-0002-6923-2227",
+      "h_index": 71,
+      "i10_index": 304,
+      "works_count": 399,
+      "cited_by_count": 16071,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5100329927",
+      "display_name": "Xi Chen",
+      "orcid": "https://orcid.org/0000-0002-3013-4558",
+      "h_index": 71,
+      "i10_index": 295,
+      "works_count": 447,
+      "cited_by_count": 19524,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Analytical Chemistry -- 8.6",
+      "id": "https://openalex.org/A5100381782",
+      "display_name": "Xiaoyan Wang",
+      "orcid": "https://orcid.org/0009-0003-5839-1163",
+      "h_index": 71,
+      "i10_index": 261,
+      "works_count": 476,
+      "cited_by_count": 20856,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5015823812",
+      "display_name": "Peter Winterhalter",
+      "orcid": "https://orcid.org/0000-0003-3417-6023",
+      "h_index": 71,
+      "i10_index": 258,
+      "works_count": 438,
+      "cited_by_count": 15513,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5002985503",
+      "display_name": "Yonghai Song",
+      "orcid": "https://orcid.org/0000-0002-7889-2438",
+      "h_index": 71,
+      "i10_index": 244,
+      "works_count": 310,
+      "cited_by_count": 14480,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5036443199",
+      "display_name": "Pei Liang",
+      "orcid": "https://orcid.org/0000-0002-2493-2238",
+      "h_index": 71,
+      "i10_index": 241,
+      "works_count": 376,
+      "cited_by_count": 16709,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5046206126",
+      "display_name": "Wouter Saeys",
+      "orcid": "https://orcid.org/0000-0002-5849-4301",
+      "h_index": 71,
+      "i10_index": 223,
+      "works_count": 501,
+      "cited_by_count": 17780,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5061285417",
+      "display_name": "Thomas R. Prohaska",
+      "orcid": "https://orcid.org/0000-0001-9367-8141",
+      "h_index": 71,
+      "i10_index": 217,
+      "works_count": 374,
+      "cited_by_count": 19703,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5069268501",
+      "display_name": "Kunio Nagashima",
+      "orcid": "https://orcid.org/0000-0002-0381-8532",
+      "h_index": 71,
+      "i10_index": 198,
+      "works_count": 304,
+      "cited_by_count": 17102,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Immunology and Microbiology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5110835611",
+      "display_name": "Bruce R. Kowalski",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 173,
+      "works_count": 218,
+      "cited_by_count": 26146,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5100319328",
+      "display_name": "Jinhua Li",
+      "orcid": "https://orcid.org/0000-0002-6069-9795",
+      "h_index": 71,
+      "i10_index": 149,
+      "works_count": 186,
+      "cited_by_count": 19510,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5006274229",
+      "display_name": "Alfredo Sanz‐Medel",
+      "orcid": "https://orcid.org/0000-0003-2899-1347",
+      "h_index": 70,
+      "i10_index": 495,
+      "works_count": 646,
+      "cited_by_count": 22557,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5058652761",
+      "display_name": "Uwe Kärst",
+      "orcid": "https://orcid.org/0000-0002-1774-6787",
+      "h_index": 70,
+      "i10_index": 374,
+      "works_count": 658,
+      "cited_by_count": 19751,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5083663903",
+      "display_name": "Philip John Marriott",
+      "orcid": "https://orcid.org/0000-0001-5180-1041",
+      "h_index": 70,
+      "i10_index": 366,
+      "works_count": 522,
+      "cited_by_count": 24864,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5100607116",
+      "display_name": "Yong Zhang",
+      "orcid": "https://orcid.org/0000-0002-5831-637X",
+      "h_index": 70,
+      "i10_index": 331,
+      "works_count": 522,
+      "cited_by_count": 18037,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5024640881",
+      "display_name": "Frieder W. Scheller",
+      "orcid": "https://orcid.org/0000-0002-6797-2133",
+      "h_index": 70,
+      "i10_index": 300,
+      "works_count": 486,
+      "cited_by_count": 15315,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5038766778",
+      "display_name": "J. van der Greef",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 298,
+      "works_count": 474,
+      "cited_by_count": 17722,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5057149414",
+      "display_name": "Christopher M. A. Brett",
+      "orcid": "https://orcid.org/0000-0002-1972-4434",
+      "h_index": 70,
+      "i10_index": 289,
+      "works_count": 444,
+      "cited_by_count": 19587,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5006203414",
+      "display_name": "Chaudhery Mustansar Hussain",
+      "orcid": "https://orcid.org/0000-0002-1964-4338",
+      "h_index": 70,
+      "i10_index": 282,
+      "works_count": 732,
+      "cited_by_count": 18738,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5100412071",
+      "display_name": "Zhen Liu",
+      "orcid": "https://orcid.org/0000-0002-8440-2554",
+      "h_index": 70,
+      "i10_index": 276,
+      "works_count": 472,
+      "cited_by_count": 17582,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5102311916",
+      "display_name": "Xiwen He",
+      "orcid": "https://orcid.org/0000-0001-6975-8491",
+      "h_index": 70,
+      "i10_index": 265,
+      "works_count": 368,
+      "cited_by_count": 15384,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5065266545",
+      "display_name": "Oliver C. Mullins",
+      "orcid": "https://orcid.org/0000-0001-6951-9415",
+      "h_index": 70,
+      "i10_index": 242,
+      "works_count": 373,
+      "cited_by_count": 20461,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5019858620",
+      "display_name": "Abdollah Salimi",
+      "orcid": "https://orcid.org/0000-0003-1137-1854",
+      "h_index": 70,
+      "i10_index": 222,
+      "works_count": 285,
+      "cited_by_count": 15077,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5070252189",
+      "display_name": "Jacques Buffle",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 218,
+      "works_count": 322,
+      "cited_by_count": 16581,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5064394395",
+      "display_name": "Steven John Rowland",
+      "orcid": "https://orcid.org/0000-0003-4980-0618",
+      "h_index": 70,
+      "i10_index": 196,
+      "works_count": 256,
+      "cited_by_count": 33006,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Analytical Chemistry -- 8.5",
+      "id": "https://openalex.org/A5100419468",
+      "display_name": "Zhihong Zhang",
+      "orcid": "https://orcid.org/0000-0002-5888-4107",
+      "h_index": 70,
+      "i10_index": 191,
+      "works_count": 237,
+      "cited_by_count": 14115,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5077364311",
+      "display_name": "Fabiana Arduini",
+      "orcid": "https://orcid.org/0000-0001-8990-6922",
+      "h_index": 70,
+      "i10_index": 187,
+      "works_count": 297,
+      "cited_by_count": 14163,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5043319511",
+      "display_name": "Karsten Haupt",
+      "orcid": "https://orcid.org/0000-0001-6743-5066",
+      "h_index": 70,
+      "i10_index": 175,
+      "works_count": 272,
+      "cited_by_count": 18952,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5028486659",
+      "display_name": "Mark H. Schoenfisch",
+      "orcid": "https://orcid.org/0000-0002-2212-0658",
+      "h_index": 70,
+      "i10_index": 170,
+      "works_count": 220,
+      "cited_by_count": 19149,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5018132225",
+      "display_name": "Pranjal Chandra",
+      "orcid": "https://orcid.org/0000-0003-3428-3195",
+      "h_index": 70,
+      "i10_index": 168,
+      "works_count": 255,
+      "cited_by_count": 12073,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5054919552",
+      "display_name": "Csaba G. Horvath",
+      "orcid": "https://orcid.org/0000-0003-2624-0072",
+      "h_index": 70,
+      "i10_index": 157,
+      "works_count": 222,
+      "cited_by_count": 16762,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5028268566",
+      "display_name": "Paul R. Haddad",
+      "orcid": "https://orcid.org/0000-0001-9579-7363",
+      "h_index": 69,
+      "i10_index": 464,
+      "works_count": 769,
+      "cited_by_count": 19505,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5078079379",
+      "display_name": "Mohammed M. Ghoneim",
+      "orcid": "https://orcid.org/0000-0002-9179-4373",
+      "h_index": 69,
+      "i10_index": 399,
+      "works_count": 578,
+      "cited_by_count": 21218,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5057796984",
+      "display_name": "William R. Heineman",
+      "orcid": "https://orcid.org/0000-0003-2428-5445",
+      "h_index": 69,
+      "i10_index": 357,
+      "works_count": 550,
+      "cited_by_count": 23152,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5042984744",
+      "display_name": "Colin F. Poole",
+      "orcid": "https://orcid.org/0000-0003-4992-942X",
+      "h_index": 69,
+      "i10_index": 348,
+      "works_count": 835,
+      "cited_by_count": 21761,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5041259777",
+      "display_name": "Hilde Rosing",
+      "orcid": "https://orcid.org/0000-0003-3124-692X",
+      "h_index": 69,
+      "i10_index": 324,
+      "works_count": 524,
+      "cited_by_count": 19624,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5100713354",
+      "display_name": "Qingyun Liu",
+      "orcid": "https://orcid.org/0000-0003-1178-6232",
+      "h_index": 69,
+      "i10_index": 311,
+      "works_count": 506,
+      "cited_by_count": 16865,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5006548026",
+      "display_name": "Ralph Edward Sturgeon",
+      "orcid": "https://orcid.org/0000-0001-7304-3034",
+      "h_index": 69,
+      "i10_index": 299,
+      "works_count": 370,
+      "cited_by_count": 16564,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5014452034",
+      "display_name": "Aldo Laganà",
+      "orcid": "https://orcid.org/0000-0003-4963-3020",
+      "h_index": 69,
+      "i10_index": 281,
+      "works_count": 368,
+      "cited_by_count": 16937,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5076236175",
+      "display_name": "Kwok‐Yin Wong",
+      "orcid": "https://orcid.org/0000-0003-4984-7109",
+      "h_index": 69,
+      "i10_index": 268,
+      "works_count": 477,
+      "cited_by_count": 20271,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5110102697",
+      "display_name": "Gregory Francis Payne",
+      "orcid": "https://orcid.org/0000-0001-6638-9459",
+      "h_index": 69,
+      "i10_index": 267,
+      "works_count": 404,
+      "cited_by_count": 16772,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5086661316",
+      "display_name": "Almira Ramanavičienė",
+      "orcid": "https://orcid.org/0000-0001-5864-0359",
+      "h_index": 69,
+      "i10_index": 233,
+      "works_count": 302,
+      "cited_by_count": 14745,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5015735297",
+      "display_name": "Stephan Hann",
+      "orcid": "https://orcid.org/0000-0001-5045-7293",
+      "h_index": 69,
+      "i10_index": 221,
+      "works_count": 327,
+      "cited_by_count": 17669,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5111975181",
+      "display_name": "Klaus K. Unger",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 208,
+      "works_count": 310,
+      "cited_by_count": 22729,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5046267439",
+      "display_name": "Ali K. Yetisen",
+      "orcid": "https://orcid.org/0000-0003-0896-267X",
+      "h_index": 69,
+      "i10_index": 203,
+      "works_count": 272,
+      "cited_by_count": 18756,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Engineering",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Engineering",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5100765716",
+      "display_name": "Sandeep Kumar",
+      "orcid": "https://orcid.org/0000-0001-7253-646X",
+      "h_index": 69,
+      "i10_index": 190,
+      "works_count": 312,
+      "cited_by_count": 20385,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5075097922",
+      "display_name": "Chenxin Cai",
+      "orcid": "https://orcid.org/0000-0002-3578-2415",
+      "h_index": 69,
+      "i10_index": 163,
+      "works_count": 187,
+      "cited_by_count": 12579,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Analytical Chemistry -- 8.4",
+      "id": "https://openalex.org/A5086868617",
+      "display_name": "Érico M.M. Flores",
+      "orcid": "https://orcid.org/0000-0001-9785-2477",
+      "h_index": 68,
+      "i10_index": 353,
+      "works_count": 507,
+      "cited_by_count": 17596,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5101783051",
+      "display_name": "Fei Liu",
+      "orcid": "https://orcid.org/0000-0003-0266-6896",
+      "h_index": 68,
+      "i10_index": 334,
+      "works_count": 1237,
+      "cited_by_count": 17798,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5100610309",
+      "display_name": "Shusheng Zhang",
+      "orcid": "https://orcid.org/0000-0003-3983-2894",
+      "h_index": 68,
+      "i10_index": 325,
+      "works_count": 639,
+      "cited_by_count": 16306,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5084260816",
+      "display_name": "Heinz‐Bernhard Kraatz",
+      "orcid": "https://orcid.org/0000-0002-7149-0110",
+      "h_index": 68,
+      "i10_index": 319,
+      "works_count": 572,
+      "cited_by_count": 17519,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5066188500",
+      "display_name": "Paul John Worsfold",
+      "orcid": "https://orcid.org/0000-0002-2262-7723",
+      "h_index": 68,
+      "i10_index": 261,
+      "works_count": 503,
+      "cited_by_count": 17318,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5003590706",
+      "display_name": "Nianjun Yang",
+      "orcid": "https://orcid.org/0000-0002-5558-2314",
+      "h_index": 68,
+      "i10_index": 261,
+      "works_count": 343,
+      "cited_by_count": 15799,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5037234529",
+      "display_name": "Yoon‐Bo Shim",
+      "orcid": "https://orcid.org/0000-0002-6295-1480",
+      "h_index": 68,
+      "i10_index": 240,
+      "works_count": 366,
+      "cited_by_count": 15013,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5036968866",
+      "display_name": "Pratima Rathee Solanki",
+      "orcid": "https://orcid.org/0000-0003-1679-2180",
+      "h_index": 68,
+      "i10_index": 238,
+      "works_count": 362,
+      "cited_by_count": 15119,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5069074096",
+      "display_name": "Tianyan You",
+      "orcid": "https://orcid.org/0000-0003-1579-7078",
+      "h_index": 68,
+      "i10_index": 234,
+      "works_count": 295,
+      "cited_by_count": 15660,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5056321186",
+      "display_name": "David A. Barrett",
+      "orcid": "https://orcid.org/0000-0001-6900-9474",
+      "h_index": 68,
+      "i10_index": 227,
+      "works_count": 339,
+      "cited_by_count": 16539,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5041961237",
+      "display_name": "Jianrong Zhang",
+      "orcid": "https://orcid.org/0000-0003-1988-0151",
+      "h_index": 68,
+      "i10_index": 206,
+      "works_count": 333,
+      "cited_by_count": 15800,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5027511863",
+      "display_name": "Gang Wei",
+      "orcid": "https://orcid.org/0000-0002-3838-8659",
+      "h_index": 68,
+      "i10_index": 199,
+      "works_count": 300,
+      "cited_by_count": 14263,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5019357972",
+      "display_name": "Luisa Torsi",
+      "orcid": "https://orcid.org/0000-0002-0798-0780",
+      "h_index": 68,
+      "i10_index": 178,
+      "works_count": 355,
+      "cited_by_count": 17782,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5013109772",
+      "display_name": "Yuming Huang",
+      "orcid": "https://orcid.org/0000-0001-7775-6787",
+      "h_index": 68,
+      "i10_index": 176,
+      "works_count": 261,
+      "cited_by_count": 14589,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5074380518",
+      "display_name": "Silvana Andreescu",
+      "orcid": "https://orcid.org/0000-0003-3382-7939",
+      "h_index": 68,
+      "i10_index": 170,
+      "works_count": 262,
+      "cited_by_count": 13960,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5044448228",
+      "display_name": "Adriano Ambrosi",
+      "orcid": "https://orcid.org/0000-0002-0581-4658",
+      "h_index": 68,
+      "i10_index": 123,
+      "works_count": 163,
+      "cited_by_count": 18848,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5073267357",
+      "display_name": "Irving W. Wainer",
+      "orcid": "https://orcid.org/0000-0003-1643-5845",
+      "h_index": 67,
+      "i10_index": 340,
+      "works_count": 483,
+      "cited_by_count": 18361,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5050371313",
+      "display_name": "Milton L. Lee",
+      "orcid": "https://orcid.org/0000-0003-3084-0003",
+      "h_index": 67,
+      "i10_index": 339,
+      "works_count": 457,
+      "cited_by_count": 16515,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5052055292",
+      "display_name": "Tasneem Gul Kazi",
+      "orcid": "https://orcid.org/0000-0003-3683-8959",
+      "h_index": 67,
+      "i10_index": 332,
+      "works_count": 481,
+      "cited_by_count": 17240,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5024186868",
+      "display_name": "Volker Schurig",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 319,
+      "works_count": 447,
+      "cited_by_count": 17075,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5020796298",
+      "display_name": "Wilfried Α. König",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 319,
+      "works_count": 596,
+      "cited_by_count": 16407,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5100427394",
+      "display_name": "Bo Chen",
+      "orcid": "https://orcid.org/0000-0002-9926-4377",
+      "h_index": 67,
+      "i10_index": 306,
+      "works_count": 570,
+      "cited_by_count": 14637,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Analytical Chemistry -- 8.3",
+      "id": "https://openalex.org/A5091553000",
+      "display_name": "Gongke Li",
+      "orcid": "https://orcid.org/0000-0003-3750-6358",
+      "h_index": 67,
+      "i10_index": 304,
+      "works_count": 465,
+      "cited_by_count": 15722,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5021353433",
+      "display_name": "Jukka Rantanen",
+      "orcid": "https://orcid.org/0000-0002-8211-5607",
+      "h_index": 67,
+      "i10_index": 302,
+      "works_count": 466,
+      "cited_by_count": 16753,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5076430226",
+      "display_name": "Mohammad Hasanzadeh",
+      "orcid": "https://orcid.org/0000-0003-4918-1239",
+      "h_index": 67,
+      "i10_index": 300,
+      "works_count": 467,
+      "cited_by_count": 15551,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5100612875",
+      "display_name": "Zhiqiang Gao",
+      "orcid": "https://orcid.org/0000-0002-6160-1147",
+      "h_index": 67,
+      "i10_index": 278,
+      "works_count": 571,
+      "cited_by_count": 26562,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5111535170",
+      "display_name": "Hiroyuki Nakazawa",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 250,
+      "works_count": 435,
+      "cited_by_count": 15371,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5008756415",
+      "display_name": "Federico Marini",
+      "orcid": "https://orcid.org/0000-0001-8266-1117",
+      "h_index": 67,
+      "i10_index": 238,
+      "works_count": 396,
+      "cited_by_count": 16408,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5032598016",
+      "display_name": "Toshifumi Takeuchi",
+      "orcid": "https://orcid.org/0000-0002-5641-2333",
+      "h_index": 67,
+      "i10_index": 238,
+      "works_count": 476,
+      "cited_by_count": 14145,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5044352603",
+      "display_name": "Frédéric Lynen",
+      "orcid": "https://orcid.org/0000-0002-4690-7690",
+      "h_index": 67,
+      "i10_index": 226,
+      "works_count": 500,
+      "cited_by_count": 14600,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5035918686",
+      "display_name": "Saeed Shahrokhian",
+      "orcid": "https://orcid.org/0000-0003-3138-6578",
+      "h_index": 67,
+      "i10_index": 210,
+      "works_count": 248,
+      "cited_by_count": 13335,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5035765072",
+      "display_name": "Sergey M. Borisov",
+      "orcid": "https://orcid.org/0000-0001-9318-8273",
+      "h_index": 67,
+      "i10_index": 184,
+      "works_count": 380,
+      "cited_by_count": 14013,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5066981451",
+      "display_name": "Linghao He",
+      "orcid": "https://orcid.org/0000-0003-1350-2723",
+      "h_index": 67,
+      "i10_index": 182,
+      "works_count": 206,
+      "cited_by_count": 12539,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5039873198",
+      "display_name": "Philippe Bühlmann",
+      "orcid": "https://orcid.org/0000-0001-9302-4674",
+      "h_index": 67,
+      "i10_index": 168,
+      "works_count": 281,
+      "cited_by_count": 21086,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 257,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5073970583",
+      "display_name": "Síbel A. Özkan",
+      "orcid": "https://orcid.org/0000-0001-7494-3077",
+      "h_index": 66,
+      "i10_index": 486,
+      "works_count": 934,
+      "cited_by_count": 21288,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 258,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5025485353",
+      "display_name": "Li Fu",
+      "orcid": "https://orcid.org/0000-0002-5957-7790",
+      "h_index": 66,
+      "i10_index": 313,
+      "works_count": 510,
+      "cited_by_count": 18241,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 259,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5026618665",
+      "display_name": "Stephen A. Wise",
+      "orcid": "https://orcid.org/0000-0002-0021-1970",
+      "h_index": 66,
+      "i10_index": 271,
+      "works_count": 468,
+      "cited_by_count": 17232,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 260,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5032732528",
+      "display_name": "Peter J. Schoenmakers",
+      "orcid": "https://orcid.org/0000-0002-9167-7716",
+      "h_index": 66,
+      "i10_index": 260,
+      "works_count": 420,
+      "cited_by_count": 15080,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 261,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5061776457",
+      "display_name": "Jacques Jamart",
+      "orcid": "https://orcid.org/0000-0002-4051-9961",
+      "h_index": 66,
+      "i10_index": 253,
+      "works_count": 636,
+      "cited_by_count": 16478,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Engineering",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 262,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5004980654",
+      "display_name": "Bernhard Welz",
+      "orcid": "https://orcid.org/0000-0002-7887-2592",
+      "h_index": 66,
+      "i10_index": 248,
+      "works_count": 349,
+      "cited_by_count": 15047,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 263,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5020162521",
+      "display_name": "David S. Hage",
+      "orcid": "https://orcid.org/0000-0003-1145-5003",
+      "h_index": 66,
+      "i10_index": 222,
+      "works_count": 381,
+      "cited_by_count": 13986,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 264,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5044454989",
+      "display_name": "Teris André van Beek",
+      "orcid": "https://orcid.org/0000-0002-9843-7096",
+      "h_index": 66,
+      "i10_index": 191,
+      "works_count": 304,
+      "cited_by_count": 20060,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 265,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5063954731",
+      "display_name": "Kağan Kerman",
+      "orcid": "https://orcid.org/0000-0003-3511-8570",
+      "h_index": 66,
+      "i10_index": 191,
+      "works_count": 267,
+      "cited_by_count": 13905,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 266,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5029728281",
+      "display_name": "Somayeh Tajik",
+      "orcid": "https://orcid.org/0000-0002-1151-5515",
+      "h_index": 66,
+      "i10_index": 174,
+      "works_count": 239,
+      "cited_by_count": 12859,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 267,
+      "score": 8.2,
+      "label": "Analytical Chemistry -- 8.2",
+      "id": "https://openalex.org/A5085191708",
+      "display_name": "Jason J. Davis",
+      "orcid": "https://orcid.org/0000-0001-7734-1709",
+      "h_index": 66,
+      "i10_index": 164,
+      "works_count": 209,
+      "cited_by_count": 12647,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 268,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5071872631",
+      "display_name": "Vinod Kumar Gupta",
+      "orcid": "https://orcid.org/0000-0002-7848-4944",
+      "h_index": 66,
+      "i10_index": 140,
+      "works_count": 192,
+      "cited_by_count": 18085,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 269,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5103477225",
+      "display_name": "Ernst Bayer",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 345,
+      "works_count": 750,
+      "cited_by_count": 18224,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 270,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5013341045",
+      "display_name": "Tung‐Hu Tsai",
+      "orcid": "https://orcid.org/0000-0002-9007-2547",
+      "h_index": 65,
+      "i10_index": 325,
+      "works_count": 478,
+      "cited_by_count": 17405,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Medicine",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 271,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5100357614",
+      "display_name": "Xiaoyu Wang",
+      "orcid": "https://orcid.org/0000-0002-6800-1275",
+      "h_index": 65,
+      "i10_index": 319,
+      "works_count": 750,
+      "cited_by_count": 14955,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 272,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5100366599",
+      "display_name": "Kun Wang",
+      "orcid": "https://orcid.org/0000-0001-6764-8686",
+      "h_index": 65,
+      "i10_index": 318,
+      "works_count": 483,
+      "cited_by_count": 14866,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 273,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5073453541",
+      "display_name": "Jeong‐Woo Choi",
+      "orcid": "https://orcid.org/0000-0003-0100-0582",
+      "h_index": 65,
+      "i10_index": 308,
+      "works_count": 650,
+      "cited_by_count": 15654,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 274,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5035278611",
+      "display_name": "Christian Wolfgang Huck",
+      "orcid": "https://orcid.org/0000-0002-6272-3242",
+      "h_index": 65,
+      "i10_index": 302,
+      "works_count": 563,
+      "cited_by_count": 18300,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 275,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5090011642",
+      "display_name": "Rodrigo A.A. Muñoz",
+      "orcid": "https://orcid.org/0000-0001-8230-5825",
+      "h_index": 65,
+      "i10_index": 298,
+      "works_count": 429,
+      "cited_by_count": 16014,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 276,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5076294572",
+      "display_name": "Man He",
+      "orcid": "https://orcid.org/0000-0002-2009-8098",
+      "h_index": 65,
+      "i10_index": 269,
+      "works_count": 331,
+      "cited_by_count": 13944,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 277,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5022156637",
+      "display_name": "Jorge Ancheyta",
+      "orcid": "https://orcid.org/0000-0001-9626-637X",
+      "h_index": 65,
+      "i10_index": 253,
+      "works_count": 446,
+      "cited_by_count": 15089,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 278,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5016999534",
+      "display_name": "Murray R. Gray",
+      "orcid": "https://orcid.org/0000-0003-2431-7312",
+      "h_index": 65,
+      "i10_index": 232,
+      "works_count": 334,
+      "cited_by_count": 13415,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Chemical Engineering",
+        "Engineering",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 279,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5070778623",
+      "display_name": "Jared L. Anderson",
+      "orcid": "https://orcid.org/0000-0001-6915-8752",
+      "h_index": 65,
+      "i10_index": 222,
+      "works_count": 314,
+      "cited_by_count": 17015,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 280,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5084216113",
+      "display_name": "Bezhan Chankvetadze",
+      "orcid": "https://orcid.org/0000-0003-2379-9815",
+      "h_index": 65,
+      "i10_index": 220,
+      "works_count": 364,
+      "cited_by_count": 14481,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 281,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5083542521",
+      "display_name": "Marcello Locatelli",
+      "orcid": "https://orcid.org/0000-0002-0840-825X",
+      "h_index": 65,
+      "i10_index": 216,
+      "works_count": 375,
+      "cited_by_count": 14008,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 282,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5011459975",
+      "display_name": "Ruin Moaddel",
+      "orcid": "https://orcid.org/0000-0002-6812-0127",
+      "h_index": 65,
+      "i10_index": 200,
+      "works_count": 321,
+      "cited_by_count": 18186,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 283,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5000095469",
+      "display_name": "Aziz Amine",
+      "orcid": "https://orcid.org/0000-0001-7909-2224",
+      "h_index": 65,
+      "i10_index": 196,
+      "works_count": 291,
+      "cited_by_count": 13843,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 284,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5001741146",
+      "display_name": "Shaoqin Liu",
+      "orcid": "https://orcid.org/0000-0001-6990-8728",
+      "h_index": 65,
+      "i10_index": 178,
+      "works_count": 244,
+      "cited_by_count": 17414,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 285,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5103043617",
+      "display_name": "Qin Ouyang",
+      "orcid": "https://orcid.org/0000-0002-8469-3099",
+      "h_index": 65,
+      "i10_index": 176,
+      "works_count": 194,
+      "cited_by_count": 11010,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 286,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5103183218",
+      "display_name": "Steen Honoré Hansen",
+      "orcid": "https://orcid.org/0000-0002-4725-8709",
+      "h_index": 64,
+      "i10_index": 292,
+      "works_count": 427,
+      "cited_by_count": 14268,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 287,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5007226151",
+      "display_name": "Carlo P. Bicchi",
+      "orcid": "https://orcid.org/0000-0003-1782-7357",
+      "h_index": 64,
+      "i10_index": 289,
+      "works_count": 515,
+      "cited_by_count": 14534,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 288,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5045106190",
+      "display_name": "Sérgio L.C. Ferreira",
+      "orcid": "https://orcid.org/0000-0001-7738-045X",
+      "h_index": 64,
+      "i10_index": 248,
+      "works_count": 366,
+      "cited_by_count": 19182,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 289,
+      "score": 8.1,
+      "label": "Analytical Chemistry -- 8.1",
+      "id": "https://openalex.org/A5100362797",
+      "display_name": "Xiaojun Zhang",
+      "orcid": "https://orcid.org/0000-0003-2925-8665",
+      "h_index": 64,
+      "i10_index": 239,
+      "works_count": 387,
+      "cited_by_count": 14499,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 290,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5033203908",
+      "display_name": "James G. Speight",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 235,
+      "works_count": 1384,
+      "cited_by_count": 19462,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Chemical Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 291,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5100634401",
+      "display_name": "Jinhua Chen",
+      "orcid": "https://orcid.org/0000-0001-5089-0927",
+      "h_index": 64,
+      "i10_index": 230,
+      "works_count": 331,
+      "cited_by_count": 14024,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 292,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5003511153",
+      "display_name": "Joanna Szpunar",
+      "orcid": "https://orcid.org/0000-0002-5644-4933",
+      "h_index": 64,
+      "i10_index": 207,
+      "works_count": 327,
+      "cited_by_count": 12115,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 293,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5108544368",
+      "display_name": "John V. Headley",
+      "orcid": "https://orcid.org/0000-0001-8112-9954",
+      "h_index": 64,
+      "i10_index": 206,
+      "works_count": 318,
+      "cited_by_count": 12955,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 294,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5052033483",
+      "display_name": "Tai Hyun Park",
+      "orcid": "https://orcid.org/0000-0003-4254-0657",
+      "h_index": 64,
+      "i10_index": 192,
+      "works_count": 441,
+      "cited_by_count": 13323,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Engineering",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Engineering",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 295,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5069191273",
+      "display_name": "Ming Zhou",
+      "orcid": "https://orcid.org/0000-0003-2239-9342",
+      "h_index": 64,
+      "i10_index": 176,
+      "works_count": 257,
+      "cited_by_count": 14482,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 296,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5020841884",
+      "display_name": "Renfu Lu",
+      "orcid": "https://orcid.org/0000-0002-4569-8305",
+      "h_index": 64,
+      "i10_index": 173,
+      "works_count": 284,
+      "cited_by_count": 12943,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 297,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5100404042",
+      "display_name": "Guangli Li",
+      "orcid": "https://orcid.org/0000-0001-9458-469X",
+      "h_index": 64,
+      "i10_index": 105,
+      "works_count": 145,
+      "cited_by_count": 9803,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 298,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5016123898",
+      "display_name": "José L. F. C. Lima",
+      "orcid": "https://orcid.org/0000-0002-8906-9826",
+      "h_index": 63,
+      "i10_index": 375,
+      "works_count": 547,
+      "cited_by_count": 22218,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 299,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5056040998",
+      "display_name": "Behzad Rezaei",
+      "orcid": "https://orcid.org/0000-0003-0055-0486",
+      "h_index": 63,
+      "i10_index": 353,
+      "works_count": 446,
+      "cited_by_count": 14450,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 300,
+      "score": 8,
+      "label": "Analytical Chemistry -- 8.0",
+      "id": "https://openalex.org/A5100416036",
+      "display_name": "Jia Chen",
+      "orcid": "https://orcid.org/0000-0003-3220-4852",
+      "h_index": 63,
+      "i10_index": 313,
+      "works_count": 484,
+      "cited_by_count": 15549,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 301,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5031258336",
+      "display_name": "Hassan Imran Afridi",
+      "orcid": "https://orcid.org/0000-0002-3152-5438",
+      "h_index": 63,
+      "i10_index": 310,
+      "works_count": 467,
+      "cited_by_count": 15607,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 302,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5052517792",
+      "display_name": "James S. Fritz",
+      "orcid": "https://orcid.org/0000-0003-2184-1215",
+      "h_index": 63,
+      "i10_index": 273,
+      "works_count": 410,
+      "cited_by_count": 13743,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 303,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5073230848",
+      "display_name": "Alejandro César Olivieri",
+      "orcid": "https://orcid.org/0000-0003-4276-0369",
+      "h_index": 63,
+      "i10_index": 272,
+      "works_count": 410,
+      "cited_by_count": 14517,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Mathematics",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 304,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5101604922",
+      "display_name": "Shengfu Wang",
+      "orcid": "https://orcid.org/0000-0001-7175-4908",
+      "h_index": 63,
+      "i10_index": 256,
+      "works_count": 344,
+      "cited_by_count": 13937,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 305,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5047998447",
+      "display_name": "Ronei J. Poppi",
+      "orcid": "https://orcid.org/0000-0003-2994-0787",
+      "h_index": 63,
+      "i10_index": 255,
+      "works_count": 338,
+      "cited_by_count": 13465,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 306,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5108677200",
+      "display_name": "Hongdeng Qiu",
+      "orcid": "https://orcid.org/0000-0002-2702-9415",
+      "h_index": 63,
+      "i10_index": 246,
+      "works_count": 327,
+      "cited_by_count": 12598,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 307,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5074424627",
+      "display_name": "Vincenza Andrisano",
+      "orcid": "https://orcid.org/0000-0003-4396-1904",
+      "h_index": 63,
+      "i10_index": 207,
+      "works_count": 584,
+      "cited_by_count": 13453,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 308,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5081721254",
+      "display_name": "Christian Wolf",
+      "orcid": "https://orcid.org/0000-0002-4447-3753",
+      "h_index": 63,
+      "i10_index": 193,
+      "works_count": 324,
+      "cited_by_count": 11840,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 309,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5000459226",
+      "display_name": "Shekhar Bhansali",
+      "orcid": "https://orcid.org/0000-0001-5871-9163",
+      "h_index": 63,
+      "i10_index": 179,
+      "works_count": 411,
+      "cited_by_count": 12721,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 310,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5034173900",
+      "display_name": "Matsuhiko Nishizawa",
+      "orcid": "https://orcid.org/0000-0002-9423-0952",
+      "h_index": 63,
+      "i10_index": 173,
+      "works_count": 432,
+      "cited_by_count": 12015,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Neuroscience",
+        "Engineering",
+        "Materials Science",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 311,
+      "score": 7.9,
+      "label": "Analytical Chemistry -- 7.9",
+      "id": "https://openalex.org/A5066323251",
+      "display_name": "Paul L. M. Geladi",
+      "orcid": "https://orcid.org/0000-0001-6618-5931",
+      "h_index": 63,
+      "i10_index": 168,
+      "works_count": 299,
+      "cited_by_count": 38223,
+      "discipline": "Analytical Chemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Analytical Chemistry",
+      "fields": [
+        "Chemistry",
+        "Mathematics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    }
+  ]
+}
