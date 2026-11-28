@@ -593,16 +593,19 @@ function sqlToolExportRow(row: Record<string, unknown>): SqlToolExportRow {
  * Every key is present, with an empty list when the user has none. Each table
  * is read by row id in pages of {@link EXPORT_PAGE_SIZE} (keyset, owner-scoped)
  * and stops after `maxPerTable` rows; `truncated` names the tables that had
- * more. Another user's rows are never read.
+ * more. Another user's rows are never read. Pass `key` to read only that one
+ * table (the other keys are then left out).
  */
 export async function exportOwnSqlTools(
   db: AccountDB,
   userId: string,
   maxPerTable = EXPORT_MAX_ITEMS,
+  key?: string,
 ): Promise<{ moreSavedWork: Record<string, SqlToolExportRow[]>; truncated: string[] }> {
   const moreSavedWork: Record<string, SqlToolExportRow[]> = {};
   const truncated: string[] = [];
   for (const tool of SAVED_SQL_TOOLS) {
+    if (key !== undefined && tool.key !== key) continue;
     const idColumn = (getTableColumns(tool.table) as Record<string, AnySQLiteColumn>).id;
     const rows: SqlToolExportRow[] = [];
     let afterId = 0;
@@ -629,6 +632,29 @@ export async function exportOwnSqlTools(
     if (more) truncated.push(tool.key);
   }
   return { moreSavedWork, truncated };
+}
+
+/**
+ * One {@link SAVED_SQL_TOOLS} table's rows as a downloadable file, for the
+ * **Export** link on a Settings → "More saved work" row. The file has the
+ * shape of **Export all**'s `moreSavedWork` part
+ * (`{ exportedAt, moreSavedWork: { <key>: [...] }, moreSavedWorkTruncated }`)
+ * with only that table, owner-scoped and oldest first. Returns `null` for a
+ * key that is not in `SAVED_SQL_TOOLS`. A table with no rows still gets a
+ * file, with an empty list. **Restore from export…** does not read
+ * `moreSavedWork` back yet (Known gap in `dev-docs/database/app-schema.md`).
+ */
+export async function exportOwnSqlTool(
+  db: AccountDB,
+  userId: string,
+  key: string,
+  now = new Date(),
+  maxRows = EXPORT_MAX_ITEMS,
+): Promise<SavedDataArchive | null> {
+  if (!SAVED_SQL_TOOLS.some((tool) => tool.key === key)) return null;
+  const { moreSavedWork, truncated } = await exportOwnSqlTools(db, userId, maxRows, key);
+  const file = { exportedAt: now.toISOString(), moreSavedWork: { [key]: moreSavedWork[key] ?? [] }, moreSavedWorkTruncated: truncated };
+  return { filename: `moreSavedWork-${slug(key)}-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(file, null, 2) };
 }
 
 /** Every row of every kind of the caller's work, with full content, plus their synced tool data and "More saved work" tables, as one downloadable JSON archive (read a page at a time, up to `maxPerKind` rows per kind and per table). */
