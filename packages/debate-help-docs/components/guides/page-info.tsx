@@ -3,15 +3,15 @@
  * @file page-info.tsx
  * @description The "Info" button at the end of every docs page's toolbar. It
  * opens a small panel of stats about the page: words, reading time,
- * sections, paragraphs, links, figures, citations and, where known, when it
- * was last updated, each with an icon, then a readability score out of 100
- * (Flesch Reading Ease) with the other grade-level formulas folded below it.
- * The counts and scores are worked out on the server
+ * sections, paragraphs, links, figures, citations, readability (the Flesch
+ * Reading Ease score out of 100 and its label) and, where known, when it was
+ * last updated, each with an icon. The counts and score are worked out on the server
  * (`lib/fumadocs/page-stats.ts`, `lib/fumadocs/readability.ts`) from the page's
  * processed Markdown, so the button costs no work in the browser.
  */
-import { useEffect, useId, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
+  BookOpen,
   CaseSensitive,
   Clock,
   Code,
@@ -30,7 +30,6 @@ import {
 } from "lucide-react"
 import { cn } from "../../lib/utils"
 import type { PageStats } from "../../lib/fumadocs/page-stats"
-import type { Readability, ReadabilityScores } from "../../lib/fumadocs/readability"
 import { buttonVariants } from "../ui/button"
 
 export interface PageInfoButtonProps {
@@ -43,12 +42,15 @@ export interface PageInfoButtonProps {
 
 const number = new Intl.NumberFormat("en-US")
 
+const DASH = "\u2014"
+
 /** The rows the panel shows, skipping counts that are zero (except words and reading time). */
 export function pageInfoRows({ stats, lastUpdated, showHighlights }: PageInfoButtonProps): [string, string][] {
   const rows: [string, string][] = [
     ["Words", number.format(stats.words)],
     ["Reading time", stats.readingMinutes < 1 ? "under a minute" : `${stats.readingMinutes} min`],
     ["Characters", number.format(stats.characters)],
+    ["Readability", stats.readability.score == null ? DASH : `${stats.readability.score}% ${stats.readability.band}`],
   ]
   const optional: [string, number][] = [
     ["Sections", stats.sections],
@@ -75,6 +77,7 @@ const ROW_ICONS: Record<string, LucideIcon> = {
   Words: Type,
   "Reading time": Clock,
   Characters: CaseSensitive,
+  Readability: BookOpen,
   Sections: Layers,
   Headings: Heading,
   Paragraphs: Pilcrow,
@@ -87,101 +90,12 @@ const ROW_ICONS: Record<string, LucideIcon> = {
   "Last updated": History,
 }
 
-const DASH = "\u2014"
-
-const formatScore = (value: number | null | undefined) => (value == null ? DASH : value.toFixed(1))
-
-/** The grade-level formulas under the readability bar, as label and value (an em dash when not computable). */
-export function readabilityRows(readability: Readability): [string, string][] {
-  const { scores } = readability
-  const rows: [keyof ReadabilityScores | "textStandard", string][] = [
-    ["fleschReadingEase", "Flesch Reading Ease"],
-    ["fleschKincaidGrade", "Flesch-Kincaid Grade"],
-    ["gunningFog", "Gunning Fog"],
-    ["smog", "SMOG Index"],
-    ["automatedReadability", "Automated Readability Index"],
-    ["colemanLiau", "Coleman-Liau Index"],
-    ["linsearWrite", "Linsear Write"],
-    ["textStandard", "Text standard (grade)"],
-  ]
-  return rows.map(([key, label]) => [
-    label,
-    key === "textStandard"
-      ? readability.textStandard == null
-        ? DASH
-        : String(readability.textStandard)
-      : formatScore(scores[key]),
-  ])
-}
-
-const BAR_COLORS: Record<string, string> = {
-  "Very Easy": "bg-emerald-500",
-  Easy: "bg-emerald-500",
-  "Fairly Easy": "bg-lime-500",
-  Standard: "bg-lime-500",
-  "Fairly Difficult": "bg-amber-500",
-  Difficult: "bg-orange-500",
-  "Very Confusing": "bg-red-500",
-}
-
-/** The headline readability score as a labelled progress bar, with the other formulas in a collapsed list. */
-export function ReadabilitySummary({ readability }: { readability: Readability }) {
-  const { score, band } = readability
-  const labelId = useId()
-  return (
-    <div className="mt-3 border-t pt-3" data-testid="readability">
-      <div className="mb-1 flex items-baseline justify-between gap-2">
-        <span id={labelId} className="text-fd-muted-foreground">
-          Readability
-        </span>
-        <span className="font-medium tabular-nums">
-          {score == null ? DASH : `${score}/100 ${band}`}
-        </span>
-      </div>
-      {score == null ? (
-        <p className="text-xs text-fd-muted-foreground">Not enough text to score.</p>
-      ) : (
-        <div
-          role="progressbar"
-          aria-labelledby={labelId}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={score}
-          aria-valuetext={`${score} out of 100, ${band}`}
-          className="h-2 w-full overflow-hidden rounded-full bg-fd-muted"
-        >
-          <div
-            className={cn("h-full rounded-full", BAR_COLORS[band ?? ""] ?? "bg-fd-primary")}
-            style={{ width: `${score}%` }}
-          />
-        </div>
-      )}
-      <details className="mt-2 group">
-        <summary className="cursor-pointer select-none text-xs text-fd-muted-foreground hover:text-fd-foreground">
-          Grade levels
-        </summary>
-        <dl className="mt-1 grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 text-xs">
-          {readabilityRows(readability).map(([label, value]) => (
-            <div key={label} className="contents">
-              <dt className="text-fd-muted-foreground">{label}</dt>
-              <dd className="text-right font-medium tabular-nums">{value}</dd>
-            </div>
-          ))}
-        </dl>
-        {readability.scores.smog == null && readability.score != null && (
-          <p className="mt-1 text-xs text-fd-muted-foreground">SMOG needs at least 3 sentences.</p>
-        )}
-      </details>
-    </div>
-  )
-}
-
 /** The stats panel's contents (the popover body of {@link PageInfoButton}). */
 export function PageInfoPanel(props: PageInfoButtonProps) {
   const rows = pageInfoRows(props)
   return (
     <>
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fd-muted-foreground">Page stats</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fd-muted-foreground">Doc Metrics</p>
       <dl className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1">
         {rows.map(([label, value]) => {
           const Icon = ROW_ICONS[label]
@@ -196,7 +110,6 @@ export function PageInfoPanel(props: PageInfoButtonProps) {
           )
         })}
       </dl>
-      <ReadabilitySummary readability={props.stats.readability} />
     </>
   )
 }
@@ -238,7 +151,7 @@ export function PageInfoButton(props: PageInfoButtonProps) {
       {open && (
         <div
           role="dialog"
-          aria-label="Page stats"
+          aria-label="Doc Metrics"
           className="absolute right-0 top-full z-50 mt-1 w-72 rounded-lg border bg-fd-popover p-3 text-sm text-fd-popover-foreground shadow-lg"
         >
           <PageInfoPanel {...props} />
