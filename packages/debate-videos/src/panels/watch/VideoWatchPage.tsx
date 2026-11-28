@@ -101,6 +101,7 @@ import { FormatBadge, videoFormat } from "../../components/videos/grid/FormatBad
 import { demoStyleOfTuple } from "../../data/demo-style"
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
+import { TeamNameLink } from "../../components/videos/card/TeamNameLink"
 import { TEAM_SIDE_SURFACE_CLASS, TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import { useVideoTeamRankings } from "../../hooks/useVideoTeamRankings"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
@@ -972,8 +973,9 @@ export function VideoWatchPage({
   }, [clearActiveVideo, exitPip, router])
 
   // The library seeds its search box from `?q=` on mount, so a click on a
-  // team, tournament or channel here lands on that search rather than on an
-  // unfiltered grid.
+  // tournament or channel here lands on that search rather than on an
+  // unfiltered grid. A team name goes to its team page instead (see
+  // `TeamNameLink`), searching only when it has none.
   const handleBadgeClick = useCallback(
     (text: string) => router.push(`/videos?q=${encodeURIComponent(text)}`),
     [router],
@@ -1208,9 +1210,11 @@ export function VideoWatchPage({
                     sits in small type right under its name. */}
                 {affTeam && (
                   <TeamWithArgument argument={arg1AC} side="aff">
-                    <button
-                      onClick={() => handleBadgeClick(affTeam)}
-                      title={`Affirmative: ${affTeam}`}
+                    <TeamNameLink
+                      team={affTeam}
+                      ranking={affRanking}
+                      onSearch={handleBadgeClick}
+                      title={`Affirmative: ${affTeam} — team page`}
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
                         TEAM_SIDE_SURFACE_CLASS.aff,
@@ -1220,14 +1224,16 @@ export function VideoWatchPage({
                       )}
                     >
                       <TeamCodeLabel label={affTeam} ranking={affRanking} side="aff" year={year} bare showRank />
-                    </button>
+                    </TeamNameLink>
                   </TeamWithArgument>
                 )}
                 {negTeam && (
                   <TeamWithArgument argument={arg2NR} side="neg">
-                    <button
-                      onClick={() => handleBadgeClick(negTeam)}
-                      title={`Negative: ${negTeam}`}
+                    <TeamNameLink
+                      team={negTeam}
+                      ranking={negRanking}
+                      onSearch={handleBadgeClick}
+                      title={`Negative: ${negTeam} — team page`}
                       className={cn(
                         "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
                         TEAM_SIDE_SURFACE_CLASS.neg,
@@ -1237,7 +1243,7 @@ export function VideoWatchPage({
                       )}
                     >
                       <TeamCodeLabel label={negTeam} ranking={negRanking} side="neg" year={year} bare showRank />
-                    </button>
+                    </TeamNameLink>
                   </TeamWithArgument>
                 )}
               </div>

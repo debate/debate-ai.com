@@ -10,7 +10,7 @@
  *
  * Skipped on a data-saver or 2G connection, and never for the heavy routes:
  * `/research/docs`' workspace is several megabytes (see the docs page
- * `internals/performance`), and `/practice/versus-ai` pulls in the whole
+ * `internals/performance`), and `/practice/debates` (and the `/practice/versus-ai` page it links to) pulls in the whole
  * practice stack (the AI opponent, round and matchup simulators, coach mode,
  * the drill generator, the judge), which showed up as a dozen unused chunks
  * on every other page. Only someone heading there should pay for either.
@@ -23,7 +23,7 @@
  */
 
 /** Dock routes too heavy to fetch for someone who may never open them. */
-export const IDLE_PREFETCH_EXCLUDED: ReadonlySet<string> = new Set(["/research/docs", "/practice/versus-ai"])
+export const IDLE_PREFETCH_EXCLUDED: ReadonlySet<string> = new Set(["/research/docs", "/practice/debates", "/practice/versus-ai"])
 
 /** Wait after `load` before the first prefetch, so it never competes with it. */
 const START_DELAY_MS = 1_500

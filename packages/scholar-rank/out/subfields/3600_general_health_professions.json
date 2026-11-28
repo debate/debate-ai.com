@@ -1,0 +1,2621 @@
+{
+  "kind": "subfield",
+  "id": 3600,
+  "name": "General Health Professions",
+  "total_in_scrape": 131,
+  "count": 131,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "General Health Professions -- 9.9",
+      "id": "https://openalex.org/A5114376236",
+      "display_name": "Víctor M. Montori",
+      "orcid": "https://orcid.org/0000-0003-0595-2898",
+      "h_index": 164,
+      "i10_index": 611,
+      "works_count": 1082,
+      "cited_by_count": 131390,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "General Health Professions -- 9.9",
+      "id": "https://openalex.org/A5054403907",
+      "display_name": "Jeremy Grimshaw",
+      "orcid": "https://orcid.org/0000-0001-8015-8243",
+      "h_index": 154,
+      "i10_index": 635,
+      "works_count": 1033,
+      "cited_by_count": 352161,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "General Health Professions -- 9.9",
+      "id": "https://openalex.org/A5059176055",
+      "display_name": "Trisha Greenhalgh",
+      "orcid": "https://orcid.org/0000-0003-2369-8088",
+      "h_index": 145,
+      "i10_index": 465,
+      "works_count": 1353,
+      "cited_by_count": 107986,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "General Health Professions -- 9.9",
+      "id": "https://openalex.org/A5010317706",
+      "display_name": "Russell E. Glasgow",
+      "orcid": "https://orcid.org/0000-0003-4218-3231",
+      "h_index": 143,
+      "i10_index": 489,
+      "works_count": 695,
+      "cited_by_count": 83966,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "General Health Professions -- 9.9",
+      "id": "https://openalex.org/A5090631705",
+      "display_name": "Susan Michie",
+      "orcid": "https://orcid.org/0000-0003-0063-6378",
+      "h_index": 133,
+      "i10_index": 615,
+      "works_count": 1785,
+      "cited_by_count": 163040,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "General Health Professions -- 9.9",
+      "id": "https://openalex.org/A5007761401",
+      "display_name": "Sharon Elizabeth Straus",
+      "orcid": "https://orcid.org/0000-0002-6106-832X",
+      "h_index": 121,
+      "i10_index": 581,
+      "works_count": 936,
+      "cited_by_count": 132325,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5090534884",
+      "display_name": "Ian D. Graham",
+      "orcid": "https://orcid.org/0000-0002-3669-1216",
+      "h_index": 119,
+      "i10_index": 529,
+      "works_count": 999,
+      "cited_by_count": 73528,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5056869880",
+      "display_name": "Glyn Jones Elwyn",
+      "orcid": "https://orcid.org/0000-0002-0917-6286",
+      "h_index": 115,
+      "i10_index": 453,
+      "works_count": 783,
+      "cited_by_count": 60076,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5082652200",
+      "display_name": "Andrew David Oxman",
+      "orcid": "https://orcid.org/0000-0002-5608-5061",
+      "h_index": 115,
+      "i10_index": 286,
+      "works_count": 454,
+      "cited_by_count": 171896,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5021398510",
+      "display_name": "Lucy Yardley",
+      "orcid": "https://orcid.org/0000-0002-3853-883X",
+      "h_index": 112,
+      "i10_index": 394,
+      "works_count": 915,
+      "cited_by_count": 65144,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5061312708",
+      "display_name": "Josip Car",
+      "orcid": "https://orcid.org/0000-0001-8969-371X",
+      "h_index": 111,
+      "i10_index": 376,
+      "works_count": 704,
+      "cited_by_count": 100803,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5065553319",
+      "display_name": "Peter Bower",
+      "orcid": "https://orcid.org/0000-0001-9558-3349",
+      "h_index": 105,
+      "i10_index": 398,
+      "works_count": 1007,
+      "cited_by_count": 46162,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5082226580",
+      "display_name": "Robert Brian Haynes",
+      "orcid": "https://orcid.org/0000-0002-1453-3196",
+      "h_index": 105,
+      "i10_index": 311,
+      "works_count": 470,
+      "cited_by_count": 75878,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5066564797",
+      "display_name": "Paul D. Cleary",
+      "orcid": "https://orcid.org/0000-0001-7527-4354",
+      "h_index": 103,
+      "i10_index": 308,
+      "works_count": 421,
+      "cited_by_count": 42615,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5029134034",
+      "display_name": "Paul S Little",
+      "orcid": "https://orcid.org/0000-0003-3664-1873",
+      "h_index": 100,
+      "i10_index": 492,
+      "works_count": 1075,
+      "cited_by_count": 39677,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5010647345",
+      "display_name": "Andrew Booth",
+      "orcid": "https://orcid.org/0000-0003-4808-3880",
+      "h_index": 98,
+      "i10_index": 301,
+      "works_count": 901,
+      "cited_by_count": 65046,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "General Health Professions -- 9.8",
+      "id": "https://openalex.org/A5009177338",
+      "display_name": "Helena Leino‐Kilpi",
+      "orcid": "https://orcid.org/0000-0003-2477-971X",
+      "h_index": 97,
+      "i10_index": 455,
+      "works_count": 670,
+      "cited_by_count": 30401,
+      "discipline": "General Health Professions",
+      "primary_field": "Nursing",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Nursing",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5048702534",
+      "display_name": "Carl R May",
+      "orcid": "https://orcid.org/0000-0002-0451-2690",
+      "h_index": 97,
+      "i10_index": 303,
+      "works_count": 714,
+      "cited_by_count": 39474,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5076299585",
+      "display_name": "Marc N. Elliott",
+      "orcid": "https://orcid.org/0000-0002-7147-5535",
+      "h_index": 96,
+      "i10_index": 376,
+      "works_count": 707,
+      "cited_by_count": 36295,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5051073842",
+      "display_name": "Nick Sevdalis",
+      "orcid": "https://orcid.org/0000-0001-7560-8924",
+      "h_index": 96,
+      "i10_index": 368,
+      "works_count": 785,
+      "cited_by_count": 33149,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5054274979",
+      "display_name": "Debra L. Roter",
+      "orcid": "https://orcid.org/0000-0003-2203-9697",
+      "h_index": 96,
+      "i10_index": 296,
+      "works_count": 393,
+      "cited_by_count": 38743,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5059234240",
+      "display_name": "Richard H. Osborne",
+      "orcid": "https://orcid.org/0000-0002-9081-2699",
+      "h_index": 95,
+      "i10_index": 313,
+      "works_count": 676,
+      "cited_by_count": 92395,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5023452123",
+      "display_name": "Michael S. Wolf",
+      "orcid": "https://orcid.org/0000-0002-4342-6517",
+      "h_index": 94,
+      "i10_index": 313,
+      "works_count": 545,
+      "cited_by_count": 31001,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5010945895",
+      "display_name": "France Légaré",
+      "orcid": "https://orcid.org/0000-0002-2296-6696",
+      "h_index": 93,
+      "i10_index": 386,
+      "works_count": 653,
+      "cited_by_count": 46215,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5071878270",
+      "display_name": "Howard Leventhal",
+      "orcid": "https://orcid.org/0000-0001-5601-2500",
+      "h_index": 93,
+      "i10_index": 207,
+      "works_count": 264,
+      "cited_by_count": 33357,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5110033685",
+      "display_name": "Jozien M. Bensing",
+      "orcid": null,
+      "h_index": 92,
+      "i10_index": 240,
+      "works_count": 544,
+      "cited_by_count": 27582,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5052983418",
+      "display_name": "Liselotte N. Dyrbye",
+      "orcid": "https://orcid.org/0000-0002-7820-704X",
+      "h_index": 92,
+      "i10_index": 179,
+      "works_count": 253,
+      "cited_by_count": 61101,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "General Health Professions -- 9.7",
+      "id": "https://openalex.org/A5069168470",
+      "display_name": "Michel Wensing",
+      "orcid": "https://orcid.org/0000-0001-6569-8137",
+      "h_index": 89,
+      "i10_index": 517,
+      "works_count": 1406,
+      "cited_by_count": 40761,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5023880478",
+      "display_name": "Hayden Barry Bosworth",
+      "orcid": "https://orcid.org/0000-0001-6188-9825",
+      "h_index": 89,
+      "i10_index": 400,
+      "works_count": 699,
+      "cited_by_count": 30421,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5048254064",
+      "display_name": "Anne E. Rogers",
+      "orcid": "https://orcid.org/0000-0002-7231-790X",
+      "h_index": 89,
+      "i10_index": 301,
+      "works_count": 602,
+      "cited_by_count": 31583,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5067755322",
+      "display_name": "Larry Davidson",
+      "orcid": "https://orcid.org/0000-0003-1183-8047",
+      "h_index": 88,
+      "i10_index": 345,
+      "works_count": 575,
+      "cited_by_count": 33729,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5048738092",
+      "display_name": "Martin Christian Härter",
+      "orcid": "https://orcid.org/0000-0001-7443-9890",
+      "h_index": 87,
+      "i10_index": 425,
+      "works_count": 860,
+      "cited_by_count": 33541,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5033311669",
+      "display_name": "Gregory A. Aarons",
+      "orcid": "https://orcid.org/0000-0001-8969-5002",
+      "h_index": 87,
+      "i10_index": 292,
+      "works_count": 520,
+      "cited_by_count": 51152,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5053156614",
+      "display_name": "Dean Schillinger",
+      "orcid": "https://orcid.org/0000-0002-7221-7327",
+      "h_index": 87,
+      "i10_index": 259,
+      "works_count": 409,
+      "cited_by_count": 29173,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5031871819",
+      "display_name": "Richard L. Kravitz",
+      "orcid": "https://orcid.org/0000-0001-5575-529X",
+      "h_index": 87,
+      "i10_index": 252,
+      "works_count": 436,
+      "cited_by_count": 29449,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5090700680",
+      "display_name": "Tammy Hoffmann",
+      "orcid": "https://orcid.org/0000-0001-5210-8548",
+      "h_index": 87,
+      "i10_index": 247,
+      "works_count": 514,
+      "cited_by_count": 267912,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5113546544",
+      "display_name": "Martin Eccles",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 201,
+      "works_count": 373,
+      "cited_by_count": 70804,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5077319089",
+      "display_name": "Rob Sanson‐Fisher",
+      "orcid": "https://orcid.org/0000-0001-6022-2949",
+      "h_index": 86,
+      "i10_index": 462,
+      "works_count": 762,
+      "cited_by_count": 28027,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "General Health Professions -- 9.6",
+      "id": "https://openalex.org/A5085045867",
+      "display_name": "Annette M. Cormier O'Connor",
+      "orcid": "https://orcid.org/0000-0003-0604-7822",
+      "h_index": 86,
+      "i10_index": 328,
+      "works_count": 601,
+      "cited_by_count": 33753,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5072569206",
+      "display_name": "Scott Reeves",
+      "orcid": "https://orcid.org/0000-0002-0573-0622",
+      "h_index": 86,
+      "i10_index": 248,
+      "works_count": 436,
+      "cited_by_count": 35665,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Arts and Humanities",
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5110272856",
+      "display_name": "Johanna C. J. M. de Haes",
+      "orcid": "https://orcid.org/0000-0001-6541-0543",
+      "h_index": 86,
+      "i10_index": 239,
+      "works_count": 429,
+      "cited_by_count": 53612,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5003802405",
+      "display_name": "Judith Allen Hall",
+      "orcid": "https://orcid.org/0000-0001-5840-2895",
+      "h_index": 86,
+      "i10_index": 218,
+      "works_count": 353,
+      "cited_by_count": 34480,
+      "discipline": "General Health Professions",
+      "primary_field": "Psychology",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5054277970",
+      "display_name": "Mark Linzer",
+      "orcid": "https://orcid.org/0000-0002-5507-3675",
+      "h_index": 86,
+      "i10_index": 197,
+      "works_count": 360,
+      "cited_by_count": 24382,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5065992780",
+      "display_name": "Colin P. West",
+      "orcid": "https://orcid.org/0000-0003-1628-5023",
+      "h_index": 86,
+      "i10_index": 189,
+      "works_count": 292,
+      "cited_by_count": 45703,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5058581702",
+      "display_name": "Ronald M. Epstein",
+      "orcid": "https://orcid.org/0000-0002-3564-9163",
+      "h_index": 85,
+      "i10_index": 221,
+      "works_count": 383,
+      "cited_by_count": 43708,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5060405297",
+      "display_name": "Anne Margarethe Stiggelbout",
+      "orcid": "https://orcid.org/0000-0002-6293-4509",
+      "h_index": 84,
+      "i10_index": 272,
+      "works_count": 482,
+      "cited_by_count": 25633,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5050924923",
+      "display_name": "Wendy S. Levinson",
+      "orcid": "https://orcid.org/0000-0001-6356-3052",
+      "h_index": 84,
+      "i10_index": 207,
+      "works_count": 402,
+      "cited_by_count": 32377,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5065626862",
+      "display_name": "Simon A. Lewin",
+      "orcid": "https://orcid.org/0000-0001-7521-9515",
+      "h_index": 83,
+      "i10_index": 235,
+      "works_count": 399,
+      "cited_by_count": 88084,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5064734898",
+      "display_name": "Keith J. Petrie",
+      "orcid": "https://orcid.org/0000-0002-6337-2480",
+      "h_index": 83,
+      "i10_index": 235,
+      "works_count": 373,
+      "cited_by_count": 34152,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5016730562",
+      "display_name": "John N. Lavis",
+      "orcid": "https://orcid.org/0000-0001-7917-3657",
+      "h_index": 82,
+      "i10_index": 263,
+      "works_count": 519,
+      "cited_by_count": 28001,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "General Health Professions -- 9.5",
+      "id": "https://openalex.org/A5032550277",
+      "display_name": "Kenneth A. Wallston",
+      "orcid": "https://orcid.org/0000-0001-6310-0306",
+      "h_index": 82,
+      "i10_index": 205,
+      "works_count": 474,
+      "cited_by_count": 30280,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5020392082",
+      "display_name": "Lawrence A. Palinkas",
+      "orcid": "https://orcid.org/0000-0003-0974-7330",
+      "h_index": 81,
+      "i10_index": 278,
+      "works_count": 495,
+      "cited_by_count": 46272,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5054431130",
+      "display_name": "Merrick Zwarenstein",
+      "orcid": "https://orcid.org/0000-0003-0162-7027",
+      "h_index": 80,
+      "i10_index": 259,
+      "works_count": 433,
+      "cited_by_count": 33117,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Mathematics",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5067911181",
+      "display_name": "Carole A. Estabrooks",
+      "orcid": "https://orcid.org/0000-0002-4753-6510",
+      "h_index": 80,
+      "i10_index": 236,
+      "works_count": 399,
+      "cited_by_count": 21065,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5061227329",
+      "display_name": "Elizabeth Murray",
+      "orcid": "https://orcid.org/0000-0002-8932-3695",
+      "h_index": 80,
+      "i10_index": 200,
+      "works_count": 417,
+      "cited_by_count": 30355,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5023851909",
+      "display_name": "Darren A. DeWalt",
+      "orcid": "https://orcid.org/0000-0003-2270-751X",
+      "h_index": 79,
+      "i10_index": 181,
+      "works_count": 310,
+      "cited_by_count": 29962,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Nursing",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5048877751",
+      "display_name": "Angela Fagerlin",
+      "orcid": "https://orcid.org/0000-0002-9192-2777",
+      "h_index": 77,
+      "i10_index": 232,
+      "works_count": 503,
+      "cited_by_count": 20983,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5008909480",
+      "display_name": "Sunil B. Kripalani",
+      "orcid": "https://orcid.org/0000-0002-4214-7129",
+      "h_index": 77,
+      "i10_index": 230,
+      "works_count": 385,
+      "cited_by_count": 26799,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5049974762",
+      "display_name": "Kirsten J. McCaffery",
+      "orcid": "https://orcid.org/0000-0003-2696-5006",
+      "h_index": 76,
+      "i10_index": 332,
+      "works_count": 747,
+      "cited_by_count": 23062,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5050634387",
+      "display_name": "Michael K. Paasche‐Orlow",
+      "orcid": "https://orcid.org/0000-0002-9276-7190",
+      "h_index": 76,
+      "i10_index": 228,
+      "works_count": 414,
+      "cited_by_count": 23309,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5007311597",
+      "display_name": "T. Sheldon",
+      "orcid": "https://orcid.org/0000-0002-7479-5913",
+      "h_index": 76,
+      "i10_index": 213,
+      "works_count": 488,
+      "cited_by_count": 21401,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "General Health Professions -- 9.4",
+      "id": "https://openalex.org/A5108522350",
+      "display_name": "Angela Coulter",
+      "orcid": "https://orcid.org/0000-0002-6308-8375",
+      "h_index": 76,
+      "i10_index": 166,
+      "works_count": 278,
+      "cited_by_count": 26631,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5066680318",
+      "display_name": "Nicky Britten",
+      "orcid": "https://orcid.org/0000-0002-7533-414X",
+      "h_index": 75,
+      "i10_index": 195,
+      "works_count": 327,
+      "cited_by_count": 34709,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5066580309",
+      "display_name": "Kasisomayajula Viswanath",
+      "orcid": "https://orcid.org/0000-0002-4795-5803",
+      "h_index": 74,
+      "i10_index": 270,
+      "works_count": 384,
+      "cited_by_count": 25199,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5090430997",
+      "display_name": "Bernadette Mazurek Melnyk",
+      "orcid": "https://orcid.org/0000-0002-4704-1198",
+      "h_index": 74,
+      "i10_index": 264,
+      "works_count": 585,
+      "cited_by_count": 24117,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5002063692",
+      "display_name": "Sue Ziébland",
+      "orcid": "https://orcid.org/0000-0002-6496-4859",
+      "h_index": 74,
+      "i10_index": 204,
+      "works_count": 341,
+      "cited_by_count": 19258,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5065531684",
+      "display_name": "Nia Wyn Roberts",
+      "orcid": "https://orcid.org/0000-0002-1142-6440",
+      "h_index": 74,
+      "i10_index": 184,
+      "works_count": 321,
+      "cited_by_count": 18823,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine",
+        "Decision Sciences",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5002641110",
+      "display_name": "C. Hendricks Brown",
+      "orcid": "https://orcid.org/0000-0002-0294-2419",
+      "h_index": 73,
+      "i10_index": 203,
+      "works_count": 260,
+      "cited_by_count": 20512,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Mathematics",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5052527590",
+      "display_name": "Judith H. Hibbard",
+      "orcid": "https://orcid.org/0000-0002-8376-8343",
+      "h_index": 73,
+      "i10_index": 144,
+      "works_count": 192,
+      "cited_by_count": 26229,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5038306829",
+      "display_name": "Dawn Stacey",
+      "orcid": "https://orcid.org/0000-0002-2681-741X",
+      "h_index": 72,
+      "i10_index": 280,
+      "works_count": 617,
+      "cited_by_count": 29195,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5007023083",
+      "display_name": "Karina Lovell",
+      "orcid": "https://orcid.org/0000-0001-8821-895X",
+      "h_index": 72,
+      "i10_index": 264,
+      "works_count": 652,
+      "cited_by_count": 23028,
+      "discipline": "General Health Professions",
+      "primary_field": "Psychology",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5089354839",
+      "display_name": "Ellen M. A. Smets",
+      "orcid": "https://orcid.org/0000-0002-8145-8595",
+      "h_index": 72,
+      "i10_index": 243,
+      "works_count": 507,
+      "cited_by_count": 20401,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "General Health Professions -- 9.3",
+      "id": "https://openalex.org/A5048169605",
+      "display_name": "Alicia O’Cathain",
+      "orcid": "https://orcid.org/0000-0003-4033-506X",
+      "h_index": 72,
+      "i10_index": 163,
+      "works_count": 436,
+      "cited_by_count": 45932,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5060716064",
+      "display_name": "John Green",
+      "orcid": "https://orcid.org/0000-0002-2315-5326",
+      "h_index": 71,
+      "i10_index": 231,
+      "works_count": 784,
+      "cited_by_count": 18437,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5026945405",
+      "display_name": "Elizabeth Halcomb",
+      "orcid": "https://orcid.org/0000-0001-8099-986X",
+      "h_index": 71,
+      "i10_index": 230,
+      "works_count": 489,
+      "cited_by_count": 18079,
+      "discipline": "General Health Professions",
+      "primary_field": "Nursing",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Nursing",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5091380756",
+      "display_name": "Peter Salmon",
+      "orcid": "https://orcid.org/0000-0001-6450-5209",
+      "h_index": 71,
+      "i10_index": 220,
+      "works_count": 328,
+      "cited_by_count": 17095,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5004798669",
+      "display_name": "Dirk T. Ubbink",
+      "orcid": "https://orcid.org/0000-0001-9398-8879",
+      "h_index": 71,
+      "i10_index": 217,
+      "works_count": 482,
+      "cited_by_count": 16821,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5041464963",
+      "display_name": "Richard M. Frankel",
+      "orcid": "https://orcid.org/0000-0003-4132-4506",
+      "h_index": 71,
+      "i10_index": 215,
+      "works_count": 339,
+      "cited_by_count": 19228,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5057779423",
+      "display_name": "Jill Francis",
+      "orcid": "https://orcid.org/0000-0001-5784-8895",
+      "h_index": 71,
+      "i10_index": 211,
+      "works_count": 362,
+      "cited_by_count": 46053,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5075453684",
+      "display_name": "Huw T.O. Davies",
+      "orcid": "https://orcid.org/0000-0002-6250-8497",
+      "h_index": 71,
+      "i10_index": 178,
+      "works_count": 328,
+      "cited_by_count": 21825,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5068887742",
+      "display_name": "Terry C. Davis",
+      "orcid": "https://orcid.org/0000-0002-5013-6120",
+      "h_index": 71,
+      "i10_index": 151,
+      "works_count": 229,
+      "cited_by_count": 20038,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5054445562",
+      "display_name": "Brendan George McCormack",
+      "orcid": "https://orcid.org/0000-0001-8525-8905",
+      "h_index": 70,
+      "i10_index": 249,
+      "works_count": 572,
+      "cited_by_count": 26901,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5007359139",
+      "display_name": "Bryan Jeffrey Weiner",
+      "orcid": "https://orcid.org/0000-0002-6996-9480",
+      "h_index": 70,
+      "i10_index": 243,
+      "works_count": 401,
+      "cited_by_count": 27679,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "General Health Professions -- 9.2",
+      "id": "https://openalex.org/A5033370374",
+      "display_name": "Mary Catherine Beach",
+      "orcid": "https://orcid.org/0000-0002-1112-6309",
+      "h_index": 70,
+      "i10_index": 181,
+      "works_count": 342,
+      "cited_by_count": 19179,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5079743045",
+      "display_name": "Elaine Tomasi",
+      "orcid": "https://orcid.org/0000-0001-7328-6044",
+      "h_index": 70,
+      "i10_index": 172,
+      "works_count": 275,
+      "cited_by_count": 17941,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5031175048",
+      "display_name": "Matthew W. Kreuter",
+      "orcid": "https://orcid.org/0000-0001-7272-0785",
+      "h_index": 70,
+      "i10_index": 168,
+      "works_count": 266,
+      "cited_by_count": 29866,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5074571402",
+      "display_name": "Trudy van der Weijden",
+      "orcid": "https://orcid.org/0000-0002-7469-3781",
+      "h_index": 69,
+      "i10_index": 251,
+      "works_count": 558,
+      "cited_by_count": 20028,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5004895406",
+      "display_name": "Rinad S. Beidas",
+      "orcid": "https://orcid.org/0000-0001-6056-6071",
+      "h_index": 69,
+      "i10_index": 249,
+      "works_count": 502,
+      "cited_by_count": 19718,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5033462351",
+      "display_name": "Richard Lewis Street",
+      "orcid": "https://orcid.org/0000-0001-7392-9927",
+      "h_index": 69,
+      "i10_index": 203,
+      "works_count": 329,
+      "cited_by_count": 25110,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5075777334",
+      "display_name": "David H. Gustafson",
+      "orcid": "https://orcid.org/0000-0001-9787-6428",
+      "h_index": 69,
+      "i10_index": 190,
+      "works_count": 284,
+      "cited_by_count": 15274,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5009969443",
+      "display_name": "Sandra van Dulmen",
+      "orcid": "https://orcid.org/0000-0002-1651-7544",
+      "h_index": 68,
+      "i10_index": 280,
+      "works_count": 570,
+      "cited_by_count": 15620,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5072741575",
+      "display_name": "Peter Johannes Schulz",
+      "orcid": "https://orcid.org/0000-0003-4281-489X",
+      "h_index": 68,
+      "i10_index": 235,
+      "works_count": 517,
+      "cited_by_count": 18909,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5051428532",
+      "display_name": "Adrian Edwards",
+      "orcid": "https://orcid.org/0000-0002-6228-4446",
+      "h_index": 68,
+      "i10_index": 222,
+      "works_count": 430,
+      "cited_by_count": 18891,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5066203871",
+      "display_name": "Luiz Augusto Facchini",
+      "orcid": "https://orcid.org/0000-0002-5746-5170",
+      "h_index": 68,
+      "i10_index": 187,
+      "works_count": 336,
+      "cited_by_count": 16022,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "General Health Professions -- 9.1",
+      "id": "https://openalex.org/A5108806375",
+      "display_name": "Thomas S. Inui",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 181,
+      "works_count": 290,
+      "cited_by_count": 18209,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "General Health Professions -- 9.0",
+      "id": "https://openalex.org/A5041172548",
+      "display_name": "Hajo Zeeb",
+      "orcid": "https://orcid.org/0000-0001-7509-242X",
+      "h_index": 67,
+      "i10_index": 266,
+      "works_count": 877,
+      "cited_by_count": 45554,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "General Health Professions -- 9.0",
+      "id": "https://openalex.org/A5012753135",
+      "display_name": "Hermie J Hermens",
+      "orcid": "https://orcid.org/0000-0002-3065-3876",
+      "h_index": 67,
+      "i10_index": 237,
+      "works_count": 397,
+      "cited_by_count": 25923,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "General Health Professions -- 9.0",
+      "id": "https://openalex.org/A5082027305",
+      "display_name": "Marie‐Pierre Gagnon",
+      "orcid": "https://orcid.org/0000-0002-0782-5457",
+      "h_index": 67,
+      "i10_index": 236,
+      "works_count": 442,
+      "cited_by_count": 27253,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "General Health Professions -- 9.0",
+      "id": "https://openalex.org/A5058150441",
+      "display_name": "Roger Brown",
+      "orcid": "https://orcid.org/0000-0001-9044-1085",
+      "h_index": 67,
+      "i10_index": 233,
+      "works_count": 427,
+      "cited_by_count": 18423,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "General Health Professions -- 9.0",
+      "id": "https://openalex.org/A5091256291",
+      "display_name": "David Armstrong",
+      "orcid": "https://orcid.org/0000-0003-3652-9662",
+      "h_index": 67,
+      "i10_index": 188,
+      "works_count": 444,
+      "cited_by_count": 16139,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5047558576",
+      "display_name": "Ewan B Ferlie",
+      "orcid": "https://orcid.org/0000-0003-2947-5141",
+      "h_index": 67,
+      "i10_index": 165,
+      "works_count": 430,
+      "cited_by_count": 22660,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5034990528",
+      "display_name": "Steven Woloshin",
+      "orcid": "https://orcid.org/0000-0003-2311-1005",
+      "h_index": 67,
+      "i10_index": 152,
+      "works_count": 303,
+      "cited_by_count": 19311,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5047298979",
+      "display_name": "Sophie H. Staniszewska",
+      "orcid": "https://orcid.org/0000-0002-7723-9074",
+      "h_index": 67,
+      "i10_index": 128,
+      "works_count": 240,
+      "cited_by_count": 25570,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5040110248",
+      "display_name": "Kate Seers",
+      "orcid": "https://orcid.org/0000-0001-7921-552X",
+      "h_index": 67,
+      "i10_index": 121,
+      "works_count": 231,
+      "cited_by_count": 18432,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5044420007",
+      "display_name": "Per Nilsén",
+      "orcid": "https://orcid.org/0000-0003-0657-9079",
+      "h_index": 66,
+      "i10_index": 225,
+      "works_count": 421,
+      "cited_by_count": 22285,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5042557140",
+      "display_name": "Sarah T. Hawley",
+      "orcid": "https://orcid.org/0000-0001-5756-645X",
+      "h_index": 66,
+      "i10_index": 205,
+      "works_count": 450,
+      "cited_by_count": 13711,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5012222147",
+      "display_name": "Nick A. Black",
+      "orcid": "https://orcid.org/0000-0003-4771-3481",
+      "h_index": 66,
+      "i10_index": 204,
+      "works_count": 382,
+      "cited_by_count": 20670,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5014008683",
+      "display_name": "Alison While",
+      "orcid": "https://orcid.org/0000-0003-0955-3472",
+      "h_index": 66,
+      "i10_index": 185,
+      "works_count": 684,
+      "cited_by_count": 19788,
+      "discipline": "General Health Professions",
+      "primary_field": "Nursing",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Nursing",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5089185279",
+      "display_name": "Arnstein Finset",
+      "orcid": "https://orcid.org/0009-0006-0214-662X",
+      "h_index": 66,
+      "i10_index": 185,
+      "works_count": 379,
+      "cited_by_count": 13546,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5086982928",
+      "display_name": "Sandy R. Oliver",
+      "orcid": "https://orcid.org/0000-0001-9571-269X",
+      "h_index": 66,
+      "i10_index": 171,
+      "works_count": 471,
+      "cited_by_count": 26689,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5008365226",
+      "display_name": "Catherine J. Pope",
+      "orcid": "https://orcid.org/0000-0002-8935-6702",
+      "h_index": 66,
+      "i10_index": 167,
+      "works_count": 373,
+      "cited_by_count": 38517,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "General Health Professions -- 8.9",
+      "id": "https://openalex.org/A5052548757",
+      "display_name": "Christine A. Sinsky",
+      "orcid": "https://orcid.org/0000-0003-1101-5761",
+      "h_index": 66,
+      "i10_index": 145,
+      "works_count": 251,
+      "cited_by_count": 29591,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5066434491",
+      "display_name": "Sally Green",
+      "orcid": "https://orcid.org/0000-0002-9564-9050",
+      "h_index": 66,
+      "i10_index": 145,
+      "works_count": 241,
+      "cited_by_count": 17651,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5030751624",
+      "display_name": "Catherine Anne D’Este",
+      "orcid": "https://orcid.org/0000-0001-9125-0483",
+      "h_index": 65,
+      "i10_index": 220,
+      "works_count": 352,
+      "cited_by_count": 16138,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5083410346",
+      "display_name": "Brian J. Zikmund‐Fisher",
+      "orcid": "https://orcid.org/0000-0002-1637-4176",
+      "h_index": 65,
+      "i10_index": 198,
+      "works_count": 385,
+      "cited_by_count": 16237,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5082614935",
+      "display_name": "Michael Calnan",
+      "orcid": "https://orcid.org/0000-0002-7239-6898",
+      "h_index": 65,
+      "i10_index": 196,
+      "works_count": 457,
+      "cited_by_count": 13597,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5078351049",
+      "display_name": "Sherry Pagoto",
+      "orcid": "https://orcid.org/0000-0002-2462-8797",
+      "h_index": 65,
+      "i10_index": 189,
+      "works_count": 356,
+      "cited_by_count": 15434,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5009507980",
+      "display_name": "Bonnie Sibbald",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 141,
+      "works_count": 296,
+      "cited_by_count": 24205,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5075305921",
+      "display_name": "Riitta Suhonen",
+      "orcid": "https://orcid.org/0000-0002-4315-5550",
+      "h_index": 64,
+      "i10_index": 214,
+      "works_count": 357,
+      "cited_by_count": 13008,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5083205025",
+      "display_name": "Alison A. Kitson",
+      "orcid": "https://orcid.org/0000-0003-3053-8381",
+      "h_index": 64,
+      "i10_index": 207,
+      "works_count": 412,
+      "cited_by_count": 23476,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5026836695",
+      "display_name": "Don Nutbeam",
+      "orcid": "https://orcid.org/0000-0001-6497-2827",
+      "h_index": 64,
+      "i10_index": 165,
+      "works_count": 277,
+      "cited_by_count": 34331,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5104064272",
+      "display_name": "Graham C. M. Watt",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 160,
+      "works_count": 360,
+      "cited_by_count": 24176,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5091010901",
+      "display_name": "Ruth M. Parker",
+      "orcid": "https://orcid.org/0000-0001-9685-6396",
+      "h_index": 64,
+      "i10_index": 129,
+      "works_count": 200,
+      "cited_by_count": 25592,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5049874372",
+      "display_name": "Mickey Trockel",
+      "orcid": "https://orcid.org/0000-0001-7191-5791",
+      "h_index": 64,
+      "i10_index": 126,
+      "works_count": 204,
+      "cited_by_count": 18395,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5109203608",
+      "display_name": "Lisa M. Schwartz",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 112,
+      "works_count": 192,
+      "cited_by_count": 16453,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5000041866",
+      "display_name": "Karen Anne Grimmer",
+      "orcid": "https://orcid.org/0000-0002-9540-458X",
+      "h_index": 63,
+      "i10_index": 254,
+      "works_count": 405,
+      "cited_by_count": 16843,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5039250646",
+      "display_name": "Noah Michael Ivers",
+      "orcid": "https://orcid.org/0000-0003-2500-2435",
+      "h_index": 63,
+      "i10_index": 236,
+      "works_count": 533,
+      "cited_by_count": 25765,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5035461185",
+      "display_name": "Frances K. Barg",
+      "orcid": "https://orcid.org/0000-0003-3328-1980",
+      "h_index": 63,
+      "i10_index": 213,
+      "works_count": 326,
+      "cited_by_count": 12676,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5017970648",
+      "display_name": "Jean‐Louis Denis",
+      "orcid": "https://orcid.org/0000-0003-1295-332X",
+      "h_index": 63,
+      "i10_index": 183,
+      "works_count": 465,
+      "cited_by_count": 18934,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5027578432",
+      "display_name": "Stephanie JC Taylor",
+      "orcid": "https://orcid.org/0000-0001-7454-6354",
+      "h_index": 63,
+      "i10_index": 163,
+      "works_count": 540,
+      "cited_by_count": 16202,
+      "discipline": "General Health Professions",
+      "primary_field": "Medicine",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "General Health Professions -- 8.8",
+      "id": "https://openalex.org/A5105024363",
+      "display_name": "Glenn Robert",
+      "orcid": "https://orcid.org/0000-0001-8781-6675",
+      "h_index": 63,
+      "i10_index": 152,
+      "works_count": 450,
+      "cited_by_count": 25700,
+      "discipline": "General Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    }
+  ]
+}

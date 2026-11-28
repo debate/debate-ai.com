@@ -137,7 +137,8 @@ describe("ReferencesPanelButton", () => {
 
     // Clicking Smith twice goes to its first, then its second citation.
     const smithLinks = collectReferenceItems(container)[1]!.links
-    const head = entries[1]!.querySelector("button")!
+    // The entry's own button, not the Reading mode / Copy / Favorite row above it.
+    const head = entries[1]!.querySelector<HTMLButtonElement>('button[title^="Show where it is cited"]')!
     await act(async () => head.click())
     expect(smithLinks[0]!.classList.contains("citation-link-flash")).toBe(true)
     await act(async () => head.click())

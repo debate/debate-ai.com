@@ -1,0 +1,611 @@
+{
+  "kind": "subfield",
+  "id": 2611,
+  "name": "Modeling and Simulation",
+  "total_in_scrape": 31,
+  "count": 31,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Modeling and Simulation -- 9.9",
+      "id": "https://openalex.org/A5030756029",
+      "display_name": "Dumitru Bǎleanu",
+      "orcid": "https://orcid.org/0000-0002-0286-7244",
+      "h_index": 130,
+      "i10_index": 1537,
+      "works_count": 2356,
+      "cited_by_count": 93957,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Modeling and Simulation -- 9.9",
+      "id": "https://openalex.org/A5008407354",
+      "display_name": "Neil M. Ferguson",
+      "orcid": "https://orcid.org/0000-0002-1154-8093",
+      "h_index": 119,
+      "i10_index": 341,
+      "works_count": 556,
+      "cited_by_count": 78862,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Modeling and Simulation -- 9.9",
+      "id": "https://openalex.org/A5010513600",
+      "display_name": "Ji‐Huan He",
+      "orcid": "https://orcid.org/0000-0002-1636-0559",
+      "h_index": 107,
+      "i10_index": 447,
+      "works_count": 669,
+      "cited_by_count": 58444,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Modeling and Simulation -- 9.9",
+      "id": "https://openalex.org/A5001383313",
+      "display_name": "W. John Edmunds",
+      "orcid": "https://orcid.org/0000-0002-9179-2917",
+      "h_index": 97,
+      "i10_index": 246,
+      "works_count": 349,
+      "cited_by_count": 40575,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Modeling and Simulation -- 9.9",
+      "id": "https://openalex.org/A5019845521",
+      "display_name": "J. Klafter",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 313,
+      "works_count": 493,
+      "cited_by_count": 47669,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Modeling and Simulation -- 9.9",
+      "id": "https://openalex.org/A5025791169",
+      "display_name": "Philip K. Maini",
+      "orcid": "https://orcid.org/0000-0002-0146-9164",
+      "h_index": 89,
+      "i10_index": 352,
+      "works_count": 666,
+      "cited_by_count": 27801,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5080120676",
+      "display_name": "Shaher Momani",
+      "orcid": "https://orcid.org/0000-0002-6326-8456",
+      "h_index": 89,
+      "i10_index": 324,
+      "works_count": 582,
+      "cited_by_count": 33285,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5083896047",
+      "display_name": "André Karch",
+      "orcid": "https://orcid.org/0000-0003-3014-8543",
+      "h_index": 89,
+      "i10_index": 215,
+      "works_count": 557,
+      "cited_by_count": 232547,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5082823020",
+      "display_name": "Abdon Atangana",
+      "orcid": "https://orcid.org/0000-0002-1886-3125",
+      "h_index": 82,
+      "i10_index": 297,
+      "works_count": 620,
+      "cited_by_count": 29150,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5058020677",
+      "display_name": "Gerardo Chowell",
+      "orcid": "https://orcid.org/0000-0003-2194-2251",
+      "h_index": 80,
+      "i10_index": 260,
+      "works_count": 469,
+      "cited_by_count": 27212,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5057525661",
+      "display_name": "Kottakkaran Sooppy Nisar",
+      "orcid": "https://orcid.org/0000-0001-5769-4320",
+      "h_index": 79,
+      "i10_index": 837,
+      "works_count": 1429,
+      "cited_by_count": 33377,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5008514010",
+      "display_name": "Simon Cauchemez",
+      "orcid": "https://orcid.org/0000-0001-9186-4549",
+      "h_index": 75,
+      "i10_index": 228,
+      "works_count": 407,
+      "cited_by_count": 37224,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5016818633",
+      "display_name": "José Francisco Gómez-Aguilar",
+      "orcid": "https://orcid.org/0000-0001-9403-3767",
+      "h_index": 74,
+      "i10_index": 388,
+      "works_count": 549,
+      "cited_by_count": 19460,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5056670112",
+      "display_name": "S. Abbasbandy",
+      "orcid": "https://orcid.org/0000-0003-3385-4152",
+      "h_index": 74,
+      "i10_index": 270,
+      "works_count": 446,
+      "cited_by_count": 19207,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5017384955",
+      "display_name": "Mark M. Meerschaert",
+      "orcid": "https://orcid.org/0000-0001-7968-6401",
+      "h_index": 73,
+      "i10_index": 176,
+      "works_count": 365,
+      "cited_by_count": 23625,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Environmental Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5058699536",
+      "display_name": "Sebastian Funk",
+      "orcid": "https://orcid.org/0000-0002-2842-3406",
+      "h_index": 70,
+      "i10_index": 163,
+      "works_count": 319,
+      "cited_by_count": 34468,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Modeling and Simulation -- 9.8",
+      "id": "https://openalex.org/A5057172500",
+      "display_name": "Adrian Esterman",
+      "orcid": "https://orcid.org/0000-0001-7324-9171",
+      "h_index": 68,
+      "i10_index": 266,
+      "works_count": 499,
+      "cited_by_count": 16758,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Medicine",
+        "Mathematics",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5068478723",
+      "display_name": "Francesco Mainardi",
+      "orcid": "https://orcid.org/0000-0003-4858-7309",
+      "h_index": 68,
+      "i10_index": 148,
+      "works_count": 273,
+      "cited_by_count": 29263,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5042663607",
+      "display_name": "Niel Hens",
+      "orcid": "https://orcid.org/0000-0003-1881-0637",
+      "h_index": 67,
+      "i10_index": 305,
+      "works_count": 605,
+      "cited_by_count": 20346,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5087448925",
+      "display_name": "Helen  Mary Byrne",
+      "orcid": "https://orcid.org/0000-0003-1771-5910",
+      "h_index": 67,
+      "i10_index": 249,
+      "works_count": 485,
+      "cited_by_count": 17923,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5055068548",
+      "display_name": "David N. Fisman",
+      "orcid": "https://orcid.org/0000-0001-5009-6926",
+      "h_index": 67,
+      "i10_index": 212,
+      "works_count": 419,
+      "cited_by_count": 21164,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5013810794",
+      "display_name": "Thibaut Jombart",
+      "orcid": "https://orcid.org/0000-0003-2226-8692",
+      "h_index": 67,
+      "i10_index": 117,
+      "works_count": 282,
+      "cited_by_count": 43829,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5010630440",
+      "display_name": "Hiroshi Nishiura",
+      "orcid": "https://orcid.org/0000-0003-0941-8537",
+      "h_index": 66,
+      "i10_index": 252,
+      "works_count": 635,
+      "cited_by_count": 22863,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5048266897",
+      "display_name": "Hacı Mehmet Başkonuş",
+      "orcid": "https://orcid.org/0000-0003-4085-3625",
+      "h_index": 66,
+      "i10_index": 232,
+      "works_count": 369,
+      "cited_by_count": 13427,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5073778062",
+      "display_name": "Fawang Liu",
+      "orcid": "https://orcid.org/0000-0003-1034-2349",
+      "h_index": 66,
+      "i10_index": 210,
+      "works_count": 321,
+      "cited_by_count": 13918,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5063667645",
+      "display_name": "Mark A. J. Chaplain",
+      "orcid": "https://orcid.org/0000-0001-5727-2160",
+      "h_index": 65,
+      "i10_index": 197,
+      "works_count": 325,
+      "cited_by_count": 16252,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5100380252",
+      "display_name": "Yan Li",
+      "orcid": "https://orcid.org/0000-0001-6155-0389",
+      "h_index": 64,
+      "i10_index": 315,
+      "works_count": 790,
+      "cited_by_count": 14964,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Medicine",
+        "Mathematics",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Modeling and Simulation -- 9.7",
+      "id": "https://openalex.org/A5025218537",
+      "display_name": "Vittoria Colizza",
+      "orcid": "https://orcid.org/0000-0002-2113-2374",
+      "h_index": 64,
+      "i10_index": 151,
+      "works_count": 277,
+      "cited_by_count": 22492,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Modeling and Simulation -- 9.6",
+      "id": "https://openalex.org/A5032161283",
+      "display_name": "James A. Glazier",
+      "orcid": "https://orcid.org/0000-0003-3634-190X",
+      "h_index": 64,
+      "i10_index": 140,
+      "works_count": 282,
+      "cited_by_count": 14360,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Modeling and Simulation -- 9.6",
+      "id": "https://openalex.org/A5028762211",
+      "display_name": "Ali Ahmadian",
+      "orcid": "https://orcid.org/0000-0002-0106-7050",
+      "h_index": 63,
+      "i10_index": 253,
+      "works_count": 433,
+      "cited_by_count": 13792,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Modeling and Simulation -- 9.6",
+      "id": "https://openalex.org/A5040703559",
+      "display_name": "Rosalind M. Eggo",
+      "orcid": "https://orcid.org/0000-0002-0362-6717",
+      "h_index": 63,
+      "i10_index": 150,
+      "works_count": 339,
+      "cited_by_count": 30346,
+      "discipline": "Modeling and Simulation",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Modeling and Simulation",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

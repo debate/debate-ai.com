@@ -1,0 +1,70 @@
+{
+  "kind": "subfield",
+  "id": 3311,
+  "name": "Safety Research",
+  "total_in_scrape": 3,
+  "count": 3,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Safety Research -- 9.9",
+      "id": "https://openalex.org/A5061160911",
+      "display_name": "Dirk Helbing",
+      "orcid": "https://orcid.org/0000-0002-9898-0101",
+      "h_index": 113,
+      "i10_index": 355,
+      "works_count": 780,
+      "cited_by_count": 80745,
+      "discipline": "Safety Research",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Safety Research",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Safety Research -- 9.9",
+      "id": "https://openalex.org/A5069714161",
+      "display_name": "Weiguo Song",
+      "orcid": "https://orcid.org/0000-0001-5390-6787",
+      "h_index": 74,
+      "i10_index": 266,
+      "works_count": 399,
+      "cited_by_count": 20974,
+      "discipline": "Safety Research",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Safety Research",
+      "fields": [
+        "Social Sciences",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Safety Research -- 9.9",
+      "id": "https://openalex.org/A5061238672",
+      "display_name": "Andreas Schadschneider",
+      "orcid": "https://orcid.org/0000-0002-2054-7973",
+      "h_index": 68,
+      "i10_index": 197,
+      "works_count": 390,
+      "cited_by_count": 19976,
+      "discipline": "Safety Research",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Safety Research",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    }
+  ]
+}

@@ -25,9 +25,10 @@ export const NAV_ITEMS: DockNavItem[] = [
   { href: "/videos", label: dockNavLabel("/videos"), icon: IconRoundsYoutube },
   { href: "/research/cards", label: dockNavLabel("/research/cards"), icon: IconCollectiveMind },
   { href: "/debate", label: dockNavLabel("/debate"), icon: IconFlowFlower },
-  // Practice vs AI — a full timed round against an AI opponent, from the
-  // `debate-practice-vs-ai` package.
-{ href: "/practice/versus-ai", label: dockNavLabel("/practice/versus-ai"), icon: IconVsAi },
+  // Practice debates — challenges, drills and partners, with Practice vs AI
+  // (`/practice/versus-ai`, from the `debate-practice-vs-ai` package) linked
+  // from the page's header.
+  { href: "/practice/debates", label: dockNavLabel("/practice/debates"), icon: IconVsAi },
   // Quick search (qwksearch.com, framed at /research/docs), marked with that site's own
   // app icon (`icon-doc.png`, a copy of qwksearch.com/apple-touch-icon.png)
   // rather than a generic page: it reads as a different tool from the rest.

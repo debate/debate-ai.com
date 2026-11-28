@@ -19,6 +19,7 @@ export { default as IconSchoolIowa } from "../../wordmarks/colleges/iowa.png";
 export { default as IconSchoolKansas } from "../../wordmarks/colleges/kansas.png";
 export { default as IconSchoolKentucky } from "../../wordmarks/colleges/kentucky.png";
 export { default as IconSchoolLiberty } from "../../wordmarks/colleges/liberty.png";
+export { default as IconSchoolLouisville } from "../../wordmarks/colleges/louisville.png";
 export { default as IconSchoolLoyolaChicago } from "../../wordmarks/colleges/loyola-chicago.png";
 export { default as IconSchoolMacalester } from "../../wordmarks/colleges/macalester.png";
 export { default as IconSchoolMichiganState } from "../../wordmarks/colleges/michigan-state.png";

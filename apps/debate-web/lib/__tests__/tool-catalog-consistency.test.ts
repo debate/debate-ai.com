@@ -212,6 +212,8 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/practice/statistics",
   // The blog: a content page, not a tool.
   "/blog",
+  // Authors cited in the help docs' References: a content index, not a tool.
+  "/authors",
 ])
 
 describe("tool catalog route coverage", () => {

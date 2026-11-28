@@ -246,7 +246,7 @@ export function LecturesVideoGridView({
   // Debate Rounds (`/videos/rounds`): every format's rounds in one listing.
   const browsingRounds = browsingLibrary && isRoundsListing(slug)
   // A lecture category from the gallery's Formats section (Worlds, NSDA
-  // Speech, Demo Debates, Open Super Debates …) is part of Debate Rounds, not
+  // Speech, Demo Debates, Open Public …) is part of Debate Rounds, not
   // Strategy Lectures, though its videos list as lectures.
   const browsingFormatsCategory = useMemo(() => {
     if (!browsingLibrary || selectedCategory === "all") return false
@@ -288,15 +288,21 @@ export function LecturesVideoGridView({
   const showLectureGallery =
     browsingLibrary && !browsingRoundCollection && galleryCategories.length > 0
 
-  // The division pages (College Policy, HS Policy, Individual, Forum) and the
+  // The division pages (College Policy, HS Policy, Forum, Individual) and the
   // round collections (ACC, Parli, Congress) carry no category bar of their
-  // own, so they get just the four format cards, the open division selected.
+  // own, so they get the four format cards, the open division selected.
   const activeFormatId = formatBadgeIdForStyle(selectedStyle)
   const showFormatCards =
     !showLectureGallery &&
     !showFavoritesOnly &&
     currentCategory === "lectures" &&
     (activeFormatId !== undefined || isRoundCollection(selectedCategory))
+  // The division pages also list the other formats (Worlds, Demo Debates,
+  // Parli, Atlantic, Congress …) under the cards: the same Formats section as
+  // All Videos, with no format selected. The round collection pages keep just
+  // the cards.
+  const showFormatsList =
+    showFormatCards && activeFormatId !== undefined && galleryCategories.length > 0
 
   // The pages that list the round collections: All Videos, Debate Rounds and
   // the Formats categories of the lecture library.
@@ -315,7 +321,7 @@ export function LecturesVideoGridView({
   // (WSD on All Videos) is not repeated in this row, so it shows once.
   // A collection with no videos yet (Speech) is hidden until it has some.
   const collectionLinks = useMemo(() => {
-    const links = showsCollections
+    const links = showsCollections || showFormatsList
       ? VIDEO_ALL_VIDEOS_FILTER_LINKS
       : browsingCollege
         ? VIDEO_COLLEGE_FILTER_LINKS
@@ -324,15 +330,15 @@ export function LecturesVideoGridView({
     // Congress always keeps its card: it is a format in its own right, so it
     // is offered even before any video is filed under it.
     const nonEmpty = links.filter((link) => link.id === "congress" || quickLinkCounts?.[link.id] !== 0)
-    if (!showLectureGallery) return nonEmpty
+    if (!showLectureGallery && !showFormatsList) return nonEmpty
     const inGallery = new Set(galleryCategories.map((category) => category.key.toLowerCase()))
     return nonEmpty.filter((link) => !inGallery.has(link.id))
-  }, [showsCollections, browsingCollege, showLectureGallery, galleryCategories, quickLinkCounts])
+  }, [showsCollections, showFormatsList, browsingCollege, showLectureGallery, galleryCategories, quickLinkCounts])
 
   // On All Videos the collections join the category bar's Formats section,
   // so the whole list reads as one set of labeled sections.
   const galleryExtraLinks = useMemo<LectureGalleryExtraLink[] | undefined>(() => {
-    if (!showsCollections || !showLectureGallery || !collectionLinks) return undefined
+    if (!(showFormatsList || (showsCollections && showLectureGallery)) || !collectionLinks) return undefined
     // The bar lists Parli in Formats itself, from the badge counts.
     return collectionLinks.filter((link) => link.id !== "parli").map((link) => ({
       id: link.id,
@@ -342,7 +348,7 @@ export function LecturesVideoGridView({
       icon: <link.glyph className="h-4 w-4" />,
       description: "Debate videos",
     }))
-  }, [showsCollections, showLectureGallery, collectionLinks, quickLinkCounts])
+  }, [showsCollections, showLectureGallery, showFormatsList, collectionLinks, quickLinkCounts])
   const collectionRowLinks = galleryExtraLinks ? null : collectionLinks
 
   /** The watch-history listing, which is neither a category nor a filter. */
@@ -459,7 +465,7 @@ export function LecturesVideoGridView({
             activeId={activeQuickLinkId}
           />
 
-          {/* The rest of the sidebar tree — Research / Debates / Inference,
+          {/* The rest of the sidebar tree — Research / Debates,
               then Learning. The tiles above cover only its Videos section, so
               without this the tool sections had no counterpart on a phone
               anywhere on the page (the dock's Settings menu carries them too).
@@ -489,7 +495,9 @@ export function LecturesVideoGridView({
         {showFormatCards && (
           <nav className="mb-6" aria-label="Debate formats">
             <LectureCategoryGridGallery
-              scope="formats"
+              scope={showFormatsList ? "rounds" : "formats"}
+              categories={showFormatsList ? galleryCategories : undefined}
+              extraLinks={showFormatsList ? galleryExtraLinks : undefined}
               formatCounts={quickLinkCounts}
               activeFormatId={activeFormatId}
             />

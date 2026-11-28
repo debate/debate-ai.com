@@ -1,0 +1,232 @@
+{
+  "kind": "subfield",
+  "id": 2718,
+  "name": "Health Informatics",
+  "total_in_scrape": 11,
+  "count": 11,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Health Informatics -- 9.9",
+      "id": "https://openalex.org/A5041175834",
+      "display_name": "Nigam Haresh Shah",
+      "orcid": "https://orcid.org/0000-0001-9385-7158",
+      "h_index": 96,
+      "i10_index": 325,
+      "works_count": 663,
+      "cited_by_count": 48391,
+      "discipline": "Health Informatics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Health Informatics -- 9.9",
+      "id": "https://openalex.org/A5083081872",
+      "display_name": "Zhiyong Lu",
+      "orcid": "https://orcid.org/0000-0001-9998-916X",
+      "h_index": 93,
+      "i10_index": 244,
+      "works_count": 399,
+      "cited_by_count": 42895,
+      "discipline": "Health Informatics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Health Informatics -- 9.9",
+      "id": "https://openalex.org/A5002223413",
+      "display_name": "Chris Mungall",
+      "orcid": "https://orcid.org/0000-0002-6601-2165",
+      "h_index": 93,
+      "i10_index": 225,
+      "works_count": 743,
+      "cited_by_count": 62895,
+      "discipline": "Health Informatics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Computer Science",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Health Informatics -- 9.9",
+      "id": "https://openalex.org/A5004965117",
+      "display_name": "Daniel L. Rubin",
+      "orcid": "https://orcid.org/0000-0001-5057-4369",
+      "h_index": 87,
+      "i10_index": 361,
+      "works_count": 596,
+      "cited_by_count": 38250,
+      "discipline": "Health Informatics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Health Informatics -- 9.9",
+      "id": "https://openalex.org/A5064320417",
+      "display_name": "Melissa Anne Haendel",
+      "orcid": "https://orcid.org/0000-0001-9114-8737",
+      "h_index": 83,
+      "i10_index": 237,
+      "works_count": 490,
+      "cited_by_count": 28159,
+      "discipline": "Health Informatics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Health Informatics -- 9.9",
+      "id": "https://openalex.org/A5087710258",
+      "display_name": "Curtis P. Langlotz",
+      "orcid": "https://orcid.org/0000-0002-8972-8051",
+      "h_index": 79,
+      "i10_index": 210,
+      "works_count": 379,
+      "cited_by_count": 41204,
+      "discipline": "Health Informatics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Health Informatics -- 9.8",
+      "id": "https://openalex.org/A5068955381",
+      "display_name": "Greg S. Corrado",
+      "orcid": "https://orcid.org/0000-0001-8817-0992",
+      "h_index": 75,
+      "i10_index": 120,
+      "works_count": 156,
+      "cited_by_count": 184137,
+      "discipline": "Health Informatics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Health Informatics -- 9.8",
+      "id": "https://openalex.org/A5030539003",
+      "display_name": "Benjamin Scott Glicksberg",
+      "orcid": "https://orcid.org/0000-0003-4515-8090",
+      "h_index": 71,
+      "i10_index": 203,
+      "works_count": 384,
+      "cited_by_count": 24029,
+      "discipline": "Health Informatics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Health Informatics -- 9.8",
+      "id": "https://openalex.org/A5003139478",
+      "display_name": "Martin Hofmann‐Apitius",
+      "orcid": "https://orcid.org/0000-0001-9012-6720",
+      "h_index": 67,
+      "i10_index": 248,
+      "works_count": 473,
+      "cited_by_count": 18461,
+      "discipline": "Health Informatics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Health Informatics -- 9.8",
+      "id": "https://openalex.org/A5086052373",
+      "display_name": "Marinka Žitnik",
+      "orcid": "https://orcid.org/0000-0001-8530-7228",
+      "h_index": 67,
+      "i10_index": 140,
+      "works_count": 276,
+      "cited_by_count": 36845,
+      "discipline": "Health Informatics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Health Informatics -- 9.8",
+      "id": "https://openalex.org/A5101585391",
+      "display_name": "Hongfang Liu",
+      "orcid": "https://orcid.org/0000-0003-2570-3741",
+      "h_index": 63,
+      "i10_index": 287,
+      "works_count": 643,
+      "cited_by_count": 18459,
+      "discipline": "Health Informatics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Informatics",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Health Professions"
+      ]
+    }
+  ]
+}

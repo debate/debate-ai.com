@@ -1,0 +1,110 @@
+{
+  "kind": "subfield",
+  "id": 2702,
+  "name": "Anatomy",
+  "total_in_scrape": 5,
+  "count": 5,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Anatomy -- 9.9",
+      "id": "https://openalex.org/A5073862979",
+      "display_name": "Marios Loukas",
+      "orcid": "https://orcid.org/0000-0003-2811-6657",
+      "h_index": 82,
+      "i10_index": 604,
+      "works_count": 1111,
+      "cited_by_count": 29498,
+      "discipline": "Anatomy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anatomy",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Anatomy -- 9.9",
+      "id": "https://openalex.org/A5050275183",
+      "display_name": "Shaun P. Collin",
+      "orcid": "https://orcid.org/0000-0001-6236-0771",
+      "h_index": 64,
+      "i10_index": 241,
+      "works_count": 509,
+      "cited_by_count": 14422,
+      "discipline": "Anatomy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anatomy",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Anatomy -- 9.9",
+      "id": "https://openalex.org/A5000666523",
+      "display_name": "Andrea Porzionato",
+      "orcid": "https://orcid.org/0000-0003-3025-4717",
+      "h_index": 63,
+      "i10_index": 273,
+      "works_count": 657,
+      "cited_by_count": 15190,
+      "discipline": "Anatomy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anatomy",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Anatomy -- 9.9",
+      "id": "https://openalex.org/A5034239187",
+      "display_name": "Veronica Macchi",
+      "orcid": "https://orcid.org/0000-0003-2335-6897",
+      "h_index": 63,
+      "i10_index": 270,
+      "works_count": 707,
+      "cited_by_count": 15416,
+      "discipline": "Anatomy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anatomy",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Anatomy -- 9.9",
+      "id": "https://openalex.org/A5053077751",
+      "display_name": "Arnold M. Seligman",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 187,
+      "works_count": 293,
+      "cited_by_count": 17001,
+      "discipline": "Anatomy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anatomy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    }
+  ]
+}

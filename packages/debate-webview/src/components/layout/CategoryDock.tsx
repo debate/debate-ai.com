@@ -173,10 +173,10 @@ function usePaletteChord(): string {
 
 /**
  * The site-nav rows at the top of {@link SettingsMenu}: the search palette
- * plus one submenu per sidebar section (Videos, Research, Debates, Inference, Learning).
+ * plus one submenu per sidebar section (Videos, Research, Debates, Learning).
  * They sit above Theme, so the gear opens one menu for "where do I go" and
- * "how do I configure this". The Practice vs AI dock icon used to open these
- * as a menu of its own; it is a plain link to `/practice/versus-ai` again.
+ * "how do I configure this". The Practice debates dock icon used to open these
+ * as a menu of its own; it is a plain link to `/practice/debates` again.
  */
 function NavMenuItems() {
   const router = useRouter()

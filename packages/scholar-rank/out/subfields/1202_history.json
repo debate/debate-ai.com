@@ -1,0 +1,88 @@
+{
+  "kind": "subfield",
+  "id": 1202,
+  "name": "History",
+  "total_in_scrape": 4,
+  "count": 4,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "History -- 9.9",
+      "id": "https://openalex.org/A5111629560",
+      "display_name": "Charles Tilly",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 239,
+      "works_count": 804,
+      "cited_by_count": 48414,
+      "discipline": "History",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "History -- 9.9",
+      "id": "https://openalex.org/A5066139560",
+      "display_name": "Henry Ryan Wagner",
+      "orcid": "https://orcid.org/0000-0003-3954-6556",
+      "h_index": 73,
+      "i10_index": 200,
+      "works_count": 357,
+      "cited_by_count": 19398,
+      "discipline": "History",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "History -- 9.9",
+      "id": "https://openalex.org/A5051840540",
+      "display_name": "Edward Young",
+      "orcid": "https://orcid.org/0000-0002-1299-0801",
+      "h_index": 66,
+      "i10_index": 182,
+      "works_count": 929,
+      "cited_by_count": 16534,
+      "discipline": "History",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History",
+      "fields": [
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "History -- 9.9",
+      "id": "https://openalex.org/A5035236781",
+      "display_name": "David C. Richardson",
+      "orcid": "https://orcid.org/0000-0001-5069-343X",
+      "h_index": 64,
+      "i10_index": 150,
+      "works_count": 305,
+      "cited_by_count": 82487,
+      "discipline": "History",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "History",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Arts and Humanities",
+        "Economics, Econometrics and Finance"
+      ]
+    }
+  ]
+}
