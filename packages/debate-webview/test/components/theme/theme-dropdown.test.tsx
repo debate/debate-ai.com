@@ -147,6 +147,18 @@ describe("useThemeState", () => {
     expect(document.documentElement.classList.contains("theme-modern-minimal")).toBe(true);
   });
 
+  it("keeps a committed theme when a stale handler ends the preview afterwards", async () => {
+    const { result } = await mountHook();
+    const { handleThemePreview, handleThemeChange, handlePreviewEnd } = result.current;
+    await flush(() => handleThemePreview("cyberpunk"));
+    await flush(() => {
+      handleThemeChange("cyberpunk");
+      handlePreviewEnd();
+    });
+    expect(document.documentElement.classList.contains("theme-cyberpunk")).toBe(true);
+    expect(localStorage.getItem("color-theme")).toBe("cyberpunk");
+  });
+
   it("does nothing when a preview ends without one started", async () => {
     const { result } = await mountHook();
     const before = document.documentElement.className;

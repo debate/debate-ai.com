@@ -121,14 +121,25 @@ export interface ParliRankingsSectionProps {
   view?: LeaderboardView
   /** Called with the season actually shown, so the shared season select can name it. */
   onSeasonShown?: (season: string) => void
+  /**
+   * Called with the season's rankings as they load (`undefined` while loading,
+   * `null` when unavailable), so the "Who debated whom" card beside the table
+   * reads the same rows.
+   */
+  onRankingsChange?: (rankings: NpdlSeasonRankings | null | undefined) => void
   className?: string
 }
 
 /** The section. */
-export function ParliRankingsSection({ season = null, view = "teams", onSeasonShown, className }: ParliRankingsSectionProps) {
+export function ParliRankingsSection({ season = null, view = "teams", onSeasonShown, onRankingsChange, className }: ParliRankingsSectionProps) {
   const { state, retry } = useNpdlRankings(season)
   const rankings = state.status === "ready" ? state.body.rankings : null
   const shownSeason = rankings?.season ?? season
+
+  useEffect(() => {
+    onRankingsChange?.(state.status === "loading" ? undefined : rankings)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.status, rankings])
 
   useEffect(() => {
     if (rankings?.season) onSeasonShown?.(rankings.season)

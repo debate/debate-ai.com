@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getDBFromContext } from "@/lib/database/context"
 import { getSession, getUserId } from "@/lib/auth/session"
 import { loadOwnSavedData } from "@/lib/saved-data/saved-data"
-import { exportAllOwnSavedData, exportOwnToolCollection } from "@/lib/saved-data/saved-data-items"
+import { exportAllOwnSavedData, exportOwnSqlTool, exportOwnToolCollection } from "@/lib/saved-data/saved-data-items"
 import { MAX_RESTORE_FILE_CHARS, parseRestoreFile, restoreOwnSavedData } from "@/lib/saved-data/saved-data-restore"
 
 /**
@@ -14,6 +14,10 @@ import { MAX_RESTORE_FILE_CHARS, parseRestoreFile, restoreOwnSavedData } from "@
  *     ?export=tool&collection=<key> — downloads one tool's synced data, in the
  *     same shape (only that collection), so Restore reads it back. 400 for a
  *     key that is not a synced tool collection.
+ *     ?export=sql&key=<key> — downloads one "More saved work" table
+ *     (`SAVED_SQL_TOOLS`: briefings, flashcard decks…), only the caller's rows,
+ *     in the shape of Export all's `moreSavedWork`. 400 for an unknown key.
+ *     Restore does not read these rows back yet.
  * POST — restores documents, flows, rounds, practice debates vs AI, word-count
  *     rounds, drill sets, judge decisions, sent speeches and tool data from an
  *     export file (the body is the file's JSON, single item or "Export all").
@@ -35,6 +39,13 @@ export async function GET(req: NextRequest) {
   if (req.nextUrl.searchParams.get("export") === "tool") {
     const file = await exportOwnToolCollection(db, userId, req.nextUrl.searchParams.get("collection") ?? "")
     if (!file) return NextResponse.json({ error: "That isn't a tool that saves to your account." }, { status: 400 })
+    return new NextResponse(file.body, {
+      headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="${file.filename}"` },
+    })
+  }
+  if (req.nextUrl.searchParams.get("export") === "sql") {
+    const file = await exportOwnSqlTool(db, userId, req.nextUrl.searchParams.get("key") ?? "")
+    if (!file) return NextResponse.json({ error: "That isn't a kind of saved work in your account." }, { status: 400 })
     return new NextResponse(file.body, {
       headers: { "Content-Type": "application/json", "Content-Disposition": `attachment; filename="${file.filename}"` },
     })

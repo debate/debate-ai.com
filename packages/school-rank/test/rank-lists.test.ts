@@ -309,12 +309,12 @@ describe("reconciling the bundled schools with the compiled lists", () => {
 
   it("reports which wordmark schools match the new data", () => {
     const all = wordmarkRankCoverage()
-    expect(all.total).toBe(59)
-    expect(all.matched).toBe(24)
-    expect(all.byStatus).toEqual({ matched: 24, "rank-conflict": 0, "in-gap": 21, "name-mismatch": 0, "not-compiled": 14 })
+    expect(all.total).toBe(63)
+    expect(all.matched).toBe(26)
+    expect(all.byStatus).toEqual({ matched: 26, "rank-conflict": 0, "in-gap": 22, "name-mismatch": 0, "not-compiled": 15 })
 
     const colleges = wordmarkRankCoverage("college")
-    expect(colleges).toMatchObject({ total: 29, matched: 15 })
+    expect(colleges).toMatchObject({ total: 30, matched: 15 })
     expect(colleges.unmatched.map((r) => r.school.name).sort()).toEqual([
       "California State University, Long Beach",
       "George Mason University",
@@ -325,6 +325,7 @@ describe("reconciling the bundled schools with the compiled lists", () => {
       "University of Houston",
       "University of Kansas",
       "University of Kentucky",
+      "University of Louisville",
       "University of North Texas",
       "University of Oklahoma",
       "University of Redlands",
@@ -334,7 +335,7 @@ describe("reconciling the bundled schools with the compiled lists", () => {
     expect(colleges.unmatched.every((r) => r.status === "not-compiled")).toBe(true)
 
     const highSchools = wordmarkRankCoverage("high-school")
-    expect(highSchools).toMatchObject({ total: 30, matched: 9 })
+    expect(highSchools).toMatchObject({ total: 33, matched: 11 })
     expect(highSchools.unmatched.every((r) => r.status === "in-gap")).toBe(true)
     for (const { school, list } of highSchools.unmatched) {
       expect(rankStatus(list, school.nicheRank as number)).toBe("gap")
@@ -343,7 +344,9 @@ describe("reconciling the bundled schools with the compiled lists", () => {
     expect(matchedNames.sort()).toEqual([
       "Bronx High School of Science",
       "Caddo Parish Magnet High School",
+      "Coppell High School",
       "Harvard-Westlake School",
+      "Lexington High School",
       "Liberal Arts & Science Academy",
       "Palos Verdes Peninsula High School",
       "Payton College Preparatory High School",

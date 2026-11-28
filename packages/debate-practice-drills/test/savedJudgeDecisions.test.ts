@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { isValidJudgeDecisionRecord } from "../src/state/savedJudgeDecisions";
+import {
+  isValidJudgeDecisionRecord,
+  judgeDecisionIdsOverCap,
+  MAX_JUDGE_DECISIONS_PER_ROUND,
+} from "../src/state/savedJudgeDecisions";
+import { MAX_JUDGE_DECISIONS_PER_ROUND as REEXPORTED_CAP } from "../src/state/judgeDecisions";
 import type { JudgeDecisionRecord } from "../src/state/judgeDecisions";
 
 function makeRecord(overrides: Partial<JudgeDecisionRecord> = {}): JudgeDecisionRecord {
@@ -93,5 +98,54 @@ describe("isValidJudgeDecisionRecord", () => {
 
   it("rejects a record whose generatedAt isn't a number", () => {
     expect(isValidJudgeDecisionRecord(makeRecord({ generatedAt: "yesterday" as unknown as number }))).toBe(false);
+  });
+});
+
+describe("judgeDecisionIdsOverCap", () => {
+  const entry = (id: string, generatedAt: number, roundId = "round-1") => ({ id, roundId, generatedAt });
+
+  it("keeps the device and account cap the same constant", () => {
+    expect(MAX_JUDGE_DECISIONS_PER_ROUND).toBe(20);
+    expect(REEXPORTED_CAP).toBe(MAX_JUDGE_DECISIONS_PER_ROUND);
+  });
+
+  it("returns nothing while every round is at or under the cap", () => {
+    const records = Array.from({ length: MAX_JUDGE_DECISIONS_PER_ROUND }, (_, i) => entry(`d${i}`, i));
+    expect(judgeDecisionIdsOverCap(records)).toEqual([]);
+    expect(judgeDecisionIdsOverCap([])).toEqual([]);
+  });
+
+  it("returns the oldest decisions beyond the cap, oldest first", () => {
+    const records = Array.from({ length: 23 }, (_, i) => entry(`d${String(i).padStart(2, "0")}`, 1000 + i));
+    expect(judgeDecisionIdsOverCap(records)).toEqual(["d00", "d01", "d02"]);
+  });
+
+  it("caps each round on its own, in first-seen round order", () => {
+    const records = [
+      entry("b-old", 1, "round-b"),
+      entry("b-new", 2, "round-b"),
+      entry("a-old", 1, "round-a"),
+      entry("a-mid", 2, "round-a"),
+      entry("a-new", 3, "round-a"),
+    ];
+    expect(judgeDecisionIdsOverCap(records, 1)).toEqual(["b-old", "a-old", "a-mid"]);
+  });
+
+  it("breaks a generatedAt tie by keeping the smaller id, whatever the input order", () => {
+    const tied = [entry("z", 5), entry("a", 5), entry("m", 5)];
+    expect(judgeDecisionIdsOverCap(tied, 2)).toEqual(["z"]);
+    expect(judgeDecisionIdsOverCap([...tied].reverse(), 2)).toEqual(["z"]);
+  });
+
+  it("trims a round whole with a cap of 0 and treats a negative cap as 0", () => {
+    expect(judgeDecisionIdsOverCap([entry("a", 1), entry("b", 2)], 0)).toEqual(["a", "b"]);
+    expect(judgeDecisionIdsOverCap([entry("a", 1)], -3)).toEqual(["a"]);
+  });
+
+  it("never mutates its input", () => {
+    const records = [entry("new", 2), entry("old", 1)];
+    const copy = records.map((record) => ({ ...record }));
+    judgeDecisionIdsOverCap(records, 1);
+    expect(records).toEqual(copy);
   });
 });

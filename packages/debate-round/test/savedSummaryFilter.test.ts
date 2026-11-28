@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import {
   describeSavedLoadFailure,
+  describeSavedRoundRemoval,
   filterSavedSummaries,
+  savedRoundFlowsPrompt,
   SAVED_SUMMARY_SORT_OPTIONS,
   savedSummaryCountLabel,
   savedSummaryQueryTerms,
@@ -141,5 +143,51 @@ describe("describeSavedLoadFailure", () => {
     expect(describeSavedLoadFailure("flow", new Error("   "))).toBe("Couldn't open this flow. Try again.");
     expect(describeSavedLoadFailure("round", "boom")).toBe("Couldn't open this round. Try again.");
     expect(describeSavedLoadFailure("round", undefined)).toBe("Couldn't open this round. Try again.");
+  });
+});
+
+describe("savedRoundFlowsPrompt", () => {
+  it("names the round and how many saved flows would go", () => {
+    const one = savedRoundFlowsPrompt("Octas", 1);
+    expect(one).toContain("Also remove its saved flow from your account?");
+    expect(one).toContain('OK removes "Octas" with its saved flow.');
+    expect(one).toContain("A flow another saved round uses is always kept.");
+    expect(savedRoundFlowsPrompt("Octas", 3)).toContain("Also remove its 3 saved flows from your account?");
+  });
+});
+
+describe("describeSavedRoundRemoval", () => {
+  const outcome = (removed: number[], kept: number[], flowsUnreadable = false) => ({
+    removedFlowIds: removed,
+    keptFlowIds: kept,
+    flowsUnreadable,
+  });
+
+  it("says only the round went when nothing was asked", () => {
+    expect(describeSavedRoundRemoval("Octas", outcome([], []), "none")).toBe('Removed "Octas" from your account.');
+  });
+
+  it("says the flows stayed when the user kept them", () => {
+    expect(describeSavedRoundRemoval("Octas", outcome([], []), "kept")).toBe(
+      'Removed "Octas" from your account. Its saved flows are still there.',
+    );
+  });
+
+  it("counts removed and kept flows", () => {
+    expect(describeSavedRoundRemoval("Octas", outcome([1, 2], []), "removed")).toBe(
+      'Removed "Octas" and 2 flows from your account.',
+    );
+    expect(describeSavedRoundRemoval("Octas", outcome([1], [2, 3]), "removed")).toBe(
+      'Removed "Octas" and 1 flow from your account. Kept 2 flows another saved round uses.',
+    );
+    expect(describeSavedRoundRemoval("Octas", outcome([], [2]), "removed")).toBe(
+      'Removed "Octas" from your account. Kept 1 flow another saved round uses.',
+    );
+  });
+
+  it("explains flows kept because the round couldn't be read", () => {
+    expect(describeSavedRoundRemoval("Octas", outcome([], [], true), "removed")).toBe(
+      'Removed "Octas" from your account. Its saved flows were kept because the round couldn\'t be read.',
+    );
   });
 });
