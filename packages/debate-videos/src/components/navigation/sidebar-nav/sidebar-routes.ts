@@ -122,7 +122,7 @@ export const OWN_SIDEBAR_DOCK_HREFS: readonly string[] = ["/doc", "/research/doc
  * Routes that render the video library page (`LecturesPage`), which draws
  * its own full sidebar, dock included: the round archive under `/videos`,
  * the lecture library under `/lectures`, and the two reference views the
- * Inference category lists — the rankings and the statistics. (The glossary
+ * Debates category lists — the rankings and the statistics. (The glossary
  * used to be a third; it is a tab of `/practice/rules` now.)
  */
 export const VIDEO_LIBRARY_HREFS: readonly string[] = [

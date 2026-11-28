@@ -63,7 +63,7 @@ export interface VideoTreeRowContext {
   onToggleFavorite: (videoId: string) => void
   onHideVideo: (videoId: string) => void
   onUnhideVideo: (videoId: string) => void
-  /** Searches the library for a clicked team name. */
+  /** Fallback for a team name with no team page (no team code): searches the library for it. */
   onSearch?: (text: string) => void
   /** Badges each tournament name with its debate format, for listings that
    *  mix formats (Top Picks). */

@@ -1,0 +1,3478 @@
+{
+  "kind": "subfield",
+  "id": 2405,
+  "name": "Parasitology",
+  "total_in_scrape": 176,
+  "count": 176,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Parasitology -- 9.9",
+      "id": "https://openalex.org/A5074730004",
+      "display_name": "Didier Raoult",
+      "orcid": "https://orcid.org/0000-0002-0633-5974",
+      "h_index": 216,
+      "i10_index": 2637,
+      "works_count": 4353,
+      "cited_by_count": 260292,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Parasitology -- 9.9",
+      "id": "https://openalex.org/A5070787894",
+      "display_name": "Jitender Prakash Dubey",
+      "orcid": "https://orcid.org/0000-0003-4455-2870",
+      "h_index": 153,
+      "i10_index": 1346,
+      "works_count": 1662,
+      "cited_by_count": 115656,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Parasitology -- 9.9",
+      "id": "https://openalex.org/A5087704375",
+      "display_name": "Peter Jay Hotez",
+      "orcid": "https://orcid.org/0000-0001-8770-1042",
+      "h_index": 135,
+      "i10_index": 637,
+      "works_count": 1042,
+      "cited_by_count": 180086,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Parasitology -- 9.9",
+      "id": "https://openalex.org/A5049396774",
+      "display_name": "Roy Malcolm Anderson",
+      "orcid": "https://orcid.org/0000-0002-9528-3175",
+      "h_index": 128,
+      "i10_index": 496,
+      "works_count": 797,
+      "cited_by_count": 84580,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Parasitology -- 9.9",
+      "id": "https://openalex.org/A5015991419",
+      "display_name": "Jürg Utzinger",
+      "orcid": "https://orcid.org/0000-0001-6885-0798",
+      "h_index": 124,
+      "i10_index": 737,
+      "works_count": 1471,
+      "cited_by_count": 67178,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Parasitology -- 9.9",
+      "id": "https://openalex.org/A5031443037",
+      "display_name": "L. David Sibley",
+      "orcid": "https://orcid.org/0000-0001-7110-0285",
+      "h_index": 123,
+      "i10_index": 290,
+      "works_count": 494,
+      "cited_by_count": 45092,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5040912618",
+      "display_name": "Robert H. Gilman",
+      "orcid": "https://orcid.org/0000-0002-9037-0712",
+      "h_index": 119,
+      "i10_index": 843,
+      "works_count": 1356,
+      "cited_by_count": 70287,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5026207705",
+      "display_name": "Matthew Berriman",
+      "orcid": "https://orcid.org/0000-0002-9581-0377",
+      "h_index": 117,
+      "i10_index": 291,
+      "works_count": 591,
+      "cited_by_count": 67228,
+      "discipline": "Parasitology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5100412746",
+      "display_name": "Lihua Xiao",
+      "orcid": "https://orcid.org/0000-0001-8532-2727",
+      "h_index": 115,
+      "i10_index": 486,
+      "works_count": 629,
+      "cited_by_count": 50763,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5000932061",
+      "display_name": "Robert Poulin",
+      "orcid": "https://orcid.org/0000-0003-1390-1206",
+      "h_index": 114,
+      "i10_index": 622,
+      "works_count": 1012,
+      "cited_by_count": 54895,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5109840575",
+      "display_name": "Jack S. Remington",
+      "orcid": null,
+      "h_index": 114,
+      "i10_index": 442,
+      "works_count": 596,
+      "cited_by_count": 43890,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5071151203",
+      "display_name": "Allen C. Steere",
+      "orcid": "https://orcid.org/0000-0002-5268-9853",
+      "h_index": 113,
+      "i10_index": 286,
+      "works_count": 372,
+      "cited_by_count": 47246,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5102941494",
+      "display_name": "José de la Fuente",
+      "orcid": "https://orcid.org/0000-0001-7383-9649",
+      "h_index": 112,
+      "i10_index": 673,
+      "works_count": 1028,
+      "cited_by_count": 48693,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5022173812",
+      "display_name": "Erol Fikrig",
+      "orcid": "https://orcid.org/0000-0002-5884-6047",
+      "h_index": 112,
+      "i10_index": 393,
+      "works_count": 546,
+      "cited_by_count": 42808,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5037580313",
+      "display_name": "José M. C. Ribeiro",
+      "orcid": "https://orcid.org/0000-0002-9107-0818",
+      "h_index": 110,
+      "i10_index": 409,
+      "works_count": 536,
+      "cited_by_count": 42887,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5026839393",
+      "display_name": "Gail M. Williams",
+      "orcid": "https://orcid.org/0000-0002-4822-5263",
+      "h_index": 109,
+      "i10_index": 555,
+      "works_count": 916,
+      "cited_by_count": 54076,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Parasitology -- 9.8",
+      "id": "https://openalex.org/A5065928472",
+      "display_name": "David J. P. Ferguson",
+      "orcid": "https://orcid.org/0000-0001-5045-819X",
+      "h_index": 107,
+      "i10_index": 427,
+      "works_count": 604,
+      "cited_by_count": 38262,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5012892998",
+      "display_name": "Rick M. Maizels",
+      "orcid": "https://orcid.org/0000-0003-3216-1944",
+      "h_index": 107,
+      "i10_index": 341,
+      "works_count": 525,
+      "cited_by_count": 39333,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5063107764",
+      "display_name": "Thomas B. Nutman",
+      "orcid": "https://orcid.org/0000-0001-6887-4941",
+      "h_index": 105,
+      "i10_index": 487,
+      "works_count": 779,
+      "cited_by_count": 37942,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5105347839",
+      "display_name": "Andrew P. Dobson",
+      "orcid": "https://orcid.org/0000-0002-9678-1694",
+      "h_index": 104,
+      "i10_index": 252,
+      "works_count": 402,
+      "cited_by_count": 55784,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Mathematics",
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5043460163",
+      "display_name": "Donald Peter McManus",
+      "orcid": "https://orcid.org/0000-0001-6443-1449",
+      "h_index": 102,
+      "i10_index": 561,
+      "works_count": 892,
+      "cited_by_count": 47968,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5053925806",
+      "display_name": "John C. Boothroyd",
+      "orcid": "https://orcid.org/0000-0001-9719-745X",
+      "h_index": 100,
+      "i10_index": 222,
+      "works_count": 294,
+      "cited_by_count": 31248,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5085039675",
+      "display_name": "Robin B. Gasser",
+      "orcid": "https://orcid.org/0000-0002-4423-1690",
+      "h_index": 98,
+      "i10_index": 693,
+      "works_count": 1085,
+      "cited_by_count": 44252,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5106792057",
+      "display_name": "Simon J. Brooker",
+      "orcid": "https://orcid.org/0000-0002-2314-0415",
+      "h_index": 98,
+      "i10_index": 248,
+      "works_count": 376,
+      "cited_by_count": 58387,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5031279058",
+      "display_name": "Peter John Hudson",
+      "orcid": "https://orcid.org/0000-0003-0468-3403",
+      "h_index": 97,
+      "i10_index": 313,
+      "works_count": 451,
+      "cited_by_count": 37201,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Mathematics",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5038050740",
+      "display_name": "David S. Roos",
+      "orcid": "https://orcid.org/0000-0001-6725-4089",
+      "h_index": 97,
+      "i10_index": 212,
+      "works_count": 347,
+      "cited_by_count": 44334,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5049120075",
+      "display_name": "Domenico Otranto",
+      "orcid": "https://orcid.org/0000-0002-7518-476X",
+      "h_index": 96,
+      "i10_index": 640,
+      "works_count": 955,
+      "cited_by_count": 38787,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Parasitology -- 9.7",
+      "id": "https://openalex.org/A5016656665",
+      "display_name": "Joseph F. Urban",
+      "orcid": "https://orcid.org/0000-0002-1590-8869",
+      "h_index": 96,
+      "i10_index": 301,
+      "works_count": 487,
+      "cited_by_count": 37257,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5040981678",
+      "display_name": "Robert E. Sinden",
+      "orcid": "https://orcid.org/0000-0003-4669-0695",
+      "h_index": 96,
+      "i10_index": 271,
+      "works_count": 385,
+      "cited_by_count": 30090,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5059589109",
+      "display_name": "Andrew Spielman",
+      "orcid": "https://orcid.org/0000-0002-7052-3689",
+      "h_index": 95,
+      "i10_index": 278,
+      "works_count": 394,
+      "cited_by_count": 26648,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5061281389",
+      "display_name": "Philippe Parola",
+      "orcid": "https://orcid.org/0000-0002-1061-1927",
+      "h_index": 94,
+      "i10_index": 519,
+      "works_count": 887,
+      "cited_by_count": 43790,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5068564987",
+      "display_name": "Alan G. Barbour",
+      "orcid": "https://orcid.org/0000-0002-0719-5248",
+      "h_index": 94,
+      "i10_index": 242,
+      "works_count": 316,
+      "cited_by_count": 32453,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5024270822",
+      "display_name": "Alex C. Loukas",
+      "orcid": "https://orcid.org/0000-0002-0896-8441",
+      "h_index": 93,
+      "i10_index": 338,
+      "works_count": 477,
+      "cited_by_count": 31910,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5024327590",
+      "display_name": "Staffan Bensch",
+      "orcid": "https://orcid.org/0000-0002-0082-0899",
+      "h_index": 93,
+      "i10_index": 260,
+      "works_count": 438,
+      "cited_by_count": 31107,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5056127741",
+      "display_name": "Marcelo B. Labruna",
+      "orcid": "https://orcid.org/0000-0002-9675-3132",
+      "h_index": 92,
+      "i10_index": 599,
+      "works_count": 935,
+      "cited_by_count": 37846,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5043404986",
+      "display_name": "Sergé Morand",
+      "orcid": "https://orcid.org/0000-0003-3986-7659",
+      "h_index": 90,
+      "i10_index": 470,
+      "works_count": 1036,
+      "cited_by_count": 34205,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5035587484",
+      "display_name": "Peter Deplazes",
+      "orcid": "https://orcid.org/0000-0002-1118-5405",
+      "h_index": 90,
+      "i10_index": 327,
+      "works_count": 447,
+      "cited_by_count": 30717,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5082305080",
+      "display_name": "Kevin D. Lafferty",
+      "orcid": "https://orcid.org/0000-0001-7583-4593",
+      "h_index": 90,
+      "i10_index": 217,
+      "works_count": 382,
+      "cited_by_count": 44707,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Parasitology -- 9.6",
+      "id": "https://openalex.org/A5013263926",
+      "display_name": "Justin David Radolf",
+      "orcid": "https://orcid.org/0000-0002-9341-6712",
+      "h_index": 89,
+      "i10_index": 237,
+      "works_count": 362,
+      "cited_by_count": 26785,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5109886672",
+      "display_name": "A Capron",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 569,
+      "works_count": 1083,
+      "cited_by_count": 32865,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5112205300",
+      "display_name": "David Hughes Walker",
+      "orcid": "https://orcid.org/0000-0002-3309-4360",
+      "h_index": 88,
+      "i10_index": 348,
+      "works_count": 522,
+      "cited_by_count": 29575,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5090890331",
+      "display_name": "Donald A. P. Bundy",
+      "orcid": "https://orcid.org/0000-0003-2470-6131",
+      "h_index": 88,
+      "i10_index": 284,
+      "works_count": 459,
+      "cited_by_count": 23330,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Nursing",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5109218978",
+      "display_name": "Allen W. Cheever",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 209,
+      "works_count": 265,
+      "cited_by_count": 28302,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5053164982",
+      "display_name": "Una M. Ryan",
+      "orcid": "https://orcid.org/0000-0003-2710-9324",
+      "h_index": 87,
+      "i10_index": 317,
+      "works_count": 479,
+      "cited_by_count": 30196,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5055957305",
+      "display_name": "James S. McCarthy",
+      "orcid": "https://orcid.org/0000-0001-6596-9718",
+      "h_index": 87,
+      "i10_index": 311,
+      "works_count": 589,
+      "cited_by_count": 24770,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5024279527",
+      "display_name": "Maria Yazdanbakhsh",
+      "orcid": "https://orcid.org/0000-0002-7666-1441",
+      "h_index": 86,
+      "i10_index": 309,
+      "works_count": 512,
+      "cited_by_count": 27954,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5083860600",
+      "display_name": "Agustín Estrada‐Peña",
+      "orcid": "https://orcid.org/0000-0001-7483-046X",
+      "h_index": 85,
+      "i10_index": 281,
+      "works_count": 660,
+      "cited_by_count": 28243,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5066856917",
+      "display_name": "Louis M. Weiss",
+      "orcid": "https://orcid.org/0000-0002-0357-7396",
+      "h_index": 84,
+      "i10_index": 348,
+      "works_count": 523,
+      "cited_by_count": 29498,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5065231641",
+      "display_name": "John Stephen Dumler",
+      "orcid": "https://orcid.org/0000-0002-8476-1311",
+      "h_index": 84,
+      "i10_index": 253,
+      "works_count": 358,
+      "cited_by_count": 27384,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5002955450",
+      "display_name": "Dominique Soldati‐Favre",
+      "orcid": "https://orcid.org/0000-0003-4156-2109",
+      "h_index": 84,
+      "i10_index": 202,
+      "works_count": 477,
+      "cited_by_count": 20429,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Parasitology -- 9.5",
+      "id": "https://openalex.org/A5071354099",
+      "display_name": "Hiroshi Sato",
+      "orcid": "https://orcid.org/0000-0002-5230-4677",
+      "h_index": 83,
+      "i10_index": 386,
+      "works_count": 716,
+      "cited_by_count": 28563,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5045974449",
+      "display_name": "Jozef Vercruysse",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 384,
+      "works_count": 663,
+      "cited_by_count": 26417,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5109848237",
+      "display_name": "Ronald Fayer",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 286,
+      "works_count": 343,
+      "cited_by_count": 31270,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5009409711",
+      "display_name": "Paul Robert Torgerson",
+      "orcid": "https://orcid.org/0000-0003-4277-9983",
+      "h_index": 82,
+      "i10_index": 259,
+      "works_count": 472,
+      "cited_by_count": 31150,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5033452459",
+      "display_name": "Jennifer Keiser",
+      "orcid": "https://orcid.org/0000-0003-0290-3521",
+      "h_index": 81,
+      "i10_index": 372,
+      "works_count": 577,
+      "cited_by_count": 31561,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5007566988",
+      "display_name": "John Ellis",
+      "orcid": "https://orcid.org/0000-0001-7328-4831",
+      "h_index": 81,
+      "i10_index": 256,
+      "works_count": 383,
+      "cited_by_count": 21610,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5053131777",
+      "display_name": "Joanne P. Webster",
+      "orcid": "https://orcid.org/0000-0001-8616-4919",
+      "h_index": 81,
+      "i10_index": 195,
+      "works_count": 358,
+      "cited_by_count": 18859,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5056393413",
+      "display_name": "Durland Fish",
+      "orcid": "https://orcid.org/0000-0002-7300-8754",
+      "h_index": 81,
+      "i10_index": 156,
+      "works_count": 195,
+      "cited_by_count": 23147,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5009904850",
+      "display_name": "Bruno Gottstein",
+      "orcid": "https://orcid.org/0000-0003-0782-3723",
+      "h_index": 80,
+      "i10_index": 342,
+      "works_count": 477,
+      "cited_by_count": 22279,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5079782880",
+      "display_name": "Eskild Petersen",
+      "orcid": "https://orcid.org/0000-0002-8793-9680",
+      "h_index": 80,
+      "i10_index": 280,
+      "works_count": 515,
+      "cited_by_count": 26731,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5073368410",
+      "display_name": "Roger K. Prichard",
+      "orcid": "https://orcid.org/0000-0002-0601-2171",
+      "h_index": 80,
+      "i10_index": 254,
+      "works_count": 329,
+      "cited_by_count": 22495,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Veterinary",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Parasitology -- 9.4",
+      "id": "https://openalex.org/A5014034297",
+      "display_name": "Jason R. Rohr",
+      "orcid": "https://orcid.org/0000-0001-8285-4912",
+      "h_index": 80,
+      "i10_index": 199,
+      "works_count": 450,
+      "cited_by_count": 24817,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5109999917",
+      "display_name": "Edoardo Pozio",
+      "orcid": "https://orcid.org/0000-0003-3317-4704",
+      "h_index": 79,
+      "i10_index": 364,
+      "works_count": 485,
+      "cited_by_count": 24652,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5074218322",
+      "display_name": "Achim M. Hoerauf",
+      "orcid": "https://orcid.org/0000-0002-8671-3831",
+      "h_index": 79,
+      "i10_index": 329,
+      "works_count": 579,
+      "cited_by_count": 23344,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5047010731",
+      "display_name": "Filipe Dantas‐Torres",
+      "orcid": "https://orcid.org/0000-0002-1496-6274",
+      "h_index": 78,
+      "i10_index": 327,
+      "works_count": 462,
+      "cited_by_count": 24979,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5063724695",
+      "display_name": "Niko Speybroeck",
+      "orcid": "https://orcid.org/0000-0003-3322-3502",
+      "h_index": 78,
+      "i10_index": 274,
+      "works_count": 505,
+      "cited_by_count": 24384,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5091071063",
+      "display_name": "Santiago Mas‐Coma",
+      "orcid": "https://orcid.org/0000-0002-1685-7004",
+      "h_index": 78,
+      "i10_index": 218,
+      "works_count": 354,
+      "cited_by_count": 18903,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5109930975",
+      "display_name": "Patricia A. Conrad",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 207,
+      "works_count": 249,
+      "cited_by_count": 18768,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5100668087",
+      "display_name": "Xiao‐Nong Zhou",
+      "orcid": "https://orcid.org/0000-0003-1417-8427",
+      "h_index": 77,
+      "i10_index": 404,
+      "works_count": 714,
+      "cited_by_count": 25062,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5091474005",
+      "display_name": "David Scott Lindsay",
+      "orcid": "https://orcid.org/0000-0002-0592-8321",
+      "h_index": 77,
+      "i10_index": 381,
+      "works_count": 500,
+      "cited_by_count": 27636,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5108583453",
+      "display_name": "Archie Clements",
+      "orcid": "https://orcid.org/0000-0002-7601-325X",
+      "h_index": 77,
+      "i10_index": 315,
+      "works_count": 566,
+      "cited_by_count": 21375,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5030659875",
+      "display_name": "David Rollinson",
+      "orcid": "https://orcid.org/0000-0003-1999-1716",
+      "h_index": 77,
+      "i10_index": 315,
+      "works_count": 546,
+      "cited_by_count": 20252,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Parasitology -- 9.3",
+      "id": "https://openalex.org/A5059784293",
+      "display_name": "Gad Baneth",
+      "orcid": "https://orcid.org/0000-0002-7549-1305",
+      "h_index": 77,
+      "i10_index": 294,
+      "works_count": 496,
+      "cited_by_count": 22534,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5003482762",
+      "display_name": "Yasuko Rikihisa",
+      "orcid": "https://orcid.org/0000-0002-1870-5338",
+      "h_index": 77,
+      "i10_index": 267,
+      "works_count": 396,
+      "cited_by_count": 30830,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5037179989",
+      "display_name": "Hein Sprong",
+      "orcid": "https://orcid.org/0000-0002-0218-4320",
+      "h_index": 77,
+      "i10_index": 245,
+      "works_count": 569,
+      "cited_by_count": 22782,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5007642514",
+      "display_name": "Ahmad Daryani",
+      "orcid": "https://orcid.org/0000-0001-8571-5803",
+      "h_index": 77,
+      "i10_index": 206,
+      "works_count": 318,
+      "cited_by_count": 130650,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5005382742",
+      "display_name": "Joseph F. Piesman",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 196,
+      "works_count": 237,
+      "cited_by_count": 21608,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5082847839",
+      "display_name": "Florence Fenollar",
+      "orcid": "https://orcid.org/0000-0002-7517-0173",
+      "h_index": 76,
+      "i10_index": 294,
+      "works_count": 559,
+      "cited_by_count": 21721,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5109242959",
+      "display_name": "Travis C. McGuire",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 279,
+      "works_count": 391,
+      "cited_by_count": 16586,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5055991332",
+      "display_name": "John F. Anderson",
+      "orcid": "https://orcid.org/0000-0003-0199-8469",
+      "h_index": 76,
+      "i10_index": 277,
+      "works_count": 475,
+      "cited_by_count": 22689,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5068367604",
+      "display_name": "John P. Dalton",
+      "orcid": "https://orcid.org/0000-0003-3829-9186",
+      "h_index": 76,
+      "i10_index": 220,
+      "works_count": 362,
+      "cited_by_count": 17301,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5014639053",
+      "display_name": "Stefan H. I. Kappe",
+      "orcid": "https://orcid.org/0000-0003-1540-1731",
+      "h_index": 76,
+      "i10_index": 192,
+      "works_count": 269,
+      "cited_by_count": 19114,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5108085812",
+      "display_name": "Katherine M. Kocan",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 228,
+      "works_count": 301,
+      "cited_by_count": 18496,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Parasitology -- 9.2",
+      "id": "https://openalex.org/A5113992164",
+      "display_name": "Nicholas Hume Ogden",
+      "orcid": "https://orcid.org/0000-0002-1062-7283",
+      "h_index": 75,
+      "i10_index": 222,
+      "works_count": 403,
+      "cited_by_count": 18986,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5108153238",
+      "display_name": "Peter M. Schantz",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 180,
+      "works_count": 254,
+      "cited_by_count": 19916,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5015049795",
+      "display_name": "Boris Striepen",
+      "orcid": "https://orcid.org/0000-0002-7426-432X",
+      "h_index": 75,
+      "i10_index": 159,
+      "works_count": 222,
+      "cited_by_count": 17304,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5007882171",
+      "display_name": "Paul J. Brindley",
+      "orcid": "https://orcid.org/0000-0003-1765-0002",
+      "h_index": 74,
+      "i10_index": 315,
+      "works_count": 570,
+      "cited_by_count": 24249,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5068575636",
+      "display_name": "J. Russell Stothard",
+      "orcid": "https://orcid.org/0000-0002-9370-3420",
+      "h_index": 74,
+      "i10_index": 274,
+      "works_count": 499,
+      "cited_by_count": 19019,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5040573284",
+      "display_name": "Charles H. King",
+      "orcid": "https://orcid.org/0000-0001-8349-9270",
+      "h_index": 74,
+      "i10_index": 225,
+      "works_count": 306,
+      "cited_by_count": 40226,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5105835232",
+      "display_name": "Eric A. Ottesen",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 210,
+      "works_count": 277,
+      "cited_by_count": 18249,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5057653322",
+      "display_name": "Richard K. Grencis",
+      "orcid": "https://orcid.org/0000-0002-7592-0085",
+      "h_index": 74,
+      "i10_index": 180,
+      "works_count": 327,
+      "cited_by_count": 17632,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5001715925",
+      "display_name": "Jean‐François Dubremetz",
+      "orcid": "https://orcid.org/0000-0002-1362-9110",
+      "h_index": 74,
+      "i10_index": 179,
+      "works_count": 235,
+      "cited_by_count": 16357,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5009866924",
+      "display_name": "Pierre Dorny",
+      "orcid": "https://orcid.org/0000-0001-5381-7987",
+      "h_index": 73,
+      "i10_index": 351,
+      "works_count": 542,
+      "cited_by_count": 18613,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5054904088",
+      "display_name": "Rodrigo Corrêa‐Oliveira",
+      "orcid": "https://orcid.org/0000-0001-6419-9459",
+      "h_index": 73,
+      "i10_index": 306,
+      "works_count": 388,
+      "cited_by_count": 19050,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Parasitology -- 9.1",
+      "id": "https://openalex.org/A5114373980",
+      "display_name": "Frédéric Thomas",
+      "orcid": "https://orcid.org/0000-0003-2238-1978",
+      "h_index": 73,
+      "i10_index": 266,
+      "works_count": 546,
+      "cited_by_count": 18360,
+      "discipline": "Parasitology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Parasitology -- 9.0",
+      "id": "https://openalex.org/A5085242160",
+      "display_name": "Guy H. Palmer",
+      "orcid": "https://orcid.org/0000-0001-5679-4709",
+      "h_index": 73,
+      "i10_index": 257,
+      "works_count": 339,
+      "cited_by_count": 19012,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Parasitology -- 9.0",
+      "id": "https://openalex.org/A5046286797",
+      "display_name": "Hector Hugo Garcia",
+      "orcid": "https://orcid.org/0000-0002-4633-6269",
+      "h_index": 73,
+      "i10_index": 245,
+      "works_count": 359,
+      "cited_by_count": 18906,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Parasitology -- 9.0",
+      "id": "https://openalex.org/A5108512388",
+      "display_name": "Philip S. Craig",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 245,
+      "works_count": 317,
+      "cited_by_count": 17649,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Parasitology -- 9.0",
+      "id": "https://openalex.org/A5021046890",
+      "display_name": "Pieter T. J. Johnson",
+      "orcid": "https://orcid.org/0000-0002-7997-5390",
+      "h_index": 73,
+      "i10_index": 180,
+      "works_count": 279,
+      "cited_by_count": 24522,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Parasitology -- 9.0",
+      "id": "https://openalex.org/A5030474704",
+      "display_name": "Franz J. Conraths",
+      "orcid": "https://orcid.org/0000-0002-7400-9409",
+      "h_index": 72,
+      "i10_index": 282,
+      "works_count": 685,
+      "cited_by_count": 17106,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5046025682",
+      "display_name": "Frans Jongejan",
+      "orcid": "https://orcid.org/0009-0004-5728-8989",
+      "h_index": 72,
+      "i10_index": 220,
+      "works_count": 330,
+      "cited_by_count": 19251,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5055180890",
+      "display_name": "Björn Olsén",
+      "orcid": "https://orcid.org/0000-0002-4646-691X",
+      "h_index": 72,
+      "i10_index": 213,
+      "works_count": 342,
+      "cited_by_count": 20918,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5003869260",
+      "display_name": "David W. Dunne",
+      "orcid": "https://orcid.org/0000-0002-8940-9886",
+      "h_index": 72,
+      "i10_index": 194,
+      "works_count": 270,
+      "cited_by_count": 15554,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5088959119",
+      "display_name": "Oliver C.H. Kwok",
+      "orcid": "https://orcid.org/0000-0001-9324-8061",
+      "h_index": 72,
+      "i10_index": 180,
+      "works_count": 204,
+      "cited_by_count": 13714,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5028906822",
+      "display_name": "Solange María Gennari",
+      "orcid": "https://orcid.org/0000-0001-7500-5277",
+      "h_index": 71,
+      "i10_index": 308,
+      "works_count": 528,
+      "cited_by_count": 19694,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5107561181",
+      "display_name": "F. Renaud",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 236,
+      "works_count": 365,
+      "cited_by_count": 15359,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5063816042",
+      "display_name": "Rachel M. Chalmers",
+      "orcid": "https://orcid.org/0000-0002-9309-7096",
+      "h_index": 71,
+      "i10_index": 199,
+      "works_count": 312,
+      "cited_by_count": 15851,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5005970752",
+      "display_name": "D. Timothy J. Littlewood",
+      "orcid": "https://orcid.org/0000-0002-2718-4001",
+      "h_index": 71,
+      "i10_index": 191,
+      "works_count": 353,
+      "cited_by_count": 19356,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5108096175",
+      "display_name": "John Henry Ouma",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 179,
+      "works_count": 227,
+      "cited_by_count": 13656,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5068801478",
+      "display_name": "José Gilberto Montoya",
+      "orcid": "https://orcid.org/0000-0002-3378-8071",
+      "h_index": 71,
+      "i10_index": 178,
+      "works_count": 289,
+      "cited_by_count": 28696,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5026773861",
+      "display_name": "Andrew Frederick Hemphill",
+      "orcid": "https://orcid.org/0000-0002-0622-2128",
+      "h_index": 70,
+      "i10_index": 299,
+      "works_count": 503,
+      "cited_by_count": 15910,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Parasitology -- 8.9",
+      "id": "https://openalex.org/A5003535839",
+      "display_name": "Peter L. Chiodini",
+      "orcid": "https://orcid.org/0000-0003-0317-7090",
+      "h_index": 70,
+      "i10_index": 222,
+      "works_count": 456,
+      "cited_by_count": 16785,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5029943451",
+      "display_name": "María Elena Bottazzi",
+      "orcid": "https://orcid.org/0000-0002-8429-0476",
+      "h_index": 70,
+      "i10_index": 219,
+      "works_count": 317,
+      "cited_by_count": 17878,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5059796157",
+      "display_name": "Isabelle Coppens",
+      "orcid": "https://orcid.org/0000-0001-5549-2362",
+      "h_index": 70,
+      "i10_index": 160,
+      "works_count": 215,
+      "cited_by_count": 26469,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5108075989",
+      "display_name": "Victor C. W. Tsang",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 159,
+      "works_count": 198,
+      "cited_by_count": 15403,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5001246506",
+      "display_name": "Xing‐Quan Zhu",
+      "orcid": "https://orcid.org/0000-0003-2530-4628",
+      "h_index": 69,
+      "i10_index": 486,
+      "works_count": 738,
+      "cited_by_count": 24172,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5067569019",
+      "display_name": "Eliezer Kouakou N'Goran",
+      "orcid": "https://orcid.org/0000-0002-8761-1933",
+      "h_index": 69,
+      "i10_index": 205,
+      "works_count": 268,
+      "cited_by_count": 14332,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5045547595",
+      "display_name": "Chunlei Su",
+      "orcid": "https://orcid.org/0000-0001-8392-7108",
+      "h_index": 69,
+      "i10_index": 182,
+      "works_count": 235,
+      "cited_by_count": 16899,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5111820373",
+      "display_name": "Alan Fenwick",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 161,
+      "works_count": 285,
+      "cited_by_count": 18178,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5033906310",
+      "display_name": "Lise Gern",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 160,
+      "works_count": 224,
+      "cited_by_count": 13573,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5111600925",
+      "display_name": "James Alexander",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 142,
+      "works_count": 186,
+      "cited_by_count": 13983,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5062134467",
+      "display_name": "Sonia Altizer",
+      "orcid": "https://orcid.org/0000-0001-9966-2773",
+      "h_index": 69,
+      "i10_index": 128,
+      "works_count": 183,
+      "cited_by_count": 23438,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5113906729",
+      "display_name": "Heinz Mehlhorn",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 290,
+      "works_count": 5041,
+      "cited_by_count": 17932,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5065837432",
+      "display_name": "David Hurst Molyneux",
+      "orcid": "https://orcid.org/0000-0001-8537-7947",
+      "h_index": 68,
+      "i10_index": 285,
+      "works_count": 460,
+      "cited_by_count": 21920,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5054422592",
+      "display_name": "Jerzy Marian Behnke",
+      "orcid": "https://orcid.org/0000-0001-9396-2572",
+      "h_index": 68,
+      "i10_index": 275,
+      "works_count": 379,
+      "cited_by_count": 14620,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5033749081",
+      "display_name": "Richard J. Martin",
+      "orcid": "https://orcid.org/0000-0003-2422-1847",
+      "h_index": 68,
+      "i10_index": 260,
+      "works_count": 526,
+      "cited_by_count": 15876,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5062561634",
+      "display_name": "Stig Milan Thamsborg",
+      "orcid": "https://orcid.org/0000-0003-3304-7422",
+      "h_index": 68,
+      "i10_index": 237,
+      "works_count": 496,
+      "cited_by_count": 16160,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5016703858",
+      "display_name": "Dominique Angèle Vuitton",
+      "orcid": "https://orcid.org/0000-0003-0043-3896",
+      "h_index": 68,
+      "i10_index": 224,
+      "works_count": 519,
+      "cited_by_count": 19903,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5023272465",
+      "display_name": "Yaoyu Feng",
+      "orcid": "https://orcid.org/0000-0002-8380-1246",
+      "h_index": 68,
+      "i10_index": 222,
+      "works_count": 333,
+      "cited_by_count": 18832,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5071042803",
+      "display_name": "Andrea Sylvia Winkler",
+      "orcid": "https://orcid.org/0000-0003-3131-6983",
+      "h_index": 68,
+      "i10_index": 211,
+      "works_count": 324,
+      "cited_by_count": 100959,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5066024138",
+      "display_name": "Eric S. Loker",
+      "orcid": "https://orcid.org/0000-0002-2916-9868",
+      "h_index": 68,
+      "i10_index": 183,
+      "works_count": 341,
+      "cited_by_count": 13391,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5086296060",
+      "display_name": "R.C.A. Thompson",
+      "orcid": "https://orcid.org/0000-0003-3117-2895",
+      "h_index": 68,
+      "i10_index": 182,
+      "works_count": 242,
+      "cited_by_count": 19195,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5102872656",
+      "display_name": "Jeffrey Michael Bethony",
+      "orcid": "https://orcid.org/0000-0002-7901-2113",
+      "h_index": 68,
+      "i10_index": 157,
+      "works_count": 205,
+      "cited_by_count": 19936,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Parasitology -- 8.8",
+      "id": "https://openalex.org/A5021706700",
+      "display_name": "Laura Rinaldi",
+      "orcid": "https://orcid.org/0000-0002-0975-2052",
+      "h_index": 67,
+      "i10_index": 299,
+      "works_count": 523,
+      "cited_by_count": 19435,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5070752159",
+      "display_name": "Óscar H. Del Brutto",
+      "orcid": "https://orcid.org/0000-0003-1917-8805",
+      "h_index": 67,
+      "i10_index": 267,
+      "works_count": 609,
+      "cited_by_count": 18877,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5111739340",
+      "display_name": "Stephen W. Barthold",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 221,
+      "works_count": 389,
+      "cited_by_count": 15423,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5040428379",
+      "display_name": "Arthur Clinton White",
+      "orcid": "https://orcid.org/0000-0002-9668-4632",
+      "h_index": 67,
+      "i10_index": 185,
+      "works_count": 319,
+      "cited_by_count": 17753,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5045152551",
+      "display_name": "Gioia Capelli",
+      "orcid": "https://orcid.org/0000-0001-8481-0171",
+      "h_index": 67,
+      "i10_index": 181,
+      "works_count": 286,
+      "cited_by_count": 13654,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5067091689",
+      "display_name": "Narcis B. Kabatereine",
+      "orcid": "https://orcid.org/0000-0001-7036-5716",
+      "h_index": 67,
+      "i10_index": 176,
+      "works_count": 301,
+      "cited_by_count": 12016,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5039947825",
+      "display_name": "Anthony E. Butterworth",
+      "orcid": "https://orcid.org/0009-0009-1647-9654",
+      "h_index": 67,
+      "i10_index": 167,
+      "works_count": 231,
+      "cited_by_count": 12547,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5076400884",
+      "display_name": "Rima L. McLeod",
+      "orcid": "https://orcid.org/0000-0002-1130-9631",
+      "h_index": 67,
+      "i10_index": 166,
+      "works_count": 266,
+      "cited_by_count": 14040,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5010389781",
+      "display_name": "Christen Rune Stensvold",
+      "orcid": "https://orcid.org/0000-0002-1417-7048",
+      "h_index": 67,
+      "i10_index": 162,
+      "works_count": 273,
+      "cited_by_count": 13356,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5114178555",
+      "display_name": "F. Jackson",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 156,
+      "works_count": 199,
+      "cited_by_count": 14975,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5109507751",
+      "display_name": "J. K. Frenkel",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 138,
+      "works_count": 201,
+      "cited_by_count": 13175,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5088631999",
+      "display_name": "Bernd Sures",
+      "orcid": "https://orcid.org/0000-0001-6865-6186",
+      "h_index": 66,
+      "i10_index": 241,
+      "works_count": 421,
+      "cited_by_count": 14642,
+      "discipline": "Parasitology",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Environmental Science",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5079942529",
+      "display_name": "Robert Alan Wilson",
+      "orcid": "https://orcid.org/0000-0002-7210-0321",
+      "h_index": 66,
+      "i10_index": 209,
+      "works_count": 265,
+      "cited_by_count": 14659,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5030384136",
+      "display_name": "Francis Derouin",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 184,
+      "works_count": 320,
+      "cited_by_count": 12998,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5009510011",
+      "display_name": "Santiago Merino",
+      "orcid": "https://orcid.org/0000-0003-0603-8280",
+      "h_index": 66,
+      "i10_index": 172,
+      "works_count": 304,
+      "cited_by_count": 11463,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5086070214",
+      "display_name": "Wolfgang Kratzer",
+      "orcid": "https://orcid.org/0000-0002-9727-3843",
+      "h_index": 66,
+      "i10_index": 163,
+      "works_count": 333,
+      "cited_by_count": 43329,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5011615487",
+      "display_name": "William C. Gause",
+      "orcid": "https://orcid.org/0000-0002-8062-4790",
+      "h_index": 66,
+      "i10_index": 125,
+      "works_count": 216,
+      "cited_by_count": 17154,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5049218335",
+      "display_name": "Uwe Groß",
+      "orcid": "https://orcid.org/0000-0001-9874-1007",
+      "h_index": 65,
+      "i10_index": 250,
+      "works_count": 500,
+      "cited_by_count": 15602,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5033465848",
+      "display_name": "Boris R. Krasnov",
+      "orcid": "https://orcid.org/0000-0002-0382-3331",
+      "h_index": 65,
+      "i10_index": 233,
+      "works_count": 414,
+      "cited_by_count": 14220,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5037903543",
+      "display_name": "Georg von Samson‐Himmelstjerna",
+      "orcid": "https://orcid.org/0000-0002-6043-2038",
+      "h_index": 65,
+      "i10_index": 231,
+      "works_count": 485,
+      "cited_by_count": 16707,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5101521186",
+      "display_name": "Akira Ito",
+      "orcid": "https://orcid.org/0000-0002-5070-9187",
+      "h_index": 65,
+      "i10_index": 225,
+      "works_count": 347,
+      "cited_by_count": 13719,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5022092381",
+      "display_name": "Donald P. Knowles",
+      "orcid": "https://orcid.org/0000-0002-7272-3166",
+      "h_index": 65,
+      "i10_index": 218,
+      "works_count": 273,
+      "cited_by_count": 13305,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Parasitology -- 8.7",
+      "id": "https://openalex.org/A5085897306",
+      "display_name": "Makedonka Mitreva",
+      "orcid": "https://orcid.org/0000-0001-9572-3436",
+      "h_index": 65,
+      "i10_index": 200,
+      "works_count": 312,
+      "cited_by_count": 34584,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5006619027",
+      "display_name": "Gediminas Valkiūnas",
+      "orcid": "https://orcid.org/0000-0003-0594-0280",
+      "h_index": 65,
+      "i10_index": 185,
+      "works_count": 400,
+      "cited_by_count": 12912,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5076715795",
+      "display_name": "William Evan Secor",
+      "orcid": "https://orcid.org/0000-0003-0584-5961",
+      "h_index": 65,
+      "i10_index": 171,
+      "works_count": 299,
+      "cited_by_count": 11909,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5067936854",
+      "display_name": "Hervé Hoste",
+      "orcid": "https://orcid.org/0000-0001-5726-251X",
+      "h_index": 65,
+      "i10_index": 164,
+      "works_count": 363,
+      "cited_by_count": 14155,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5024516181",
+      "display_name": "Jaco J. Verweij",
+      "orcid": "https://orcid.org/0000-0001-8553-931X",
+      "h_index": 65,
+      "i10_index": 160,
+      "works_count": 245,
+      "cited_by_count": 13677,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5113684958",
+      "display_name": "Huw Vaughan Smith",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 153,
+      "works_count": 219,
+      "cited_by_count": 15419,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5010506228",
+      "display_name": "Armand M. Kuris",
+      "orcid": "https://orcid.org/0000-0002-1053-4407",
+      "h_index": 65,
+      "i10_index": 142,
+      "works_count": 280,
+      "cited_by_count": 23408,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5012380751",
+      "display_name": "John F. Andersen",
+      "orcid": "https://orcid.org/0000-0002-7686-3713",
+      "h_index": 65,
+      "i10_index": 132,
+      "works_count": 166,
+      "cited_by_count": 11898,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5037244623",
+      "display_name": "Banchob Sripa",
+      "orcid": "https://orcid.org/0000-0001-8899-5919",
+      "h_index": 64,
+      "i10_index": 248,
+      "works_count": 396,
+      "cited_by_count": 17603,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5023571921",
+      "display_name": "Brecht Devleesschauwer",
+      "orcid": "https://orcid.org/0000-0002-2867-6892",
+      "h_index": 64,
+      "i10_index": 244,
+      "works_count": 834,
+      "cited_by_count": 26715,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Economics, Econometrics and Finance",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5012283927",
+      "display_name": "Lucy Jane Robertson",
+      "orcid": "https://orcid.org/0000-0001-5186-4421",
+      "h_index": 64,
+      "i10_index": 229,
+      "works_count": 457,
+      "cited_by_count": 14890,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5048775979",
+      "display_name": "Volker Fingerle",
+      "orcid": "https://orcid.org/0000-0002-3835-5646",
+      "h_index": 64,
+      "i10_index": 212,
+      "works_count": 447,
+      "cited_by_count": 15253,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5050679668",
+      "display_name": "Eric Rene Morgan",
+      "orcid": "https://orcid.org/0000-0002-5999-7728",
+      "h_index": 64,
+      "i10_index": 178,
+      "works_count": 335,
+      "cited_by_count": 12549,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5034341653",
+      "display_name": "Jonas Waldenström",
+      "orcid": "https://orcid.org/0000-0002-1152-4235",
+      "h_index": 64,
+      "i10_index": 172,
+      "works_count": 362,
+      "cited_by_count": 17641,
+      "discipline": "Parasitology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5036234089",
+      "display_name": "Jorge L. Benach",
+      "orcid": "https://orcid.org/0000-0001-9375-6058",
+      "h_index": 64,
+      "i10_index": 151,
+      "works_count": 189,
+      "cited_by_count": 14660,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5002925293",
+      "display_name": "Marie‐Laure Dardé",
+      "orcid": "https://orcid.org/0000-0002-9808-4569",
+      "h_index": 64,
+      "i10_index": 147,
+      "works_count": 396,
+      "cited_by_count": 16353,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5027838668",
+      "display_name": "Dale H. Clayton",
+      "orcid": "https://orcid.org/0000-0003-1698-3542",
+      "h_index": 64,
+      "i10_index": 139,
+      "works_count": 206,
+      "cited_by_count": 12254,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5079785844",
+      "display_name": "R. M. E. Parkhouse",
+      "orcid": "https://orcid.org/0000-0001-5967-3291",
+      "h_index": 63,
+      "i10_index": 242,
+      "works_count": 370,
+      "cited_by_count": 14472,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5023755537",
+      "display_name": "James H. Oliver",
+      "orcid": "https://orcid.org/0000-0003-2815-4928",
+      "h_index": 63,
+      "i10_index": 223,
+      "works_count": 396,
+      "cited_by_count": 14925,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5019875891",
+      "display_name": "Michael L. Kent",
+      "orcid": "https://orcid.org/0000-0001-7968-5142",
+      "h_index": 63,
+      "i10_index": 213,
+      "works_count": 305,
+      "cited_by_count": 14198,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Parasitology -- 8.6",
+      "id": "https://openalex.org/A5047394553",
+      "display_name": "Stephen C. Barker",
+      "orcid": "https://orcid.org/0000-0001-9431-8404",
+      "h_index": 63,
+      "i10_index": 156,
+      "works_count": 481,
+      "cited_by_count": 12734,
+      "discipline": "Parasitology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Parasitology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    }
+  ]
+}

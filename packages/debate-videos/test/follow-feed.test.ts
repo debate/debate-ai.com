@@ -164,7 +164,8 @@ describe("follow feed", () => {
     expect(result?.title).toBe("Harker Lee & Lin at Grapevine: 2–2, finished runner-up");
     const latest = items.find((i) => i.id === "follow-round-a4");
     expect(latest?.body).toContain("Harker LL lost on the neg.");
-    expect(latest?.href).toMatch(/^\/videos\//);
+    // Round watch pages live at the short `/<topic code><yy>/…` address.
+    expect(latest?.href).toBe("/pfa27/grapevine/finals/strake-jesuit-fs-harker-ll");
   });
 
   it("drops tournament results older than the window", () => {

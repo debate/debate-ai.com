@@ -37,7 +37,7 @@ vi.mock("next/image", () => ({
 import type { ToolNavTreeProps } from "../src/components/navigation/sidebar-nav/ToolNavTree";
 
 const { ToolNavTree } = await import("../src/components/navigation/sidebar-nav/ToolNavTree");
-const { INSIGHTS_SECTION_ID, RESEARCH_SECTION_ID } = await import(
+const { PRACTICE_DEBATES_SECTION_ID, RESEARCH_SECTION_ID } = await import(
   "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
 );
 
@@ -50,16 +50,16 @@ describe("ToolNavTree sectionIds", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
     expect(html).toContain("Research");
-    expect(html).not.toContain("Practice Debates");
+    expect(html).not.toContain("Practice debates");
     expect(html).not.toContain("Inference");
     expect(html).not.toMatch(/<h1[^>]*>Practice<\/h1>/);
   });
 
-  it("lists the practice tools under Research, keeping their /practice URLs", () => {
+  it("lists the Prep Workspace under Research, keeping its /practice URL, and no Practice vs AI row", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
-    expect(html).toContain('href="/practice/versus-ai"');
-    expect(html).toContain("Practice vs AI");
+    expect(html).not.toContain('href="/practice/versus-ai"');
+    expect(html).not.toContain("Practice vs AI");
     expect(html).toContain('href="/practice/prep"');
     expect(html).toContain("Prep Workspace");
   });
@@ -107,18 +107,19 @@ describe("ToolNavTree sectionIds", () => {
   it("still renders every section when no sections are named", () => {
     const html = render({});
 
-    expect(html).toContain("Practice Debates");
+    expect(html).toContain("Practice debates");
     expect(html).toContain("Research");
-    expect(html).toContain("Inference");
+    expect(html).not.toContain("Inference");
   });
 
-  it("lists Inference links without subgroup labels", () => {
-    const html = render({ sectionIds: [INSIGHTS_SECTION_ID] });
+  it("lists the former Inference links in Debates without subgroup labels", () => {
+    const html = render({ sectionIds: [PRACTICE_DEBATES_SECTION_ID] });
 
     expect(html).not.toContain(">Performance<");
     expect(html).not.toContain(">Data &amp; Reference<");
     expect(html).toContain("/rank");
     expect(html).toContain("/practice/statistics");
+    expect(html).toContain("/practice/predictions");
     expect(html).not.toContain("/practice/rules");
     expect(html).not.toContain("/practice/features");
   });
@@ -127,19 +128,18 @@ describe("ToolNavTree sectionIds", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID, "no-such-section"] });
 
     expect(html).toContain("Research");
-    expect(html).not.toContain("Practice Debates");
+    expect(html).not.toContain("Practice debates");
   });
 });
 
 describe("SIDEBAR_TOOL_SECTIONS", () => {
-  it("is the three requested sections, in order", async () => {
+  it("is the two remaining sections, in order", async () => {
     const { SIDEBAR_TOOL_SECTIONS } = await import(
       "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
     );
     expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.title)).toEqual([
       "Research",
       "Debates",
-      "Inference",
     ]);
     // Every link appears in exactly one section.
     const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href));
@@ -148,13 +148,16 @@ describe("SIDEBAR_TOOL_SECTIONS", () => {
 });
 
 describe("Team & School Rank", () => {
-  it("is the first Inference link, and nowhere else", async () => {
-    const { SIDEBAR_TOOL_SECTIONS, INSIGHTS_SECTION_ID, LEARNING_LINKS } = await import(
+  it("is a Debates link, and nowhere else", async () => {
+    const { SIDEBAR_TOOL_SECTIONS, PRACTICE_DEBATES_SECTION_ID, LEARNING_LINKS } = await import(
       "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
     );
-    const inference = SIDEBAR_TOOL_SECTIONS.find((entry) => entry.id === INSIGHTS_SECTION_ID);
-    expect(inference?.tools[0]).toMatchObject({ href: "/rank", title: "Team & School Rank" });
-    const elsewhere = SIDEBAR_TOOL_SECTIONS.filter((entry) => entry.id !== INSIGHTS_SECTION_ID);
+    const debates = SIDEBAR_TOOL_SECTIONS.find((entry) => entry.id === PRACTICE_DEBATES_SECTION_ID);
+    expect(debates?.tools.find((tool) => tool.href === "/rank")).toMatchObject({
+      href: "/rank",
+      title: "Team & School Rank",
+    });
+    const elsewhere = SIDEBAR_TOOL_SECTIONS.filter((entry) => entry.id !== PRACTICE_DEBATES_SECTION_ID);
     for (const section of elsewhere) {
       expect(section.tools.some((tool) => tool.href === "/rank")).toBe(false);
     }
@@ -196,7 +199,7 @@ describe("the Research section", () => {
 });
 
 describe("the Debates section", () => {
-  it("is the renamed Coaching section (titled Debates), with the merged Practice Debates row after Tournaments", async () => {
+  it("is the renamed Coaching section (titled Debates), with the merged Practice debates row after Tournaments", async () => {
     const { SIDEBAR_TOOL_SECTIONS, PRACTICE_DEBATES_SECTION_ID } = await import(
       "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
     );
@@ -205,12 +208,12 @@ describe("the Debates section", () => {
     expect(section?.tools[0]?.href).toBe("/tournament");
     expect(section?.tools[1]).toMatchObject({
       href: "/practice/debates",
-      title: "Practice Debates",
-      aliases: ["/practice/challenges", "/practice/drills", "/practice/partners"],
+      title: "Practice debates",
+      aliases: ["/practice/challenges", "/practice/drills", "/practice/partners", "/practice/versus-ai"],
     });
-    // The three tools no longer have rows of their own anywhere.
+    // The tools no longer have rows of their own anywhere.
     const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((entry) => entry.tools.map((tool) => tool.href));
-    for (const old of ["/practice/challenges", "/practice/drills", "/practice/partners"]) {
+    for (const old of ["/practice/challenges", "/practice/drills", "/practice/partners", "/practice/versus-ai"]) {
       expect(hrefs).not.toContain(old);
     }
   });

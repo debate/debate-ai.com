@@ -1,0 +1,919 @@
+{
+  "kind": "subfield",
+  "id": 1711,
+  "name": "Signal Processing",
+  "total_in_scrape": 47,
+  "count": 47,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Signal Processing -- 9.9",
+      "id": "https://openalex.org/A5100613677",
+      "display_name": "Anil K. Jain",
+      "orcid": "https://orcid.org/0000-0002-6369-6995",
+      "h_index": 188,
+      "i10_index": 714,
+      "works_count": 1084,
+      "cited_by_count": 186455,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Signal Processing -- 9.9",
+      "id": "https://openalex.org/A5005913897",
+      "display_name": "Yonina C. Eldar",
+      "orcid": "https://orcid.org/0000-0003-4358-5304",
+      "h_index": 127,
+      "i10_index": 658,
+      "works_count": 1430,
+      "cited_by_count": 74818,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Signal Processing -- 9.9",
+      "id": "https://openalex.org/A5010419481",
+      "display_name": "Jieping Ye",
+      "orcid": "https://orcid.org/0000-0001-8662-5818",
+      "h_index": 115,
+      "i10_index": 427,
+      "works_count": 608,
+      "cited_by_count": 49745,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Signal Processing -- 9.9",
+      "id": "https://openalex.org/A5018676117",
+      "display_name": "Andrzej S Cichocki",
+      "orcid": "https://orcid.org/0000-0002-8364-7226",
+      "h_index": 113,
+      "i10_index": 602,
+      "works_count": 1213,
+      "cited_by_count": 55885,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Neuroscience",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Signal Processing -- 9.9",
+      "id": "https://openalex.org/A5072495084",
+      "display_name": "Emmanuel J. Candès",
+      "orcid": "https://orcid.org/0000-0001-9234-924X",
+      "h_index": 113,
+      "i10_index": 195,
+      "works_count": 285,
+      "cited_by_count": 147055,
+      "discipline": "Signal Processing",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Signal Processing -- 9.9",
+      "id": "https://openalex.org/A5072713767",
+      "display_name": "Richard G. Baraniuk",
+      "orcid": "https://orcid.org/0000-0002-0721-8999",
+      "h_index": 110,
+      "i10_index": 427,
+      "works_count": 755,
+      "cited_by_count": 61311,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5007877889",
+      "display_name": "Petre Stoica",
+      "orcid": "https://orcid.org/0000-0002-7957-3711",
+      "h_index": 109,
+      "i10_index": 454,
+      "works_count": 884,
+      "cited_by_count": 56873,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5078245746",
+      "display_name": "Eamonn Keogh",
+      "orcid": "https://orcid.org/0000-0002-4188-3968",
+      "h_index": 103,
+      "i10_index": 261,
+      "works_count": 443,
+      "cited_by_count": 55433,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5049415924",
+      "display_name": "Martin Vetterli",
+      "orcid": "https://orcid.org/0000-0002-6122-1216",
+      "h_index": 99,
+      "i10_index": 381,
+      "works_count": 764,
+      "cited_by_count": 56832,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5017529415",
+      "display_name": "Samy Bengio",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 248,
+      "works_count": 554,
+      "cited_by_count": 83377,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5091863515",
+      "display_name": "Aleksandr Y. Aravkin",
+      "orcid": "https://orcid.org/0000-0002-1875-1801",
+      "h_index": 94,
+      "i10_index": 190,
+      "works_count": 309,
+      "cited_by_count": 120663,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5051837453",
+      "display_name": "DeLiang Wang",
+      "orcid": "https://orcid.org/0000-0001-8195-6319",
+      "h_index": 88,
+      "i10_index": 275,
+      "works_count": 425,
+      "cited_by_count": 28867,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5085908411",
+      "display_name": "Wotao Yin",
+      "orcid": "https://orcid.org/0000-0001-6697-9731",
+      "h_index": 85,
+      "i10_index": 210,
+      "works_count": 301,
+      "cited_by_count": 38288,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5103001848",
+      "display_name": "Danilo P. Mandic",
+      "orcid": "https://orcid.org/0000-0001-8432-3963",
+      "h_index": 83,
+      "i10_index": 446,
+      "works_count": 973,
+      "cited_by_count": 31705,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5007639385",
+      "display_name": "Junichi Yamagishi",
+      "orcid": "https://orcid.org/0000-0003-2752-3955",
+      "h_index": 79,
+      "i10_index": 318,
+      "works_count": 641,
+      "cited_by_count": 32871,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5071376063",
+      "display_name": "Jacob Benesty",
+      "orcid": "https://orcid.org/0000-0002-0036-5865",
+      "h_index": 78,
+      "i10_index": 347,
+      "works_count": 877,
+      "cited_by_count": 29852,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Signal Processing -- 9.8",
+      "id": "https://openalex.org/A5043262479",
+      "display_name": "Shengli Xie",
+      "orcid": "https://orcid.org/0000-0003-2041-5214",
+      "h_index": 77,
+      "i10_index": 360,
+      "works_count": 826,
+      "cited_by_count": 25413,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5031212309",
+      "display_name": "Arye Nehorai",
+      "orcid": "https://orcid.org/0000-0002-9055-9865",
+      "h_index": 77,
+      "i10_index": 301,
+      "works_count": 642,
+      "cited_by_count": 29272,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5049466863",
+      "display_name": "Palghat P. Vaidyanathan",
+      "orcid": "https://orcid.org/0000-0003-3003-7042",
+      "h_index": 77,
+      "i10_index": 270,
+      "works_count": 663,
+      "cited_by_count": 31570,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5055458377",
+      "display_name": "Daniel P. W. Ellis",
+      "orcid": "https://orcid.org/0000-0002-5076-4311",
+      "h_index": 76,
+      "i10_index": 235,
+      "works_count": 597,
+      "cited_by_count": 34114,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5106921483",
+      "display_name": "Robert D. Nowak",
+      "orcid": "https://orcid.org/0000-0001-8743-0887",
+      "h_index": 76,
+      "i10_index": 217,
+      "works_count": 337,
+      "cited_by_count": 28321,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5110218997",
+      "display_name": "L. R. Rabiner",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 196,
+      "works_count": 318,
+      "cited_by_count": 58759,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5077852542",
+      "display_name": "Badong Chen",
+      "orcid": "https://orcid.org/0000-0003-1710-3818",
+      "h_index": 73,
+      "i10_index": 356,
+      "works_count": 661,
+      "cited_by_count": 22075,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5062987908",
+      "display_name": "Martin Werner",
+      "orcid": "https://orcid.org/0000-0002-6951-8022",
+      "h_index": 73,
+      "i10_index": 340,
+      "works_count": 959,
+      "cited_by_count": 22705,
+      "discipline": "Signal Processing",
+      "primary_field": "Medicine",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5068081385",
+      "display_name": "Julián Fiérrez",
+      "orcid": "https://orcid.org/0000-0002-6343-5656",
+      "h_index": 73,
+      "i10_index": 306,
+      "works_count": 461,
+      "cited_by_count": 20969,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5049691461",
+      "display_name": "Tuomas I. Virtanen",
+      "orcid": "https://orcid.org/0000-0002-4604-9729",
+      "h_index": 72,
+      "i10_index": 278,
+      "works_count": 519,
+      "cited_by_count": 24151,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5061834795",
+      "display_name": "Arun A. Ross",
+      "orcid": "https://orcid.org/0000-0001-8850-3013",
+      "h_index": 72,
+      "i10_index": 257,
+      "works_count": 394,
+      "cited_by_count": 35648,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Signal Processing -- 9.7",
+      "id": "https://openalex.org/A5007993661",
+      "display_name": "Jonathon A. Chambers",
+      "orcid": "https://orcid.org/0000-0002-5820-6509",
+      "h_index": 71,
+      "i10_index": 322,
+      "works_count": 824,
+      "cited_by_count": 22419,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5028520858",
+      "display_name": "Pierre Vandergheynst",
+      "orcid": "https://orcid.org/0000-0002-9070-900X",
+      "h_index": 71,
+      "i10_index": 214,
+      "works_count": 543,
+      "cited_by_count": 44043,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5058651667",
+      "display_name": "Gabriel Peyré",
+      "orcid": "https://orcid.org/0000-0002-4477-0387",
+      "h_index": 71,
+      "i10_index": 184,
+      "works_count": 385,
+      "cited_by_count": 27831,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5061498233",
+      "display_name": "Aapo Hyvärinen",
+      "orcid": "https://orcid.org/0000-0002-5806-4432",
+      "h_index": 71,
+      "i10_index": 176,
+      "works_count": 451,
+      "cited_by_count": 57678,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Neuroscience",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5017716310",
+      "display_name": "Christoph Busch",
+      "orcid": "https://orcid.org/0000-0002-9159-2923",
+      "h_index": 70,
+      "i10_index": 437,
+      "works_count": 937,
+      "cited_by_count": 20873,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5051849103",
+      "display_name": "Marc Moonen",
+      "orcid": "https://orcid.org/0000-0003-4461-0073",
+      "h_index": 70,
+      "i10_index": 365,
+      "works_count": 928,
+      "cited_by_count": 19874,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5082563150",
+      "display_name": "Hing Cheung So",
+      "orcid": "https://orcid.org/0000-0001-8396-7898",
+      "h_index": 70,
+      "i10_index": 348,
+      "works_count": 644,
+      "cited_by_count": 18664,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5010643037",
+      "display_name": "Asoke Kumar Nandi",
+      "orcid": "https://orcid.org/0000-0001-6248-2875",
+      "h_index": 70,
+      "i10_index": 285,
+      "works_count": 737,
+      "cited_by_count": 23828,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5042186400",
+      "display_name": "Paavo Alku",
+      "orcid": "https://orcid.org/0000-0002-8173-9418",
+      "h_index": 69,
+      "i10_index": 288,
+      "works_count": 550,
+      "cited_by_count": 19814,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5066967599",
+      "display_name": "Mark D. Plumbley",
+      "orcid": "https://orcid.org/0000-0002-9708-1075",
+      "h_index": 69,
+      "i10_index": 254,
+      "works_count": 660,
+      "cited_by_count": 22068,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5006597702",
+      "display_name": "B. Friedlander",
+      "orcid": "https://orcid.org/0000-0001-5133-2433",
+      "h_index": 69,
+      "i10_index": 206,
+      "works_count": 474,
+      "cited_by_count": 17692,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Signal Processing -- 9.6",
+      "id": "https://openalex.org/A5000947076",
+      "display_name": "Pascal Frossard",
+      "orcid": "https://orcid.org/0000-0002-4010-714X",
+      "h_index": 68,
+      "i10_index": 289,
+      "works_count": 820,
+      "cited_by_count": 37384,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Signal Processing -- 9.5",
+      "id": "https://openalex.org/A5060798483",
+      "display_name": "Tülay Adalı",
+      "orcid": "https://orcid.org/0000-0003-0594-2796",
+      "h_index": 68,
+      "i10_index": 244,
+      "works_count": 637,
+      "cited_by_count": 27424,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Neuroscience",
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Signal Processing -- 9.5",
+      "id": "https://openalex.org/A5050186120",
+      "display_name": "Nicholas D. Sidiropoulos",
+      "orcid": "https://orcid.org/0000-0002-3385-7911",
+      "h_index": 68,
+      "i10_index": 226,
+      "works_count": 466,
+      "cited_by_count": 24285,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Signal Processing -- 9.5",
+      "id": "https://openalex.org/A5000879912",
+      "display_name": "Joel A. Tropp",
+      "orcid": "https://orcid.org/0000-0003-1024-1791",
+      "h_index": 68,
+      "i10_index": 131,
+      "works_count": 208,
+      "cited_by_count": 46994,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Signal Processing -- 9.5",
+      "id": "https://openalex.org/A5068781276",
+      "display_name": "Stephen J. Elliott",
+      "orcid": "https://orcid.org/0000-0003-1643-0489",
+      "h_index": 67,
+      "i10_index": 265,
+      "works_count": 507,
+      "cited_by_count": 16025,
+      "discipline": "Signal Processing",
+      "primary_field": "Engineering",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Signal Processing -- 9.5",
+      "id": "https://openalex.org/A5041230403",
+      "display_name": "Rémi Gribonval",
+      "orcid": "https://orcid.org/0000-0002-9450-8125",
+      "h_index": 66,
+      "i10_index": 205,
+      "works_count": 552,
+      "cited_by_count": 20652,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Signal Processing -- 9.5",
+      "id": "https://openalex.org/A5015431603",
+      "display_name": "Xin Yuan",
+      "orcid": "https://orcid.org/0000-0002-8311-7524",
+      "h_index": 65,
+      "i10_index": 229,
+      "works_count": 469,
+      "cited_by_count": 17024,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Signal Processing -- 9.5",
+      "id": "https://openalex.org/A5048346353",
+      "display_name": "Qingsong Wen",
+      "orcid": "https://orcid.org/0000-0003-4516-2524",
+      "h_index": 65,
+      "i10_index": 149,
+      "works_count": 233,
+      "cited_by_count": 21752,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Signal Processing -- 9.5",
+      "id": "https://openalex.org/A5065635001",
+      "display_name": "Emmanuel Vincent",
+      "orcid": "https://orcid.org/0000-0002-0183-7289",
+      "h_index": 63,
+      "i10_index": 187,
+      "works_count": 479,
+      "cited_by_count": 21088,
+      "discipline": "Signal Processing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Signal Processing",
+      "fields": [
+        "Computer Science",
+        "Arts and Humanities"
+      ]
+    }
+  ]
+}

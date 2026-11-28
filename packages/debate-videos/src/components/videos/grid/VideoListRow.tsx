@@ -13,9 +13,9 @@
  *
  * The 1AC/2NR argument labels, when recorded, sit in small type under the
  * team that ran them in the Aff and Neg cells — the same pairing the cards
- * (`VideoCardThumbnail`) draw. A team the current season's rankings know
- * links to its team page and carries its rating; any other team name
- * searches the library for that team's videos.
+ * (`VideoCardThumbnail`) draw. A team name links to its team page (see
+ * `videoTeamHref`) and, when the rankings know it, carries its rating; only a
+ * label with no team code (a bare school) searches the library instead.
  */
 
 "use client"
@@ -48,9 +48,8 @@ import { displayRoundLevel } from "../card/round-level"
 import { TOC_TOURNAMENT_IMAGE } from "../card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
 import { FormatBadge, videoFormat } from "./FormatBadge"
-import { teamHref } from "@debate-ai/rankings/src/leaderboard/profile/rankingProfileHelpers"
-import { pastTeamHref } from "@debate-ai/rankings/src/leaderboard/profile/pastTeamHelpers"
-import { isPastSeasonRanking, type VideoTeamRanking } from "../../../hooks/useVideoTeamRankings"
+import { type VideoTeamRanking } from "../../../hooks/useVideoTeamRankings"
+import { videoTeamHref } from "../../../lib/video-team-href"
 import { TeamCodeLabel, type TeamSide } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 import type { TopicType, VideoType } from "../../../types/videos"
 import { hasDecision } from "../../../lib/decision-summary"
@@ -131,10 +130,13 @@ function RowThumbnail({
  * team page and shows its rank (e.g. "#4") as a badge inside the label,
  * whose tooltip lists the team's stats. A team found in a past college
  * season's table links to its past-team page (see `PastTeamProfile`) and
- * shows its last names and its rank that season. Otherwise, with
- * `onSearch`, the name is a button that searches the library for that
- * team's videos instead of opening the row. The team is drawn as a {@link TeamCodeLabel}: school
- * logo or name, then last names (from the rankings row) or initials.
+ * shows its last names and its rank that season. A team the rankings don't
+ * know links to the `@school-initials` page its label names. Only a label
+ * that can't be resolved to a team page (no team code) falls back: with
+ * `onSearch` the name is a button that searches the library for that team's
+ * videos instead of opening the row, else it is plain text. The team is
+ * drawn as a {@link TeamCodeLabel}: school logo or name, then last names
+ * (from the rankings row) or initials.
  */
 function TeamCell({
   side,
@@ -152,17 +154,17 @@ function TeamCell({
   year?: number | null
   onSearch?: (text: string) => void
 }) {
-  const href = ranking ? (isPastSeasonRanking(ranking) ? pastTeamHref(ranking) : teamHref(ranking)) : null
+  const href = videoTeamHref(team, ranking)
   return (
     <td className="px-3 py-3 align-top text-sm">
       <div className="flex min-w-0 items-center gap-1.5">
         {!team ? (
           <span className="text-muted-foreground">—</span>
-        ) : ranking && href ? (
+        ) : href ? (
           <Link
             href={href}
             onClick={(e) => e.stopPropagation()}
-            title={`${ranking.school} ${ranking.name} — team page`}
+            title={`${ranking ? `${ranking.school} ${ranking.name}` : team} — team page`}
             className="min-w-0 text-left hover:text-primary hover:underline"
           >
             <TeamCodeLabel label={team} ranking={ranking} side={side} year={year} showRank />
@@ -232,7 +234,7 @@ export function VideoListRow({
   onToggleFavorite: (videoId: string) => void
   onHideVideo: (videoId: string) => void
   onUnhideVideo: (videoId: string) => void
-  /** Searches the library for a team when its name is clicked. */
+  /** Fallback for a team name with no team page (no team code): searches the library for it. */
   onSearch?: (text: string) => void
   /** The aff team's current-season rankings row, or its past college season's row. */
   affRanking?: VideoTeamRanking | null

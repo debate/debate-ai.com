@@ -41,10 +41,9 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
   it("lists Rules & Glossary and Overview Home under Learning, above nothing else in that submenu", () => {
     const learning = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "learning")!
     expect(learning.links.map((link) => link.href)).toEqual(["/practice/rules", "/practice/features"])
-    const insights = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "insights")!
-    expect(insights.links.map((link) => link.href)[0]).toBe("/rank")
-    expect(insights.links.map((link) => link.href)).not.toContain("/practice/rules")
-    expect(insights.links.map((link) => link.href)).not.toContain("/practice/features")
+    const debates = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "coaching")!
+    expect(debates.links.map((link) => link.href)).not.toContain("/practice/rules")
+    expect(debates.links.map((link) => link.href)).not.toContain("/practice/features")
   })
 
   it("reaches every videos destination the sidebar links to", () => {
@@ -53,12 +52,12 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
     }
   })
 
-  it("lists the glossary and statistics under Inference, not Videos", () => {
+  it("lists the glossary and statistics under Debates, not Videos", () => {
     const linksOf = (id: string) =>
       SIDEBAR_MENU_SECTIONS.find((section) => section.id === id)!.links.map((link) => link.href)
     for (const link of VIDEO_REFERENCE_LINKS) {
       expect(linksOf("videos")).not.toContain(link.href)
-      expect(linksOf("insights")).toContain(link.href)
+      expect(linksOf("coaching")).toContain(link.href)
     }
   })
 

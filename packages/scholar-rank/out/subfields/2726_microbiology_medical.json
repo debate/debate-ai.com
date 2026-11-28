@@ -1,0 +1,2801 @@
+{
+  "kind": "subfield",
+  "id": 2726,
+  "name": "Microbiology (medical)",
+  "total_in_scrape": 146,
+  "count": 146,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Microbiology (medical) -- 9.9",
+      "id": "https://openalex.org/A5037481164",
+      "display_name": "Patrice Nordmann",
+      "orcid": "https://orcid.org/0000-0002-1343-1622",
+      "h_index": 155,
+      "i10_index": 769,
+      "works_count": 1133,
+      "cited_by_count": 101976,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Microbiology (medical) -- 9.9",
+      "id": "https://openalex.org/A5087319030",
+      "display_name": "Laurent Poirel",
+      "orcid": "https://orcid.org/0000-0001-5160-5286",
+      "h_index": 142,
+      "i10_index": 583,
+      "works_count": 849,
+      "cited_by_count": 83526,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Microbiology (medical) -- 9.9",
+      "id": "https://openalex.org/A5015076483",
+      "display_name": "David L. Paterson",
+      "orcid": "https://orcid.org/0000-0003-2079-4437",
+      "h_index": 141,
+      "i10_index": 615,
+      "works_count": 1089,
+      "cited_by_count": 118543,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Microbiology (medical) -- 9.9",
+      "id": "https://openalex.org/A5044679653",
+      "display_name": "Ronald N. Jones",
+      "orcid": "https://orcid.org/0000-0003-0758-1859",
+      "h_index": 137,
+      "i10_index": 1142,
+      "works_count": 1649,
+      "cited_by_count": 82053,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Microbiology (medical) -- 9.9",
+      "id": "https://openalex.org/A5047582800",
+      "display_name": "Matthew E. Falagas",
+      "orcid": "https://orcid.org/0000-0002-5905-2695",
+      "h_index": 137,
+      "i10_index": 574,
+      "works_count": 845,
+      "cited_by_count": 86880,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Microbiology (medical) -- 9.9",
+      "id": "https://openalex.org/A5089282433",
+      "display_name": "Derrick W. Crook",
+      "orcid": "https://orcid.org/0000-0002-0590-2850",
+      "h_index": 127,
+      "i10_index": 391,
+      "works_count": 550,
+      "cited_by_count": 59290,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5011990927",
+      "display_name": "Peter A. R. Vandamme",
+      "orcid": "https://orcid.org/0000-0002-5581-7937",
+      "h_index": 125,
+      "i10_index": 621,
+      "works_count": 849,
+      "cited_by_count": 70385,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5021776590",
+      "display_name": "Frank M. Aarestrup",
+      "orcid": "https://orcid.org/0000-0002-7116-2723",
+      "h_index": 123,
+      "i10_index": 445,
+      "works_count": 852,
+      "cited_by_count": 73332,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5072423246",
+      "display_name": "David M. Livermore",
+      "orcid": "https://orcid.org/0000-0002-9856-3703",
+      "h_index": 123,
+      "i10_index": 389,
+      "works_count": 513,
+      "cited_by_count": 57003,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5000611736",
+      "display_name": "Robert A. Bonomo",
+      "orcid": "https://orcid.org/0000-0002-3299-894X",
+      "h_index": 122,
+      "i10_index": 672,
+      "works_count": 1119,
+      "cited_by_count": 71328,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5047471745",
+      "display_name": "Patrice M. Courvalin",
+      "orcid": null,
+      "h_index": 122,
+      "i10_index": 411,
+      "works_count": 622,
+      "cited_by_count": 51877,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5000013450",
+      "display_name": "Neil Woodford",
+      "orcid": "https://orcid.org/0000-0003-1396-8953",
+      "h_index": 115,
+      "i10_index": 404,
+      "works_count": 588,
+      "cited_by_count": 60466,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5019686478",
+      "display_name": "Po‐Ren Hsueh",
+      "orcid": "https://orcid.org/0000-0002-7502-9225",
+      "h_index": 112,
+      "i10_index": 910,
+      "works_count": 1267,
+      "cited_by_count": 64740,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5067156920",
+      "display_name": "Robin Patel",
+      "orcid": "https://orcid.org/0000-0001-6344-4141",
+      "h_index": 112,
+      "i10_index": 564,
+      "works_count": 912,
+      "cited_by_count": 52762,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5036220332",
+      "display_name": "Rafael Cantón",
+      "orcid": "https://orcid.org/0000-0003-1675-3173",
+      "h_index": 111,
+      "i10_index": 627,
+      "works_count": 1039,
+      "cited_by_count": 58597,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5035651551",
+      "display_name": "Fernando Baquero",
+      "orcid": "https://orcid.org/0000-0002-7930-3033",
+      "h_index": 110,
+      "i10_index": 423,
+      "works_count": 690,
+      "cited_by_count": 51655,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Microbiology (medical) -- 9.8",
+      "id": "https://openalex.org/A5032944850",
+      "display_name": "Fred C. Tenover",
+      "orcid": "https://orcid.org/0000-0002-1220-3118",
+      "h_index": 110,
+      "i10_index": 338,
+      "works_count": 510,
+      "cited_by_count": 60259,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5075222232",
+      "display_name": "Emilio Bouza",
+      "orcid": "https://orcid.org/0000-0001-6967-9267",
+      "h_index": 106,
+      "i10_index": 739,
+      "works_count": 1156,
+      "cited_by_count": 55115,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5012876941",
+      "display_name": "Gerard D. Wright",
+      "orcid": "https://orcid.org/0000-0002-9129-7131",
+      "h_index": 106,
+      "i10_index": 297,
+      "works_count": 440,
+      "cited_by_count": 57943,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5110204127",
+      "display_name": "Brian G. Spratt",
+      "orcid": null,
+      "h_index": 105,
+      "i10_index": 230,
+      "works_count": 266,
+      "cited_by_count": 53737,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5019537806",
+      "display_name": "Gian María Rossolini",
+      "orcid": "https://orcid.org/0000-0002-9386-0434",
+      "h_index": 104,
+      "i10_index": 539,
+      "works_count": 896,
+      "cited_by_count": 43993,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5068293016",
+      "display_name": "Barbara E. Murray",
+      "orcid": "https://orcid.org/0000-0003-4461-6870",
+      "h_index": 101,
+      "i10_index": 313,
+      "works_count": 411,
+      "cited_by_count": 52197,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5057991295",
+      "display_name": "Sylvain Brisse",
+      "orcid": "https://orcid.org/0000-0002-2516-2108",
+      "h_index": 99,
+      "i10_index": 281,
+      "works_count": 564,
+      "cited_by_count": 37698,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5100402427",
+      "display_name": "Jian Li",
+      "orcid": "https://orcid.org/0000-0001-7953-8230",
+      "h_index": 98,
+      "i10_index": 590,
+      "works_count": 867,
+      "cited_by_count": 44203,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5006534529",
+      "display_name": "Yohei Doi",
+      "orcid": "https://orcid.org/0000-0002-9620-2525",
+      "h_index": 98,
+      "i10_index": 349,
+      "works_count": 574,
+      "cited_by_count": 40941,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5001917936",
+      "display_name": "Timothy Rutland Walsh",
+      "orcid": "https://orcid.org/0000-0003-4315-4096",
+      "h_index": 98,
+      "i10_index": 293,
+      "works_count": 482,
+      "cited_by_count": 52532,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5102792303",
+      "display_name": "Richard J. Wallace",
+      "orcid": "https://orcid.org/0000-0002-4120-0143",
+      "h_index": 98,
+      "i10_index": 274,
+      "works_count": 372,
+      "cited_by_count": 38622,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Microbiology (medical) -- 9.7",
+      "id": "https://openalex.org/A5110498283",
+      "display_name": "D J Brenner",
+      "orcid": null,
+      "h_index": 97,
+      "i10_index": 252,
+      "works_count": 304,
+      "cited_by_count": 36135,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5012670349",
+      "display_name": "Jean‐Marc Rolain",
+      "orcid": "https://orcid.org/0000-0002-2402-4467",
+      "h_index": 96,
+      "i10_index": 545,
+      "works_count": 805,
+      "cited_by_count": 54664,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5065392872",
+      "display_name": "Jordi Vilà",
+      "orcid": "https://orcid.org/0000-0002-8025-3926",
+      "h_index": 96,
+      "i10_index": 469,
+      "works_count": 725,
+      "cited_by_count": 37896,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5069644844",
+      "display_name": "Michael Goodfellow",
+      "orcid": "https://orcid.org/0000-0002-4588-4124",
+      "h_index": 95,
+      "i10_index": 466,
+      "works_count": 696,
+      "cited_by_count": 46490,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5080608098",
+      "display_name": "Kathryn E. Holt",
+      "orcid": "https://orcid.org/0000-0003-3949-2471",
+      "h_index": 95,
+      "i10_index": 246,
+      "works_count": 398,
+      "cited_by_count": 52090,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5019987484",
+      "display_name": "Laura J. V. Piddock",
+      "orcid": "https://orcid.org/0000-0003-1460-473X",
+      "h_index": 94,
+      "i10_index": 260,
+      "works_count": 370,
+      "cited_by_count": 43365,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5074174877",
+      "display_name": "Maysaa El Sayed Zaki",
+      "orcid": "https://orcid.org/0000-0001-5431-0248",
+      "h_index": 92,
+      "i10_index": 175,
+      "works_count": 370,
+      "cited_by_count": 171284,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5089371529",
+      "display_name": "Helio Silva Sader",
+      "orcid": "https://orcid.org/0000-0001-7022-6644",
+      "h_index": 91,
+      "i10_index": 496,
+      "works_count": 864,
+      "cited_by_count": 52734,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5100334546",
+      "display_name": "Liang Chen",
+      "orcid": "https://orcid.org/0000-0001-5845-2235",
+      "h_index": 91,
+      "i10_index": 424,
+      "works_count": 749,
+      "cited_by_count": 29726,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5048017496",
+      "display_name": "Antonio Oliver",
+      "orcid": "https://orcid.org/0000-0001-9327-1894",
+      "h_index": 91,
+      "i10_index": 355,
+      "works_count": 470,
+      "cited_by_count": 32306,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5091004361",
+      "display_name": "Patrick A. D. Grimont",
+      "orcid": "https://orcid.org/0000-0002-6264-136X",
+      "h_index": 91,
+      "i10_index": 271,
+      "works_count": 345,
+      "cited_by_count": 37600,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Microbiology (medical) -- 9.6",
+      "id": "https://openalex.org/A5069770283",
+      "display_name": "Michael R. Jacobs",
+      "orcid": "https://orcid.org/0000-0002-4235-7855",
+      "h_index": 89,
+      "i10_index": 458,
+      "works_count": 719,
+      "cited_by_count": 33655,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5045551151",
+      "display_name": "Mariana Castanheira",
+      "orcid": "https://orcid.org/0000-0003-0126-1782",
+      "h_index": 88,
+      "i10_index": 340,
+      "works_count": 693,
+      "cited_by_count": 29471,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5076324401",
+      "display_name": "Harald Seifert",
+      "orcid": "https://orcid.org/0000-0002-7732-4762",
+      "h_index": 88,
+      "i10_index": 293,
+      "works_count": 477,
+      "cited_by_count": 37973,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5110344347",
+      "display_name": "L. Barth Reller",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 273,
+      "works_count": 373,
+      "cited_by_count": 27304,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5016535882",
+      "display_name": "Ad C. Fluit",
+      "orcid": "https://orcid.org/0000-0003-3432-0021",
+      "h_index": 87,
+      "i10_index": 245,
+      "works_count": 374,
+      "cited_by_count": 23222,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5060958743",
+      "display_name": "José Luis Martínez",
+      "orcid": "https://orcid.org/0000-0001-8813-7607",
+      "h_index": 87,
+      "i10_index": 231,
+      "works_count": 389,
+      "cited_by_count": 37123,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5087755674",
+      "display_name": "Jianzhong Shen",
+      "orcid": "https://orcid.org/0000-0002-8502-8445",
+      "h_index": 86,
+      "i10_index": 470,
+      "works_count": 606,
+      "cited_by_count": 35979,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5013812375",
+      "display_name": "Shahriar Mobashery",
+      "orcid": "https://orcid.org/0000-0002-7695-7883",
+      "h_index": 86,
+      "i10_index": 351,
+      "works_count": 621,
+      "cited_by_count": 29886,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5041735503",
+      "display_name": "Karen C. Carroll",
+      "orcid": "https://orcid.org/0000-0001-8080-5391",
+      "h_index": 86,
+      "i10_index": 328,
+      "works_count": 528,
+      "cited_by_count": 31981,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5037949399",
+      "display_name": "Erik C. Böttger",
+      "orcid": "https://orcid.org/0000-0002-2570-0121",
+      "h_index": 86,
+      "i10_index": 266,
+      "works_count": 350,
+      "cited_by_count": 29934,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5066070289",
+      "display_name": "Stuart B. Levy",
+      "orcid": "https://orcid.org/0000-0002-8845-8870",
+      "h_index": 86,
+      "i10_index": 226,
+      "works_count": 350,
+      "cited_by_count": 40457,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5100322731",
+      "display_name": "Yang Wang",
+      "orcid": "https://orcid.org/0000-0002-5928-9377",
+      "h_index": 85,
+      "i10_index": 438,
+      "works_count": 642,
+      "cited_by_count": 34717,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Microbiology (medical) -- 9.5",
+      "id": "https://openalex.org/A5034763831",
+      "display_name": "Thierry Naas",
+      "orcid": "https://orcid.org/0000-0001-9937-9572",
+      "h_index": 85,
+      "i10_index": 343,
+      "works_count": 555,
+      "cited_by_count": 35084,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5052183888",
+      "display_name": "Mario Vaneechoutte",
+      "orcid": "https://orcid.org/0000-0002-4586-203X",
+      "h_index": 85,
+      "i10_index": 277,
+      "works_count": 471,
+      "cited_by_count": 24455,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5090227234",
+      "display_name": "George G. Zhanel",
+      "orcid": "https://orcid.org/0000-0002-3238-0082",
+      "h_index": 84,
+      "i10_index": 383,
+      "works_count": 582,
+      "cited_by_count": 28131,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5085205603",
+      "display_name": "Jean‐Marie Frère",
+      "orcid": "https://orcid.org/0000-0001-8280-9783",
+      "h_index": 84,
+      "i10_index": 346,
+      "works_count": 510,
+      "cited_by_count": 25763,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5052146006",
+      "display_name": "Helen Giamarellou",
+      "orcid": "https://orcid.org/0000-0002-7387-5065",
+      "h_index": 84,
+      "i10_index": 326,
+      "works_count": 549,
+      "cited_by_count": 25044,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5010037206",
+      "display_name": "Luis Martínez-Martínez",
+      "orcid": "https://orcid.org/0000-0002-6091-4045",
+      "h_index": 84,
+      "i10_index": 309,
+      "works_count": 493,
+      "cited_by_count": 24271,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5061510230",
+      "display_name": "John Peter Quinn",
+      "orcid": "https://orcid.org/0000-0003-3551-7803",
+      "h_index": 83,
+      "i10_index": 345,
+      "works_count": 506,
+      "cited_by_count": 31289,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5036421485",
+      "display_name": "John J. LiPuma",
+      "orcid": "https://orcid.org/0000-0003-4033-7794",
+      "h_index": 83,
+      "i10_index": 266,
+      "works_count": 379,
+      "cited_by_count": 24422,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5071372879",
+      "display_name": "Johann D D Pitout",
+      "orcid": "https://orcid.org/0000-0002-4547-4707",
+      "h_index": 82,
+      "i10_index": 196,
+      "works_count": 315,
+      "cited_by_count": 30552,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5075494825",
+      "display_name": "Anthony Ifeanyi Okoh",
+      "orcid": "https://orcid.org/0000-0002-9770-085X",
+      "h_index": 81,
+      "i10_index": 400,
+      "works_count": 570,
+      "cited_by_count": 29346,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Environmental Science",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5082548129",
+      "display_name": "Germán Bou",
+      "orcid": "https://orcid.org/0000-0001-8837-0062",
+      "h_index": 81,
+      "i10_index": 313,
+      "works_count": 452,
+      "cited_by_count": 31234,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Microbiology (medical) -- 9.4",
+      "id": "https://openalex.org/A5110939896",
+      "display_name": "Richard R. Facklam",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 210,
+      "works_count": 294,
+      "cited_by_count": 26148,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5055770757",
+      "display_name": "Michael Richard Gillings",
+      "orcid": "https://orcid.org/0000-0002-4043-4351",
+      "h_index": 81,
+      "i10_index": 189,
+      "works_count": 325,
+      "cited_by_count": 24612,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5061522332",
+      "display_name": "James A. Karlowsky",
+      "orcid": "https://orcid.org/0000-0002-1939-464X",
+      "h_index": 80,
+      "i10_index": 276,
+      "works_count": 394,
+      "cited_by_count": 22759,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5114377169",
+      "display_name": "Rob J. L. Willems",
+      "orcid": "https://orcid.org/0000-0002-7370-0812",
+      "h_index": 80,
+      "i10_index": 217,
+      "works_count": 383,
+      "cited_by_count": 24886,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5111419840",
+      "display_name": "Sydney M. Finegold",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 235,
+      "works_count": 336,
+      "cited_by_count": 21675,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5082494281",
+      "display_name": "Axel Cloeckaert",
+      "orcid": "https://orcid.org/0000-0002-5887-7599",
+      "h_index": 79,
+      "i10_index": 231,
+      "works_count": 468,
+      "cited_by_count": 22394,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5100720110",
+      "display_name": "Sheng Chen",
+      "orcid": "https://orcid.org/0000-0003-3526-7808",
+      "h_index": 78,
+      "i10_index": 504,
+      "works_count": 895,
+      "cited_by_count": 26312,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5044201260",
+      "display_name": "Wen‐Chien Ko",
+      "orcid": "https://orcid.org/0000-0001-7497-149X",
+      "h_index": 78,
+      "i10_index": 478,
+      "works_count": 769,
+      "cited_by_count": 36637,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5022556893",
+      "display_name": "Karen Bush",
+      "orcid": "https://orcid.org/0000-0002-7843-2474",
+      "h_index": 78,
+      "i10_index": 220,
+      "works_count": 323,
+      "cited_by_count": 37876,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5057411200",
+      "display_name": "Álvaro Pascual",
+      "orcid": "https://orcid.org/0000-0002-8672-5891",
+      "h_index": 77,
+      "i10_index": 349,
+      "works_count": 559,
+      "cited_by_count": 24926,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5057989168",
+      "display_name": "Francesc Marco",
+      "orcid": "https://orcid.org/0000-0002-1863-6379",
+      "h_index": 77,
+      "i10_index": 295,
+      "works_count": 463,
+      "cited_by_count": 21937,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Microbiology (medical) -- 9.3",
+      "id": "https://openalex.org/A5071001364",
+      "display_name": "Luísa Maria Sobreira Vieira Peixe",
+      "orcid": "https://orcid.org/0000-0001-5810-8215",
+      "h_index": 77,
+      "i10_index": 272,
+      "works_count": 489,
+      "cited_by_count": 22677,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5113531048",
+      "display_name": "Carl Erik Nord",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 429,
+      "works_count": 717,
+      "cited_by_count": 24014,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5080585706",
+      "display_name": "Yi‐Wei Tang",
+      "orcid": "https://orcid.org/0000-0003-4888-6771",
+      "h_index": 76,
+      "i10_index": 289,
+      "works_count": 466,
+      "cited_by_count": 25375,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5047347058",
+      "display_name": "Ruth M. Hall",
+      "orcid": "https://orcid.org/0000-0003-2062-3312",
+      "h_index": 76,
+      "i10_index": 238,
+      "works_count": 330,
+      "cited_by_count": 20722,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5109593172",
+      "display_name": "Daniel F. Sahm",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 229,
+      "works_count": 422,
+      "cited_by_count": 20330,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5045015403",
+      "display_name": "Teresa M. Coque",
+      "orcid": "https://orcid.org/0000-0002-8228-3491",
+      "h_index": 76,
+      "i10_index": 189,
+      "works_count": 285,
+      "cited_by_count": 25418,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5039012036",
+      "display_name": "Alessandra Carattoli",
+      "orcid": "https://orcid.org/0000-0002-6120-6526",
+      "h_index": 76,
+      "i10_index": 178,
+      "works_count": 244,
+      "cited_by_count": 31781,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5006096420",
+      "display_name": "Patrick F. McDermott",
+      "orcid": "https://orcid.org/0000-0003-1868-8096",
+      "h_index": 76,
+      "i10_index": 151,
+      "works_count": 194,
+      "cited_by_count": 19795,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5050658340",
+      "display_name": "Paolo Visca",
+      "orcid": "https://orcid.org/0000-0002-6128-7039",
+      "h_index": 75,
+      "i10_index": 279,
+      "works_count": 457,
+      "cited_by_count": 20656,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5028041493",
+      "display_name": "George A. Jacoby",
+      "orcid": "https://orcid.org/0000-0003-1824-5834",
+      "h_index": 75,
+      "i10_index": 162,
+      "works_count": 216,
+      "cited_by_count": 38647,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5027587575",
+      "display_name": "César A. Arias",
+      "orcid": "https://orcid.org/0000-0001-9054-9774",
+      "h_index": 74,
+      "i10_index": 225,
+      "works_count": 603,
+      "cited_by_count": 26597,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Microbiology (medical) -- 9.2",
+      "id": "https://openalex.org/A5087023094",
+      "display_name": "Anton Yariv Peleg",
+      "orcid": "https://orcid.org/0000-0002-2296-2126",
+      "h_index": 74,
+      "i10_index": 207,
+      "works_count": 323,
+      "cited_by_count": 51195,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5031624178",
+      "display_name": "David Paul Speert",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 177,
+      "works_count": 229,
+      "cited_by_count": 22761,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5113689782",
+      "display_name": "David Gordon White",
+      "orcid": "https://orcid.org/0009-0006-5255-340X",
+      "h_index": 74,
+      "i10_index": 151,
+      "works_count": 293,
+      "cited_by_count": 18414,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Arts and Humanities",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5033903857",
+      "display_name": "Athanasios Tsakris",
+      "orcid": "https://orcid.org/0000-0003-0656-4715",
+      "h_index": 73,
+      "i10_index": 358,
+      "works_count": 631,
+      "cited_by_count": 20959,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5006715126",
+      "display_name": "Robert K. Flamm",
+      "orcid": "https://orcid.org/0000-0002-6518-1522",
+      "h_index": 73,
+      "i10_index": 282,
+      "works_count": 435,
+      "cited_by_count": 16227,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5019407143",
+      "display_name": "Steven D. Brown",
+      "orcid": "https://orcid.org/0000-0002-9281-3898",
+      "h_index": 73,
+      "i10_index": 220,
+      "works_count": 336,
+      "cited_by_count": 18775,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5024736923",
+      "display_name": "Gunnar Kahlmeter",
+      "orcid": "https://orcid.org/0000-0001-9993-9891",
+      "h_index": 73,
+      "i10_index": 189,
+      "works_count": 309,
+      "cited_by_count": 47051,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5060997191",
+      "display_name": "Arnold G. Steigerwalt",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 164,
+      "works_count": 188,
+      "cited_by_count": 17825,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5007565957",
+      "display_name": "Peter C. Appelbaum",
+      "orcid": "https://orcid.org/0000-0002-6011-6342",
+      "h_index": 72,
+      "i10_index": 323,
+      "works_count": 475,
+      "cited_by_count": 21201,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5089714048",
+      "display_name": "Guillaume Arlet",
+      "orcid": "https://orcid.org/0000-0002-1330-472X",
+      "h_index": 72,
+      "i10_index": 187,
+      "works_count": 309,
+      "cited_by_count": 20111,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5028335853",
+      "display_name": "Nicole E Stoesser",
+      "orcid": "https://orcid.org/0000-0002-4508-7969",
+      "h_index": 72,
+      "i10_index": 158,
+      "works_count": 248,
+      "cited_by_count": 23089,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Microbiology (medical) -- 9.1",
+      "id": "https://openalex.org/A5065663137",
+      "display_name": "Harold C. Neu",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 300,
+      "works_count": 526,
+      "cited_by_count": 21538,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Microbiology (medical) -- 9.0",
+      "id": "https://openalex.org/A5040276233",
+      "display_name": "David Asa Schwartz",
+      "orcid": "https://orcid.org/0000-0002-7486-8545",
+      "h_index": 71,
+      "i10_index": 273,
+      "works_count": 481,
+      "cited_by_count": 20148,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Microbiology (medical) -- 9.0",
+      "id": "https://openalex.org/A5062693388",
+      "display_name": "Ellie J. C. Goldstein",
+      "orcid": "https://orcid.org/0000-0002-1044-6159",
+      "h_index": 71,
+      "i10_index": 245,
+      "works_count": 348,
+      "cited_by_count": 27290,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Microbiology (medical) -- 9.0",
+      "id": "https://openalex.org/A5048088023",
+      "display_name": "Marco Falcone",
+      "orcid": "https://orcid.org/0000-0003-3813-8796",
+      "h_index": 71,
+      "i10_index": 242,
+      "works_count": 431,
+      "cited_by_count": 19874,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Microbiology (medical) -- 9.0",
+      "id": "https://openalex.org/A5088106959",
+      "display_name": "Paul H. M. Savelkoul",
+      "orcid": "https://orcid.org/0000-0002-3527-6950",
+      "h_index": 71,
+      "i10_index": 224,
+      "works_count": 409,
+      "cited_by_count": 19520,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Microbiology (medical) -- 9.0",
+      "id": "https://openalex.org/A5110184050",
+      "display_name": "Yoshichika Arakawa",
+      "orcid": "https://orcid.org/0000-0001-5212-8303",
+      "h_index": 71,
+      "i10_index": 224,
+      "works_count": 323,
+      "cited_by_count": 18546,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5033483720",
+      "display_name": "Dik J. Mevius",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 199,
+      "works_count": 377,
+      "cited_by_count": 20062,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5033027758",
+      "display_name": "Leo M. Schouls",
+      "orcid": "https://orcid.org/0000-0003-1253-9794",
+      "h_index": 71,
+      "i10_index": 183,
+      "works_count": 216,
+      "cited_by_count": 22901,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5100689508",
+      "display_name": "Kyungwon Lee",
+      "orcid": "https://orcid.org/0000-0003-3788-2134",
+      "h_index": 70,
+      "i10_index": 375,
+      "works_count": 725,
+      "cited_by_count": 24061,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5059192444",
+      "display_name": "Clyde Thornsberry",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 226,
+      "works_count": 319,
+      "cited_by_count": 16115,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5015642749",
+      "display_name": "Christian G. Giske",
+      "orcid": "https://orcid.org/0000-0003-4327-6122",
+      "h_index": 70,
+      "i10_index": 222,
+      "works_count": 383,
+      "cited_by_count": 54095,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5054725825",
+      "display_name": "Marilyn C. Roberts",
+      "orcid": "https://orcid.org/0000-0003-0617-0046",
+      "h_index": 70,
+      "i10_index": 199,
+      "works_count": 302,
+      "cited_by_count": 25024,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5045925745",
+      "display_name": "Gautam A. Dantas",
+      "orcid": "https://orcid.org/0000-0003-0455-8370",
+      "h_index": 70,
+      "i10_index": 153,
+      "works_count": 261,
+      "cited_by_count": 28226,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5059914416",
+      "display_name": "Ana Cristina Gales",
+      "orcid": "https://orcid.org/0000-0003-0913-768X",
+      "h_index": 69,
+      "i10_index": 255,
+      "works_count": 390,
+      "cited_by_count": 26735,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5109224208",
+      "display_name": "Gary V. Doern",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 205,
+      "works_count": 308,
+      "cited_by_count": 19640,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5070961080",
+      "display_name": "Cheng‐Hsun Chiu",
+      "orcid": "https://orcid.org/0000-0003-4324-7743",
+      "h_index": 68,
+      "i10_index": 402,
+      "works_count": 663,
+      "cited_by_count": 21094,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5026861437",
+      "display_name": "Hui Wang",
+      "orcid": "https://orcid.org/0000-0001-9220-0357",
+      "h_index": 68,
+      "i10_index": 267,
+      "works_count": 436,
+      "cited_by_count": 19746,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Microbiology (medical) -- 8.9",
+      "id": "https://openalex.org/A5001355515",
+      "display_name": "Youri Glupczynski",
+      "orcid": "https://orcid.org/0000-0002-9419-6387",
+      "h_index": 68,
+      "i10_index": 228,
+      "works_count": 381,
+      "cited_by_count": 18583,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5076347067",
+      "display_name": "Jerónimo Pachón",
+      "orcid": "https://orcid.org/0000-0002-8166-5308",
+      "h_index": 68,
+      "i10_index": 226,
+      "works_count": 387,
+      "cited_by_count": 15664,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5088404965",
+      "display_name": "Torsten Seemann",
+      "orcid": "https://orcid.org/0000-0001-6046-610X",
+      "h_index": 68,
+      "i10_index": 176,
+      "works_count": 314,
+      "cited_by_count": 38822,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5048557948",
+      "display_name": "María José Figueras",
+      "orcid": "https://orcid.org/0000-0002-2268-8980",
+      "h_index": 68,
+      "i10_index": 161,
+      "works_count": 241,
+      "cited_by_count": 13970,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5003987523",
+      "display_name": "Michel G. Bergeron",
+      "orcid": "https://orcid.org/0000-0002-0939-4435",
+      "h_index": 67,
+      "i10_index": 310,
+      "works_count": 520,
+      "cited_by_count": 21727,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5062642490",
+      "display_name": "Makoto Kuroda",
+      "orcid": "https://orcid.org/0000-0002-0487-4405",
+      "h_index": 67,
+      "i10_index": 306,
+      "works_count": 582,
+      "cited_by_count": 25100,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5091444788",
+      "display_name": "Édouard Bingen",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 265,
+      "works_count": 566,
+      "cited_by_count": 21457,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5041157580",
+      "display_name": "Rodrigo Elisandro Mendes",
+      "orcid": "https://orcid.org/0000-0002-8648-1137",
+      "h_index": 67,
+      "i10_index": 265,
+      "works_count": 546,
+      "cited_by_count": 15546,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5007052582",
+      "display_name": "Vincent Cattoir",
+      "orcid": "https://orcid.org/0000-0003-4026-9912",
+      "h_index": 67,
+      "i10_index": 225,
+      "works_count": 432,
+      "cited_by_count": 20627,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5085802392",
+      "display_name": "Douglas Ruben Call",
+      "orcid": "https://orcid.org/0000-0001-6791-055X",
+      "h_index": 67,
+      "i10_index": 220,
+      "works_count": 336,
+      "cited_by_count": 14664,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5104091867",
+      "display_name": "Laurent Gutmann",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 182,
+      "works_count": 276,
+      "cited_by_count": 14311,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5031846197",
+      "display_name": "John R. W. Govan",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 145,
+      "works_count": 186,
+      "cited_by_count": 17760,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5102988860",
+      "display_name": "Beatriz Guerra",
+      "orcid": "https://orcid.org/0000-0003-3302-2989",
+      "h_index": 67,
+      "i10_index": 136,
+      "works_count": 183,
+      "cited_by_count": 15559,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5014668607",
+      "display_name": "Jan Adriaan Jacobs",
+      "orcid": "https://orcid.org/0000-0002-8657-6777",
+      "h_index": 66,
+      "i10_index": 281,
+      "works_count": 474,
+      "cited_by_count": 36644,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5031044365",
+      "display_name": "Carey‐Ann D. Burnham",
+      "orcid": "https://orcid.org/0000-0002-1137-840X",
+      "h_index": 66,
+      "i10_index": 261,
+      "works_count": 450,
+      "cited_by_count": 16035,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5049516465",
+      "display_name": "Waleria Hryniewicz",
+      "orcid": "https://orcid.org/0000-0002-3651-9790",
+      "h_index": 66,
+      "i10_index": 223,
+      "works_count": 401,
+      "cited_by_count": 25344,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5012255520",
+      "display_name": "Gary W. Procop",
+      "orcid": "https://orcid.org/0000-0002-3164-2968",
+      "h_index": 66,
+      "i10_index": 204,
+      "works_count": 336,
+      "cited_by_count": 13781,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5089744609",
+      "display_name": "Patrick Plésiat",
+      "orcid": "https://orcid.org/0000-0001-7381-5671",
+      "h_index": 66,
+      "i10_index": 161,
+      "works_count": 281,
+      "cited_by_count": 15682,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5084058050",
+      "display_name": "Henrik Hasman",
+      "orcid": "https://orcid.org/0000-0001-6314-2709",
+      "h_index": 66,
+      "i10_index": 149,
+      "works_count": 261,
+      "cited_by_count": 31286,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5060427520",
+      "display_name": "Alasdair P. MacGowan",
+      "orcid": "https://orcid.org/0000-0002-6720-5268",
+      "h_index": 65,
+      "i10_index": 266,
+      "works_count": 456,
+      "cited_by_count": 17655,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5109518842",
+      "display_name": "Thomas R. Fritsche",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 177,
+      "works_count": 282,
+      "cited_by_count": 11738,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5037042809",
+      "display_name": "Stefania Stefani",
+      "orcid": "https://orcid.org/0000-0003-1594-7427",
+      "h_index": 64,
+      "i10_index": 274,
+      "works_count": 507,
+      "cited_by_count": 18999,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Microbiology (medical) -- 8.8",
+      "id": "https://openalex.org/A5020748618",
+      "display_name": "Tony Velkov",
+      "orcid": "https://orcid.org/0000-0002-0017-7952",
+      "h_index": 64,
+      "i10_index": 229,
+      "works_count": 317,
+      "cited_by_count": 14061,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5100412507",
+      "display_name": "Asad Ullah Khan",
+      "orcid": "https://orcid.org/0000-0001-9191-9423",
+      "h_index": 64,
+      "i10_index": 201,
+      "works_count": 380,
+      "cited_by_count": 16280,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5068286313",
+      "display_name": "David van Duin",
+      "orcid": "https://orcid.org/0000-0003-4784-3227",
+      "h_index": 64,
+      "i10_index": 167,
+      "works_count": 318,
+      "cited_by_count": 20044,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5066002865",
+      "display_name": "Arnfinn Sundsfjord",
+      "orcid": "https://orcid.org/0000-0002-3728-2270",
+      "h_index": 64,
+      "i10_index": 146,
+      "works_count": 235,
+      "cited_by_count": 14288,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5015827091",
+      "display_name": "Erik Kristiansson",
+      "orcid": "https://orcid.org/0000-0002-8609-2414",
+      "h_index": 64,
+      "i10_index": 143,
+      "works_count": 294,
+      "cited_by_count": 20324,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5088319959",
+      "display_name": "David J. Ecker",
+      "orcid": "https://orcid.org/0000-0003-4350-9037",
+      "h_index": 64,
+      "i10_index": 140,
+      "works_count": 183,
+      "cited_by_count": 13979,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5077670541",
+      "display_name": "Lenie Dijkshoorn",
+      "orcid": "https://orcid.org/0000-0003-1909-402X",
+      "h_index": 64,
+      "i10_index": 133,
+      "works_count": 180,
+      "cited_by_count": 16441,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5004058682",
+      "display_name": "Barbara A. Brown‐Elliott",
+      "orcid": "https://orcid.org/0000-0002-3091-1169",
+      "h_index": 64,
+      "i10_index": 128,
+      "works_count": 208,
+      "cited_by_count": 22028,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5109964426",
+      "display_name": "Ulf Berthold Göbel",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 126,
+      "works_count": 169,
+      "cited_by_count": 15816,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5108450266",
+      "display_name": "Luc A. Devriese",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 174,
+      "works_count": 490,
+      "cited_by_count": 12889,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5027103374",
+      "display_name": "Rene Sjøgren Hendriksen",
+      "orcid": "https://orcid.org/0000-0003-2934-8214",
+      "h_index": 63,
+      "i10_index": 161,
+      "works_count": 295,
+      "cited_by_count": 17013,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5090336151",
+      "display_name": "Ryan K. Shields",
+      "orcid": "https://orcid.org/0000-0001-9794-5665",
+      "h_index": 63,
+      "i10_index": 159,
+      "works_count": 337,
+      "cited_by_count": 11724,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Microbiology (medical) -- 8.7",
+      "id": "https://openalex.org/A5022681982",
+      "display_name": "Richard Bonnet",
+      "orcid": "https://orcid.org/0000-0002-1363-6871",
+      "h_index": 63,
+      "i10_index": 155,
+      "works_count": 284,
+      "cited_by_count": 15615,
+      "discipline": "Microbiology (medical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology (medical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    }
+  ]
+}

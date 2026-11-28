@@ -1,0 +1,5710 @@
+{
+  "kind": "subfield",
+  "id": 2310,
+  "name": "Pollution",
+  "total_in_scrape": 296,
+  "count": 296,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Pollution -- 9.9",
+      "id": "https://openalex.org/A5062101644",
+      "display_name": "Mark C.M. van Loosdrecht",
+      "orcid": "https://orcid.org/0000-0003-0658-4775",
+      "h_index": 190,
+      "i10_index": 974,
+      "works_count": 1455,
+      "cited_by_count": 132145,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Pollution -- 9.9",
+      "id": "https://openalex.org/A5003866204",
+      "display_name": "‪Damià Barceló",
+      "orcid": "https://orcid.org/0000-0002-8873-0491",
+      "h_index": 184,
+      "i10_index": 1376,
+      "works_count": 1866,
+      "cited_by_count": 150806,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Pollution -- 9.9",
+      "id": "https://openalex.org/A5100434325",
+      "display_name": "Yong‐Guan Zhu",
+      "orcid": "https://orcid.org/0000-0003-3861-8482",
+      "h_index": 178,
+      "i10_index": 905,
+      "works_count": 1431,
+      "cited_by_count": 118059,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Pollution -- 9.9",
+      "id": "https://openalex.org/A5090222404",
+      "display_name": "Willy Verstraete",
+      "orcid": "https://orcid.org/0000-0002-3140-3713",
+      "h_index": 174,
+      "i10_index": 783,
+      "works_count": 1489,
+      "cited_by_count": 120799,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Pollution -- 9.9",
+      "id": "https://openalex.org/A5035633946",
+      "display_name": "Baoshan Xing",
+      "orcid": "https://orcid.org/0000-0003-2028-1295",
+      "h_index": 163,
+      "i10_index": 1036,
+      "works_count": 1320,
+      "cited_by_count": 113609,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Pollution -- 9.9",
+      "id": "https://openalex.org/A5061592897",
+      "display_name": "Fangjie J. Zhao",
+      "orcid": "https://orcid.org/0000-0002-0164-169X",
+      "h_index": 148,
+      "i10_index": 454,
+      "works_count": 697,
+      "cited_by_count": 72917,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5039520570",
+      "display_name": "Jörg Rinklebe",
+      "orcid": "https://orcid.org/0000-0001-7404-1639",
+      "h_index": 143,
+      "i10_index": 534,
+      "works_count": 707,
+      "cited_by_count": 72463,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5036215557",
+      "display_name": "Mike S. M. Jetten",
+      "orcid": "https://orcid.org/0000-0002-4691-7039",
+      "h_index": 143,
+      "i10_index": 475,
+      "works_count": 868,
+      "cited_by_count": 85568,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5037311049",
+      "display_name": "S. P. McGrath",
+      "orcid": "https://orcid.org/0000-0003-0952-8947",
+      "h_index": 137,
+      "i10_index": 388,
+      "works_count": 727,
+      "cited_by_count": 67908,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5047800622",
+      "display_name": "Nico Boon",
+      "orcid": "https://orcid.org/0000-0002-7734-3103",
+      "h_index": 136,
+      "i10_index": 543,
+      "works_count": 1100,
+      "cited_by_count": 62447,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5002248149",
+      "display_name": "Ravi Naidu",
+      "orcid": "https://orcid.org/0000-0002-1520-2495",
+      "h_index": 135,
+      "i10_index": 822,
+      "works_count": 1147,
+      "cited_by_count": 73984,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5009954391",
+      "display_name": "Zhiguo Yuan",
+      "orcid": "https://orcid.org/0000-0002-7566-1482",
+      "h_index": 132,
+      "i10_index": 576,
+      "works_count": 787,
+      "cited_by_count": 59318,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5100436302",
+      "display_name": "Duu‐Jong Lee",
+      "orcid": "https://orcid.org/0000-0002-8820-8097",
+      "h_index": 129,
+      "i10_index": 1019,
+      "works_count": 1393,
+      "cited_by_count": 75638,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5034506802",
+      "display_name": "Richard Charles Thompson",
+      "orcid": "https://orcid.org/0000-0003-2262-6621",
+      "h_index": 124,
+      "i10_index": 323,
+      "works_count": 514,
+      "cited_by_count": 123838,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5081251356",
+      "display_name": "Pedro J. J. Alvarez",
+      "orcid": "https://orcid.org/0000-0002-6725-7199",
+      "h_index": 122,
+      "i10_index": 419,
+      "works_count": 561,
+      "cited_by_count": 64657,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5076252003",
+      "display_name": "Jaco Vangronsveld",
+      "orcid": "https://orcid.org/0000-0003-4423-8363",
+      "h_index": 120,
+      "i10_index": 386,
+      "works_count": 757,
+      "cited_by_count": 48672,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Pollution -- 9.8",
+      "id": "https://openalex.org/A5100378815",
+      "display_name": "Tong Zhang",
+      "orcid": "https://orcid.org/0000-0003-1148-4322",
+      "h_index": 119,
+      "i10_index": 339,
+      "works_count": 597,
+      "cited_by_count": 50638,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5056640675",
+      "display_name": "Bing‐Jie Ni",
+      "orcid": "https://orcid.org/0000-0002-1129-7837",
+      "h_index": 117,
+      "i10_index": 589,
+      "works_count": 770,
+      "cited_by_count": 47172,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5059807847",
+      "display_name": "Per Halkjær Nielsen",
+      "orcid": "https://orcid.org/0000-0002-6402-1877",
+      "h_index": 117,
+      "i10_index": 355,
+      "works_count": 784,
+      "cited_by_count": 53226,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5091050630",
+      "display_name": "Bruce E. Rittmann",
+      "orcid": "https://orcid.org/0000-0002-3678-149X",
+      "h_index": 116,
+      "i10_index": 635,
+      "works_count": 999,
+      "cited_by_count": 57549,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5025975328",
+      "display_name": "Kenneth Nigel Timmis",
+      "orcid": "https://orcid.org/0000-0002-0066-4670",
+      "h_index": 116,
+      "i10_index": 421,
+      "works_count": 633,
+      "cited_by_count": 54826,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5057897261",
+      "display_name": "Guang‐Guo Ying",
+      "orcid": "https://orcid.org/0000-0002-3387-1078",
+      "h_index": 115,
+      "i10_index": 478,
+      "works_count": 620,
+      "cited_by_count": 52812,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5061907624",
+      "display_name": "Yongzhen Peng",
+      "orcid": "https://orcid.org/0000-0002-4702-3774",
+      "h_index": 114,
+      "i10_index": 776,
+      "works_count": 1306,
+      "cited_by_count": 52943,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5029170230",
+      "display_name": "Thomas A. Ternes",
+      "orcid": "https://orcid.org/0000-0002-2615-7925",
+      "h_index": 113,
+      "i10_index": 261,
+      "works_count": 410,
+      "cited_by_count": 62968,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5100694840",
+      "display_name": "Min Yang",
+      "orcid": "https://orcid.org/0000-0002-9034-3175",
+      "h_index": 112,
+      "i10_index": 1046,
+      "works_count": 2735,
+      "cited_by_count": 64256,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5056974200",
+      "display_name": "Dongbo Wang",
+      "orcid": "https://orcid.org/0000-0003-3188-0138",
+      "h_index": 111,
+      "i10_index": 411,
+      "works_count": 501,
+      "cited_by_count": 38226,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5000851816",
+      "display_name": "Mallavarapu Megharaj",
+      "orcid": "https://orcid.org/0000-0002-6230-518X",
+      "h_index": 108,
+      "i10_index": 536,
+      "works_count": 702,
+      "cited_by_count": 42662,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Pollution -- 9.7",
+      "id": "https://openalex.org/A5068464260",
+      "display_name": "Jianming M. Xu",
+      "orcid": "https://orcid.org/0000-0002-2954-9764",
+      "h_index": 107,
+      "i10_index": 536,
+      "works_count": 711,
+      "cited_by_count": 47276,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5020019418",
+      "display_name": "Kevin Victor Thomas",
+      "orcid": "https://orcid.org/0000-0002-2155-100X",
+      "h_index": 106,
+      "i10_index": 345,
+      "works_count": 557,
+      "cited_by_count": 39447,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5023880060",
+      "display_name": "Mira Petrović",
+      "orcid": "https://orcid.org/0000-0001-9734-1933",
+      "h_index": 106,
+      "i10_index": 240,
+      "works_count": 370,
+      "cited_by_count": 36870,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5022072267",
+      "display_name": "Yu Liu",
+      "orcid": "https://orcid.org/0000-0002-9702-349X",
+      "h_index": 105,
+      "i10_index": 339,
+      "works_count": 466,
+      "cited_by_count": 38627,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5014302695",
+      "display_name": "Ibrahim Mohamed Banat",
+      "orcid": "https://orcid.org/0000-0001-8964-2840",
+      "h_index": 104,
+      "i10_index": 292,
+      "works_count": 394,
+      "cited_by_count": 43901,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5100416438",
+      "display_name": "Xiangdong D. Li",
+      "orcid": "https://orcid.org/0000-0002-4044-2888",
+      "h_index": 104,
+      "i10_index": 250,
+      "works_count": 342,
+      "cited_by_count": 38246,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5112806181",
+      "display_name": "Martin Alexander",
+      "orcid": null,
+      "h_index": 101,
+      "i10_index": 396,
+      "works_count": 529,
+      "cited_by_count": 34804,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5109847601",
+      "display_name": "Alexander J. B. Zehnder",
+      "orcid": "https://orcid.org/0000-0003-2565-5065",
+      "h_index": 101,
+      "i10_index": 237,
+      "works_count": 422,
+      "cited_by_count": 36088,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5077972365",
+      "display_name": "Yolanda Picó",
+      "orcid": "https://orcid.org/0000-0002-9545-0965",
+      "h_index": 100,
+      "i10_index": 313,
+      "works_count": 578,
+      "cited_by_count": 30363,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5001483262",
+      "display_name": "Albert A. Koelmans",
+      "orcid": "https://orcid.org/0000-0001-7176-4356",
+      "h_index": 100,
+      "i10_index": 243,
+      "works_count": 514,
+      "cited_by_count": 53517,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5042293342",
+      "display_name": "Lena Qiying Ma",
+      "orcid": "https://orcid.org/0000-0002-8463-9957",
+      "h_index": 98,
+      "i10_index": 394,
+      "works_count": 461,
+      "cited_by_count": 42477,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Pollution -- 9.6",
+      "id": "https://openalex.org/A5089824454",
+      "display_name": "Qixing Zhou",
+      "orcid": "https://orcid.org/0000-0003-2804-2360",
+      "h_index": 98,
+      "i10_index": 311,
+      "works_count": 377,
+      "cited_by_count": 31658,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5044660683",
+      "display_name": "Scott E. Fendorf",
+      "orcid": "https://orcid.org/0000-0002-9177-1809",
+      "h_index": 98,
+      "i10_index": 238,
+      "works_count": 3671,
+      "cited_by_count": 32929,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5053693280",
+      "display_name": "Meththika Suharshini Vithanage",
+      "orcid": "https://orcid.org/0000-0003-2923-4065",
+      "h_index": 97,
+      "i10_index": 313,
+      "works_count": 532,
+      "cited_by_count": 37878,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5072201127",
+      "display_name": "Enzo Lombi",
+      "orcid": "https://orcid.org/0000-0003-3384-0375",
+      "h_index": 97,
+      "i10_index": 258,
+      "works_count": 391,
+      "cited_by_count": 33538,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5010856777",
+      "display_name": "Xinde Cao",
+      "orcid": "https://orcid.org/0000-0002-2315-4219",
+      "h_index": 97,
+      "i10_index": 238,
+      "works_count": 294,
+      "cited_by_count": 37739,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5100650085",
+      "display_name": "Qi Xing Yang",
+      "orcid": "https://orcid.org/0000-0001-6781-770X",
+      "h_index": 96,
+      "i10_index": 293,
+      "works_count": 428,
+      "cited_by_count": 29220,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5067502616",
+      "display_name": "Mike John McLaughlin",
+      "orcid": "https://orcid.org/0000-0001-6796-4144",
+      "h_index": 96,
+      "i10_index": 291,
+      "works_count": 460,
+      "cited_by_count": 27685,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5000512450",
+      "display_name": "Xiaoe Yang",
+      "orcid": "https://orcid.org/0000-0003-2714-6483",
+      "h_index": 95,
+      "i10_index": 337,
+      "works_count": 406,
+      "cited_by_count": 31803,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5017032128",
+      "display_name": "Ruben Kretzschmar",
+      "orcid": "https://orcid.org/0000-0003-2587-2430",
+      "h_index": 95,
+      "i10_index": 230,
+      "works_count": 440,
+      "cited_by_count": 25463,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5061905355",
+      "display_name": "Sabry Mohamed Shaheen",
+      "orcid": "https://orcid.org/0000-0002-5618-8175",
+      "h_index": 94,
+      "i10_index": 257,
+      "works_count": 324,
+      "cited_by_count": 28792,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5023426204",
+      "display_name": "Peter Hans Santschi",
+      "orcid": "https://orcid.org/0000-0001-8188-7691",
+      "h_index": 93,
+      "i10_index": 297,
+      "works_count": 396,
+      "cited_by_count": 27910,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5084857922",
+      "display_name": "Rufus L. Chaney",
+      "orcid": "https://orcid.org/0000-0001-6957-5345",
+      "h_index": 93,
+      "i10_index": 282,
+      "works_count": 348,
+      "cited_by_count": 29879,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Pollution -- 9.5",
+      "id": "https://openalex.org/A5075200807",
+      "display_name": "Juliane Hollender",
+      "orcid": "https://orcid.org/0000-0002-4660-274X",
+      "h_index": 93,
+      "i10_index": 266,
+      "works_count": 514,
+      "cited_by_count": 35925,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5022055752",
+      "display_name": "Despo Fatta‐Kassinos",
+      "orcid": "https://orcid.org/0000-0003-1173-0941",
+      "h_index": 93,
+      "i10_index": 191,
+      "works_count": 260,
+      "cited_by_count": 39845,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5085845634",
+      "display_name": "Carl E. Cerniglia",
+      "orcid": "https://orcid.org/0000-0001-9565-897X",
+      "h_index": 91,
+      "i10_index": 325,
+      "works_count": 426,
+      "cited_by_count": 29201,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5112236758",
+      "display_name": "Ji‐Dong Gu",
+      "orcid": "https://orcid.org/0000-0002-7082-9784",
+      "h_index": 90,
+      "i10_index": 496,
+      "works_count": 919,
+      "cited_by_count": 31554,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5088455213",
+      "display_name": "Sami Sayadi",
+      "orcid": "https://orcid.org/0000-0002-2115-2981",
+      "h_index": 90,
+      "i10_index": 380,
+      "works_count": 537,
+      "cited_by_count": 25943,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Energy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5033025672",
+      "display_name": "Zhenli L. He",
+      "orcid": "https://orcid.org/0000-0001-7761-2070",
+      "h_index": 90,
+      "i10_index": 377,
+      "works_count": 491,
+      "cited_by_count": 34023,
+      "discipline": "Pollution",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5028407513",
+      "display_name": "Jürg Keller",
+      "orcid": "https://orcid.org/0000-0001-6796-0936",
+      "h_index": 90,
+      "i10_index": 190,
+      "works_count": 319,
+      "cited_by_count": 30318,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5012567962",
+      "display_name": "Niels Peter Revsbech",
+      "orcid": "https://orcid.org/0000-0002-2193-262X",
+      "h_index": 90,
+      "i10_index": 187,
+      "works_count": 292,
+      "cited_by_count": 28729,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5033947135",
+      "display_name": "Νikolaos S. Τhomaidis",
+      "orcid": "https://orcid.org/0000-0002-4624-4735",
+      "h_index": 89,
+      "i10_index": 336,
+      "works_count": 601,
+      "cited_by_count": 26850,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5031761356",
+      "display_name": "Edward Topp",
+      "orcid": "https://orcid.org/0000-0002-8273-9372",
+      "h_index": 89,
+      "i10_index": 313,
+      "works_count": 430,
+      "cited_by_count": 31384,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5005720456",
+      "display_name": "D. G. Joakim Larsson",
+      "orcid": "https://orcid.org/0000-0002-5496-0328",
+      "h_index": 89,
+      "i10_index": 227,
+      "works_count": 399,
+      "cited_by_count": 41903,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Pollution -- 9.4",
+      "id": "https://openalex.org/A5088019295",
+      "display_name": "René P. Schwarzenbach",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 186,
+      "works_count": 263,
+      "cited_by_count": 31862,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5062498580",
+      "display_name": "Alan J. M. Baker",
+      "orcid": "https://orcid.org/0009-0000-9538-2504",
+      "h_index": 88,
+      "i10_index": 220,
+      "works_count": 356,
+      "cited_by_count": 37003,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5036179952",
+      "display_name": "Huahong Shi",
+      "orcid": "https://orcid.org/0000-0003-2978-0680",
+      "h_index": 88,
+      "i10_index": 153,
+      "works_count": 211,
+      "cited_by_count": 34504,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5100369613",
+      "display_name": "Jun Wang",
+      "orcid": "https://orcid.org/0000-0002-7574-9468",
+      "h_index": 87,
+      "i10_index": 357,
+      "works_count": 504,
+      "cited_by_count": 31577,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5052150811",
+      "display_name": "Erik Smolders",
+      "orcid": "https://orcid.org/0000-0003-3054-2444",
+      "h_index": 87,
+      "i10_index": 348,
+      "works_count": 643,
+      "cited_by_count": 25249,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5072939366",
+      "display_name": "Thorsten Reemtsma",
+      "orcid": "https://orcid.org/0000-0003-1606-0764",
+      "h_index": 87,
+      "i10_index": 240,
+      "works_count": 352,
+      "cited_by_count": 23557,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5059737780",
+      "display_name": "Shigeaki Harayama",
+      "orcid": "https://orcid.org/0000-0003-2103-7796",
+      "h_index": 87,
+      "i10_index": 233,
+      "works_count": 311,
+      "cited_by_count": 24552,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5076595337",
+      "display_name": "Sara Rodríguez‐Mozaz",
+      "orcid": "https://orcid.org/0000-0003-2962-8144",
+      "h_index": 87,
+      "i10_index": 175,
+      "works_count": 262,
+      "cited_by_count": 25066,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5059948424",
+      "display_name": "Jonathan W.C. Wong",
+      "orcid": "https://orcid.org/0000-0003-0159-259X",
+      "h_index": 86,
+      "i10_index": 344,
+      "works_count": 465,
+      "cited_by_count": 27571,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5069687407",
+      "display_name": "Maria A.M. Reis",
+      "orcid": "https://orcid.org/0000-0003-4000-1836",
+      "h_index": 86,
+      "i10_index": 314,
+      "works_count": 444,
+      "cited_by_count": 28425,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5028931040",
+      "display_name": "Yinguang Chen",
+      "orcid": "https://orcid.org/0000-0002-6463-5895",
+      "h_index": 86,
+      "i10_index": 265,
+      "works_count": 336,
+      "cited_by_count": 24106,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Pollution -- 9.3",
+      "id": "https://openalex.org/A5100335676",
+      "display_name": "Shaohua Chen",
+      "orcid": "https://orcid.org/0000-0001-8306-2626",
+      "h_index": 86,
+      "i10_index": 252,
+      "works_count": 416,
+      "cited_by_count": 24984,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5045423576",
+      "display_name": "Muhammad Abdul Rehman Shahid",
+      "orcid": "https://orcid.org/0000-0001-8521-4515",
+      "h_index": 86,
+      "i10_index": 235,
+      "works_count": 399,
+      "cited_by_count": 28049,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5046181665",
+      "display_name": "Amy J. Pruden",
+      "orcid": "https://orcid.org/0000-0002-3191-6244",
+      "h_index": 86,
+      "i10_index": 230,
+      "works_count": 369,
+      "cited_by_count": 27198,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5023202517",
+      "display_name": "Perry L. McCarty",
+      "orcid": "https://orcid.org/0000-0002-7031-0106",
+      "h_index": 86,
+      "i10_index": 211,
+      "works_count": 308,
+      "cited_by_count": 28959,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5100451284",
+      "display_name": "Bing Jhang Li",
+      "orcid": "https://orcid.org/0000-0002-7161-0477",
+      "h_index": 85,
+      "i10_index": 448,
+      "works_count": 737,
+      "cited_by_count": 31714,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5006541287",
+      "display_name": "Rongliang Qiu",
+      "orcid": "https://orcid.org/0000-0002-9469-5274",
+      "h_index": 84,
+      "i10_index": 409,
+      "works_count": 687,
+      "cited_by_count": 27724,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5111830579",
+      "display_name": "Jack Thomas Trevors",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 370,
+      "works_count": 634,
+      "cited_by_count": 30040,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5060799797",
+      "display_name": "Rainer Schulin",
+      "orcid": "https://orcid.org/0000-0002-9679-0750",
+      "h_index": 84,
+      "i10_index": 309,
+      "works_count": 451,
+      "cited_by_count": 25539,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5054179077",
+      "display_name": "Jim A. Field",
+      "orcid": "https://orcid.org/0000-0001-8704-3289",
+      "h_index": 84,
+      "i10_index": 294,
+      "works_count": 455,
+      "cited_by_count": 21940,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5086712247",
+      "display_name": "Earl Michael Thurman",
+      "orcid": "https://orcid.org/0000-0002-2191-1407",
+      "h_index": 84,
+      "i10_index": 219,
+      "works_count": 331,
+      "cited_by_count": 37050,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5009760942",
+      "display_name": "Hans Hermann Richnow",
+      "orcid": "https://orcid.org/0000-0002-6144-4129",
+      "h_index": 83,
+      "i10_index": 329,
+      "works_count": 471,
+      "cited_by_count": 23706,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Pollution -- 9.2",
+      "id": "https://openalex.org/A5080874179",
+      "display_name": "Guo‐Ping Sheng",
+      "orcid": "https://orcid.org/0000-0003-4579-1654",
+      "h_index": 83,
+      "i10_index": 286,
+      "works_count": 344,
+      "cited_by_count": 26772,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5077764215",
+      "display_name": "Sébastien Sauvé",
+      "orcid": "https://orcid.org/0000-0001-8584-1690",
+      "h_index": 83,
+      "i10_index": 284,
+      "works_count": 481,
+      "cited_by_count": 28351,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5113496204",
+      "display_name": "William Davison",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 278,
+      "works_count": 373,
+      "cited_by_count": 27249,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5005999266",
+      "display_name": "Jianhua Guo",
+      "orcid": "https://orcid.org/0000-0002-4732-9175",
+      "h_index": 83,
+      "i10_index": 263,
+      "works_count": 351,
+      "cited_by_count": 22445,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5100770932",
+      "display_name": "Yiwen Liu",
+      "orcid": "https://orcid.org/0000-0001-6677-7961",
+      "h_index": 83,
+      "i10_index": 251,
+      "works_count": 320,
+      "cited_by_count": 20255,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5048127370",
+      "display_name": "Filip M.G. Tack",
+      "orcid": "https://orcid.org/0000-0002-6976-7862",
+      "h_index": 83,
+      "i10_index": 242,
+      "works_count": 538,
+      "cited_by_count": 23183,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5090766405",
+      "display_name": "Satoshi Okabe",
+      "orcid": "https://orcid.org/0000-0003-0522-1606",
+      "h_index": 83,
+      "i10_index": 216,
+      "works_count": 344,
+      "cited_by_count": 20904,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5060604040",
+      "display_name": "Hideshige Takada",
+      "orcid": "https://orcid.org/0000-0002-3604-5329",
+      "h_index": 83,
+      "i10_index": 179,
+      "works_count": 252,
+      "cited_by_count": 32333,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5113758877",
+      "display_name": "David Templeton Gibson",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 170,
+      "works_count": 238,
+      "cited_by_count": 21332,
+      "discipline": "Pollution",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Chemistry",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5019205006",
+      "display_name": "Markus Flury",
+      "orcid": "https://orcid.org/0000-0002-3344-3962",
+      "h_index": 83,
+      "i10_index": 162,
+      "works_count": 355,
+      "cited_by_count": 20606,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5076258695",
+      "display_name": "Klaus Kümmerer",
+      "orcid": "https://orcid.org/0000-0003-2027-6488",
+      "h_index": 82,
+      "i10_index": 301,
+      "works_count": 600,
+      "cited_by_count": 34740,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Pollution -- 9.1",
+      "id": "https://openalex.org/A5059873143",
+      "display_name": "Jinren Ni",
+      "orcid": "https://orcid.org/0000-0002-9114-8347",
+      "h_index": 82,
+      "i10_index": 283,
+      "works_count": 390,
+      "cited_by_count": 25368,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Pollution -- 9.0",
+      "id": "https://openalex.org/A5047144508",
+      "display_name": "Terry Clyde Hazen",
+      "orcid": "https://orcid.org/0000-0002-2536-9993",
+      "h_index": 82,
+      "i10_index": 266,
+      "works_count": 652,
+      "cited_by_count": 27589,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Pollution -- 9.0",
+      "id": "https://openalex.org/A5100710389",
+      "display_name": "Qilin Wang",
+      "orcid": "https://orcid.org/0000-0002-0346-2396",
+      "h_index": 82,
+      "i10_index": 240,
+      "works_count": 302,
+      "cited_by_count": 21507,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Pollution -- 9.0",
+      "id": "https://openalex.org/A5009412499",
+      "display_name": "François Galgani",
+      "orcid": "https://orcid.org/0000-0001-8770-6054",
+      "h_index": 82,
+      "i10_index": 212,
+      "works_count": 511,
+      "cited_by_count": 41230,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Pollution -- 9.0",
+      "id": "https://openalex.org/A5059785684",
+      "display_name": "Dana W. Kolpin",
+      "orcid": "https://orcid.org/0000-0002-3529-6505",
+      "h_index": 82,
+      "i10_index": 203,
+      "works_count": 292,
+      "cited_by_count": 38254,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Pollution -- 9.0",
+      "id": "https://openalex.org/A5100321381",
+      "display_name": "Fang Wang",
+      "orcid": "https://orcid.org/0000-0001-9986-0948",
+      "h_index": 81,
+      "i10_index": 477,
+      "works_count": 867,
+      "cited_by_count": 30353,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5100343855",
+      "display_name": "Min Liu",
+      "orcid": "https://orcid.org/0000-0001-6515-5095",
+      "h_index": 81,
+      "i10_index": 335,
+      "works_count": 518,
+      "cited_by_count": 21742,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5068080408",
+      "display_name": "Jean‐Louis Morel",
+      "orcid": "https://orcid.org/0000-0002-5720-1482",
+      "h_index": 81,
+      "i10_index": 281,
+      "works_count": 582,
+      "cited_by_count": 21900,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5041899854",
+      "display_name": "Hefa Cheng",
+      "orcid": "https://orcid.org/0000-0003-4911-6971",
+      "h_index": 81,
+      "i10_index": 266,
+      "works_count": 354,
+      "cited_by_count": 23866,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5027466445",
+      "display_name": "Roger C. Prince",
+      "orcid": "https://orcid.org/0000-0002-5174-4216",
+      "h_index": 81,
+      "i10_index": 264,
+      "works_count": 390,
+      "cited_by_count": 26028,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5076693439",
+      "display_name": "Craig S. Criddle",
+      "orcid": "https://orcid.org/0000-0002-2750-8547",
+      "h_index": 81,
+      "i10_index": 190,
+      "works_count": 314,
+      "cited_by_count": 25320,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5026157255",
+      "display_name": "Robbert Kleerebezem",
+      "orcid": "https://orcid.org/0000-0001-7612-7794",
+      "h_index": 81,
+      "i10_index": 189,
+      "works_count": 272,
+      "cited_by_count": 22880,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5036424894",
+      "display_name": "Alistair B. A. Boxall",
+      "orcid": "https://orcid.org/0000-0003-3823-7516",
+      "h_index": 81,
+      "i10_index": 172,
+      "works_count": 215,
+      "cited_by_count": 32287,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5035924675",
+      "display_name": "Gary S. Sayler",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 261,
+      "works_count": 390,
+      "cited_by_count": 21208,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5085307835",
+      "display_name": "Rai S. Kookana",
+      "orcid": "https://orcid.org/0000-0002-0477-3284",
+      "h_index": 80,
+      "i10_index": 241,
+      "works_count": 362,
+      "cited_by_count": 26283,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5069034683",
+      "display_name": "Murray B. McBride",
+      "orcid": "https://orcid.org/0000-0003-0915-6688",
+      "h_index": 80,
+      "i10_index": 226,
+      "works_count": 268,
+      "cited_by_count": 27950,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5033118920",
+      "display_name": "Ajit Kumar Sarmah",
+      "orcid": "https://orcid.org/0000-0003-0664-2605",
+      "h_index": 80,
+      "i10_index": 182,
+      "works_count": 226,
+      "cited_by_count": 26777,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Pollution -- 8.9",
+      "id": "https://openalex.org/A5082791685",
+      "display_name": "Tatiana Minkina",
+      "orcid": "https://orcid.org/0000-0003-3022-0883",
+      "h_index": 79,
+      "i10_index": 448,
+      "works_count": 971,
+      "cited_by_count": 25917,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5109960560",
+      "display_name": "John N. Lester",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 335,
+      "works_count": 470,
+      "cited_by_count": 28544,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5083519174",
+      "display_name": "Hauke Harms",
+      "orcid": "https://orcid.org/0000-0002-7316-7341",
+      "h_index": 79,
+      "i10_index": 305,
+      "works_count": 476,
+      "cited_by_count": 25631,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5036508020",
+      "display_name": "Yongming Luo",
+      "orcid": "https://orcid.org/0000-0003-2131-4343",
+      "h_index": 79,
+      "i10_index": 264,
+      "works_count": 408,
+      "cited_by_count": 22688,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5026527210",
+      "display_name": "Rolf U. Halden",
+      "orcid": "https://orcid.org/0000-0001-5232-7361",
+      "h_index": 79,
+      "i10_index": 210,
+      "works_count": 322,
+      "cited_by_count": 23160,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5052474408",
+      "display_name": "Nicolas E. Kalogerakis",
+      "orcid": "https://orcid.org/0000-0001-7033-0302",
+      "h_index": 79,
+      "i10_index": 204,
+      "works_count": 321,
+      "cited_by_count": 19269,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5031423229",
+      "display_name": "Chelsea M. Rochman",
+      "orcid": "https://orcid.org/0000-0002-7624-711X",
+      "h_index": 79,
+      "i10_index": 148,
+      "works_count": 279,
+      "cited_by_count": 38644,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5077700424",
+      "display_name": "Xiaochang C. Wang",
+      "orcid": "https://orcid.org/0000-0003-1320-6326",
+      "h_index": 78,
+      "i10_index": 342,
+      "works_count": 654,
+      "cited_by_count": 25972,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5100684371",
+      "display_name": "Zhenya Zhang",
+      "orcid": "https://orcid.org/0000-0003-2554-6168",
+      "h_index": 78,
+      "i10_index": 335,
+      "works_count": 527,
+      "cited_by_count": 20528,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5024376941",
+      "display_name": "Eldon R. Rene",
+      "orcid": "https://orcid.org/0000-0001-5974-2808",
+      "h_index": 78,
+      "i10_index": 332,
+      "works_count": 501,
+      "cited_by_count": 21431,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5020805651",
+      "display_name": "E. Steinnes",
+      "orcid": "https://orcid.org/0000-0003-1108-4599",
+      "h_index": 78,
+      "i10_index": 332,
+      "works_count": 490,
+      "cited_by_count": 20586,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Physics and Astronomy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5060407146",
+      "display_name": "Teresa Rocha‐Santos",
+      "orcid": "https://orcid.org/0000-0003-3660-4116",
+      "h_index": 78,
+      "i10_index": 200,
+      "works_count": 282,
+      "cited_by_count": 32230,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5001814782",
+      "display_name": "Richard G. Luthy",
+      "orcid": "https://orcid.org/0000-0003-0274-0240",
+      "h_index": 78,
+      "i10_index": 191,
+      "works_count": 344,
+      "cited_by_count": 22539,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5068554577",
+      "display_name": "Daniël van der Lelie",
+      "orcid": "https://orcid.org/0000-0002-0307-8255",
+      "h_index": 78,
+      "i10_index": 142,
+      "works_count": 263,
+      "cited_by_count": 27842,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5113582628",
+      "display_name": "Ping Zheng",
+      "orcid": "https://orcid.org/0000-0001-8101-2713",
+      "h_index": 77,
+      "i10_index": 233,
+      "works_count": 319,
+      "cited_by_count": 17635,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5049822836",
+      "display_name": "Stephen A. Boyd",
+      "orcid": "https://orcid.org/0000-0002-9978-1139",
+      "h_index": 77,
+      "i10_index": 191,
+      "works_count": 221,
+      "cited_by_count": 18448,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5021004790",
+      "display_name": "Nabeel Khan Niazi",
+      "orcid": "https://orcid.org/0000-0003-4459-1124",
+      "h_index": 77,
+      "i10_index": 188,
+      "works_count": 299,
+      "cited_by_count": 24379,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5085963115",
+      "display_name": "Wei‐Min Wu",
+      "orcid": "https://orcid.org/0000-0001-5244-0655",
+      "h_index": 77,
+      "i10_index": 176,
+      "works_count": 259,
+      "cited_by_count": 21957,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5100446344",
+      "display_name": "Juan Liu",
+      "orcid": "https://orcid.org/0000-0003-4963-6694",
+      "h_index": 76,
+      "i10_index": 395,
+      "works_count": 777,
+      "cited_by_count": 20836,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5100684304",
+      "display_name": "Yang Liu",
+      "orcid": "https://orcid.org/0000-0001-5058-8373",
+      "h_index": 76,
+      "i10_index": 394,
+      "works_count": 661,
+      "cited_by_count": 19746,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5100661001",
+      "display_name": "Hui Li",
+      "orcid": "https://orcid.org/0000-0003-3298-5265",
+      "h_index": 76,
+      "i10_index": 348,
+      "works_count": 580,
+      "cited_by_count": 21119,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5081389385",
+      "display_name": "Christopher M. Reddy",
+      "orcid": "https://orcid.org/0000-0002-7814-2071",
+      "h_index": 76,
+      "i10_index": 235,
+      "works_count": 389,
+      "cited_by_count": 23816,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Pollution -- 8.8",
+      "id": "https://openalex.org/A5020050392",
+      "display_name": "Charles W. Greer",
+      "orcid": "https://orcid.org/0000-0002-8953-7810",
+      "h_index": 76,
+      "i10_index": 231,
+      "works_count": 306,
+      "cited_by_count": 18740,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5023821492",
+      "display_name": "Miren López de Alda",
+      "orcid": "https://orcid.org/0000-0002-9347-2765",
+      "h_index": 76,
+      "i10_index": 166,
+      "works_count": 249,
+      "cited_by_count": 18499,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5028186844",
+      "display_name": "William W. Mohn",
+      "orcid": "https://orcid.org/0000-0002-6509-746X",
+      "h_index": 76,
+      "i10_index": 156,
+      "works_count": 190,
+      "cited_by_count": 20070,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5062342386",
+      "display_name": "Paul M. Bertsch",
+      "orcid": "https://orcid.org/0000-0002-2847-0579",
+      "h_index": 76,
+      "i10_index": 156,
+      "works_count": 225,
+      "cited_by_count": 15643,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5100386179",
+      "display_name": "Ying Zhang",
+      "orcid": "https://orcid.org/0000-0002-8299-3848",
+      "h_index": 75,
+      "i10_index": 323,
+      "works_count": 532,
+      "cited_by_count": 19372,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5019163266",
+      "display_name": "Andrew S. Ball",
+      "orcid": "https://orcid.org/0000-0003-2387-968X",
+      "h_index": 75,
+      "i10_index": 307,
+      "works_count": 427,
+      "cited_by_count": 20696,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5091880331",
+      "display_name": "Piotr Stepnowski",
+      "orcid": "https://orcid.org/0000-0001-5022-6962",
+      "h_index": 75,
+      "i10_index": 289,
+      "works_count": 419,
+      "cited_by_count": 19841,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5031209724",
+      "display_name": "Kirk Taylor Semple",
+      "orcid": "https://orcid.org/0000-0002-4046-2037",
+      "h_index": 75,
+      "i10_index": 241,
+      "works_count": 357,
+      "cited_by_count": 19922,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5018817246",
+      "display_name": "Barth F. Smets",
+      "orcid": "https://orcid.org/0000-0003-4119-6292",
+      "h_index": 75,
+      "i10_index": 240,
+      "works_count": 606,
+      "cited_by_count": 19373,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5037961934",
+      "display_name": "Majeti Narasimha Vara Prasad",
+      "orcid": "https://orcid.org/0000-0002-2369-571X",
+      "h_index": 75,
+      "i10_index": 239,
+      "works_count": 495,
+      "cited_by_count": 25300,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5021667092",
+      "display_name": "Lígia R. Rodrigues",
+      "orcid": "https://orcid.org/0000-0001-9265-0630",
+      "h_index": 75,
+      "i10_index": 216,
+      "works_count": 483,
+      "cited_by_count": 18001,
+      "discipline": "Pollution",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Nursing",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5043053397",
+      "display_name": "Max M. Häggblom",
+      "orcid": "https://orcid.org/0000-0001-6307-7863",
+      "h_index": 75,
+      "i10_index": 205,
+      "works_count": 315,
+      "cited_by_count": 17531,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5054046029",
+      "display_name": "Lawrence P. Wackett",
+      "orcid": "https://orcid.org/0000-0002-3255-1101",
+      "h_index": 75,
+      "i10_index": 189,
+      "works_count": 740,
+      "cited_by_count": 20195,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5027180367",
+      "display_name": "Wen‐Tso Liu",
+      "orcid": "https://orcid.org/0000-0002-8700-9803",
+      "h_index": 75,
+      "i10_index": 181,
+      "works_count": 227,
+      "cited_by_count": 25301,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5100384844",
+      "display_name": "Jun Wang",
+      "orcid": "https://orcid.org/0000-0002-9976-4910",
+      "h_index": 74,
+      "i10_index": 352,
+      "works_count": 550,
+      "cited_by_count": 20699,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5032363275",
+      "display_name": "Hongqiang Ren",
+      "orcid": "https://orcid.org/0000-0001-5303-8828",
+      "h_index": 74,
+      "i10_index": 262,
+      "works_count": 350,
+      "cited_by_count": 24612,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5103189786",
+      "display_name": "Rao Yadagiri Surampalli",
+      "orcid": "https://orcid.org/0000-0003-2998-3103",
+      "h_index": 74,
+      "i10_index": 261,
+      "works_count": 404,
+      "cited_by_count": 24663,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5027219705",
+      "display_name": "Dietmar Helmut Pieper",
+      "orcid": "https://orcid.org/0000-0002-3106-3421",
+      "h_index": 74,
+      "i10_index": 217,
+      "works_count": 359,
+      "cited_by_count": 17544,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5085610622",
+      "display_name": "Won Joon Shim",
+      "orcid": "https://orcid.org/0000-0002-9591-8564",
+      "h_index": 74,
+      "i10_index": 198,
+      "works_count": 299,
+      "cited_by_count": 25982,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5075408766",
+      "display_name": "Jian‐Qiang Su",
+      "orcid": "https://orcid.org/0000-0003-1875-249X",
+      "h_index": 74,
+      "i10_index": 198,
+      "works_count": 273,
+      "cited_by_count": 19875,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5034486320",
+      "display_name": "Barbara Kasprzyk‐Hordern",
+      "orcid": "https://orcid.org/0000-0002-6809-2875",
+      "h_index": 74,
+      "i10_index": 181,
+      "works_count": 341,
+      "cited_by_count": 27615,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5081770881",
+      "display_name": "Nathalie Tufenkji",
+      "orcid": "https://orcid.org/0000-0002-1546-3441",
+      "h_index": 74,
+      "i10_index": 180,
+      "works_count": 253,
+      "cited_by_count": 27495,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Pollution -- 8.7",
+      "id": "https://openalex.org/A5000991624",
+      "display_name": "Célia M. Manaia",
+      "orcid": "https://orcid.org/0000-0002-3674-1789",
+      "h_index": 74,
+      "i10_index": 169,
+      "works_count": 321,
+      "cited_by_count": 27575,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5078248367",
+      "display_name": "Thomas W. Egli",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 163,
+      "works_count": 217,
+      "cited_by_count": 20944,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5004716878",
+      "display_name": "Linchuan Fang",
+      "orcid": "https://orcid.org/0000-0003-1923-7908",
+      "h_index": 74,
+      "i10_index": 160,
+      "works_count": 225,
+      "cited_by_count": 15670,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5089411227",
+      "display_name": "Hong Chen",
+      "orcid": "https://orcid.org/0000-0001-8937-3804",
+      "h_index": 73,
+      "i10_index": 340,
+      "works_count": 1309,
+      "cited_by_count": 19461,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Energy",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5060923921",
+      "display_name": "Natarajan Chandrasekaran",
+      "orcid": "https://orcid.org/0000-0002-0586-134X",
+      "h_index": 73,
+      "i10_index": 317,
+      "works_count": 527,
+      "cited_by_count": 21191,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5008372311",
+      "display_name": "Xiangliang Pan",
+      "orcid": "https://orcid.org/0000-0002-2832-6518",
+      "h_index": 73,
+      "i10_index": 296,
+      "works_count": 431,
+      "cited_by_count": 20378,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5088206109",
+      "display_name": "Rong Ji",
+      "orcid": "https://orcid.org/0000-0002-1724-5253",
+      "h_index": 73,
+      "i10_index": 264,
+      "works_count": 405,
+      "cited_by_count": 21502,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5008622082",
+      "display_name": "Tony Robert Walker",
+      "orcid": "https://orcid.org/0000-0001-9008-0697",
+      "h_index": 73,
+      "i10_index": 208,
+      "works_count": 361,
+      "cited_by_count": 23629,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5103483482",
+      "display_name": "Joo‐Hwa Tay",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 173,
+      "works_count": 206,
+      "cited_by_count": 17787,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5005748837",
+      "display_name": "Mehmet Çetin",
+      "orcid": "https://orcid.org/0000-0002-8992-0289",
+      "h_index": 73,
+      "i10_index": 135,
+      "works_count": 172,
+      "cited_by_count": 11748,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5068850142",
+      "display_name": "Tian C. Zhang",
+      "orcid": "https://orcid.org/0000-0002-9377-7462",
+      "h_index": 72,
+      "i10_index": 259,
+      "works_count": 441,
+      "cited_by_count": 16530,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5064614542",
+      "display_name": "Mirja S Salkinoja-Salonen",
+      "orcid": "https://orcid.org/0000-0003-1853-5268",
+      "h_index": 72,
+      "i10_index": 241,
+      "works_count": 347,
+      "cited_by_count": 16550,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5052520162",
+      "display_name": "William Shotyk",
+      "orcid": "https://orcid.org/0000-0002-2584-8388",
+      "h_index": 72,
+      "i10_index": 226,
+      "works_count": 418,
+      "cited_by_count": 18845,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5049671893",
+      "display_name": "Roger Marchant",
+      "orcid": "https://orcid.org/0000-0001-5213-229X",
+      "h_index": 72,
+      "i10_index": 209,
+      "works_count": 278,
+      "cited_by_count": 29486,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5047257173",
+      "display_name": "Jeppe Lund Nielsen",
+      "orcid": "https://orcid.org/0000-0002-8747-6938",
+      "h_index": 72,
+      "i10_index": 201,
+      "works_count": 432,
+      "cited_by_count": 18633,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5021145543",
+      "display_name": "Gerrit Voordouw",
+      "orcid": "https://orcid.org/0000-0002-6192-9150",
+      "h_index": 72,
+      "i10_index": 201,
+      "works_count": 291,
+      "cited_by_count": 15593,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5084025906",
+      "display_name": "P. G. Appleby",
+      "orcid": "https://orcid.org/0000-0002-6945-1841",
+      "h_index": 72,
+      "i10_index": 196,
+      "works_count": 274,
+      "cited_by_count": 20169,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5034069957",
+      "display_name": "Violette Geissen",
+      "orcid": "https://orcid.org/0000-0002-6937-3791",
+      "h_index": 72,
+      "i10_index": 184,
+      "works_count": 366,
+      "cited_by_count": 32700,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5078159444",
+      "display_name": "Thomas Daniel Bucheli",
+      "orcid": "https://orcid.org/0000-0001-9971-3104",
+      "h_index": 72,
+      "i10_index": 169,
+      "works_count": 285,
+      "cited_by_count": 21193,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5046206874",
+      "display_name": "Joseph M. Suflita",
+      "orcid": "https://orcid.org/0000-0003-1619-5247",
+      "h_index": 72,
+      "i10_index": 152,
+      "works_count": 200,
+      "cited_by_count": 13895,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5014365351",
+      "display_name": "Philip L. Bond",
+      "orcid": "https://orcid.org/0000-0002-9025-4797",
+      "h_index": 72,
+      "i10_index": 137,
+      "works_count": 223,
+      "cited_by_count": 19935,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5100608223",
+      "display_name": "Fang Ma",
+      "orcid": "https://orcid.org/0000-0002-8849-0803",
+      "h_index": 71,
+      "i10_index": 325,
+      "works_count": 559,
+      "cited_by_count": 19103,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Pollution -- 8.6",
+      "id": "https://openalex.org/A5015168873",
+      "display_name": "Guanghao Chen",
+      "orcid": "https://orcid.org/0000-0002-1353-8585",
+      "h_index": 71,
+      "i10_index": 269,
+      "works_count": 545,
+      "cited_by_count": 17461,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5100408741",
+      "display_name": "Hua Zhang",
+      "orcid": "https://orcid.org/0000-0003-4326-7875",
+      "h_index": 71,
+      "i10_index": 266,
+      "works_count": 518,
+      "cited_by_count": 16953,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5026511875",
+      "display_name": "Andrew Turner",
+      "orcid": "https://orcid.org/0000-0003-0505-4561",
+      "h_index": 71,
+      "i10_index": 238,
+      "works_count": 338,
+      "cited_by_count": 21256,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5052460947",
+      "display_name": "Paula M. L. Castro",
+      "orcid": "https://orcid.org/0000-0001-8841-6606",
+      "h_index": 71,
+      "i10_index": 234,
+      "works_count": 461,
+      "cited_by_count": 16094,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5064943796",
+      "display_name": "Dimitra A. Lambropoulou",
+      "orcid": "https://orcid.org/0000-0001-5743-7236",
+      "h_index": 71,
+      "i10_index": 202,
+      "works_count": 304,
+      "cited_by_count": 16702,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5101871208",
+      "display_name": "Sardar Ali Khan",
+      "orcid": "https://orcid.org/0000-0002-7060-1771",
+      "h_index": 71,
+      "i10_index": 193,
+      "works_count": 244,
+      "cited_by_count": 19221,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5039241370",
+      "display_name": "Stefan Wuertz",
+      "orcid": "https://orcid.org/0000-0002-3415-6199",
+      "h_index": 71,
+      "i10_index": 165,
+      "works_count": 242,
+      "cited_by_count": 19900,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5013351656",
+      "display_name": "J. Kirk Cochran",
+      "orcid": "https://orcid.org/0000-0003-3632-8932",
+      "h_index": 71,
+      "i10_index": 165,
+      "works_count": 261,
+      "cited_by_count": 13818,
+      "discipline": "Pollution",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5049965359",
+      "display_name": "You‐Sheng Liu",
+      "orcid": "https://orcid.org/0009-0005-1654-2765",
+      "h_index": 71,
+      "i10_index": 164,
+      "works_count": 206,
+      "cited_by_count": 18928,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5024655565",
+      "display_name": "Chris Wilcox",
+      "orcid": "https://orcid.org/0000-0002-5983-657X",
+      "h_index": 71,
+      "i10_index": 153,
+      "works_count": 264,
+      "cited_by_count": 37208,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5084057094",
+      "display_name": "Sara Castiglioni",
+      "orcid": "https://orcid.org/0000-0002-7313-8495",
+      "h_index": 71,
+      "i10_index": 152,
+      "works_count": 226,
+      "cited_by_count": 19458,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5111753564",
+      "display_name": "Hansruedi Siegrist",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 135,
+      "works_count": 277,
+      "cited_by_count": 29151,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5031817348",
+      "display_name": "Stefan Krause",
+      "orcid": "https://orcid.org/0000-0003-2521-2248",
+      "h_index": 70,
+      "i10_index": 222,
+      "works_count": 594,
+      "cited_by_count": 16544,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5075171590",
+      "display_name": "Shuhei Nomura",
+      "orcid": "https://orcid.org/0000-0002-2963-7297",
+      "h_index": 70,
+      "i10_index": 202,
+      "works_count": 388,
+      "cited_by_count": 128644,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Mathematics",
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5073575695",
+      "display_name": "Leonie Asfora Sarubbo",
+      "orcid": "https://orcid.org/0000-0002-4746-0560",
+      "h_index": 70,
+      "i10_index": 190,
+      "works_count": 407,
+      "cited_by_count": 16580,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5036122299",
+      "display_name": "Jim C. Spain",
+      "orcid": "https://orcid.org/0000-0003-1779-1972",
+      "h_index": 70,
+      "i10_index": 183,
+      "works_count": 242,
+      "cited_by_count": 15145,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5052876572",
+      "display_name": "Kirk G. Scheckel",
+      "orcid": "https://orcid.org/0000-0001-9326-9241",
+      "h_index": 70,
+      "i10_index": 182,
+      "works_count": 275,
+      "cited_by_count": 20230,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5027986588",
+      "display_name": "Xuetao Guo",
+      "orcid": "https://orcid.org/0000-0003-3028-7447",
+      "h_index": 70,
+      "i10_index": 176,
+      "works_count": 216,
+      "cited_by_count": 17433,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5021365113",
+      "display_name": "Josef Zeyer",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 158,
+      "works_count": 239,
+      "cited_by_count": 13744,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5066013551",
+      "display_name": "Qing X. Li",
+      "orcid": "https://orcid.org/0000-0003-4589-2869",
+      "h_index": 69,
+      "i10_index": 382,
+      "works_count": 547,
+      "cited_by_count": 19895,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5100383545",
+      "display_name": "Manish Kumar",
+      "orcid": "https://orcid.org/0000-0002-3351-7298",
+      "h_index": 69,
+      "i10_index": 270,
+      "works_count": 629,
+      "cited_by_count": 18247,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5080774460",
+      "display_name": "Harald Horn",
+      "orcid": "https://orcid.org/0000-0002-9385-3883",
+      "h_index": 69,
+      "i10_index": 232,
+      "works_count": 357,
+      "cited_by_count": 19899,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5045431446",
+      "display_name": "Margherita Ferrante",
+      "orcid": "https://orcid.org/0000-0001-7596-2464",
+      "h_index": 69,
+      "i10_index": 232,
+      "works_count": 486,
+      "cited_by_count": 16368,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Pollution -- 8.5",
+      "id": "https://openalex.org/A5074902332",
+      "display_name": "Mukesh Doble",
+      "orcid": "https://orcid.org/0000-0002-4335-0698",
+      "h_index": 69,
+      "i10_index": 223,
+      "works_count": 337,
+      "cited_by_count": 16919,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5080934130",
+      "display_name": "Md. Saiful Islam",
+      "orcid": "https://orcid.org/0000-0002-3598-0315",
+      "h_index": 69,
+      "i10_index": 216,
+      "works_count": 358,
+      "cited_by_count": 18256,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5036589740",
+      "display_name": "Yiliang He",
+      "orcid": "https://orcid.org/0000-0001-7672-5727",
+      "h_index": 69,
+      "i10_index": 213,
+      "works_count": 309,
+      "cited_by_count": 14167,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5075592885",
+      "display_name": "Peter J. Vikesland",
+      "orcid": "https://orcid.org/0000-0003-2654-5132",
+      "h_index": 69,
+      "i10_index": 164,
+      "works_count": 324,
+      "cited_by_count": 17143,
+      "discipline": "Pollution",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Materials Science",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5013586549",
+      "display_name": "Dominik Jakob Weiss",
+      "orcid": "https://orcid.org/0000-0001-8074-9430",
+      "h_index": 69,
+      "i10_index": 156,
+      "works_count": 259,
+      "cited_by_count": 14358,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5109882879",
+      "display_name": "Hans‐Joachim Knackmuss",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 156,
+      "works_count": 199,
+      "cited_by_count": 14293,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5075229116",
+      "display_name": "Cristian Picioreanu",
+      "orcid": "https://orcid.org/0000-0002-7286-206X",
+      "h_index": 69,
+      "i10_index": 144,
+      "works_count": 251,
+      "cited_by_count": 17427,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5107927927",
+      "display_name": "Camille Dumat",
+      "orcid": "https://orcid.org/0000-0002-7875-0675",
+      "h_index": 69,
+      "i10_index": 118,
+      "works_count": 313,
+      "cited_by_count": 18633,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5100751469",
+      "display_name": "Wei Zhang",
+      "orcid": "https://orcid.org/0000-0002-2937-1732",
+      "h_index": 68,
+      "i10_index": 262,
+      "works_count": 457,
+      "cited_by_count": 17197,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5056520026",
+      "display_name": "Tomáš Cajthaml",
+      "orcid": "https://orcid.org/0000-0002-3393-1333",
+      "h_index": 68,
+      "i10_index": 231,
+      "works_count": 388,
+      "cited_by_count": 17255,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5026577952",
+      "display_name": "Jerald L. Schnoor",
+      "orcid": "https://orcid.org/0000-0003-3916-8516",
+      "h_index": 68,
+      "i10_index": 222,
+      "works_count": 451,
+      "cited_by_count": 21520,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5006870438",
+      "display_name": "Diana S. Aga",
+      "orcid": "https://orcid.org/0000-0001-6512-7713",
+      "h_index": 68,
+      "i10_index": 202,
+      "works_count": 326,
+      "cited_by_count": 17837,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5110572383",
+      "display_name": "Yongming Luo",
+      "orcid": "https://orcid.org/0000-0002-2217-3207",
+      "h_index": 68,
+      "i10_index": 201,
+      "works_count": 312,
+      "cited_by_count": 18399,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5042726992",
+      "display_name": "Eberhard Morgenroth",
+      "orcid": "https://orcid.org/0000-0002-1217-269X",
+      "h_index": 68,
+      "i10_index": 194,
+      "works_count": 382,
+      "cited_by_count": 16845,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5090044028",
+      "display_name": "Chaosheng Zhang",
+      "orcid": "https://orcid.org/0000-0002-7913-4858",
+      "h_index": 68,
+      "i10_index": 185,
+      "works_count": 251,
+      "cited_by_count": 14091,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5061841244",
+      "display_name": "Timothy Alexander Mousseau",
+      "orcid": "https://orcid.org/0000-0002-2235-4868",
+      "h_index": 68,
+      "i10_index": 181,
+      "works_count": 286,
+      "cited_by_count": 18101,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5081318544",
+      "display_name": "Clemens Reimann",
+      "orcid": "https://orcid.org/0000-0003-1330-1403",
+      "h_index": 68,
+      "i10_index": 175,
+      "works_count": 329,
+      "cited_by_count": 21409,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5068837161",
+      "display_name": "Matthias Kästner",
+      "orcid": "https://orcid.org/0000-0003-4041-6257",
+      "h_index": 68,
+      "i10_index": 162,
+      "works_count": 253,
+      "cited_by_count": 19293,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5044348959",
+      "display_name": "Marc Fabien Benedetti",
+      "orcid": "https://orcid.org/0000-0003-1075-8205",
+      "h_index": 68,
+      "i10_index": 162,
+      "works_count": 373,
+      "cited_by_count": 16193,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5037280007",
+      "display_name": "Manish Kumar",
+      "orcid": "https://orcid.org/0000-0002-1444-5508",
+      "h_index": 68,
+      "i10_index": 151,
+      "works_count": 273,
+      "cited_by_count": 18834,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5017224368",
+      "display_name": "Jerker Berglund Fick",
+      "orcid": "https://orcid.org/0000-0002-3949-7371",
+      "h_index": 68,
+      "i10_index": 147,
+      "works_count": 221,
+      "cited_by_count": 17674,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5009508070",
+      "display_name": "Thomas Peter Curtis",
+      "orcid": "https://orcid.org/0000-0002-9009-1748",
+      "h_index": 68,
+      "i10_index": 137,
+      "works_count": 233,
+      "cited_by_count": 21688,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Pollution -- 8.4",
+      "id": "https://openalex.org/A5011049483",
+      "display_name": "Lisa Alvarez‐Cohen",
+      "orcid": "https://orcid.org/0000-0003-0135-2262",
+      "h_index": 68,
+      "i10_index": 132,
+      "works_count": 165,
+      "cited_by_count": 15460,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5100386224",
+      "display_name": "Ying Zhang",
+      "orcid": "https://orcid.org/0000-0003-1620-3825",
+      "h_index": 67,
+      "i10_index": 307,
+      "works_count": 592,
+      "cited_by_count": 16639,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5045836144",
+      "display_name": "Bing Xie",
+      "orcid": "https://orcid.org/0000-0003-2335-5966",
+      "h_index": 67,
+      "i10_index": 272,
+      "works_count": 546,
+      "cited_by_count": 16547,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5090529525",
+      "display_name": "Makram T. Suidan",
+      "orcid": "https://orcid.org/0000-0002-5698-4913",
+      "h_index": 67,
+      "i10_index": 249,
+      "works_count": 392,
+      "cited_by_count": 17601,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5075951652",
+      "display_name": "Jay J. Gan",
+      "orcid": "https://orcid.org/0000-0002-7137-4988",
+      "h_index": 67,
+      "i10_index": 248,
+      "works_count": 321,
+      "cited_by_count": 17245,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5113634345",
+      "display_name": "Yu Zhang",
+      "orcid": "https://orcid.org/0000-0003-1017-4170",
+      "h_index": 67,
+      "i10_index": 228,
+      "works_count": 342,
+      "cited_by_count": 14738,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5011132555",
+      "display_name": "Xuxiang Zhang",
+      "orcid": "https://orcid.org/0000-0002-2833-0656",
+      "h_index": 67,
+      "i10_index": 209,
+      "works_count": 304,
+      "cited_by_count": 15396,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5046648715",
+      "display_name": "Karina Yew‐Hoong Gin",
+      "orcid": "https://orcid.org/0000-0002-1266-9276",
+      "h_index": 67,
+      "i10_index": 194,
+      "works_count": 281,
+      "cited_by_count": 17636,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5090945122",
+      "display_name": "José Luís Balcázar",
+      "orcid": "https://orcid.org/0000-0002-6866-9347",
+      "h_index": 67,
+      "i10_index": 150,
+      "works_count": 243,
+      "cited_by_count": 20228,
+      "discipline": "Pollution",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5038842840",
+      "display_name": "Rainer U. Meckenstock",
+      "orcid": "https://orcid.org/0000-0001-7786-9546",
+      "h_index": 67,
+      "i10_index": 140,
+      "works_count": 219,
+      "cited_by_count": 13328,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5078395141",
+      "display_name": "Edward T. Furlong",
+      "orcid": "https://orcid.org/0000-0002-7305-4603",
+      "h_index": 67,
+      "i10_index": 138,
+      "works_count": 218,
+      "cited_by_count": 30094,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5051511236",
+      "display_name": "Alok Prasad Das",
+      "orcid": "https://orcid.org/0000-0003-1499-4133",
+      "h_index": 67,
+      "i10_index": 127,
+      "works_count": 222,
+      "cited_by_count": 11235,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5078500831",
+      "display_name": "Ralf Schulz",
+      "orcid": "https://orcid.org/0000-0002-6348-6971",
+      "h_index": 66,
+      "i10_index": 243,
+      "works_count": 370,
+      "cited_by_count": 17702,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5008402730",
+      "display_name": "Qaisar Mahmood",
+      "orcid": "https://orcid.org/0000-0003-2685-1367",
+      "h_index": 66,
+      "i10_index": 239,
+      "works_count": 373,
+      "cited_by_count": 15402,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5100344063",
+      "display_name": "Qingliang Zhao",
+      "orcid": "https://orcid.org/0000-0002-7018-0196",
+      "h_index": 66,
+      "i10_index": 229,
+      "works_count": 391,
+      "cited_by_count": 14926,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5038938414",
+      "display_name": "Ren‐Cun Jin",
+      "orcid": "https://orcid.org/0000-0003-0978-7594",
+      "h_index": 66,
+      "i10_index": 227,
+      "works_count": 298,
+      "cited_by_count": 13281,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5100459427",
+      "display_name": "Xiaoyan Li",
+      "orcid": "https://orcid.org/0000-0003-1910-2464",
+      "h_index": 66,
+      "i10_index": 223,
+      "works_count": 366,
+      "cited_by_count": 17268,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5000549986",
+      "display_name": "Kyoung‐Woong Kim",
+      "orcid": "https://orcid.org/0000-0001-5397-0594",
+      "h_index": 66,
+      "i10_index": 223,
+      "works_count": 369,
+      "cited_by_count": 13859,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5063887607",
+      "display_name": "Frédéric Coulon",
+      "orcid": "https://orcid.org/0000-0002-4384-3222",
+      "h_index": 66,
+      "i10_index": 212,
+      "works_count": 393,
+      "cited_by_count": 15075,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5088724972",
+      "display_name": "Scott W. Fowler",
+      "orcid": "https://orcid.org/0000-0002-3005-0303",
+      "h_index": 66,
+      "i10_index": 193,
+      "works_count": 254,
+      "cited_by_count": 14964,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5085590419",
+      "display_name": "Haifeng Qian",
+      "orcid": "https://orcid.org/0000-0003-0807-9991",
+      "h_index": 66,
+      "i10_index": 189,
+      "works_count": 230,
+      "cited_by_count": 14732,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5074528717",
+      "display_name": "Mauro Majone",
+      "orcid": "https://orcid.org/0000-0002-3198-9822",
+      "h_index": 66,
+      "i10_index": 188,
+      "works_count": 426,
+      "cited_by_count": 14584,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Pollution -- 8.3",
+      "id": "https://openalex.org/A5042950202",
+      "display_name": "Steven D. Siciliano",
+      "orcid": "https://orcid.org/0000-0002-8994-3341",
+      "h_index": 66,
+      "i10_index": 183,
+      "works_count": 349,
+      "cited_by_count": 17561,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5074245029",
+      "display_name": "Chenxi Wu",
+      "orcid": "https://orcid.org/0000-0002-2908-9841",
+      "h_index": 66,
+      "i10_index": 166,
+      "works_count": 242,
+      "cited_by_count": 21404,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5032931260",
+      "display_name": "Carlos Garbisu",
+      "orcid": "https://orcid.org/0000-0002-5577-6151",
+      "h_index": 66,
+      "i10_index": 165,
+      "works_count": 271,
+      "cited_by_count": 14270,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5023276355",
+      "display_name": "Akira Hiraishi",
+      "orcid": "https://orcid.org/0000-0001-5556-344X",
+      "h_index": 66,
+      "i10_index": 164,
+      "works_count": 260,
+      "cited_by_count": 13166,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5030143313",
+      "display_name": "Jan Dolfing",
+      "orcid": "https://orcid.org/0000-0002-7220-530X",
+      "h_index": 66,
+      "i10_index": 158,
+      "works_count": 267,
+      "cited_by_count": 15360,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5055232159",
+      "display_name": "Qing‐Lin Chen",
+      "orcid": "https://orcid.org/0000-0002-5648-277X",
+      "h_index": 66,
+      "i10_index": 149,
+      "works_count": 230,
+      "cited_by_count": 15148,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5020104676",
+      "display_name": "Raina M. Maier",
+      "orcid": "https://orcid.org/0000-0002-0421-4677",
+      "h_index": 66,
+      "i10_index": 147,
+      "works_count": 223,
+      "cited_by_count": 16404,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5110098919",
+      "display_name": "Ronald L. Crawford",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 146,
+      "works_count": 211,
+      "cited_by_count": 13099,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Immunology and Microbiology",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5075360141",
+      "display_name": "Rob N.J. Comans",
+      "orcid": "https://orcid.org/0000-0002-3403-0561",
+      "h_index": 66,
+      "i10_index": 136,
+      "works_count": 285,
+      "cited_by_count": 15428,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5018121615",
+      "display_name": "M. Silvia Díaz‐Cruz",
+      "orcid": "https://orcid.org/0000-0003-3331-4076",
+      "h_index": 66,
+      "i10_index": 134,
+      "works_count": 195,
+      "cited_by_count": 13281,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5111484637",
+      "display_name": "Richárd Bartha",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 121,
+      "works_count": 155,
+      "cited_by_count": 14883,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5100421533",
+      "display_name": "Yi Li",
+      "orcid": "https://orcid.org/0000-0002-4958-2545",
+      "h_index": 65,
+      "i10_index": 319,
+      "works_count": 519,
+      "cited_by_count": 16535,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 257,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5047244927",
+      "display_name": "Chaohai Wei",
+      "orcid": "https://orcid.org/0000-0002-4240-6442",
+      "h_index": 65,
+      "i10_index": 248,
+      "works_count": 387,
+      "cited_by_count": 14852,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 258,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5038102805",
+      "display_name": "Siqing Xia",
+      "orcid": "https://orcid.org/0000-0002-5613-2681",
+      "h_index": 65,
+      "i10_index": 224,
+      "works_count": 323,
+      "cited_by_count": 12655,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 259,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5101755008",
+      "display_name": "Yan Zhou",
+      "orcid": "https://orcid.org/0000-0002-0677-5195",
+      "h_index": 65,
+      "i10_index": 201,
+      "works_count": 263,
+      "cited_by_count": 14563,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 260,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5044044684",
+      "display_name": "Hanzhong Jia",
+      "orcid": "https://orcid.org/0000-0002-9838-2881",
+      "h_index": 65,
+      "i10_index": 197,
+      "works_count": 257,
+      "cited_by_count": 13582,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 261,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5100652331",
+      "display_name": "Weiping Chen",
+      "orcid": "https://orcid.org/0000-0003-3568-0061",
+      "h_index": 65,
+      "i10_index": 184,
+      "works_count": 347,
+      "cited_by_count": 12896,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 262,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5090551575",
+      "display_name": "Brett Harvey Robinson",
+      "orcid": "https://orcid.org/0000-0003-0322-0255",
+      "h_index": 65,
+      "i10_index": 173,
+      "works_count": 283,
+      "cited_by_count": 18736,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 263,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5018832853",
+      "display_name": "Surajit Das",
+      "orcid": "https://orcid.org/0000-0002-5657-2222",
+      "h_index": 65,
+      "i10_index": 168,
+      "works_count": 303,
+      "cited_by_count": 13621,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 264,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5053747407",
+      "display_name": "Kai Bester",
+      "orcid": "https://orcid.org/0000-0001-6348-416X",
+      "h_index": 65,
+      "i10_index": 166,
+      "works_count": 292,
+      "cited_by_count": 12879,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 265,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5042132425",
+      "display_name": "Michael J. McInerney",
+      "orcid": "https://orcid.org/0000-0002-8054-1389",
+      "h_index": 65,
+      "i10_index": 160,
+      "works_count": 246,
+      "cited_by_count": 16576,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 266,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5033934354",
+      "display_name": "Roberto Rosal",
+      "orcid": "https://orcid.org/0000-0003-0816-8775",
+      "h_index": 65,
+      "i10_index": 159,
+      "works_count": 246,
+      "cited_by_count": 14538,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 267,
+      "score": 8.2,
+      "label": "Pollution -- 8.2",
+      "id": "https://openalex.org/A5066422590",
+      "display_name": "Iain Thornton",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 150,
+      "works_count": 224,
+      "cited_by_count": 15053,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 268,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5008960831",
+      "display_name": "Rälf Kaegi",
+      "orcid": "https://orcid.org/0000-0002-2430-4733",
+      "h_index": 65,
+      "i10_index": 149,
+      "works_count": 268,
+      "cited_by_count": 16350,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 269,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5060167208",
+      "display_name": "David W. Graham",
+      "orcid": "https://orcid.org/0000-0002-9753-496X",
+      "h_index": 65,
+      "i10_index": 147,
+      "works_count": 217,
+      "cited_by_count": 16963,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 270,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5023379769",
+      "display_name": "Paul A. Helm",
+      "orcid": "https://orcid.org/0000-0002-7462-4217",
+      "h_index": 65,
+      "i10_index": 142,
+      "works_count": 162,
+      "cited_by_count": 14597,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 271,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5071042090",
+      "display_name": "Akiyoshi Ohashi",
+      "orcid": "https://orcid.org/0000-0003-2213-3915",
+      "h_index": 65,
+      "i10_index": 140,
+      "works_count": 241,
+      "cited_by_count": 13625,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 272,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5025064301",
+      "display_name": "Britta Denise Hardesty",
+      "orcid": "https://orcid.org/0000-0003-1948-5098",
+      "h_index": 65,
+      "i10_index": 130,
+      "works_count": 243,
+      "cited_by_count": 18352,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 273,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5004378994",
+      "display_name": "Samuel J. Traina",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 129,
+      "works_count": 184,
+      "cited_by_count": 15573,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 274,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5057457582",
+      "display_name": "Luiz Roberto Guimarães Guilherme",
+      "orcid": "https://orcid.org/0000-0002-5387-6028",
+      "h_index": 64,
+      "i10_index": 270,
+      "works_count": 444,
+      "cited_by_count": 15187,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 275,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5100635263",
+      "display_name": "Kenneth Lee",
+      "orcid": "https://orcid.org/0000-0002-9538-3942",
+      "h_index": 64,
+      "i10_index": 247,
+      "works_count": 367,
+      "cited_by_count": 14586,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 276,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5034257967",
+      "display_name": "Jian Feng Xu",
+      "orcid": "https://orcid.org/0000-0001-5287-1009",
+      "h_index": 64,
+      "i10_index": 203,
+      "works_count": 305,
+      "cited_by_count": 13815,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 277,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5109297317",
+      "display_name": "Yingxu Chen",
+      "orcid": "https://orcid.org/0000-0002-0130-9013",
+      "h_index": 64,
+      "i10_index": 198,
+      "works_count": 323,
+      "cited_by_count": 16501,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 278,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5039859667",
+      "display_name": "Jing Ding",
+      "orcid": "https://orcid.org/0000-0002-3246-9802",
+      "h_index": 64,
+      "i10_index": 194,
+      "works_count": 295,
+      "cited_by_count": 13257,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 279,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5026946420",
+      "display_name": "Spyros G. Pavlostathis",
+      "orcid": "https://orcid.org/0000-0001-9731-3836",
+      "h_index": 64,
+      "i10_index": 189,
+      "works_count": 250,
+      "cited_by_count": 15801,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 280,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5056952147",
+      "display_name": "Joel R. Coats",
+      "orcid": "https://orcid.org/0000-0002-0446-5855",
+      "h_index": 64,
+      "i10_index": 189,
+      "works_count": 298,
+      "cited_by_count": 13204,
+      "discipline": "Pollution",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 281,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5049454123",
+      "display_name": "Laosheng Wu",
+      "orcid": "https://orcid.org/0000-0001-6547-8513",
+      "h_index": 64,
+      "i10_index": 178,
+      "works_count": 224,
+      "cited_by_count": 11996,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 282,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5061390311",
+      "display_name": "Fabio Fava",
+      "orcid": "https://orcid.org/0000-0002-4040-8516",
+      "h_index": 64,
+      "i10_index": 175,
+      "works_count": 367,
+      "cited_by_count": 13918,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 283,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5014626260",
+      "display_name": "Fikret Kargı",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 174,
+      "works_count": 222,
+      "cited_by_count": 13011,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 284,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5078465119",
+      "display_name": "Elizabeth Anne Edwards",
+      "orcid": "https://orcid.org/0000-0002-8071-338X",
+      "h_index": 64,
+      "i10_index": 168,
+      "works_count": 304,
+      "cited_by_count": 15440,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 285,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5008000810",
+      "display_name": "Farid Moore",
+      "orcid": "https://orcid.org/0000-0002-2801-7272",
+      "h_index": 64,
+      "i10_index": 162,
+      "works_count": 216,
+      "cited_by_count": 13697,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 286,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5080835407",
+      "display_name": "Michel J. Mench",
+      "orcid": "https://orcid.org/0000-0002-0273-4142",
+      "h_index": 64,
+      "i10_index": 161,
+      "works_count": 403,
+      "cited_by_count": 14624,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 287,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5071162233",
+      "display_name": "Paul Andrew Lant",
+      "orcid": "https://orcid.org/0000-0003-1869-1180",
+      "h_index": 64,
+      "i10_index": 145,
+      "works_count": 277,
+      "cited_by_count": 15149,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 288,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5108143038",
+      "display_name": "Pankaj Bhatt",
+      "orcid": "https://orcid.org/0000-0002-0356-5715",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 184,
+      "cited_by_count": 12876,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 289,
+      "score": 8.1,
+      "label": "Pollution -- 8.1",
+      "id": "https://openalex.org/A5077085798",
+      "display_name": "Ettore Zuccato",
+      "orcid": "https://orcid.org/0000-0003-2094-2305",
+      "h_index": 64,
+      "i10_index": 121,
+      "works_count": 172,
+      "cited_by_count": 17132,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 290,
+      "score": 8,
+      "label": "Pollution -- 8.0",
+      "id": "https://openalex.org/A5027867813",
+      "display_name": "Andreas Voegelin",
+      "orcid": "https://orcid.org/0000-0003-2873-8966",
+      "h_index": 64,
+      "i10_index": 117,
+      "works_count": 197,
+      "cited_by_count": 13112,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 291,
+      "score": 8,
+      "label": "Pollution -- 8.0",
+      "id": "https://openalex.org/A5100768385",
+      "display_name": "Joginder Singh",
+      "orcid": "https://orcid.org/0000-0001-6968-4912",
+      "h_index": 63,
+      "i10_index": 285,
+      "works_count": 746,
+      "cited_by_count": 20444,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 292,
+      "score": 8,
+      "label": "Pollution -- 8.0",
+      "id": "https://openalex.org/A5059176667",
+      "display_name": "Mengchang He",
+      "orcid": "https://orcid.org/0000-0001-8975-8034",
+      "h_index": 63,
+      "i10_index": 235,
+      "works_count": 334,
+      "cited_by_count": 15491,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 293,
+      "score": 8,
+      "label": "Pollution -- 8.0",
+      "id": "https://openalex.org/A5081485824",
+      "display_name": "Satoshi Tsuneda",
+      "orcid": "https://orcid.org/0000-0002-4624-5359",
+      "h_index": 63,
+      "i10_index": 220,
+      "works_count": 368,
+      "cited_by_count": 13639,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 294,
+      "score": 8,
+      "label": "Pollution -- 8.0",
+      "id": "https://openalex.org/A5040711397",
+      "display_name": "Huub  H. M. Rijnaarts",
+      "orcid": "https://orcid.org/0000-0001-6607-1256",
+      "h_index": 63,
+      "i10_index": 207,
+      "works_count": 334,
+      "cited_by_count": 14621,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 295,
+      "score": 8,
+      "label": "Pollution -- 8.0",
+      "id": "https://openalex.org/A5079409348",
+      "display_name": "Robert James Seviour",
+      "orcid": "https://orcid.org/0000-0002-1366-0484",
+      "h_index": 63,
+      "i10_index": 199,
+      "works_count": 293,
+      "cited_by_count": 13747,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 296,
+      "score": 8,
+      "label": "Pollution -- 8.0",
+      "id": "https://openalex.org/A5019955346",
+      "display_name": "Christof Holliger",
+      "orcid": "https://orcid.org/0000-0002-9645-3834",
+      "h_index": 63,
+      "i10_index": 123,
+      "works_count": 303,
+      "cited_by_count": 13301,
+      "discipline": "Pollution",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Pollution",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    }
+  ]
+}

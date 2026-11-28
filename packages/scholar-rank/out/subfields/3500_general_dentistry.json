@@ -1,0 +1,2780 @@
+{
+  "kind": "subfield",
+  "id": 3500,
+  "name": "General Dentistry",
+  "total_in_scrape": 145,
+  "count": 145,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "General Dentistry -- 9.9",
+      "id": "https://openalex.org/A5076115296",
+      "display_name": "Franklin R. Tay",
+      "orcid": "https://orcid.org/0000-0003-3769-0626",
+      "h_index": 160,
+      "i10_index": 712,
+      "works_count": 933,
+      "cited_by_count": 87341,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "General Dentistry -- 9.9",
+      "id": "https://openalex.org/A5108804513",
+      "display_name": "David Henry Pashley",
+      "orcid": null,
+      "h_index": 125,
+      "i10_index": 446,
+      "works_count": 519,
+      "cited_by_count": 53923,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "General Dentistry -- 9.9",
+      "id": "https://openalex.org/A5036081255",
+      "display_name": "Bart VAN MEERBEEK",
+      "orcid": "https://orcid.org/0000-0002-4097-5836",
+      "h_index": 125,
+      "i10_index": 431,
+      "works_count": 849,
+      "cited_by_count": 60403,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "General Dentistry -- 9.9",
+      "id": "https://openalex.org/A5012520510",
+      "display_name": "Aubrey Sheiham",
+      "orcid": null,
+      "h_index": 111,
+      "i10_index": 368,
+      "works_count": 592,
+      "cited_by_count": 42327,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "General Dentistry -- 9.9",
+      "id": "https://openalex.org/A5016295981",
+      "display_name": "Michael Vincent Swain",
+      "orcid": "https://orcid.org/0000-0002-8801-8656",
+      "h_index": 110,
+      "i10_index": 586,
+      "works_count": 896,
+      "cited_by_count": 45638,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "General Dentistry -- 9.9",
+      "id": "https://openalex.org/A5105936821",
+      "display_name": "Crispian M. Scully",
+      "orcid": null,
+      "h_index": 109,
+      "i10_index": 706,
+      "works_count": 1891,
+      "cited_by_count": 51443,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5040576917",
+      "display_name": "Helen V Worthington",
+      "orcid": "https://orcid.org/0000-0002-4851-7469",
+      "h_index": 109,
+      "i10_index": 400,
+      "works_count": 629,
+      "cited_by_count": 46156,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5059737089",
+      "display_name": "Irma Thesleff",
+      "orcid": "https://orcid.org/0000-0001-7621-8952",
+      "h_index": 109,
+      "i10_index": 248,
+      "works_count": 323,
+      "cited_by_count": 37350,
+      "discipline": "General Dentistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5063934370",
+      "display_name": "Falk Schwendicke",
+      "orcid": "https://orcid.org/0000-0003-1223-1669",
+      "h_index": 108,
+      "i10_index": 408,
+      "works_count": 660,
+      "cited_by_count": 161296,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5018517728",
+      "display_name": "Paul Lambrechts",
+      "orcid": "https://orcid.org/0000-0003-1760-5703",
+      "h_index": 105,
+      "i10_index": 235,
+      "works_count": 440,
+      "cited_by_count": 43292,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5033528539",
+      "display_name": "Joel Brian Epstein",
+      "orcid": "https://orcid.org/0000-0002-9264-9151",
+      "h_index": 104,
+      "i10_index": 410,
+      "works_count": 670,
+      "cited_by_count": 39286,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5068295456",
+      "display_name": "Mutlu Özcan",
+      "orcid": "https://orcid.org/0000-0002-9623-6098",
+      "h_index": 100,
+      "i10_index": 632,
+      "works_count": 1071,
+      "cited_by_count": 39485,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5021290413",
+      "display_name": "Jack L. Ferracane",
+      "orcid": "https://orcid.org/0000-0002-6511-5488",
+      "h_index": 99,
+      "i10_index": 291,
+      "works_count": 440,
+      "cited_by_count": 38331,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5001760088",
+      "display_name": "David Locker",
+      "orcid": "https://orcid.org/0009-0006-9649-3189",
+      "h_index": 98,
+      "i10_index": 239,
+      "works_count": 313,
+      "cited_by_count": 31530,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5108430333",
+      "display_name": "David H. Pashley",
+      "orcid": null,
+      "h_index": 97,
+      "i10_index": 195,
+      "works_count": 245,
+      "cited_by_count": 28745,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5046114422",
+      "display_name": "Edward Chin Man Lo",
+      "orcid": "https://orcid.org/0000-0002-3618-0619",
+      "h_index": 96,
+      "i10_index": 336,
+      "works_count": 439,
+      "cited_by_count": 28355,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "General Dentistry -- 9.8",
+      "id": "https://openalex.org/A5088652438",
+      "display_name": "Saman Warnakulasuriya",
+      "orcid": "https://orcid.org/0000-0003-2103-0746",
+      "h_index": 94,
+      "i10_index": 341,
+      "works_count": 560,
+      "cited_by_count": 41367,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5110845583",
+      "display_name": "Gary Douglas Slade",
+      "orcid": "https://orcid.org/0000-0002-4065-6341",
+      "h_index": 94,
+      "i10_index": 235,
+      "works_count": 301,
+      "cited_by_count": 34375,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5027924618",
+      "display_name": "Jens Ove Andreasen",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 213,
+      "works_count": 275,
+      "cited_by_count": 31716,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5064886913",
+      "display_name": "Mary L. Marazita",
+      "orcid": "https://orcid.org/0000-0002-2648-2832",
+      "h_index": 93,
+      "i10_index": 381,
+      "works_count": 553,
+      "cited_by_count": 33560,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5006690496",
+      "display_name": "Hockin H.K. Xu",
+      "orcid": "https://orcid.org/0000-0001-5160-8866",
+      "h_index": 93,
+      "i10_index": 375,
+      "works_count": 425,
+      "cited_by_count": 27868,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5004786653",
+      "display_name": "W. Murray Thomson",
+      "orcid": "https://orcid.org/0000-0003-0588-6843",
+      "h_index": 93,
+      "i10_index": 367,
+      "works_count": 593,
+      "cited_by_count": 57881,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5012550002",
+      "display_name": "Reinhard Hickel",
+      "orcid": "https://orcid.org/0000-0001-9185-6602",
+      "h_index": 92,
+      "i10_index": 364,
+      "works_count": 528,
+      "cited_by_count": 30986,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5059504383",
+      "display_name": "Thomas Attin",
+      "orcid": "https://orcid.org/0000-0002-6141-1263",
+      "h_index": 91,
+      "i10_index": 451,
+      "works_count": 853,
+      "cited_by_count": 31257,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5064669357",
+      "display_name": "Robert Gordon Newcombe",
+      "orcid": "https://orcid.org/0000-0003-4400-8867",
+      "h_index": 91,
+      "i10_index": 349,
+      "works_count": 489,
+      "cited_by_count": 41035,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5020778907",
+      "display_name": "Alessandro Dourado Loguércio",
+      "orcid": "https://orcid.org/0000-0001-9880-4856",
+      "h_index": 90,
+      "i10_index": 484,
+      "works_count": 857,
+      "cited_by_count": 29394,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5019526510",
+      "display_name": "Jan De Munck",
+      "orcid": "https://orcid.org/0000-0003-1005-1090",
+      "h_index": 90,
+      "i10_index": 162,
+      "works_count": 314,
+      "cited_by_count": 32400,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "General Dentistry -- 9.7",
+      "id": "https://openalex.org/A5038300186",
+      "display_name": "Junji Tagami",
+      "orcid": "https://orcid.org/0000-0003-4865-0515",
+      "h_index": 89,
+      "i10_index": 586,
+      "works_count": 855,
+      "cited_by_count": 33659,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5088647028",
+      "display_name": "Alessandra Reis",
+      "orcid": "https://orcid.org/0000-0001-6798-2094",
+      "h_index": 88,
+      "i10_index": 404,
+      "works_count": 612,
+      "cited_by_count": 25596,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5003653484",
+      "display_name": "Eduardo Bernabé",
+      "orcid": "https://orcid.org/0000-0002-1858-3713",
+      "h_index": 87,
+      "i10_index": 230,
+      "works_count": 367,
+      "cited_by_count": 208407,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5057746879",
+      "display_name": "Lorenzo Breschi",
+      "orcid": "https://orcid.org/0000-0001-7621-226X",
+      "h_index": 86,
+      "i10_index": 290,
+      "works_count": 688,
+      "cited_by_count": 30824,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5012482667",
+      "display_name": "Wagner Segura Marcenes",
+      "orcid": "https://orcid.org/0000-0001-9276-1744",
+      "h_index": 86,
+      "i10_index": 178,
+      "works_count": 236,
+      "cited_by_count": 154029,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5028274750",
+      "display_name": "Stephen T. Sonis",
+      "orcid": "https://orcid.org/0000-0001-6480-2625",
+      "h_index": 85,
+      "i10_index": 227,
+      "works_count": 453,
+      "cited_by_count": 29000,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5065147823",
+      "display_name": "Isaäc van der Waal",
+      "orcid": "https://orcid.org/0000-0003-3540-8981",
+      "h_index": 84,
+      "i10_index": 269,
+      "works_count": 948,
+      "cited_by_count": 27788,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5056257750",
+      "display_name": "Qianming Chen",
+      "orcid": "https://orcid.org/0000-0002-5371-4432",
+      "h_index": 83,
+      "i10_index": 398,
+      "works_count": 815,
+      "cited_by_count": 42224,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5011215915",
+      "display_name": "Pekka Kalevi VALLITTU",
+      "orcid": "https://orcid.org/0000-0002-9981-6717",
+      "h_index": 83,
+      "i10_index": 361,
+      "works_count": 516,
+      "cited_by_count": 22895,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5078076730",
+      "display_name": "Newell Walter Johnson",
+      "orcid": "https://orcid.org/0000-0001-5866-262X",
+      "h_index": 83,
+      "i10_index": 339,
+      "works_count": 547,
+      "cited_by_count": 33503,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5019860365",
+      "display_name": "David Christopher Watts",
+      "orcid": "https://orcid.org/0000-0002-9105-2775",
+      "h_index": 83,
+      "i10_index": 338,
+      "works_count": 582,
+      "cited_by_count": 27966,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "General Dentistry -- 9.6",
+      "id": "https://openalex.org/A5088320537",
+      "display_name": "Michael D. Weir",
+      "orcid": "https://orcid.org/0000-0002-7961-3787",
+      "h_index": 82,
+      "i10_index": 292,
+      "works_count": 366,
+      "cited_by_count": 21545,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5047663812",
+      "display_name": "Marco Aurélio Peres",
+      "orcid": "https://orcid.org/0000-0002-8329-2808",
+      "h_index": 82,
+      "i10_index": 274,
+      "works_count": 398,
+      "cited_by_count": 34146,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5028748317",
+      "display_name": "J.D.B. Featherstone",
+      "orcid": "https://orcid.org/0000-0001-5185-5816",
+      "h_index": 82,
+      "i10_index": 232,
+      "works_count": 319,
+      "cited_by_count": 24814,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5078971163",
+      "display_name": "Flávio Fernando Demarco",
+      "orcid": "https://orcid.org/0000-0003-2276-491X",
+      "h_index": 81,
+      "i10_index": 346,
+      "works_count": 599,
+      "cited_by_count": 24869,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5084701287",
+      "display_name": "Gottfried Schmalz",
+      "orcid": "https://orcid.org/0000-0001-8082-7662",
+      "h_index": 81,
+      "i10_index": 249,
+      "works_count": 363,
+      "cited_by_count": 20442,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5062849549",
+      "display_name": "Zuhair Saleh Natto",
+      "orcid": "https://orcid.org/0000-0003-2723-0255",
+      "h_index": 80,
+      "i10_index": 157,
+      "works_count": 266,
+      "cited_by_count": 68451,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5056462829",
+      "display_name": "James P. Simmer",
+      "orcid": "https://orcid.org/0000-0002-7192-6105",
+      "h_index": 79,
+      "i10_index": 221,
+      "works_count": 317,
+      "cited_by_count": 18102,
+      "discipline": "General Dentistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5021295922",
+      "display_name": "Franklin García-Godoy",
+      "orcid": "https://orcid.org/0000-0001-8133-3306",
+      "h_index": 78,
+      "i10_index": 434,
+      "works_count": 687,
+      "cited_by_count": 26467,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5091888417",
+      "display_name": "Stephen Ross Porter",
+      "orcid": "https://orcid.org/0000-0002-3328-2759",
+      "h_index": 78,
+      "i10_index": 331,
+      "works_count": 786,
+      "cited_by_count": 23765,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5048125234",
+      "display_name": "John M. Powers",
+      "orcid": "https://orcid.org/0000-0001-9926-4548",
+      "h_index": 78,
+      "i10_index": 299,
+      "works_count": 450,
+      "cited_by_count": 18838,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5007705202",
+      "display_name": "Hidehiko Sano",
+      "orcid": "https://orcid.org/0000-0003-1505-4047",
+      "h_index": 78,
+      "i10_index": 193,
+      "works_count": 317,
+      "cited_by_count": 21333,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5076391489",
+      "display_name": "Jaime Aparecido Cury",
+      "orcid": "https://orcid.org/0000-0003-1046-5605",
+      "h_index": 77,
+      "i10_index": 263,
+      "works_count": 456,
+      "cited_by_count": 21019,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "General Dentistry -- 9.5",
+      "id": "https://openalex.org/A5067316373",
+      "display_name": "Poul Erik Petersen",
+      "orcid": "https://orcid.org/0000-0002-4904-8510",
+      "h_index": 77,
+      "i10_index": 154,
+      "works_count": 220,
+      "cited_by_count": 33055,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5053084731",
+      "display_name": "Lorenzo Lo Muzio",
+      "orcid": "https://orcid.org/0000-0003-4633-4893",
+      "h_index": 76,
+      "i10_index": 503,
+      "works_count": 854,
+      "cited_by_count": 26553,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5056078322",
+      "display_name": "Colman P. J. McGrath",
+      "orcid": "https://orcid.org/0000-0001-9379-0889",
+      "h_index": 76,
+      "i10_index": 331,
+      "works_count": 715,
+      "cited_by_count": 20403,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5033110733",
+      "display_name": "Jukka H. Meurman",
+      "orcid": "https://orcid.org/0000-0001-6702-6836",
+      "h_index": 76,
+      "i10_index": 277,
+      "works_count": 504,
+      "cited_by_count": 20623,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5083626249",
+      "display_name": "Richard Geddie Watt",
+      "orcid": "https://orcid.org/0000-0001-6229-8584",
+      "h_index": 76,
+      "i10_index": 228,
+      "works_count": 456,
+      "cited_by_count": 27803,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5076470455",
+      "display_name": "Leo Tjäderhane",
+      "orcid": "https://orcid.org/0000-0002-5018-478X",
+      "h_index": 76,
+      "i10_index": 204,
+      "works_count": 328,
+      "cited_by_count": 25806,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5056788164",
+      "display_name": "Carlo Prati",
+      "orcid": "https://orcid.org/0000-0001-8163-8628",
+      "h_index": 76,
+      "i10_index": 202,
+      "works_count": 450,
+      "cited_by_count": 16824,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5017555255",
+      "display_name": "Theodore Eliades",
+      "orcid": "https://orcid.org/0000-0003-2313-4979",
+      "h_index": 75,
+      "i10_index": 293,
+      "works_count": 553,
+      "cited_by_count": 18085,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5015576333",
+      "display_name": "Lippo V.J. Lassila",
+      "orcid": "https://orcid.org/0000-0002-7001-1309",
+      "h_index": 75,
+      "i10_index": 278,
+      "works_count": 359,
+      "cited_by_count": 17086,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5088558524",
+      "display_name": "Svante Twetman",
+      "orcid": "https://orcid.org/0000-0002-0199-9210",
+      "h_index": 75,
+      "i10_index": 254,
+      "works_count": 416,
+      "cited_by_count": 22916,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5062907308",
+      "display_name": "Georgios Tsakos",
+      "orcid": "https://orcid.org/0000-0002-5086-235X",
+      "h_index": 75,
+      "i10_index": 199,
+      "works_count": 360,
+      "cited_by_count": 18688,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Social Sciences",
+        "Nursing",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "General Dentistry -- 9.4",
+      "id": "https://openalex.org/A5007697163",
+      "display_name": "Romina Brignardello‐Petersen",
+      "orcid": "https://orcid.org/0000-0002-6010-9900",
+      "h_index": 75,
+      "i10_index": 188,
+      "works_count": 902,
+      "cited_by_count": 30066,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5015613179",
+      "display_name": "Saul Martins Paiva",
+      "orcid": "https://orcid.org/0000-0002-3968-1638",
+      "h_index": 74,
+      "i10_index": 352,
+      "works_count": 626,
+      "cited_by_count": 19494,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5059211149",
+      "display_name": "Ewald Maria Bronkhorst",
+      "orcid": "https://orcid.org/0000-0003-0953-8053",
+      "h_index": 74,
+      "i10_index": 304,
+      "works_count": 463,
+      "cited_by_count": 21032,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5008583921",
+      "display_name": "Elmar Hellwig",
+      "orcid": "https://orcid.org/0000-0003-1880-5256",
+      "h_index": 74,
+      "i10_index": 263,
+      "works_count": 411,
+      "cited_by_count": 19052,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5057498366",
+      "display_name": "Frederick Allen Rueggeberg",
+      "orcid": "https://orcid.org/0000-0003-1947-3337",
+      "h_index": 74,
+      "i10_index": 203,
+      "works_count": 289,
+      "cited_by_count": 19792,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5040762788",
+      "display_name": "Grayson W. Marshall",
+      "orcid": "https://orcid.org/0000-0001-8921-3253",
+      "h_index": 74,
+      "i10_index": 196,
+      "works_count": 268,
+      "cited_by_count": 20797,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5006878643",
+      "display_name": "Nigel Berry Pitts",
+      "orcid": "https://orcid.org/0000-0001-6184-4213",
+      "h_index": 73,
+      "i10_index": 250,
+      "works_count": 441,
+      "cited_by_count": 31316,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5016541393",
+      "display_name": "Manuel Toledano",
+      "orcid": "https://orcid.org/0000-0002-2172-7896",
+      "h_index": 73,
+      "i10_index": 242,
+      "works_count": 354,
+      "cited_by_count": 15876,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5060076939",
+      "display_name": "Stephen Challacombe",
+      "orcid": "https://orcid.org/0000-0002-7327-6927",
+      "h_index": 73,
+      "i10_index": 218,
+      "works_count": 416,
+      "cited_by_count": 20449,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5109139804",
+      "display_name": "O. Fejerskov",
+      "orcid": "https://orcid.org/0009-0009-8810-0383",
+      "h_index": 73,
+      "i10_index": 205,
+      "works_count": 336,
+      "cited_by_count": 18136,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5048794645",
+      "display_name": "Albert Joseph Feilzer",
+      "orcid": "https://orcid.org/0000-0003-0626-4261",
+      "h_index": 73,
+      "i10_index": 203,
+      "works_count": 429,
+      "cited_by_count": 19826,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "General Dentistry -- 9.3",
+      "id": "https://openalex.org/A5019510840",
+      "display_name": "Kirsten L. VAN LANDUYT",
+      "orcid": "https://orcid.org/0000-0002-4932-3148",
+      "h_index": 72,
+      "i10_index": 161,
+      "works_count": 280,
+      "cited_by_count": 27611,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5013540731",
+      "display_name": "Jorge Perdigão",
+      "orcid": "https://orcid.org/0000-0003-1841-6365",
+      "h_index": 72,
+      "i10_index": 161,
+      "works_count": 258,
+      "cited_by_count": 17005,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5025698678",
+      "display_name": "Marília Afonso Rabelo Buzalaf",
+      "orcid": "https://orcid.org/0000-0002-5985-3951",
+      "h_index": 71,
+      "i10_index": 402,
+      "works_count": 912,
+      "cited_by_count": 21064,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5110134976",
+      "display_name": "Jacob M. ten Cate",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 212,
+      "works_count": 297,
+      "cited_by_count": 18940,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5060522829",
+      "display_name": "Adrian Lussi",
+      "orcid": "https://orcid.org/0000-0002-0426-3364",
+      "h_index": 71,
+      "i10_index": 182,
+      "works_count": 307,
+      "cited_by_count": 18872,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5003873342",
+      "display_name": "Álvaro Della Bona",
+      "orcid": "https://orcid.org/0000-0002-8312-7503",
+      "h_index": 71,
+      "i10_index": 174,
+      "works_count": 324,
+      "cited_by_count": 17727,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5031197372",
+      "display_name": "Robert J. Weyant",
+      "orcid": "https://orcid.org/0000-0002-5252-9120",
+      "h_index": 71,
+      "i10_index": 172,
+      "works_count": 263,
+      "cited_by_count": 28854,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5110410252",
+      "display_name": "Carel Leon Davidson",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 144,
+      "works_count": 271,
+      "cited_by_count": 18639,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5024177916",
+      "display_name": "George Joseph Eckert",
+      "orcid": "https://orcid.org/0000-0001-7798-7155",
+      "h_index": 70,
+      "i10_index": 346,
+      "works_count": 709,
+      "cited_by_count": 19665,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5062414404",
+      "display_name": "Giuseppina Campisi",
+      "orcid": "https://orcid.org/0000-0002-9443-0495",
+      "h_index": 70,
+      "i10_index": 240,
+      "works_count": 583,
+      "cited_by_count": 15875,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5024806340",
+      "display_name": "Raquel Osorio",
+      "orcid": "https://orcid.org/0000-0001-7679-6840",
+      "h_index": 70,
+      "i10_index": 226,
+      "works_count": 309,
+      "cited_by_count": 14478,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "General Dentistry -- 9.2",
+      "id": "https://openalex.org/A5085367335",
+      "display_name": "Bogna Stawarczyk",
+      "orcid": "https://orcid.org/0000-0003-1732-3255",
+      "h_index": 70,
+      "i10_index": 210,
+      "works_count": 299,
+      "cited_by_count": 16177,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5011107298",
+      "display_name": "Mike Torsten John",
+      "orcid": "https://orcid.org/0000-0002-5169-7691",
+      "h_index": 70,
+      "i10_index": 156,
+      "works_count": 224,
+      "cited_by_count": 14627,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5030325855",
+      "display_name": "Ratilal Lalloo",
+      "orcid": "https://orcid.org/0000-0001-5822-1269",
+      "h_index": 70,
+      "i10_index": 155,
+      "works_count": 272,
+      "cited_by_count": 215475,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5031805467",
+      "display_name": "Domenick Thomas Zero",
+      "orcid": "https://orcid.org/0000-0001-7499-2282",
+      "h_index": 70,
+      "i10_index": 146,
+      "works_count": 246,
+      "cited_by_count": 18215,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5082333874",
+      "display_name": "Gláucia María Bovi Ambrosano",
+      "orcid": "https://orcid.org/0000-0001-5950-6370",
+      "h_index": 69,
+      "i10_index": 363,
+      "works_count": 588,
+      "cited_by_count": 17850,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5010165489",
+      "display_name": "Steven Marc Levy",
+      "orcid": "https://orcid.org/0000-0001-9150-4199",
+      "h_index": 69,
+      "i10_index": 232,
+      "works_count": 376,
+      "cited_by_count": 15402,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5083024392",
+      "display_name": "Lei Cheng",
+      "orcid": "https://orcid.org/0000-0002-2762-4740",
+      "h_index": 69,
+      "i10_index": 220,
+      "works_count": 295,
+      "cited_by_count": 18276,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5060165409",
+      "display_name": "Timothy Frederick Watson",
+      "orcid": "https://orcid.org/0000-0001-6039-3780",
+      "h_index": 69,
+      "i10_index": 180,
+      "works_count": 295,
+      "cited_by_count": 14255,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5053209490",
+      "display_name": "L.C. Chow",
+      "orcid": "https://orcid.org/0000-0003-0651-2165",
+      "h_index": 69,
+      "i10_index": 176,
+      "works_count": 266,
+      "cited_by_count": 14469,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5049424000",
+      "display_name": "Jocelyne S. Feine",
+      "orcid": "https://orcid.org/0000-0002-2746-103X",
+      "h_index": 69,
+      "i10_index": 146,
+      "works_count": 274,
+      "cited_by_count": 17295,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5086227177",
+      "display_name": "Marcelo Giannini",
+      "orcid": "https://orcid.org/0000-0002-7260-5231",
+      "h_index": 68,
+      "i10_index": 266,
+      "works_count": 516,
+      "cited_by_count": 15465,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "General Dentistry -- 9.1",
+      "id": "https://openalex.org/A5088320646",
+      "display_name": "José Leopoldo Ferreira Antunes",
+      "orcid": "https://orcid.org/0000-0003-3972-9723",
+      "h_index": 68,
+      "i10_index": 235,
+      "works_count": 437,
+      "cited_by_count": 14712,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "General Dentistry -- 9.0",
+      "id": "https://openalex.org/A5112329232",
+      "display_name": "Cynthia Kar Yung Yiu",
+      "orcid": "https://orcid.org/0000-0003-4090-6205",
+      "h_index": 68,
+      "i10_index": 233,
+      "works_count": 384,
+      "cited_by_count": 16368,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "General Dentistry -- 9.0",
+      "id": "https://openalex.org/A5108832537",
+      "display_name": "Ivo Krejci",
+      "orcid": "https://orcid.org/0000-0002-8660-2031",
+      "h_index": 68,
+      "i10_index": 220,
+      "works_count": 393,
+      "cited_by_count": 15296,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "General Dentistry -- 9.0",
+      "id": "https://openalex.org/A5059955076",
+      "display_name": "Jihua Chen",
+      "orcid": "https://orcid.org/0000-0002-1151-0693",
+      "h_index": 68,
+      "i10_index": 201,
+      "works_count": 373,
+      "cited_by_count": 16797,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "General Dentistry -- 9.0",
+      "id": "https://openalex.org/A5029505615",
+      "display_name": "John S. Greenspan",
+      "orcid": "https://orcid.org/0000-0002-3252-1973",
+      "h_index": 68,
+      "i10_index": 175,
+      "works_count": 255,
+      "cited_by_count": 17554,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "General Dentistry -- 9.0",
+      "id": "https://openalex.org/A5056003566",
+      "display_name": "Deborah Greenspan",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 152,
+      "works_count": 193,
+      "cited_by_count": 14083,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5021547657",
+      "display_name": "Morẹ́nikẹ́ Oluwátóyìn Foláyan",
+      "orcid": "https://orcid.org/0000-0002-9008-7730",
+      "h_index": 67,
+      "i10_index": 288,
+      "works_count": 736,
+      "cited_by_count": 83013,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5085204885",
+      "display_name": "Tim Newton",
+      "orcid": "https://orcid.org/0000-0003-4082-6942",
+      "h_index": 67,
+      "i10_index": 288,
+      "works_count": 523,
+      "cited_by_count": 16990,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5102300985",
+      "display_name": "Nigel Martyn King",
+      "orcid": "https://orcid.org/0000-0003-0585-7364",
+      "h_index": 67,
+      "i10_index": 236,
+      "works_count": 436,
+      "cited_by_count": 23756,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5058783267",
+      "display_name": "José Vicente Bagán Sebastián",
+      "orcid": "https://orcid.org/0000-0002-0295-2916",
+      "h_index": 67,
+      "i10_index": 222,
+      "works_count": 366,
+      "cited_by_count": 16941,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5045867778",
+      "display_name": "Yasuhiro Yoshida",
+      "orcid": "https://orcid.org/0000-0003-1658-3119",
+      "h_index": 67,
+      "i10_index": 211,
+      "works_count": 467,
+      "cited_by_count": 22130,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Materials Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5086788053",
+      "display_name": "Li‐na Niu",
+      "orcid": "https://orcid.org/0000-0002-6653-0819",
+      "h_index": 67,
+      "i10_index": 201,
+      "works_count": 286,
+      "cited_by_count": 15531,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5012182664",
+      "display_name": "Karen Glazer Peres",
+      "orcid": "https://orcid.org/0000-0002-1730-2123",
+      "h_index": 67,
+      "i10_index": 169,
+      "works_count": 256,
+      "cited_by_count": 12483,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5103385522",
+      "display_name": "William H. J. Douglas",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 160,
+      "works_count": 227,
+      "cited_by_count": 13981,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5089724672",
+      "display_name": "John C. Wataha",
+      "orcid": "https://orcid.org/0000-0003-3195-2197",
+      "h_index": 67,
+      "i10_index": 158,
+      "works_count": 183,
+      "cited_by_count": 13819,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5023181415",
+      "display_name": "Matthias Hannig",
+      "orcid": "https://orcid.org/0000-0003-0669-6881",
+      "h_index": 66,
+      "i10_index": 243,
+      "works_count": 421,
+      "cited_by_count": 17323,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5023667688",
+      "display_name": "Alexandre Rezende Vieira",
+      "orcid": "https://orcid.org/0000-0003-3392-6881",
+      "h_index": 66,
+      "i10_index": 241,
+      "works_count": 483,
+      "cited_by_count": 17126,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "General Dentistry -- 8.9",
+      "id": "https://openalex.org/A5028016335",
+      "display_name": "James S. Hodges",
+      "orcid": "https://orcid.org/0000-0001-7467-6941",
+      "h_index": 66,
+      "i10_index": 210,
+      "works_count": 321,
+      "cited_by_count": 14789,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Mathematics",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5074872099",
+      "display_name": "Dwayne D. Arola",
+      "orcid": "https://orcid.org/0000-0001-9140-2758",
+      "h_index": 66,
+      "i10_index": 198,
+      "works_count": 297,
+      "cited_by_count": 12906,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5110406044",
+      "display_name": "J. J. Pindborg",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 170,
+      "works_count": 224,
+      "cited_by_count": 16726,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5050551405",
+      "display_name": "Anne‐Marie Glenny",
+      "orcid": "https://orcid.org/0000-0003-4037-2899",
+      "h_index": 66,
+      "i10_index": 156,
+      "works_count": 310,
+      "cited_by_count": 18193,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5029731127",
+      "display_name": "Van P. Thompson",
+      "orcid": "https://orcid.org/0000-0003-0033-0344",
+      "h_index": 66,
+      "i10_index": 151,
+      "works_count": 224,
+      "cited_by_count": 15103,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5110550944",
+      "display_name": "Ricardo M. Carvalho",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 148,
+      "works_count": 225,
+      "cited_by_count": 18155,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5014124475",
+      "display_name": "Guido Vanherle",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 102,
+      "works_count": 212,
+      "cited_by_count": 20383,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5054749968",
+      "display_name": "Lucianne Cople Maia",
+      "orcid": "https://orcid.org/0000-0003-1026-9401",
+      "h_index": 65,
+      "i10_index": 283,
+      "works_count": 589,
+      "cited_by_count": 14102,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5078252134",
+      "display_name": "Antonella Polimeni",
+      "orcid": "https://orcid.org/0000-0002-2679-7607",
+      "h_index": 65,
+      "i10_index": 275,
+      "works_count": 454,
+      "cited_by_count": 14528,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5029843488",
+      "display_name": "Ricardo D. Coletta",
+      "orcid": "https://orcid.org/0000-0001-5285-3046",
+      "h_index": 65,
+      "i10_index": 263,
+      "works_count": 553,
+      "cited_by_count": 13845,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5003918981",
+      "display_name": "Carlos José Soares",
+      "orcid": "https://orcid.org/0000-0002-8830-605X",
+      "h_index": 65,
+      "i10_index": 251,
+      "works_count": 469,
+      "cited_by_count": 15103,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5011707378",
+      "display_name": "Cornelis J. Kleverlaan",
+      "orcid": "https://orcid.org/0000-0002-3218-8031",
+      "h_index": 65,
+      "i10_index": 221,
+      "works_count": 400,
+      "cited_by_count": 13830,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5085505697",
+      "display_name": "Altair Antoninha Del Bel Cury",
+      "orcid": "https://orcid.org/0000-0002-4329-0437",
+      "h_index": 65,
+      "i10_index": 215,
+      "works_count": 338,
+      "cited_by_count": 12897,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5112257389",
+      "display_name": "Michael Francis Burrow",
+      "orcid": "https://orcid.org/0000-0001-9735-1904",
+      "h_index": 65,
+      "i10_index": 207,
+      "works_count": 270,
+      "cited_by_count": 15534,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5050736907",
+      "display_name": "Satoshi Imazato",
+      "orcid": "https://orcid.org/0000-0003-3655-4809",
+      "h_index": 65,
+      "i10_index": 199,
+      "works_count": 356,
+      "cited_by_count": 14207,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5110038215",
+      "display_name": "Peter A. Reichart",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 172,
+      "works_count": 288,
+      "cited_by_count": 14655,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5110029317",
+      "display_name": "Sol Silverman",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 155,
+      "works_count": 217,
+      "cited_by_count": 13876,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5023878826",
+      "display_name": "Niek J.M. Opdam",
+      "orcid": "https://orcid.org/0000-0003-3079-8992",
+      "h_index": 65,
+      "i10_index": 125,
+      "works_count": 208,
+      "cited_by_count": 14554,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5102812968",
+      "display_name": "Pascal Magne",
+      "orcid": "https://orcid.org/0000-0002-2476-9725",
+      "h_index": 65,
+      "i10_index": 120,
+      "works_count": 173,
+      "cited_by_count": 11603,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5012834132",
+      "display_name": "Elizabeth A. Krall",
+      "orcid": "https://orcid.org/0000-0001-7529-2501",
+      "h_index": 65,
+      "i10_index": 110,
+      "works_count": 176,
+      "cited_by_count": 16873,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5058721203",
+      "display_name": "Jesus Djalma Pécora",
+      "orcid": "https://orcid.org/0000-0002-1865-0103",
+      "h_index": 64,
+      "i10_index": 188,
+      "works_count": 390,
+      "cited_by_count": 14062,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5102775864",
+      "display_name": "Pekka Kalevi VALLITTU",
+      "orcid": "https://orcid.org/0000-0002-3391-5165",
+      "h_index": 64,
+      "i10_index": 165,
+      "works_count": 229,
+      "cited_by_count": 12454,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "General Dentistry -- 8.8",
+      "id": "https://openalex.org/A5069311662",
+      "display_name": "Ulrich Lohbauer",
+      "orcid": "https://orcid.org/0000-0002-9862-0886",
+      "h_index": 64,
+      "i10_index": 158,
+      "works_count": 282,
+      "cited_by_count": 12971,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5036337422",
+      "display_name": "Amid Ibrahim Ismail",
+      "orcid": "https://orcid.org/0009-0007-1164-9082",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 185,
+      "cited_by_count": 21534,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5070325650",
+      "display_name": "Laurence James Walsh",
+      "orcid": "https://orcid.org/0000-0001-5874-5687",
+      "h_index": 63,
+      "i10_index": 303,
+      "works_count": 652,
+      "cited_by_count": 18381,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5006178504",
+      "display_name": "Peter Milgrom",
+      "orcid": "https://orcid.org/0000-0003-0784-9181",
+      "h_index": 63,
+      "i10_index": 245,
+      "works_count": 400,
+      "cited_by_count": 14875,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5074746770",
+      "display_name": "Carlos Alberto de Souza Costa",
+      "orcid": "https://orcid.org/0000-0002-7455-6867",
+      "h_index": 63,
+      "i10_index": 232,
+      "works_count": 407,
+      "cited_by_count": 13115,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5011032876",
+      "display_name": "Grant C. Townsend",
+      "orcid": "https://orcid.org/0000-0002-7216-6996",
+      "h_index": 63,
+      "i10_index": 223,
+      "works_count": 366,
+      "cited_by_count": 14294,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Arts and Humanities",
+        "Agricultural and Biological Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5109247721",
+      "display_name": "Dowen Birkhed",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 220,
+      "works_count": 286,
+      "cited_by_count": 11188,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5109953490",
+      "display_name": "J. Arends",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 219,
+      "works_count": 567,
+      "cited_by_count": 15460,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5044752316",
+      "display_name": "Liran Levin",
+      "orcid": "https://orcid.org/0000-0002-8123-7936",
+      "h_index": 63,
+      "i10_index": 202,
+      "works_count": 369,
+      "cited_by_count": 15769,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5057077073",
+      "display_name": "Nick Silikas",
+      "orcid": "https://orcid.org/0000-0003-4576-4584",
+      "h_index": 63,
+      "i10_index": 193,
+      "works_count": 304,
+      "cited_by_count": 13664,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5005759004",
+      "display_name": "M.C.D.N.J.M. Huysmans",
+      "orcid": "https://orcid.org/0000-0002-3036-7554",
+      "h_index": 63,
+      "i10_index": 172,
+      "works_count": 285,
+      "cited_by_count": 13200,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "General Dentistry -- 8.7",
+      "id": "https://openalex.org/A5026434710",
+      "display_name": "Daniel Edelhoff",
+      "orcid": "https://orcid.org/0000-0002-1733-5726",
+      "h_index": 63,
+      "i10_index": 150,
+      "works_count": 297,
+      "cited_by_count": 15388,
+      "discipline": "General Dentistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "General Dentistry",
+      "fields": [
+        "Dentistry"
+      ]
+    }
+  ]
+}

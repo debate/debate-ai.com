@@ -14,13 +14,18 @@
  * stylesheet reads the same shadcn variables those classes set
  * (`styles/docs.css`), so every theme applies to Fumadocs' own components too.
  *
+ * Hovering (or keyboard-highlighting) a colour theme previews it live through
+ * the hook's `handleThemePreview` / `handlePreviewEnd` — the same pair the
+ * app's dock and sidebar theme menus use. The preview reverts when the pointer
+ * or focus leaves the item or the menu closes; only a click commits.
+ *
  * Two looks: `toolbar` (a large icon over a small label, for the header's
  * button group, wrapped by the caller in a `ToolbarItem` tooltip) and `icon`
  * (a plain icon button, for the narrow header).
  *
  * The icon is Lucide's `swatch-book`.
  */
-import { useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Check, Monitor, Moon, Sun, SwatchBook } from 'lucide-react';
 import {
@@ -92,13 +97,26 @@ export function ThemesMenu({
   className?: string;
   onOpenChange?: (open: boolean) => void;
 }) {
-  const { mounted, mode, setMode, handleThemeChange } = useThemeState();
+  const { mounted, mode, setMode, handleThemeChange, handleThemePreview, handlePreviewEnd } = useThemeState();
   const colorTheme = useActiveColorTheme();
+  // The theme in force when the menu opened. <html> carries the previewed theme
+  // while hovering, so the checkmark must not follow it.
+  const [committedTheme, setCommittedTheme] = useState<string | null>(null);
   const currentMode = mounted ? (mode ?? 'light') : '';
-  const currentColor = mounted ? colorTheme : '';
+  const currentColor = mounted ? (committedTheme ?? colorTheme) : '';
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      setCommittedTheme(readActiveColorTheme(document.documentElement));
+    } else {
+      handlePreviewEnd();
+      setCommittedTheme(null);
+    }
+    onOpenChange?.(open);
+  };
 
   return (
-    <DropdownMenu.Root onOpenChange={onOpenChange}>
+    <DropdownMenu.Root onOpenChange={handleOpenChange}>
       <DropdownMenu.Trigger asChild>
         {variant === 'toolbar' ? (
           <button type="button" aria-label="Themes" data-themes-trigger="" className={className}>
@@ -151,7 +169,16 @@ export function ThemesMenu({
           <DropdownMenu.Label className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">Color theme</DropdownMenu.Label>
           <DropdownMenu.RadioGroup value={currentColor} onValueChange={handleThemeChange}>
             {themeNames.map((name) => (
-              <DropdownMenu.RadioItem key={name} value={name} className={itemClass} data-color-theme={name}>
+              <DropdownMenu.RadioItem
+                key={name}
+                value={name}
+                className={itemClass}
+                data-color-theme={name}
+                onPointerEnter={() => handleThemePreview(name)}
+                onFocus={() => handleThemePreview(name)}
+                onPointerLeave={handlePreviewEnd}
+                onBlur={handlePreviewEnd}
+              >
                 <Swatches name={name} />
                 <span className="flex-1">{formatThemeName(name)}</span>
                 <DropdownMenu.ItemIndicator>

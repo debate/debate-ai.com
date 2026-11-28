@@ -1,0 +1,602 @@
+{
+  "kind": "subfield",
+  "id": 3616,
+  "name": "Speech and Hearing",
+  "total_in_scrape": 29,
+  "count": 29,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Speech and Hearing -- 9.9",
+      "id": "https://openalex.org/A5059298173",
+      "display_name": "Alfred W. Rademaker",
+      "orcid": "https://orcid.org/0000-0003-3103-6519",
+      "h_index": 119,
+      "i10_index": 534,
+      "works_count": 806,
+      "cited_by_count": 46008,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Medicine",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Speech and Hearing -- 9.9",
+      "id": "https://openalex.org/A5110050608",
+      "display_name": "Brian C. J. Moore",
+      "orcid": "https://orcid.org/0000-0001-7071-0671",
+      "h_index": 104,
+      "i10_index": 571,
+      "works_count": 951,
+      "cited_by_count": 46535,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Speech and Hearing -- 9.9",
+      "id": "https://openalex.org/A5028552495",
+      "display_name": "Paul Van de Heyning",
+      "orcid": "https://orcid.org/0000-0002-8424-3717",
+      "h_index": 101,
+      "i10_index": 536,
+      "works_count": 917,
+      "cited_by_count": 41817,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Speech and Hearing -- 9.9",
+      "id": "https://openalex.org/A5049367753",
+      "display_name": "Ingo R. Titze",
+      "orcid": "https://orcid.org/0000-0003-0583-7515",
+      "h_index": 93,
+      "i10_index": 241,
+      "works_count": 496,
+      "cited_by_count": 25985,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Arts and Humanities",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Speech and Hearing -- 9.9",
+      "id": "https://openalex.org/A5110534436",
+      "display_name": "Karen J. Cruickshanks",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 208,
+      "works_count": 293,
+      "cited_by_count": 28687,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Medicine",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Speech and Hearing -- 9.9",
+      "id": "https://openalex.org/A5069178600",
+      "display_name": "Jan M Wouters",
+      "orcid": "https://orcid.org/0000-0002-0093-698X",
+      "h_index": 80,
+      "i10_index": 349,
+      "works_count": 1107,
+      "cited_by_count": 21921,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5102800323",
+      "display_name": "Frank Robert Lin",
+      "orcid": "https://orcid.org/0000-0002-6458-1196",
+      "h_index": 79,
+      "i10_index": 221,
+      "works_count": 405,
+      "cited_by_count": 28733,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5108807899",
+      "display_name": "Jeri A. Logemann",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 135,
+      "works_count": 196,
+      "cited_by_count": 17723,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5072268854",
+      "display_name": "Graeme M. Clark",
+      "orcid": "https://orcid.org/0000-0002-5543-2789",
+      "h_index": 75,
+      "i10_index": 271,
+      "works_count": 793,
+      "cited_by_count": 18025,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Psychology",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5046431320",
+      "display_name": "Adrian C. Davis",
+      "orcid": "https://orcid.org/0000-0001-7134-7528",
+      "h_index": 73,
+      "i10_index": 172,
+      "works_count": 262,
+      "cited_by_count": 142269,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Medicine",
+        "Psychology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5020089672",
+      "display_name": "Bruce J. Gantz",
+      "orcid": "https://orcid.org/0000-0002-9916-6048",
+      "h_index": 72,
+      "i10_index": 221,
+      "works_count": 352,
+      "cited_by_count": 18637,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5071800169",
+      "display_name": "Thomas Lenarz",
+      "orcid": "https://orcid.org/0000-0002-9307-5989",
+      "h_index": 71,
+      "i10_index": 496,
+      "works_count": 1526,
+      "cited_by_count": 22730,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5042419068",
+      "display_name": "Louise M. H. Hickson",
+      "orcid": "https://orcid.org/0000-0001-6832-4173",
+      "h_index": 70,
+      "i10_index": 225,
+      "works_count": 393,
+      "cited_by_count": 15364,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5068243360",
+      "display_name": "Robert K. Shepherd",
+      "orcid": "https://orcid.org/0000-0002-4239-3362",
+      "h_index": 70,
+      "i10_index": 197,
+      "works_count": 366,
+      "cited_by_count": 14506,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5084198747",
+      "display_name": "Père Clavé",
+      "orcid": "https://orcid.org/0000-0002-0696-8560",
+      "h_index": 70,
+      "i10_index": 186,
+      "works_count": 312,
+      "cited_by_count": 24020,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5012950439",
+      "display_name": "John K. Niparko",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 168,
+      "works_count": 286,
+      "cited_by_count": 14211,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Speech and Hearing -- 9.8",
+      "id": "https://openalex.org/A5006173918",
+      "display_name": "Blake Croll Papsin",
+      "orcid": "https://orcid.org/0000-0003-1704-3026",
+      "h_index": 66,
+      "i10_index": 240,
+      "works_count": 373,
+      "cited_by_count": 13568,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5047069085",
+      "display_name": "Rainer Dziewas",
+      "orcid": "https://orcid.org/0000-0003-1592-8461",
+      "h_index": 66,
+      "i10_index": 219,
+      "works_count": 385,
+      "cited_by_count": 16326,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5088736796",
+      "display_name": "Richard S. Tyler",
+      "orcid": "https://orcid.org/0000-0002-2101-4714",
+      "h_index": 66,
+      "i10_index": 201,
+      "works_count": 335,
+      "cited_by_count": 16339,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Psychology",
+        "Physics and Astronomy",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5070163206",
+      "display_name": "Jerome Rene Lechien",
+      "orcid": "https://orcid.org/0000-0002-0845-0845",
+      "h_index": 65,
+      "i10_index": 374,
+      "works_count": 952,
+      "cited_by_count": 20816,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Medicine",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5035016276",
+      "display_name": "Shaheen Hamdy",
+      "orcid": "https://orcid.org/0000-0001-9640-7427",
+      "h_index": 65,
+      "i10_index": 163,
+      "works_count": 424,
+      "cited_by_count": 16154,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5079222506",
+      "display_name": "Christy L. Ludlow",
+      "orcid": "https://orcid.org/0000-0002-2015-6171",
+      "h_index": 65,
+      "i10_index": 146,
+      "works_count": 216,
+      "cited_by_count": 13059,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5088515918",
+      "display_name": "Robert E. Hillman",
+      "orcid": "https://orcid.org/0000-0002-7374-994X",
+      "h_index": 64,
+      "i10_index": 175,
+      "works_count": 281,
+      "cited_by_count": 14125,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5074389724",
+      "display_name": "Michael F. Dorman",
+      "orcid": "https://orcid.org/0000-0001-9560-3231",
+      "h_index": 64,
+      "i10_index": 163,
+      "works_count": 253,
+      "cited_by_count": 16189,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Psychology",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Computer Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5048176693",
+      "display_name": "Robert Thayer Sataloff",
+      "orcid": "https://orcid.org/0000-0001-5146-6319",
+      "h_index": 63,
+      "i10_index": 283,
+      "works_count": 1224,
+      "cited_by_count": 15152,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5027094411",
+      "display_name": "Clarence T. Sasaki",
+      "orcid": "https://orcid.org/0000-0002-0122-0166",
+      "h_index": 63,
+      "i10_index": 219,
+      "works_count": 418,
+      "cited_by_count": 14483,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Medicine",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5080199119",
+      "display_name": "Judy R. Dubno",
+      "orcid": "https://orcid.org/0000-0003-2340-4721",
+      "h_index": 63,
+      "i10_index": 196,
+      "works_count": 381,
+      "cited_by_count": 14304,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Speech and Hearing -- 9.7",
+      "id": "https://openalex.org/A5008101652",
+      "display_name": "Clark A. Rosen",
+      "orcid": "https://orcid.org/0000-0003-1571-1086",
+      "h_index": 63,
+      "i10_index": 165,
+      "works_count": 358,
+      "cited_by_count": 12556,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Medicine",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Speech and Hearing -- 9.6",
+      "id": "https://openalex.org/A5060620724",
+      "display_name": "Fan‐Gang Zeng",
+      "orcid": "https://orcid.org/0000-0002-4325-2780",
+      "h_index": 63,
+      "i10_index": 141,
+      "works_count": 298,
+      "cited_by_count": 16935,
+      "discipline": "Speech and Hearing",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Computer Science",
+        "Psychology"
+      ]
+    }
+  ]
+}
