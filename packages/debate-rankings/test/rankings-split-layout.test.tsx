@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 /**
  * @fileoverview Every ranked division's page puts the topic and side bias in a
- * left column and the "Who debated whom" graph in a right one. Parli has no
- * ballots to draw, so its right column says so.
+ * left column and the "Who debated whom" graph in a right one. Parli's
+ * right column holds record sheets built from Tabroom rounds, or says there are none.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

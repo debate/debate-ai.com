@@ -12,7 +12,7 @@ import { DebateEditorImportError } from "../../src/lib/debate-editor/import-file
 import { registerStoredCmir, type StoredCmir } from "../../src/lib/debate-editor/lazy-stored-cmir";
 import type { ReasonDocument } from "../../src/docs/types";
 import type { TopicStarterItem } from "../../src/docs/topic-starters/TopicStarterTree";
-import { cleanup, flush, mockFetch, mount, type FetchCall, type Route } from "../helpers/dom";
+import { cleanup, flush, jsonResponse, mockFetch, mount, type FetchCall, type Route } from "../helpers/dom";
 import { configureMyFilesCache, type CachedDocument, type MyFilesBackend } from "../../src/lib/my-files/local-cache";
 import { ReasonSessionProvider, type ReasonSession } from "../../src/session";
 
@@ -314,6 +314,39 @@ describe("ReasonDocsProvider", () => {
     expect(puts.find((c) => c.url === "/api/doc/documents/3")!.body).toEqual({ parentId: null });
     expect(puts[0].init!.keepalive).toBe(true);
     expect(ctx.unsaved).toBe(false);
+  });
+
+  it("puts a move the server refuses back, says why, and does not retry it", async () => {
+    const { calls } = await mountLoaded([
+      { method: "PUT", match: "/api/doc/documents/3", status: 400, respond: { error: "That folder no longer exists." } },
+    ]);
+    await act(async () => ctx.moveDocument(3, 99));
+    expect(ctx.documents.find((d) => d.id === 3)!.parentId).toBe(99);
+
+    pagehide();
+    await flush();
+    expect(ctx.documents.find((d) => d.id === 3)!.parentId).toBe(2);
+    expect(ctx.saveRefusal).toBe("That move wasn't saved: That folder no longer exists. The file is back where it was.");
+    expect(ctx.unsaved).toBe(false);
+    expect(ctx.saveFailed).toBe(false);
+    expect(calls.filter((c) => c.method === "PUT" && c.url === "/api/doc/documents/3")).toHaveLength(1);
+
+    act(() => ctx.dismissSaveRefusal());
+    expect(ctx.saveRefusal).toBeNull();
+  });
+
+  it("puts a refused second move back to the folder the first one saved", async () => {
+    let n = 0;
+    await mountLoaded([
+      { method: "PUT", match: "/api/doc/documents/3", respond: () => (++n === 1 ? { ok: true } : jsonResponse({ error: "No." }, 400)) },
+    ]);
+    await act(async () => ctx.moveDocument(3, null));
+    pagehide();
+    await flush();
+    await act(async () => ctx.moveDocument(3, 4));
+    pagehide();
+    await flush();
+    expect(ctx.documents.find((d) => d.id === 3)!.parentId).toBeNull();
   });
 
   it("re-encodes a .cmir edit synchronously when the page goes away", async () => {

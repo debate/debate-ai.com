@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { saveRoundToAccount } from "../src/round/saved-rounds-client";
+import { deleteSavedRound, saveRoundToAccount } from "../src/round/saved-rounds-client";
 import type { Round } from "../src/types/flow";
 
 function makeRound(overrides: Partial<Round> = {}): Round {
@@ -92,5 +92,47 @@ describe("saveRoundToAccount", () => {
 
     const call = fetchMock.mock.calls[0];
     expect(JSON.parse(call[1]!.body as string)).toMatchObject({ force: true });
+  });
+});
+
+describe("deleteSavedRound", () => {
+  const empty = { removedFlowIds: [], keptFlowIds: [], flowsUnreadable: false };
+
+  it("DELETEs the round alone by default and resolves to an empty result", async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ success: true }) }));
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(deleteSavedRound(7)).resolves.toEqual(empty);
+    expect(fetchMock).toHaveBeenCalledWith("/api/rounds/7", { method: "DELETE" });
+  });
+
+  it("asks for the flows with withFlows and passes back which went and which stayed", async () => {
+    const body = { success: true, removedFlowIds: [1, 2], keptFlowIds: [3], flowsUnreadable: false };
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200, json: async () => body }));
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(deleteSavedRound(7, "/api/rounds", { withFlows: true })).resolves.toEqual({
+      removedFlowIds: [1, 2],
+      keptFlowIds: [3],
+      flowsUnreadable: false,
+    });
+    expect(fetchMock).toHaveBeenCalledWith("/api/rounds/7?withFlows=1", { method: "DELETE" });
+  });
+
+  it("drops malformed ids and tolerates a body that isn't JSON", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ removedFlowIds: [1, "2", 2.5], flowsUnreadable: "yes" }) })),
+    );
+    await expect(deleteSavedRound(7, undefined, { withFlows: true })).resolves.toEqual({ ...empty, removedFlowIds: [1] });
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({ ok: true, status: 200, json: async () => { throw new SyntaxError("x"); } })),
+    );
+    await expect(deleteSavedRound(7)).resolves.toEqual(empty);
+  });
+
+  it("throws the server's message on failure", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 401, json: async () => ({ error: "Sign in to manage your saved rounds." }) })));
+    await expect(deleteSavedRound(7)).rejects.toThrow("Sign in to manage your saved rounds.");
   });
 });
