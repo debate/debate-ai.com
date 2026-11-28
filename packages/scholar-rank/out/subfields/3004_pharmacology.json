@@ -1,0 +1,3196 @@
+{
+  "kind": "subfield",
+  "id": 3004,
+  "name": "Pharmacology",
+  "total_in_scrape": 159,
+  "count": 159,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Pharmacology -- 9.9",
+      "id": "https://openalex.org/A5073932699",
+      "display_name": "Frank J. Gonzalez",
+      "orcid": "https://orcid.org/0000-0002-7990-2140",
+      "h_index": 201,
+      "i10_index": 1207,
+      "works_count": 1582,
+      "cited_by_count": 164208,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Pharmacology -- 9.9",
+      "id": "https://openalex.org/A5058389506",
+      "display_name": "Frederick Peter Guengerich",
+      "orcid": "https://orcid.org/0000-0002-7458-3048",
+      "h_index": 154,
+      "i10_index": 936,
+      "works_count": 1345,
+      "cited_by_count": 103832,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Pharmacology -- 9.9",
+      "id": "https://openalex.org/A5062227574",
+      "display_name": "Jos H. Beijnen",
+      "orcid": "https://orcid.org/0000-0003-0118-561X",
+      "h_index": 140,
+      "i10_index": 1276,
+      "works_count": 1983,
+      "cited_by_count": 90714,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Pharmacology -- 9.9",
+      "id": "https://openalex.org/A5057183308",
+      "display_name": "Matthias Georg Schwab",
+      "orcid": "https://orcid.org/0000-0002-9984-075X",
+      "h_index": 125,
+      "i10_index": 613,
+      "works_count": 1076,
+      "cited_by_count": 75355,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Pharmacology -- 9.9",
+      "id": "https://openalex.org/A5087156903",
+      "display_name": "Hartmut Jaeschke",
+      "orcid": "https://orcid.org/0000-0002-8695-6980",
+      "h_index": 125,
+      "i10_index": 395,
+      "works_count": 607,
+      "cited_by_count": 54499,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Pharmacology -- 9.9",
+      "id": "https://openalex.org/A5012663065",
+      "display_name": "Magnus Ingelman‐Sundberg",
+      "orcid": "https://orcid.org/0000-0002-7255-9079",
+      "h_index": 122,
+      "i10_index": 502,
+      "works_count": 720,
+      "cited_by_count": 55557,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5087737186",
+      "display_name": "David J. Greenblatt",
+      "orcid": "https://orcid.org/0000-0003-4719-6226",
+      "h_index": 121,
+      "i10_index": 868,
+      "works_count": 1371,
+      "cited_by_count": 72047,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5029237881",
+      "display_name": "Daniel W. Nebert",
+      "orcid": null,
+      "h_index": 121,
+      "i10_index": 440,
+      "works_count": 569,
+      "cited_by_count": 63104,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5006847944",
+      "display_name": "Munir Pirmohamed",
+      "orcid": "https://orcid.org/0000-0002-7534-7266",
+      "h_index": 120,
+      "i10_index": 592,
+      "works_count": 1035,
+      "cited_by_count": 64564,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5076743166",
+      "display_name": "Curtis D. Klaassen",
+      "orcid": "https://orcid.org/0000-0003-3408-6191",
+      "h_index": 119,
+      "i10_index": 689,
+      "works_count": 963,
+      "cited_by_count": 54502,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5089629096",
+      "display_name": "Masahiko Negishi",
+      "orcid": "https://orcid.org/0000-0002-2076-8928",
+      "h_index": 112,
+      "i10_index": 453,
+      "works_count": 618,
+      "cited_by_count": 43718,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5043356624",
+      "display_name": "Neil Kaplowitz",
+      "orcid": "https://orcid.org/0000-0002-9424-393X",
+      "h_index": 112,
+      "i10_index": 305,
+      "works_count": 500,
+      "cited_by_count": 45527,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5056312367",
+      "display_name": "Richard M. Weinshilboum",
+      "orcid": "https://orcid.org/0000-0002-4911-7985",
+      "h_index": 109,
+      "i10_index": 476,
+      "works_count": 923,
+      "cited_by_count": 46169,
+      "discipline": "Pharmacology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5011034688",
+      "display_name": "Howard L. McLeod",
+      "orcid": "https://orcid.org/0000-0002-9004-9232",
+      "h_index": 106,
+      "i10_index": 466,
+      "works_count": 729,
+      "cited_by_count": 45615,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5089475081",
+      "display_name": "Pertti J. Neuvonen",
+      "orcid": "https://orcid.org/0000-0003-3631-9411",
+      "h_index": 105,
+      "i10_index": 464,
+      "works_count": 594,
+      "cited_by_count": 38330,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5015123190",
+      "display_name": "Hossein Hosseinzadeh",
+      "orcid": "https://orcid.org/0000-0002-3483-851X",
+      "h_index": 103,
+      "i10_index": 424,
+      "works_count": 632,
+      "cited_by_count": 36458,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Pharmacology -- 9.8",
+      "id": "https://openalex.org/A5023657124",
+      "display_name": "Michel F Eichelbaum",
+      "orcid": "https://orcid.org/0000-0001-5029-8472",
+      "h_index": 103,
+      "i10_index": 295,
+      "works_count": 426,
+      "cited_by_count": 36883,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5010768963",
+      "display_name": "Allan H. Conney",
+      "orcid": null,
+      "h_index": 102,
+      "i10_index": 379,
+      "works_count": 450,
+      "cited_by_count": 39352,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5009017786",
+      "display_name": "Ann K. Daly",
+      "orcid": "https://orcid.org/0000-0002-7321-0629",
+      "h_index": 100,
+      "i10_index": 282,
+      "works_count": 475,
+      "cited_by_count": 37925,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5062878299",
+      "display_name": "Paul Brent Watkins",
+      "orcid": "https://orcid.org/0000-0001-9541-8917",
+      "h_index": 100,
+      "i10_index": 263,
+      "works_count": 388,
+      "cited_by_count": 38950,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5087375405",
+      "display_name": "C. Roland Wolf",
+      "orcid": "https://orcid.org/0000-0002-6969-0113",
+      "h_index": 98,
+      "i10_index": 431,
+      "works_count": 694,
+      "cited_by_count": 37649,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5075960682",
+      "display_name": "Leslie Z. Benet",
+      "orcid": "https://orcid.org/0000-0002-9678-2371",
+      "h_index": 97,
+      "i10_index": 468,
+      "works_count": 713,
+      "cited_by_count": 43398,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5109073145",
+      "display_name": "Alastair J.J. Wood",
+      "orcid": null,
+      "h_index": 97,
+      "i10_index": 219,
+      "works_count": 257,
+      "cited_by_count": 36069,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5068268371",
+      "display_name": "Mark J. Ratain",
+      "orcid": "https://orcid.org/0000-0002-0938-4392",
+      "h_index": 96,
+      "i10_index": 483,
+      "works_count": 937,
+      "cited_by_count": 44612,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5051669394",
+      "display_name": "Mohamed M. Abdel‐Daim",
+      "orcid": "https://orcid.org/0000-0002-4341-2713",
+      "h_index": 96,
+      "i10_index": 474,
+      "works_count": 622,
+      "cited_by_count": 32955,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences",
+        "Neuroscience",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5044985980",
+      "display_name": "David J. Waxman",
+      "orcid": "https://orcid.org/0000-0001-7982-9206",
+      "h_index": 94,
+      "i10_index": 341,
+      "works_count": 518,
+      "cited_by_count": 41707,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5055898939",
+      "display_name": "Richard I. Shader",
+      "orcid": "https://orcid.org/0000-0002-1888-7565",
+      "h_index": 93,
+      "i10_index": 424,
+      "works_count": 921,
+      "cited_by_count": 28333,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Pharmacology -- 9.7",
+      "id": "https://openalex.org/A5081414468",
+      "display_name": "Kathleen M. Giacomini",
+      "orcid": "https://orcid.org/0000-0001-8041-5430",
+      "h_index": 92,
+      "i10_index": 309,
+      "works_count": 471,
+      "cited_by_count": 32609,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5113806008",
+      "display_name": "Minor J. Coon",
+      "orcid": null,
+      "h_index": 92,
+      "i10_index": 261,
+      "works_count": 348,
+      "cited_by_count": 35446,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5060841302",
+      "display_name": "Rachel Fynvola Tyndale",
+      "orcid": "https://orcid.org/0000-0003-1297-2053",
+      "h_index": 91,
+      "i10_index": 390,
+      "works_count": 579,
+      "cited_by_count": 29272,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5108803606",
+      "display_name": "Heyo K. Kroemer",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 251,
+      "works_count": 404,
+      "cited_by_count": 28699,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5071905126",
+      "display_name": "Alan R. Boobis",
+      "orcid": "https://orcid.org/0000-0003-3371-386X",
+      "h_index": 90,
+      "i10_index": 305,
+      "works_count": 580,
+      "cited_by_count": 28865,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5111567063",
+      "display_name": "Leif Bertilsson",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 274,
+      "works_count": 351,
+      "cited_by_count": 25396,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5012663330",
+      "display_name": "Erin G. Schuetz",
+      "orcid": "https://orcid.org/0000-0002-9783-0099",
+      "h_index": 90,
+      "i10_index": 194,
+      "works_count": 238,
+      "cited_by_count": 28475,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5108376122",
+      "display_name": "Ronald G. Thurman",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 342,
+      "works_count": 472,
+      "cited_by_count": 27140,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5064971840",
+      "display_name": "Jürgen Brockmöller",
+      "orcid": "https://orcid.org/0000-0002-8854-1340",
+      "h_index": 89,
+      "i10_index": 241,
+      "works_count": 365,
+      "cited_by_count": 32272,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5053870539",
+      "display_name": "Urs Meyer",
+      "orcid": "https://orcid.org/0000-0001-7244-0345",
+      "h_index": 89,
+      "i10_index": 216,
+      "works_count": 339,
+      "cited_by_count": 27622,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5007321180",
+      "display_name": "Richard B. Kim",
+      "orcid": "https://orcid.org/0000-0001-8148-1632",
+      "h_index": 88,
+      "i10_index": 214,
+      "works_count": 357,
+      "cited_by_count": 30614,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Pharmacology -- 9.6",
+      "id": "https://openalex.org/A5027820159",
+      "display_name": "Ronald Scott Obach",
+      "orcid": "https://orcid.org/0000-0002-6604-401X",
+      "h_index": 88,
+      "i10_index": 203,
+      "works_count": 317,
+      "cited_by_count": 27773,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5044688765",
+      "display_name": "Ulrich M. Zanger",
+      "orcid": "https://orcid.org/0000-0002-5276-2002",
+      "h_index": 88,
+      "i10_index": 189,
+      "works_count": 240,
+      "cited_by_count": 29875,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5030957904",
+      "display_name": "Henk‐Jan Guchelaar",
+      "orcid": "https://orcid.org/0000-0002-7085-1383",
+      "h_index": 87,
+      "i10_index": 400,
+      "works_count": 770,
+      "cited_by_count": 30703,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5063396591",
+      "display_name": "Peter James O'Brien",
+      "orcid": "https://orcid.org/0000-0003-4290-3585",
+      "h_index": 87,
+      "i10_index": 327,
+      "works_count": 493,
+      "cited_by_count": 31316,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5045174225",
+      "display_name": "Wayne Levin",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 307,
+      "works_count": 358,
+      "cited_by_count": 27563,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5028433076",
+      "display_name": "Philippe H. Beaune",
+      "orcid": "https://orcid.org/0000-0002-6569-9014",
+      "h_index": 87,
+      "i10_index": 290,
+      "works_count": 407,
+      "cited_by_count": 25426,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5004489015",
+      "display_name": "Kenneth E. Thummel",
+      "orcid": "https://orcid.org/0000-0002-7799-3739",
+      "h_index": 87,
+      "i10_index": 242,
+      "works_count": 332,
+      "cited_by_count": 30050,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5113821432",
+      "display_name": "Yoshiaki Fujii‐Kuriyama",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 209,
+      "works_count": 252,
+      "cited_by_count": 28360,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5046143290",
+      "display_name": "Franz Oesch",
+      "orcid": "https://orcid.org/0000-0002-7607-1329",
+      "h_index": 86,
+      "i10_index": 457,
+      "works_count": 733,
+      "cited_by_count": 27815,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5051566641",
+      "display_name": "Amin Rostami‐Hodjegan",
+      "orcid": "https://orcid.org/0000-0003-3917-844X",
+      "h_index": 85,
+      "i10_index": 305,
+      "works_count": 573,
+      "cited_by_count": 25622,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5062174660",
+      "display_name": "Wolfgang Sadée",
+      "orcid": "https://orcid.org/0000-0003-1894-6374",
+      "h_index": 85,
+      "i10_index": 305,
+      "works_count": 492,
+      "cited_by_count": 25542,
+      "discipline": "Pharmacology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5089543992",
+      "display_name": "Gerd Achim Kullak-Ublick",
+      "orcid": "https://orcid.org/0000-0002-0757-4408",
+      "h_index": 84,
+      "i10_index": 221,
+      "works_count": 396,
+      "cited_by_count": 29222,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Pharmacology -- 9.5",
+      "id": "https://openalex.org/A5021514439",
+      "display_name": "Dominique Pessayre",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 204,
+      "works_count": 305,
+      "cited_by_count": 22078,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5033485067",
+      "display_name": "Dominique G. Larrey",
+      "orcid": "https://orcid.org/0000-0002-0892-3489",
+      "h_index": 82,
+      "i10_index": 270,
+      "works_count": 676,
+      "cited_by_count": 25520,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5110588033",
+      "display_name": "Malcolm Rowland",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 266,
+      "works_count": 404,
+      "cited_by_count": 24310,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5008901409",
+      "display_name": "John O. Miners",
+      "orcid": "https://orcid.org/0000-0001-9555-9453",
+      "h_index": 82,
+      "i10_index": 246,
+      "works_count": 345,
+      "cited_by_count": 22629,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5001414279",
+      "display_name": "Ivar Roots",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 232,
+      "works_count": 380,
+      "cited_by_count": 25149,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5083182269",
+      "display_name": "Steven A. Wrighton",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 171,
+      "works_count": 435,
+      "cited_by_count": 24314,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5008819108",
+      "display_name": "Walter E. Haefeli",
+      "orcid": "https://orcid.org/0000-0003-0672-6876",
+      "h_index": 81,
+      "i10_index": 439,
+      "works_count": 772,
+      "cited_by_count": 25510,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5100454705",
+      "display_name": "Dong‐Hyun Kim",
+      "orcid": "https://orcid.org/0000-0003-4783-7900",
+      "h_index": 81,
+      "i10_index": 278,
+      "works_count": 383,
+      "cited_by_count": 20782,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5090549749",
+      "display_name": "Jeffrey R. Idle",
+      "orcid": "https://orcid.org/0000-0002-6143-1520",
+      "h_index": 81,
+      "i10_index": 259,
+      "works_count": 348,
+      "cited_by_count": 21588,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5109078846",
+      "display_name": "David Alastair Flockhart",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 243,
+      "works_count": 444,
+      "cited_by_count": 24860,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5050336307",
+      "display_name": "Parames Chandra Sil",
+      "orcid": "https://orcid.org/0000-0003-0190-5904",
+      "h_index": 81,
+      "i10_index": 211,
+      "works_count": 328,
+      "cited_by_count": 19137,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Pharmacology -- 9.4",
+      "id": "https://openalex.org/A5021901997",
+      "display_name": "William J. Jusko",
+      "orcid": "https://orcid.org/0000-0003-4027-0550",
+      "h_index": 80,
+      "i10_index": 520,
+      "works_count": 730,
+      "cited_by_count": 28466,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5111433777",
+      "display_name": "Harry V. Gelboin",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 271,
+      "works_count": 353,
+      "cited_by_count": 24933,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5089297113",
+      "display_name": "Tsuyoshi Yokoi",
+      "orcid": "https://orcid.org/0000-0002-3239-2817",
+      "h_index": 79,
+      "i10_index": 299,
+      "works_count": 461,
+      "cited_by_count": 21539,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5034309819",
+      "display_name": "Raúl J. Andrade",
+      "orcid": "https://orcid.org/0000-0002-1565-0757",
+      "h_index": 79,
+      "i10_index": 264,
+      "works_count": 541,
+      "cited_by_count": 29262,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5076974488",
+      "display_name": "Jürgen Drewe",
+      "orcid": "https://orcid.org/0000-0001-5178-7825",
+      "h_index": 79,
+      "i10_index": 244,
+      "works_count": 402,
+      "cited_by_count": 22781,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5109965072",
+      "display_name": "Jerold S. Harmatz",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 242,
+      "works_count": 318,
+      "cited_by_count": 17915,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5103063699",
+      "display_name": "Tsutomu Shimada",
+      "orcid": "https://orcid.org/0000-0003-2552-4348",
+      "h_index": 79,
+      "i10_index": 237,
+      "works_count": 353,
+      "cited_by_count": 25797,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5059195101",
+      "display_name": "Ingolf Cascorbi",
+      "orcid": "https://orcid.org/0000-0002-2182-9534",
+      "h_index": 79,
+      "i10_index": 229,
+      "works_count": 404,
+      "cited_by_count": 22622,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5072487015",
+      "display_name": "Wen Xie",
+      "orcid": "https://orcid.org/0000-0003-3967-155X",
+      "h_index": 79,
+      "i10_index": 219,
+      "works_count": 337,
+      "cited_by_count": 22783,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5001681968",
+      "display_name": "Andrea Gaedigk",
+      "orcid": "https://orcid.org/0000-0001-6968-1893",
+      "h_index": 79,
+      "i10_index": 217,
+      "works_count": 352,
+      "cited_by_count": 25279,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5046167919",
+      "display_name": "Arthur I. Cederbaum",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 325,
+      "works_count": 389,
+      "cited_by_count": 33210,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Pharmacology -- 9.3",
+      "id": "https://openalex.org/A5064038800",
+      "display_name": "Robert B. Diasio",
+      "orcid": "https://orcid.org/0000-0002-9648-9570",
+      "h_index": 78,
+      "i10_index": 204,
+      "works_count": 386,
+      "cited_by_count": 20219,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5030993480",
+      "display_name": "Martin F. Fromm",
+      "orcid": "https://orcid.org/0000-0002-0334-7478",
+      "h_index": 78,
+      "i10_index": 198,
+      "works_count": 297,
+      "cited_by_count": 23225,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5078922881",
+      "display_name": "Hiroshi Yamazaki",
+      "orcid": "https://orcid.org/0000-0002-1068-4261",
+      "h_index": 77,
+      "i10_index": 498,
+      "works_count": 872,
+      "cited_by_count": 28137,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5083693387",
+      "display_name": "Romano Danesi",
+      "orcid": "https://orcid.org/0000-0002-4414-8934",
+      "h_index": 77,
+      "i10_index": 361,
+      "works_count": 666,
+      "cited_by_count": 21679,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5069586805",
+      "display_name": "José Vicente Castell",
+      "orcid": "https://orcid.org/0000-0003-1179-6430",
+      "h_index": 77,
+      "i10_index": 294,
+      "works_count": 411,
+      "cited_by_count": 25675,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5020600016",
+      "display_name": "Jashvant D. Unadkat",
+      "orcid": "https://orcid.org/0000-0002-4820-8455",
+      "h_index": 77,
+      "i10_index": 244,
+      "works_count": 373,
+      "cited_by_count": 17444,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5005624600",
+      "display_name": "James Steven Leeder",
+      "orcid": "https://orcid.org/0000-0001-6688-0504",
+      "h_index": 77,
+      "i10_index": 235,
+      "works_count": 390,
+      "cited_by_count": 26532,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5111772810",
+      "display_name": "André Guillouzo",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 274,
+      "works_count": 415,
+      "cited_by_count": 20534,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5047851431",
+      "display_name": "Mikko Niemi",
+      "orcid": "https://orcid.org/0000-0003-4550-2189",
+      "h_index": 76,
+      "i10_index": 233,
+      "works_count": 392,
+      "cited_by_count": 26464,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5103459153",
+      "display_name": "Joyce A. Goldstein",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 165,
+      "works_count": 213,
+      "cited_by_count": 19454,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5111711726",
+      "display_name": "Lisa Lvon Moltke",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 165,
+      "works_count": 199,
+      "cited_by_count": 15599,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Pharmacology -- 9.2",
+      "id": "https://openalex.org/A5033133140",
+      "display_name": "Meindert Danhof",
+      "orcid": "https://orcid.org/0000-0002-2319-6830",
+      "h_index": 75,
+      "i10_index": 399,
+      "works_count": 638,
+      "cited_by_count": 21895,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5107837129",
+      "display_name": "Harri Vainio",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 319,
+      "works_count": 548,
+      "cited_by_count": 22332,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5064080263",
+      "display_name": "Kristopher W. Krausz",
+      "orcid": "https://orcid.org/0000-0003-2910-7787",
+      "h_index": 75,
+      "i10_index": 200,
+      "works_count": 323,
+      "cited_by_count": 20624,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5017096947",
+      "display_name": "Janne T. Backman",
+      "orcid": "https://orcid.org/0000-0002-9577-2788",
+      "h_index": 75,
+      "i10_index": 189,
+      "works_count": 285,
+      "cited_by_count": 17915,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5020423570",
+      "display_name": "Chun‐Su Yuan",
+      "orcid": "https://orcid.org/0000-0002-0711-2342",
+      "h_index": 74,
+      "i10_index": 294,
+      "works_count": 404,
+      "cited_by_count": 21432,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5062146319",
+      "display_name": "Olavi Pelkonen",
+      "orcid": "https://orcid.org/0000-0003-2132-3864",
+      "h_index": 74,
+      "i10_index": 260,
+      "works_count": 354,
+      "cited_by_count": 19595,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Environmental Science",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5111499782",
+      "display_name": "Ronald W. Estabrook",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 193,
+      "works_count": 289,
+      "cited_by_count": 26033,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5056735832",
+      "display_name": "Edoardo Spina",
+      "orcid": "https://orcid.org/0000-0002-2509-7449",
+      "h_index": 73,
+      "i10_index": 247,
+      "works_count": 396,
+      "cited_by_count": 16820,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5112254985",
+      "display_name": "Ron H. N. van Schaik",
+      "orcid": "https://orcid.org/0000-0003-1864-2151",
+      "h_index": 73,
+      "i10_index": 242,
+      "works_count": 367,
+      "cited_by_count": 20679,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5049348918",
+      "display_name": "Akira Murakami",
+      "orcid": "https://orcid.org/0000-0002-5694-2828",
+      "h_index": 73,
+      "i10_index": 235,
+      "works_count": 470,
+      "cited_by_count": 19559,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5075309289",
+      "display_name": "Gérard Siest",
+      "orcid": "https://orcid.org/0000-0002-3001-760X",
+      "h_index": 72,
+      "i10_index": 367,
+      "works_count": 699,
+      "cited_by_count": 19786,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Pharmacology -- 9.1",
+      "id": "https://openalex.org/A5100454108",
+      "display_name": "Jie Liu",
+      "orcid": "https://orcid.org/0000-0002-4530-1443",
+      "h_index": 72,
+      "i10_index": 336,
+      "works_count": 582,
+      "cited_by_count": 23179,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Pharmacology -- 9.0",
+      "id": "https://openalex.org/A5102090584",
+      "display_name": "Miki Nakajima",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 231,
+      "works_count": 340,
+      "cited_by_count": 15219,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Pharmacology -- 9.0",
+      "id": "https://openalex.org/A5082304021",
+      "display_name": "Philip J. Lazarus",
+      "orcid": "https://orcid.org/0000-0002-8686-0874",
+      "h_index": 72,
+      "i10_index": 221,
+      "works_count": 446,
+      "cited_by_count": 16863,
+      "discipline": "Pharmacology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Pharmacology -- 9.0",
+      "id": "https://openalex.org/A5111938300",
+      "display_name": "John A. Wagner",
+      "orcid": "https://orcid.org/0000-0002-0636-5006",
+      "h_index": 72,
+      "i10_index": 210,
+      "works_count": 337,
+      "cited_by_count": 18955,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Pharmacology -- 9.0",
+      "id": "https://openalex.org/A5109162124",
+      "display_name": "James Brian. Houston",
+      "orcid": "https://orcid.org/0000-0002-9322-0533",
+      "h_index": 72,
+      "i10_index": 196,
+      "works_count": 334,
+      "cited_by_count": 19032,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Pharmacology -- 9.0",
+      "id": "https://openalex.org/A5066900523",
+      "display_name": "Allan E. Rettie",
+      "orcid": "https://orcid.org/0000-0001-9894-8753",
+      "h_index": 72,
+      "i10_index": 186,
+      "works_count": 273,
+      "cited_by_count": 18951,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5046103946",
+      "display_name": "Patrick Maurel",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 180,
+      "works_count": 277,
+      "cited_by_count": 19876,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5010531755",
+      "display_name": "Alwin D. R. Huitema",
+      "orcid": "https://orcid.org/0000-0003-1939-4639",
+      "h_index": 71,
+      "i10_index": 418,
+      "works_count": 813,
+      "cited_by_count": 21956,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Mathematics",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5025524243",
+      "display_name": "Ulrich E. Klotz",
+      "orcid": "https://orcid.org/0000-0002-6033-1659",
+      "h_index": 71,
+      "i10_index": 267,
+      "works_count": 507,
+      "cited_by_count": 20719,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5091531260",
+      "display_name": "Thierry Buclin",
+      "orcid": "https://orcid.org/0000-0003-0639-5536",
+      "h_index": 71,
+      "i10_index": 257,
+      "works_count": 558,
+      "cited_by_count": 19507,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5090645051",
+      "display_name": "Andreas J. Gescher",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 205,
+      "works_count": 337,
+      "cited_by_count": 24089,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5018025297",
+      "display_name": "Thomas Walle",
+      "orcid": "https://orcid.org/0000-0003-4835-955X",
+      "h_index": 71,
+      "i10_index": 192,
+      "works_count": 289,
+      "cited_by_count": 19968,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5076781787",
+      "display_name": "Peter I. Mackenzie",
+      "orcid": "https://orcid.org/0000-0002-0697-6878",
+      "h_index": 71,
+      "i10_index": 176,
+      "works_count": 245,
+      "cited_by_count": 17479,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5102908836",
+      "display_name": "Kim Brøsen",
+      "orcid": "https://orcid.org/0000-0001-8444-7835",
+      "h_index": 70,
+      "i10_index": 203,
+      "works_count": 371,
+      "cited_by_count": 15405,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5063051115",
+      "display_name": "Tsung‐Ping Su",
+      "orcid": "https://orcid.org/0000-0003-2384-6925",
+      "h_index": 70,
+      "i10_index": 141,
+      "works_count": 181,
+      "cited_by_count": 18181,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5021292416",
+      "display_name": "Bernard Fromenty",
+      "orcid": "https://orcid.org/0000-0003-2994-5465",
+      "h_index": 70,
+      "i10_index": 141,
+      "works_count": 260,
+      "cited_by_count": 17650,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5021070991",
+      "display_name": "Tetsuya Kamataki",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 290,
+      "works_count": 492,
+      "cited_by_count": 19440,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Pharmacology -- 8.9",
+      "id": "https://openalex.org/A5087882435",
+      "display_name": "Stephan Krähenbühl",
+      "orcid": "https://orcid.org/0000-0001-8347-4145",
+      "h_index": 69,
+      "i10_index": 266,
+      "works_count": 344,
+      "cited_by_count": 15803,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5026746931",
+      "display_name": "Geoffrey T. Tucker",
+      "orcid": "https://orcid.org/0000-0002-6400-9333",
+      "h_index": 69,
+      "i10_index": 173,
+      "works_count": 260,
+      "cited_by_count": 16939,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5001100678",
+      "display_name": "Marja‐Liisa Dahl",
+      "orcid": "https://orcid.org/0000-0002-4837-6299",
+      "h_index": 69,
+      "i10_index": 147,
+      "works_count": 191,
+      "cited_by_count": 13798,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5002149960",
+      "display_name": "Gerhard Levy",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 317,
+      "works_count": 468,
+      "cited_by_count": 17899,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5009598036",
+      "display_name": "Anders Rane",
+      "orcid": "https://orcid.org/0000-0002-5495-7508",
+      "h_index": 68,
+      "i10_index": 289,
+      "works_count": 410,
+      "cited_by_count": 18109,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5059576370",
+      "display_name": "Peter Moldéus",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 284,
+      "works_count": 429,
+      "cited_by_count": 18028,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5062695970",
+      "display_name": "Sidney J. Stohs",
+      "orcid": "https://orcid.org/0000-0001-5575-5759",
+      "h_index": 68,
+      "i10_index": 237,
+      "works_count": 368,
+      "cited_by_count": 21997,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5074105906",
+      "display_name": "Chau‐Jong Wang",
+      "orcid": "https://orcid.org/0000-0003-1046-4338",
+      "h_index": 68,
+      "i10_index": 219,
+      "works_count": 254,
+      "cited_by_count": 15249,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5113792703",
+      "display_name": "Peter J. van BLADEREN",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 209,
+      "works_count": 298,
+      "cited_by_count": 14420,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5067829318",
+      "display_name": "Brian Burchell",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 197,
+      "works_count": 245,
+      "cited_by_count": 16270,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5011866686",
+      "display_name": "James R. Gillette",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 181,
+      "works_count": 252,
+      "cited_by_count": 23019,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5023499634",
+      "display_name": "Ari P. Hirvonen",
+      "orcid": "https://orcid.org/0000-0003-0315-5588",
+      "h_index": 68,
+      "i10_index": 179,
+      "works_count": 223,
+      "cited_by_count": 14091,
+      "discipline": "Pharmacology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5020812264",
+      "display_name": "Huiman Xie Barnhart",
+      "orcid": "https://orcid.org/0000-0003-0988-3439",
+      "h_index": 68,
+      "i10_index": 169,
+      "works_count": 279,
+      "cited_by_count": 21086,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Decision Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5007740742",
+      "display_name": "Christoph Hiemke",
+      "orcid": "https://orcid.org/0000-0003-2820-8738",
+      "h_index": 67,
+      "i10_index": 350,
+      "works_count": 855,
+      "cited_by_count": 22084,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5111384001",
+      "display_name": "Ernest Hodgson",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 236,
+      "works_count": 399,
+      "cited_by_count": 13665,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5089827696",
+      "display_name": "Andrew Alexander Somogyi",
+      "orcid": "https://orcid.org/0000-0003-4779-0380",
+      "h_index": 67,
+      "i10_index": 235,
+      "works_count": 390,
+      "cited_by_count": 16069,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5056589677",
+      "display_name": "Kim L. R. Brouwer",
+      "orcid": "https://orcid.org/0000-0003-1945-4929",
+      "h_index": 67,
+      "i10_index": 218,
+      "works_count": 312,
+      "cited_by_count": 18196,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5039008828",
+      "display_name": "Jack Uetrecht",
+      "orcid": "https://orcid.org/0000-0003-1024-1302",
+      "h_index": 67,
+      "i10_index": 185,
+      "works_count": 262,
+      "cited_by_count": 13699,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5112137575",
+      "display_name": "Folke Sjöqvist",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 177,
+      "works_count": 275,
+      "cited_by_count": 16461,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5100448951",
+      "display_name": "Feng Li",
+      "orcid": "https://orcid.org/0000-0002-9680-4614",
+      "h_index": 66,
+      "i10_index": 236,
+      "works_count": 448,
+      "cited_by_count": 16665,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5100383618",
+      "display_name": "Lang Li",
+      "orcid": "https://orcid.org/0000-0002-0746-1809",
+      "h_index": 66,
+      "i10_index": 235,
+      "works_count": 608,
+      "cited_by_count": 16117,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5022210942",
+      "display_name": "Thomas A. Baillie",
+      "orcid": "https://orcid.org/0000-0001-8629-4801",
+      "h_index": 66,
+      "i10_index": 190,
+      "works_count": 249,
+      "cited_by_count": 17681,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Pharmacology -- 8.8",
+      "id": "https://openalex.org/A5066057635",
+      "display_name": "Elke Schaeffeler",
+      "orcid": "https://orcid.org/0009-0005-2997-0355",
+      "h_index": 66,
+      "i10_index": 175,
+      "works_count": 332,
+      "cited_by_count": 16758,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5049866928",
+      "display_name": "Ben van Ommen",
+      "orcid": "https://orcid.org/0000-0002-0124-9428",
+      "h_index": 66,
+      "i10_index": 168,
+      "works_count": 281,
+      "cited_by_count": 14613,
+      "discipline": "Pharmacology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5090896472",
+      "display_name": "Amit S.S. Kalgutkar",
+      "orcid": "https://orcid.org/0000-0001-9701-756X",
+      "h_index": 66,
+      "i10_index": 158,
+      "works_count": 269,
+      "cited_by_count": 16627,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5047722150",
+      "display_name": "Stephen David Hall",
+      "orcid": "https://orcid.org/0009-0005-0268-309X",
+      "h_index": 66,
+      "i10_index": 146,
+      "works_count": 219,
+      "cited_by_count": 17512,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5019415594",
+      "display_name": "Amr Amin",
+      "orcid": "https://orcid.org/0000-0001-8888-1102",
+      "h_index": 66,
+      "i10_index": 126,
+      "works_count": 190,
+      "cited_by_count": 16914,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5034858563",
+      "display_name": "Edward L. LeCluyse",
+      "orcid": "https://orcid.org/0000-0002-2149-8990",
+      "h_index": 66,
+      "i10_index": 118,
+      "works_count": 165,
+      "cited_by_count": 17713,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5100454659",
+      "display_name": "Dong‐Hyun Kim",
+      "orcid": "https://orcid.org/0000-0001-9807-4064",
+      "h_index": 65,
+      "i10_index": 354,
+      "works_count": 675,
+      "cited_by_count": 17840,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5003128598",
+      "display_name": "Luyong Zhang",
+      "orcid": "https://orcid.org/0000-0003-1164-7371",
+      "h_index": 65,
+      "i10_index": 345,
+      "works_count": 557,
+      "cited_by_count": 17064,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5034776433",
+      "display_name": "Ming Hu",
+      "orcid": "https://orcid.org/0000-0002-2744-6294",
+      "h_index": 65,
+      "i10_index": 241,
+      "works_count": 392,
+      "cited_by_count": 15372,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5004418235",
+      "display_name": "Chin B. Eap",
+      "orcid": "https://orcid.org/0000-0002-5439-0230",
+      "h_index": 65,
+      "i10_index": 236,
+      "works_count": 468,
+      "cited_by_count": 15036,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5111980725",
+      "display_name": "Steven Schenker",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 191,
+      "works_count": 273,
+      "cited_by_count": 17415,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5019675536",
+      "display_name": "Rolf Teschke",
+      "orcid": "https://orcid.org/0000-0001-8910-1200",
+      "h_index": 65,
+      "i10_index": 190,
+      "works_count": 318,
+      "cited_by_count": 12228,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5027199677",
+      "display_name": "Nico P.E. Vermeulen",
+      "orcid": "https://orcid.org/0000-0003-4194-6401",
+      "h_index": 64,
+      "i10_index": 330,
+      "works_count": 780,
+      "cited_by_count": 24311,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5100655503",
+      "display_name": "Min Huang",
+      "orcid": "https://orcid.org/0000-0002-2844-5680",
+      "h_index": 64,
+      "i10_index": 312,
+      "works_count": 620,
+      "cited_by_count": 15380,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5009212415",
+      "display_name": "Marie Stiborová",
+      "orcid": "https://orcid.org/0000-0001-5430-4403",
+      "h_index": 64,
+      "i10_index": 264,
+      "works_count": 474,
+      "cited_by_count": 15827,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5070548379",
+      "display_name": "Hye Gwang Jeong",
+      "orcid": "https://orcid.org/0000-0002-8020-8914",
+      "h_index": 64,
+      "i10_index": 260,
+      "works_count": 369,
+      "cited_by_count": 13127,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5100651066",
+      "display_name": "Shiming Li",
+      "orcid": "https://orcid.org/0000-0002-6167-0660",
+      "h_index": 64,
+      "i10_index": 212,
+      "works_count": 316,
+      "cited_by_count": 14255,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5075947367",
+      "display_name": "Gerd Mikus",
+      "orcid": "https://orcid.org/0000-0003-1783-133X",
+      "h_index": 64,
+      "i10_index": 205,
+      "works_count": 312,
+      "cited_by_count": 12033,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5050910389",
+      "display_name": "Danny D. Shen",
+      "orcid": "https://orcid.org/0000-0003-4519-303X",
+      "h_index": 64,
+      "i10_index": 185,
+      "works_count": 240,
+      "cited_by_count": 15994,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5043776268",
+      "display_name": "Bettie Sue Siler Masters",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 151,
+      "works_count": 218,
+      "cited_by_count": 16986,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5029336335",
+      "display_name": "Robert H. Tukey",
+      "orcid": "https://orcid.org/0000-0001-9683-4226",
+      "h_index": 64,
+      "i10_index": 148,
+      "works_count": 210,
+      "cited_by_count": 13359,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5014858344",
+      "display_name": "Laurent Arthur Decosterd",
+      "orcid": "https://orcid.org/0000-0002-9840-1325",
+      "h_index": 63,
+      "i10_index": 235,
+      "works_count": 408,
+      "cited_by_count": 15314,
+      "discipline": "Pharmacology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Pharmacology -- 8.7",
+      "id": "https://openalex.org/A5033645297",
+      "display_name": "James R. Halpert",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 213,
+      "works_count": 328,
+      "cited_by_count": 13745,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Pharmacology -- 8.6",
+      "id": "https://openalex.org/A5073880418",
+      "display_name": "M. Isabel Lucena",
+      "orcid": "https://orcid.org/0000-0001-9586-4896",
+      "h_index": 63,
+      "i10_index": 188,
+      "works_count": 358,
+      "cited_by_count": 15179,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Pharmacology -- 8.6",
+      "id": "https://openalex.org/A5040356803",
+      "display_name": "Colin J. Ross",
+      "orcid": "https://orcid.org/0000-0003-1476-7037",
+      "h_index": 63,
+      "i10_index": 186,
+      "works_count": 341,
+      "cited_by_count": 13137,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Pharmacology -- 8.6",
+      "id": "https://openalex.org/A5019857762",
+      "display_name": "Pierre Dayer",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 147,
+      "works_count": 280,
+      "cited_by_count": 12194,
+      "discipline": "Pharmacology",
+      "primary_field": "Pharmacology, Toxicology and Pharmaceutics",
+      "primary_subfield": "Pharmacology",
+      "fields": [
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    }
+  ]
+}

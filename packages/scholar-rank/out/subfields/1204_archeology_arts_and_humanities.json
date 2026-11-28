@@ -1,0 +1,351 @@
+{
+  "kind": "subfield",
+  "id": 1204,
+  "name": "Archeology (arts and humanities)",
+  "total_in_scrape": 17,
+  "count": 17,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Archeology (arts and humanities) -- 9.9",
+      "id": "https://openalex.org/A5051368800",
+      "display_name": "Kewal Krishan",
+      "orcid": "https://orcid.org/0000-0001-5321-0958",
+      "h_index": 104,
+      "i10_index": 262,
+      "works_count": 538,
+      "cited_by_count": 175017,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Archeology (arts and humanities) -- 9.9",
+      "id": "https://openalex.org/A5012385296",
+      "display_name": "Erik Trinkaus",
+      "orcid": "https://orcid.org/0000-0002-5175-1651",
+      "h_index": 90,
+      "i10_index": 250,
+      "works_count": 405,
+      "cited_by_count": 26411,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Archeology (arts and humanities) -- 9.9",
+      "id": "https://openalex.org/A5089434398",
+      "display_name": "Christopher B. Ruff",
+      "orcid": "https://orcid.org/0000-0002-2932-3634",
+      "h_index": 86,
+      "i10_index": 187,
+      "works_count": 324,
+      "cited_by_count": 26847,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Archeology (arts and humanities) -- 9.9",
+      "id": "https://openalex.org/A5042469905",
+      "display_name": "Koen Henri Janssens",
+      "orcid": "https://orcid.org/0000-0002-6752-6408",
+      "h_index": 83,
+      "i10_index": 370,
+      "works_count": 881,
+      "cited_by_count": 27551,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Physics and Astronomy",
+        "Materials Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Archeology (arts and humanities) -- 9.9",
+      "id": "https://openalex.org/A5041064899",
+      "display_name": "Philippe Colomban",
+      "orcid": "https://orcid.org/0000-0001-6099-5423",
+      "h_index": 77,
+      "i10_index": 403,
+      "works_count": 762,
+      "cited_by_count": 24139,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Materials Science",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Archeology (arts and humanities) -- 9.9",
+      "id": "https://openalex.org/A5040938903",
+      "display_name": "Michael J. Day",
+      "orcid": "https://orcid.org/0000-0001-5856-1685",
+      "h_index": 77,
+      "i10_index": 335,
+      "works_count": 935,
+      "cited_by_count": 22202,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5081265809",
+      "display_name": "Tanuj Kanchan",
+      "orcid": "https://orcid.org/0000-0003-0346-1075",
+      "h_index": 76,
+      "i10_index": 277,
+      "works_count": 647,
+      "cited_by_count": 121661,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Medicine",
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5000584677",
+      "display_name": "Colin Renfrew",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 193,
+      "works_count": 567,
+      "cited_by_count": 18786,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5003061419",
+      "display_name": "T. Douglas Price",
+      "orcid": "https://orcid.org/0000-0001-5951-5621",
+      "h_index": 71,
+      "i10_index": 161,
+      "works_count": 226,
+      "cited_by_count": 19430,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5111853770",
+      "display_name": "Jaap J. Boon",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 240,
+      "works_count": 361,
+      "cited_by_count": 14828,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5109849770",
+      "display_name": "Stanley Marion Garn",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 273,
+      "works_count": 490,
+      "cited_by_count": 16486,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Dentistry",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5049828992",
+      "display_name": "Stephen J. Shennan",
+      "orcid": "https://orcid.org/0000-0001-6605-064X",
+      "h_index": 67,
+      "i10_index": 159,
+      "works_count": 411,
+      "cited_by_count": 16449,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5060323887",
+      "display_name": "Jane Ellen Buikstra",
+      "orcid": "https://orcid.org/0000-0003-0206-0165",
+      "h_index": 66,
+      "i10_index": 162,
+      "works_count": 368,
+      "cited_by_count": 19119,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5059822923",
+      "display_name": "Jon M. Erlandson",
+      "orcid": "https://orcid.org/0000-0002-4705-4319",
+      "h_index": 65,
+      "i10_index": 192,
+      "works_count": 407,
+      "cited_by_count": 25500,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5109814986",
+      "display_name": "George J. Armelagos",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 118,
+      "works_count": 222,
+      "cited_by_count": 13843,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5068364577",
+      "display_name": "Maria Perla Colombini",
+      "orcid": "https://orcid.org/0000-0002-1666-8596",
+      "h_index": 63,
+      "i10_index": 257,
+      "works_count": 490,
+      "cited_by_count": 14556,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Archeology (arts and humanities) -- 9.8",
+      "id": "https://openalex.org/A5015911878",
+      "display_name": "Ian Hodder",
+      "orcid": "https://orcid.org/0000-0002-7018-586X",
+      "h_index": 63,
+      "i10_index": 153,
+      "works_count": 390,
+      "cited_by_count": 17775,
+      "discipline": "Archeology (arts and humanities)",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

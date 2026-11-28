@@ -1,0 +1,764 @@
+{
+  "kind": "subfield",
+  "id": 1203,
+  "name": "Language and Linguistics",
+  "total_in_scrape": 38,
+  "count": 38,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Language and Linguistics -- 9.9",
+      "id": "https://openalex.org/A5072532913",
+      "display_name": "Noam Chomsky",
+      "orcid": "https://orcid.org/0000-0002-3632-2461",
+      "h_index": 122,
+      "i10_index": 456,
+      "works_count": 1578,
+      "cited_by_count": 141005,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Language and Linguistics -- 9.9",
+      "id": "https://openalex.org/A5037978750",
+      "display_name": "Stephen C. Levinson",
+      "orcid": "https://orcid.org/0000-0001-8961-5316",
+      "h_index": 107,
+      "i10_index": 232,
+      "works_count": 2415,
+      "cited_by_count": 93366,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Language and Linguistics -- 9.9",
+      "id": "https://openalex.org/A5041017273",
+      "display_name": "Jean‐Marc Dewaele",
+      "orcid": "https://orcid.org/0000-0001-8480-0977",
+      "h_index": 102,
+      "i10_index": 293,
+      "works_count": 565,
+      "cited_by_count": 39440,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Language and Linguistics -- 9.9",
+      "id": "https://openalex.org/A5034271321",
+      "display_name": "Rod Ellis",
+      "orcid": "https://orcid.org/0000-0003-0131-1743",
+      "h_index": 101,
+      "i10_index": 203,
+      "works_count": 420,
+      "cited_by_count": 62760,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Language and Linguistics -- 9.9",
+      "id": "https://openalex.org/A5054618195",
+      "display_name": "Zoltán Dörnyei",
+      "orcid": "https://orcid.org/0000-0002-7820-1254",
+      "h_index": 92,
+      "i10_index": 133,
+      "works_count": 365,
+      "cited_by_count": 76472,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Language and Linguistics -- 9.9",
+      "id": "https://openalex.org/A5072247317",
+      "display_name": "Martín Haspelmath",
+      "orcid": "https://orcid.org/0000-0003-2100-8493",
+      "h_index": 90,
+      "i10_index": 199,
+      "works_count": 469,
+      "cited_by_count": 34430,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5000597416",
+      "display_name": "Steven A. Pinker",
+      "orcid": "https://orcid.org/0000-0002-2319-4085",
+      "h_index": 89,
+      "i10_index": 174,
+      "works_count": 479,
+      "cited_by_count": 55008,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5029057336",
+      "display_name": "Ray S. Jackendoff",
+      "orcid": "https://orcid.org/0000-0002-1358-9200",
+      "h_index": 83,
+      "i10_index": 154,
+      "works_count": 297,
+      "cited_by_count": 50491,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5086059929",
+      "display_name": "John C. Heritage",
+      "orcid": "https://orcid.org/0000-0002-8603-6447",
+      "h_index": 81,
+      "i10_index": 164,
+      "works_count": 303,
+      "cited_by_count": 36116,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Medicine",
+        "Arts and Humanities",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5062808281",
+      "display_name": "Robert Lew",
+      "orcid": "https://orcid.org/0000-0002-6772-210X",
+      "h_index": 80,
+      "i10_index": 212,
+      "works_count": 319,
+      "cited_by_count": 22683,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5071902216",
+      "display_name": "Peter D. MacIntyre",
+      "orcid": "https://orcid.org/0000-0002-1085-6692",
+      "h_index": 80,
+      "i10_index": 160,
+      "works_count": 260,
+      "cited_by_count": 45494,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5090458959",
+      "display_name": "Lorenza Mondada",
+      "orcid": "https://orcid.org/0000-0002-7543-9769",
+      "h_index": 79,
+      "i10_index": 249,
+      "works_count": 594,
+      "cited_by_count": 24668,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5060372973",
+      "display_name": "Rebecca L. Oxford",
+      "orcid": "https://orcid.org/0000-0001-5387-7285",
+      "h_index": 76,
+      "i10_index": 145,
+      "works_count": 226,
+      "cited_by_count": 31299,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5072980637",
+      "display_name": "Bernd Heine",
+      "orcid": "https://orcid.org/0000-0002-9304-7814",
+      "h_index": 75,
+      "i10_index": 172,
+      "works_count": 410,
+      "cited_by_count": 31271,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5075335677",
+      "display_name": "Stefan Τh. Gries",
+      "orcid": "https://orcid.org/0000-0002-6497-3958",
+      "h_index": 74,
+      "i10_index": 176,
+      "works_count": 394,
+      "cited_by_count": 22982,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5017528933",
+      "display_name": "Dan Sperber",
+      "orcid": "https://orcid.org/0000-0002-4066-3058",
+      "h_index": 74,
+      "i10_index": 160,
+      "works_count": 408,
+      "cited_by_count": 48050,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Language and Linguistics -- 9.8",
+      "id": "https://openalex.org/A5111631801",
+      "display_name": "George Armitage Miller",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 148,
+      "works_count": 316,
+      "cited_by_count": 90582,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5073211389",
+      "display_name": "Lawrence Jun Zhang",
+      "orcid": "https://orcid.org/0000-0003-1025-1746",
+      "h_index": 73,
+      "i10_index": 245,
+      "works_count": 459,
+      "cited_by_count": 18797,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5021370397",
+      "display_name": "Janet Holmes",
+      "orcid": "https://orcid.org/0000-0002-1791-033X",
+      "h_index": 73,
+      "i10_index": 171,
+      "works_count": 359,
+      "cited_by_count": 22047,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5021445004",
+      "display_name": "Edward A. F. Gibson",
+      "orcid": "https://orcid.org/0000-0002-5912-883X",
+      "h_index": 73,
+      "i10_index": 161,
+      "works_count": 574,
+      "cited_by_count": 26452,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Psychology",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5041926618",
+      "display_name": "Jack C. Richards",
+      "orcid": "https://orcid.org/0000-0001-9746-0852",
+      "h_index": 72,
+      "i10_index": 153,
+      "works_count": 582,
+      "cited_by_count": 51251,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5064362701",
+      "display_name": "Larry M. Hyman",
+      "orcid": "https://orcid.org/0000-0002-7676-6358",
+      "h_index": 72,
+      "i10_index": 148,
+      "works_count": 287,
+      "cited_by_count": 16271,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5049495233",
+      "display_name": "Ali Derakhshan",
+      "orcid": "https://orcid.org/0000-0002-6639-9339",
+      "h_index": 70,
+      "i10_index": 198,
+      "works_count": 348,
+      "cited_by_count": 17808,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5018950644",
+      "display_name": "Ronald W. Langacker",
+      "orcid": "https://orcid.org/0009-0009-7345-455X",
+      "h_index": 70,
+      "i10_index": 151,
+      "works_count": 278,
+      "cited_by_count": 39745,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5030988722",
+      "display_name": "Elizabeth Closs Traugott",
+      "orcid": "https://orcid.org/0000-0002-1016-7803",
+      "h_index": 70,
+      "i10_index": 123,
+      "works_count": 283,
+      "cited_by_count": 27711,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5057365390",
+      "display_name": "Jonathan Potter",
+      "orcid": "https://orcid.org/0000-0002-3889-8480",
+      "h_index": 70,
+      "i10_index": 121,
+      "works_count": 179,
+      "cited_by_count": 30245,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5108353814",
+      "display_name": "R. C. Gardner",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 118,
+      "works_count": 142,
+      "cited_by_count": 47246,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Language and Linguistics -- 9.7",
+      "id": "https://openalex.org/A5047363625",
+      "display_name": "Herbert H. Clark",
+      "orcid": "https://orcid.org/0000-0003-1252-666X",
+      "h_index": 70,
+      "i10_index": 112,
+      "works_count": 202,
+      "cited_by_count": 52382,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Language and Linguistics -- 9.6",
+      "id": "https://openalex.org/A5070791275",
+      "display_name": "Bernard Comrie",
+      "orcid": "https://orcid.org/0000-0003-0487-7005",
+      "h_index": 69,
+      "i10_index": 185,
+      "works_count": 671,
+      "cited_by_count": 21208,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Language and Linguistics -- 9.6",
+      "id": "https://openalex.org/A5016506316",
+      "display_name": "Emanuel A. Schegloff",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 92,
+      "works_count": 135,
+      "cited_by_count": 78062,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Language and Linguistics -- 9.6",
+      "id": "https://openalex.org/A5006934600",
+      "display_name": "David Nunan",
+      "orcid": "https://orcid.org/0000-0003-4597-1276",
+      "h_index": 68,
+      "i10_index": 167,
+      "works_count": 473,
+      "cited_by_count": 31877,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Decision Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Language and Linguistics -- 9.6",
+      "id": "https://openalex.org/A5083636619",
+      "display_name": "Geoffrey Leech",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 125,
+      "works_count": 368,
+      "cited_by_count": 43557,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Language and Linguistics -- 9.6",
+      "id": "https://openalex.org/A5020043743",
+      "display_name": "Sandra Annear Thompson",
+      "orcid": "https://orcid.org/0000-0002-7794-2042",
+      "h_index": 66,
+      "i10_index": 111,
+      "works_count": 195,
+      "cited_by_count": 31273,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Language and Linguistics -- 9.6",
+      "id": "https://openalex.org/A5109342635",
+      "display_name": "T. Givón",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 103,
+      "works_count": 234,
+      "cited_by_count": 21956,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Language and Linguistics -- 9.6",
+      "id": "https://openalex.org/A5062823200",
+      "display_name": "Susan M. Gass",
+      "orcid": "https://orcid.org/0000-0001-5222-3319",
+      "h_index": 65,
+      "i10_index": 125,
+      "works_count": 324,
+      "cited_by_count": 23228,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Language and Linguistics -- 9.6",
+      "id": "https://openalex.org/A5042655177",
+      "display_name": "Alexandra Y. Aikhenvald",
+      "orcid": "https://orcid.org/0000-0003-1866-7869",
+      "h_index": 64,
+      "i10_index": 135,
+      "works_count": 470,
+      "cited_by_count": 18065,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Language and Linguistics -- 9.6",
+      "id": "https://openalex.org/A5090215557",
+      "display_name": "Roger Lévy",
+      "orcid": "https://orcid.org/0000-0002-4493-8864",
+      "h_index": 63,
+      "i10_index": 145,
+      "works_count": 397,
+      "cited_by_count": 30429,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Language and Linguistics -- 9.6",
+      "id": "https://openalex.org/A5114948823",
+      "display_name": "William Croft",
+      "orcid": "https://orcid.org/0000-0003-0886-2652",
+      "h_index": 63,
+      "i10_index": 128,
+      "works_count": 321,
+      "cited_by_count": 30633,
+      "discipline": "Language and Linguistics",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    }
+  ]
+}

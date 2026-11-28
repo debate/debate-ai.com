@@ -5,6 +5,7 @@
 import type { VideoMeta } from "../../../state/videoPlayerStore"
 import { useVideoPlayerStore } from "../../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS } from "../card/videoCardUtils"
+import { TeamNameLink } from "../card/TeamNameLink"
 import { TeamCodeLabel } from "@debate-ai/rankings/src/leaderboard/team-label/TeamLabel"
 
 interface PlayerTitleBarProps {
@@ -35,20 +36,22 @@ export function PlayerTitleBar({ activeVideoMeta, activeVideoTitle }: PlayerTitl
         </button>
       ) : null}
       {activeVideoMeta?.affTeam ? (
-        <button
-          onClick={() => searchHandler?.(activeVideoMeta.affTeam || '')}
+        <TeamNameLink
+          team={activeVideoMeta.affTeam}
+          onSearch={searchHandler ?? undefined}
           className="text-[10px] font-semibold text-blue-600 dark:text-blue-400 shrink-0 hover:underline cursor-pointer"
         >
           <TeamCodeLabel label={activeVideoMeta.affTeam} side="aff" year={activeVideoMeta.year} bare className="[&_img]:h-3" />
-        </button>
+        </TeamNameLink>
       ) : null}
       {activeVideoMeta?.negTeam ? (
-        <button
-          onClick={() => searchHandler?.(activeVideoMeta.negTeam || '')}
+        <TeamNameLink
+          team={activeVideoMeta.negTeam}
+          onSearch={searchHandler ?? undefined}
           className="text-[10px] font-semibold text-red-600 dark:text-red-400 shrink-0 hover:underline cursor-pointer"
         >
           <TeamCodeLabel label={activeVideoMeta.negTeam} side="neg" year={activeVideoMeta.year} bare className="[&_img]:h-3" />
-        </button>
+        </TeamNameLink>
       ) : null}
       {!activeVideoMeta?.style && !activeVideoMeta?.tournament && (
         <span className="text-xs font-medium text-foreground truncate">

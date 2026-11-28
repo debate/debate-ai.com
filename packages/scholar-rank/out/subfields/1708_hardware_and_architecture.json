@@ -1,0 +1,1449 @@
+{
+  "kind": "subfield",
+  "id": 1708,
+  "name": "Hardware and Architecture",
+  "total_in_scrape": 77,
+  "count": 77,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Hardware and Architecture -- 9.9",
+      "id": "https://openalex.org/A5019426968",
+      "display_name": "Dawn Xiaodong Song",
+      "orcid": "https://orcid.org/0000-0001-9745-6802",
+      "h_index": 139,
+      "i10_index": 362,
+      "works_count": 449,
+      "cited_by_count": 125148,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Hardware and Architecture -- 9.9",
+      "id": "https://openalex.org/A5050695684",
+      "display_name": "Onur Mutlu",
+      "orcid": "https://orcid.org/0000-0002-0075-2312",
+      "h_index": 135,
+      "i10_index": 541,
+      "works_count": 924,
+      "cited_by_count": 60307,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Hardware and Architecture -- 9.9",
+      "id": "https://openalex.org/A5003234972",
+      "display_name": "L. Benini",
+      "orcid": "https://orcid.org/0000-0001-8068-3806",
+      "h_index": 120,
+      "i10_index": 1162,
+      "works_count": 2168,
+      "cited_by_count": 70579,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Hardware and Architecture -- 9.9",
+      "id": "https://openalex.org/A5075517045",
+      "display_name": "Jack J. Dongarra",
+      "orcid": "https://orcid.org/0000-0003-3247-1782",
+      "h_index": 115,
+      "i10_index": 801,
+      "works_count": 2208,
+      "cited_by_count": 75226,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Hardware and Architecture -- 9.9",
+      "id": "https://openalex.org/A5083330935",
+      "display_name": "Meikang Qiu",
+      "orcid": "https://orcid.org/0000-0002-1004-0140",
+      "h_index": 108,
+      "i10_index": 297,
+      "works_count": 668,
+      "cited_by_count": 27456,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Hardware and Architecture -- 9.9",
+      "id": "https://openalex.org/A5047285420",
+      "display_name": "Kurt Keutzer",
+      "orcid": "https://orcid.org/0000-0003-3868-8501",
+      "h_index": 106,
+      "i10_index": 353,
+      "works_count": 526,
+      "cited_by_count": 65068,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5100603760",
+      "display_name": "John A. Stankovic",
+      "orcid": "https://orcid.org/0000-0001-7307-9395",
+      "h_index": 105,
+      "i10_index": 384,
+      "works_count": 795,
+      "cited_by_count": 48613,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5022177364",
+      "display_name": "Christopher Kruegel",
+      "orcid": "https://orcid.org/0000-0001-5140-3414",
+      "h_index": 105,
+      "i10_index": 251,
+      "works_count": 371,
+      "cited_by_count": 36935,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5075685499",
+      "display_name": "Giovanni Vigna",
+      "orcid": "https://orcid.org/0000-0002-3422-5369",
+      "h_index": 97,
+      "i10_index": 267,
+      "works_count": 434,
+      "cited_by_count": 32688,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5087894632",
+      "display_name": "Keqin Li",
+      "orcid": "https://orcid.org/0000-0001-5224-4048",
+      "h_index": 92,
+      "i10_index": 696,
+      "works_count": 1348,
+      "cited_by_count": 37356,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5079497016",
+      "display_name": "Ahmad‐Reza Sadeghi",
+      "orcid": "https://orcid.org/0000-0001-6833-3598",
+      "h_index": 91,
+      "i10_index": 353,
+      "works_count": 607,
+      "cited_by_count": 32293,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5007028607",
+      "display_name": "W.J. Dally",
+      "orcid": "https://orcid.org/0000-0003-4632-2876",
+      "h_index": 90,
+      "i10_index": 256,
+      "works_count": 443,
+      "cited_by_count": 75083,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5042148531",
+      "display_name": "Christos Kozyrakis",
+      "orcid": "https://orcid.org/0000-0002-3154-7530",
+      "h_index": 90,
+      "i10_index": 226,
+      "works_count": 368,
+      "cited_by_count": 30584,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5047140382",
+      "display_name": "Wenke Lee",
+      "orcid": "https://orcid.org/0000-0003-2761-1277",
+      "h_index": 88,
+      "i10_index": 214,
+      "works_count": 377,
+      "cited_by_count": 32115,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5002015508",
+      "display_name": "Margaret Martonosi",
+      "orcid": "https://orcid.org/0000-0001-9683-8032",
+      "h_index": 87,
+      "i10_index": 236,
+      "works_count": 447,
+      "cited_by_count": 28848,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5082347771",
+      "display_name": "Ingrid M.R. Verbauwhede",
+      "orcid": "https://orcid.org/0000-0002-0879-076X",
+      "h_index": 86,
+      "i10_index": 377,
+      "works_count": 709,
+      "cited_by_count": 26898,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Hardware and Architecture -- 9.8",
+      "id": "https://openalex.org/A5060999697",
+      "display_name": "Lothar Thiele",
+      "orcid": "https://orcid.org/0000-0001-6139-868X",
+      "h_index": 83,
+      "i10_index": 399,
+      "works_count": 790,
+      "cited_by_count": 63242,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5014824446",
+      "display_name": "Phillip B. Gibbons",
+      "orcid": "https://orcid.org/0000-0001-6967-2735",
+      "h_index": 82,
+      "i10_index": 210,
+      "works_count": 434,
+      "cited_by_count": 37873,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5077687075",
+      "display_name": "Kwang-Ting Tim Cheng",
+      "orcid": "https://orcid.org/0000-0002-3885-4912",
+      "h_index": 81,
+      "i10_index": 436,
+      "works_count": 905,
+      "cited_by_count": 29267,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5009831760",
+      "display_name": "Edward A. Lee",
+      "orcid": "https://orcid.org/0000-0002-5663-0584",
+      "h_index": 80,
+      "i10_index": 304,
+      "works_count": 645,
+      "cited_by_count": 36572,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5056790702",
+      "display_name": "Thorsten Holz",
+      "orcid": "https://orcid.org/0000-0002-2783-1264",
+      "h_index": 80,
+      "i10_index": 215,
+      "works_count": 367,
+      "cited_by_count": 27024,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5033880864",
+      "display_name": "Krishnendu Chakrabarty",
+      "orcid": "https://orcid.org/0000-0003-4475-6435",
+      "h_index": 78,
+      "i10_index": 657,
+      "works_count": 1454,
+      "cited_by_count": 31932,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5055368149",
+      "display_name": "Patrick Drew McDaniel",
+      "orcid": "https://orcid.org/0000-0003-2091-7484",
+      "h_index": 77,
+      "i10_index": 189,
+      "works_count": 381,
+      "cited_by_count": 49819,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5078793726",
+      "display_name": "Kenli Li",
+      "orcid": "https://orcid.org/0000-0002-2635-7716",
+      "h_index": 76,
+      "i10_index": 440,
+      "works_count": 895,
+      "cited_by_count": 26726,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5050207942",
+      "display_name": "Norman Paul Jouppi",
+      "orcid": "https://orcid.org/0000-0003-1765-1929",
+      "h_index": 76,
+      "i10_index": 159,
+      "works_count": 237,
+      "cited_by_count": 32801,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5011491987",
+      "display_name": "Parthasarathy Ranganathan",
+      "orcid": "https://orcid.org/0000-0002-9751-5902",
+      "h_index": 75,
+      "i10_index": 148,
+      "works_count": 236,
+      "cited_by_count": 18837,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5040404999",
+      "display_name": "Wen‐mei Hwu",
+      "orcid": "https://orcid.org/0000-0003-2532-5349",
+      "h_index": 74,
+      "i10_index": 300,
+      "works_count": 577,
+      "cited_by_count": 21834,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Hardware and Architecture -- 9.7",
+      "id": "https://openalex.org/A5002419188",
+      "display_name": "Monica S. Lam",
+      "orcid": "https://orcid.org/0000-0002-1205-1302",
+      "h_index": 74,
+      "i10_index": 184,
+      "works_count": 309,
+      "cited_by_count": 24257,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5026130910",
+      "display_name": "Tadayoshi Kohno",
+      "orcid": "https://orcid.org/0000-0002-4899-226X",
+      "h_index": 74,
+      "i10_index": 171,
+      "works_count": 353,
+      "cited_by_count": 26923,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5037541525",
+      "display_name": "Trevor Mudge",
+      "orcid": "https://orcid.org/0000-0001-7845-2187",
+      "h_index": 73,
+      "i10_index": 264,
+      "works_count": 616,
+      "cited_by_count": 27824,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5070542865",
+      "display_name": "François‐Xavier Standaert",
+      "orcid": "https://orcid.org/0000-0001-7444-0285",
+      "h_index": 73,
+      "i10_index": 251,
+      "works_count": 464,
+      "cited_by_count": 18622,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5059648257",
+      "display_name": "Ramesh Karri",
+      "orcid": "https://orcid.org/0000-0001-7989-5617",
+      "h_index": 72,
+      "i10_index": 315,
+      "works_count": 604,
+      "cited_by_count": 24399,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5002075773",
+      "display_name": "Scott A. Mahlke",
+      "orcid": "https://orcid.org/0000-0002-0438-0616",
+      "h_index": 72,
+      "i10_index": 246,
+      "works_count": 412,
+      "cited_by_count": 15925,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5019931011",
+      "display_name": "Farinaz Koushanfar",
+      "orcid": "https://orcid.org/0000-0003-0798-3794",
+      "h_index": 72,
+      "i10_index": 230,
+      "works_count": 393,
+      "cited_by_count": 37057,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5046983053",
+      "display_name": "Ross Anderson",
+      "orcid": "https://orcid.org/0000-0001-8697-5682",
+      "h_index": 72,
+      "i10_index": 201,
+      "works_count": 452,
+      "cited_by_count": 31109,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5041748332",
+      "display_name": "Christof Paar",
+      "orcid": "https://orcid.org/0000-0001-8681-2277",
+      "h_index": 71,
+      "i10_index": 260,
+      "works_count": 494,
+      "cited_by_count": 23284,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5063354509",
+      "display_name": "Stephen W. Keckler",
+      "orcid": "https://orcid.org/0000-0001-6701-6099",
+      "h_index": 71,
+      "i10_index": 185,
+      "works_count": 358,
+      "cited_by_count": 21953,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5007116603",
+      "display_name": "Mahmut Kandemir",
+      "orcid": "https://orcid.org/0000-0002-9940-9951",
+      "h_index": 69,
+      "i10_index": 451,
+      "works_count": 1057,
+      "cited_by_count": 22237,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Hardware and Architecture -- 9.6",
+      "id": "https://openalex.org/A5072946826",
+      "display_name": "Joel Haskin Saltz",
+      "orcid": "https://orcid.org/0000-0002-3451-2165",
+      "h_index": 69,
+      "i10_index": 291,
+      "works_count": 547,
+      "cited_by_count": 23261,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5046791216",
+      "display_name": "Saman P. Amarasinghe",
+      "orcid": "https://orcid.org/0000-0002-7231-7643",
+      "h_index": 69,
+      "i10_index": 190,
+      "works_count": 407,
+      "cited_by_count": 22372,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5084213178",
+      "display_name": "Salvatore J. Stolfo",
+      "orcid": "https://orcid.org/0000-0003-1611-0100",
+      "h_index": 69,
+      "i10_index": 188,
+      "works_count": 396,
+      "cited_by_count": 24289,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5100333239",
+      "display_name": "Xiaofeng Wang",
+      "orcid": "https://orcid.org/0000-0002-0607-4946",
+      "h_index": 69,
+      "i10_index": 186,
+      "works_count": 311,
+      "cited_by_count": 17691,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5024384625",
+      "display_name": "Joel Emer",
+      "orcid": "https://orcid.org/0000-0002-3459-5466",
+      "h_index": 69,
+      "i10_index": 149,
+      "works_count": 252,
+      "cited_by_count": 33150,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5067337700",
+      "display_name": "Doug Burger",
+      "orcid": "https://orcid.org/0009-0006-6588-6596",
+      "h_index": 69,
+      "i10_index": 143,
+      "works_count": 311,
+      "cited_by_count": 30778,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5033166029",
+      "display_name": "Viktor K. Prasanna",
+      "orcid": "https://orcid.org/0000-0002-1609-8589",
+      "h_index": 68,
+      "i10_index": 450,
+      "works_count": 1034,
+      "cited_by_count": 21494,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5007817952",
+      "display_name": "Nikil D. Dutt",
+      "orcid": "https://orcid.org/0000-0002-3060-8119",
+      "h_index": 68,
+      "i10_index": 439,
+      "works_count": 862,
+      "cited_by_count": 20301,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5017566347",
+      "display_name": "James Edward Smith",
+      "orcid": "https://orcid.org/0000-0001-7908-1859",
+      "h_index": 68,
+      "i10_index": 297,
+      "works_count": 928,
+      "cited_by_count": 24660,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5082847985",
+      "display_name": "Miodrag Potkonjak",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 252,
+      "works_count": 643,
+      "cited_by_count": 20910,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5049937500",
+      "display_name": "Alan Burns",
+      "orcid": "https://orcid.org/0000-0001-5621-8816",
+      "h_index": 68,
+      "i10_index": 246,
+      "works_count": 500,
+      "cited_by_count": 19666,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5100730785",
+      "display_name": "Xiaowen Chu",
+      "orcid": "https://orcid.org/0000-0001-9745-4372",
+      "h_index": 68,
+      "i10_index": 221,
+      "works_count": 457,
+      "cited_by_count": 17411,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Hardware and Architecture -- 9.5",
+      "id": "https://openalex.org/A5035134864",
+      "display_name": "Krste Asanović",
+      "orcid": "https://orcid.org/0000-0003-0754-3975",
+      "h_index": 68,
+      "i10_index": 201,
+      "works_count": 414,
+      "cited_by_count": 23958,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5057697787",
+      "display_name": "Babak Falsafi",
+      "orcid": "https://orcid.org/0000-0001-5916-8068",
+      "h_index": 68,
+      "i10_index": 179,
+      "works_count": 380,
+      "cited_by_count": 15375,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5026496503",
+      "display_name": "David M. Brooks",
+      "orcid": "https://orcid.org/0000-0002-0662-7889",
+      "h_index": 67,
+      "i10_index": 201,
+      "works_count": 308,
+      "cited_by_count": 21222,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5023857198",
+      "display_name": "Kunle Olukotun",
+      "orcid": "https://orcid.org/0000-0002-8779-0636",
+      "h_index": 67,
+      "i10_index": 184,
+      "works_count": 377,
+      "cited_by_count": 18431,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5081914923",
+      "display_name": "Luís Ceze",
+      "orcid": "https://orcid.org/0000-0002-1377-6217",
+      "h_index": 67,
+      "i10_index": 179,
+      "works_count": 280,
+      "cited_by_count": 20260,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5055909708",
+      "display_name": "Josep Torrellas",
+      "orcid": "https://orcid.org/0000-0003-2595-5228",
+      "h_index": 66,
+      "i10_index": 246,
+      "works_count": 447,
+      "cited_by_count": 15104,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5038442224",
+      "display_name": "Sanjoy Baruah",
+      "orcid": "https://orcid.org/0000-0002-4541-3445",
+      "h_index": 66,
+      "i10_index": 222,
+      "works_count": 459,
+      "cited_by_count": 16410,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5005190949",
+      "display_name": "Muhammad Shafique",
+      "orcid": "https://orcid.org/0000-0002-2607-8135",
+      "h_index": 65,
+      "i10_index": 369,
+      "works_count": 703,
+      "cited_by_count": 17869,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5087579275",
+      "display_name": "Aiichiro Nakano",
+      "orcid": "https://orcid.org/0000-0003-3228-3896",
+      "h_index": 65,
+      "i10_index": 273,
+      "works_count": 657,
+      "cited_by_count": 14553,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5078959213",
+      "display_name": "Rajesh K. Gupta",
+      "orcid": "https://orcid.org/0000-0002-6489-7633",
+      "h_index": 65,
+      "i10_index": 225,
+      "works_count": 631,
+      "cited_by_count": 18169,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5067032971",
+      "display_name": "Lui Sha",
+      "orcid": "https://orcid.org/0000-0002-5578-0791",
+      "h_index": 65,
+      "i10_index": 220,
+      "works_count": 402,
+      "cited_by_count": 24248,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Hardware and Architecture -- 9.4",
+      "id": "https://openalex.org/A5024920325",
+      "display_name": "Giorgio Buttazzo",
+      "orcid": "https://orcid.org/0000-0003-4959-4017",
+      "h_index": 65,
+      "i10_index": 220,
+      "works_count": 480,
+      "cited_by_count": 17989,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5085975362",
+      "display_name": "Sharad Malik",
+      "orcid": "https://orcid.org/0000-0002-0837-5443",
+      "h_index": 65,
+      "i10_index": 218,
+      "works_count": 430,
+      "cited_by_count": 21947,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5022706180",
+      "display_name": "John LeRoy Hennessy",
+      "orcid": "https://orcid.org/0000-0003-0356-1041",
+      "h_index": 65,
+      "i10_index": 150,
+      "works_count": 388,
+      "cited_by_count": 20516,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5030456600",
+      "display_name": "Insup Lee",
+      "orcid": "https://orcid.org/0000-0003-2672-1132",
+      "h_index": 64,
+      "i10_index": 311,
+      "works_count": 638,
+      "cited_by_count": 15270,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5100372152",
+      "display_name": "Xue Liu",
+      "orcid": "https://orcid.org/0000-0001-5252-3442",
+      "h_index": 64,
+      "i10_index": 274,
+      "works_count": 530,
+      "cited_by_count": 17607,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5100651611",
+      "display_name": "Weisong Shi",
+      "orcid": "https://orcid.org/0000-0001-5864-4675",
+      "h_index": 64,
+      "i10_index": 241,
+      "works_count": 535,
+      "cited_by_count": 28858,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5043327132",
+      "display_name": "Gu-Yeon Wei",
+      "orcid": "https://orcid.org/0000-0001-5730-9904",
+      "h_index": 64,
+      "i10_index": 204,
+      "works_count": 337,
+      "cited_by_count": 16184,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5029566823",
+      "display_name": "Herbert Bos",
+      "orcid": "https://orcid.org/0000-0001-6179-1510",
+      "h_index": 64,
+      "i10_index": 167,
+      "works_count": 329,
+      "cited_by_count": 14757,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5086111967",
+      "display_name": "Sarita V. Adve",
+      "orcid": "https://orcid.org/0000-0002-3403-5119",
+      "h_index": 64,
+      "i10_index": 153,
+      "works_count": 273,
+      "cited_by_count": 14668,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5069107397",
+      "display_name": "Henry M. Levy",
+      "orcid": "https://orcid.org/0009-0008-7786-8541",
+      "h_index": 64,
+      "i10_index": 131,
+      "works_count": 228,
+      "cited_by_count": 16953,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5071742136",
+      "display_name": "Rolf Drechsler",
+      "orcid": "https://orcid.org/0000-0002-9872-1740",
+      "h_index": 63,
+      "i10_index": 494,
+      "works_count": 1575,
+      "cited_by_count": 19527,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Hardware and Architecture -- 9.3",
+      "id": "https://openalex.org/A5063508488",
+      "display_name": "Jörg Henkel",
+      "orcid": "https://orcid.org/0000-0001-9602-2922",
+      "h_index": 63,
+      "i10_index": 410,
+      "works_count": 834,
+      "cited_by_count": 19302,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Hardware and Architecture -- 9.2",
+      "id": "https://openalex.org/A5088556682",
+      "display_name": "Qiang Xu",
+      "orcid": "https://orcid.org/0000-0001-6747-126X",
+      "h_index": 63,
+      "i10_index": 223,
+      "works_count": 548,
+      "cited_by_count": 20961,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Hardware and Architecture -- 9.2",
+      "id": "https://openalex.org/A5074818897",
+      "display_name": "Kevin Skadron",
+      "orcid": "https://orcid.org/0000-0002-8091-9302",
+      "h_index": 63,
+      "i10_index": 206,
+      "works_count": 491,
+      "cited_by_count": 23824,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Hardware and Architecture -- 9.2",
+      "id": "https://openalex.org/A5087054368",
+      "display_name": "Kathryn S. McKinley",
+      "orcid": "https://orcid.org/0000-0002-7188-2501",
+      "h_index": 63,
+      "i10_index": 201,
+      "works_count": 348,
+      "cited_by_count": 15363,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Hardware and Architecture -- 9.2",
+      "id": "https://openalex.org/A5070360563",
+      "display_name": "Yale N. Patt",
+      "orcid": "https://orcid.org/0009-0004-8704-8249",
+      "h_index": 63,
+      "i10_index": 191,
+      "works_count": 405,
+      "cited_by_count": 16281,
+      "discipline": "Hardware and Architecture",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Hardware and Architecture",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    }
+  ]
+}

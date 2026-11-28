@@ -1,0 +1,4122 @@
+{
+  "kind": "subfield",
+  "id": 1315,
+  "name": "Structural Biology",
+  "total_in_scrape": 212,
+  "count": 212,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Structural Biology -- 9.9",
+      "id": "https://openalex.org/A5101832860",
+      "display_name": "Robert Huber",
+      "orcid": "https://orcid.org/0000-0002-0133-5334",
+      "h_index": 155,
+      "i10_index": 574,
+      "works_count": 732,
+      "cited_by_count": 91925,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Structural Biology -- 9.9",
+      "id": "https://openalex.org/A5056871681",
+      "display_name": "Stephen John Pennycook",
+      "orcid": "https://orcid.org/0000-0002-3210-6323",
+      "h_index": 139,
+      "i10_index": 574,
+      "works_count": 1067,
+      "cited_by_count": 70789,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Structural Biology -- 9.9",
+      "id": "https://openalex.org/A5000740212",
+      "display_name": "Stephen C. Harrison",
+      "orcid": "https://orcid.org/0000-0001-7215-9393",
+      "h_index": 139,
+      "i10_index": 358,
+      "works_count": 678,
+      "cited_by_count": 74805,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Structural Biology -- 9.9",
+      "id": "https://openalex.org/A5067120865",
+      "display_name": "Michael George Rossmann",
+      "orcid": "https://orcid.org/0000-0002-9468-9309",
+      "h_index": 137,
+      "i10_index": 496,
+      "works_count": 1072,
+      "cited_by_count": 67843,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Structural Biology -- 9.9",
+      "id": "https://openalex.org/A5056016799",
+      "display_name": "David Ian Stuart",
+      "orcid": "https://orcid.org/0000-0002-3426-4210",
+      "h_index": 136,
+      "i10_index": 482,
+      "works_count": 1102,
+      "cited_by_count": 70547,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Structural Biology -- 9.9",
+      "id": "https://openalex.org/A5029559203",
+      "display_name": "Wolfgang P. Baumeister",
+      "orcid": "https://orcid.org/0000-0001-8154-8809",
+      "h_index": 136,
+      "i10_index": 456,
+      "works_count": 722,
+      "cited_by_count": 61560,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5042016235",
+      "display_name": "David Anthony Muller",
+      "orcid": "https://orcid.org/0000-0003-4129-0473",
+      "h_index": 132,
+      "i10_index": 462,
+      "works_count": 955,
+      "cited_by_count": 80600,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5104977585",
+      "display_name": "Gustaaf Van Tendeloo",
+      "orcid": "https://orcid.org/0009-0001-9501-2228",
+      "h_index": 124,
+      "i10_index": 1046,
+      "works_count": 1906,
+      "cited_by_count": 66563,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5042398293",
+      "display_name": "Christopher John Schofield",
+      "orcid": "https://orcid.org/0000-0002-0290-6565",
+      "h_index": 121,
+      "i10_index": 718,
+      "works_count": 1309,
+      "cited_by_count": 71633,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5012117525",
+      "display_name": "C.H. Arrowsmith",
+      "orcid": "https://orcid.org/0000-0002-4971-3250",
+      "h_index": 118,
+      "i10_index": 406,
+      "works_count": 7062,
+      "cited_by_count": 48122,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5042892654",
+      "display_name": "Joachim Frank",
+      "orcid": "https://orcid.org/0000-0001-5449-6943",
+      "h_index": 116,
+      "i10_index": 352,
+      "works_count": 903,
+      "cited_by_count": 47377,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5109009178",
+      "display_name": "Wolfram Bode",
+      "orcid": null,
+      "h_index": 112,
+      "i10_index": 273,
+      "works_count": 444,
+      "cited_by_count": 41438,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5049689333",
+      "display_name": "Wah Chiu",
+      "orcid": "https://orcid.org/0000-0002-8910-3078",
+      "h_index": 111,
+      "i10_index": 417,
+      "works_count": 960,
+      "cited_by_count": 45556,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5081416783",
+      "display_name": "David A. Agard",
+      "orcid": "https://orcid.org/0000-0003-3512-695X",
+      "h_index": 111,
+      "i10_index": 317,
+      "works_count": 615,
+      "cited_by_count": 60593,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5068648875",
+      "display_name": "Stephen Kevin Burley",
+      "orcid": "https://orcid.org/0000-0002-2487-9713",
+      "h_index": 111,
+      "i10_index": 304,
+      "works_count": 1742,
+      "cited_by_count": 60091,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5105986678",
+      "display_name": "Bert L. Vallée",
+      "orcid": null,
+      "h_index": 110,
+      "i10_index": 504,
+      "works_count": 629,
+      "cited_by_count": 53065,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Structural Biology -- 9.8",
+      "id": "https://openalex.org/A5009478169",
+      "display_name": "G.J. Davies",
+      "orcid": "https://orcid.org/0000-0002-7343-776X",
+      "h_index": 110,
+      "i10_index": 382,
+      "works_count": 1295,
+      "cited_by_count": 52155,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5113570579",
+      "display_name": "Hans Jörnvall",
+      "orcid": null,
+      "h_index": 109,
+      "i10_index": 512,
+      "works_count": 692,
+      "cited_by_count": 46056,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5100671232",
+      "display_name": "Yimei Zhu",
+      "orcid": "https://orcid.org/0000-0002-1638-7217",
+      "h_index": 108,
+      "i10_index": 595,
+      "works_count": 1312,
+      "cited_by_count": 50383,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5075870873",
+      "display_name": "Eric A. Stach",
+      "orcid": "https://orcid.org/0000-0002-3366-2153",
+      "h_index": 108,
+      "i10_index": 442,
+      "works_count": 819,
+      "cited_by_count": 66400,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5052940235",
+      "display_name": "Andreas H. Engel",
+      "orcid": "https://orcid.org/0000-0002-0118-8733",
+      "h_index": 108,
+      "i10_index": 337,
+      "works_count": 544,
+      "cited_by_count": 40250,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5007934367",
+      "display_name": "Gregory A. Petsko",
+      "orcid": "https://orcid.org/0000-0003-3668-3694",
+      "h_index": 108,
+      "i10_index": 312,
+      "works_count": 784,
+      "cited_by_count": 46102,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5103456216",
+      "display_name": "James C. Sacchettini",
+      "orcid": "https://orcid.org/0000-0001-5767-2367",
+      "h_index": 107,
+      "i10_index": 298,
+      "works_count": 743,
+      "cited_by_count": 38070,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5027915011",
+      "display_name": "Paul D. Adams",
+      "orcid": "https://orcid.org/0000-0001-9333-8219",
+      "h_index": 106,
+      "i10_index": 324,
+      "works_count": 599,
+      "cited_by_count": 134048,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5090643634",
+      "display_name": "Alasdair C. Steven",
+      "orcid": "https://orcid.org/0000-0003-4104-6497",
+      "h_index": 105,
+      "i10_index": 307,
+      "works_count": 441,
+      "cited_by_count": 34075,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5059152784",
+      "display_name": "Thomas Walz",
+      "orcid": "https://orcid.org/0000-0003-2606-2835",
+      "h_index": 102,
+      "i10_index": 210,
+      "works_count": 367,
+      "cited_by_count": 40026,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5110136758",
+      "display_name": "William N. Lipscomb",
+      "orcid": null,
+      "h_index": 100,
+      "i10_index": 529,
+      "works_count": 715,
+      "cited_by_count": 39501,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Structural Biology -- 9.7",
+      "id": "https://openalex.org/A5077792493",
+      "display_name": "Nigel D. Browning",
+      "orcid": "https://orcid.org/0000-0003-0491-251X",
+      "h_index": 100,
+      "i10_index": 393,
+      "works_count": 1026,
+      "cited_by_count": 35328,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5108085252",
+      "display_name": "Wim G. J. Hol",
+      "orcid": null,
+      "h_index": 100,
+      "i10_index": 337,
+      "works_count": 711,
+      "cited_by_count": 36197,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5006013523",
+      "display_name": "Steven C. Almo",
+      "orcid": "https://orcid.org/0000-0003-2591-5234",
+      "h_index": 99,
+      "i10_index": 370,
+      "works_count": 1832,
+      "cited_by_count": 31185,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5013451849",
+      "display_name": "Christian Cambillau",
+      "orcid": "https://orcid.org/0000-0001-5502-4729",
+      "h_index": 99,
+      "i10_index": 340,
+      "works_count": 747,
+      "cited_by_count": 30387,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5013888065",
+      "display_name": "Sara Bals",
+      "orcid": "https://orcid.org/0000-0002-4249-8017",
+      "h_index": 96,
+      "i10_index": 482,
+      "works_count": 843,
+      "cited_by_count": 38080,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5050870388",
+      "display_name": "Joel L. Sussman",
+      "orcid": "https://orcid.org/0000-0003-0306-3878",
+      "h_index": 96,
+      "i10_index": 255,
+      "works_count": 620,
+      "cited_by_count": 40469,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5055622569",
+      "display_name": "Yuichi Ikuhara",
+      "orcid": "https://orcid.org/0000-0003-3886-005X",
+      "h_index": 95,
+      "i10_index": 671,
+      "works_count": 1322,
+      "cited_by_count": 40837,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5036399862",
+      "display_name": "S. Cusack",
+      "orcid": "https://orcid.org/0000-0002-9324-0796",
+      "h_index": 95,
+      "i10_index": 226,
+      "works_count": 689,
+      "cited_by_count": 29975,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5066630519",
+      "display_name": "Ilme Schlichting",
+      "orcid": "https://orcid.org/0000-0002-0936-7496",
+      "h_index": 95,
+      "i10_index": 214,
+      "works_count": 417,
+      "cited_by_count": 32639,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5014879094",
+      "display_name": "Edward H. Egelman",
+      "orcid": "https://orcid.org/0000-0003-4844-5212",
+      "h_index": 94,
+      "i10_index": 287,
+      "works_count": 743,
+      "cited_by_count": 28113,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5060205129",
+      "display_name": "Lawrence S. Shapiro",
+      "orcid": "https://orcid.org/0000-0001-9943-8819",
+      "h_index": 94,
+      "i10_index": 240,
+      "works_count": 576,
+      "cited_by_count": 39507,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Structural Biology -- 9.6",
+      "id": "https://openalex.org/A5060946176",
+      "display_name": "Douglas C. Rees",
+      "orcid": "https://orcid.org/0000-0003-4073-1185",
+      "h_index": 93,
+      "i10_index": 211,
+      "works_count": 1428,
+      "cited_by_count": 40276,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5079221179",
+      "display_name": "Vincent Massey",
+      "orcid": null,
+      "h_index": 92,
+      "i10_index": 344,
+      "works_count": 471,
+      "cited_by_count": 33261,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5056028884",
+      "display_name": "Zihe Rao",
+      "orcid": "https://orcid.org/0000-0001-9866-2384",
+      "h_index": 92,
+      "i10_index": 334,
+      "works_count": 627,
+      "cited_by_count": 38736,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5003711513",
+      "display_name": "Werner Kühlbrandt",
+      "orcid": "https://orcid.org/0000-0002-2013-4810",
+      "h_index": 92,
+      "i10_index": 217,
+      "works_count": 504,
+      "cited_by_count": 30134,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5037247357",
+      "display_name": "Peter J. Peters",
+      "orcid": "https://orcid.org/0000-0002-2964-5684",
+      "h_index": 90,
+      "i10_index": 171,
+      "works_count": 264,
+      "cited_by_count": 49061,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5015893701",
+      "display_name": "A. Joachimiak",
+      "orcid": "https://orcid.org/0000-0003-2535-6209",
+      "h_index": 89,
+      "i10_index": 347,
+      "works_count": 4152,
+      "cited_by_count": 34265,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5101730502",
+      "display_name": "John C. H. Spence",
+      "orcid": "https://orcid.org/0000-0001-6049-3925",
+      "h_index": 89,
+      "i10_index": 324,
+      "works_count": 810,
+      "cited_by_count": 33110,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5076685416",
+      "display_name": "Eddy Arnold",
+      "orcid": "https://orcid.org/0000-0003-2612-9622",
+      "h_index": 89,
+      "i10_index": 247,
+      "works_count": 480,
+      "cited_by_count": 28415,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5027980832",
+      "display_name": "Alexander Wlodawer",
+      "orcid": "https://orcid.org/0000-0002-5510-9703",
+      "h_index": 88,
+      "i10_index": 319,
+      "works_count": 524,
+      "cited_by_count": 27716,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5066632471",
+      "display_name": "Bauke W. Dijkstra",
+      "orcid": "https://orcid.org/0000-0001-9731-6586",
+      "h_index": 88,
+      "i10_index": 236,
+      "works_count": 353,
+      "cited_by_count": 29180,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5028725593",
+      "display_name": "Felix Augusto Rey",
+      "orcid": "https://orcid.org/0000-0002-9953-7988",
+      "h_index": 88,
+      "i10_index": 195,
+      "works_count": 525,
+      "cited_by_count": 44058,
+      "discipline": "Structural Biology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5082950184",
+      "display_name": "Timothy S. Baker",
+      "orcid": "https://orcid.org/0000-0001-6543-8968",
+      "h_index": 88,
+      "i10_index": 182,
+      "works_count": 313,
+      "cited_by_count": 23930,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Structural Biology -- 9.5",
+      "id": "https://openalex.org/A5061952716",
+      "display_name": "Sjors H. W. Scheres",
+      "orcid": "https://orcid.org/0000-0002-0462-6540",
+      "h_index": 88,
+      "i10_index": 146,
+      "works_count": 496,
+      "cited_by_count": 50549,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5015579596",
+      "display_name": "David W. Christianson",
+      "orcid": "https://orcid.org/0000-0002-0194-5212",
+      "h_index": 87,
+      "i10_index": 260,
+      "works_count": 1626,
+      "cited_by_count": 26986,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5017449175",
+      "display_name": "Andrea Mattevi",
+      "orcid": "https://orcid.org/0000-0002-9523-7128",
+      "h_index": 87,
+      "i10_index": 222,
+      "works_count": 617,
+      "cited_by_count": 23599,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5008855880",
+      "display_name": "Robert B. Gennis",
+      "orcid": "https://orcid.org/0000-0002-3805-6945",
+      "h_index": 86,
+      "i10_index": 413,
+      "works_count": 586,
+      "cited_by_count": 28040,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5041541957",
+      "display_name": "Keith S. Wilson",
+      "orcid": "https://orcid.org/0000-0002-3581-2194",
+      "h_index": 86,
+      "i10_index": 320,
+      "works_count": 668,
+      "cited_by_count": 43427,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5039783946",
+      "display_name": "Bruno Canard",
+      "orcid": "https://orcid.org/0000-0003-4924-1991",
+      "h_index": 86,
+      "i10_index": 250,
+      "works_count": 460,
+      "cited_by_count": 26364,
+      "discipline": "Structural Biology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5016221669",
+      "display_name": "Yifan Cheng",
+      "orcid": "https://orcid.org/0000-0001-9535-0369",
+      "h_index": 86,
+      "i10_index": 167,
+      "works_count": 435,
+      "cited_by_count": 39955,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5076675370",
+      "display_name": "Naoya Shibata",
+      "orcid": "https://orcid.org/0000-0003-3548-5952",
+      "h_index": 85,
+      "i10_index": 321,
+      "works_count": 630,
+      "cited_by_count": 30057,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5030941925",
+      "display_name": "Andrew M. Minor",
+      "orcid": "https://orcid.org/0000-0003-3606-8309",
+      "h_index": 85,
+      "i10_index": 260,
+      "works_count": 543,
+      "cited_by_count": 24495,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5001503356",
+      "display_name": "So Iwata",
+      "orcid": "https://orcid.org/0000-0003-1735-2937",
+      "h_index": 85,
+      "i10_index": 235,
+      "works_count": 677,
+      "cited_by_count": 35284,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5022292484",
+      "display_name": "Natalie C. J. Strynadka",
+      "orcid": "https://orcid.org/0000-0002-4058-9425",
+      "h_index": 85,
+      "i10_index": 213,
+      "works_count": 1464,
+      "cited_by_count": 23324,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Structural Biology -- 9.4",
+      "id": "https://openalex.org/A5014900252",
+      "display_name": "Dagmar Ringe",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 212,
+      "works_count": 504,
+      "cited_by_count": 23785,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5068323278",
+      "display_name": "Randy J. Read",
+      "orcid": "https://orcid.org/0000-0001-8273-0047",
+      "h_index": 85,
+      "i10_index": 189,
+      "works_count": 408,
+      "cited_by_count": 128201,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5030636499",
+      "display_name": "Richard Anthony Crowther",
+      "orcid": "https://orcid.org/0000-0003-0568-1426",
+      "h_index": 85,
+      "i10_index": 143,
+      "works_count": 210,
+      "cited_by_count": 43353,
+      "discipline": "Structural Biology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5067478405",
+      "display_name": "Gianluigi A. Botton",
+      "orcid": "https://orcid.org/0000-0002-8746-1146",
+      "h_index": 84,
+      "i10_index": 365,
+      "works_count": 681,
+      "cited_by_count": 43657,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5078724396",
+      "display_name": "John Emil Johnson",
+      "orcid": "https://orcid.org/0000-0001-9782-3721",
+      "h_index": 84,
+      "i10_index": 285,
+      "works_count": 441,
+      "cited_by_count": 24465,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5066756448",
+      "display_name": "James H. Naismith",
+      "orcid": "https://orcid.org/0000-0001-6744-5061",
+      "h_index": 84,
+      "i10_index": 260,
+      "works_count": 810,
+      "cited_by_count": 25739,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5065824138",
+      "display_name": "Sol Michael Gruner",
+      "orcid": "https://orcid.org/0000-0002-1171-4426",
+      "h_index": 83,
+      "i10_index": 287,
+      "works_count": 521,
+      "cited_by_count": 25210,
+      "discipline": "Structural Biology",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5013491544",
+      "display_name": "David John Smith",
+      "orcid": "https://orcid.org/0000-0002-8810-4386",
+      "h_index": 82,
+      "i10_index": 566,
+      "works_count": 1211,
+      "cited_by_count": 29097,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5050620343",
+      "display_name": "James C. Whisstock",
+      "orcid": "https://orcid.org/0000-0003-4200-5611",
+      "h_index": 82,
+      "i10_index": 238,
+      "works_count": 482,
+      "cited_by_count": 24839,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5091154586",
+      "display_name": "Florante A. Quiocho",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 193,
+      "works_count": 343,
+      "cited_by_count": 25584,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5033642634",
+      "display_name": "J. Deisenhofer",
+      "orcid": "https://orcid.org/0000-0003-1006-1344",
+      "h_index": 82,
+      "i10_index": 127,
+      "works_count": 267,
+      "cited_by_count": 38118,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Structural Biology -- 9.3",
+      "id": "https://openalex.org/A5077999397",
+      "display_name": "Rafal E. Dunin‐Borkowski",
+      "orcid": "https://orcid.org/0000-0001-8082-0647",
+      "h_index": 81,
+      "i10_index": 479,
+      "works_count": 1370,
+      "cited_by_count": 29962,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5054413817",
+      "display_name": "Edward N. Baker",
+      "orcid": "https://orcid.org/0000-0003-2456-7661",
+      "h_index": 81,
+      "i10_index": 283,
+      "works_count": 617,
+      "cited_by_count": 25941,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5055269714",
+      "display_name": "Paul Anthony Midgley",
+      "orcid": "https://orcid.org/0000-0002-6817-458X",
+      "h_index": 81,
+      "i10_index": 275,
+      "works_count": 620,
+      "cited_by_count": 26706,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5062362734",
+      "display_name": "Michael N.G. James",
+      "orcid": "https://orcid.org/0000-0002-5978-4562",
+      "h_index": 81,
+      "i10_index": 231,
+      "works_count": 329,
+      "cited_by_count": 21657,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5014770642",
+      "display_name": "A.M. Edwards",
+      "orcid": "https://orcid.org/0000-0002-4782-6016",
+      "h_index": 81,
+      "i10_index": 220,
+      "works_count": 6753,
+      "cited_by_count": 24246,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5015990767",
+      "display_name": "Juan Carlos Fontecilla-Camps",
+      "orcid": "https://orcid.org/0000-0002-3901-1378",
+      "h_index": 81,
+      "i10_index": 196,
+      "works_count": 389,
+      "cited_by_count": 26707,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5001461580",
+      "display_name": "Grant J. Jensen",
+      "orcid": "https://orcid.org/0000-0003-1556-4864",
+      "h_index": 81,
+      "i10_index": 196,
+      "works_count": 1496,
+      "cited_by_count": 20729,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5005420915",
+      "display_name": "Gerhard Klebe",
+      "orcid": "https://orcid.org/0000-0002-4913-390X",
+      "h_index": 80,
+      "i10_index": 334,
+      "works_count": 2138,
+      "cited_by_count": 32826,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5053221368",
+      "display_name": "Boštjan Kobe",
+      "orcid": "https://orcid.org/0000-0001-9413-9166",
+      "h_index": 80,
+      "i10_index": 226,
+      "works_count": 567,
+      "cited_by_count": 26336,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5058612126",
+      "display_name": "Nigel Shaun Scrutton",
+      "orcid": "https://orcid.org/0000-0002-4182-3500",
+      "h_index": 79,
+      "i10_index": 408,
+      "works_count": 740,
+      "cited_by_count": 24657,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5111773554",
+      "display_name": "Jozef VAN BEEUMEN",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 355,
+      "works_count": 616,
+      "cited_by_count": 22826,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Structural Biology -- 9.2",
+      "id": "https://openalex.org/A5020457775",
+      "display_name": "Peter A. van Aken",
+      "orcid": "https://orcid.org/0000-0003-1890-1256",
+      "h_index": 79,
+      "i10_index": 317,
+      "works_count": 629,
+      "cited_by_count": 25989,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5073357045",
+      "display_name": "Richard A. Henderson",
+      "orcid": "https://orcid.org/0000-0003-1444-0528",
+      "h_index": 79,
+      "i10_index": 243,
+      "works_count": 448,
+      "cited_by_count": 36235,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5046681311",
+      "display_name": "Anton Barty",
+      "orcid": "https://orcid.org/0000-0003-4751-2727",
+      "h_index": 79,
+      "i10_index": 182,
+      "works_count": 406,
+      "cited_by_count": 27142,
+      "discipline": "Structural Biology",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5053712171",
+      "display_name": "Abraham J. Koster",
+      "orcid": "https://orcid.org/0000-0003-1717-2549",
+      "h_index": 79,
+      "i10_index": 172,
+      "works_count": 288,
+      "cited_by_count": 21311,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5067699683",
+      "display_name": "Haimei Zheng",
+      "orcid": "https://orcid.org/0000-0003-3813-4170",
+      "h_index": 79,
+      "i10_index": 169,
+      "works_count": 276,
+      "cited_by_count": 31394,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5057424046",
+      "display_name": "W.F. Anderson",
+      "orcid": "https://orcid.org/0000-0003-4181-8127",
+      "h_index": 77,
+      "i10_index": 245,
+      "works_count": 1107,
+      "cited_by_count": 22252,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5022570818",
+      "display_name": "Henning Stahlberg",
+      "orcid": "https://orcid.org/0000-0002-1185-4592",
+      "h_index": 77,
+      "i10_index": 208,
+      "works_count": 372,
+      "cited_by_count": 21143,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5049401708",
+      "display_name": "Hazel M. Holden",
+      "orcid": "https://orcid.org/0000-0001-6214-3638",
+      "h_index": 77,
+      "i10_index": 198,
+      "works_count": 527,
+      "cited_by_count": 22485,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5067641191",
+      "display_name": "L. Mario Amzel",
+      "orcid": "https://orcid.org/0000-0002-0129-9572",
+      "h_index": 77,
+      "i10_index": 198,
+      "works_count": 449,
+      "cited_by_count": 20201,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5002292798",
+      "display_name": "Sébastien Boutet",
+      "orcid": "https://orcid.org/0000-0003-3928-1244",
+      "h_index": 77,
+      "i10_index": 179,
+      "works_count": 422,
+      "cited_by_count": 26474,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5024079309",
+      "display_name": "Nikolaus Grigorieff",
+      "orcid": "https://orcid.org/0000-0002-1506-909X",
+      "h_index": 77,
+      "i10_index": 123,
+      "works_count": 318,
+      "cited_by_count": 27513,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Structural Biology -- 9.1",
+      "id": "https://openalex.org/A5037073937",
+      "display_name": "Laurence D. Marks",
+      "orcid": "https://orcid.org/0000-0002-6659-2016",
+      "h_index": 76,
+      "i10_index": 326,
+      "works_count": 650,
+      "cited_by_count": 27004,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Structural Biology -- 9.0",
+      "id": "https://openalex.org/A5002890830",
+      "display_name": "Chris Abell",
+      "orcid": "https://orcid.org/0000-0001-9174-1987",
+      "h_index": 76,
+      "i10_index": 308,
+      "works_count": 629,
+      "cited_by_count": 23284,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Structural Biology -- 9.0",
+      "id": "https://openalex.org/A5025152584",
+      "display_name": "Keiichi Namba",
+      "orcid": "https://orcid.org/0000-0003-2911-5875",
+      "h_index": 76,
+      "i10_index": 265,
+      "works_count": 829,
+      "cited_by_count": 19050,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Structural Biology -- 9.0",
+      "id": "https://openalex.org/A5018057371",
+      "display_name": "Alexander McPherson",
+      "orcid": "https://orcid.org/0000-0001-5123-6433",
+      "h_index": 76,
+      "i10_index": 250,
+      "works_count": 480,
+      "cited_by_count": 22278,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Structural Biology -- 9.0",
+      "id": "https://openalex.org/A5087385265",
+      "display_name": "Jianxun Qi",
+      "orcid": "https://orcid.org/0000-0002-9358-4732",
+      "h_index": 76,
+      "i10_index": 228,
+      "works_count": 352,
+      "cited_by_count": 24886,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Structural Biology -- 9.0",
+      "id": "https://openalex.org/A5032584004",
+      "display_name": "Lawrence F. Allard",
+      "orcid": "https://orcid.org/0000-0002-4552-8277",
+      "h_index": 76,
+      "i10_index": 194,
+      "works_count": 339,
+      "cited_by_count": 28625,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5100686706",
+      "display_name": "Sriram Subramaniam",
+      "orcid": "https://orcid.org/0000-0003-4231-4115",
+      "h_index": 76,
+      "i10_index": 183,
+      "works_count": 1387,
+      "cited_by_count": 19194,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5028628838",
+      "display_name": "John A. G. Briggs",
+      "orcid": "https://orcid.org/0000-0003-3990-6910",
+      "h_index": 76,
+      "i10_index": 131,
+      "works_count": 299,
+      "cited_by_count": 22410,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5015434460",
+      "display_name": "Zbigniew Dauter",
+      "orcid": "https://orcid.org/0000-0002-8806-9066",
+      "h_index": 75,
+      "i10_index": 254,
+      "works_count": 615,
+      "cited_by_count": 22484,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5008115009",
+      "display_name": "Ivan Rayment",
+      "orcid": "https://orcid.org/0000-0001-9279-7835",
+      "h_index": 75,
+      "i10_index": 189,
+      "works_count": 409,
+      "cited_by_count": 22630,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5063402771",
+      "display_name": "Gerard J. Kleywegt",
+      "orcid": "https://orcid.org/0000-0002-4670-0331",
+      "h_index": 75,
+      "i10_index": 143,
+      "works_count": 258,
+      "cited_by_count": 35586,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5049565862",
+      "display_name": "Martino Bolognesi",
+      "orcid": "https://orcid.org/0000-0002-9253-5170",
+      "h_index": 74,
+      "i10_index": 342,
+      "works_count": 730,
+      "cited_by_count": 22890,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5076993754",
+      "display_name": "Petra Fromme",
+      "orcid": "https://orcid.org/0000-0003-0953-4909",
+      "h_index": 74,
+      "i10_index": 192,
+      "works_count": 399,
+      "cited_by_count": 27904,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5090015351",
+      "display_name": "Thomas C. Terwilliger",
+      "orcid": "https://orcid.org/0000-0001-6384-0320",
+      "h_index": 74,
+      "i10_index": 187,
+      "works_count": 368,
+      "cited_by_count": 78966,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5076669457",
+      "display_name": "Susan M. Lea",
+      "orcid": "https://orcid.org/0000-0001-9287-8053",
+      "h_index": 74,
+      "i10_index": 182,
+      "works_count": 491,
+      "cited_by_count": 16351,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5027958286",
+      "display_name": "Bridget O Carragher",
+      "orcid": "https://orcid.org/0000-0002-0624-5020",
+      "h_index": 74,
+      "i10_index": 176,
+      "works_count": 405,
+      "cited_by_count": 23178,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5012990749",
+      "display_name": "Matthew R. Redinbo",
+      "orcid": "https://orcid.org/0000-0003-0814-5346",
+      "h_index": 74,
+      "i10_index": 157,
+      "works_count": 444,
+      "cited_by_count": 20986,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Structural Biology -- 8.9",
+      "id": "https://openalex.org/A5040337685",
+      "display_name": "Steve J. Gamblin",
+      "orcid": "https://orcid.org/0000-0001-5331-639X",
+      "h_index": 74,
+      "i10_index": 104,
+      "works_count": 268,
+      "cited_by_count": 27986,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5062733366",
+      "display_name": "Erdmann Spiecker",
+      "orcid": "https://orcid.org/0000-0002-2723-5227",
+      "h_index": 73,
+      "i10_index": 321,
+      "works_count": 703,
+      "cited_by_count": 21305,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5049849950",
+      "display_name": "Emil L. Smith",
+      "orcid": "https://orcid.org/0000-0002-9158-4798",
+      "h_index": 73,
+      "i10_index": 234,
+      "works_count": 280,
+      "cited_by_count": 17101,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5083355596",
+      "display_name": "Janet Lynn Smith",
+      "orcid": "https://orcid.org/0000-0002-0664-9228",
+      "h_index": 73,
+      "i10_index": 213,
+      "works_count": 439,
+      "cited_by_count": 18416,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5029265500",
+      "display_name": "Thilo Stehle",
+      "orcid": "https://orcid.org/0000-0002-4571-8548",
+      "h_index": 73,
+      "i10_index": 190,
+      "works_count": 463,
+      "cited_by_count": 18312,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5002201442",
+      "display_name": "Pedro M. Alzari",
+      "orcid": "https://orcid.org/0000-0002-4233-1903",
+      "h_index": 73,
+      "i10_index": 185,
+      "works_count": 483,
+      "cited_by_count": 16128,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5063551258",
+      "display_name": "János Hajdu",
+      "orcid": "https://orcid.org/0000-0002-3747-2760",
+      "h_index": 73,
+      "i10_index": 176,
+      "works_count": 381,
+      "cited_by_count": 25074,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5007964042",
+      "display_name": "Duilio Cascio",
+      "orcid": "https://orcid.org/0000-0001-8285-754X",
+      "h_index": 73,
+      "i10_index": 166,
+      "works_count": 505,
+      "cited_by_count": 20798,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5051132348",
+      "display_name": "T. Alwyn Jones",
+      "orcid": "https://orcid.org/0000-0002-0067-3382",
+      "h_index": 73,
+      "i10_index": 153,
+      "works_count": 201,
+      "cited_by_count": 35370,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5000721117",
+      "display_name": "Amy C. Rosenzweig",
+      "orcid": "https://orcid.org/0000-0001-8472-4134",
+      "h_index": 73,
+      "i10_index": 153,
+      "works_count": 1350,
+      "cited_by_count": 19700,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5043739803",
+      "display_name": "Thomas P. Singer",
+      "orcid": "https://orcid.org/0000-0003-2495-4151",
+      "h_index": 72,
+      "i10_index": 290,
+      "works_count": 364,
+      "cited_by_count": 18598,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5004462153",
+      "display_name": "Masaki Yamamoto",
+      "orcid": "https://orcid.org/0000-0002-1311-1768",
+      "h_index": 72,
+      "i10_index": 253,
+      "works_count": 752,
+      "cited_by_count": 29900,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5010549483",
+      "display_name": "Gunter Schneider",
+      "orcid": "https://orcid.org/0000-0003-0622-5713",
+      "h_index": 72,
+      "i10_index": 229,
+      "works_count": 493,
+      "cited_by_count": 16370,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5014610741",
+      "display_name": "Matthew F. Chisholm",
+      "orcid": "https://orcid.org/0000-0003-0546-5109",
+      "h_index": 72,
+      "i10_index": 198,
+      "works_count": 373,
+      "cited_by_count": 22427,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5065700590",
+      "display_name": "Robert P. Hausinger",
+      "orcid": "https://orcid.org/0000-0002-3643-2054",
+      "h_index": 72,
+      "i10_index": 195,
+      "works_count": 346,
+      "cited_by_count": 21752,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5077634475",
+      "display_name": "Lindsay D. Eltis",
+      "orcid": "https://orcid.org/0000-0002-6774-8158",
+      "h_index": 72,
+      "i10_index": 192,
+      "works_count": 288,
+      "cited_by_count": 16544,
+      "discipline": "Structural Biology",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5080004495",
+      "display_name": "Jürgen M. Plitzko",
+      "orcid": "https://orcid.org/0000-0002-6402-8315",
+      "h_index": 72,
+      "i10_index": 137,
+      "works_count": 373,
+      "cited_by_count": 17876,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5084271294",
+      "display_name": "Thomas J. Deerinck",
+      "orcid": "https://orcid.org/0000-0002-1696-8409",
+      "h_index": 72,
+      "i10_index": 113,
+      "works_count": 175,
+      "cited_by_count": 23689,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5108288766",
+      "display_name": "Richard Nelson Perham",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 236,
+      "works_count": 364,
+      "cited_by_count": 16557,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5080581166",
+      "display_name": "B. V. Venkataram Prasad",
+      "orcid": "https://orcid.org/0000-0002-1172-2071",
+      "h_index": 71,
+      "i10_index": 176,
+      "works_count": 296,
+      "cited_by_count": 16098,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5108385912",
+      "display_name": "Louise Napier Johnson",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 144,
+      "works_count": 266,
+      "cited_by_count": 18706,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5043428416",
+      "display_name": "Steven J. Ludtke",
+      "orcid": "https://orcid.org/0000-0002-1903-1574",
+      "h_index": 71,
+      "i10_index": 119,
+      "works_count": 262,
+      "cited_by_count": 21365,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Structural Biology -- 8.8",
+      "id": "https://openalex.org/A5028593363",
+      "display_name": "Severin Amelinckx",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 415,
+      "works_count": 974,
+      "cited_by_count": 21330,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5029790706",
+      "display_name": "Dagmar Gerthsen",
+      "orcid": "https://orcid.org/0000-0003-2406-5805",
+      "h_index": 70,
+      "i10_index": 357,
+      "works_count": 726,
+      "cited_by_count": 18124,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5020556619",
+      "display_name": "Isao Tanaka",
+      "orcid": "https://orcid.org/0000-0002-2736-7107",
+      "h_index": 70,
+      "i10_index": 338,
+      "works_count": 948,
+      "cited_by_count": 21161,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5089220289",
+      "display_name": "Jian‐Min Zuo",
+      "orcid": "https://orcid.org/0000-0002-5151-3370",
+      "h_index": 70,
+      "i10_index": 279,
+      "works_count": 667,
+      "cited_by_count": 18528,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5091252875",
+      "display_name": "J.A. Gerlt",
+      "orcid": "https://orcid.org/0000-0002-5625-1218",
+      "h_index": 70,
+      "i10_index": 212,
+      "works_count": 847,
+      "cited_by_count": 18251,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5060925042",
+      "display_name": "José L. Carrascosa",
+      "orcid": "https://orcid.org/0000-0002-4749-3522",
+      "h_index": 70,
+      "i10_index": 199,
+      "works_count": 294,
+      "cited_by_count": 14212,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5043607954",
+      "display_name": "Philip D. Jeffrey",
+      "orcid": "https://orcid.org/0000-0002-4351-5341",
+      "h_index": 70,
+      "i10_index": 147,
+      "works_count": 345,
+      "cited_by_count": 31473,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5021767059",
+      "display_name": "Ivan Ahel",
+      "orcid": "https://orcid.org/0000-0002-9446-3756",
+      "h_index": 70,
+      "i10_index": 131,
+      "works_count": 346,
+      "cited_by_count": 15952,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5002277619",
+      "display_name": "Frank M. Raushel",
+      "orcid": "https://orcid.org/0000-0002-5918-3089",
+      "h_index": 69,
+      "i10_index": 295,
+      "works_count": 554,
+      "cited_by_count": 18651,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5042847807",
+      "display_name": "K. Ravi Acharya",
+      "orcid": "https://orcid.org/0000-0002-3009-4058",
+      "h_index": 69,
+      "i10_index": 226,
+      "works_count": 504,
+      "cited_by_count": 17574,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5024196097",
+      "display_name": "Wolfgang Buckel",
+      "orcid": "https://orcid.org/0000-0002-8280-1260",
+      "h_index": 69,
+      "i10_index": 210,
+      "works_count": 430,
+      "cited_by_count": 18833,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5035756447",
+      "display_name": "Kuniaki Nagayama",
+      "orcid": "https://orcid.org/0000-0002-8092-3360",
+      "h_index": 69,
+      "i10_index": 202,
+      "works_count": 438,
+      "cited_by_count": 20220,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5078223433",
+      "display_name": "Howard H. Robinson",
+      "orcid": "https://orcid.org/0000-0001-7523-4678",
+      "h_index": 69,
+      "i10_index": 189,
+      "works_count": 431,
+      "cited_by_count": 13883,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5045810897",
+      "display_name": "Z. Hong Zhou",
+      "orcid": "https://orcid.org/0000-0002-8373-4717",
+      "h_index": 69,
+      "i10_index": 188,
+      "works_count": 292,
+      "cited_by_count": 15983,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5088534839",
+      "display_name": "Lena Fitting Kourkoutis",
+      "orcid": "https://orcid.org/0000-0002-1303-1362",
+      "h_index": 69,
+      "i10_index": 179,
+      "works_count": 401,
+      "cited_by_count": 23142,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5062569953",
+      "display_name": "Alexei V. Savchenko",
+      "orcid": "https://orcid.org/0000-0002-5256-9237",
+      "h_index": 69,
+      "i10_index": 177,
+      "works_count": 276,
+      "cited_by_count": 13464,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5011269879",
+      "display_name": "Kay Diederichs",
+      "orcid": "https://orcid.org/0000-0001-5360-0905",
+      "h_index": 69,
+      "i10_index": 150,
+      "works_count": 367,
+      "cited_by_count": 18824,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5036172001",
+      "display_name": "Karl Harlos",
+      "orcid": "https://orcid.org/0000-0002-7266-4354",
+      "h_index": 69,
+      "i10_index": 147,
+      "works_count": 382,
+      "cited_by_count": 15381,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5051385736",
+      "display_name": "Keith Moffat",
+      "orcid": "https://orcid.org/0000-0002-7417-9264",
+      "h_index": 69,
+      "i10_index": 145,
+      "works_count": 248,
+      "cited_by_count": 18133,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Physics and Astronomy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5007156546",
+      "display_name": "Guy G Dodson",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 135,
+      "works_count": 217,
+      "cited_by_count": 19669,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5111760567",
+      "display_name": "Christian Kübel",
+      "orcid": "https://orcid.org/0000-0001-5701-4006",
+      "h_index": 68,
+      "i10_index": 274,
+      "works_count": 486,
+      "cited_by_count": 18748,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5046960969",
+      "display_name": "J.M. Carazo",
+      "orcid": "https://orcid.org/0000-0003-0788-8447",
+      "h_index": 68,
+      "i10_index": 244,
+      "works_count": 479,
+      "cited_by_count": 18397,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Structural Biology -- 8.7",
+      "id": "https://openalex.org/A5005759921",
+      "display_name": "Mirosław Cygler",
+      "orcid": "https://orcid.org/0000-0003-4579-1881",
+      "h_index": 68,
+      "i10_index": 217,
+      "works_count": 328,
+      "cited_by_count": 20518,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5006813426",
+      "display_name": "Dale E. Edmondson",
+      "orcid": "https://orcid.org/0000-0002-1304-231X",
+      "h_index": 68,
+      "i10_index": 186,
+      "works_count": 302,
+      "cited_by_count": 18160,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5067385882",
+      "display_name": "Guy Schoehn",
+      "orcid": "https://orcid.org/0000-0002-1459-3201",
+      "h_index": 68,
+      "i10_index": 179,
+      "works_count": 400,
+      "cited_by_count": 13751,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5045562414",
+      "display_name": "Rolf Hilgenfeld",
+      "orcid": "https://orcid.org/0000-0001-8850-2977",
+      "h_index": 68,
+      "i10_index": 175,
+      "works_count": 380,
+      "cited_by_count": 25100,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5022487976",
+      "display_name": "Yoshinori Fujiyoshi",
+      "orcid": "https://orcid.org/0000-0002-8070-1493",
+      "h_index": 68,
+      "i10_index": 172,
+      "works_count": 400,
+      "cited_by_count": 23145,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5078946015",
+      "display_name": "Anthony J. Wilkinson",
+      "orcid": "https://orcid.org/0000-0003-4577-9479",
+      "h_index": 68,
+      "i10_index": 172,
+      "works_count": 399,
+      "cited_by_count": 17481,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5072228953",
+      "display_name": "Catherine Luschinsky Drennan",
+      "orcid": "https://orcid.org/0000-0001-5486-2755",
+      "h_index": 68,
+      "i10_index": 168,
+      "works_count": 522,
+      "cited_by_count": 14382,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5003137941",
+      "display_name": "Joseph M. Jez",
+      "orcid": "https://orcid.org/0000-0001-7911-9108",
+      "h_index": 68,
+      "i10_index": 160,
+      "works_count": 304,
+      "cited_by_count": 15099,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5010165126",
+      "display_name": "Andrew D. Mesecar",
+      "orcid": "https://orcid.org/0000-0002-1241-2577",
+      "h_index": 68,
+      "i10_index": 159,
+      "works_count": 394,
+      "cited_by_count": 17914,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5045847541",
+      "display_name": "Richard G. Brennan",
+      "orcid": "https://orcid.org/0000-0001-7647-485X",
+      "h_index": 68,
+      "i10_index": 150,
+      "works_count": 299,
+      "cited_by_count": 19107,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5066308693",
+      "display_name": "Jonathan M. Grimes",
+      "orcid": "https://orcid.org/0000-0001-9698-0389",
+      "h_index": 68,
+      "i10_index": 149,
+      "works_count": 345,
+      "cited_by_count": 17564,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5008622925",
+      "display_name": "Jacques Dubochet",
+      "orcid": "https://orcid.org/0000-0002-9159-7361",
+      "h_index": 68,
+      "i10_index": 129,
+      "works_count": 188,
+      "cited_by_count": 19942,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5037189873",
+      "display_name": "Rolf Erni",
+      "orcid": "https://orcid.org/0000-0003-2391-5943",
+      "h_index": 67,
+      "i10_index": 220,
+      "works_count": 420,
+      "cited_by_count": 23232,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5006948939",
+      "display_name": "Colin Ophus",
+      "orcid": "https://orcid.org/0000-0003-2348-8558",
+      "h_index": 67,
+      "i10_index": 218,
+      "works_count": 699,
+      "cited_by_count": 18511,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5078036358",
+      "display_name": "Angus I. Kirkland",
+      "orcid": "https://orcid.org/0000-0001-8068-1990",
+      "h_index": 67,
+      "i10_index": 205,
+      "works_count": 501,
+      "cited_by_count": 16623,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5047974197",
+      "display_name": "John S. Blanchard",
+      "orcid": "https://orcid.org/0000-0002-9195-4402",
+      "h_index": 67,
+      "i10_index": 202,
+      "works_count": 326,
+      "cited_by_count": 15370,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5004792265",
+      "display_name": "David Leys",
+      "orcid": "https://orcid.org/0000-0003-4845-8443",
+      "h_index": 67,
+      "i10_index": 175,
+      "works_count": 556,
+      "cited_by_count": 12666,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5007519466",
+      "display_name": "Richard D. Leapman",
+      "orcid": "https://orcid.org/0000-0002-8575-4084",
+      "h_index": 67,
+      "i10_index": 162,
+      "works_count": 364,
+      "cited_by_count": 22412,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5034479823",
+      "display_name": "Julien Lescar",
+      "orcid": "https://orcid.org/0000-0002-9623-8130",
+      "h_index": 67,
+      "i10_index": 156,
+      "works_count": 391,
+      "cited_by_count": 15379,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5056046836",
+      "display_name": "Judy Hirst",
+      "orcid": "https://orcid.org/0000-0001-8667-6797",
+      "h_index": 67,
+      "i10_index": 134,
+      "works_count": 313,
+      "cited_by_count": 18833,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5004068855",
+      "display_name": "S. James Remington",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 126,
+      "works_count": 236,
+      "cited_by_count": 22194,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5004678380",
+      "display_name": "Johan Verbeeck",
+      "orcid": "https://orcid.org/0000-0002-7151-8101",
+      "h_index": 66,
+      "i10_index": 287,
+      "works_count": 526,
+      "cited_by_count": 19818,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Structural Biology -- 8.6",
+      "id": "https://openalex.org/A5048670971",
+      "display_name": "Robert F. Klie",
+      "orcid": "https://orcid.org/0000-0003-4773-6667",
+      "h_index": 66,
+      "i10_index": 203,
+      "works_count": 611,
+      "cited_by_count": 19691,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5108432350",
+      "display_name": "Charles David Stout",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 157,
+      "works_count": 313,
+      "cited_by_count": 15818,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5088269651",
+      "display_name": "Adam Zlotnick",
+      "orcid": "https://orcid.org/0000-0001-9945-6267",
+      "h_index": 66,
+      "i10_index": 145,
+      "works_count": 230,
+      "cited_by_count": 12897,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5071526287",
+      "display_name": "Brian R. Crane",
+      "orcid": "https://orcid.org/0000-0001-8234-9991",
+      "h_index": 66,
+      "i10_index": 142,
+      "works_count": 319,
+      "cited_by_count": 14203,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5058923877",
+      "display_name": "Jingshan Ren",
+      "orcid": "https://orcid.org/0000-0003-4015-1404",
+      "h_index": 66,
+      "i10_index": 136,
+      "works_count": 468,
+      "cited_by_count": 17893,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5074423495",
+      "display_name": "Eleanor Joy Dodson",
+      "orcid": "https://orcid.org/0000-0002-8968-9814",
+      "h_index": 66,
+      "i10_index": 134,
+      "works_count": 270,
+      "cited_by_count": 32106,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5111982475",
+      "display_name": "Hans Eklund",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 116,
+      "works_count": 226,
+      "cited_by_count": 16030,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5047363695",
+      "display_name": "Quentin Mathieu Ramasse",
+      "orcid": "https://orcid.org/0000-0001-7466-2283",
+      "h_index": 65,
+      "i10_index": 252,
+      "works_count": 566,
+      "cited_by_count": 16821,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5009290437",
+      "display_name": "Celia A. Schiffer",
+      "orcid": "https://orcid.org/0000-0003-2270-6613",
+      "h_index": 65,
+      "i10_index": 199,
+      "works_count": 654,
+      "cited_by_count": 12848,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5081814794",
+      "display_name": "Emil F. PAI",
+      "orcid": "https://orcid.org/0000-0002-1162-7242",
+      "h_index": 65,
+      "i10_index": 160,
+      "works_count": 476,
+      "cited_by_count": 19328,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5029634022",
+      "display_name": "Elspeth F. Garman",
+      "orcid": "https://orcid.org/0000-0001-8329-5665",
+      "h_index": 65,
+      "i10_index": 152,
+      "works_count": 341,
+      "cited_by_count": 15296,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5068838357",
+      "display_name": "Benes Louis Trus",
+      "orcid": "https://orcid.org/0000-0002-2652-6524",
+      "h_index": 65,
+      "i10_index": 135,
+      "works_count": 191,
+      "cited_by_count": 13167,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5078245800",
+      "display_name": "Reinhard Rachel",
+      "orcid": "https://orcid.org/0000-0001-6367-1221",
+      "h_index": 65,
+      "i10_index": 134,
+      "works_count": 205,
+      "cited_by_count": 12660,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5027017783",
+      "display_name": "Igor Polikarpov",
+      "orcid": "https://orcid.org/0000-0001-9496-4174",
+      "h_index": 64,
+      "i10_index": 248,
+      "works_count": 581,
+      "cited_by_count": 15530,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5019164857",
+      "display_name": "S.E. Ealick",
+      "orcid": "https://orcid.org/0000-0001-8548-112X",
+      "h_index": 64,
+      "i10_index": 230,
+      "works_count": 643,
+      "cited_by_count": 14065,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5013080748",
+      "display_name": "David W. McComb",
+      "orcid": "https://orcid.org/0000-0003-3763-9652",
+      "h_index": 64,
+      "i10_index": 218,
+      "works_count": 637,
+      "cited_by_count": 22453,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5077368913",
+      "display_name": "Irene T. Weber",
+      "orcid": "https://orcid.org/0000-0003-4876-7393",
+      "h_index": 64,
+      "i10_index": 215,
+      "works_count": 500,
+      "cited_by_count": 16329,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5072628018",
+      "display_name": "S.S. Hasnain",
+      "orcid": "https://orcid.org/0000-0002-2854-4718",
+      "h_index": 64,
+      "i10_index": 212,
+      "works_count": 644,
+      "cited_by_count": 12985,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5006511805",
+      "display_name": "Wladek Minor",
+      "orcid": "https://orcid.org/0000-0001-7075-7090",
+      "h_index": 64,
+      "i10_index": 185,
+      "works_count": 793,
+      "cited_by_count": 54589,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5027461170",
+      "display_name": "Brian G. Fox",
+      "orcid": "https://orcid.org/0000-0001-9027-5371",
+      "h_index": 64,
+      "i10_index": 177,
+      "works_count": 285,
+      "cited_by_count": 14032,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5006045347",
+      "display_name": "Raymond J. Owens",
+      "orcid": "https://orcid.org/0000-0002-3705-2993",
+      "h_index": 64,
+      "i10_index": 164,
+      "works_count": 421,
+      "cited_by_count": 13512,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5059271995",
+      "display_name": "Charles W. Eigenbrot",
+      "orcid": "https://orcid.org/0000-0002-8936-6302",
+      "h_index": 64,
+      "i10_index": 151,
+      "works_count": 224,
+      "cited_by_count": 18030,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5045973927",
+      "display_name": "Yuval Shoham",
+      "orcid": "https://orcid.org/0000-0002-4668-3076",
+      "h_index": 64,
+      "i10_index": 144,
+      "works_count": 316,
+      "cited_by_count": 13818,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Structural Biology -- 8.5",
+      "id": "https://openalex.org/A5084200031",
+      "display_name": "Tamir Gonen",
+      "orcid": "https://orcid.org/0000-0002-9254-4069",
+      "h_index": 64,
+      "i10_index": 136,
+      "works_count": 440,
+      "cited_by_count": 17236,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5076097538",
+      "display_name": "Martha L Ludwig",
+      "orcid": "https://orcid.org/0000-0002-0324-7602",
+      "h_index": 64,
+      "i10_index": 130,
+      "works_count": 222,
+      "cited_by_count": 12753,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5046815472",
+      "display_name": "Clinton S. Potter",
+      "orcid": "https://orcid.org/0000-0003-2394-0831",
+      "h_index": 64,
+      "i10_index": 122,
+      "works_count": 229,
+      "cited_by_count": 16792,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5017567464",
+      "display_name": "Pawel A. Penczek",
+      "orcid": "https://orcid.org/0000-0002-2421-0577",
+      "h_index": 64,
+      "i10_index": 100,
+      "works_count": 181,
+      "cited_by_count": 18581,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5022410156",
+      "display_name": "Paul Walther",
+      "orcid": "https://orcid.org/0000-0002-4080-5685",
+      "h_index": 63,
+      "i10_index": 220,
+      "works_count": 380,
+      "cited_by_count": 17093,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5013710650",
+      "display_name": "Peter J. Tonge",
+      "orcid": "https://orcid.org/0000-0003-1606-3471",
+      "h_index": 63,
+      "i10_index": 188,
+      "works_count": 378,
+      "cited_by_count": 12650,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5089547236",
+      "display_name": "Sandro Ghisla",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 162,
+      "works_count": 302,
+      "cited_by_count": 11581,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5023739289",
+      "display_name": "Kenneth H. Downing",
+      "orcid": "https://orcid.org/0000-0002-3543-7013",
+      "h_index": 63,
+      "i10_index": 152,
+      "works_count": 288,
+      "cited_by_count": 25033,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5020492463",
+      "display_name": "Stefan Raunser",
+      "orcid": "https://orcid.org/0000-0001-9373-3016",
+      "h_index": 63,
+      "i10_index": 143,
+      "works_count": 314,
+      "cited_by_count": 15281,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5079418780",
+      "display_name": "Mirjam Czjzek",
+      "orcid": "https://orcid.org/0000-0002-7483-2841",
+      "h_index": 63,
+      "i10_index": 139,
+      "works_count": 329,
+      "cited_by_count": 14202,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5082994244",
+      "display_name": "Jakob Birkedal Wagner",
+      "orcid": "https://orcid.org/0000-0002-2945-0190",
+      "h_index": 63,
+      "i10_index": 138,
+      "works_count": 330,
+      "cited_by_count": 13402,
+      "discipline": "Structural Biology",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Structural Biology -- 8.4",
+      "id": "https://openalex.org/A5029478690",
+      "display_name": "Caroline Kisker",
+      "orcid": "https://orcid.org/0000-0002-0216-6026",
+      "h_index": 63,
+      "i10_index": 131,
+      "works_count": 355,
+      "cited_by_count": 14328,
+      "discipline": "Structural Biology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Structural Biology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    }
+  ]
+}

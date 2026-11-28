@@ -1,0 +1,5749 @@
+{
+  "kind": "subfield",
+  "id": 1705,
+  "name": "Computer Networks and Communications",
+  "total_in_scrape": 307,
+  "count": 307,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Computer Networks and Communications -- 9.9",
+      "id": "https://openalex.org/A5100773343",
+      "display_name": "Xuemin Shen",
+      "orcid": "https://orcid.org/0000-0002-4140-287X",
+      "h_index": 161,
+      "i10_index": 1267,
+      "works_count": 2249,
+      "cited_by_count": 112413,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Computer Networks and Communications -- 9.9",
+      "id": "https://openalex.org/A5014716105",
+      "display_name": "Rajkumar Buyya",
+      "orcid": "https://orcid.org/0000-0001-9754-6496",
+      "h_index": 159,
+      "i10_index": 839,
+      "works_count": 1385,
+      "cited_by_count": 130786,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Computer Networks and Communications -- 9.9",
+      "id": "https://openalex.org/A5040529929",
+      "display_name": "Scott J. Shenker",
+      "orcid": "https://orcid.org/0000-0002-1357-7533",
+      "h_index": 145,
+      "i10_index": 427,
+      "works_count": 568,
+      "cited_by_count": 119010,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Computer Networks and Communications -- 9.9",
+      "id": "https://openalex.org/A5057916222",
+      "display_name": "Mohsen Guizani",
+      "orcid": "https://orcid.org/0000-0002-8972-8094",
+      "h_index": 141,
+      "i10_index": 1165,
+      "works_count": 1889,
+      "cited_by_count": 101858,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Computer Networks and Communications -- 9.9",
+      "id": "https://openalex.org/A5074022699",
+      "display_name": "Athanasios V. Vasilakos",
+      "orcid": "https://orcid.org/0000-0003-1902-9877",
+      "h_index": 141,
+      "i10_index": 594,
+      "works_count": 1024,
+      "cited_by_count": 73124,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Computer Networks and Communications -- 9.9",
+      "id": "https://openalex.org/A5100409306",
+      "display_name": "Neeraj Kumar",
+      "orcid": "https://orcid.org/0000-0002-3020-3947",
+      "h_index": 140,
+      "i10_index": 861,
+      "works_count": 1374,
+      "cited_by_count": 75614,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5032231503",
+      "display_name": "Ian T Foster",
+      "orcid": "https://orcid.org/0000-0003-2129-5269",
+      "h_index": 129,
+      "i10_index": 683,
+      "works_count": 1602,
+      "cited_by_count": 90486,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5044396726",
+      "display_name": "Ian Fuat Akyildiz",
+      "orcid": "https://orcid.org/0000-0002-8099-3529",
+      "h_index": 128,
+      "i10_index": 439,
+      "works_count": 711,
+      "cited_by_count": 118267,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5027798962",
+      "display_name": "Dan Boneh",
+      "orcid": "https://orcid.org/0000-0003-0820-0421",
+      "h_index": 126,
+      "i10_index": 318,
+      "works_count": 570,
+      "cited_by_count": 87485,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5035919267",
+      "display_name": "Victor C. M. Leung",
+      "orcid": "https://orcid.org/0000-0003-3529-2640",
+      "h_index": 125,
+      "i10_index": 1123,
+      "works_count": 2257,
+      "cited_by_count": 75991,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5056732574",
+      "display_name": "David Culler",
+      "orcid": "https://orcid.org/0000-0002-0460-9900",
+      "h_index": 118,
+      "i10_index": 353,
+      "works_count": 612,
+      "cited_by_count": 78728,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5076776322",
+      "display_name": "Joel J. P. C. Rodrigues",
+      "orcid": "https://orcid.org/0000-0001-8657-3800",
+      "h_index": 117,
+      "i10_index": 835,
+      "works_count": 1435,
+      "cited_by_count": 57061,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5036683370",
+      "display_name": "Don Towsley",
+      "orcid": "https://orcid.org/0000-0002-7808-7375",
+      "h_index": 117,
+      "i10_index": 685,
+      "works_count": 1173,
+      "cited_by_count": 60500,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5069596903",
+      "display_name": "Michael Rung-Tsong Lyu",
+      "orcid": "https://orcid.org/0000-0002-3666-5798",
+      "h_index": 117,
+      "i10_index": 573,
+      "works_count": 873,
+      "cited_by_count": 55339,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5051587086",
+      "display_name": "Deborah L. Estrin",
+      "orcid": "https://orcid.org/0000-0001-6477-0096",
+      "h_index": 117,
+      "i10_index": 345,
+      "works_count": 654,
+      "cited_by_count": 84197,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5113516878",
+      "display_name": "Hari Balakrishnan",
+      "orcid": "https://orcid.org/0000-0002-1455-9652",
+      "h_index": 115,
+      "i10_index": 284,
+      "works_count": 449,
+      "cited_by_count": 99631,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Computer Networks and Communications -- 9.8",
+      "id": "https://openalex.org/A5100456327",
+      "display_name": "Yan Zhang",
+      "orcid": "https://orcid.org/0000-0002-8561-5092",
+      "h_index": 113,
+      "i10_index": 524,
+      "works_count": 1309,
+      "cited_by_count": 53682,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5059529956",
+      "display_name": "Mário Gerla",
+      "orcid": null,
+      "h_index": 107,
+      "i10_index": 646,
+      "works_count": 1430,
+      "cited_by_count": 54738,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5100337209",
+      "display_name": "Min Chen",
+      "orcid": "https://orcid.org/0000-0002-0960-4447",
+      "h_index": 107,
+      "i10_index": 549,
+      "works_count": 1184,
+      "cited_by_count": 53619,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5002779288",
+      "display_name": "Mehdi Hosseinzadeh",
+      "orcid": "https://orcid.org/0000-0003-1088-4551",
+      "h_index": 107,
+      "i10_index": 352,
+      "works_count": 536,
+      "cited_by_count": 175176,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5002810652",
+      "display_name": "Sherali Zeadally",
+      "orcid": "https://orcid.org/0000-0002-5982-8190",
+      "h_index": 106,
+      "i10_index": 387,
+      "works_count": 689,
+      "cited_by_count": 43373,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5015993565",
+      "display_name": "Albert Y. Zomaya",
+      "orcid": "https://orcid.org/0000-0002-3090-1059",
+      "h_index": 104,
+      "i10_index": 653,
+      "works_count": 1385,
+      "cited_by_count": 47341,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5074563122",
+      "display_name": "Mani B. Srivastava",
+      "orcid": "https://orcid.org/0000-0002-3782-9192",
+      "h_index": 104,
+      "i10_index": 397,
+      "works_count": 722,
+      "cited_by_count": 50011,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5108044017",
+      "display_name": "Zhihan Lv",
+      "orcid": "https://orcid.org/0000-0001-8164-1405",
+      "h_index": 104,
+      "i10_index": 392,
+      "works_count": 636,
+      "cited_by_count": 32420,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5003914268",
+      "display_name": "Jennifer Rexford",
+      "orcid": "https://orcid.org/0000-0002-0231-8165",
+      "h_index": 104,
+      "i10_index": 334,
+      "works_count": 572,
+      "cited_by_count": 50317,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5033480276",
+      "display_name": "Mihir Bellare",
+      "orcid": "https://orcid.org/0000-0002-8765-5573",
+      "h_index": 104,
+      "i10_index": 231,
+      "works_count": 421,
+      "cited_by_count": 50297,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5052959289",
+      "display_name": "Dina Katabi",
+      "orcid": "https://orcid.org/0000-0003-4854-4157",
+      "h_index": 103,
+      "i10_index": 210,
+      "works_count": 339,
+      "cited_by_count": 36869,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Computer Networks and Communications -- 9.7",
+      "id": "https://openalex.org/A5061694501",
+      "display_name": "Elisa Bertino",
+      "orcid": "https://orcid.org/0000-0002-4029-7051",
+      "h_index": 102,
+      "i10_index": 706,
+      "works_count": 1528,
+      "cited_by_count": 43963,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5049154222",
+      "display_name": "Laurence Tianruo Yang",
+      "orcid": "https://orcid.org/0000-0002-7986-4244",
+      "h_index": 101,
+      "i10_index": 577,
+      "works_count": 1226,
+      "cited_by_count": 37678,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5018409592",
+      "display_name": "Mamoun Alazab",
+      "orcid": "https://orcid.org/0000-0002-1928-3704",
+      "h_index": 100,
+      "i10_index": 325,
+      "works_count": 423,
+      "cited_by_count": 36805,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5109560331",
+      "display_name": "Randy Howard Katz",
+      "orcid": null,
+      "h_index": 100,
+      "i10_index": 278,
+      "works_count": 486,
+      "cited_by_count": 59539,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5043464306",
+      "display_name": "Song Guo",
+      "orcid": "https://orcid.org/0000-0001-9831-2202",
+      "h_index": 99,
+      "i10_index": 604,
+      "works_count": 1118,
+      "cited_by_count": 39918,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5103216531",
+      "display_name": "Naixue N. Xiong",
+      "orcid": "https://orcid.org/0000-0002-0394-4635",
+      "h_index": 99,
+      "i10_index": 589,
+      "works_count": 1122,
+      "cited_by_count": 35366,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5010727123",
+      "display_name": "Sushil Jajodia",
+      "orcid": "https://orcid.org/0000-0003-3210-558X",
+      "h_index": 99,
+      "i10_index": 432,
+      "works_count": 914,
+      "cited_by_count": 37457,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5072011650",
+      "display_name": "Muhammad Khurram Khan",
+      "orcid": "https://orcid.org/0000-0001-6636-0533",
+      "h_index": 99,
+      "i10_index": 429,
+      "works_count": 700,
+      "cited_by_count": 33578,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5053541912",
+      "display_name": "Kang Geun Shin",
+      "orcid": "https://orcid.org/0000-0003-0086-8777",
+      "h_index": 98,
+      "i10_index": 567,
+      "works_count": 1024,
+      "cited_by_count": 40622,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5002219113",
+      "display_name": "Vern Paxson",
+      "orcid": "https://orcid.org/0009-0005-2673-543X",
+      "h_index": 98,
+      "i10_index": 228,
+      "works_count": 349,
+      "cited_by_count": 47341,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5079301418",
+      "display_name": "Houbing Song",
+      "orcid": "https://orcid.org/0000-0003-2631-9223",
+      "h_index": 97,
+      "i10_index": 496,
+      "works_count": 827,
+      "cited_by_count": 35435,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Computer Networks and Communications -- 9.6",
+      "id": "https://openalex.org/A5071261948",
+      "display_name": "Brij Bhooshan Gupta",
+      "orcid": "https://orcid.org/0000-0003-4929-4698",
+      "h_index": 97,
+      "i10_index": 486,
+      "works_count": 943,
+      "cited_by_count": 39386,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5036851432",
+      "display_name": "Kishor Shridharbhai Trivedi",
+      "orcid": "https://orcid.org/0000-0001-7396-6330",
+      "h_index": 97,
+      "i10_index": 468,
+      "works_count": 806,
+      "cited_by_count": 33733,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5078339613",
+      "display_name": "Roger P. Wattenhofer",
+      "orcid": "https://orcid.org/0000-0002-6339-3134",
+      "h_index": 96,
+      "i10_index": 408,
+      "works_count": 1080,
+      "cited_by_count": 35077,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5009164482",
+      "display_name": "Shuguang Robert Cui",
+      "orcid": "https://orcid.org/0000-0003-2608-775X",
+      "h_index": 96,
+      "i10_index": 404,
+      "works_count": 799,
+      "cited_by_count": 42442,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5013311265",
+      "display_name": "Nei Kato",
+      "orcid": "https://orcid.org/0000-0001-8769-302X",
+      "h_index": 96,
+      "i10_index": 398,
+      "works_count": 847,
+      "cited_by_count": 37005,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5011213078",
+      "display_name": "Ashok Kumar Das",
+      "orcid": "https://orcid.org/0000-0002-5196-9589",
+      "h_index": 96,
+      "i10_index": 385,
+      "works_count": 579,
+      "cited_by_count": 30527,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5037865550",
+      "display_name": "M. Shamim Hossain",
+      "orcid": "https://orcid.org/0000-0001-5906-9422",
+      "h_index": 95,
+      "i10_index": 346,
+      "works_count": 461,
+      "cited_by_count": 29258,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5021772077",
+      "display_name": "Amir Masoud Rahmani",
+      "orcid": "https://orcid.org/0000-0001-8641-6119",
+      "h_index": 94,
+      "i10_index": 384,
+      "works_count": 713,
+      "cited_by_count": 88877,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5080497445",
+      "display_name": "Jean‐Pierre Hubaux",
+      "orcid": "https://orcid.org/0000-0003-1533-6132",
+      "h_index": 94,
+      "i10_index": 287,
+      "works_count": 583,
+      "cited_by_count": 38101,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5063847107",
+      "display_name": "Mauro Conti",
+      "orcid": "https://orcid.org/0000-0002-3612-1934",
+      "h_index": 93,
+      "i10_index": 506,
+      "works_count": 965,
+      "cited_by_count": 37587,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5042326103",
+      "display_name": "Ramesh Govindan",
+      "orcid": "https://orcid.org/0000-0001-8311-8853",
+      "h_index": 92,
+      "i10_index": 271,
+      "works_count": 498,
+      "cited_by_count": 42510,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5002372704",
+      "display_name": "Moni Naor",
+      "orcid": "https://orcid.org/0000-0003-3381-0221",
+      "h_index": 92,
+      "i10_index": 233,
+      "works_count": 349,
+      "cited_by_count": 45500,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Computer Networks and Communications -- 9.5",
+      "id": "https://openalex.org/A5050245571",
+      "display_name": "Amin M. Vahdat",
+      "orcid": "https://orcid.org/0000-0002-4866-1698",
+      "h_index": 92,
+      "i10_index": 232,
+      "works_count": 330,
+      "cited_by_count": 44860,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5050881965",
+      "display_name": "Sajal Kumar Das",
+      "orcid": "https://orcid.org/0000-0002-9471-0868",
+      "h_index": 91,
+      "i10_index": 583,
+      "works_count": 1307,
+      "cited_by_count": 35120,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5101877973",
+      "display_name": "Yunhao Liu",
+      "orcid": "https://orcid.org/0000-0001-8052-9200",
+      "h_index": 91,
+      "i10_index": 463,
+      "works_count": 856,
+      "cited_by_count": 43795,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5100404886",
+      "display_name": "Ning Zhang",
+      "orcid": "https://orcid.org/0000-0002-8781-4925",
+      "h_index": 91,
+      "i10_index": 348,
+      "works_count": 612,
+      "cited_by_count": 30818,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5056518136",
+      "display_name": "Adrian Perrig",
+      "orcid": "https://orcid.org/0000-0002-5280-5412",
+      "h_index": 91,
+      "i10_index": 278,
+      "works_count": 679,
+      "cited_by_count": 49830,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5005228053",
+      "display_name": "Shui Yu",
+      "orcid": "https://orcid.org/0000-0003-4485-6743",
+      "h_index": 90,
+      "i10_index": 521,
+      "works_count": 946,
+      "cited_by_count": 33740,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5070447777",
+      "display_name": "Rongxing Lu",
+      "orcid": "https://orcid.org/0000-0001-5720-0941",
+      "h_index": 90,
+      "i10_index": 482,
+      "works_count": 762,
+      "cited_by_count": 36095,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5062093738",
+      "display_name": "Jon Crowcroft",
+      "orcid": "https://orcid.org/0000-0002-7013-0121",
+      "h_index": 90,
+      "i10_index": 413,
+      "works_count": 1089,
+      "cited_by_count": 39974,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5100666554",
+      "display_name": "Yang Xiang",
+      "orcid": "https://orcid.org/0000-0001-5252-0831",
+      "h_index": 90,
+      "i10_index": 412,
+      "works_count": 841,
+      "cited_by_count": 31779,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5035085176",
+      "display_name": "Nick McKeown",
+      "orcid": "https://orcid.org/0009-0000-3657-3933",
+      "h_index": 90,
+      "i10_index": 208,
+      "works_count": 327,
+      "cited_by_count": 50188,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5029582839",
+      "display_name": "Noor Zaman Jhanjhi",
+      "orcid": "https://orcid.org/0000-0001-8116-4733",
+      "h_index": 89,
+      "i10_index": 372,
+      "works_count": 643,
+      "cited_by_count": 24388,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Computer Networks and Communications -- 9.4",
+      "id": "https://openalex.org/A5000596496",
+      "display_name": "Kui Ren",
+      "orcid": "https://orcid.org/0000-0003-3441-6277",
+      "h_index": 89,
+      "i10_index": 303,
+      "works_count": 482,
+      "cited_by_count": 39790,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5016290340",
+      "display_name": "Yuguang Michael Fang",
+      "orcid": "https://orcid.org/0000-0002-1079-3871",
+      "h_index": 88,
+      "i10_index": 449,
+      "works_count": 818,
+      "cited_by_count": 27975,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5060514022",
+      "display_name": "Xiaojiang Du",
+      "orcid": "https://orcid.org/0000-0003-4235-9671",
+      "h_index": 88,
+      "i10_index": 442,
+      "works_count": 744,
+      "cited_by_count": 32817,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5023424929",
+      "display_name": "Giancarlo Fortino",
+      "orcid": "https://orcid.org/0000-0002-4039-891X",
+      "h_index": 88,
+      "i10_index": 428,
+      "works_count": 956,
+      "cited_by_count": 32042,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5087114395",
+      "display_name": "Tarek Abdelzaher",
+      "orcid": "https://orcid.org/0000-0003-3883-7220",
+      "h_index": 88,
+      "i10_index": 372,
+      "works_count": 660,
+      "cited_by_count": 31938,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5005327587",
+      "display_name": "Zehui Xiong",
+      "orcid": "https://orcid.org/0000-0002-4440-941X",
+      "h_index": 88,
+      "i10_index": 358,
+      "works_count": 625,
+      "cited_by_count": 31777,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5053223081",
+      "display_name": "Jonathan I. Katz",
+      "orcid": "https://orcid.org/0000-0001-6084-9303",
+      "h_index": 88,
+      "i10_index": 239,
+      "works_count": 446,
+      "cited_by_count": 30625,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5051087399",
+      "display_name": "Ronald L. Rivest",
+      "orcid": "https://orcid.org/0000-0002-7105-3690",
+      "h_index": 88,
+      "i10_index": 233,
+      "works_count": 677,
+      "cited_by_count": 79259,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5046685246",
+      "display_name": "David J. Wetherall",
+      "orcid": "https://orcid.org/0000-0002-3069-9081",
+      "h_index": 88,
+      "i10_index": 158,
+      "works_count": 264,
+      "cited_by_count": 29625,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5008864376",
+      "display_name": "Nirwan Ansari",
+      "orcid": "https://orcid.org/0000-0001-8541-3565",
+      "h_index": 87,
+      "i10_index": 407,
+      "works_count": 836,
+      "cited_by_count": 29790,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5007723627",
+      "display_name": "Lei Shu",
+      "orcid": "https://orcid.org/0000-0002-6700-9347",
+      "h_index": 87,
+      "i10_index": 349,
+      "works_count": 720,
+      "cited_by_count": 30937,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Computer Networks and Communications -- 9.3",
+      "id": "https://openalex.org/A5024072566",
+      "display_name": "David N. C. Tse",
+      "orcid": "https://orcid.org/0000-0003-1460-5900",
+      "h_index": 87,
+      "i10_index": 273,
+      "works_count": 458,
+      "cited_by_count": 69523,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5102762846",
+      "display_name": "Adi Shamir",
+      "orcid": "https://orcid.org/0000-0002-5422-905X",
+      "h_index": 87,
+      "i10_index": 221,
+      "works_count": 365,
+      "cited_by_count": 87492,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5021357065",
+      "display_name": "Lionel Ming-shuan Ni",
+      "orcid": "https://orcid.org/0000-0002-2325-6215",
+      "h_index": 86,
+      "i10_index": 324,
+      "works_count": 684,
+      "cited_by_count": 44965,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5031927335",
+      "display_name": "Muhammad Ali Imran",
+      "orcid": "https://orcid.org/0000-0002-6946-2591",
+      "h_index": 86,
+      "i10_index": 287,
+      "works_count": 445,
+      "cited_by_count": 30172,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5103184697",
+      "display_name": "Sergio Verdú",
+      "orcid": "https://orcid.org/0000-0003-1254-9116",
+      "h_index": 86,
+      "i10_index": 255,
+      "works_count": 398,
+      "cited_by_count": 44175,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5103835895",
+      "display_name": "Amit Sahai",
+      "orcid": "https://orcid.org/0000-0003-2216-9600",
+      "h_index": 86,
+      "i10_index": 226,
+      "works_count": 447,
+      "cited_by_count": 52416,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5005894115",
+      "display_name": "Michele Zorzi",
+      "orcid": "https://orcid.org/0000-0003-2870-4678",
+      "h_index": 85,
+      "i10_index": 547,
+      "works_count": 1046,
+      "cited_by_count": 46699,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5001712801",
+      "display_name": "Robert Huijie Deng",
+      "orcid": "https://orcid.org/0000-0003-3491-8146",
+      "h_index": 85,
+      "i10_index": 437,
+      "works_count": 825,
+      "cited_by_count": 28067,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5018292481",
+      "display_name": "Pramod K. Varshney",
+      "orcid": "https://orcid.org/0000-0003-4504-5088",
+      "h_index": 85,
+      "i10_index": 428,
+      "works_count": 940,
+      "cited_by_count": 34933,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5009882362",
+      "display_name": "Gene Tsudik",
+      "orcid": "https://orcid.org/0000-0002-8467-8614",
+      "h_index": 85,
+      "i10_index": 283,
+      "works_count": 553,
+      "cited_by_count": 28172,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5054741725",
+      "display_name": "Willy Susilo",
+      "orcid": "https://orcid.org/0000-0002-1562-5105",
+      "h_index": 84,
+      "i10_index": 525,
+      "works_count": 1099,
+      "cited_by_count": 28494,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Computer Networks and Communications -- 9.2",
+      "id": "https://openalex.org/A5100770003",
+      "display_name": "Geyong Min",
+      "orcid": "https://orcid.org/0000-0003-1395-7314",
+      "h_index": 84,
+      "i10_index": 429,
+      "works_count": 915,
+      "cited_by_count": 27276,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5100726041",
+      "display_name": "Jiming Chen",
+      "orcid": "https://orcid.org/0000-0003-3155-3145",
+      "h_index": 84,
+      "i10_index": 420,
+      "works_count": 776,
+      "cited_by_count": 29508,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5025668908",
+      "display_name": "Debiao He",
+      "orcid": "https://orcid.org/0000-0002-2446-7436",
+      "h_index": 84,
+      "i10_index": 338,
+      "works_count": 559,
+      "cited_by_count": 27788,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5062761975",
+      "display_name": "Jiawen Kang",
+      "orcid": "https://orcid.org/0000-0002-8218-3490",
+      "h_index": 84,
+      "i10_index": 315,
+      "works_count": 497,
+      "cited_by_count": 28605,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5048642442",
+      "display_name": "David William Chadwick",
+      "orcid": "https://orcid.org/0000-0003-3145-055X",
+      "h_index": 84,
+      "i10_index": 283,
+      "works_count": 517,
+      "cited_by_count": 25119,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Medicine",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5013296031",
+      "display_name": "Tatsuo Miyamura",
+      "orcid": "https://orcid.org/0000-0003-1520-9686",
+      "h_index": 84,
+      "i10_index": 253,
+      "works_count": 499,
+      "cited_by_count": 30635,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5064857767",
+      "display_name": "Andrew Thomas Campbell",
+      "orcid": "https://orcid.org/0000-0001-7394-7682",
+      "h_index": 84,
+      "i10_index": 245,
+      "works_count": 418,
+      "cited_by_count": 32720,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5007379830",
+      "display_name": "Brent R. Waters",
+      "orcid": "https://orcid.org/0009-0008-9718-8623",
+      "h_index": 84,
+      "i10_index": 180,
+      "works_count": 325,
+      "cited_by_count": 56699,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5100600528",
+      "display_name": "Jie Wu",
+      "orcid": "https://orcid.org/0000-0002-3472-1717",
+      "h_index": 83,
+      "i10_index": 581,
+      "works_count": 1342,
+      "cited_by_count": 28761,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5080122431",
+      "display_name": "Shiwen Mao",
+      "orcid": "https://orcid.org/0000-0002-7052-0007",
+      "h_index": 83,
+      "i10_index": 411,
+      "works_count": 731,
+      "cited_by_count": 33476,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5083596391",
+      "display_name": "Baochun Li",
+      "orcid": "https://orcid.org/0000-0003-2404-0974",
+      "h_index": 83,
+      "i10_index": 368,
+      "works_count": 615,
+      "cited_by_count": 23982,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Computer Networks and Communications -- 9.1",
+      "id": "https://openalex.org/A5004014878",
+      "display_name": "Michael Backes",
+      "orcid": "https://orcid.org/0000-0002-7130-9211",
+      "h_index": 83,
+      "i10_index": 334,
+      "works_count": 778,
+      "cited_by_count": 28482,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Computer Networks and Communications -- 9.0",
+      "id": "https://openalex.org/A5029249775",
+      "display_name": "Ari Juels",
+      "orcid": "https://orcid.org/0009-0002-1143-5504",
+      "h_index": 83,
+      "i10_index": 153,
+      "works_count": 220,
+      "cited_by_count": 35580,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Computer Networks and Communications -- 9.0",
+      "id": "https://openalex.org/A5100740023",
+      "display_name": "Jiannong Cao",
+      "orcid": "https://orcid.org/0000-0002-2725-2529",
+      "h_index": 82,
+      "i10_index": 555,
+      "works_count": 1260,
+      "cited_by_count": 30930,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Computer Networks and Communications -- 9.0",
+      "id": "https://openalex.org/A5083787204",
+      "display_name": "Xiaodong Lin",
+      "orcid": "https://orcid.org/0000-0001-8916-6645",
+      "h_index": 82,
+      "i10_index": 295,
+      "works_count": 489,
+      "cited_by_count": 26739,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Computer Networks and Communications -- 9.0",
+      "id": "https://openalex.org/A5000985289",
+      "display_name": "Mohamed Elhoseny",
+      "orcid": "https://orcid.org/0000-0001-6347-8368",
+      "h_index": 82,
+      "i10_index": 242,
+      "works_count": 408,
+      "cited_by_count": 21322,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Computer Networks and Communications -- 9.0",
+      "id": "https://openalex.org/A5109968020",
+      "display_name": "M. Frans Kaashoek",
+      "orcid": "https://orcid.org/0000-0001-7098-586X",
+      "h_index": 82,
+      "i10_index": 206,
+      "works_count": 384,
+      "cited_by_count": 41141,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5087154420",
+      "display_name": "Thomas E. Anderson",
+      "orcid": "https://orcid.org/0009-0004-2951-0343",
+      "h_index": 82,
+      "i10_index": 180,
+      "works_count": 329,
+      "cited_by_count": 26523,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5087043869",
+      "display_name": "Tarik Taleb",
+      "orcid": "https://orcid.org/0000-0003-1119-1239",
+      "h_index": 81,
+      "i10_index": 346,
+      "works_count": 592,
+      "cited_by_count": 31395,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5100364819",
+      "display_name": "Jin Li",
+      "orcid": "https://orcid.org/0000-0003-0385-8793",
+      "h_index": 81,
+      "i10_index": 308,
+      "works_count": 610,
+      "cited_by_count": 28231,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5110782105",
+      "display_name": "Mung Chiang",
+      "orcid": "https://orcid.org/0000-0002-8920-651X",
+      "h_index": 81,
+      "i10_index": 288,
+      "works_count": 587,
+      "cited_by_count": 30797,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5063784062",
+      "display_name": "Bhaskar Krishnamachari",
+      "orcid": "https://orcid.org/0000-0002-9994-9931",
+      "h_index": 81,
+      "i10_index": 287,
+      "works_count": 583,
+      "cited_by_count": 27269,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5001879281",
+      "display_name": "Wenjing Lou",
+      "orcid": "https://orcid.org/0000-0002-2421-4623",
+      "h_index": 81,
+      "i10_index": 273,
+      "works_count": 433,
+      "cited_by_count": 36215,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5078518595",
+      "display_name": "R. Srikant",
+      "orcid": "https://orcid.org/0000-0003-1483-5204",
+      "h_index": 81,
+      "i10_index": 273,
+      "works_count": 492,
+      "cited_by_count": 26879,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5076994242",
+      "display_name": "Keping Yu",
+      "orcid": "https://orcid.org/0000-0001-5735-2507",
+      "h_index": 81,
+      "i10_index": 256,
+      "works_count": 457,
+      "cited_by_count": 19588,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5074117167",
+      "display_name": "Michael K. Reiter",
+      "orcid": "https://orcid.org/0000-0001-7007-8274",
+      "h_index": 81,
+      "i10_index": 241,
+      "works_count": 544,
+      "cited_by_count": 34420,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5036229923",
+      "display_name": "Ran Canetti",
+      "orcid": "https://orcid.org/0000-0002-5479-7540",
+      "h_index": 81,
+      "i10_index": 205,
+      "works_count": 373,
+      "cited_by_count": 37008,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5061267204",
+      "display_name": "Jaime Lloret",
+      "orcid": "https://orcid.org/0000-0002-0862-0533",
+      "h_index": 80,
+      "i10_index": 465,
+      "works_count": 994,
+      "cited_by_count": 28963,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Computer Networks and Communications -- 8.9",
+      "id": "https://openalex.org/A5070719868",
+      "display_name": "Guangjie Han",
+      "orcid": "https://orcid.org/0000-0002-6921-7369",
+      "h_index": 80,
+      "i10_index": 406,
+      "works_count": 715,
+      "cited_by_count": 22624,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5100343712",
+      "display_name": "Yin Zhang⋆",
+      "orcid": "https://orcid.org/0000-0002-1772-0763",
+      "h_index": 80,
+      "i10_index": 335,
+      "works_count": 788,
+      "cited_by_count": 23724,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5030243906",
+      "display_name": "Moti M. Yung",
+      "orcid": "https://orcid.org/0000-0003-0848-0873",
+      "h_index": 80,
+      "i10_index": 314,
+      "works_count": 660,
+      "cited_by_count": 26466,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5068586837",
+      "display_name": "Nick Feamster",
+      "orcid": "https://orcid.org/0000-0001-9315-5201",
+      "h_index": 80,
+      "i10_index": 265,
+      "works_count": 496,
+      "cited_by_count": 24209,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5029925982",
+      "display_name": "Pan Hui",
+      "orcid": "https://orcid.org/0000-0001-6026-1083",
+      "h_index": 79,
+      "i10_index": 463,
+      "works_count": 941,
+      "cited_by_count": 33549,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5012016098",
+      "display_name": "Jianfeng Ma",
+      "orcid": "https://orcid.org/0000-0003-4251-1143",
+      "h_index": 79,
+      "i10_index": 448,
+      "works_count": 1025,
+      "cited_by_count": 24135,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5006546107",
+      "display_name": "Tian Wang",
+      "orcid": "https://orcid.org/0000-0003-4819-621X",
+      "h_index": 79,
+      "i10_index": 385,
+      "works_count": 777,
+      "cited_by_count": 22057,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5043371405",
+      "display_name": "Branka S. Vucetic",
+      "orcid": "https://orcid.org/0000-0002-2700-2001",
+      "h_index": 79,
+      "i10_index": 381,
+      "works_count": 833,
+      "cited_by_count": 26351,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5085933596",
+      "display_name": "Mohammad Mehedi Hassan",
+      "orcid": "https://orcid.org/0000-0002-3479-3606",
+      "h_index": 79,
+      "i10_index": 351,
+      "works_count": 525,
+      "cited_by_count": 21916,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5016883501",
+      "display_name": "Denız Gündüz",
+      "orcid": "https://orcid.org/0000-0002-7725-395X",
+      "h_index": 79,
+      "i10_index": 342,
+      "works_count": 691,
+      "cited_by_count": 27057,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5003203521",
+      "display_name": "Shaohua Wan",
+      "orcid": "https://orcid.org/0000-0001-7013-9081",
+      "h_index": 79,
+      "i10_index": 246,
+      "works_count": 412,
+      "cited_by_count": 19938,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5081852077",
+      "display_name": "Yuval Ishai",
+      "orcid": "https://orcid.org/0009-0009-4096-6305",
+      "h_index": 79,
+      "i10_index": 211,
+      "works_count": 373,
+      "cited_by_count": 22213,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5073301367",
+      "display_name": "Shai Halevi",
+      "orcid": "https://orcid.org/0000-0003-3432-7899",
+      "h_index": 79,
+      "i10_index": 168,
+      "works_count": 285,
+      "cited_by_count": 28015,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5046618429",
+      "display_name": "Yang Xiao",
+      "orcid": "https://orcid.org/0000-0001-8549-6794",
+      "h_index": 78,
+      "i10_index": 377,
+      "works_count": 982,
+      "cited_by_count": 25863,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5061453937",
+      "display_name": "Mianxiong Dong",
+      "orcid": "https://orcid.org/0000-0002-2788-3451",
+      "h_index": 78,
+      "i10_index": 365,
+      "works_count": 641,
+      "cited_by_count": 22761,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5026990786",
+      "display_name": "Torsten Hoefler",
+      "orcid": "https://orcid.org/0000-0002-1333-9797",
+      "h_index": 78,
+      "i10_index": 356,
+      "works_count": 750,
+      "cited_by_count": 32065,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5014892027",
+      "display_name": "Leandros Tassiulas",
+      "orcid": "https://orcid.org/0000-0003-0932-774X",
+      "h_index": 78,
+      "i10_index": 341,
+      "works_count": 719,
+      "cited_by_count": 30336,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5072670483",
+      "display_name": "Rajiv Kumar Ranjan",
+      "orcid": "https://orcid.org/0000-0002-6610-1328",
+      "h_index": 78,
+      "i10_index": 278,
+      "works_count": 537,
+      "cited_by_count": 30601,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5100442199",
+      "display_name": "Jianzhong Zhang",
+      "orcid": "https://orcid.org/0000-0001-7056-8206",
+      "h_index": 77,
+      "i10_index": 516,
+      "works_count": 1538,
+      "cited_by_count": 27911,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Medicine",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5051195514",
+      "display_name": "Mohammad S. Obaidat",
+      "orcid": "https://orcid.org/0000-0002-1569-9657",
+      "h_index": 77,
+      "i10_index": 499,
+      "works_count": 1257,
+      "cited_by_count": 24885,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5039506639",
+      "display_name": "Bart Preneel",
+      "orcid": "https://orcid.org/0000-0003-2005-9651",
+      "h_index": 77,
+      "i10_index": 403,
+      "works_count": 1054,
+      "cited_by_count": 25076,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5072913672",
+      "display_name": "Yuval Elovici",
+      "orcid": "https://orcid.org/0000-0002-9641-128X",
+      "h_index": 77,
+      "i10_index": 342,
+      "works_count": 570,
+      "cited_by_count": 23447,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Computer Networks and Communications -- 8.8",
+      "id": "https://openalex.org/A5084739355",
+      "display_name": "Hsiao‐Hwa Chen",
+      "orcid": "https://orcid.org/0000-0001-8473-0729",
+      "h_index": 77,
+      "i10_index": 321,
+      "works_count": 631,
+      "cited_by_count": 23571,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5031941569",
+      "display_name": "Ewa Deelman",
+      "orcid": "https://orcid.org/0000-0001-5106-503X",
+      "h_index": 77,
+      "i10_index": 254,
+      "works_count": 551,
+      "cited_by_count": 31559,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5102730096",
+      "display_name": "George Varghese",
+      "orcid": "https://orcid.org/0000-0002-8218-5701",
+      "h_index": 77,
+      "i10_index": 186,
+      "works_count": 383,
+      "cited_by_count": 27617,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5089202539",
+      "display_name": "Elaine Shi",
+      "orcid": "https://orcid.org/0000-0002-5605-1048",
+      "h_index": 77,
+      "i10_index": 181,
+      "works_count": 284,
+      "cited_by_count": 30065,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5012195474",
+      "display_name": "Azzedine Boukerche",
+      "orcid": "https://orcid.org/0000-0002-3851-9938",
+      "h_index": 76,
+      "i10_index": 610,
+      "works_count": 1257,
+      "cited_by_count": 29689,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5034052371",
+      "display_name": "Choong Seon Hong",
+      "orcid": "https://orcid.org/0000-0003-3484-7333",
+      "h_index": 76,
+      "i10_index": 463,
+      "works_count": 1319,
+      "cited_by_count": 30769,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5039311485",
+      "display_name": "Jiangchuan Liu",
+      "orcid": "https://orcid.org/0000-0001-6592-1984",
+      "h_index": 76,
+      "i10_index": 381,
+      "works_count": 815,
+      "cited_by_count": 24432,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5100341802",
+      "display_name": "Xiang‐Yang Li",
+      "orcid": "https://orcid.org/0000-0002-6070-6625",
+      "h_index": 76,
+      "i10_index": 344,
+      "works_count": 777,
+      "cited_by_count": 20325,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5056877599",
+      "display_name": "Victor O. K. Li",
+      "orcid": "https://orcid.org/0000-0002-1380-9445",
+      "h_index": 76,
+      "i10_index": 334,
+      "works_count": 796,
+      "cited_by_count": 26057,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5075435434",
+      "display_name": "Anfeng Liu",
+      "orcid": "https://orcid.org/0000-0001-5190-4761",
+      "h_index": 76,
+      "i10_index": 286,
+      "works_count": 411,
+      "cited_by_count": 17570,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5020375635",
+      "display_name": "Rafail Ostrovsky",
+      "orcid": "https://orcid.org/0000-0002-1501-1330",
+      "h_index": 76,
+      "i10_index": 281,
+      "works_count": 580,
+      "cited_by_count": 32883,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5075234257",
+      "display_name": "Jiankun Hu",
+      "orcid": "https://orcid.org/0000-0003-0230-1432",
+      "h_index": 76,
+      "i10_index": 264,
+      "works_count": 462,
+      "cited_by_count": 20724,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5116294214",
+      "display_name": "Lixia Zhang",
+      "orcid": "https://orcid.org/0000-0002-9471-4500",
+      "h_index": 76,
+      "i10_index": 214,
+      "works_count": 336,
+      "cited_by_count": 29273,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5052227093",
+      "display_name": "Mahadev Satyanarayanan",
+      "orcid": "https://orcid.org/0000-0002-2187-2049",
+      "h_index": 76,
+      "i10_index": 206,
+      "works_count": 355,
+      "cited_by_count": 34607,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5108248360",
+      "display_name": "Ben Y. Zhao",
+      "orcid": "https://orcid.org/0009-0003-8909-0494",
+      "h_index": 76,
+      "i10_index": 187,
+      "works_count": 283,
+      "cited_by_count": 25815,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5066545991",
+      "display_name": "Robert Morris",
+      "orcid": "https://orcid.org/0009-0009-6885-0208",
+      "h_index": 76,
+      "i10_index": 124,
+      "works_count": 201,
+      "cited_by_count": 47453,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5074413858",
+      "display_name": "Erol Gelenbe",
+      "orcid": "https://orcid.org/0000-0001-9688-2201",
+      "h_index": 75,
+      "i10_index": 380,
+      "works_count": 920,
+      "cited_by_count": 22145,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5074224097",
+      "display_name": "Klara Nahrstedt",
+      "orcid": "https://orcid.org/0000-0001-6813-3043",
+      "h_index": 75,
+      "i10_index": 344,
+      "works_count": 787,
+      "cited_by_count": 23636,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5038723583",
+      "display_name": "Raouf Boutaba",
+      "orcid": "https://orcid.org/0000-0001-7936-6862",
+      "h_index": 75,
+      "i10_index": 342,
+      "works_count": 735,
+      "cited_by_count": 32872,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5066044089",
+      "display_name": "Fadi M. Al-Turjman",
+      "orcid": "https://orcid.org/0000-0001-5418-873X",
+      "h_index": 75,
+      "i10_index": 326,
+      "works_count": 779,
+      "cited_by_count": 22085,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5091880648",
+      "display_name": "Anand Nayyar",
+      "orcid": "https://orcid.org/0000-0002-9821-6146",
+      "h_index": 75,
+      "i10_index": 302,
+      "works_count": 676,
+      "cited_by_count": 20985,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5038811034",
+      "display_name": "Tian He",
+      "orcid": "https://orcid.org/0000-0001-6062-2619",
+      "h_index": 75,
+      "i10_index": 289,
+      "works_count": 425,
+      "cited_by_count": 23188,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Computer Networks and Communications -- 8.7",
+      "id": "https://openalex.org/A5100335132",
+      "display_name": "Xiong Li",
+      "orcid": "https://orcid.org/0000-0001-6619-554X",
+      "h_index": 75,
+      "i10_index": 273,
+      "works_count": 624,
+      "cited_by_count": 18835,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5079826922",
+      "display_name": "Ivan Damgård",
+      "orcid": "https://orcid.org/0009-0003-6164-0896",
+      "h_index": 75,
+      "i10_index": 208,
+      "works_count": 367,
+      "cited_by_count": 26057,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5085298473",
+      "display_name": "Carl Kesselman",
+      "orcid": "https://orcid.org/0000-0003-0917-1562",
+      "h_index": 75,
+      "i10_index": 172,
+      "works_count": 293,
+      "cited_by_count": 38593,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5110776230",
+      "display_name": "Shafi Goldwasser",
+      "orcid": "https://orcid.org/0000-0003-4728-1535",
+      "h_index": 75,
+      "i10_index": 166,
+      "works_count": 299,
+      "cited_by_count": 36234,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5061723765",
+      "display_name": "Weihua Zhuang",
+      "orcid": "https://orcid.org/0000-0003-0488-511X",
+      "h_index": 74,
+      "i10_index": 315,
+      "works_count": 683,
+      "cited_by_count": 22075,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5082041657",
+      "display_name": "Jian Weng",
+      "orcid": "https://orcid.org/0000-0003-4067-8230",
+      "h_index": 74,
+      "i10_index": 309,
+      "works_count": 501,
+      "cited_by_count": 22022,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5088617561",
+      "display_name": "Ali Kashif Bashir",
+      "orcid": "https://orcid.org/0000-0003-2601-9327",
+      "h_index": 74,
+      "i10_index": 299,
+      "works_count": 494,
+      "cited_by_count": 20238,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5041322972",
+      "display_name": "Jean‐Yves Le Boudec",
+      "orcid": "https://orcid.org/0000-0003-2357-8078",
+      "h_index": 74,
+      "i10_index": 266,
+      "works_count": 642,
+      "cited_by_count": 24496,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5056889098",
+      "display_name": "Saru Kumari",
+      "orcid": "https://orcid.org/0000-0003-4929-5383",
+      "h_index": 74,
+      "i10_index": 266,
+      "works_count": 471,
+      "cited_by_count": 17403,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5102287047",
+      "display_name": "Guohong Cao",
+      "orcid": "https://orcid.org/0000-0003-2115-7165",
+      "h_index": 74,
+      "i10_index": 228,
+      "works_count": 370,
+      "cited_by_count": 17656,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5014141359",
+      "display_name": "Alexandros G. Dimakis",
+      "orcid": "https://orcid.org/0000-0002-4244-7033",
+      "h_index": 74,
+      "i10_index": 190,
+      "works_count": 282,
+      "cited_by_count": 27435,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5082255432",
+      "display_name": "Walter Willinger",
+      "orcid": "https://orcid.org/0000-0002-1384-8188",
+      "h_index": 74,
+      "i10_index": 163,
+      "works_count": 297,
+      "cited_by_count": 30468,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5011820318",
+      "display_name": "Cynthia Dwork",
+      "orcid": "https://orcid.org/0000-0001-7177-3738",
+      "h_index": 74,
+      "i10_index": 151,
+      "works_count": 255,
+      "cited_by_count": 76455,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5108016089",
+      "display_name": "Geoffrey Fox",
+      "orcid": "https://orcid.org/0000-0003-1017-1391",
+      "h_index": 73,
+      "i10_index": 441,
+      "works_count": 1592,
+      "cited_by_count": 27164,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5075370174",
+      "display_name": "Muriel Médard",
+      "orcid": "https://orcid.org/0000-0003-4059-407X",
+      "h_index": 73,
+      "i10_index": 371,
+      "works_count": 953,
+      "cited_by_count": 32397,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5035752536",
+      "display_name": "Ness B. Shroff",
+      "orcid": "https://orcid.org/0000-0002-4606-6879",
+      "h_index": 73,
+      "i10_index": 326,
+      "works_count": 609,
+      "cited_by_count": 22505,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5100374360",
+      "display_name": "Bo Li",
+      "orcid": "https://orcid.org/0000-0003-2083-9105",
+      "h_index": 73,
+      "i10_index": 313,
+      "works_count": 638,
+      "cited_by_count": 20415,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5108050448",
+      "display_name": "Jiajia Liu",
+      "orcid": "https://orcid.org/0000-0003-4273-8866",
+      "h_index": 73,
+      "i10_index": 300,
+      "works_count": 640,
+      "cited_by_count": 20596,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5113663657",
+      "display_name": "Ivan Stojmenović",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 252,
+      "works_count": 522,
+      "cited_by_count": 21949,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5101471208",
+      "display_name": "Ninghui Li",
+      "orcid": "https://orcid.org/0000-0001-8207-9717",
+      "h_index": 73,
+      "i10_index": 206,
+      "works_count": 373,
+      "cited_by_count": 22932,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5042010270",
+      "display_name": "Miron Livny",
+      "orcid": "https://orcid.org/0000-0001-5444-7439",
+      "h_index": 73,
+      "i10_index": 195,
+      "works_count": 438,
+      "cited_by_count": 34161,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5000240220",
+      "display_name": "Vinod Vaikuntanathan",
+      "orcid": "https://orcid.org/0000-0002-2666-0045",
+      "h_index": 73,
+      "i10_index": 186,
+      "works_count": 279,
+      "cited_by_count": 33254,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Computer Networks and Communications -- 8.6",
+      "id": "https://openalex.org/A5037557529",
+      "display_name": "Gregory R. Ganger",
+      "orcid": "https://orcid.org/0000-0002-3065-7316",
+      "h_index": 73,
+      "i10_index": 184,
+      "works_count": 445,
+      "cited_by_count": 18472,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5030198184",
+      "display_name": "Silvio M. Micali",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 148,
+      "works_count": 314,
+      "cited_by_count": 44669,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5049321288",
+      "display_name": "Rachid Guerraoui",
+      "orcid": "https://orcid.org/0000-0002-4794-8902",
+      "h_index": 72,
+      "i10_index": 378,
+      "works_count": 986,
+      "cited_by_count": 29725,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5044100655",
+      "display_name": "Depeng Jin",
+      "orcid": "https://orcid.org/0000-0003-0419-5514",
+      "h_index": 72,
+      "i10_index": 289,
+      "works_count": 508,
+      "cited_by_count": 23666,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5008787905",
+      "display_name": "Alex X. Liu",
+      "orcid": "https://orcid.org/0000-0002-6916-1326",
+      "h_index": 72,
+      "i10_index": 274,
+      "works_count": 458,
+      "cited_by_count": 18619,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5007818509",
+      "display_name": "Xiaolong Xu",
+      "orcid": "https://orcid.org/0000-0003-4879-9803",
+      "h_index": 72,
+      "i10_index": 248,
+      "works_count": 553,
+      "cited_by_count": 16395,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5034805517",
+      "display_name": "Chenyang Lu",
+      "orcid": "https://orcid.org/0000-0003-1709-6769",
+      "h_index": 72,
+      "i10_index": 242,
+      "works_count": 366,
+      "cited_by_count": 21559,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5077290467",
+      "display_name": "Srđjan Čapkun",
+      "orcid": "https://orcid.org/0000-0001-5727-3673",
+      "h_index": 72,
+      "i10_index": 177,
+      "works_count": 332,
+      "cited_by_count": 23371,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5081366293",
+      "display_name": "Geoffrey M. Voelker",
+      "orcid": "https://orcid.org/0000-0003-0865-7499",
+      "h_index": 72,
+      "i10_index": 158,
+      "works_count": 221,
+      "cited_by_count": 19812,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5033036383",
+      "display_name": "Yehuda Lindell",
+      "orcid": "https://orcid.org/0000-0002-8176-690X",
+      "h_index": 72,
+      "i10_index": 151,
+      "works_count": 291,
+      "cited_by_count": 20173,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5109650687",
+      "display_name": "Gunasekaran Manogaran",
+      "orcid": "https://orcid.org/0000-0003-4083-6163",
+      "h_index": 72,
+      "i10_index": 140,
+      "works_count": 222,
+      "cited_by_count": 16036,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5013643572",
+      "display_name": "Xiaohua Jia",
+      "orcid": "https://orcid.org/0000-0001-8702-8302",
+      "h_index": 71,
+      "i10_index": 378,
+      "works_count": 777,
+      "cited_by_count": 20768,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5086268677",
+      "display_name": "Abbas Jamalipour",
+      "orcid": "https://orcid.org/0000-0002-1807-7220",
+      "h_index": 71,
+      "i10_index": 362,
+      "works_count": 808,
+      "cited_by_count": 23203,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5100692488",
+      "display_name": "Xiuzhen Cheng",
+      "orcid": "https://orcid.org/0000-0001-5912-4647",
+      "h_index": 71,
+      "i10_index": 354,
+      "works_count": 622,
+      "cited_by_count": 21671,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5021973291",
+      "display_name": "Omer F. Rana",
+      "orcid": "https://orcid.org/0000-0003-3597-2646",
+      "h_index": 71,
+      "i10_index": 329,
+      "works_count": 805,
+      "cited_by_count": 22813,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5044316824",
+      "display_name": "Lang Tong",
+      "orcid": "https://orcid.org/0000-0003-3322-2681",
+      "h_index": 71,
+      "i10_index": 287,
+      "works_count": 582,
+      "cited_by_count": 24350,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5054337759",
+      "display_name": "Tommaso Melodia",
+      "orcid": "https://orcid.org/0000-0002-2719-1789",
+      "h_index": 71,
+      "i10_index": 278,
+      "works_count": 500,
+      "cited_by_count": 26360,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5078219471",
+      "display_name": "Zheng Yan",
+      "orcid": "https://orcid.org/0000-0002-9697-2108",
+      "h_index": 71,
+      "i10_index": 274,
+      "works_count": 586,
+      "cited_by_count": 19837,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5024626195",
+      "display_name": "Anis Koubâa",
+      "orcid": "https://orcid.org/0000-0003-3787-7423",
+      "h_index": 71,
+      "i10_index": 267,
+      "works_count": 519,
+      "cited_by_count": 17367,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5019818778",
+      "display_name": "Gerhard Petrus Hancke",
+      "orcid": "https://orcid.org/0000-0002-2388-3542",
+      "h_index": 71,
+      "i10_index": 264,
+      "works_count": 518,
+      "cited_by_count": 28512,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5042521435",
+      "display_name": "Nitin H. Vaidya",
+      "orcid": "https://orcid.org/0000-0001-5104-8977",
+      "h_index": 71,
+      "i10_index": 221,
+      "works_count": 445,
+      "cited_by_count": 25602,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5027274731",
+      "display_name": "Anja Feldmann",
+      "orcid": "https://orcid.org/0000-0002-5530-6993",
+      "h_index": 71,
+      "i10_index": 188,
+      "works_count": 322,
+      "cited_by_count": 16231,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5035918501",
+      "display_name": "Peter Druschel",
+      "orcid": "https://orcid.org/0000-0002-7239-1114",
+      "h_index": 71,
+      "i10_index": 142,
+      "works_count": 269,
+      "cited_by_count": 31193,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Computer Networks and Communications -- 8.5",
+      "id": "https://openalex.org/A5007040282",
+      "display_name": "Phillip Rogaway",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 118,
+      "works_count": 237,
+      "cited_by_count": 30678,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5114378267",
+      "display_name": "Qian Zhang",
+      "orcid": "https://orcid.org/0000-0001-9205-1881",
+      "h_index": 70,
+      "i10_index": 414,
+      "works_count": 792,
+      "cited_by_count": 22347,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5100638446",
+      "display_name": "Yuanyuan Yang",
+      "orcid": "https://orcid.org/0000-0001-7296-9222",
+      "h_index": 70,
+      "i10_index": 376,
+      "works_count": 835,
+      "cited_by_count": 21220,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5072627238",
+      "display_name": "Zhipeng Cai",
+      "orcid": "https://orcid.org/0000-0001-6017-975X",
+      "h_index": 70,
+      "i10_index": 312,
+      "works_count": 547,
+      "cited_by_count": 21709,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5051803761",
+      "display_name": "Weijia Jia",
+      "orcid": "https://orcid.org/0000-0003-1000-3937",
+      "h_index": 70,
+      "i10_index": 294,
+      "works_count": 788,
+      "cited_by_count": 16805,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5084074039",
+      "display_name": "Mohammed Atiquzzaman",
+      "orcid": "https://orcid.org/0000-0001-9440-7669",
+      "h_index": 70,
+      "i10_index": 257,
+      "works_count": 618,
+      "cited_by_count": 18138,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5017241944",
+      "display_name": "William Gropp",
+      "orcid": "https://orcid.org/0000-0003-2905-3029",
+      "h_index": 70,
+      "i10_index": 256,
+      "works_count": 485,
+      "cited_by_count": 26766,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5100338634",
+      "display_name": "Ping Wang",
+      "orcid": "https://orcid.org/0000-0002-1599-5480",
+      "h_index": 70,
+      "i10_index": 241,
+      "works_count": 493,
+      "cited_by_count": 27224,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5023687478",
+      "display_name": "Joseph K. Liu",
+      "orcid": "https://orcid.org/0000-0001-6656-6240",
+      "h_index": 70,
+      "i10_index": 203,
+      "works_count": 382,
+      "cited_by_count": 14758,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5003217329",
+      "display_name": "Zhuoqing Morley Mao",
+      "orcid": "https://orcid.org/0000-0002-9844-2055",
+      "h_index": 70,
+      "i10_index": 181,
+      "works_count": 255,
+      "cited_by_count": 17918,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5077602642",
+      "display_name": "Christophe Diot",
+      "orcid": "https://orcid.org/0000-0002-4336-845X",
+      "h_index": 70,
+      "i10_index": 171,
+      "works_count": 331,
+      "cited_by_count": 21983,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5088871947",
+      "display_name": "Srinivasan Seshan",
+      "orcid": "https://orcid.org/0000-0002-9508-2066",
+      "h_index": 70,
+      "i10_index": 164,
+      "works_count": 349,
+      "cited_by_count": 17649,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5102095475",
+      "display_name": "Anoop Gupta",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 162,
+      "works_count": 277,
+      "cited_by_count": 23100,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5016753473",
+      "display_name": "Peng Ning",
+      "orcid": "https://orcid.org/0000-0002-1455-9919",
+      "h_index": 70,
+      "i10_index": 155,
+      "works_count": 281,
+      "cited_by_count": 21692,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5074976770",
+      "display_name": "Alok Choudhary",
+      "orcid": "https://orcid.org/0000-0001-8152-6319",
+      "h_index": 69,
+      "i10_index": 321,
+      "works_count": 654,
+      "cited_by_count": 27211,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5008039780",
+      "display_name": "Anthony Ephremides",
+      "orcid": "https://orcid.org/0000-0003-0172-8944",
+      "h_index": 69,
+      "i10_index": 276,
+      "works_count": 682,
+      "cited_by_count": 25545,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5036587377",
+      "display_name": "Eytan Modiano",
+      "orcid": "https://orcid.org/0000-0001-8238-8130",
+      "h_index": 69,
+      "i10_index": 261,
+      "works_count": 579,
+      "cited_by_count": 20334,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5021827481",
+      "display_name": "Yudong Yao",
+      "orcid": "https://orcid.org/0000-0003-3868-0593",
+      "h_index": 69,
+      "i10_index": 248,
+      "works_count": 481,
+      "cited_by_count": 17771,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5100385692",
+      "display_name": "Xu Chen",
+      "orcid": "https://orcid.org/0000-0001-9943-6020",
+      "h_index": 69,
+      "i10_index": 244,
+      "works_count": 480,
+      "cited_by_count": 27106,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5029499294",
+      "display_name": "Devavrat Shah",
+      "orcid": "https://orcid.org/0000-0003-0737-3259",
+      "h_index": 69,
+      "i10_index": 225,
+      "works_count": 449,
+      "cited_by_count": 20579,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5034685391",
+      "display_name": "Ali Akbar Ghorbani",
+      "orcid": "https://orcid.org/0000-0001-9189-6268",
+      "h_index": 69,
+      "i10_index": 224,
+      "works_count": 451,
+      "cited_by_count": 53508,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5015419107",
+      "display_name": "Ju Ren",
+      "orcid": "https://orcid.org/0000-0003-2782-183X",
+      "h_index": 69,
+      "i10_index": 186,
+      "works_count": 330,
+      "cited_by_count": 15355,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Computer Networks and Communications -- 8.4",
+      "id": "https://openalex.org/A5090014731",
+      "display_name": "John Heidemann",
+      "orcid": "https://orcid.org/0000-0002-1225-7562",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 328,
+      "cited_by_count": 37905,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5057141682",
+      "display_name": "Edward W. Knightly",
+      "orcid": "https://orcid.org/0000-0002-8663-0438",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 334,
+      "cited_by_count": 15910,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5040295629",
+      "display_name": "Leonard Kleinrock",
+      "orcid": "https://orcid.org/0000-0002-0662-707X",
+      "h_index": 69,
+      "i10_index": 156,
+      "works_count": 305,
+      "cited_by_count": 25746,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5034529593",
+      "display_name": "Zhaolong Ning",
+      "orcid": "https://orcid.org/0000-0002-7870-5524",
+      "h_index": 69,
+      "i10_index": 151,
+      "works_count": 266,
+      "cited_by_count": 15573,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5079175103",
+      "display_name": "Vyas Sekar",
+      "orcid": "https://orcid.org/0000-0001-5452-8976",
+      "h_index": 69,
+      "i10_index": 143,
+      "works_count": 282,
+      "cited_by_count": 18773,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5089788947",
+      "display_name": "Mark James Handley",
+      "orcid": "https://orcid.org/0000-0001-8509-2001",
+      "h_index": 69,
+      "i10_index": 142,
+      "works_count": 238,
+      "cited_by_count": 33073,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5079654174",
+      "display_name": "Michael G. Luby",
+      "orcid": "https://orcid.org/0000-0002-6239-8072",
+      "h_index": 69,
+      "i10_index": 116,
+      "works_count": 194,
+      "cited_by_count": 26893,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5100428808",
+      "display_name": "Guihai Chen",
+      "orcid": "https://orcid.org/0000-0002-6934-1685",
+      "h_index": 68,
+      "i10_index": 429,
+      "works_count": 1075,
+      "cited_by_count": 22248,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5054299062",
+      "display_name": "Antonio Skármeta",
+      "orcid": "https://orcid.org/0000-0002-5525-1259",
+      "h_index": 68,
+      "i10_index": 385,
+      "works_count": 939,
+      "cited_by_count": 20788,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5068489266",
+      "display_name": "John C. S. Lui",
+      "orcid": "https://orcid.org/0000-0001-7466-0384",
+      "h_index": 68,
+      "i10_index": 334,
+      "works_count": 678,
+      "cited_by_count": 17580,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5100386726",
+      "display_name": "Guojun Wang",
+      "orcid": "https://orcid.org/0000-0001-9875-4182",
+      "h_index": 68,
+      "i10_index": 299,
+      "works_count": 809,
+      "cited_by_count": 16580,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5100360194",
+      "display_name": "Qi Zhang",
+      "orcid": "https://orcid.org/0000-0001-5303-9804",
+      "h_index": 68,
+      "i10_index": 284,
+      "works_count": 741,
+      "cited_by_count": 23112,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5106707877",
+      "display_name": "Kaoru Ota",
+      "orcid": "https://orcid.org/0000-0002-3382-1652",
+      "h_index": 68,
+      "i10_index": 259,
+      "works_count": 442,
+      "cited_by_count": 17265,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5089327837",
+      "display_name": "Nour Moustafa",
+      "orcid": "https://orcid.org/0000-0001-6127-9349",
+      "h_index": 68,
+      "i10_index": 167,
+      "works_count": 274,
+      "cited_by_count": 29364,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5012298614",
+      "display_name": "Yevgeniy Dodis",
+      "orcid": "https://orcid.org/0000-0003-1013-6318",
+      "h_index": 68,
+      "i10_index": 166,
+      "works_count": 354,
+      "cited_by_count": 18981,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5087649192",
+      "display_name": "Barbara H. Liskov",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 165,
+      "works_count": 359,
+      "cited_by_count": 27651,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5045989894",
+      "display_name": "Jan L. Camenisch",
+      "orcid": "https://orcid.org/0000-0001-6654-9459",
+      "h_index": 68,
+      "i10_index": 158,
+      "works_count": 340,
+      "cited_by_count": 21336,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5038206174",
+      "display_name": "Vitaly Shmatikov",
+      "orcid": "https://orcid.org/0009-0002-1336-5714",
+      "h_index": 68,
+      "i10_index": 132,
+      "works_count": 229,
+      "cited_by_count": 37609,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5045155287",
+      "display_name": "Sylvia Ratnasamy",
+      "orcid": "https://orcid.org/0000-0002-0524-9425",
+      "h_index": 68,
+      "i10_index": 126,
+      "works_count": 218,
+      "cited_by_count": 26057,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5044697595",
+      "display_name": "Craig Gentry",
+      "orcid": "https://orcid.org/0009-0000-6651-7262",
+      "h_index": 68,
+      "i10_index": 112,
+      "works_count": 186,
+      "cited_by_count": 44510,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5051596806",
+      "display_name": "Marco Conti",
+      "orcid": "https://orcid.org/0000-0003-4097-4064",
+      "h_index": 67,
+      "i10_index": 277,
+      "works_count": 579,
+      "cited_by_count": 25151,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5089600920",
+      "display_name": "Ahmad Almogren",
+      "orcid": "https://orcid.org/0000-0002-8253-9709",
+      "h_index": 67,
+      "i10_index": 258,
+      "works_count": 377,
+      "cited_by_count": 15884,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Computer Networks and Communications -- 8.3",
+      "id": "https://openalex.org/A5100366692",
+      "display_name": "Kun Wang",
+      "orcid": "https://orcid.org/0000-0002-9099-2781",
+      "h_index": 67,
+      "i10_index": 226,
+      "works_count": 591,
+      "cited_by_count": 16082,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5066172831",
+      "display_name": "Gregory W. Wornell",
+      "orcid": "https://orcid.org/0000-0001-9166-4758",
+      "h_index": 67,
+      "i10_index": 205,
+      "works_count": 445,
+      "cited_by_count": 37259,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5030019746",
+      "display_name": "Luís Rodrigues",
+      "orcid": "https://orcid.org/0000-0002-0313-6590",
+      "h_index": 67,
+      "i10_index": 192,
+      "works_count": 477,
+      "cited_by_count": 15949,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5035329776",
+      "display_name": "Aditya Akella",
+      "orcid": "https://orcid.org/0000-0002-5920-170X",
+      "h_index": 67,
+      "i10_index": 178,
+      "works_count": 320,
+      "cited_by_count": 18287,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5079131956",
+      "display_name": "Adam Smith",
+      "orcid": "https://orcid.org/0000-0001-9393-1127",
+      "h_index": 67,
+      "i10_index": 140,
+      "works_count": 247,
+      "cited_by_count": 32650,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5061150224",
+      "display_name": "Lin Cai",
+      "orcid": "https://orcid.org/0000-0002-1093-4865",
+      "h_index": 66,
+      "i10_index": 309,
+      "works_count": 580,
+      "cited_by_count": 16152,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5100728176",
+      "display_name": "Chunming Qiao",
+      "orcid": "https://orcid.org/0000-0002-4679-6572",
+      "h_index": 66,
+      "i10_index": 308,
+      "works_count": 638,
+      "cited_by_count": 18997,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5100323752",
+      "display_name": "Wei Wei",
+      "orcid": "https://orcid.org/0000-0002-7566-2995",
+      "h_index": 66,
+      "i10_index": 265,
+      "works_count": 722,
+      "cited_by_count": 17124,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5051297830",
+      "display_name": "Yong Xiang",
+      "orcid": "https://orcid.org/0000-0003-3545-7863",
+      "h_index": 66,
+      "i10_index": 262,
+      "works_count": 481,
+      "cited_by_count": 18035,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5067802693",
+      "display_name": "Ravishankar K. Iyer",
+      "orcid": "https://orcid.org/0000-0003-2245-3038",
+      "h_index": 66,
+      "i10_index": 246,
+      "works_count": 564,
+      "cited_by_count": 17964,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5103285073",
+      "display_name": "Jong Hyuk Park",
+      "orcid": "https://orcid.org/0000-0003-1831-0309",
+      "h_index": 66,
+      "i10_index": 237,
+      "works_count": 628,
+      "cited_by_count": 17228,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5102790255",
+      "display_name": "Huansheng Ning",
+      "orcid": "https://orcid.org/0000-0001-6413-193X",
+      "h_index": 66,
+      "i10_index": 227,
+      "works_count": 437,
+      "cited_by_count": 16406,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 257,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5020766546",
+      "display_name": "Vahid Tarokh",
+      "orcid": "https://orcid.org/0000-0003-2994-6302",
+      "h_index": 66,
+      "i10_index": 221,
+      "works_count": 554,
+      "cited_by_count": 35975,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 258,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5100426184",
+      "display_name": "Qun Li",
+      "orcid": "https://orcid.org/0000-0003-2231-6615",
+      "h_index": 66,
+      "i10_index": 201,
+      "works_count": 560,
+      "cited_by_count": 16910,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 259,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5068692753",
+      "display_name": "John Maltby",
+      "orcid": "https://orcid.org/0000-0002-0621-9359",
+      "h_index": 66,
+      "i10_index": 191,
+      "works_count": 1210,
+      "cited_by_count": 21733,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 260,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5013420832",
+      "display_name": "Nigel Paul Smart",
+      "orcid": "https://orcid.org/0000-0003-3567-3304",
+      "h_index": 66,
+      "i10_index": 183,
+      "works_count": 437,
+      "cited_by_count": 20962,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 261,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5007706911",
+      "display_name": "Willy Zwaenepoel",
+      "orcid": "https://orcid.org/0000-0002-4182-6920",
+      "h_index": 66,
+      "i10_index": 163,
+      "works_count": 343,
+      "cited_by_count": 16714,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 262,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5036104549",
+      "display_name": "Eyal Kushilevitz",
+      "orcid": "https://orcid.org/0009-0009-9277-3863",
+      "h_index": 66,
+      "i10_index": 161,
+      "works_count": 268,
+      "cited_by_count": 18431,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 263,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5089858932",
+      "display_name": "Mohammed Amin Almaiah",
+      "orcid": "https://orcid.org/0000-0002-2215-2481",
+      "h_index": 66,
+      "i10_index": 137,
+      "works_count": 212,
+      "cited_by_count": 14006,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 264,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5013518229",
+      "display_name": "Ratul Mahajan",
+      "orcid": "https://orcid.org/0009-0005-8005-6948",
+      "h_index": 66,
+      "i10_index": 127,
+      "works_count": 251,
+      "cited_by_count": 18162,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 265,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5085479490",
+      "display_name": "David G. Andersen",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 124,
+      "works_count": 232,
+      "cited_by_count": 18784,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 266,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5015965031",
+      "display_name": "Albert G. Greenberg",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 122,
+      "works_count": 196,
+      "cited_by_count": 21874,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 267,
+      "score": 8.2,
+      "label": "Computer Networks and Communications -- 8.2",
+      "id": "https://openalex.org/A5089439033",
+      "display_name": "Benny Pinkas",
+      "orcid": "https://orcid.org/0000-0002-9053-3024",
+      "h_index": 66,
+      "i10_index": 113,
+      "works_count": 160,
+      "cited_by_count": 23289,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 268,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5055542851",
+      "display_name": "Hussein Talaat Mouftah",
+      "orcid": "https://orcid.org/0000-0001-7939-7212",
+      "h_index": 65,
+      "i10_index": 387,
+      "works_count": 1021,
+      "cited_by_count": 19001,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 269,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5021132487",
+      "display_name": "Şennur Ulukuş",
+      "orcid": "https://orcid.org/0000-0002-8219-8190",
+      "h_index": 65,
+      "i10_index": 308,
+      "works_count": 616,
+      "cited_by_count": 19897,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 270,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5046613458",
+      "display_name": "Franck Cappello",
+      "orcid": "https://orcid.org/0000-0002-7890-3934",
+      "h_index": 65,
+      "i10_index": 248,
+      "works_count": 485,
+      "cited_by_count": 17354,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 271,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5031931063",
+      "display_name": "Xinyi Huang",
+      "orcid": "https://orcid.org/0000-0003-0070-1707",
+      "h_index": 65,
+      "i10_index": 243,
+      "works_count": 442,
+      "cited_by_count": 17376,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 272,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5066407180",
+      "display_name": "Zhou Su",
+      "orcid": "https://orcid.org/0000-0002-6518-3130",
+      "h_index": 65,
+      "i10_index": 243,
+      "works_count": 583,
+      "cited_by_count": 17224,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 273,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5091211008",
+      "display_name": "Pierangela Samarati",
+      "orcid": "https://orcid.org/0000-0001-7395-4620",
+      "h_index": 65,
+      "i10_index": 209,
+      "works_count": 522,
+      "cited_by_count": 22390,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 274,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5086347882",
+      "display_name": "Maurice P. Herlihy",
+      "orcid": "https://orcid.org/0000-0002-3059-8926",
+      "h_index": 65,
+      "i10_index": 200,
+      "works_count": 508,
+      "cited_by_count": 25152,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 275,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5040978564",
+      "display_name": "Tom H. Luan",
+      "orcid": "https://orcid.org/0000-0002-5215-7443",
+      "h_index": 65,
+      "i10_index": 193,
+      "works_count": 405,
+      "cited_by_count": 17370,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 276,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5003896287",
+      "display_name": "Martin Haenggi",
+      "orcid": "https://orcid.org/0000-0001-8547-0607",
+      "h_index": 65,
+      "i10_index": 190,
+      "works_count": 391,
+      "cited_by_count": 21433,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 277,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5110260801",
+      "display_name": "Baruch Awerbuch",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 172,
+      "works_count": 317,
+      "cited_by_count": 14927,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 278,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5101801953",
+      "display_name": "Keith W. Ross",
+      "orcid": "https://orcid.org/0000-0003-2556-805X",
+      "h_index": 65,
+      "i10_index": 166,
+      "works_count": 251,
+      "cited_by_count": 14846,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 279,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5020188879",
+      "display_name": "Songwu Lu",
+      "orcid": "https://orcid.org/0000-0003-3779-0918",
+      "h_index": 65,
+      "i10_index": 153,
+      "works_count": 289,
+      "cited_by_count": 20727,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 280,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5041431830",
+      "display_name": "Garth A. Gibson",
+      "orcid": "https://orcid.org/0000-0002-6656-7080",
+      "h_index": 65,
+      "i10_index": 146,
+      "works_count": 294,
+      "cited_by_count": 18771,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 281,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5041937385",
+      "display_name": "Thomas Moscibroda",
+      "orcid": "https://orcid.org/0000-0002-8729-7841",
+      "h_index": 65,
+      "i10_index": 124,
+      "works_count": 223,
+      "cited_by_count": 12644,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 282,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5057824781",
+      "display_name": "Hugo Krawczyk",
+      "orcid": "https://orcid.org/0000-0003-3130-1888",
+      "h_index": 65,
+      "i10_index": 123,
+      "works_count": 204,
+      "cited_by_count": 24851,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 283,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5050922407",
+      "display_name": "Dharma Prakash Agrawal",
+      "orcid": "https://orcid.org/0000-0002-3366-057X",
+      "h_index": 64,
+      "i10_index": 293,
+      "works_count": 793,
+      "cited_by_count": 20113,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 284,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5002139930",
+      "display_name": "Wei Yu",
+      "orcid": "https://orcid.org/0000-0003-4522-7340",
+      "h_index": 64,
+      "i10_index": 287,
+      "works_count": 578,
+      "cited_by_count": 22683,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 285,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5024453724",
+      "display_name": "Hui Li",
+      "orcid": "https://orcid.org/0000-0001-8310-7169",
+      "h_index": 64,
+      "i10_index": 284,
+      "works_count": 681,
+      "cited_by_count": 22364,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 286,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5065935907",
+      "display_name": "Jose Joaquin Garcia-Luna-Aceves",
+      "orcid": "https://orcid.org/0000-0001-9914-6031",
+      "h_index": 64,
+      "i10_index": 261,
+      "works_count": 690,
+      "cited_by_count": 17228,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 287,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5032187551",
+      "display_name": "Yaser Jararweh",
+      "orcid": "https://orcid.org/0000-0002-4403-3846",
+      "h_index": 64,
+      "i10_index": 239,
+      "works_count": 401,
+      "cited_by_count": 16553,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 288,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5065622216",
+      "display_name": "Roy H. Campbell",
+      "orcid": "https://orcid.org/0000-0002-3754-7777",
+      "h_index": 64,
+      "i10_index": 236,
+      "works_count": 501,
+      "cited_by_count": 19875,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 289,
+      "score": 8.1,
+      "label": "Computer Networks and Communications -- 8.1",
+      "id": "https://openalex.org/A5047920922",
+      "display_name": "Krithi Ramamritham",
+      "orcid": "https://orcid.org/0000-0002-2181-0526",
+      "h_index": 64,
+      "i10_index": 232,
+      "works_count": 605,
+      "cited_by_count": 15920,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 290,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5079723268",
+      "display_name": "Radha Poovendran",
+      "orcid": "https://orcid.org/0000-0003-0269-8097",
+      "h_index": 64,
+      "i10_index": 212,
+      "works_count": 449,
+      "cited_by_count": 15049,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 291,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5091796724",
+      "display_name": "David F. Kotz",
+      "orcid": "https://orcid.org/0000-0001-7411-2783",
+      "h_index": 64,
+      "i10_index": 209,
+      "works_count": 391,
+      "cited_by_count": 16883,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 292,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5005877741",
+      "display_name": "Sahil Garg",
+      "orcid": "https://orcid.org/0000-0003-0229-608X",
+      "h_index": 64,
+      "i10_index": 209,
+      "works_count": 313,
+      "cited_by_count": 14935,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 293,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5080483470",
+      "display_name": "Kaushik Roy Chowdhury",
+      "orcid": "https://orcid.org/0000-0002-3570-2622",
+      "h_index": 64,
+      "i10_index": 190,
+      "works_count": 330,
+      "cited_by_count": 18583,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 294,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5003619481",
+      "display_name": "David Pointcheval",
+      "orcid": "https://orcid.org/0000-0002-6668-683X",
+      "h_index": 64,
+      "i10_index": 179,
+      "works_count": 413,
+      "cited_by_count": 21260,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 295,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5007698196",
+      "display_name": "Laurent Massoulié",
+      "orcid": "https://orcid.org/0000-0001-7263-0069",
+      "h_index": 64,
+      "i10_index": 154,
+      "works_count": 308,
+      "cited_by_count": 14541,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 296,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5088855767",
+      "display_name": "Armando Fox",
+      "orcid": "https://orcid.org/0000-0002-6096-4931",
+      "h_index": 64,
+      "i10_index": 146,
+      "works_count": 288,
+      "cited_by_count": 33110,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 297,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5092973561",
+      "display_name": "Paramvir Bahl",
+      "orcid": "https://orcid.org/0009-0001-1555-9996",
+      "h_index": 64,
+      "i10_index": 103,
+      "works_count": 170,
+      "cited_by_count": 33980,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 298,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5051784384",
+      "display_name": "Filip De Turck",
+      "orcid": "https://orcid.org/0000-0003-4824-1199",
+      "h_index": 63,
+      "i10_index": 373,
+      "works_count": 941,
+      "cited_by_count": 21607,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 299,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5100710713",
+      "display_name": "Huadóng Ma",
+      "orcid": "https://orcid.org/0000-0002-7199-5047",
+      "h_index": 63,
+      "i10_index": 316,
+      "works_count": 734,
+      "cited_by_count": 17975,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 300,
+      "score": 8,
+      "label": "Computer Networks and Communications -- 8.0",
+      "id": "https://openalex.org/A5100679241",
+      "display_name": "Jie Li",
+      "orcid": "https://orcid.org/0000-0002-4974-6116",
+      "h_index": 63,
+      "i10_index": 300,
+      "works_count": 864,
+      "cited_by_count": 17767,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 301,
+      "score": 7.9,
+      "label": "Computer Networks and Communications -- 7.9",
+      "id": "https://openalex.org/A5019489166",
+      "display_name": "Jemal Abawajy",
+      "orcid": "https://orcid.org/0000-0001-8962-1222",
+      "h_index": 63,
+      "i10_index": 231,
+      "works_count": 525,
+      "cited_by_count": 17427,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 302,
+      "score": 7.9,
+      "label": "Computer Networks and Communications -- 7.9",
+      "id": "https://openalex.org/A5027348774",
+      "display_name": "Jeffrey H. Reed",
+      "orcid": "https://orcid.org/0000-0003-3494-1901",
+      "h_index": 63,
+      "i10_index": 226,
+      "works_count": 515,
+      "cited_by_count": 19919,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 303,
+      "score": 7.9,
+      "label": "Computer Networks and Communications -- 7.9",
+      "id": "https://openalex.org/A5068169019",
+      "display_name": "Madhusanka Liyanage",
+      "orcid": "https://orcid.org/0000-0003-4786-030X",
+      "h_index": 63,
+      "i10_index": 207,
+      "works_count": 461,
+      "cited_by_count": 21896,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 304,
+      "score": 7.9,
+      "label": "Computer Networks and Communications -- 7.9",
+      "id": "https://openalex.org/A5069049205",
+      "display_name": "Yaoxue Zhang",
+      "orcid": "https://orcid.org/0000-0001-6717-461X",
+      "h_index": 63,
+      "i10_index": 183,
+      "works_count": 375,
+      "cited_by_count": 12120,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 305,
+      "score": 7.9,
+      "label": "Computer Networks and Communications -- 7.9",
+      "id": "https://openalex.org/A5064085132",
+      "display_name": "Ueli M. Maurer",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 170,
+      "works_count": 342,
+      "cited_by_count": 17097,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 306,
+      "score": 7.9,
+      "label": "Computer Networks and Communications -- 7.9",
+      "id": "https://openalex.org/A5087770310",
+      "display_name": "Zygmunt J. Haas",
+      "orcid": "https://orcid.org/0000-0003-4225-7333",
+      "h_index": 63,
+      "i10_index": 166,
+      "works_count": 321,
+      "cited_by_count": 19976,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 307,
+      "score": 7.9,
+      "label": "Computer Networks and Communications -- 7.9",
+      "id": "https://openalex.org/A5021463856",
+      "display_name": "Paolo Santi",
+      "orcid": "https://orcid.org/0000-0002-8942-8702",
+      "h_index": 63,
+      "i10_index": 166,
+      "works_count": 408,
+      "cited_by_count": 16783,
+      "discipline": "Computer Networks and Communications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Networks and Communications",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

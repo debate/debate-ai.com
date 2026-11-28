@@ -1,0 +1,830 @@
+{
+  "kind": "subfield",
+  "id": 2203,
+  "name": "Automotive Engineering",
+  "total_in_scrape": 44,
+  "count": 44,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Automotive Engineering -- 9.9",
+      "id": "https://openalex.org/A5001533541",
+      "display_name": "Minggao Ouyang",
+      "orcid": "https://orcid.org/0000-0002-1087-0398",
+      "h_index": 135,
+      "i10_index": 638,
+      "works_count": 999,
+      "cited_by_count": 79234,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Automotive Engineering -- 9.9",
+      "id": "https://openalex.org/A5113600509",
+      "display_name": "Fei–Yue Wang",
+      "orcid": "https://orcid.org/0000-0001-9185-3989",
+      "h_index": 114,
+      "i10_index": 814,
+      "works_count": 1493,
+      "cited_by_count": 64825,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Automotive Engineering -- 9.9",
+      "id": "https://openalex.org/A5041924424",
+      "display_name": "Rui Xiong",
+      "orcid": "https://orcid.org/0000-0003-4608-7597",
+      "h_index": 108,
+      "i10_index": 249,
+      "works_count": 394,
+      "cited_by_count": 39277,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Automotive Engineering -- 9.9",
+      "id": "https://openalex.org/A5084311035",
+      "display_name": "Dirk Uwe Sauer",
+      "orcid": "https://orcid.org/0000-0002-5622-3591",
+      "h_index": 100,
+      "i10_index": 414,
+      "works_count": 861,
+      "cited_by_count": 39471,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Automotive Engineering -- 9.9",
+      "id": "https://openalex.org/A5064077634",
+      "display_name": "Masayoshi Tomizuka",
+      "orcid": "https://orcid.org/0000-0003-0206-6639",
+      "h_index": 91,
+      "i10_index": 560,
+      "works_count": 1051,
+      "cited_by_count": 40101,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Automotive Engineering -- 9.9",
+      "id": "https://openalex.org/A5100411305",
+      "display_name": "Hongwen He",
+      "orcid": "https://orcid.org/0000-0003-2874-1858",
+      "h_index": 90,
+      "i10_index": 317,
+      "works_count": 558,
+      "cited_by_count": 31737,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5075155216",
+      "display_name": "M. A. Hannan",
+      "orcid": "https://orcid.org/0000-0001-8367-4112",
+      "h_index": 90,
+      "i10_index": 288,
+      "works_count": 457,
+      "cited_by_count": 34431,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5026149012",
+      "display_name": "Joeri Van Mierlo",
+      "orcid": "https://orcid.org/0000-0001-7968-9733",
+      "h_index": 88,
+      "i10_index": 316,
+      "works_count": 691,
+      "cited_by_count": 33472,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5100611797",
+      "display_name": "Xuebing Han",
+      "orcid": "https://orcid.org/0000-0001-7896-9354",
+      "h_index": 86,
+      "i10_index": 228,
+      "works_count": 333,
+      "cited_by_count": 31403,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5072073374",
+      "display_name": "Chen Lv",
+      "orcid": "https://orcid.org/0000-0001-6897-4512",
+      "h_index": 83,
+      "i10_index": 315,
+      "works_count": 557,
+      "cited_by_count": 23881,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5019025642",
+      "display_name": "Huei Peng",
+      "orcid": "https://orcid.org/0000-0002-1844-3163",
+      "h_index": 79,
+      "i10_index": 253,
+      "works_count": 447,
+      "cited_by_count": 25362,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5052233170",
+      "display_name": "Zhenpo Wang",
+      "orcid": "https://orcid.org/0000-0002-1396-906X",
+      "h_index": 79,
+      "i10_index": 251,
+      "works_count": 390,
+      "cited_by_count": 24906,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5108048515",
+      "display_name": "Fengchun Sun",
+      "orcid": "https://orcid.org/0000-0001-9524-9367",
+      "h_index": 76,
+      "i10_index": 185,
+      "works_count": 356,
+      "cited_by_count": 23989,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5074996561",
+      "display_name": "Hong Chen",
+      "orcid": "https://orcid.org/0000-0002-1724-8649",
+      "h_index": 75,
+      "i10_index": 437,
+      "works_count": 995,
+      "cited_by_count": 23895,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5020470831",
+      "display_name": "Amir Khajepour",
+      "orcid": "https://orcid.org/0000-0002-1998-6100",
+      "h_index": 75,
+      "i10_index": 350,
+      "works_count": 699,
+      "cited_by_count": 23178,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5051704749",
+      "display_name": "Haiping Du",
+      "orcid": "https://orcid.org/0000-0002-3439-3821",
+      "h_index": 74,
+      "i10_index": 316,
+      "works_count": 626,
+      "cited_by_count": 19518,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Automotive Engineering -- 9.8",
+      "id": "https://openalex.org/A5082361275",
+      "display_name": "Xuezhe Wei",
+      "orcid": "https://orcid.org/0000-0001-9043-2330",
+      "h_index": 74,
+      "i10_index": 221,
+      "works_count": 366,
+      "cited_by_count": 18588,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5031855986",
+      "display_name": "Keqiang Li",
+      "orcid": "https://orcid.org/0000-0002-9333-7416",
+      "h_index": 73,
+      "i10_index": 270,
+      "works_count": 557,
+      "cited_by_count": 20268,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5046883184",
+      "display_name": "Haifeng Dai",
+      "orcid": "https://orcid.org/0000-0001-5322-2019",
+      "h_index": 73,
+      "i10_index": 230,
+      "works_count": 447,
+      "cited_by_count": 18787,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5051251491",
+      "display_name": "Ye Wu",
+      "orcid": "https://orcid.org/0000-0002-9928-1177",
+      "h_index": 73,
+      "i10_index": 212,
+      "works_count": 351,
+      "cited_by_count": 18453,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5100608812",
+      "display_name": "Junmin Wang",
+      "orcid": "https://orcid.org/0000-0001-7133-7311",
+      "h_index": 72,
+      "i10_index": 248,
+      "works_count": 480,
+      "cited_by_count": 16287,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5056826002",
+      "display_name": "Yuejiu Zheng",
+      "orcid": "https://orcid.org/0000-0002-6359-8375",
+      "h_index": 72,
+      "i10_index": 213,
+      "works_count": 332,
+      "cited_by_count": 19506,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5025120951",
+      "display_name": "Jianqiu Li",
+      "orcid": "https://orcid.org/0000-0003-1739-5742",
+      "h_index": 72,
+      "i10_index": 209,
+      "works_count": 401,
+      "cited_by_count": 28325,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5012032003",
+      "display_name": "David A. J. Rand",
+      "orcid": "https://orcid.org/0000-0002-2217-3274",
+      "h_index": 72,
+      "i10_index": 193,
+      "works_count": 383,
+      "cited_by_count": 20102,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5071343023",
+      "display_name": "Zonghai Chen",
+      "orcid": "https://orcid.org/0000-0001-9312-9089",
+      "h_index": 72,
+      "i10_index": 181,
+      "works_count": 414,
+      "cited_by_count": 18283,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5030467159",
+      "display_name": "Weixiang Shen",
+      "orcid": "https://orcid.org/0000-0002-4666-5126",
+      "h_index": 71,
+      "i10_index": 200,
+      "works_count": 312,
+      "cited_by_count": 17434,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5067847375",
+      "display_name": "Daniel‐Ioan Stroe",
+      "orcid": "https://orcid.org/0000-0002-2938-8921",
+      "h_index": 71,
+      "i10_index": 200,
+      "works_count": 361,
+      "cited_by_count": 17361,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Automotive Engineering -- 9.7",
+      "id": "https://openalex.org/A5031991761",
+      "display_name": "Dongpu Cao",
+      "orcid": "https://orcid.org/0000-0001-7929-4336",
+      "h_index": 71,
+      "i10_index": 166,
+      "works_count": 238,
+      "cited_by_count": 16149,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5001170785",
+      "display_name": "Zhongbao Wei",
+      "orcid": "https://orcid.org/0000-0003-0051-5648",
+      "h_index": 70,
+      "i10_index": 163,
+      "works_count": 276,
+      "cited_by_count": 15948,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5019610452",
+      "display_name": "Nong Zhang",
+      "orcid": "https://orcid.org/0000-0001-6408-0044",
+      "h_index": 69,
+      "i10_index": 278,
+      "works_count": 563,
+      "cited_by_count": 15021,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5089318617",
+      "display_name": "Anna G. Stefanopoulou",
+      "orcid": "https://orcid.org/0000-0003-1695-9657",
+      "h_index": 69,
+      "i10_index": 273,
+      "works_count": 535,
+      "cited_by_count": 20158,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5075108700",
+      "display_name": "Giorgio Rizzoni",
+      "orcid": "https://orcid.org/0000-0002-8397-7241",
+      "h_index": 68,
+      "i10_index": 302,
+      "works_count": 606,
+      "cited_by_count": 21119,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5100750920",
+      "display_name": "Zheng Chen",
+      "orcid": "https://orcid.org/0000-0002-1634-7231",
+      "h_index": 68,
+      "i10_index": 188,
+      "works_count": 326,
+      "cited_by_count": 13402,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5067111065",
+      "display_name": "Satyam Panchal",
+      "orcid": "https://orcid.org/0000-0001-8152-0451",
+      "h_index": 67,
+      "i10_index": 130,
+      "works_count": 146,
+      "cited_by_count": 13634,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5100618612",
+      "display_name": "Zhirong Wang",
+      "orcid": "https://orcid.org/0000-0002-5412-9550",
+      "h_index": 66,
+      "i10_index": 280,
+      "works_count": 428,
+      "cited_by_count": 12997,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5077257353",
+      "display_name": "Matthew Barth",
+      "orcid": "https://orcid.org/0000-0002-4735-5859",
+      "h_index": 66,
+      "i10_index": 250,
+      "works_count": 484,
+      "cited_by_count": 17874,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5100441194",
+      "display_name": "Liang Li",
+      "orcid": "https://orcid.org/0000-0002-1577-408X",
+      "h_index": 66,
+      "i10_index": 242,
+      "works_count": 704,
+      "cited_by_count": 14875,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5091574711",
+      "display_name": "Christoph Stiller",
+      "orcid": "https://orcid.org/0000-0003-4165-2075",
+      "h_index": 66,
+      "i10_index": 194,
+      "works_count": 427,
+      "cited_by_count": 30668,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Automotive Engineering -- 9.6",
+      "id": "https://openalex.org/A5100605358",
+      "display_name": "Shunli Wang",
+      "orcid": "https://orcid.org/0000-0003-0485-8082",
+      "h_index": 65,
+      "i10_index": 328,
+      "works_count": 683,
+      "cited_by_count": 17264,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Automotive Engineering -- 9.5",
+      "id": "https://openalex.org/A5023182070",
+      "display_name": "David B. Kittelson",
+      "orcid": "https://orcid.org/0000-0002-8855-9188",
+      "h_index": 65,
+      "i10_index": 196,
+      "works_count": 336,
+      "cited_by_count": 17013,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Automotive Engineering -- 9.5",
+      "id": "https://openalex.org/A5052432097",
+      "display_name": "Karl D. Iagnemma",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 168,
+      "works_count": 277,
+      "cited_by_count": 18616,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Automotive Engineering -- 9.5",
+      "id": "https://openalex.org/A5089181686",
+      "display_name": "Joseph Christian Gerdes",
+      "orcid": "https://orcid.org/0000-0001-7948-3444",
+      "h_index": 65,
+      "i10_index": 167,
+      "works_count": 249,
+      "cited_by_count": 15982,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Automotive Engineering -- 9.5",
+      "id": "https://openalex.org/A5034947641",
+      "display_name": "Wim Desmet",
+      "orcid": "https://orcid.org/0000-0003-2016-7863",
+      "h_index": 64,
+      "i10_index": 367,
+      "works_count": 1601,
+      "cited_by_count": 17024,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Automotive Engineering -- 9.5",
+      "id": "https://openalex.org/A5106120443",
+      "display_name": "Kai Wang",
+      "orcid": "https://orcid.org/0000-0002-3513-3511",
+      "h_index": 63,
+      "i10_index": 139,
+      "works_count": 308,
+      "cited_by_count": 12097,
+      "discipline": "Automotive Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Automotive Engineering",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    }
+  ]
+}

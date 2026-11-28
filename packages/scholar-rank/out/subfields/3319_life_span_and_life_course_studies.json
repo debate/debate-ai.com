@@ -1,0 +1,29 @@
+{
+  "kind": "subfield",
+  "id": 3319,
+  "name": "Life-span and Life-course Studies",
+  "total_in_scrape": 1,
+  "count": 1,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Life-span and Life-course Studies -- 9.9",
+      "id": "https://openalex.org/A5041416541",
+      "display_name": "Alan Walker",
+      "orcid": "https://orcid.org/0000-0002-3169-2738",
+      "h_index": 90,
+      "i10_index": 292,
+      "works_count": 764,
+      "cited_by_count": 29135,
+      "discipline": "Life-span and Life-course Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Life-span and Life-course Studies",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Earth and Planetary Sciences"
+      ]
+    }
+  ]
+}
