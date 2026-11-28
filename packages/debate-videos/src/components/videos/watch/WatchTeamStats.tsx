@@ -48,6 +48,7 @@ import { useShowSchoolMascots } from "@debate-ai/rankings/src/leaderboard/lib/sc
 import { pastTeamHref } from "@debate-ai/rankings/src/leaderboard/profile/pastTeamHelpers"
 import { isRankedSeasonRound } from "../../../hooks/useVideoTeamRankings"
 import { pastCollegeSeason } from "../../../lib/video-team-ranks"
+import { videoTeamHref } from "../../../lib/video-team-href"
 import {
   collegeTeamHistory,
   findCollegeRoundTeam,
@@ -226,13 +227,16 @@ function PastSeasonTeamCard({
   college: boolean
   compact?: boolean
 }) {
+  // College teams have a past-team page built from the season's names; a high
+  // school team's page is found from the label's school and initials.
+  const pastHref = college ? pastTeamHref({ school, name: stat.name }) : videoTeamHref(label)
   return (
     <div className={cn("min-w-0 rounded-lg border bg-card", compact ? "p-2 space-y-2" : "p-3 space-y-3")}>
       <SchoolMascot school={school} />
       <header className="flex items-baseline justify-between gap-2">
         <div className="min-w-0">
-          {college ? (
-            <a href={pastTeamHref({ school, name: stat.name })} className="font-semibold hover:underline">
+          {pastHref ? (
+            <a href={pastHref} className="font-semibold hover:underline">
               {label}
             </a>
           ) : (
