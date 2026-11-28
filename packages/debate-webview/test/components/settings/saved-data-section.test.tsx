@@ -121,13 +121,37 @@ describe("SavedDataSection", () => {
     const rows = [...list!.querySelectorAll("div")].map((row) => [
       row.querySelector("dt a")?.getAttribute("href"),
       row.querySelector("dt")?.textContent,
-      row.querySelector("dd")?.textContent,
+      row.querySelector("dd span")?.textContent,
     ])
     expect(rows).toEqual([
       ["/practice/prep?section=briefings", "Briefings", "2"],
       ["/reason-editor", "Quick cards", "1"],
     ])
     expect(list!.querySelector("button")).toBeNull()
+  })
+
+  it("gives each More saved work row an Export link for that table only", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          total: 3,
+          items: [{ key: "docs", label: "Documents", count: 0 }],
+          sqlTools: [
+            { key: "roundPairings", label: "Briefings", count: 2, href: "/practice/prep?section=briefings" },
+            { key: "learnDecks", label: "Flashcard decks", count: 1, href: "/reason-editor" },
+          ],
+        }),
+      }),
+    )
+    const host = await mount()
+    const links = [...host.querySelectorAll('dl[aria-label="More saved work"] dd a')]
+    expect(links.map((a) => [a.textContent, a.getAttribute("href"), a.getAttribute("aria-label"), a.hasAttribute("download")])).toEqual([
+      ["Export", "/api/settings/saved-data?export=sql&key=roundPairings", "Export Briefings as JSON", true],
+      ["Export", "/api/settings/saved-data?export=sql&key=learnDecks", "Export Flashcard decks as JSON", true],
+    ])
+    expect(links[0].getAttribute("title")).toContain("doesn't read these back yet")
   })
 
   it("omits More saved work when the server sends none or predates it", async () => {

@@ -30,6 +30,8 @@ import { themeNames, themeColors, formatThemeName, useThemeState } from "../them
 import { LoginDialog } from "./auth/LoginDialog"
 import { useSignOut } from "../../lib/auth/use-sign-out"
 import { useSession } from "../../lib/hooks/useSession"
+import { useAdminUserCount } from "../../lib/admin/use-admin-user-count"
+import { UserCountBadge } from "../admin/UserCountBadge"
 import { hasEmbeddedDock, hostsOwnSidebarDock } from "../../lib/sidebar-routes"
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { NAV_ITEMS } from "../../lib/nav/dock-nav-items"
@@ -220,33 +222,33 @@ function NavMenuItems() {
  * `/api/admin/me` so the dock stays cacheable and only shows the Admin row to
  * people who can open `/admin`. Every admin API re-checks the role itself.
  */
-function useCanEditContent(): boolean {
+function useStaffAccess(): { canEditContent: boolean; isAdmin: boolean } {
   const { user, isAuthenticated } = useSession()
-  const [canEdit, setCanEdit] = useState(false)
+  const [access, setAccess] = useState({ canEditContent: false, isAdmin: false })
 
   useEffect(() => {
     if (!isAuthenticated) {
-      setCanEdit(false)
+      setAccess({ canEditContent: false, isAdmin: false })
       return
     }
     let cancelled = false
     fetch("/api/admin/me", { credentials: "include" })
       .then((res) => (res.ok ? res.json() : null))
-      .then((body: { canEditContent?: boolean } | null) => {
-        if (!cancelled) setCanEdit(!!body?.canEditContent)
+      .then((body: { canEditContent?: boolean; isAdmin?: boolean } | null) => {
+        if (!cancelled) setAccess({ canEditContent: !!body?.canEditContent, isAdmin: !!body?.isAdmin })
       })
       .catch(() => {
-        if (!cancelled) setCanEdit(false)
+        if (!cancelled) setAccess({ canEditContent: false, isAdmin: false })
       })
     return () => {
       cancelled = true
     }
   }, [isAuthenticated, user?.id])
 
-  return canEdit
+  return access
 }
 
-function SettingsMenu({
+export function SettingsMenu({
   side,
   onSignIn,
 }: {
@@ -256,7 +258,9 @@ function SettingsMenu({
   const themeState = useThemeState()
   const router = useRouter()
   const pathname = usePathname()
-  const canEditContent = useCanEditContent()
+  const { canEditContent, isAdmin } = useStaffAccess()
+  // Moderators see the Admin row too, but the user count is admin-only.
+  const userCount = useAdminUserCount(isAdmin)
   const dockHidden = useDockHidden()
   // Hiding the dock from this menu must not hand focus back to the Settings
   // icon as the menu closes: focus inside the hidden dock reveals it again.
@@ -288,6 +292,7 @@ function SettingsMenu({
         <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/admin") }}>
           <ShieldCheck className="mr-2 h-4 w-4" />
           Admin
+          <UserCountBadge count={userCount} className="ml-2" />
         </DropdownMenuItem>
       )}
       <DropdownMenuSub>
