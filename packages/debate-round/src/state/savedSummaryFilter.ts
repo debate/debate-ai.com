@@ -109,3 +109,56 @@ export function describeSavedLoadFailure(kind: SavedItemKind, failure: unknown):
   if (failure instanceof Error && failure.message.trim()) return failure.message.trim();
   return `Couldn't open this ${kind}. Try again.`;
 }
+
+function flowCount(count: number): string {
+  return count === 1 ? "1 flow" : `${count} flows`;
+}
+
+/**
+ * The second prompt when removing a saved round whose flows are also in the
+ * account: OK removes them with the round, Cancel removes only the round.
+ */
+export function savedRoundFlowsPrompt(label: string, count: number): string {
+  const these = count === 1 ? "its saved flow" : `its ${count} saved flows`;
+  return `Also remove ${these} from your account?\n\nOK removes "${label}" with ${these}. Cancel removes only the round. A flow another saved round uses is always kept.`;
+}
+
+/** The round removal result the notice reads (`DeleteSavedRoundResult`, minus what it doesn't need). */
+export type SavedRoundRemovalOutcome = {
+  removedFlowIds: readonly number[];
+  keptFlowIds: readonly number[];
+  flowsUnreadable: boolean;
+};
+
+/**
+ * What the user chose for a removed round's saved flows: `"none"` — none of
+ * them were in the account list, so nothing was asked; `"kept"` — asked and
+ * cancelled; `"removed"` — asked and confirmed.
+ */
+export type SavedRoundFlowsChoice = "none" | "kept" | "removed";
+
+/**
+ * The `aria-live` line after a saved round is removed from the account:
+ * how many of its saved flows went with it, and why any stayed.
+ */
+export function describeSavedRoundRemoval(
+  label: string,
+  outcome: SavedRoundRemovalOutcome,
+  choice: SavedRoundFlowsChoice,
+): string {
+  if (choice === "none") return `Removed "${label}" from your account.`;
+  if (choice === "kept") return `Removed "${label}" from your account. Its saved flows are still there.`;
+  if (outcome.flowsUnreadable) {
+    return `Removed "${label}" from your account. Its saved flows were kept because the round couldn't be read.`;
+  }
+  const removed = outcome.removedFlowIds.length;
+  const kept = outcome.keptFlowIds.length;
+  let line =
+    removed > 0
+      ? `Removed "${label}" and ${flowCount(removed)} from your account.`
+      : `Removed "${label}" from your account.`;
+  if (kept > 0) {
+    line += ` Kept ${flowCount(kept)} another saved round uses.`;
+  }
+  return line;
+}

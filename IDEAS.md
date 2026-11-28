@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-28, fifth run** (branch `claude/gifted-babbage-bq06ep`): open PRs #2095–#2098 from this routine cover REASON docs saves, word-count deletes, judge-decision caps and Export all, so this run stayed out of their files. For "save flows … and debates in SQL and link to users" and "better tool UI", removing a saved round in Flow History → **Saved to account** can now remove its saved flows too, keeping any flow another saved round uses (see "Remove a saved round with its saved flows" under Account sync of tools below).
+
 > **Scheduled run 2026-11-23** (branch `claude/gifted-babbage-emly6r`, PR #1897): open PRs #1881–#1896 cover Flow History, Settings' tool-storage list, Debate History, judge decisions, the timer and REASON docs, so this run stayed out of their files. The videos-admin test follow-up was already fixed on `master`. For "save … in SQL and link to users" and "better tool UI", it fixed word-count rounds deleted from the account coming back on the next merge, and made deletes ask first (see "Don't let a deleted word-count round come back" under Account sync of tools below).
 
 > **Scheduled run 2026-11-22, seventh run** (branch `claude/gifted-babbage-y5m2my`, PR #1871): no open PRs. For "develop better tool UI" on the flows and rounds saved in SQL, Flow History's **Saved to account** tab now says why a saved flow or round won't open (no longer in the account, or the route's 422 "damaged" message) instead of silently doing nothing, and a saved round still opens when one of its flows can't be read (see "Say why a saved flow or round won't open" under Account sync of tools below). `bun run test` has 25 pre-existing failures in `debate-videos-admin` on `master` (follow-up recorded there).
@@ -279,6 +281,17 @@
   - [x] Docs: `features/rounds.mdx` (Word-Count-Only Speech Format) and `dev-docs/packages/debate-practice-drills.mdx` (new "Word-count rounds: deleting from the account" section with Known gaps)
   - [x] Verified 2026-11-23 (after `git submodule update --init`, `bun install`, each package's `scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 32/32; `bun run test` 1298 files / 17125 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
   - Follow-ups: none new (tombstones for second-device deletes and persisting pending deletes are recorded as Known gaps in the dev doc)
+
+- [ ] **Remove a saved round with its saved flows** (In Progress 2026-11-28, branch `claude/gifted-babbage-bq06ep`). Problem: in the round workspace's Flow History → **Saved to account** tab, removing a saved round deleted only its `saved_rounds` row; its flows stayed in `saved_flows` and had to be found and removed one by one, so the Flows list filled with leftovers of rounds the user had already removed. Goal: removing a round offers to remove its saved flows too, never breaks another saved round, and says what went. Non-goals: a schema change or migration; one transaction across the reads and deletes (Known gap); checking which rounds use a flow when a single flow is removed; the Rounds / History tabs; undo
+  - [x] `readSavedRoundFlowIds`, `planSavedRoundFlowRemoval`, `DeleteSavedRoundResult` in `packages/debate-round/src/state/savedRounds.ts` (public entry)
+  - [x] `DELETE /api/rounds/[clientId]?withFlows=1`: owner-scoped; removes the round's saved flows that no other saved round of the user uses (50 ids per `IN`), flows before the round; answers `removedFlowIds` / `keptFlowIds` / `flowsUnreadable`; a damaged round removes no flows; a plain `DELETE` is unchanged
+  - [x] `deleteSavedRound(clientId, endpoint?, { withFlows })` returns the normalized result
+  - [x] `FlowHistoryDialog`: when the round has flows in the Flows list, a second `confirm()` (`savedRoundFlowsPrompt`) — OK removes them, Cancel only the round; removed flows leave the list; `role="status"` line from `describeSavedRoundRemoval`
+  - [x] Vitest: `apps/debate-web/lib/database/__tests__/rounds-delete-with-flows-route.test.ts` (10, in-memory SQLite), `savedRounds.test.ts` (7), `savedSummaryFilter.test.ts` (5), `saved-rounds-client.test.ts` (4), `FlowHistoryDialog.test.tsx` (3 new, 1 updated)
+  - [x] Docs: `features/flow.mdx` (Flow Cloud Save), `dev-docs/packages/debate-round.mdx` (new "Removing a saved round with its flows" section with Known gaps)
+  - [x] Verified 2026-11-28 (after `git submodule update --init`, `bun install`, each package's `scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 32/32; `bun run build:web` 4/4; `bun run test` 1533 files / 20680 tests, 20645 pass, 19 skipped, **16 fail in 13 files not touched here** — the same 16 the other open PRs record on `master` (e.g. the `/authors` route missing from the tool catalog, `open_public` / `open_super_debates` unclassified in the storage-key guard), which open PR #2082 fixes
+  - [ ] PR opened and merged — moves to Completed when it merges
+  - Follow-ups: none new (the non-transactional delete and single-flow removal not checking rounds are recorded as Known gaps in `dev-docs/packages/debate-round.mdx`)
 
 ---
 

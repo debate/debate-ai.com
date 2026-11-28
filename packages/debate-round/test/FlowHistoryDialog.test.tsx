@@ -38,6 +38,12 @@ vi.mock("next/image", () => ({
 import { FlowHistoryDialog } from "../src/dialogs/FlowHistoryDialog"
 
 /** Picks an option in a controlled `<select>` the way React's onChange expects. */
+function byLabel(label: string): HTMLElement {
+  const el = [...document.querySelectorAll<HTMLElement>("[aria-label]")].find((e) => e.getAttribute("aria-label") === label)
+  if (!el) throw new Error(`No element labelled ${label}`)
+  return el
+}
+
 async function changeSelect(select: HTMLSelectElement, value: string) {
   await act(async () => {
     const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")!.set!
@@ -803,12 +809,75 @@ describe("FlowHistoryDialog — Saved to account tab", () => {
     await renderDialog()
     await click(buttonByText("Saved to account"))
     await click(allByTitle("Remove from your account")[0])
-    expect(bodyText()).not.toContain("Bye round")
+    expect(document.querySelectorAll('[title="Remove from your account"]')).toHaveLength(1)
+    expect(document.querySelector('[data-testid="saved-round-removed-notice"]')?.textContent).toBe(
+      'Removed "Bye round" from your account.',
+    )
     await click(allByTitle("Remove from your account")[0])
-    expect(roundsClient.deleteSavedRound).toHaveBeenCalledWith(21)
+    expect(roundsClient.deleteSavedRound).toHaveBeenCalledWith(21, undefined, { withFlows: false })
     expect(bodyText()).toContain("Stay round")
     expect(bodyText()).toContain("Couldn't remove this round from your account. Try again.")
-    expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Its flows saved to your account"))
+    expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("The copy in this browser is not affected"))
+    // No saved flows in the account: no second prompt, no round fetch.
+    expect(confirmSpy).toHaveBeenCalledTimes(2)
+    expect(roundsClient.fetchSavedRound).not.toHaveBeenCalled()
+  })
+
+  it("asks to remove a saved round's saved flows too, and drops them from the Flows list", async () => {
+    const confirmSpy = vi.fn(() => true)
+    vi.stubGlobal("confirm", confirmSpy)
+    flowsClient.listSavedFlows.mockResolvedValue([
+      { clientId: 1, label: "AC flow", updatedAt: ISO },
+      { clientId: 2, label: "NC flow", updatedAt: ISO },
+      { clientId: 9, label: "Other flow", updatedAt: ISO },
+    ])
+    roundsClient.listSavedRounds.mockResolvedValue([{ clientId: 20, label: "Bye round", updatedAt: ISO }])
+    roundsClient.fetchSavedRound.mockResolvedValue(makeRound(20, { flowIds: [1, 2, 3] }))
+    roundsClient.deleteSavedRound.mockResolvedValue({ removedFlowIds: [1], keptFlowIds: [2], flowsUnreadable: false })
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    await click(byLabel('Remove "Bye round" from your account'))
+    expect(confirmSpy).toHaveBeenNthCalledWith(2, expect.stringContaining("Also remove its 2 saved flows"))
+    expect(roundsClient.deleteSavedRound).toHaveBeenCalledWith(20, undefined, { withFlows: true })
+    expect(bodyText()).not.toContain("AC flow")
+    expect(bodyText()).toContain("NC flow")
+    expect(bodyText()).toContain("Other flow")
+    expect(document.querySelector('[data-testid="saved-round-removed-notice"]')?.textContent).toBe(
+      'Removed "Bye round" and 1 flow from your account. Kept 1 flow another saved round uses.',
+    )
+  })
+
+  it("removes only the round when the flows prompt is cancelled", async () => {
+    const confirmSpy = vi.fn().mockReturnValueOnce(true).mockReturnValueOnce(false)
+    vi.stubGlobal("confirm", confirmSpy)
+    flowsClient.listSavedFlows.mockResolvedValue([{ clientId: 1, label: "AC flow", updatedAt: ISO }])
+    roundsClient.listSavedRounds.mockResolvedValue([{ clientId: 20, label: "Bye round", updatedAt: ISO }])
+    roundsClient.fetchSavedRound.mockResolvedValue(makeRound(20, { flowIds: [1] }))
+    roundsClient.deleteSavedRound.mockResolvedValue({ removedFlowIds: [], keptFlowIds: [], flowsUnreadable: false })
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    await click(byLabel('Remove "Bye round" from your account'))
+    expect(confirmSpy).toHaveBeenNthCalledWith(2, expect.stringContaining("Also remove its saved flow from"))
+    expect(roundsClient.deleteSavedRound).toHaveBeenCalledWith(20, undefined, { withFlows: false })
+    expect(bodyText()).toContain("AC flow")
+    expect(document.querySelector('[data-testid="saved-round-removed-notice"]')?.textContent).toBe(
+      'Removed "Bye round" from your account. Its saved flows are still there.',
+    )
+  })
+
+  it("removes a saved round on its own when it can't be read to count its flows", async () => {
+    const confirmSpy = vi.fn(() => true)
+    vi.stubGlobal("confirm", confirmSpy)
+    flowsClient.listSavedFlows.mockResolvedValue([{ clientId: 1, label: "AC flow", updatedAt: ISO }])
+    roundsClient.listSavedRounds.mockResolvedValue([{ clientId: 20, label: "Broken round", updatedAt: ISO }])
+    roundsClient.fetchSavedRound.mockRejectedValue(new Error("This saved round is damaged and can't be opened."))
+    roundsClient.deleteSavedRound.mockResolvedValue({ removedFlowIds: [], keptFlowIds: [], flowsUnreadable: false })
+    await renderDialog()
+    await click(buttonByText("Saved to account"))
+    await click(byLabel('Remove "Broken round" from your account'))
+    expect(confirmSpy).toHaveBeenCalledTimes(1)
+    expect(roundsClient.deleteSavedRound).toHaveBeenCalledWith(20, undefined, { withFlows: false })
+    expect(bodyText()).toContain("AC flow")
   })
 
   it("asks before removing a cloud round and leaves it alone when cancelled", async () => {
