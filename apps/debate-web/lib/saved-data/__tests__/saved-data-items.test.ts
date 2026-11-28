@@ -6,7 +6,7 @@ import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
 import { documents, practiceVsAiDebates, savedCustomOpponentPersonas, savedLearnCards, savedQuickCards, savedStrategyRecommendations, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedToolRecords, savedWordCountRounds, user } from "../../database/schema";
 import { SAVED_SQL_TOOLS } from "../saved-data";
-import { exportOwnSqlTools, DRILL_SETS_HREF, EXPORT_MAX_ITEMS, exportOwnToolCollection, exportOwnToolRecords, TOOL_RECORD_EXPORT_PAGE_SIZE, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle, WORD_COUNT_TITLE_ROUND_ID_MAX } from "../saved-data-items";
+import { exportOwnSqlTool, exportOwnSqlTools, DRILL_SETS_HREF, EXPORT_MAX_ITEMS, exportOwnToolCollection, exportOwnToolRecords, TOOL_RECORD_EXPORT_PAGE_SIZE, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle, WORD_COUNT_TITLE_ROUND_ID_MAX } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -545,6 +545,46 @@ describe("More saved work in the export", () => {
     expect(body.moreSavedWork.quickCards.map((r: { clientId: string }) => r.clientId)).toEqual(["q1", "q2", "q3"]);
     expect(body.moreSavedWork.learnCards).toHaveLength(3);
     expect(body.moreSavedWorkTruncated).toEqual(["quickCards"]);
+  });
+});
+
+describe("exportOwnSqlTool", () => {
+  const NOW = new Date("2026-11-28T12:00:00.000Z");
+
+  it("returns null for a key that isn't a More saved work table", async () => {
+    const db = await freshDb();
+    for (const key of ["", "docs", "pinnedDebates", "learnReviewLog"]) expect(await exportOwnSqlTool(db, "a", key, NOW)).toBeNull();
+  });
+
+  it("holds only that table's rows for the caller, oldest first, in the Export all shape", async () => {
+    const db = await freshDb();
+    await db.insert(savedQuickCards).values([
+      { userId: "a", clientId: "q1", data: '{"tag":"First"}' },
+      { userId: "b", clientId: "q9", data: '{"tag":"Theirs"}' },
+      { userId: "a", clientId: "q2", data: '{"tag":"Second"}' },
+    ]);
+    await db.insert(savedLearnCards).values({ userId: "a", clientId: "c1", data: "{}" });
+    const file = await exportOwnSqlTool(db, "a", "quickCards", NOW);
+    expect(file?.filename).toBe("moreSavedWork-quickcards-2026-11-28.json");
+    const body = JSON.parse(file!.body);
+    expect(Object.keys(body)).toEqual(["exportedAt", "moreSavedWork", "moreSavedWorkTruncated"]);
+    expect(body.exportedAt).toBe(NOW.toISOString());
+    expect(Object.keys(body.moreSavedWork)).toEqual(["quickCards"]);
+    expect(body.moreSavedWork.quickCards.map((r: { clientId: string; data: unknown }) => [r.clientId, r.data])).toEqual([
+      ["q1", { tag: "First" }],
+      ["q2", { tag: "Second" }],
+    ]);
+    expect(body.moreSavedWorkTruncated).toEqual([]);
+    expect(file!.body).not.toContain("userId");
+  });
+
+  it("writes an empty list for a table with no rows, and flags a cut-off export", async () => {
+    const db = await freshDb();
+    expect(JSON.parse((await exportOwnSqlTool(db, "a", "learnDecks", NOW))!.body).moreSavedWork).toEqual({ learnDecks: [] });
+    await db.insert(savedQuickCards).values([1, 2, 3].map((n) => ({ userId: "a", clientId: `q${n}`, data: "{}" })));
+    const cut = JSON.parse((await exportOwnSqlTool(db, "a", "quickCards", NOW, 2))!.body);
+    expect(cut.moreSavedWork.quickCards).toHaveLength(2);
+    expect(cut.moreSavedWorkTruncated).toEqual(["quickCards"]);
   });
 });
 

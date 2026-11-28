@@ -21,6 +21,7 @@ import {
   type JudgePanelRubricAgreement,
 } from "@debate-ai/round/src/round/judge-decision-panel";
 import { getJudgeParadigmByName } from "@debate-ai/speech-writer/src/judge/judge-paradigms";
+import { judgeDecisionIdsOverCap, MAX_JUDGE_DECISIONS_PER_ROUND } from "./savedJudgeDecisions";
 
 export type JudgeDecisionRecord = {
   /** Generated once when the decision is first requested; the record's stable cross-device identity. */
@@ -42,14 +43,8 @@ export type JudgeDecisionRecord = {
 
 const STORAGE_KEY = "judgeDecisions";
 
-/**
- * Idea #5's third "Next" bullet ("a per-round decision count cap, now that a
- * heavily-re-judged round can accumulate many entries even with the new
- * bulk-clear action available"). Once a round's history log exceeds this
- * many entries, `appendJudgeDecision` trims the oldest ones, mirroring
- * `wordLimitPresets.ts`'s `MAX_WORD_LIMIT_PRESETS` cap-constant convention.
- */
-export const MAX_JUDGE_DECISIONS_PER_ROUND = 20;
+/** Per-round history cap; defined in `state/savedJudgeDecisions.ts` so the account route shares it. */
+export { MAX_JUDGE_DECISIONS_PER_ROUND };
 
 function readAll(): JudgeDecisionRecord[] {
   if (typeof localStorage === "undefined") return [];
@@ -178,26 +173,7 @@ export function adoptJudgeDecision(record: JudgeDecisionRecord): void {
  */
 export function trimJudgeDecisionsToCap(): string[] {
   const all = readAll();
-  const byRound = new Map<string, JudgeDecisionRecord[]>();
-  for (const record of all) {
-    const round = byRound.get(record.roundId);
-    if (round) round.push(record);
-    else byRound.set(record.roundId, [record]);
-  }
-
-  const trimmedIds: string[] = [];
-  for (const records of byRound.values()) {
-    if (records.length <= MAX_JUDGE_DECISIONS_PER_ROUND) continue;
-    const newestFirst = [...records].sort(
-      (a, b) => b.generatedAt - a.generatedAt || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
-    );
-    trimmedIds.push(
-      ...newestFirst
-        .slice(MAX_JUDGE_DECISIONS_PER_ROUND)
-        .reverse()
-        .map((record) => record.id),
-    );
-  }
+  const trimmedIds = judgeDecisionIdsOverCap(all);
 
   if (trimmedIds.length > 0) {
     const trimmed = new Set(trimmedIds);

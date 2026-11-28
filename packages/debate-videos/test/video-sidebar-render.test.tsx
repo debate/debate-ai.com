@@ -89,10 +89,10 @@ describe("VideoSidebarTree", () => {
 
   it("renders Lucide section headings as inline SVG, never as an image", () => {
     const html = renderSidebar();
-    // The Practice Debates / Research / Inference headings carry Lucide icons.
-    expect(html).toContain("Practice Debates");
+    // The Debates / Research headings carry Lucide icons.
+    expect(html).toContain("Practice debates");
     expect(html).toContain("Research");
-    expect(html).toContain("Inference");
+    expect(html).not.toContain("Inference");
     expect(html).toContain("lucide");
     expect(html).toContain("<svg");
   });
@@ -161,9 +161,9 @@ describe("the sidebar's heading structure", () => {
     }
   });
 
-  it("renders Research / Debates / Inference as h1 sections", () => {
+  it("renders Research / Debates as h1 sections", () => {
     const html = renderSidebar();
-    for (const title of ["Debates", "Research", "Inference"]) {
+    for (const title of ["Debates", "Research"]) {
       expect(html).toMatch(new RegExp(`<h1[^>]*>${title}<\\/h1>`));
     }
   });
@@ -177,7 +177,7 @@ describe("the sidebar's heading structure", () => {
     // "open in a new tab" silently did nothing on the five rows that happened
     // to be sections.
     const html = renderSidebar();
-    for (const title of ["Videos", "Debates", "Research", "Inference"]) {
+    for (const title of ["Videos", "Debates", "Research"]) {
       expect(html).toMatch(
         new RegExp(
           `<a[^>]*href="/[^"]*"[^>]*aria-expanded="(?:true|false)"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`,
@@ -192,7 +192,7 @@ describe("the sidebar's heading structure", () => {
     expect(html).toMatch(
       /<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Videos<\/h1>/,
     );
-    for (const title of ["Debates", "Research", "Inference"]) {
+    for (const title of ["Debates", "Research"]) {
       expect(html).toMatch(
         new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
@@ -231,9 +231,9 @@ describe("the sidebar's heading structure", () => {
     expect(html).not.toContain("1400");
   });
 
-  it("lists Team & School Rank under Inference and the reference rows under Learning", () => {
+  it("lists Team & School Rank under Debates and the reference rows under Learning", () => {
     const html = renderSidebar();
-    const inference = html.indexOf(">Inference<");
+    const inference = html.indexOf(">Debates<");
     const rank = html.indexOf("Team &amp; School Rank");
     const statistics = html.indexOf("Topics &amp; Statistics");
     const learning = html.indexOf(">Learning<");

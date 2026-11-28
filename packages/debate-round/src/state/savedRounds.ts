@@ -117,3 +117,60 @@ export function hasRoundSaveConflict(
   if (currentUpdatedAt === null) return false;
   return baseUpdatedAt == null || baseUpdatedAt !== currentUpdatedAt;
 }
+
+/**
+ * The flow ids a parsed `saved_rounds.data` blob points at, for
+ * `DELETE /api/rounds/[clientId]?withFlows=1`. Reads only `flowIds`, so a
+ * row that fails `isValidRound` elsewhere still says which flows it uses.
+ * Non-integer and repeated ids are dropped; anything that isn't an object
+ * with a `flowIds` array answers `[]`. Never throws.
+ */
+export function readSavedRoundFlowIds(value: unknown): number[] {
+  if (typeof value !== "object" || value === null) return [];
+  const flowIds = (value as { flowIds?: unknown }).flowIds;
+  if (!Array.isArray(flowIds)) return [];
+  const seen = new Set<number>();
+  for (const id of flowIds) {
+    if (Number.isInteger(id)) seen.add(id as number);
+  }
+  return [...seen];
+}
+
+/** Which of a removed round's saved flows go with it, and which stay because another saved round uses them. */
+export type SavedRoundFlowRemovalPlan = {
+  remove: number[];
+  kept: number[];
+};
+
+/**
+ * Splits a round's flow ids into the ones that can be removed with it and
+ * the ones another of the user's saved rounds still points at (`kept`), so
+ * removing one round never breaks another. Keeps the round's order, drops
+ * repeats, never mutates its inputs.
+ */
+export function planSavedRoundFlowRemoval(
+  roundFlowIds: readonly number[],
+  otherRoundsFlowIds: readonly (readonly number[])[],
+): SavedRoundFlowRemovalPlan {
+  const usedElsewhere = new Set<number>();
+  for (const ids of otherRoundsFlowIds) for (const id of ids) usedElsewhere.add(id);
+  const remove: number[] = [];
+  const kept: number[] = [];
+  const seen = new Set<number>();
+  for (const id of roundFlowIds) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    (usedElsewhere.has(id) ? kept : remove).push(id);
+  }
+  return { remove, kept };
+}
+
+/** What `DELETE /api/rounds/[clientId]?withFlows=1` answers (a plain delete answers `{ success: true }` only). */
+export type DeleteSavedRoundResult = {
+  /** Saved flows removed with the round (only ids that were in the account). */
+  removedFlowIds: number[];
+  /** The round's saved flows left in place because another saved round uses them. */
+  keptFlowIds: number[];
+  /** The round's own row couldn't be read, so none of its flows were touched. */
+  flowsUnreadable: boolean;
+};

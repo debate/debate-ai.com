@@ -33,8 +33,11 @@ Locally the same schema runs on SQLite through libSQL.
   (earlier versions) and `saved_tournament_results` (no page opens them). **Export all**
   carries the "More saved work" tables' rows under `moreSavedWork` (keyed like
   `SAVED_SQL_TOOLS`, `exportOwnSqlTools` in `lib/saved-data/saved-data-items.ts`;
-  tables past the per-kind ceiling named in `moreSavedWorkTruncated`). They are not
-  yet in **Manage**, and **Restore from export…** doesn't read them back.
+  tables past the per-kind ceiling named in `moreSavedWorkTruncated`). Each "More
+  saved work" row's **Export** link downloads one table in the same shape
+  (`GET /api/settings/saved-data?export=sql&key=<key>`, `exportOwnSqlTool`; 400 for
+  a key not in `SAVED_SQL_TOOLS`). They are not yet in **Manage**, and **Restore
+  from export…** doesn't read them back.
 
 See [Database setup](../setup/database.md) for how these tables
 get created.
