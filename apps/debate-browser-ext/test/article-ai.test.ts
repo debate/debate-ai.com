@@ -24,7 +24,12 @@ vi.mock('wxt/browser', () => {
   return { browser: { storage: { sync: area(storage.sync), local: area(storage.local) } } };
 });
 
-import { AiNotConfiguredError, askArticleQuestion, suggestFollowups } from '@/src/ai/article-ai';
+import {
+  AiNotConfiguredError,
+  askArticleQuestion,
+  describeActiveProvider,
+  suggestFollowups,
+} from '@/src/ai/article-ai';
 
 const fetchMock = vi.fn<typeof fetch>();
 
@@ -148,5 +153,98 @@ describe('suggestFollowups', () => {
       'What evidence supports the claim?',
       'Who funded the study here?',
     ]);
+  });
+});
+
+const textResponse = (body: string, status: number) => new Response(body, { status });
+const signIn = () => {
+  storage.local.debateAccountSession = { token: 'session-token', user: { id: 'u1' }, apiBase: 'https://debate-ai.com' };
+};
+
+describe('provider error messages', () => {
+  beforeEach(() => {
+    storage.local.appOwnAiKey = 'sk-ant-test';
+  });
+
+  it('says the key was rejected when the provider returns 401 with no explanation', async () => {
+    fetchMock.mockResolvedValue(textResponse('', 401));
+    await expect(ask()).rejects.toThrow('Anthropic rejected the API key (401).');
+  });
+
+  it('falls back to the status when the error body is not JSON', async () => {
+    fetchMock.mockResolvedValue(textResponse('<html>Bad gateway</html>', 502));
+    await expect(ask()).rejects.toThrow('Anthropic request failed (502).');
+  });
+
+  it.each([
+    ['message', { message: 'Overloaded' }, 'Overloaded'],
+    ['details', { details: 'Model unavailable' }, 'Model unavailable'],
+    ['a string error', { error: 'quota' }, 'quota'],
+    ['an error object without a message', { error: { code: 42 } }, '{"code":42}'],
+  ])('reads the detail from %s', async (_label, body, expected) => {
+    fetchMock.mockResolvedValue(jsonResponse(body, 500));
+    await expect(ask()).rejects.toThrow(expected);
+  });
+
+  it('answers with nothing when Anthropic returns no text blocks', async () => {
+    fetchMock.mockResolvedValue(jsonResponse({ content: [{ type: 'tool_use' }] }));
+    await expect(ask()).resolves.toBe('');
+    fetchMock.mockResolvedValue(jsonResponse({}));
+    await expect(ask()).resolves.toBe('');
+  });
+
+  it('answers with nothing when OpenRouter returns no choices', async () => {
+    storage.local.appOwnAiKey = 'sk-or-v1-test';
+    fetchMock.mockResolvedValue(jsonResponse({}));
+    await expect(ask()).resolves.toBe('');
+  });
+});
+
+describe('Debate AI account responses', () => {
+  beforeEach(signIn);
+
+  it.each([
+    ['flattened text', { text: 'flat' }, 'flat'],
+    ['a content string', { content: 'plain' }, 'plain'],
+    ['raw content blocks', { content: [{ type: 'text', text: 'a' }, { type: 'image' }, { type: 'text', text: 'b' }] }, 'ab'],
+    ['nothing usable', { other: true }, ''],
+  ])('reads %s', async (_label, body, expected) => {
+    fetchMock.mockResolvedValue(jsonResponse(body));
+    await expect(ask()).resolves.toBe(expected);
+  });
+
+  it('tells the reader to sign in again when the session has expired', async () => {
+    fetchMock.mockResolvedValue(textResponse('', 401));
+    const error = await ask().catch((e) => e);
+    expect(error).toBeInstanceOf(AiNotConfiguredError);
+    expect(error.message).toMatch(/session has expired/);
+  });
+
+  it('reports a server failure with its own message', async () => {
+    fetchMock.mockResolvedValue(jsonResponse({ error: 'Out of credits' }, 402));
+    await expect(ask()).rejects.toThrow('Out of credits');
+    fetchMock.mockResolvedValue(textResponse('', 500));
+    await expect(ask()).rejects.toThrow('Debate AI request failed (500).');
+  });
+
+  it('lets a network failure through unchanged', async () => {
+    fetchMock.mockRejectedValue(new TypeError('Failed to fetch'));
+    await expect(ask()).rejects.toThrow('Failed to fetch');
+  });
+});
+
+describe('describeActiveProvider', () => {
+  it('reports the account as not ready until the reader signs in', async () => {
+    expect(await describeActiveProvider()).toEqual({ id: 'account', label: 'My Debate AI account', ready: false });
+    signIn();
+    expect(await describeActiveProvider()).toMatchObject({ id: 'account', ready: true });
+  });
+
+  it('reports a saved key as ready without needing an account', async () => {
+    storage.local.appOwnAiKey = 'sk-or-v1-test';
+    expect(await describeActiveProvider()).toMatchObject({ id: 'openrouter', ready: true });
+
+    storage.local.appOwnAiKey = 'sk-ant-test';
+    expect(await describeActiveProvider()).toMatchObject({ id: 'anthropic', ready: true });
   });
 });

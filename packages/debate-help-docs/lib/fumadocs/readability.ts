@@ -1,47 +1,25 @@
 /**
  * @file readability.ts
- * @description Readability scores for a docs page's Info panel
- * (`components/guides/page-info.tsx`), following the formulas of the Python
- * `textstat` / `text-readability` libraries: Flesch Reading Ease, Flesch-Kincaid
- * Grade, Gunning Fog, SMOG, Automated Readability Index, Coleman-Liau, Linsear
- * Write and an overall text-standard grade.
+ * @description Readability score for a docs page's Doc Metrics panel
+ * (`components/guides/page-info.tsx`): the Flesch Reading Ease formula used by
+ * the Python `textstat` library, clamped to 0-100 and labelled with its band.
  *
  * Pure TypeScript with no dependencies, no network and no Node APIs, so it
  * runs unchanged on Cloudflare Workers (where the page's stats are computed)
  * and in the browser. Syllables are counted with a vowel-group heuristic
- * rather than a pronunciation dictionary, so individual scores can differ
- * from textstat's by a fraction of a grade.
- *
- * Dale-Chall is left out: it needs textstat's 3,000-word "easy word" list,
- * which is bigger than the rest of this module put together.
+ * rather than a pronunciation dictionary, so the score can differ from
+ * textstat's by a point or two.
  */
 
-/** Below this many words the scores are too noisy to show. */
+/** Below this many words the score is too noisy to show. */
 export const MIN_WORDS = 10;
-/** SMOG is defined on samples of at least three sentences. */
-export const SMOG_MIN_SENTENCES = 3;
-
-export interface ReadabilityScores {
-  fleschReadingEase: number | null;
-  fleschKincaidGrade: number | null;
-  gunningFog: number | null;
-  smog: number | null;
-  automatedReadability: number | null;
-  colemanLiau: number | null;
-  linsearWrite: number | null;
-}
 
 export interface Readability {
   words: number;
   sentences: number;
   syllables: number;
-  /** Words of three or more syllables. */
-  polysyllables: number;
-  /** Letters and digits (no spaces or punctuation). */
-  letters: number;
-  scores: ReadabilityScores;
-  /** The grade most of the grade-level formulas agree on, or null for too little text. */
-  textStandard: number | null;
+  /** Flesch Reading Ease (unclamped, one decimal), or null for too little text. */
+  fleschReadingEase: number | null;
   /** Flesch Reading Ease clamped to 0-100 and rounded, or null for too little text. */
   score: number | null;
   /** The band `score` falls in (see {@link readabilityBand}). */
@@ -49,13 +27,13 @@ export interface Readability {
 }
 
 export type ReadabilityBand =
-  | 'Very Easy'
+  | 'Very easy'
   | 'Easy'
-  | 'Fairly Easy'
+  | 'Fairly easy'
   | 'Standard'
-  | 'Fairly Difficult'
+  | 'Fairly difficult'
   | 'Difficult'
-  | 'Very Confusing';
+  | 'Very difficult';
 
 const WORD = /[\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*/gu;
 const ABBREVIATION = /\b(?:e\.g|i\.e|et al|etc|vs|cf|Mr|Mrs|Ms|Dr|Prof|St|No)\./g;
@@ -95,65 +73,19 @@ const round = (value: number, digits = 1) => {
 /** The label for a headline score (0-100). */
 export function readabilityBand(score: number): ReadabilityBand {
   const value = Math.round(Math.min(100, Math.max(0, score)));
-  if (value >= 90) return 'Very Easy';
+  if (value >= 90) return 'Very easy';
   if (value >= 80) return 'Easy';
-  if (value >= 70) return 'Fairly Easy';
+  if (value >= 70) return 'Fairly easy';
   if (value >= 60) return 'Standard';
-  if (value >= 50) return 'Fairly Difficult';
+  if (value >= 50) return 'Fairly difficult';
   if (value >= 30) return 'Difficult';
-  return 'Very Confusing';
-}
-
-/** A US grade level for a Flesch Reading Ease score, as textstat's `text_standard` does. */
-function gradeFromEase(ease: number): number {
-  if (ease >= 90) return 5;
-  if (ease >= 80) return 6;
-  if (ease >= 70) return 7;
-  if (ease >= 60) return 8;
-  if (ease >= 50) return 10;
-  if (ease >= 40) return 11;
-  if (ease >= 30) return 12;
-  return 13;
-}
-
-const EMPTY_SCORES: ReadabilityScores = {
-  fleschReadingEase: null,
-  fleschKincaidGrade: null,
-  gunningFog: null,
-  smog: null,
-  automatedReadability: null,
-  colemanLiau: null,
-  linsearWrite: null,
-};
-
-/** The Linsear Write formula on the first 100 words, as textstat computes it. */
-function linsearWrite(sentences: string[]): number {
-  let easy = 0;
-  let hard = 0;
-  let seen = 0;
-  let sampleSentences = 0;
-  for (const sentence of sentences) {
-    const words = sentence.match(WORD) ?? [];
-    if (words.length === 0) continue;
-    sampleSentences++;
-    for (const word of words) {
-      if (seen === 100) break;
-      seen++;
-      if (countSyllables(word) < 3) easy++;
-      else hard++;
-    }
-    if (seen === 100) break;
-  }
-  const total = (easy + hard * 3) / Math.max(1, sampleSentences);
-  return total > 20 ? total / 2 : (total - 2) / 2;
+  return 'Very difficult';
 }
 
 /**
  * Readability of some prose.
  *
- * Scores are null when there are fewer than {@link MIN_WORDS} words (and
- * SMOG when there are fewer than {@link SMOG_MIN_SENTENCES} sentences), never
- * NaN.
+ * The score is null when there are fewer than {@link MIN_WORDS} words, never NaN.
  *
  * @param text - Plain prose, without Markdown, citations or headings.
  */
@@ -161,56 +93,13 @@ export function readability(text: string): Readability {
   const sentences = sentencesOf(text);
   const words = text.match(WORD) ?? [];
   let syllables = 0;
-  let polysyllables = 0;
-  let letters = 0;
-  for (const word of words) {
-    const count = countSyllables(word);
-    syllables += count;
-    if (count >= 3) polysyllables++;
-    letters += word.replace(/[^\p{L}\p{N}]/gu, '').length;
-  }
-  const base = { words: words.length, sentences: sentences.length, syllables, polysyllables, letters };
+  for (const word of words) syllables += countSyllables(word);
+  const base = { words: words.length, sentences: sentences.length, syllables };
   if (words.length < MIN_WORDS || sentences.length === 0) {
-    return { ...base, scores: { ...EMPTY_SCORES }, textStandard: null, score: null, band: null };
+    return { ...base, fleschReadingEase: null, score: null, band: null };
   }
 
-  const perSentence = words.length / sentences.length;
-  const perWord = syllables / words.length;
-  const scores: ReadabilityScores = {
-    fleschReadingEase: round(206.835 - 1.015 * perSentence - 84.6 * perWord),
-    fleschKincaidGrade: round(0.39 * perSentence + 11.8 * perWord - 15.59),
-    gunningFog: round(0.4 * (perSentence + (100 * polysyllables) / words.length)),
-    smog:
-      sentences.length >= SMOG_MIN_SENTENCES
-        ? round(1.043 * Math.sqrt(polysyllables * (30 / sentences.length)) + 3.1291)
-        : null,
-    automatedReadability: round(4.71 * (letters / words.length) + 0.5 * perSentence - 21.43),
-    colemanLiau: round(0.0588 * ((letters / words.length) * 100) - 0.296 * ((sentences.length / words.length) * 100) - 15.8),
-    linsearWrite: round(linsearWrite(sentences)),
-  };
-
-  const grades = [
-    scores.fleschKincaidGrade,
-    gradeFromEase(scores.fleschReadingEase!),
-    scores.smog,
-    scores.automatedReadability,
-    scores.colemanLiau,
-    scores.linsearWrite,
-    scores.gunningFog,
-  ]
-    .filter((grade): grade is number => grade !== null)
-    .map((grade) => Math.max(0, Math.round(grade)));
-  const tally = new Map<number, number>();
-  for (const grade of grades) tally.set(grade, (tally.get(grade) ?? 0) + 1);
-  let textStandard = grades[0]!;
-  let best = 0;
-  for (const [grade, votes] of tally) {
-    if (votes > best) {
-      best = votes;
-      textStandard = grade;
-    }
-  }
-
-  const score = Math.round(Math.min(100, Math.max(0, scores.fleschReadingEase!)));
-  return { ...base, scores, textStandard, score, band: readabilityBand(score) };
+  const fleschReadingEase = round(206.835 - 1.015 * (words.length / sentences.length) - 84.6 * (syllables / words.length));
+  const score = Math.round(Math.min(100, Math.max(0, fleschReadingEase)));
+  return { ...base, fleschReadingEase, score, band: readabilityBand(score) };
 }

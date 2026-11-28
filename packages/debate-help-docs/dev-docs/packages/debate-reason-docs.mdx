@@ -31,9 +31,27 @@ rather than a 500. The walk up the tree reads one row at a time through
 `apps/debate-web/lib/api/document-tree.ts` and stops at `MAX_FOLDER_DEPTH`
 or on a cycle already in the data.
 
-Known gaps: the save queue retries a 400 like any other failure (up to its
-attempt limit) and the optimistic move stays on screen until the next reload;
-rows already orphaned before this check are not repaired.
+A refusal is not retried. `DocumentSaveQueue` (`lib/reason-docs/save-queue.ts`)
+treats a 400, 403 or 404 (`isRefusal`) as final: it drops the refused fields at
+once and calls `onRejected` with them, the status and the server's `{ error }`.
+A 400 on a patch that also carried a title or body edit blames only the
+`parentId`, since the server checks the move first and writes nothing, and the
+rest is sent again straight away. A field edited again while the write was in
+flight is newer, so it isn't dropped. If nothing was dropped, nothing is
+reported. A 401, 408, 429, 5xx or network error still retries with backoff.
+`ReasonDocsProvider` keeps each moved file's last server-confirmed folder
+(seeded on its first move, updated from `onSaved`). On a refused move it puts
+the file back there, and it exposes the sentence from
+`lib/reason-docs/save-refusal.ts` as `saveRefusal` / `dismissSaveRefusal`.
+The sidebar shows it under My Personal Documents. Tests:
+`test/lib/reason-docs/save-queue-refusal.test.ts`, `save-refusal.test.ts`,
+`test/docs/ReasonDocsProvider.test.tsx` and `sidebar-panels.test.tsx`.
+
+Known gaps: rows already orphaned before this check are not repaired. The
+refusal line lives in the sidebar, so a move refused from the File manager
+dialog is undone in the dialog but explained only once it is closed. A 404 on
+a file deleted on another device doesn't remove it from the tree until the
+next reload.
 
 ## Dependency graph
 

@@ -50,10 +50,11 @@ follows the collections' sync state. `apps/debate-web`'s
 (`SAVED_DATA_KINDS`) points at a catalog tool that is described as neither a
 `sql` tool nor a synced one with `sql`.
 
-Known gaps: `/debate` (flows and rounds) is not a `/tools` catalog entry, so it
-has no row. (A signed-out visitor used to see the "This device only" pill next
-to a line saying the items were already saved to the account; the line now
-follows the sign-in state.)
+`/debate` (flows and rounds) is not a `/tools` catalog entry, so it is listed
+through `STORAGE_PAGES_OUTSIDE_CATALOG` under a **Rounds** group, first
+(`withStoragePagesOutsideCatalog`). (A signed-out visitor used to see the
+"This device only" pill next to a line saying the items were already saved to
+the account; the line now follows the sign-in state.)
 
 ## Dependency graph
 
