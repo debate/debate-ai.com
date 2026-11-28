@@ -86,7 +86,7 @@ describe("lecture category sections", () => {
     const html = renderToStaticMarkup(
       createElement(LectureCategoryGridGallery, { categories, formatCounts: { college: 1400, parli: 15 } }),
     );
-    const hrefs = ["/videos/college", "/videos/policy", "/videos/ld", "/videos/pf"].map((href) =>
+    const hrefs = ["/videos/college", "/videos/policy", "/videos/pf", "/videos/ld"].map((href) =>
       html.indexOf(`href="${href}"`),
     );
     expect(hrefs.every((index) => index > -1)).toBe(true);
@@ -155,14 +155,14 @@ describe("lecture category sections", () => {
         formatCounts: { ld: 321 },
       }),
     );
-    for (const href of ["/videos/college", "/videos/policy", "/videos/ld", "/videos/pf"]) {
+    for (const href of ["/videos/college", "/videos/policy", "/videos/pf", "/videos/ld"]) {
       expect(html).toContain(`href="${href}"`);
     }
     expect(html).not.toContain("<section");
     expect(html).toContain(">321<");
     expect(html.match(/aria-current="page"/g)).toHaveLength(1);
-    expect(html.indexOf('aria-current="page"')).toBeGreaterThan(html.indexOf('href="/videos/ld"'));
-    expect(html.indexOf('aria-current="page"')).toBeLessThan(html.indexOf('href="/videos/pf"'));
+    expect(html.indexOf('aria-current="page"')).toBeGreaterThan(html.indexOf('href="/videos/pf"'));
+    expect(html.indexOf('aria-current="page"')).toBeLessThan(html.indexOf(">321<"));
   });
 
   it("draws the format cards without any category facets, none selected by default", () => {
