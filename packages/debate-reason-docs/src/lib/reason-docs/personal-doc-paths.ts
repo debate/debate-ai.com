@@ -39,7 +39,7 @@ import { isTopicCode } from "./topic-doc-paths"
  */
 export const RESERVED_USERNAMES: ReadonlySet<string> = new Set([
   // apps/debate-web/app
-  "about", "admin", "annotations", "api", "auth", "blog", "coaching", "contacts",
+  "about", "admin", "annotations", "api", "auth", "authors", "blog", "coaching", "contacts",
   "debate", "docs", "import", "lectures", "legal", "login", "news", "notifications",
   "outline", "practice", "rank", "reason-editor", "research", "schools", "settings",
   "speech-documents", "summaries", "teams", "tournament", "unsubscribe", "videos",
