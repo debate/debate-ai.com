@@ -1,0 +1,148 @@
+{
+  "kind": "subfield",
+  "id": 3611,
+  "name": "Pharmacy",
+  "total_in_scrape": 7,
+  "count": 7,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Pharmacy -- 9.9",
+      "id": "https://openalex.org/A5008363918",
+      "display_name": "Akshaya Srikanth Bhagavathula",
+      "orcid": "https://orcid.org/0000-0002-0581-7808",
+      "h_index": 85,
+      "i10_index": 218,
+      "works_count": 400,
+      "cited_by_count": 117408,
+      "discipline": "Pharmacy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacy",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Pharmacy -- 9.9",
+      "id": "https://openalex.org/A5104084941",
+      "display_name": "Morris Weinberger",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 288,
+      "works_count": 454,
+      "cited_by_count": 29407,
+      "discipline": "Pharmacy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacy",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Pharmacy -- 9.9",
+      "id": "https://openalex.org/A5087339027",
+      "display_name": "Ross T. Tsuyuki",
+      "orcid": "https://orcid.org/0000-0002-3724-598X",
+      "h_index": 74,
+      "i10_index": 300,
+      "works_count": 748,
+      "cited_by_count": 27396,
+      "discipline": "Pharmacy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacy",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Pharmacy -- 9.9",
+      "id": "https://openalex.org/A5015125630",
+      "display_name": "Long Chiau Ming",
+      "orcid": "https://orcid.org/0000-0002-6971-1383",
+      "h_index": 73,
+      "i10_index": 286,
+      "works_count": 639,
+      "cited_by_count": 24751,
+      "discipline": "Pharmacy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacy",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Agricultural and Biological Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Pharmacy -- 9.9",
+      "id": "https://openalex.org/A5112076218",
+      "display_name": "Nick Barber",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 147,
+      "works_count": 253,
+      "cited_by_count": 19023,
+      "discipline": "Pharmacy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacy",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Pharmacy -- 9.9",
+      "id": "https://openalex.org/A5080734914",
+      "display_name": "Mohamed Azmi Hassali",
+      "orcid": "https://orcid.org/0000-0001-9575-403X",
+      "h_index": 66,
+      "i10_index": 350,
+      "works_count": 786,
+      "cited_by_count": 17591,
+      "discipline": "Pharmacy",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Pharmacy",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Pharmacy -- 9.8",
+      "id": "https://openalex.org/A5023182162",
+      "display_name": "Pascale Salameh",
+      "orcid": "https://orcid.org/0000-0002-4780-0772",
+      "h_index": 64,
+      "i10_index": 413,
+      "works_count": 949,
+      "cited_by_count": 18643,
+      "discipline": "Pharmacy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Pharmacy",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    }
+  ]
+}

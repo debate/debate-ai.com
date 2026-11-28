@@ -1,0 +1,127 @@
+{
+  "kind": "subfield",
+  "id": 2500,
+  "name": "General Materials Science",
+  "total_in_scrape": 6,
+  "count": 6,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "General Materials Science -- 9.9",
+      "id": "https://openalex.org/A5109137716",
+      "display_name": "Michael Farries Ashby",
+      "orcid": "https://orcid.org/0009-0003-4072-883X",
+      "h_index": 129,
+      "i10_index": 352,
+      "works_count": 920,
+      "cited_by_count": 97617,
+      "discipline": "General Materials Science",
+      "primary_field": "Materials Science",
+      "primary_subfield": "General Materials Science",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "General Materials Science -- 9.9",
+      "id": "https://openalex.org/A5035524417",
+      "display_name": "Simon Peter Ringer",
+      "orcid": "https://orcid.org/0000-0002-1559-330X",
+      "h_index": 96,
+      "i10_index": 476,
+      "works_count": 804,
+      "cited_by_count": 37987,
+      "discipline": "General Materials Science",
+      "primary_field": "Materials Science",
+      "primary_subfield": "General Materials Science",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "General Materials Science -- 9.9",
+      "id": "https://openalex.org/A5086156055",
+      "display_name": "Baptiste Gault",
+      "orcid": "https://orcid.org/0000-0002-4934-0458",
+      "h_index": 91,
+      "i10_index": 389,
+      "works_count": 858,
+      "cited_by_count": 34542,
+      "discipline": "General Materials Science",
+      "primary_field": "Materials Science",
+      "primary_subfield": "General Materials Science",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "General Materials Science -- 9.9",
+      "id": "https://openalex.org/A5054004822",
+      "display_name": "David N. Seidman",
+      "orcid": "https://orcid.org/0000-0001-5237-1151",
+      "h_index": 84,
+      "i10_index": 384,
+      "works_count": 624,
+      "cited_by_count": 36874,
+      "discipline": "General Materials Science",
+      "primary_field": "Materials Science",
+      "primary_subfield": "General Materials Science",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "General Materials Science -- 9.9",
+      "id": "https://openalex.org/A5102740184",
+      "display_name": "Gareth J. Thomas",
+      "orcid": "https://orcid.org/0009-0002-1744-3812",
+      "h_index": 72,
+      "i10_index": 287,
+      "works_count": 745,
+      "cited_by_count": 19353,
+      "discipline": "General Materials Science",
+      "primary_field": "Materials Science",
+      "primary_subfield": "General Materials Science",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "General Materials Science -- 9.9",
+      "id": "https://openalex.org/A5085222628",
+      "display_name": "Julie M. Cairney",
+      "orcid": "https://orcid.org/0000-0003-4564-2675",
+      "h_index": 71,
+      "i10_index": 257,
+      "works_count": 435,
+      "cited_by_count": 19162,
+      "discipline": "General Materials Science",
+      "primary_field": "Materials Science",
+      "primary_subfield": "General Materials Science",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    }
+  ]
+}

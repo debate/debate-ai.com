@@ -1,0 +1,1566 @@
+2026-11-28T01:40:43.322Z start: threshold=20 limit=50000 mode=primary-field subfields=false out=/Users/admin/Developer/debate-ai/packages/scholar-rank/out
+2026-11-28T01:40:43.325Z --fresh: removing cache, state and previous output
+2026-11-28T01:40:43.428Z fetching manifest
+2026-11-28T01:40:44.106Z 517 part files
+2026-11-28T01:40:45.546Z scanned part 1/517
+2026-11-28T01:40:46.010Z scanned part 2/517
+2026-11-28T01:40:46.335Z scanned part 3/517
+2026-11-28T01:40:46.652Z scanned part 4/517
+2026-11-28T01:40:47.035Z scanned part 5/517
+2026-11-28T01:40:47.270Z scanned part 6/517
+2026-11-28T01:40:47.524Z scanned part 7/517
+2026-11-28T01:40:47.879Z scanned part 8/517
+2026-11-28T01:40:48.182Z scanned part 9/517
+2026-11-28T01:40:48.465Z scanned part 10/517
+2026-11-28T01:40:48.736Z scanned part 11/517
+2026-11-28T01:40:49.040Z scanned part 12/517
+2026-11-28T01:40:49.338Z scanned part 13/517
+2026-11-28T01:40:49.641Z scanned part 14/517
+2026-11-28T01:40:49.998Z scanned part 15/517
+2026-11-28T01:40:50.314Z scanned part 16/517
+2026-11-28T01:40:50.612Z scanned part 17/517
+2026-11-28T01:40:50.872Z scanned part 18/517
+2026-11-28T01:40:51.124Z scanned part 19/517
+2026-11-28T01:40:51.449Z scanned part 20/517
+2026-11-28T01:40:51.722Z scanned part 21/517
+2026-11-28T01:40:52.149Z scanned part 22/517
+2026-11-28T01:40:52.411Z scanned part 23/517
+2026-11-28T01:40:52.765Z scanned part 24/517
+2026-11-28T01:40:53.121Z scanned part 25/517
+2026-11-28T01:40:53.485Z scanned part 26/517
+2026-11-28T01:40:53.809Z scanned part 27/517
+2026-11-28T01:40:54.361Z scanned part 28/517
+2026-11-28T01:40:54.743Z scanned part 29/517
+2026-11-28T01:40:55.035Z scanned part 30/517
+2026-11-28T01:40:55.329Z scanned part 31/517
+2026-11-28T01:40:55.573Z scanned part 32/517
+2026-11-28T01:40:55.879Z scanned part 33/517
+2026-11-28T01:40:56.203Z scanned part 34/517
+2026-11-28T01:40:56.546Z scanned part 35/517
+2026-11-28T01:40:56.839Z scanned part 36/517
+2026-11-28T01:40:57.156Z scanned part 37/517
+2026-11-28T01:40:57.423Z scanned part 38/517
+2026-11-28T01:40:57.684Z scanned part 39/517
+2026-11-28T01:40:58.135Z scanned part 40/517
+2026-11-28T01:40:58.389Z scanned part 41/517
+2026-11-28T01:40:58.703Z scanned part 42/517
+2026-11-28T01:40:58.949Z scanned part 43/517
+2026-11-28T01:40:59.268Z scanned part 44/517
+2026-11-28T01:40:59.674Z scanned part 45/517
+2026-11-28T01:41:00.196Z scanned part 46/517
+2026-11-28T01:41:00.501Z scanned part 47/517
+2026-11-28T01:41:00.852Z scanned part 48/517
+2026-11-28T01:41:01.118Z scanned part 49/517
+2026-11-28T01:41:01.409Z scanned part 50/517
+2026-11-28T01:41:02.183Z scanned part 51/517
+2026-11-28T01:41:02.594Z scanned part 52/517
+2026-11-28T01:41:02.738Z SIGINT: saving progress (re-run the same command to resume)
+2026-11-28T01:41:30.472Z start: threshold=10 limit=500 mode=primary-field subfields=true out=/Users/admin/Developer/debate-ai/packages/scholar-rank/out
+2026-11-28T01:41:30.473Z --fresh: removing cache, state and previous output
+2026-11-28T01:41:30.489Z fetching manifest
+2026-11-28T01:41:31.275Z 517 part files
+2026-11-28T01:41:32.369Z scanned part 1/517
+2026-11-28T01:41:32.780Z scanned part 2/517
+2026-11-28T01:41:33.061Z scanned part 3/517
+2026-11-28T01:41:33.314Z scanned part 4/517
+2026-11-28T01:41:33.609Z scanned part 5/517
+2026-11-28T01:41:33.854Z scanned part 6/517
+2026-11-28T01:41:34.134Z scanned part 7/517
+2026-11-28T01:41:34.393Z scanned part 8/517
+2026-11-28T01:41:34.743Z scanned part 9/517
+2026-11-28T01:41:35.019Z scanned part 10/517
+2026-11-28T01:41:35.328Z scanned part 11/517
+2026-11-28T01:41:35.664Z scanned part 12/517
+2026-11-28T01:41:35.975Z scanned part 13/517
+2026-11-28T01:41:36.277Z scanned part 14/517
+2026-11-28T01:41:36.590Z scanned part 15/517
+2026-11-28T01:41:36.891Z scanned part 16/517
+2026-11-28T01:41:37.150Z scanned part 17/517
+2026-11-28T01:41:37.482Z scanned part 18/517
+2026-11-28T01:41:37.753Z scanned part 19/517
+2026-11-28T01:41:38.045Z scanned part 20/517
+2026-11-28T01:41:38.292Z scanned part 21/517
+2026-11-28T01:41:38.564Z scanned part 22/517
+2026-11-28T01:41:38.787Z scanned part 23/517
+2026-11-28T01:41:39.109Z scanned part 24/517
+2026-11-28T01:41:39.374Z scanned part 25/517
+2026-11-28T01:41:39.798Z scanned part 26/517
+2026-11-28T01:41:40.033Z scanned part 27/517
+2026-11-28T01:41:40.574Z scanned part 28/517
+2026-11-28T01:41:40.923Z scanned part 29/517
+2026-11-28T01:41:41.171Z scanned part 30/517
+2026-11-28T01:41:41.500Z scanned part 31/517
+2026-11-28T01:41:41.747Z scanned part 32/517
+2026-11-28T01:41:41.990Z scanned part 33/517
+2026-11-28T01:41:42.328Z scanned part 34/517
+2026-11-28T01:41:42.579Z scanned part 35/517
+2026-11-28T01:41:42.865Z scanned part 36/517
+2026-11-28T01:41:43.152Z scanned part 37/517
+2026-11-28T01:41:43.386Z scanned part 38/517
+2026-11-28T01:41:43.653Z scanned part 39/517
+2026-11-28T01:41:44.043Z scanned part 40/517
+2026-11-28T01:41:44.300Z scanned part 41/517
+2026-11-28T01:41:44.576Z scanned part 42/517
+2026-11-28T01:41:44.861Z scanned part 43/517
+2026-11-28T01:41:45.107Z scanned part 44/517
+2026-11-28T01:41:45.615Z scanned part 45/517
+2026-11-28T01:41:46.017Z scanned part 46/517
+2026-11-28T01:41:46.249Z scanned part 47/517
+2026-11-28T01:41:46.490Z scanned part 48/517
+2026-11-28T01:41:46.781Z scanned part 49/517
+2026-11-28T01:41:47.079Z scanned part 50/517
+2026-11-28T01:41:47.780Z scanned part 51/517
+2026-11-28T01:41:48.089Z scanned part 52/517
+2026-11-28T01:41:48.395Z scanned part 53/517
+2026-11-28T01:41:48.673Z scanned part 54/517
+2026-11-28T01:41:48.950Z scanned part 55/517
+2026-11-28T01:41:49.320Z scanned part 56/517
+2026-11-28T01:41:49.592Z scanned part 57/517
+2026-11-28T01:41:49.903Z scanned part 58/517
+2026-11-28T01:41:50.207Z scanned part 59/517
+2026-11-28T01:41:50.581Z scanned part 60/517
+2026-11-28T01:41:50.929Z scanned part 61/517
+2026-11-28T01:41:51.229Z scanned part 62/517
+2026-11-28T01:41:51.547Z scanned part 63/517
+2026-11-28T01:41:52.061Z scanned part 64/517
+2026-11-28T01:41:52.316Z scanned part 65/517
+2026-11-28T01:41:52.622Z scanned part 66/517
+2026-11-28T01:41:52.972Z scanned part 67/517
+2026-11-28T01:41:53.240Z scanned part 68/517
+2026-11-28T01:41:53.848Z scanned part 69/517
+2026-11-28T01:41:54.240Z scanned part 70/517
+2026-11-28T01:41:54.703Z scanned part 71/517
+2026-11-28T01:41:55.079Z scanned part 72/517
+2026-11-28T01:41:55.430Z scanned part 73/517
+2026-11-28T01:41:55.796Z scanned part 74/517
+2026-11-28T01:41:56.262Z scanned part 75/517
+2026-11-28T01:41:56.770Z scanned part 76/517
+2026-11-28T01:41:57.068Z scanned part 77/517
+2026-11-28T01:41:57.477Z scanned part 78/517
+2026-11-28T01:41:57.724Z scanned part 79/517
+2026-11-28T01:41:57.978Z scanned part 80/517
+2026-11-28T01:41:58.457Z scanned part 81/517
+2026-11-28T01:41:59.115Z scanned part 82/517
+2026-11-28T01:41:59.581Z scanned part 83/517
+2026-11-28T01:41:59.886Z scanned part 84/517
+2026-11-28T01:42:00.191Z scanned part 85/517
+2026-11-28T01:42:00.441Z scanned part 86/517
+2026-11-28T01:42:00.510Z ... scanning | scan 86/517 | disciplines 0/0 | current: -
+2026-11-28T01:42:00.756Z scanned part 87/517
+2026-11-28T01:42:01.016Z scanned part 88/517
+2026-11-28T01:42:01.495Z scanned part 89/517
+2026-11-28T01:42:01.789Z scanned part 90/517
+2026-11-28T01:42:02.085Z scanned part 91/517
+2026-11-28T01:42:02.397Z scanned part 92/517
+2026-11-28T01:42:02.699Z scanned part 93/517
+2026-11-28T01:42:03.028Z scanned part 94/517
+2026-11-28T01:42:03.365Z scanned part 95/517
+2026-11-28T01:42:04.391Z scanned part 96/517
+2026-11-28T01:42:04.672Z scanned part 97/517
+2026-11-28T01:42:04.954Z scanned part 98/517
+2026-11-28T01:42:05.387Z scanned part 99/517
+2026-11-28T01:42:06.092Z scanned part 100/517
+2026-11-28T01:42:07.472Z scanned part 101/517
+2026-11-28T01:42:07.882Z scanned part 102/517
+2026-11-28T01:42:08.478Z scanned part 103/517
+2026-11-28T01:42:08.818Z scanned part 104/517
+2026-11-28T01:42:09.072Z scanned part 105/517
+2026-11-28T01:42:09.362Z scanned part 106/517
+2026-11-28T01:42:09.802Z scanned part 107/517
+2026-11-28T01:42:10.074Z scanned part 108/517
+2026-11-28T01:42:10.796Z scanned part 109/517
+2026-11-28T01:42:11.073Z scanned part 110/517
+2026-11-28T01:42:11.407Z scanned part 111/517
+2026-11-28T01:42:13.255Z scanned part 112/517
+2026-11-28T01:42:13.680Z scanned part 113/517
+2026-11-28T01:42:14.096Z scanned part 114/517
+2026-11-28T01:42:14.375Z scanned part 115/517
+2026-11-28T01:42:14.709Z scanned part 116/517
+2026-11-28T01:42:15.132Z scanned part 117/517
+2026-11-28T01:42:15.560Z scanned part 118/517
+2026-11-28T01:42:15.928Z scanned part 119/517
+2026-11-28T01:42:16.393Z scanned part 120/517
+2026-11-28T01:42:16.730Z scanned part 121/517
+2026-11-28T01:42:16.974Z scanned part 122/517
+2026-11-28T01:42:18.409Z scanned part 123/517
+2026-11-28T01:42:18.766Z scanned part 124/517
+2026-11-28T01:42:19.089Z scanned part 125/517
+2026-11-28T01:42:19.415Z scanned part 126/517
+2026-11-28T01:42:19.859Z scanned part 127/517
+2026-11-28T01:42:20.364Z scanned part 128/517
+2026-11-28T01:42:20.676Z scanned part 129/517
+2026-11-28T01:42:21.247Z scanned part 130/517
+2026-11-28T01:42:21.569Z scanned part 131/517
+2026-11-28T01:42:22.882Z scanned part 132/517
+2026-11-28T01:42:23.342Z scanned part 133/517
+2026-11-28T01:42:25.241Z scanned part 134/517
+2026-11-28T01:42:25.702Z scanned part 135/517
+2026-11-28T01:42:26.165Z scanned part 136/517
+2026-11-28T01:42:26.731Z scanned part 137/517
+2026-11-28T01:42:27.432Z scanned part 138/517
+2026-11-28T01:42:27.923Z scanned part 139/517
+2026-11-28T01:42:28.467Z scanned part 140/517
+2026-11-28T01:42:28.811Z scanned part 141/517
+2026-11-28T01:42:29.307Z scanned part 142/517
+2026-11-28T01:42:29.636Z scanned part 143/517
+2026-11-28T01:42:29.973Z scanned part 144/517
+2026-11-28T01:42:30.272Z scanned part 145/517
+2026-11-28T01:42:30.492Z ... scanning | scan 145/517 | disciplines 0/0 | current: -
+2026-11-28T01:42:31.140Z scanned part 146/517
+2026-11-28T01:42:31.612Z scanned part 147/517
+2026-11-28T01:42:33.126Z scanned part 148/517
+2026-11-28T01:42:33.543Z scanned part 149/517
+2026-11-28T01:42:35.979Z scanned part 150/517
+2026-11-28T01:42:37.015Z scanned part 151/517
+2026-11-28T01:42:37.740Z scanned part 152/517
+2026-11-28T01:42:38.245Z scanned part 153/517
+2026-11-28T01:42:38.737Z scanned part 154/517
+2026-11-28T01:42:39.069Z scanned part 155/517
+2026-11-28T01:42:39.405Z scanned part 156/517
+2026-11-28T01:42:40.149Z scanned part 157/517
+2026-11-28T01:42:41.432Z scanned part 158/517
+2026-11-28T01:42:41.764Z scanned part 159/517
+2026-11-28T01:42:42.068Z scanned part 160/517
+2026-11-28T01:42:42.500Z scanned part 161/517
+2026-11-28T01:42:44.036Z scanned part 162/517
+2026-11-28T01:42:44.785Z scanned part 163/517
+2026-11-28T01:42:45.197Z scanned part 164/517
+2026-11-28T01:42:45.540Z scanned part 165/517
+2026-11-28T01:42:54.153Z scanned part 166/517
+2026-11-28T01:42:54.453Z scanned part 167/517
+2026-11-28T01:42:54.791Z scanned part 168/517
+2026-11-28T01:43:00.494Z ... scanning | scan 168/517 | disciplines 0/0 | current: -
+2026-11-28T01:43:02.243Z scanned part 169/517
+2026-11-28T01:43:11.565Z scanned part 170/517
+2026-11-28T01:43:22.963Z scanned part 171/517
+2026-11-28T01:43:30.495Z ... scanning | scan 171/517 | disciplines 0/0 | current: -
+2026-11-28T01:43:34.516Z scanned part 172/517
+2026-11-28T01:43:40.243Z scanned part 173/517
+2026-11-28T01:43:45.332Z scanned part 174/517
+2026-11-28T01:43:52.244Z scanned part 175/517
+2026-11-28T01:44:00.220Z scanned part 176/517
+2026-11-28T01:44:00.499Z ... scanning | scan 176/517 | disciplines 0/0 | current: -
+2026-11-28T01:44:07.560Z scanned part 177/517
+2026-11-28T01:44:07.884Z scanned part 178/517
+2026-11-28T01:44:08.559Z scanned part 179/517
+2026-11-28T01:44:17.366Z scanned part 180/517
+2026-11-28T01:44:25.857Z scanned part 181/517
+2026-11-28T01:44:26.352Z scanned part 182/517
+2026-11-28T01:44:30.592Z ... scanning | scan 182/517 | disciplines 0/0 | current: -
+2026-11-28T01:44:33.997Z scanned part 183/517
+2026-11-28T01:44:34.618Z scanned part 184/517
+2026-11-28T01:44:42.052Z scanned part 185/517
+2026-11-28T01:44:42.456Z scanned part 186/517
+2026-11-28T01:44:42.854Z scanned part 187/517
+2026-11-28T01:44:49.315Z scanned part 188/517
+2026-11-28T01:44:54.213Z scanned part 189/517
+2026-11-28T01:44:58.261Z scanned part 190/517
+2026-11-28T01:45:00.524Z ... scanning | scan 190/517 | disciplines 0/0 | current: -
+2026-11-28T01:45:01.962Z scanned part 191/517
+2026-11-28T01:45:07.863Z scanned part 192/517
+2026-11-28T01:45:14.021Z scanned part 193/517
+2026-11-28T01:45:14.624Z ERROR SQL failed:
+COPY (
+          SELECT id, display_name, orcid, summary_stats.h_index AS h_index, summary_stats.i10_index AS i10_index, works_count, cited_by_count, topics
+          FROM read_parquet('https://openalex.s3.amazonaws.com/data/parquet/authors/updated_date=2026-10-05/part_0029.parquet')
+          WHERE summary_stats.h_index > 10
+        ) TO '/Users/admin/Developer/debate-ai/packages/scholar-rank/out/.cache/parts/part_0193.parquet.tmp' (FORMAT parquet, COMPRESSION zstd)
+IO Error: Cannot open file "/Users/admin/Developer/debate-ai/packages/scholar-rank/out/.cache/parts/part_0193.parquet.tmp": No space left on device
+
+2026-11-28T01:45:14.684Z ERROR fatal
+IO Error: Cannot open file "/Users/admin/Developer/debate-ai/packages/scholar-rank/out/.cache/parts/part_0193.parquet.tmp": No space left on device
+
+2026-11-28T01:48:29.301Z start: top=100000 min-h=10 limit=500 mode=primary key=NO (cursor paging will likely fail) out=/Users/admin/Developer/debate-ai/packages/scholar-rank/out
+2026-11-28T01:48:29.303Z --fresh: deleting scraped data and cursor
+2026-11-28T01:48:31.158Z API ok. total matching=3734583. sample: Walter Churchill Willett h=362 topics=[{"id":"https://openalex.org/T10866","display_name":"Nutritional Studies and Diet","count":1742,"subfield":{"id":"https://openalex.org/subfields/2739","display_name":"Public Health, Environmental and Occupational Health"},"field":{"id":"https://openalex.org/fields/27","display_name":"Medicine"},"domain":{"id":"https://openalex.org/domains/4","display_name":"Health Sciences"}},{"id":"https://openalex.org/T12103","display_name":"Cancer Risks and Factors","count":689,"subfield":{"id":"https://openalex.org/subfields/2730","display_name":"Oncology"},"field":{"id":"https://openalex.org/fields/27","display_name":"Medicine"},"domain":{"id":"https://openalex.org/domains/4","display_name":"Health Sciences"}}]
+2026-11-28T01:48:31.173Z page 1: +100 (total 100) h-index now 227
+2026-11-28T01:48:31.364Z ERROR HTTP 401 (attempt 1) https://api.openalex.org/authors?filter=summary_stats.h_index%3A%3E10&sort=summary_stats.h_index%3Adesc&per_page=100&cursor=IlsyMjcsIDI2MzUsICdodHRwczovL29wZW5hbGV4Lm9yZy9BNTEwODE2NzU5NSddIg%3D%3D&select=id%2Cdisplay_name%2Corcid%2Csummary_stats%2Cworks_count%2Ccited_by_count%2Ctopics
+{"error":"API key required for cursor paging","message":"Paging past the first page with cursor= needs a free API key. An AI agent can get one for its user in one call: POST https://api.openalex.org/api-keys with {\"email\": \"<your user's email>\"}; we email them a link, and the key works once they click it. Or your user can copy their key from https://openalex.org/settings/api-key. Without a key, page=2, page=3 and so on reach the first 10,000 results."}
+2026-11-28T01:48:31.367Z ERROR fatal
+auth/permission error 401: set OPENALEX_API_KEY (cursor paging needs a free key)
+Error: auth/permission error 401: set OPENALEX_API_KEY (cursor paging needs a free key)
+    at fetchPage (/Users/admin/Developer/debate-ai/packages/scholar-rank/scholar-rank.ts:143:19)
+    at async main (/Users/admin/Developer/debate-ai/packages/scholar-rank/scholar-rank.ts:301:25)
+2026-11-28T01:51:32.120Z start: top=100000 min-h=10 limit=500 mode=primary key=yes out=/Users/admin/Developer/debate-ai/packages/scholar-rank/out
+2026-11-28T01:51:32.122Z --fresh: deleting scraped data and cursor
+2026-11-28T01:51:34.040Z API ok. total matching=3734583. sample: Walter Churchill Willett h=362 topics=[{"id":"https://openalex.org/T10866","display_name":"Nutritional Studies and Diet","count":1742,"subfield":{"id":"https://openalex.org/subfields/2739","display_name":"Public Health, Environmental and Occupational Health"},"field":{"id":"https://openalex.org/fields/27","display_name":"Medicine"},"domain":{"id":"https://openalex.org/domains/4","display_name":"Health Sciences"}},{"id":"https://openalex.org/T12103","display_name":"Cancer Risks and Factors","count":689,"subfield":{"id":"https://openalex.org/subfields/2730","display_name":"Oncology"},"field":{"id":"https://openalex.org/fields/27","display_name":"Medicine"},"domain":{"id":"https://openalex.org/domains/4","display_name":"Health Sciences"}}]
+2026-11-28T01:51:34.053Z page 1: +100 (total 100) h-index now 227
+2026-11-28T01:51:35.491Z page 2: +100 (total 200) h-index now 217
+2026-11-28T01:51:36.767Z page 3: +100 (total 300) h-index now 213
+2026-11-28T01:51:38.172Z page 4: +100 (total 400) h-index now 211
+2026-11-28T01:51:39.358Z page 5: +100 (total 500) h-index now 209
+2026-11-28T01:51:40.572Z page 6: +100 (total 600) h-index now 208
+2026-11-28T01:51:41.681Z page 7: +100 (total 700) h-index now 207
+2026-11-28T01:51:43.316Z page 8: +100 (total 800) h-index now 206
+2026-11-28T01:51:44.370Z page 9: +100 (total 900) h-index now 205
+2026-11-28T01:51:45.473Z page 10: +100 (total 1000) h-index now 205
+2026-11-28T01:51:47.052Z page 11: +100 (total 1100) h-index now 204
+2026-11-28T01:51:48.215Z page 12: +100 (total 1200) h-index now 203
+2026-11-28T01:51:49.691Z page 13: +100 (total 1300) h-index now 202
+2026-11-28T01:51:50.780Z page 14: +100 (total 1400) h-index now 201
+2026-11-28T01:51:51.821Z page 15: +100 (total 1500) h-index now 200
+2026-11-28T01:51:52.864Z page 16: +100 (total 1600) h-index now 199
+2026-11-28T01:51:53.994Z page 17: +100 (total 1700) h-index now 198
+2026-11-28T01:51:55.268Z page 18: +100 (total 1800) h-index now 196
+2026-11-28T01:51:56.648Z page 19: +100 (total 1900) h-index now 195
+2026-11-28T01:51:57.717Z page 20: +100 (total 2000) h-index now 195
+2026-11-28T01:51:58.733Z page 21: +100 (total 2100) h-index now 193
+2026-11-28T01:52:01.451Z page 22: +100 (total 2200) h-index now 192
+2026-11-28T01:52:02.151Z ... scraping | 2200/100000 scholars | page 22
+2026-11-28T01:52:02.318Z wrote 96 discipline files from 2200 scholars (0 had no topics); empty: field:12, field:26, field:29, field:34, field:35, field:36
+2026-11-28T01:52:02.492Z page 23: +100 (total 2300) h-index now 192
+2026-11-28T01:52:03.385Z page 24: +100 (total 2400) h-index now 191
+2026-11-28T01:52:04.559Z page 25: +100 (total 2500) h-index now 190
+2026-11-28T01:52:05.755Z page 26: +100 (total 2600) h-index now 188
+2026-11-28T01:52:06.795Z page 27: +100 (total 2700) h-index now 187
+2026-11-28T01:52:07.996Z page 28: +100 (total 2800) h-index now 185
+2026-11-28T01:52:09.031Z page 29: +100 (total 2900) h-index now 183
+2026-11-28T01:52:10.064Z page 30: +100 (total 3000) h-index now 181
+2026-11-28T01:52:11.170Z page 31: +100 (total 3100) h-index now 180
+2026-11-28T01:52:12.252Z page 32: +100 (total 3200) h-index now 179
+2026-11-28T01:52:13.433Z page 33: +100 (total 3300) h-index now 178
+2026-11-28T01:52:14.539Z page 34: +100 (total 3400) h-index now 177
+2026-11-28T01:52:15.643Z page 35: +100 (total 3500) h-index now 175
+2026-11-28T01:52:16.682Z page 36: +100 (total 3600) h-index now 174
+2026-11-28T01:52:17.741Z page 37: +100 (total 3700) h-index now 173
+2026-11-28T01:52:18.858Z page 38: +100 (total 3800) h-index now 171
+2026-11-28T01:52:20.067Z page 39: +100 (total 3900) h-index now 170
+2026-11-28T01:52:21.283Z page 40: +100 (total 4000) h-index now 168
+2026-11-28T01:52:22.442Z page 41: +100 (total 4100) h-index now 166
+2026-11-28T01:52:23.444Z page 42: +100 (total 4200) h-index now 165
+2026-11-28T01:52:24.627Z page 43: +100 (total 4300) h-index now 164
+2026-11-28T01:52:25.814Z page 44: +100 (total 4400) h-index now 163
+2026-11-28T01:52:27.046Z page 45: +100 (total 4500) h-index now 162
+2026-11-28T01:52:28.065Z page 46: +100 (total 4600) h-index now 161
+2026-11-28T01:52:29.137Z page 47: +100 (total 4700) h-index now 160
+2026-11-28T01:52:30.113Z page 48: +100 (total 4800) h-index now 159
+2026-11-28T01:52:31.099Z page 49: +100 (total 4900) h-index now 159
+2026-11-28T01:52:31.902Z page 50: +100 (total 5000) h-index now 158
+2026-11-28T01:52:32.142Z ... scraping | 5000/100000 scholars | page 50
+2026-11-28T01:52:32.208Z wrote 144 discipline files from 5000 scholars (0 had no topics); empty: field:12, field:34
+2026-11-28T01:52:32.776Z page 51: +100 (total 5100) h-index now 157
+2026-11-28T01:52:33.831Z page 52: +100 (total 5200) h-index now 156
+2026-11-28T01:52:35.161Z page 53: +100 (total 5300) h-index now 155
+2026-11-28T01:52:36.109Z page 54: +100 (total 5400) h-index now 154
+2026-11-28T01:52:37.520Z page 55: +100 (total 5500) h-index now 153
+2026-11-28T01:52:38.570Z page 56: +100 (total 5600) h-index now 152
+2026-11-28T01:52:39.607Z page 57: +100 (total 5700) h-index now 152
+2026-11-28T01:52:40.812Z page 58: +100 (total 5800) h-index now 151
+2026-11-28T01:52:41.888Z page 59: +100 (total 5900) h-index now 150
+2026-11-28T01:52:42.813Z page 60: +100 (total 6000) h-index now 149
+2026-11-28T01:52:43.789Z page 61: +100 (total 6100) h-index now 149
+2026-11-28T01:52:44.906Z page 62: +100 (total 6200) h-index now 148
+2026-11-28T01:52:45.946Z page 63: +100 (total 6300) h-index now 147
+2026-11-28T01:52:46.826Z page 64: +100 (total 6400) h-index now 147
+2026-11-28T01:52:48.034Z page 65: +100 (total 6500) h-index now 146
+2026-11-28T01:52:49.070Z page 66: +100 (total 6600) h-index now 145
+2026-11-28T01:52:50.100Z page 67: +100 (total 6700) h-index now 144
+2026-11-28T01:52:51.297Z page 68: +100 (total 6800) h-index now 144
+2026-11-28T01:52:52.234Z page 69: +100 (total 6900) h-index now 143
+2026-11-28T01:52:53.299Z page 70: +100 (total 7000) h-index now 143
+2026-11-28T01:52:54.347Z page 71: +100 (total 7100) h-index now 142
+2026-11-28T01:52:55.392Z page 72: +100 (total 7200) h-index now 141
+2026-11-28T01:52:56.635Z page 73: +100 (total 7300) h-index now 141
+2026-11-28T01:52:57.608Z page 74: +100 (total 7400) h-index now 141
+2026-11-28T01:52:58.668Z page 75: +100 (total 7500) h-index now 140
+2026-11-28T01:52:59.533Z page 76: +100 (total 7600) h-index now 139
+2026-11-28T01:53:00.427Z page 77: +100 (total 7700) h-index now 139
+2026-11-28T01:53:01.443Z page 78: +100 (total 7800) h-index now 138
+2026-11-28T01:53:02.146Z ... scraping | 7800/100000 scholars | page 78
+2026-11-28T01:53:02.284Z wrote 174 discipline files from 7800 scholars (0 had no topics); empty: field:34
+2026-11-28T01:53:02.552Z page 79: +100 (total 7900) h-index now 138
+2026-11-28T01:53:03.535Z page 80: +100 (total 8000) h-index now 137
+2026-11-28T01:53:04.774Z page 81: +100 (total 8100) h-index now 137
+2026-11-28T01:53:05.695Z page 82: +100 (total 8200) h-index now 136
+2026-11-28T01:53:06.812Z page 83: +100 (total 8300) h-index now 136
+2026-11-28T01:53:07.937Z page 84: +100 (total 8400) h-index now 136
+2026-11-28T01:53:09.062Z page 85: +100 (total 8500) h-index now 135
+2026-11-28T01:53:10.072Z page 86: +100 (total 8600) h-index now 135
+2026-11-28T01:53:11.002Z page 87: +100 (total 8700) h-index now 134
+2026-11-28T01:53:12.026Z page 88: +100 (total 8800) h-index now 134
+2026-11-28T01:53:13.074Z page 89: +100 (total 8900) h-index now 134
+2026-11-28T01:53:14.170Z page 90: +100 (total 9000) h-index now 133
+2026-11-28T01:53:15.172Z page 91: +100 (total 9100) h-index now 133
+2026-11-28T01:53:16.228Z page 92: +100 (total 9200) h-index now 132
+2026-11-28T01:53:17.235Z page 93: +100 (total 9300) h-index now 132
+2026-11-28T01:53:18.157Z page 94: +100 (total 9400) h-index now 132
+2026-11-28T01:53:19.193Z page 95: +100 (total 9500) h-index now 131
+2026-11-28T01:53:20.207Z page 96: +100 (total 9600) h-index now 131
+2026-11-28T01:53:21.220Z page 97: +100 (total 9700) h-index now 130
+2026-11-28T01:53:22.293Z page 98: +100 (total 9800) h-index now 130
+2026-11-28T01:53:23.271Z page 99: +100 (total 9900) h-index now 130
+2026-11-28T01:53:24.291Z page 100: +100 (total 10000) h-index now 129
+2026-11-28T01:53:25.433Z page 101: +100 (total 10100) h-index now 129
+2026-11-28T01:53:26.380Z page 102: +100 (total 10200) h-index now 129
+2026-11-28T01:53:27.357Z page 103: +100 (total 10300) h-index now 128
+2026-11-28T01:53:28.485Z page 104: +100 (total 10400) h-index now 128
+2026-11-28T01:53:29.508Z page 105: +100 (total 10500) h-index now 128
+2026-11-28T01:53:30.484Z page 106: +100 (total 10600) h-index now 127
+2026-11-28T01:53:31.607Z page 107: +100 (total 10700) h-index now 127
+2026-11-28T01:53:32.143Z ... scraping | 10700/100000 scholars | page 107
+2026-11-28T01:53:32.295Z wrote 192 discipline files from 10700 scholars (0 had no topics); empty: field:34
+2026-11-28T01:53:32.729Z page 108: +100 (total 10800) h-index now 127
+2026-11-28T01:53:33.613Z page 109: +100 (total 10900) h-index now 127
+2026-11-28T01:53:34.564Z page 110: +100 (total 11000) h-index now 126
+2026-11-28T01:53:35.655Z page 111: +100 (total 11100) h-index now 126
+2026-11-28T01:53:36.630Z page 112: +100 (total 11200) h-index now 126
+2026-11-28T01:53:37.654Z page 113: +100 (total 11300) h-index now 125
+2026-11-28T01:53:38.809Z page 114: +100 (total 11400) h-index now 125
+2026-11-28T01:53:39.747Z page 115: +100 (total 11500) h-index now 125
+2026-11-28T01:53:40.861Z page 116: +100 (total 11600) h-index now 124
+2026-11-28T01:53:42.085Z page 117: +100 (total 11700) h-index now 124
+2026-11-28T01:53:43.052Z page 118: +100 (total 11800) h-index now 124
+2026-11-28T01:53:44.254Z page 119: +100 (total 11900) h-index now 123
+2026-11-28T01:53:45.276Z page 120: +100 (total 12000) h-index now 123
+2026-11-28T01:53:46.298Z page 121: +100 (total 12100) h-index now 123
+2026-11-28T01:53:47.331Z page 122: +100 (total 12200) h-index now 122
+2026-11-28T01:53:48.360Z page 123: +100 (total 12300) h-index now 122
+2026-11-28T01:53:49.323Z page 124: +100 (total 12400) h-index now 122
+2026-11-28T01:53:50.192Z page 125: +100 (total 12500) h-index now 122
+2026-11-28T01:53:51.206Z page 126: +100 (total 12600) h-index now 121
+2026-11-28T01:53:52.365Z page 127: +100 (total 12700) h-index now 121
+2026-11-28T01:53:53.348Z page 128: +100 (total 12800) h-index now 121
+2026-11-28T01:53:54.429Z page 129: +100 (total 12900) h-index now 120
+2026-11-28T01:53:55.516Z page 130: +100 (total 13000) h-index now 120
+2026-11-28T01:53:56.659Z page 131: +100 (total 13100) h-index now 120
+2026-11-28T01:53:57.716Z page 132: +100 (total 13200) h-index now 120
+2026-11-28T01:53:58.644Z page 133: +100 (total 13300) h-index now 119
+2026-11-28T01:53:59.692Z page 134: +100 (total 13400) h-index now 119
+2026-11-28T01:54:00.692Z page 135: +100 (total 13500) h-index now 119
+2026-11-28T01:54:01.671Z page 136: +100 (total 13600) h-index now 119
+2026-11-28T01:54:02.145Z ... scraping | 13600/100000 scholars | page 136
+2026-11-28T01:54:02.330Z wrote 206 discipline files from 13600 scholars (0 had no topics); empty: field:34
+2026-11-28T01:54:02.818Z page 137: +100 (total 13700) h-index now 118
+2026-11-28T01:54:03.989Z page 138: +100 (total 13800) h-index now 118
+2026-11-28T01:54:04.964Z page 139: +100 (total 13900) h-index now 118
+2026-11-28T01:54:06.009Z page 140: +100 (total 14000) h-index now 117
+2026-11-28T01:54:07.088Z page 141: +100 (total 14100) h-index now 117
+2026-11-28T01:54:08.243Z page 142: +100 (total 14200) h-index now 117
+2026-11-28T01:54:09.735Z page 143: +100 (total 14300) h-index now 117
+2026-11-28T01:54:10.758Z page 144: +100 (total 14400) h-index now 116
+2026-11-28T01:54:11.907Z page 145: +100 (total 14500) h-index now 116
+2026-11-28T01:54:13.055Z page 146: +100 (total 14600) h-index now 116
+2026-11-28T01:54:14.050Z page 147: +100 (total 14700) h-index now 116
+2026-11-28T01:54:15.093Z page 148: +100 (total 14800) h-index now 115
+2026-11-28T01:54:16.047Z page 149: +100 (total 14900) h-index now 115
+2026-11-28T01:54:17.121Z page 150: +100 (total 15000) h-index now 115
+2026-11-28T01:54:18.264Z page 151: +100 (total 15100) h-index now 115
+2026-11-28T01:54:19.213Z page 152: +100 (total 15200) h-index now 114
+2026-11-28T01:54:20.398Z page 153: +100 (total 15300) h-index now 114
+2026-11-28T01:54:21.425Z page 154: +100 (total 15400) h-index now 114
+2026-11-28T01:54:22.416Z page 155: +100 (total 15500) h-index now 114
+2026-11-28T01:54:23.178Z page 156: +100 (total 15600) h-index now 114
+2026-11-28T01:54:24.348Z page 157: +100 (total 15700) h-index now 113
+2026-11-28T01:54:25.372Z page 158: +100 (total 15800) h-index now 113
+2026-11-28T01:54:26.440Z page 159: +100 (total 15900) h-index now 113
+2026-11-28T01:54:27.262Z page 160: +100 (total 16000) h-index now 113
+2026-11-28T01:54:28.483Z page 161: +100 (total 16100) h-index now 112
+2026-11-28T01:54:29.677Z page 162: +100 (total 16200) h-index now 112
+2026-11-28T01:54:30.870Z page 163: +100 (total 16300) h-index now 112
+2026-11-28T01:54:31.785Z page 164: +100 (total 16400) h-index now 112
+2026-11-28T01:54:32.150Z ... scraping | 16400/100000 scholars | page 164
+2026-11-28T01:54:32.552Z wrote 220 discipline files from 16400 scholars (0 had no topics); empty: none
+2026-11-28T01:54:32.996Z page 165: +100 (total 16500) h-index now 111
+2026-11-28T01:54:34.154Z page 166: +100 (total 16600) h-index now 111
+2026-11-28T01:54:35.208Z page 167: +100 (total 16700) h-index now 111
+2026-11-28T01:54:36.224Z page 168: +100 (total 16800) h-index now 111
+2026-11-28T01:54:37.086Z page 169: +100 (total 16900) h-index now 111
+2026-11-28T01:54:38.192Z page 170: +100 (total 17000) h-index now 110
+2026-11-28T01:54:39.207Z page 171: +100 (total 17100) h-index now 110
+2026-11-28T01:54:40.423Z page 172: +100 (total 17200) h-index now 110
+2026-11-28T01:54:41.454Z page 173: +100 (total 17300) h-index now 110
+2026-11-28T01:54:42.621Z page 174: +100 (total 17400) h-index now 109
+2026-11-28T01:54:43.770Z page 175: +100 (total 17500) h-index now 109
+2026-11-28T01:54:44.745Z page 176: +100 (total 17600) h-index now 109
+2026-11-28T01:54:45.751Z page 177: +100 (total 17700) h-index now 109
+2026-11-28T01:54:46.671Z page 178: +100 (total 17800) h-index now 109
+2026-11-28T01:54:47.642Z page 179: +100 (total 17900) h-index now 108
+2026-11-28T01:54:48.673Z page 180: +100 (total 18000) h-index now 108
+2026-11-28T01:54:49.785Z page 181: +100 (total 18100) h-index now 108
+2026-11-28T01:54:50.706Z page 182: +100 (total 18200) h-index now 108
+2026-11-28T01:54:51.660Z page 183: +100 (total 18300) h-index now 108
+2026-11-28T01:54:52.581Z page 184: +100 (total 18400) h-index now 107
+2026-11-28T01:54:53.769Z page 185: +100 (total 18500) h-index now 107
+2026-11-28T01:54:54.953Z page 186: +100 (total 18600) h-index now 107
+2026-11-28T01:54:55.959Z page 187: +100 (total 18700) h-index now 107
+2026-11-28T01:54:56.687Z page 188: +100 (total 18800) h-index now 107
+2026-11-28T01:54:57.845Z page 189: +100 (total 18900) h-index now 107
+2026-11-28T01:54:59.000Z page 190: +100 (total 19000) h-index now 106
+2026-11-28T01:55:00.187Z page 191: +100 (total 19100) h-index now 106
+2026-11-28T01:55:01.205Z page 192: +100 (total 19200) h-index now 106
+2026-11-28T01:55:02.154Z ... scraping | 19200/100000 scholars | page 192
+2026-11-28T01:55:03.072Z page 193: +100 (total 19300) h-index now 106
+2026-11-28T01:55:03.947Z wrote 226 discipline files from 19300 scholars (0 had no topics); empty: none
+2026-11-28T01:55:04.169Z page 194: +100 (total 19400) h-index now 106
+2026-11-28T01:55:05.686Z page 195: +100 (total 19500) h-index now 105
+2026-11-28T01:55:06.928Z page 196: +100 (total 19600) h-index now 105
+2026-11-28T01:55:08.178Z page 197: +100 (total 19700) h-index now 105
+2026-11-28T01:55:09.148Z page 198: +100 (total 19800) h-index now 105
+2026-11-28T01:55:11.837Z page 199: +100 (total 19900) h-index now 105
+2026-11-28T01:58:12.032Z start: top=100000 min-h=10 limit=500 mode=primary key=yes out=/Users/admin/Developer/debate-ai/packages/scholar-rank/out
+2026-11-28T01:58:12.033Z --fresh: deleting scraped data and cursor
+2026-11-28T01:58:14.014Z API ok. total matching=3734583. sample: Walter Churchill Willett h=362 topics=[{"id":"https://openalex.org/T10866","display_name":"Nutritional Studies and Diet","count":1742,"subfield":{"id":"https://openalex.org/subfields/2739","display_name":"Public Health, Environmental and Occupational Health"},"field":{"id":"https://openalex.org/fields/27","display_name":"Medicine"},"domain":{"id":"https://openalex.org/domains/4","display_name":"Health Sciences"}},{"id":"https://openalex.org/T12103","display_name":"Cancer Risks and Factors","count":689,"subfield":{"id":"https://openalex.org/subfields/2730","display_name":"Oncology"},"field":{"id":"https://openalex.org/fields/27","display_name":"Medicine"},"domain":{"id":"https://openalex.org/domains/4","display_name":"Health Sciences"}}]
+2026-11-28T01:58:14.025Z page 1: +100 (total 100) h-index now 227
+2026-11-28T01:58:15.445Z page 2: +100 (total 200) h-index now 217
+2026-11-28T01:58:16.716Z page 3: +100 (total 300) h-index now 213
+2026-11-28T01:58:18.153Z page 4: +100 (total 400) h-index now 211
+2026-11-28T01:58:19.315Z page 5: +100 (total 500) h-index now 209
+2026-11-28T01:58:20.769Z page 6: +100 (total 600) h-index now 208
+2026-11-28T01:58:22.020Z page 7: +100 (total 700) h-index now 207
+2026-11-28T01:58:23.068Z page 8: +100 (total 800) h-index now 206
+2026-11-28T01:58:24.240Z page 9: +100 (total 900) h-index now 205
+2026-11-28T01:58:25.333Z page 10: +100 (total 1000) h-index now 205
+2026-11-28T01:58:26.409Z page 11: +100 (total 1100) h-index now 204
+2026-11-28T01:58:27.510Z page 12: +100 (total 1200) h-index now 203
+2026-11-28T01:58:28.510Z page 13: +100 (total 1300) h-index now 202
+2026-11-28T01:58:29.636Z page 14: +100 (total 1400) h-index now 201
+2026-11-28T01:58:30.663Z page 15: +100 (total 1500) h-index now 200
+2026-11-28T01:58:31.633Z page 16: +100 (total 1600) h-index now 199
+2026-11-28T01:58:32.763Z page 17: +100 (total 1700) h-index now 198
+2026-11-28T01:58:33.834Z page 18: +100 (total 1800) h-index now 196
+2026-11-28T01:58:34.860Z page 19: +100 (total 1900) h-index now 195
+2026-11-28T01:58:35.951Z page 20: +100 (total 2000) h-index now 195
+2026-11-28T01:58:37.051Z page 21: +100 (total 2100) h-index now 193
+2026-11-28T01:58:38.506Z page 22: +100 (total 2200) h-index now 192
+2026-11-28T01:58:39.509Z page 23: +100 (total 2300) h-index now 192
+2026-11-28T01:58:40.597Z page 24: +100 (total 2400) h-index now 191
+2026-11-28T01:58:41.574Z page 25: +100 (total 2500) h-index now 190
+2026-11-28T01:58:42.142Z ... scraping | 2500/100000 scholars | page 25
+2026-11-28T01:58:42.283Z wrote 101 discipline files from 2500 scholars (0 had no topics); empty: field:12, field:26, field:29, field:34, field:35, field:36
+2026-11-28T01:58:42.747Z page 26: +100 (total 2600) h-index now 188
+2026-11-28T01:58:43.781Z page 27: +100 (total 2700) h-index now 187
+2026-11-28T01:58:44.895Z page 28: +100 (total 2800) h-index now 185
+2026-11-28T01:58:45.837Z page 29: +100 (total 2900) h-index now 183
+2026-11-28T01:58:47.040Z page 30: +100 (total 3000) h-index now 181
+2026-11-28T01:58:48.254Z page 31: +100 (total 3100) h-index now 180
+2026-11-28T01:58:49.196Z page 32: +100 (total 3200) h-index now 179
+2026-11-28T01:58:50.232Z page 33: +100 (total 3300) h-index now 178
+2026-11-28T01:58:51.445Z page 34: +100 (total 3400) h-index now 177
+2026-11-28T01:58:52.574Z page 35: +100 (total 3500) h-index now 175
+2026-11-28T01:58:53.698Z page 36: +100 (total 3600) h-index now 174
+2026-11-28T01:58:54.889Z page 37: +100 (total 3700) h-index now 173
+2026-11-28T01:58:55.869Z page 38: +100 (total 3800) h-index now 171
+2026-11-28T01:58:56.975Z page 39: +100 (total 3900) h-index now 170
+2026-11-28T01:58:58.001Z page 40: +100 (total 4000) h-index now 168
+2026-11-28T01:58:59.125Z page 41: +100 (total 4100) h-index now 166
+2026-11-28T01:59:00.462Z page 42: +100 (total 4200) h-index now 165
+2026-11-28T01:59:01.489Z page 43: +100 (total 4300) h-index now 164
+2026-11-28T01:59:02.516Z page 44: +100 (total 4400) h-index now 163
+2026-11-28T01:59:03.374Z page 45: +100 (total 4500) h-index now 162
+2026-11-28T01:59:04.555Z page 46: +100 (total 4600) h-index now 161
+2026-11-28T01:59:05.522Z page 47: +100 (total 4700) h-index now 160
+2026-11-28T01:59:06.403Z page 48: +100 (total 4800) h-index now 159
+2026-11-28T01:59:07.427Z page 49: +100 (total 4900) h-index now 159
+2026-11-28T01:59:08.430Z page 50: +100 (total 5000) h-index now 158
+2026-11-28T01:59:09.404Z page 51: +100 (total 5100) h-index now 157
+2026-11-28T01:59:10.519Z page 52: +100 (total 5200) h-index now 156
+2026-11-28T01:59:11.560Z page 53: +100 (total 5300) h-index now 155
+2026-11-28T01:59:12.146Z ... scraping | 5300/100000 scholars | page 53
+2026-11-28T01:59:12.410Z wrote 148 discipline files from 5300 scholars (0 had no topics); empty: field:34
+2026-11-28T01:59:12.640Z page 54: +100 (total 5400) h-index now 154
+2026-11-28T01:59:13.812Z page 55: +100 (total 5500) h-index now 153
+2026-11-28T01:59:15.098Z page 56: +100 (total 5600) h-index now 152
+2026-11-28T01:59:16.633Z page 57: +100 (total 5700) h-index now 152
+2026-11-28T01:59:17.691Z page 58: +100 (total 5800) h-index now 151
+2026-11-28T01:59:18.709Z page 59: +100 (total 5900) h-index now 150
+2026-11-28T01:59:19.708Z page 60: +100 (total 6000) h-index now 149
+2026-11-28T01:59:20.668Z page 61: +100 (total 6100) h-index now 149
+2026-11-28T01:59:21.793Z page 62: +100 (total 6200) h-index now 148
+2026-11-28T01:59:22.902Z page 63: +100 (total 6300) h-index now 147
+2026-11-28T01:59:23.808Z page 64: +100 (total 6400) h-index now 147
+2026-11-28T01:59:24.901Z page 65: +100 (total 6500) h-index now 146
+2026-11-28T01:59:25.692Z page 66: +100 (total 6600) h-index now 145
+2026-11-28T01:59:26.691Z page 67: +100 (total 6700) h-index now 144
+2026-11-28T01:59:27.904Z page 68: +100 (total 6800) h-index now 144
+2026-11-28T01:59:28.925Z page 69: +100 (total 6900) h-index now 143
+2026-11-28T01:59:30.008Z page 70: +100 (total 7000) h-index now 143
+2026-11-28T01:59:31.200Z page 71: +100 (total 7100) h-index now 142
+2026-11-28T01:59:32.253Z page 72: +100 (total 7200) h-index now 141
+2026-11-28T01:59:33.462Z page 73: +100 (total 7300) h-index now 141
+2026-11-28T01:59:34.365Z page 74: +100 (total 7400) h-index now 141
+2026-11-28T01:59:35.549Z page 75: +100 (total 7500) h-index now 140
+2026-11-28T01:59:36.706Z page 76: +100 (total 7600) h-index now 139
+2026-11-28T01:59:37.714Z page 77: +100 (total 7700) h-index now 139
+2026-11-28T01:59:38.610Z page 78: +100 (total 7800) h-index now 138
+2026-11-28T01:59:39.624Z page 79: +100 (total 7900) h-index now 138
+2026-11-28T01:59:40.480Z page 80: +100 (total 8000) h-index now 137
+2026-11-28T01:59:41.846Z page 81: +100 (total 8100) h-index now 137
+2026-11-28T01:59:42.138Z ... scraping | 8100/100000 scholars | page 81
+2026-11-28T01:59:42.249Z wrote 176 discipline files from 8100 scholars (0 had no topics); empty: field:34
+2026-11-28T01:59:42.715Z page 82: +100 (total 8200) h-index now 136
+2026-11-28T01:59:43.933Z page 83: +100 (total 8300) h-index now 136
+2026-11-28T01:59:44.717Z page 84: +100 (total 8400) h-index now 136
+2026-11-28T01:59:45.847Z page 85: +100 (total 8500) h-index now 135
+2026-11-28T01:59:47.022Z page 86: +100 (total 8600) h-index now 135
+2026-11-28T01:59:47.988Z page 87: +100 (total 8700) h-index now 134
+2026-11-28T01:59:49.001Z page 88: +100 (total 8800) h-index now 134
+2026-11-28T01:59:50.023Z page 89: +100 (total 8900) h-index now 134
+2026-11-28T01:59:51.051Z page 90: +100 (total 9000) h-index now 133
+2026-11-28T01:59:52.115Z page 91: +100 (total 9100) h-index now 133
+2026-11-28T01:59:53.073Z page 92: +100 (total 9200) h-index now 132
+2026-11-28T01:59:53.968Z page 93: +100 (total 9300) h-index now 132
+2026-11-28T01:59:54.861Z page 94: +100 (total 9400) h-index now 132
+2026-11-28T01:59:56.068Z page 95: +100 (total 9500) h-index now 131
+2026-11-28T01:59:57.120Z page 96: +100 (total 9600) h-index now 131
+2026-11-28T01:59:58.108Z page 97: +100 (total 9700) h-index now 130
+2026-11-28T01:59:59.237Z page 98: +100 (total 9800) h-index now 130
+2026-11-28T02:00:00.468Z page 99: +100 (total 9900) h-index now 130
+2026-11-28T02:00:01.495Z page 100: +100 (total 10000) h-index now 129
+2026-11-28T02:00:02.515Z page 101: +100 (total 10100) h-index now 129
+2026-11-28T02:00:03.419Z page 102: +100 (total 10200) h-index now 129
+2026-11-28T02:00:04.254Z page 103: +100 (total 10300) h-index now 128
+2026-11-28T02:00:05.299Z page 104: +100 (total 10400) h-index now 128
+2026-11-28T02:00:06.421Z page 105: +100 (total 10500) h-index now 128
+2026-11-28T02:00:07.935Z page 106: +100 (total 10600) h-index now 127
+2026-11-28T02:00:09.213Z page 107: +100 (total 10700) h-index now 127
+2026-11-28T02:00:10.210Z page 108: +100 (total 10800) h-index now 127
+2026-11-28T02:00:11.162Z page 109: +100 (total 10900) h-index now 127
+2026-11-28T02:00:12.144Z ... scraping | 10900/100000 scholars | page 109
+2026-11-28T02:00:12.243Z wrote 194 discipline files from 10900 scholars (0 had no topics); empty: field:34
+2026-11-28T02:00:12.455Z page 110: +100 (total 11000) h-index now 126
+2026-11-28T02:00:13.724Z page 111: +100 (total 11100) h-index now 126
+2026-11-28T02:00:14.850Z page 112: +100 (total 11200) h-index now 126
+2026-11-28T02:00:15.953Z page 113: +100 (total 11300) h-index now 125
+2026-11-28T02:00:16.913Z page 114: +100 (total 11400) h-index now 125
+2026-11-28T02:00:17.671Z page 115: +100 (total 11500) h-index now 125
+2026-11-28T02:00:18.833Z page 116: +100 (total 11600) h-index now 124
+2026-11-28T02:00:20.008Z page 117: +100 (total 11700) h-index now 124
+2026-11-28T02:00:21.197Z page 118: +100 (total 11800) h-index now 124
+2026-11-28T02:00:22.241Z page 119: +100 (total 11900) h-index now 123
+2026-11-28T02:00:23.284Z page 120: +100 (total 12000) h-index now 123
+2026-11-28T02:00:24.278Z page 121: +100 (total 12100) h-index now 123
+2026-11-28T02:00:25.238Z page 122: +100 (total 12200) h-index now 122
+2026-11-28T02:00:26.415Z page 123: +100 (total 12300) h-index now 122
+2026-11-28T02:00:27.145Z page 124: +100 (total 12400) h-index now 122
+2026-11-28T02:00:27.951Z page 125: +100 (total 12500) h-index now 122
+2026-11-28T02:00:29.450Z page 126: +100 (total 12600) h-index now 121
+2026-11-28T02:00:30.572Z page 127: +100 (total 12700) h-index now 121
+2026-11-28T02:00:31.605Z page 128: +100 (total 12800) h-index now 121
+2026-11-28T02:00:32.692Z page 129: +100 (total 12900) h-index now 120
+2026-11-28T02:00:33.753Z page 130: +100 (total 13000) h-index now 120
+2026-11-28T02:00:35.123Z page 131: +100 (total 13100) h-index now 120
+2026-11-28T02:00:36.102Z page 132: +100 (total 13200) h-index now 120
+2026-11-28T02:00:37.041Z page 133: +100 (total 13300) h-index now 119
+2026-11-28T02:00:38.080Z page 134: +100 (total 13400) h-index now 119
+2026-11-28T02:00:39.157Z page 135: +100 (total 13500) h-index now 119
+2026-11-28T02:00:40.153Z page 136: +100 (total 13600) h-index now 119
+2026-11-28T02:00:41.159Z page 137: +100 (total 13700) h-index now 118
+2026-11-28T02:00:42.146Z ... scraping | 13700/100000 scholars | page 137
+2026-11-28T02:00:42.285Z wrote 206 discipline files from 13700 scholars (0 had no topics); empty: field:34
+2026-11-28T02:00:42.388Z page 138: +100 (total 13800) h-index now 118
+2026-11-28T02:00:43.245Z page 139: +100 (total 13900) h-index now 118
+2026-11-28T02:00:44.459Z page 140: +100 (total 14000) h-index now 117
+2026-11-28T02:00:45.763Z page 141: +100 (total 14100) h-index now 117
+2026-11-28T02:00:46.760Z page 142: +100 (total 14200) h-index now 117
+2026-11-28T02:00:47.730Z page 143: +100 (total 14300) h-index now 117
+2026-11-28T02:00:48.715Z page 144: +100 (total 14400) h-index now 116
+2026-11-28T02:00:49.618Z page 145: +100 (total 14500) h-index now 116
+2026-11-28T02:00:50.435Z page 146: +100 (total 14600) h-index now 116
+2026-11-28T02:00:51.765Z page 147: +100 (total 14700) h-index now 116
+2026-11-28T02:00:52.754Z page 148: +100 (total 14800) h-index now 115
+2026-11-28T02:00:53.979Z page 149: +100 (total 14900) h-index now 115
+2026-11-28T02:00:55.048Z page 150: +100 (total 15000) h-index now 115
+2026-11-28T02:00:56.060Z page 151: +100 (total 15100) h-index now 115
+2026-11-28T02:00:56.982Z page 152: +100 (total 15200) h-index now 114
+2026-11-28T02:00:58.669Z page 153: +100 (total 15300) h-index now 114
+2026-11-28T02:00:59.750Z page 154: +100 (total 15400) h-index now 114
+2026-11-28T02:01:00.818Z page 155: +100 (total 15500) h-index now 114
+2026-11-28T02:01:01.813Z page 156: +100 (total 15600) h-index now 114
+2026-11-28T02:01:03.018Z page 157: +100 (total 15700) h-index now 113
+2026-11-28T02:01:04.229Z page 158: +100 (total 15800) h-index now 113
+2026-11-28T02:01:05.301Z page 159: +100 (total 15900) h-index now 113
+2026-11-28T02:01:06.206Z page 160: +100 (total 16000) h-index now 113
+2026-11-28T02:01:07.758Z page 161: +100 (total 16100) h-index now 112
+2026-11-28T02:01:08.674Z page 162: +100 (total 16200) h-index now 112
+2026-11-28T02:01:09.838Z page 163: +100 (total 16300) h-index now 112
+2026-11-28T02:01:10.736Z page 164: +100 (total 16400) h-index now 112
+2026-11-28T02:01:11.806Z page 165: +100 (total 16500) h-index now 111
+2026-11-28T02:01:12.148Z ... scraping | 16500/100000 scholars | page 165
+2026-11-28T02:01:12.277Z wrote 220 discipline files from 16500 scholars (0 had no topics); empty: none
+2026-11-28T02:01:13.326Z page 166: +100 (total 16600) h-index now 111
+2026-11-28T02:01:14.603Z page 167: +100 (total 16700) h-index now 111
+2026-11-28T02:01:15.468Z page 168: +100 (total 16800) h-index now 111
+2026-11-28T02:01:16.467Z page 169: +100 (total 16900) h-index now 111
+2026-11-28T02:01:17.872Z page 170: +100 (total 17000) h-index now 110
+2026-11-28T02:01:19.225Z page 171: +100 (total 17100) h-index now 110
+2026-11-28T02:01:20.260Z page 172: +100 (total 17200) h-index now 110
+2026-11-28T02:01:21.556Z page 173: +100 (total 17300) h-index now 110
+2026-11-28T02:01:22.592Z page 174: +100 (total 17400) h-index now 109
+2026-11-28T02:01:23.808Z page 175: +100 (total 17500) h-index now 109
+2026-11-28T02:01:24.837Z page 176: +100 (total 17600) h-index now 109
+2026-11-28T02:01:25.885Z page 177: +100 (total 17700) h-index now 109
+2026-11-28T02:01:27.005Z page 178: +100 (total 17800) h-index now 109
+2026-11-28T02:01:27.933Z page 179: +100 (total 17900) h-index now 108
+2026-11-28T02:01:28.963Z page 180: +100 (total 18000) h-index now 108
+2026-11-28T02:01:29.972Z page 181: +100 (total 18100) h-index now 108
+2026-11-28T02:01:31.002Z page 182: +100 (total 18200) h-index now 108
+2026-11-28T02:01:31.874Z page 183: +100 (total 18300) h-index now 108
+2026-11-28T02:01:32.679Z page 184: +100 (total 18400) h-index now 107
+2026-11-28T02:01:33.955Z page 185: +100 (total 18500) h-index now 107
+2026-11-28T02:01:34.983Z page 186: +100 (total 18600) h-index now 107
+2026-11-28T02:01:35.801Z page 187: +100 (total 18700) h-index now 107
+2026-11-28T02:01:36.738Z page 188: +100 (total 18800) h-index now 107
+2026-11-28T02:01:37.552Z page 189: +100 (total 18900) h-index now 107
+2026-11-28T02:01:38.764Z page 190: +100 (total 19000) h-index now 106
+2026-11-28T02:01:40.141Z page 191: +100 (total 19100) h-index now 106
+2026-11-28T02:01:41.122Z page 192: +100 (total 19200) h-index now 106
+2026-11-28T02:01:42.152Z ... scraping | 19200/100000 scholars | page 192
+2026-11-28T02:01:42.203Z page 193: +100 (total 19300) h-index now 106
+2026-11-28T02:01:42.351Z wrote 226 discipline files from 19300 scholars (0 had no topics); empty: none
+2026-11-28T02:01:43.060Z page 194: +100 (total 19400) h-index now 106
+2026-11-28T02:01:44.180Z page 195: +100 (total 19500) h-index now 105
+2026-11-28T02:01:45.252Z page 196: +100 (total 19600) h-index now 105
+2026-11-28T02:01:46.399Z page 197: +100 (total 19700) h-index now 105
+2026-11-28T02:01:47.357Z page 198: +100 (total 19800) h-index now 105
+2026-11-28T02:01:48.301Z page 199: +100 (total 19900) h-index now 105
+2026-11-28T02:01:48.996Z page 200: +100 (total 20000) h-index now 105
+2026-11-28T02:01:49.724Z page 201: +100 (total 20100) h-index now 104
+2026-11-28T02:01:50.752Z page 202: +100 (total 20200) h-index now 104
+2026-11-28T02:01:51.869Z page 203: +100 (total 20300) h-index now 104
+2026-11-28T02:01:52.720Z page 204: +100 (total 20400) h-index now 104
+2026-11-28T02:01:53.738Z page 205: +100 (total 20500) h-index now 104
+2026-11-28T02:01:54.485Z page 206: +100 (total 20600) h-index now 104
+2026-11-28T02:01:55.373Z page 207: +100 (total 20700) h-index now 104
+2026-11-28T02:01:56.391Z page 208: +100 (total 20800) h-index now 103
+2026-11-28T02:01:57.405Z page 209: +100 (total 20900) h-index now 103
+2026-11-28T02:01:58.466Z page 210: +100 (total 21000) h-index now 103
+2026-11-28T02:01:59.384Z page 211: +100 (total 21100) h-index now 103
+2026-11-28T02:02:00.519Z page 212: +100 (total 21200) h-index now 103
+2026-11-28T02:02:01.495Z page 213: +100 (total 21300) h-index now 103
+2026-11-28T02:02:02.253Z page 214: +100 (total 21400) h-index now 103
+2026-11-28T02:02:03.210Z page 215: +100 (total 21500) h-index now 102
+2026-11-28T02:02:04.472Z page 216: +100 (total 21600) h-index now 102
+2026-11-28T02:02:05.304Z page 217: +100 (total 21700) h-index now 102
+2026-11-28T02:02:06.277Z page 218: +100 (total 21800) h-index now 102
+2026-11-28T02:02:07.315Z page 219: +100 (total 21900) h-index now 102
+2026-11-28T02:02:08.260Z page 220: +100 (total 22000) h-index now 102
+2026-11-28T02:02:08.952Z page 221: +100 (total 22100) h-index now 101
+2026-11-28T02:02:10.104Z page 222: +100 (total 22200) h-index now 101
+2026-11-28T02:02:11.125Z page 223: +100 (total 22300) h-index now 101
+2026-11-28T02:02:12.149Z page 224: +100 (total 22400) h-index now 101
+2026-11-28T02:02:12.151Z ... scraping | 22400/100000 scholars | page 224
+2026-11-28T02:02:12.399Z wrote 231 discipline files from 22400 scholars (0 had no topics); empty: none
+2026-11-28T02:02:13.101Z page 225: +100 (total 22500) h-index now 101
+2026-11-28T02:02:13.996Z page 226: +100 (total 22600) h-index now 101
+2026-11-28T02:02:14.607Z page 227: +100 (total 22700) h-index now 101
+2026-11-28T02:02:15.579Z page 228: +100 (total 22800) h-index now 100
+2026-11-28T02:02:16.648Z page 229: +100 (total 22900) h-index now 100
+2026-11-28T02:02:17.506Z page 230: +100 (total 23000) h-index now 100
+2026-11-28T02:02:18.387Z page 231: +100 (total 23100) h-index now 100
+2026-11-28T02:02:19.166Z page 232: +100 (total 23200) h-index now 100
+2026-11-28T02:02:20.037Z page 233: +100 (total 23300) h-index now 100
+2026-11-28T02:02:21.062Z page 234: +100 (total 23400) h-index now 100
+2026-11-28T02:02:22.238Z page 235: +100 (total 23500) h-index now 99
+2026-11-28T02:02:23.360Z page 236: +100 (total 23600) h-index now 99
+2026-11-28T02:02:24.397Z page 237: +100 (total 23700) h-index now 99
+2026-11-28T02:02:25.376Z page 238: +100 (total 23800) h-index now 99
+2026-11-28T02:02:26.421Z page 239: +100 (total 23900) h-index now 99
+2026-11-28T02:02:27.384Z page 240: +100 (total 24000) h-index now 99
+2026-11-28T02:02:28.263Z page 241: +100 (total 24100) h-index now 99
+2026-11-28T02:02:29.137Z page 242: +100 (total 24200) h-index now 98
+2026-11-28T02:02:30.250Z page 243: +100 (total 24300) h-index now 98
+2026-11-28T02:02:31.279Z page 244: +100 (total 24400) h-index now 98
+2026-11-28T02:02:32.321Z page 245: +100 (total 24500) h-index now 98
+2026-11-28T02:02:33.357Z page 246: +100 (total 24600) h-index now 98
+2026-11-28T02:02:34.501Z page 247: +100 (total 24700) h-index now 98
+2026-11-28T02:02:35.497Z page 248: +100 (total 24800) h-index now 98
+2026-11-28T02:02:36.191Z page 249: +100 (total 24900) h-index now 98
+2026-11-28T02:02:37.374Z page 250: +100 (total 25000) h-index now 97
+2026-11-28T02:02:38.268Z page 251: +100 (total 25100) h-index now 97
+2026-11-28T02:02:39.183Z page 252: +100 (total 25200) h-index now 97
+2026-11-28T02:02:40.414Z page 253: +100 (total 25300) h-index now 97
+2026-11-28T02:02:41.442Z page 254: +100 (total 25400) h-index now 97
+2026-11-28T02:02:42.153Z ... scraping | 25400/100000 scholars | page 254
+2026-11-28T02:02:42.322Z wrote 235 discipline files from 25400 scholars (0 had no topics); empty: none
+2026-11-28T02:02:42.617Z page 255: +100 (total 25500) h-index now 97
+2026-11-28T02:02:43.558Z page 256: +100 (total 25600) h-index now 97
+2026-11-28T02:02:44.376Z page 257: +100 (total 25700) h-index now 97
+2026-11-28T02:02:45.363Z page 258: +100 (total 25800) h-index now 97
+2026-11-28T02:02:46.465Z page 259: +100 (total 25900) h-index now 96
+2026-11-28T02:02:47.796Z page 260: +100 (total 26000) h-index now 96
+2026-11-28T02:02:48.829Z page 261: +100 (total 26100) h-index now 96
+2026-11-28T02:02:49.740Z page 262: +100 (total 26200) h-index now 96
+2026-11-28T02:02:50.551Z page 263: +100 (total 26300) h-index now 96
+2026-11-28T02:02:51.589Z page 264: +100 (total 26400) h-index now 96
+2026-11-28T02:02:52.604Z page 265: +100 (total 26500) h-index now 96
+2026-11-28T02:02:53.515Z page 266: +100 (total 26600) h-index now 96
+2026-11-28T02:02:54.639Z page 267: +100 (total 26700) h-index now 95
+2026-11-28T02:02:55.905Z page 268: +100 (total 26800) h-index now 95
+2026-11-28T02:02:56.789Z page 269: +100 (total 26900) h-index now 95
+2026-11-28T02:02:57.725Z page 270: +100 (total 27000) h-index now 95
+2026-11-28T02:02:58.486Z page 271: +100 (total 27100) h-index now 95
+2026-11-28T02:02:59.362Z page 272: +100 (total 27200) h-index now 95
+2026-11-28T02:03:00.273Z page 273: +100 (total 27300) h-index now 95
+2026-11-28T02:03:00.993Z page 274: +100 (total 27400) h-index now 95
+2026-11-28T02:03:01.666Z page 275: +100 (total 27500) h-index now 94
+2026-11-28T02:03:02.743Z page 276: +100 (total 27600) h-index now 94
+2026-11-28T02:03:04.059Z page 277: +100 (total 27700) h-index now 94
+2026-11-28T02:03:04.982Z page 278: +100 (total 27800) h-index now 94
+2026-11-28T02:03:05.755Z page 279: +100 (total 27900) h-index now 94
+2026-11-28T02:03:06.625Z page 280: +100 (total 28000) h-index now 94
+2026-11-28T02:03:07.492Z page 281: +100 (total 28100) h-index now 94
+2026-11-28T02:03:08.339Z page 282: +100 (total 28200) h-index now 94
+2026-11-28T02:03:09.312Z page 283: +100 (total 28300) h-index now 94
+2026-11-28T02:03:10.322Z page 284: +100 (total 28400) h-index now 94
+2026-11-28T02:03:11.279Z page 285: +100 (total 28500) h-index now 93
+2026-11-28T02:03:12.154Z ... scraping | 28500/100000 scholars | page 285
+2026-11-28T02:03:12.348Z wrote 238 discipline files from 28500 scholars (0 had no topics); empty: none
+2026-11-28T02:03:12.359Z page 286: +100 (total 28600) h-index now 93
+2026-11-28T02:03:13.499Z page 287: +100 (total 28700) h-index now 93
+2026-11-28T02:03:14.568Z page 288: +100 (total 28800) h-index now 93
+2026-11-28T02:03:15.433Z page 289: +100 (total 28900) h-index now 93
+2026-11-28T02:03:16.391Z page 290: +100 (total 29000) h-index now 93
+2026-11-28T02:03:17.321Z page 291: +100 (total 29100) h-index now 93
+2026-11-28T02:03:18.296Z page 292: +100 (total 29200) h-index now 93
+2026-11-28T02:03:19.018Z page 293: +100 (total 29300) h-index now 93
+2026-11-28T02:03:19.940Z page 294: +100 (total 29400) h-index now 92
+2026-11-28T02:03:21.093Z page 295: +100 (total 29500) h-index now 92
+2026-11-28T02:03:22.144Z page 296: +100 (total 29600) h-index now 92
+2026-11-28T02:03:23.159Z page 297: +100 (total 29700) h-index now 92
+2026-11-28T02:03:24.146Z page 298: +100 (total 29800) h-index now 92
+2026-11-28T02:03:25.180Z page 299: +100 (total 29900) h-index now 92
+2026-11-28T02:03:26.006Z page 300: +100 (total 30000) h-index now 92
+2026-11-28T02:03:27.005Z page 301: +100 (total 30100) h-index now 92
+2026-11-28T02:03:28.043Z page 302: +100 (total 30200) h-index now 92
+2026-11-28T02:03:29.028Z page 303: +100 (total 30300) h-index now 92
+2026-11-28T02:03:29.972Z page 304: +100 (total 30400) h-index now 92
+2026-11-28T02:03:30.897Z page 305: +100 (total 30500) h-index now 91
+2026-11-28T02:03:32.138Z page 306: +100 (total 30600) h-index now 91
+2026-11-28T02:03:33.247Z page 307: +100 (total 30700) h-index now 91
+2026-11-28T02:03:34.178Z page 308: +100 (total 30800) h-index now 91
+2026-11-28T02:03:35.185Z page 309: +100 (total 30900) h-index now 91
+2026-11-28T02:03:36.145Z page 310: +100 (total 31000) h-index now 91
+2026-11-28T02:03:37.243Z page 311: +100 (total 31100) h-index now 91
+2026-11-28T02:03:38.116Z page 312: +100 (total 31200) h-index now 91
+2026-11-28T02:03:39.022Z page 313: +100 (total 31300) h-index now 91
+2026-11-28T02:03:39.848Z page 314: +100 (total 31400) h-index now 91
+2026-11-28T02:03:40.572Z page 315: +100 (total 31500) h-index now 90
+2026-11-28T02:03:41.859Z page 316: +100 (total 31600) h-index now 90
+2026-11-28T02:03:42.154Z ... scraping | 31600/100000 scholars | page 316
+2026-11-28T02:03:42.335Z wrote 240 discipline files from 31600 scholars (0 had no topics); empty: none
+2026-11-28T02:03:42.863Z page 317: +100 (total 31700) h-index now 90
+2026-11-28T02:03:43.696Z page 318: +100 (total 31800) h-index now 90
+2026-11-28T02:03:44.503Z page 319: +100 (total 31900) h-index now 90
+2026-11-28T02:03:45.755Z page 320: +100 (total 32000) h-index now 90
+2026-11-28T02:03:46.978Z page 321: +100 (total 32100) h-index now 90
+2026-11-28T02:03:48.088Z page 322: +100 (total 32200) h-index now 90
+2026-11-28T02:03:48.941Z page 323: +100 (total 32300) h-index now 90
+2026-11-28T02:03:49.835Z page 324: +100 (total 32400) h-index now 90
+2026-11-28T02:03:50.619Z page 325: +100 (total 32500) h-index now 90
+2026-11-28T02:03:51.482Z page 326: +100 (total 32600) h-index now 90
+2026-11-28T02:03:52.563Z page 327: +100 (total 32700) h-index now 89
+2026-11-28T02:03:53.458Z page 328: +100 (total 32800) h-index now 89
+2026-11-28T02:03:54.484Z page 329: +100 (total 32900) h-index now 89
+2026-11-28T02:03:55.322Z page 330: +100 (total 33000) h-index now 89
+2026-11-28T02:03:56.098Z page 331: +100 (total 33100) h-index now 89
+2026-11-28T02:03:57.016Z page 332: +100 (total 33200) h-index now 89
+2026-11-28T02:03:58.095Z page 333: +100 (total 33300) h-index now 89
+2026-11-28T02:03:59.282Z page 334: +100 (total 33400) h-index now 89
+2026-11-28T02:04:00.285Z page 335: +100 (total 33500) h-index now 89
+2026-11-28T02:04:01.014Z page 336: +100 (total 33600) h-index now 89
+2026-11-28T02:04:01.996Z page 337: +100 (total 33700) h-index now 89
+2026-11-28T02:04:02.661Z page 338: +100 (total 33800) h-index now 89
+2026-11-28T02:04:03.500Z page 339: +100 (total 33900) h-index now 88
+2026-11-28T02:04:04.506Z page 340: +100 (total 34000) h-index now 88
+2026-11-28T02:04:05.613Z page 341: +100 (total 34100) h-index now 88
+2026-11-28T02:04:06.623Z page 342: +100 (total 34200) h-index now 88
+2026-11-28T02:04:07.514Z page 343: +100 (total 34300) h-index now 88
+2026-11-28T02:04:08.684Z page 344: +100 (total 34400) h-index now 88
+2026-11-28T02:04:09.597Z page 345: +100 (total 34500) h-index now 88
+2026-11-28T02:04:10.535Z page 346: +100 (total 34600) h-index now 88
+2026-11-28T02:04:11.535Z page 347: +100 (total 34700) h-index now 88
+2026-11-28T02:04:12.155Z ... scraping | 34700/100000 scholars | page 347
+2026-11-28T02:04:12.370Z wrote 244 discipline files from 34700 scholars (0 had no topics); empty: none
+2026-11-28T02:04:12.416Z page 348: +100 (total 34800) h-index now 88
+2026-11-28T02:04:13.339Z page 349: +100 (total 34900) h-index now 88
+2026-11-28T02:04:14.277Z page 350: +100 (total 35000) h-index now 88
+2026-11-28T02:04:14.929Z page 351: +100 (total 35100) h-index now 88
+2026-11-28T02:04:16.064Z page 352: +100 (total 35200) h-index now 87
+2026-11-28T02:04:16.994Z page 353: +100 (total 35300) h-index now 87
+2026-11-28T02:04:18.142Z page 354: +100 (total 35400) h-index now 87
+2026-11-28T02:04:19.228Z page 355: +100 (total 35500) h-index now 87
+2026-11-28T02:04:20.152Z page 356: +100 (total 35600) h-index now 87
+2026-11-28T02:04:21.010Z page 357: +100 (total 35700) h-index now 87
+2026-11-28T02:04:22.001Z page 358: +100 (total 35800) h-index now 87
+2026-11-28T02:04:22.843Z page 359: +100 (total 35900) h-index now 87
+2026-11-28T02:04:23.707Z page 360: +100 (total 36000) h-index now 87
+2026-11-28T02:04:24.658Z page 361: +100 (total 36100) h-index now 87
+2026-11-28T02:04:25.613Z page 362: +100 (total 36200) h-index now 87
+2026-11-28T02:04:26.317Z page 363: +100 (total 36300) h-index now 87
+2026-11-28T02:04:27.021Z page 364: +100 (total 36400) h-index now 87
+2026-11-28T02:04:27.926Z page 365: +100 (total 36500) h-index now 86
+2026-11-28T02:04:28.813Z page 366: +100 (total 36600) h-index now 86
+2026-11-28T02:04:29.900Z page 367: +100 (total 36700) h-index now 86
+2026-11-28T02:04:30.878Z page 368: +100 (total 36800) h-index now 86
+2026-11-28T02:04:31.864Z page 369: +100 (total 36900) h-index now 86
+2026-11-28T02:04:32.911Z page 370: +100 (total 37000) h-index now 86
+2026-11-28T02:04:34.036Z page 371: +100 (total 37100) h-index now 86
+2026-11-28T02:04:34.830Z page 372: +100 (total 37200) h-index now 86
+2026-11-28T02:04:35.669Z page 373: +100 (total 37300) h-index now 86
+2026-11-28T02:04:36.533Z page 374: +100 (total 37400) h-index now 86
+2026-11-28T02:04:37.412Z page 375: +100 (total 37500) h-index now 86
+2026-11-28T02:04:38.376Z page 376: +100 (total 37600) h-index now 86
+2026-11-28T02:04:39.402Z page 377: +100 (total 37700) h-index now 86
+2026-11-28T02:04:40.369Z page 378: +100 (total 37800) h-index now 86
+2026-11-28T02:04:41.068Z page 379: +100 (total 37900) h-index now 85
+2026-11-28T02:04:42.161Z ... scraping | 37900/100000 scholars | page 379
+2026-11-28T02:04:42.275Z page 380: +100 (total 38000) h-index now 85
+2026-11-28T02:04:42.376Z wrote 247 discipline files from 38000 scholars (0 had no topics); empty: none
+2026-11-28T02:04:43.626Z page 381: +100 (total 38100) h-index now 85
+2026-11-28T02:04:44.433Z page 382: +100 (total 38200) h-index now 85
+2026-11-28T02:04:45.255Z page 383: +100 (total 38300) h-index now 85
+2026-11-28T02:04:46.207Z page 384: +100 (total 38400) h-index now 85
+2026-11-28T02:04:47.140Z page 385: +100 (total 38500) h-index now 85
+2026-11-28T02:04:48.105Z page 386: +100 (total 38600) h-index now 85
+2026-11-28T02:04:49.029Z page 387: +100 (total 38700) h-index now 85
+2026-11-28T02:04:50.060Z page 388: +100 (total 38800) h-index now 85
+2026-11-28T02:04:50.954Z page 389: +100 (total 38900) h-index now 85
+2026-11-28T02:04:51.886Z page 390: +100 (total 39000) h-index now 85
+2026-11-28T02:04:52.796Z page 391: +100 (total 39100) h-index now 85
+2026-11-28T02:04:53.575Z page 392: +100 (total 39200) h-index now 85
+2026-11-28T02:04:54.556Z page 393: +100 (total 39300) h-index now 84
+2026-11-28T02:04:55.526Z page 394: +100 (total 39400) h-index now 84
+2026-11-28T02:04:56.668Z page 395: +100 (total 39500) h-index now 84
+2026-11-28T02:04:57.740Z page 396: +100 (total 39600) h-index now 84
+2026-11-28T02:04:58.903Z page 397: +100 (total 39700) h-index now 84
+2026-11-28T02:04:59.935Z page 398: +100 (total 39800) h-index now 84
+2026-11-28T02:05:01.040Z page 399: +100 (total 39900) h-index now 84
+2026-11-28T02:05:01.932Z page 400: +100 (total 40000) h-index now 84
+2026-11-28T02:05:02.933Z page 401: +100 (total 40100) h-index now 84
+2026-11-28T02:05:03.941Z page 402: +100 (total 40200) h-index now 84
+2026-11-28T02:05:05.264Z page 403: +100 (total 40300) h-index now 84
+2026-11-28T02:05:06.407Z page 404: +100 (total 40400) h-index now 84
+2026-11-28T02:05:07.409Z page 405: +100 (total 40500) h-index now 84
+2026-11-28T02:05:08.546Z page 406: +100 (total 40600) h-index now 84
+2026-11-28T02:05:09.304Z page 407: +100 (total 40700) h-index now 84
+2026-11-28T02:05:10.004Z page 408: +100 (total 40800) h-index now 84
+2026-11-28T02:05:11.090Z page 409: +100 (total 40900) h-index now 83
+2026-11-28T02:05:12.159Z ... scraping | 40900/100000 scholars | page 409
+2026-11-28T02:05:12.237Z page 410: +100 (total 41000) h-index now 83
+2026-11-28T02:05:12.364Z wrote 249 discipline files from 41000 scholars (0 had no topics); empty: none
+2026-11-28T02:05:12.990Z page 411: +100 (total 41100) h-index now 83
+2026-11-28T02:05:14.150Z page 412: +100 (total 41200) h-index now 83
+2026-11-28T02:05:15.198Z page 413: +100 (total 41300) h-index now 83
+2026-11-28T02:05:16.162Z page 414: +100 (total 41400) h-index now 83
+2026-11-28T02:05:17.096Z page 415: +100 (total 41500) h-index now 83
+2026-11-28T02:05:17.941Z page 416: +100 (total 41600) h-index now 83
+2026-11-28T02:05:18.959Z page 417: +100 (total 41700) h-index now 83
+2026-11-28T02:05:19.982Z page 418: +100 (total 41800) h-index now 83
+2026-11-28T02:05:20.932Z page 419: +100 (total 41900) h-index now 83
+2026-11-28T02:05:21.840Z page 420: +100 (total 42000) h-index now 83
+2026-11-28T02:05:22.732Z page 421: +100 (total 42100) h-index now 83
+2026-11-28T02:05:23.633Z page 422: +100 (total 42200) h-index now 83
+2026-11-28T02:05:24.455Z page 423: +100 (total 42300) h-index now 83
+2026-11-28T02:05:25.732Z page 424: +100 (total 42400) h-index now 82
+2026-11-28T02:05:26.773Z page 425: +100 (total 42500) h-index now 82
+2026-11-28T02:05:28.146Z page 426: +100 (total 42600) h-index now 82
+2026-11-28T02:05:29.411Z page 427: +100 (total 42700) h-index now 82
+2026-11-28T02:05:30.453Z page 428: +100 (total 42800) h-index now 82
+2026-11-28T02:05:31.427Z page 429: +100 (total 42900) h-index now 82
+2026-11-28T02:05:32.357Z page 430: +100 (total 43000) h-index now 82
+2026-11-28T02:05:33.313Z page 431: +100 (total 43100) h-index now 82
+2026-11-28T02:05:34.105Z page 432: +100 (total 43200) h-index now 82
+2026-11-28T02:05:34.981Z page 433: +100 (total 43300) h-index now 82
+2026-11-28T02:05:35.821Z page 434: +100 (total 43400) h-index now 82
+2026-11-28T02:05:36.575Z page 435: +100 (total 43500) h-index now 82
+2026-11-28T02:05:37.571Z page 436: +100 (total 43600) h-index now 82
+2026-11-28T02:05:38.464Z page 437: +100 (total 43700) h-index now 82
+2026-11-28T02:05:39.238Z page 438: +100 (total 43800) h-index now 82
+2026-11-28T02:05:40.081Z page 439: +100 (total 43900) h-index now 82
+2026-11-28T02:05:41.059Z page 440: +100 (total 44000) h-index now 82
+2026-11-28T02:05:42.073Z page 441: +100 (total 44100) h-index now 81
+2026-11-28T02:05:42.160Z ... scraping | 44100/100000 scholars | page 441
+2026-11-28T02:05:42.364Z wrote 251 discipline files from 44100 scholars (0 had no topics); empty: none
+2026-11-28T02:05:43.303Z page 442: +100 (total 44200) h-index now 81
+2026-11-28T02:05:44.464Z page 443: +100 (total 44300) h-index now 81
+2026-11-28T02:05:45.545Z page 444: +100 (total 44400) h-index now 81
+2026-11-28T02:05:46.677Z page 445: +100 (total 44500) h-index now 81
+2026-11-28T02:05:47.702Z page 446: +100 (total 44600) h-index now 81
+2026-11-28T02:05:48.699Z page 447: +100 (total 44700) h-index now 81
+2026-11-28T02:05:49.999Z page 448: +100 (total 44800) h-index now 81
+2026-11-28T02:05:50.876Z page 449: +100 (total 44900) h-index now 81
+2026-11-28T02:05:51.931Z page 450: +100 (total 45000) h-index now 81
+2026-11-28T02:05:52.974Z page 451: +100 (total 45100) h-index now 81
+2026-11-28T02:05:53.892Z page 452: +100 (total 45200) h-index now 81
+2026-11-28T02:05:54.834Z page 453: +100 (total 45300) h-index now 81
+2026-11-28T02:05:55.617Z page 454: +100 (total 45400) h-index now 81
+2026-11-28T02:05:56.571Z page 455: +100 (total 45500) h-index now 81
+2026-11-28T02:05:57.463Z page 456: +100 (total 45600) h-index now 81
+2026-11-28T02:05:58.262Z page 457: +100 (total 45700) h-index now 81
+2026-11-28T02:05:59.274Z page 458: +100 (total 45800) h-index now 80
+2026-11-28T02:06:00.430Z page 459: +100 (total 45900) h-index now 80
+2026-11-28T02:06:01.387Z page 460: +100 (total 46000) h-index now 80
+2026-11-28T02:06:02.496Z page 461: +100 (total 46100) h-index now 80
+2026-11-28T02:06:03.779Z page 462: +100 (total 46200) h-index now 80
+2026-11-28T02:06:04.844Z page 463: +100 (total 46300) h-index now 80
+2026-11-28T02:06:05.825Z page 464: +100 (total 46400) h-index now 80
+2026-11-28T02:06:06.787Z page 465: +100 (total 46500) h-index now 80
+2026-11-28T02:06:07.527Z page 466: +100 (total 46600) h-index now 80
+2026-11-28T02:06:08.545Z page 467: +100 (total 46700) h-index now 80
+2026-11-28T02:06:09.588Z page 468: +100 (total 46800) h-index now 80
+2026-11-28T02:06:10.429Z page 469: +100 (total 46900) h-index now 80
+2026-11-28T02:06:11.383Z page 470: +100 (total 47000) h-index now 80
+2026-11-28T02:06:12.161Z ... scraping | 47000/100000 scholars | page 470
+2026-11-28T02:06:12.395Z wrote 254 discipline files from 47000 scholars (0 had no topics); empty: none
+2026-11-28T02:06:12.399Z page 471: +100 (total 47100) h-index now 80
+2026-11-28T02:06:13.242Z page 472: +100 (total 47200) h-index now 80
+2026-11-28T02:06:14.088Z page 473: +100 (total 47300) h-index now 80
+2026-11-28T02:06:14.960Z page 474: +100 (total 47400) h-index now 80
+2026-11-28T02:06:15.907Z page 475: +100 (total 47500) h-index now 80
+2026-11-28T02:06:16.897Z page 476: +100 (total 47600) h-index now 80
+2026-11-28T02:06:18.042Z page 477: +100 (total 47700) h-index now 79
+2026-11-28T02:06:19.238Z page 478: +100 (total 47800) h-index now 79
+2026-11-28T02:06:20.260Z page 479: +100 (total 47900) h-index now 79
+2026-11-28T02:06:21.393Z page 480: +100 (total 48000) h-index now 79
+2026-11-28T02:06:22.246Z page 481: +100 (total 48100) h-index now 79
+2026-11-28T02:06:23.240Z page 482: +100 (total 48200) h-index now 79
+2026-11-28T02:06:24.360Z page 483: +100 (total 48300) h-index now 79
+2026-11-28T02:06:25.409Z page 484: +100 (total 48400) h-index now 79
+2026-11-28T02:06:26.344Z page 485: +100 (total 48500) h-index now 79
+2026-11-28T02:06:27.291Z page 486: +100 (total 48600) h-index now 79
+2026-11-28T02:06:28.243Z page 487: +100 (total 48700) h-index now 79
+2026-11-28T02:06:29.170Z page 488: +100 (total 48800) h-index now 79
+2026-11-28T02:06:29.990Z page 489: +100 (total 48900) h-index now 79
+2026-11-28T02:06:30.903Z page 490: +100 (total 49000) h-index now 79
+2026-11-28T02:06:31.557Z page 491: +100 (total 49100) h-index now 79
+2026-11-28T02:06:32.444Z page 492: +100 (total 49200) h-index now 79
+2026-11-28T02:06:33.321Z page 493: +100 (total 49300) h-index now 79
+2026-11-28T02:06:34.290Z page 494: +100 (total 49400) h-index now 79
+2026-11-28T02:06:35.168Z page 495: +100 (total 49500) h-index now 79
+2026-11-28T02:06:35.828Z page 496: +100 (total 49600) h-index now 79
+2026-11-28T02:06:36.544Z page 497: +100 (total 49700) h-index now 78
+2026-11-28T02:06:37.575Z page 498: +100 (total 49800) h-index now 78
+2026-11-28T02:06:38.512Z page 499: +100 (total 49900) h-index now 78
+2026-11-28T02:06:39.567Z page 500: +100 (total 50000) h-index now 78
+2026-11-28T02:06:40.642Z page 501: +100 (total 50100) h-index now 78
+2026-11-28T02:06:41.502Z page 502: +100 (total 50200) h-index now 78
+2026-11-28T02:06:42.166Z ... scraping | 50200/100000 scholars | page 502
+2026-11-28T02:06:42.385Z wrote 254 discipline files from 50200 scholars (0 had no topics); empty: none
+2026-11-28T02:06:42.387Z page 503: +100 (total 50300) h-index now 78
+2026-11-28T02:06:43.393Z page 504: +100 (total 50400) h-index now 78
+2026-11-28T02:06:44.223Z page 505: +100 (total 50500) h-index now 78
+2026-11-28T02:06:45.087Z page 506: +100 (total 50600) h-index now 78
+2026-11-28T02:06:46.083Z page 507: +100 (total 50700) h-index now 78
+2026-11-28T02:06:47.100Z page 508: +100 (total 50800) h-index now 78
+2026-11-28T02:06:48.220Z page 509: +100 (total 50900) h-index now 78
+2026-11-28T02:06:49.045Z page 510: +100 (total 51000) h-index now 78
+2026-11-28T02:06:49.913Z page 511: +100 (total 51100) h-index now 78
+2026-11-28T02:06:50.585Z page 512: +100 (total 51200) h-index now 78
+2026-11-28T02:06:51.521Z page 513: +100 (total 51300) h-index now 78
+2026-11-28T02:06:52.347Z page 514: +100 (total 51400) h-index now 78
+2026-11-28T02:06:53.057Z page 515: +100 (total 51500) h-index now 78
+2026-11-28T02:06:53.892Z page 516: +100 (total 51600) h-index now 78
+2026-11-28T02:06:54.769Z page 517: +100 (total 51700) h-index now 78
+2026-11-28T02:06:55.724Z page 518: +100 (total 51800) h-index now 77
+2026-11-28T02:06:56.722Z page 519: +100 (total 51900) h-index now 77
+2026-11-28T02:06:57.736Z page 520: +100 (total 52000) h-index now 77
+2026-11-28T02:06:58.559Z page 521: +100 (total 52100) h-index now 77
+2026-11-28T02:06:59.625Z page 522: +100 (total 52200) h-index now 77
+2026-11-28T02:07:00.787Z page 523: +100 (total 52300) h-index now 77
+2026-11-28T02:07:01.849Z page 524: +100 (total 52400) h-index now 77
+2026-11-28T02:07:02.913Z page 525: +100 (total 52500) h-index now 77
+2026-11-28T02:07:03.920Z page 526: +100 (total 52600) h-index now 77
+2026-11-28T02:07:04.915Z page 527: +100 (total 52700) h-index now 77
+2026-11-28T02:07:05.839Z page 528: +100 (total 52800) h-index now 77
+2026-11-28T02:07:06.668Z page 529: +100 (total 52900) h-index now 77
+2026-11-28T02:07:07.675Z page 530: +100 (total 53000) h-index now 77
+2026-11-28T02:07:08.572Z page 531: +100 (total 53100) h-index now 77
+2026-11-28T02:07:09.515Z page 532: +100 (total 53200) h-index now 77
+2026-11-28T02:07:10.343Z page 533: +100 (total 53300) h-index now 77
+2026-11-28T02:07:11.169Z page 534: +100 (total 53400) h-index now 77
+2026-11-28T02:07:12.025Z page 535: +100 (total 53500) h-index now 77
+2026-11-28T02:07:12.164Z ... scraping | 53500/100000 scholars | page 535
+2026-11-28T02:07:12.517Z wrote 256 discipline files from 53500 scholars (0 had no topics); empty: none
+2026-11-28T02:07:12.747Z page 536: +100 (total 53600) h-index now 77
+2026-11-28T02:07:13.437Z page 537: +100 (total 53700) h-index now 77
+2026-11-28T02:07:14.166Z page 538: +100 (total 53800) h-index now 77
+2026-11-28T02:07:14.912Z page 539: +100 (total 53900) h-index now 77
+2026-11-28T02:07:15.752Z page 540: +100 (total 54000) h-index now 76
+2026-11-28T02:07:16.782Z page 541: +100 (total 54100) h-index now 76
+2026-11-28T02:07:17.923Z page 542: +100 (total 54200) h-index now 76
+2026-11-28T02:07:18.942Z page 543: +100 (total 54300) h-index now 76
+2026-11-28T02:07:19.924Z page 544: +100 (total 54400) h-index now 76
+2026-11-28T02:07:20.657Z page 545: +100 (total 54500) h-index now 76
+2026-11-28T02:07:21.640Z page 546: +100 (total 54600) h-index now 76
+2026-11-28T02:07:22.623Z page 547: +100 (total 54700) h-index now 76
+2026-11-28T02:07:23.649Z page 548: +100 (total 54800) h-index now 76
+2026-11-28T02:07:24.574Z page 549: +100 (total 54900) h-index now 76
+2026-11-28T02:07:25.647Z page 550: +100 (total 55000) h-index now 76
+2026-11-28T02:07:26.618Z page 551: +100 (total 55100) h-index now 76
+2026-11-28T02:07:27.394Z page 552: +100 (total 55200) h-index now 76
+2026-11-28T02:07:28.503Z page 553: +100 (total 55300) h-index now 76
+2026-11-28T02:07:29.268Z page 554: +100 (total 55400) h-index now 76
+2026-11-28T02:07:30.009Z page 555: +100 (total 55500) h-index now 76
+2026-11-28T02:07:30.909Z page 556: +100 (total 55600) h-index now 76
+2026-11-28T02:07:31.840Z page 557: +100 (total 55700) h-index now 76
+2026-11-28T02:07:32.774Z page 558: +100 (total 55800) h-index now 76
+2026-11-28T02:07:33.681Z page 559: +100 (total 55900) h-index now 76
+2026-11-28T02:07:34.522Z page 560: +100 (total 56000) h-index now 76
+2026-11-28T02:07:35.324Z page 561: +100 (total 56100) h-index now 76
+2026-11-28T02:07:36.000Z page 562: +100 (total 56200) h-index now 76
+2026-11-28T02:07:36.962Z page 563: +100 (total 56300) h-index now 75
+2026-11-28T02:07:38.028Z page 564: +100 (total 56400) h-index now 75
+2026-11-28T02:07:39.051Z page 565: +100 (total 56500) h-index now 75
+2026-11-28T02:07:40.245Z page 566: +100 (total 56600) h-index now 75
+2026-11-28T02:07:41.209Z page 567: +100 (total 56700) h-index now 75
+2026-11-28T02:07:42.164Z ... scraping | 56700/100000 scholars | page 567
+2026-11-28T02:07:42.265Z page 568: +100 (total 56800) h-index now 75
+2026-11-28T02:07:42.479Z wrote 259 discipline files from 56800 scholars (0 had no topics); empty: none
+2026-11-28T02:07:43.194Z page 569: +100 (total 56900) h-index now 75
+2026-11-28T02:07:44.338Z page 570: +100 (total 57000) h-index now 75
+2026-11-28T02:07:45.154Z page 571: +100 (total 57100) h-index now 75
+2026-11-28T02:07:46.131Z page 572: +100 (total 57200) h-index now 75
+2026-11-28T02:07:46.996Z page 573: +100 (total 57300) h-index now 75
+2026-11-28T02:07:47.713Z page 574: +100 (total 57400) h-index now 75
+2026-11-28T02:07:48.501Z page 575: +100 (total 57500) h-index now 75
+2026-11-28T02:07:49.176Z page 576: +100 (total 57600) h-index now 75
+2026-11-28T02:07:50.108Z page 577: +100 (total 57700) h-index now 75
+2026-11-28T02:07:50.999Z page 578: +100 (total 57800) h-index now 75
+2026-11-28T02:07:51.849Z page 579: +100 (total 57900) h-index now 75
+2026-11-28T02:07:52.613Z page 580: +100 (total 58000) h-index now 75
+2026-11-28T02:07:53.481Z page 581: +100 (total 58100) h-index now 75
+2026-11-28T02:07:54.207Z page 582: +100 (total 58200) h-index now 75
+2026-11-28T02:07:55.087Z page 583: +100 (total 58300) h-index now 75
+2026-11-28T02:07:55.941Z page 584: +100 (total 58400) h-index now 75
+2026-11-28T02:07:56.723Z page 585: +100 (total 58500) h-index now 75
+2026-11-28T02:07:57.506Z page 586: +100 (total 58600) h-index now 75
+2026-11-28T02:07:58.339Z page 587: +100 (total 58700) h-index now 75
+2026-11-28T02:07:59.398Z page 588: +100 (total 58800) h-index now 74
+2026-11-28T02:08:00.309Z page 589: +100 (total 58900) h-index now 74
+2026-11-28T02:08:01.354Z page 590: +100 (total 59000) h-index now 74
+2026-11-28T02:08:02.401Z page 591: +100 (total 59100) h-index now 74
+2026-11-28T02:08:03.793Z page 592: +100 (total 59200) h-index now 74
+2026-11-28T02:08:04.505Z page 593: +100 (total 59300) h-index now 74
+2026-11-28T02:08:05.430Z page 594: +100 (total 59400) h-index now 74
+2026-11-28T02:08:06.275Z page 595: +100 (total 59500) h-index now 74
+2026-11-28T02:08:07.108Z page 596: +100 (total 59600) h-index now 74
+2026-11-28T02:08:08.093Z page 597: +100 (total 59700) h-index now 74
+2026-11-28T02:08:09.135Z page 598: +100 (total 59800) h-index now 74
+2026-11-28T02:08:10.163Z page 599: +100 (total 59900) h-index now 74
+2026-11-28T02:08:11.059Z page 600: +100 (total 60000) h-index now 74
+2026-11-28T02:08:11.983Z page 601: +100 (total 60100) h-index now 74
+2026-11-28T02:08:12.165Z ... scraping | 60100/100000 scholars | page 601
+2026-11-28T02:08:12.425Z wrote 261 discipline files from 60100 scholars (0 had no topics); empty: none
+2026-11-28T02:08:12.917Z page 602: +100 (total 60200) h-index now 74
+2026-11-28T02:08:13.831Z page 603: +100 (total 60300) h-index now 74
+2026-11-28T02:08:14.744Z page 604: +100 (total 60400) h-index now 74
+2026-11-28T02:08:15.569Z page 605: +100 (total 60500) h-index now 74
+2026-11-28T02:08:16.490Z page 606: +100 (total 60600) h-index now 74
+2026-11-28T02:08:17.321Z page 607: +100 (total 60700) h-index now 74
+2026-11-28T02:08:18.085Z page 608: +100 (total 60800) h-index now 74
+2026-11-28T02:08:18.947Z page 609: +100 (total 60900) h-index now 74
+2026-11-28T02:08:19.807Z page 610: +100 (total 61000) h-index now 74
+2026-11-28T02:08:20.637Z page 611: +100 (total 61100) h-index now 74
+2026-11-28T02:08:21.462Z page 612: +100 (total 61200) h-index now 74
+2026-11-28T02:08:22.324Z page 613: +100 (total 61300) h-index now 74
+2026-11-28T02:08:23.472Z page 614: +100 (total 61400) h-index now 73
+2026-11-28T02:08:24.548Z page 615: +100 (total 61500) h-index now 73
+2026-11-28T02:08:25.739Z page 616: +100 (total 61600) h-index now 73
+2026-11-28T02:08:26.738Z page 617: +100 (total 61700) h-index now 73
+2026-11-28T02:08:27.800Z page 618: +100 (total 61800) h-index now 73
+2026-11-28T02:08:28.815Z page 619: +100 (total 61900) h-index now 73
+2026-11-28T02:08:29.813Z page 620: +100 (total 62000) h-index now 73
+2026-11-28T02:08:30.823Z page 621: +100 (total 62100) h-index now 73
+2026-11-28T02:08:31.801Z page 622: +100 (total 62200) h-index now 73
+2026-11-28T02:08:32.779Z page 623: +100 (total 62300) h-index now 73
+2026-11-28T02:08:33.748Z page 624: +100 (total 62400) h-index now 73
+2026-11-28T02:08:34.610Z page 625: +100 (total 62500) h-index now 73
+2026-11-28T02:08:35.669Z page 626: +100 (total 62600) h-index now 73
+2026-11-28T02:08:36.560Z page 627: +100 (total 62700) h-index now 73
+2026-11-28T02:08:37.486Z page 628: +100 (total 62800) h-index now 73
+2026-11-28T02:08:38.201Z page 629: +100 (total 62900) h-index now 73
+2026-11-28T02:08:39.079Z page 630: +100 (total 63000) h-index now 73
+2026-11-28T02:08:39.989Z page 631: +100 (total 63100) h-index now 73
+2026-11-28T02:08:40.931Z page 632: +100 (total 63200) h-index now 73
+2026-11-28T02:08:41.781Z page 633: +100 (total 63300) h-index now 73
+2026-11-28T02:08:42.166Z ... scraping | 63300/100000 scholars | page 633
+2026-11-28T02:08:42.549Z wrote 261 discipline files from 63300 scholars (0 had no topics); empty: none
+2026-11-28T02:08:42.586Z page 634: +100 (total 63400) h-index now 73
+2026-11-28T02:08:43.443Z page 635: +100 (total 63500) h-index now 73
+2026-11-28T02:08:44.243Z page 636: +100 (total 63600) h-index now 73
+2026-11-28T02:08:45.066Z page 637: +100 (total 63700) h-index now 73
+2026-11-28T02:08:45.776Z page 638: +100 (total 63800) h-index now 73
+2026-11-28T02:08:46.448Z page 639: +100 (total 63900) h-index now 73
+2026-11-28T02:08:47.236Z page 640: +100 (total 64000) h-index now 72
+2026-11-28T02:08:48.365Z page 641: +100 (total 64100) h-index now 72
+2026-11-28T02:08:49.274Z page 642: +100 (total 64200) h-index now 72
+2026-11-28T02:08:50.281Z page 643: +100 (total 64300) h-index now 72
+2026-11-28T02:08:51.191Z page 644: +100 (total 64400) h-index now 72
+2026-11-28T02:08:52.030Z page 645: +100 (total 64500) h-index now 72
+2026-11-28T02:08:52.994Z page 646: +100 (total 64600) h-index now 72
+2026-11-28T02:08:53.874Z page 647: +100 (total 64700) h-index now 72
+2026-11-28T02:08:54.786Z page 648: +100 (total 64800) h-index now 72
+2026-11-28T02:08:55.618Z page 649: +100 (total 64900) h-index now 72
+2026-11-28T02:08:56.432Z page 650: +100 (total 65000) h-index now 72
+2026-11-28T02:08:57.329Z page 651: +100 (total 65100) h-index now 72
+2026-11-28T02:08:58.323Z page 652: +100 (total 65200) h-index now 72
+2026-11-28T02:08:59.213Z page 653: +100 (total 65300) h-index now 72
+2026-11-28T02:09:00.202Z page 654: +100 (total 65400) h-index now 72
+2026-11-28T02:09:01.031Z page 655: +100 (total 65500) h-index now 72
+2026-11-28T02:09:01.902Z page 656: +100 (total 65600) h-index now 72
+2026-11-28T02:09:02.733Z page 657: +100 (total 65700) h-index now 72
+2026-11-28T02:09:03.414Z page 658: +100 (total 65800) h-index now 72
+2026-11-28T02:09:04.218Z page 659: +100 (total 65900) h-index now 72
+2026-11-28T02:09:05.125Z page 660: +100 (total 66000) h-index now 72
+2026-11-28T02:09:05.937Z page 661: +100 (total 66100) h-index now 72
+2026-11-28T02:09:06.670Z page 662: +100 (total 66200) h-index now 72
+2026-11-28T02:09:07.792Z page 663: +100 (total 66300) h-index now 72
+2026-11-28T02:09:08.711Z page 664: +100 (total 66400) h-index now 72
+2026-11-28T02:09:09.599Z page 665: +100 (total 66500) h-index now 72
+2026-11-28T02:09:10.400Z page 666: +100 (total 66600) h-index now 72
+2026-11-28T02:09:11.203Z page 667: +100 (total 66700) h-index now 72
+2026-11-28T02:09:12.167Z ... scraping | 66700/100000 scholars | page 667
+2026-11-28T02:09:12.274Z page 668: +100 (total 66800) h-index now 71
+2026-11-28T02:09:12.430Z wrote 261 discipline files from 66800 scholars (0 had no topics); empty: none
+2026-11-28T02:09:13.357Z page 669: +100 (total 66900) h-index now 71
+2026-11-28T02:09:14.447Z page 670: +100 (total 67000) h-index now 71
+2026-11-28T02:09:15.673Z page 671: +100 (total 67100) h-index now 71
+2026-11-28T02:09:16.506Z page 672: +100 (total 67200) h-index now 71
+2026-11-28T02:09:17.420Z page 673: +100 (total 67300) h-index now 71
+2026-11-28T02:09:18.390Z page 674: +100 (total 67400) h-index now 71
+2026-11-28T02:09:19.297Z page 675: +100 (total 67500) h-index now 71
+2026-11-28T02:09:20.242Z page 676: +100 (total 67600) h-index now 71
+2026-11-28T02:09:21.210Z page 677: +100 (total 67700) h-index now 71
+2026-11-28T02:09:22.159Z page 678: +100 (total 67800) h-index now 71
+2026-11-28T02:09:23.203Z page 679: +100 (total 67900) h-index now 71
+2026-11-28T02:09:24.028Z page 680: +100 (total 68000) h-index now 71
+2026-11-28T02:09:24.784Z page 681: +100 (total 68100) h-index now 71
+2026-11-28T02:09:25.730Z page 682: +100 (total 68200) h-index now 71
+2026-11-28T02:09:26.721Z page 683: +100 (total 68300) h-index now 71
+2026-11-28T02:09:27.801Z page 684: +100 (total 68400) h-index now 71
+2026-11-28T02:09:28.721Z page 685: +100 (total 68500) h-index now 71
+2026-11-28T02:09:29.567Z page 686: +100 (total 68600) h-index now 71
+2026-11-28T02:09:30.645Z page 687: +100 (total 68700) h-index now 71
+2026-11-28T02:09:31.489Z page 688: +100 (total 68800) h-index now 71
+2026-11-28T02:09:32.383Z page 689: +100 (total 68900) h-index now 71
+2026-11-28T02:09:33.222Z page 690: +100 (total 69000) h-index now 71
+2026-11-28T02:09:34.011Z page 691: +100 (total 69100) h-index now 71
+2026-11-28T02:09:34.942Z page 692: +100 (total 69200) h-index now 71
+2026-11-28T02:09:35.879Z page 693: +100 (total 69300) h-index now 71
+2026-11-28T02:09:36.775Z page 694: +100 (total 69400) h-index now 71
+2026-11-28T02:09:37.520Z page 695: +100 (total 69500) h-index now 71
+2026-11-28T02:09:38.352Z page 696: +100 (total 69600) h-index now 71
+2026-11-28T02:09:39.050Z page 697: +100 (total 69700) h-index now 71
+2026-11-28T02:09:39.773Z page 698: +100 (total 69800) h-index now 71
+2026-11-28T02:09:40.502Z page 699: +100 (total 69900) h-index now 71
+2026-11-28T02:09:41.579Z page 700: +100 (total 70000) h-index now 70
+2026-11-28T02:09:42.168Z ... scraping | 70000/100000 scholars | page 700
+2026-11-28T02:09:42.467Z wrote 261 discipline files from 70000 scholars (0 had no topics); empty: none
+2026-11-28T02:09:42.834Z page 701: +100 (total 70100) h-index now 70
+2026-11-28T02:09:43.839Z page 702: +100 (total 70200) h-index now 70
+2026-11-28T02:09:44.764Z page 703: +100 (total 70300) h-index now 70
+2026-11-28T02:09:45.715Z page 704: +100 (total 70400) h-index now 70
+2026-11-28T02:09:46.709Z page 705: +100 (total 70500) h-index now 70
+2026-11-28T02:09:47.725Z page 706: +100 (total 70600) h-index now 70
+2026-11-28T02:09:48.772Z page 707: +100 (total 70700) h-index now 70
+2026-11-28T02:09:49.742Z page 708: +100 (total 70800) h-index now 70
+2026-11-28T02:09:50.594Z page 709: +100 (total 70900) h-index now 70
+2026-11-28T02:09:51.437Z page 710: +100 (total 71000) h-index now 70
+2026-11-28T02:09:52.198Z page 711: +100 (total 71100) h-index now 70
+2026-11-28T02:09:53.061Z page 712: +100 (total 71200) h-index now 70
+2026-11-28T02:09:54.013Z page 713: +100 (total 71300) h-index now 70
+2026-11-28T02:09:54.998Z page 714: +100 (total 71400) h-index now 70
+2026-11-28T02:09:55.837Z page 715: +100 (total 71500) h-index now 70
+2026-11-28T02:09:56.682Z page 716: +100 (total 71600) h-index now 70
+2026-11-28T02:09:57.412Z page 717: +100 (total 71700) h-index now 70
+2026-11-28T02:09:58.276Z page 718: +100 (total 71800) h-index now 70
+2026-11-28T02:09:59.340Z page 719: +100 (total 71900) h-index now 70
+2026-11-28T02:10:00.201Z page 720: +100 (total 72000) h-index now 70
+2026-11-28T02:10:01.067Z page 721: +100 (total 72100) h-index now 70
+2026-11-28T02:10:01.796Z page 722: +100 (total 72200) h-index now 70
+2026-11-28T02:10:02.709Z page 723: +100 (total 72300) h-index now 70
+2026-11-28T02:10:03.664Z page 724: +100 (total 72400) h-index now 70
+2026-11-28T02:10:04.543Z page 725: +100 (total 72500) h-index now 70
+2026-11-28T02:10:05.284Z page 726: +100 (total 72600) h-index now 70
+2026-11-28T02:10:05.932Z page 727: +100 (total 72700) h-index now 70
+2026-11-28T02:10:06.711Z page 728: +100 (total 72800) h-index now 70
+2026-11-28T02:10:07.557Z page 729: +100 (total 72900) h-index now 70
+2026-11-28T02:10:08.410Z page 730: +100 (total 73000) h-index now 70
+2026-11-28T02:10:09.080Z page 731: +100 (total 73100) h-index now 70
+2026-11-28T02:10:09.947Z page 732: +100 (total 73200) h-index now 69
+2026-11-28T02:10:10.977Z page 733: +100 (total 73300) h-index now 69
+2026-11-28T02:10:12.096Z page 734: +100 (total 73400) h-index now 69
+2026-11-28T02:10:12.169Z ... scraping | 73400/100000 scholars | page 734
+2026-11-28T02:10:12.447Z wrote 261 discipline files from 73400 scholars (0 had no topics); empty: none
+2026-11-28T02:10:13.449Z page 735: +100 (total 73500) h-index now 69
+2026-11-28T02:10:14.404Z page 736: +100 (total 73600) h-index now 69
+2026-11-28T02:10:15.282Z page 737: +100 (total 73700) h-index now 69
+2026-11-28T02:10:16.399Z page 738: +100 (total 73800) h-index now 69
+2026-11-28T02:10:17.235Z page 739: +100 (total 73900) h-index now 69
+2026-11-28T02:10:18.209Z page 740: +100 (total 74000) h-index now 69
+2026-11-28T02:10:19.164Z page 741: +100 (total 74100) h-index now 69
+2026-11-28T02:10:20.212Z page 742: +100 (total 74200) h-index now 69
+2026-11-28T02:10:21.334Z page 743: +100 (total 74300) h-index now 69
+2026-11-28T02:10:22.372Z page 744: +100 (total 74400) h-index now 69
+2026-11-28T02:10:23.465Z page 745: +100 (total 74500) h-index now 69
+2026-11-28T02:10:24.436Z page 746: +100 (total 74600) h-index now 69
+2026-11-28T02:10:25.249Z page 747: +100 (total 74700) h-index now 69
+2026-11-28T02:10:26.339Z page 748: +100 (total 74800) h-index now 69
+2026-11-28T02:10:27.249Z page 749: +100 (total 74900) h-index now 69
+2026-11-28T02:10:28.036Z page 750: +100 (total 75000) h-index now 69
+2026-11-28T02:10:28.947Z page 751: +100 (total 75100) h-index now 69
+2026-11-28T02:10:29.883Z page 752: +100 (total 75200) h-index now 69
+2026-11-28T02:10:30.749Z page 753: +100 (total 75300) h-index now 69
+2026-11-28T02:10:31.868Z page 754: +100 (total 75400) h-index now 69
+2026-11-28T02:10:32.782Z page 755: +100 (total 75500) h-index now 69
+2026-11-28T02:10:33.714Z page 756: +100 (total 75600) h-index now 69
+2026-11-28T02:10:34.567Z page 757: +100 (total 75700) h-index now 69
+2026-11-28T02:10:35.332Z page 758: +100 (total 75800) h-index now 69
+2026-11-28T02:10:36.208Z page 759: +100 (total 75900) h-index now 69
+2026-11-28T02:10:37.249Z page 760: +100 (total 76000) h-index now 69
+2026-11-28T02:10:38.142Z page 761: +100 (total 76100) h-index now 69
+2026-11-28T02:10:39.030Z page 762: +100 (total 76200) h-index now 69
+2026-11-28T02:10:39.756Z page 763: +100 (total 76300) h-index now 69
+2026-11-28T02:10:40.549Z page 764: +100 (total 76400) h-index now 69
+2026-11-28T02:10:41.283Z page 765: +100 (total 76500) h-index now 69
+2026-11-28T02:10:42.064Z page 766: +100 (total 76600) h-index now 69
+2026-11-28T02:10:42.172Z ... scraping | 76600/100000 scholars | page 766
+2026-11-28T02:10:42.453Z wrote 261 discipline files from 76600 scholars (0 had no topics); empty: none
+2026-11-28T02:10:42.938Z page 767: +100 (total 76700) h-index now 68
+2026-11-28T02:10:44.047Z page 768: +100 (total 76800) h-index now 68
+2026-11-28T02:10:45.005Z page 769: +100 (total 76900) h-index now 68
+2026-11-28T02:10:46.025Z page 770: +100 (total 77000) h-index now 68
+2026-11-28T02:10:47.014Z page 771: +100 (total 77100) h-index now 68
+2026-11-28T02:10:48.048Z page 772: +100 (total 77200) h-index now 68
+2026-11-28T02:10:49.000Z page 773: +100 (total 77300) h-index now 68
+2026-11-28T02:10:50.000Z page 774: +100 (total 77400) h-index now 68
+2026-11-28T02:10:51.029Z page 775: +100 (total 77500) h-index now 68
+2026-11-28T02:10:51.863Z page 776: +100 (total 77600) h-index now 68
+2026-11-28T02:10:52.829Z page 777: +100 (total 77700) h-index now 68
+2026-11-28T02:10:53.796Z page 778: +100 (total 77800) h-index now 68
+2026-11-28T02:10:54.736Z page 779: +100 (total 77900) h-index now 68
+2026-11-28T02:10:55.721Z page 780: +100 (total 78000) h-index now 68
+2026-11-28T02:10:56.688Z page 781: +100 (total 78100) h-index now 68
+2026-11-28T02:10:57.676Z page 782: +100 (total 78200) h-index now 68
+2026-11-28T02:10:58.447Z page 783: +100 (total 78300) h-index now 68
+2026-11-28T02:10:59.352Z page 784: +100 (total 78400) h-index now 68
+2026-11-28T02:11:00.275Z page 785: +100 (total 78500) h-index now 68
+2026-11-28T02:11:01.256Z page 786: +100 (total 78600) h-index now 68
+2026-11-28T02:11:02.273Z page 787: +100 (total 78700) h-index now 68
+2026-11-28T02:11:03.195Z page 788: +100 (total 78800) h-index now 68
+2026-11-28T02:11:04.075Z page 789: +100 (total 78900) h-index now 68
+2026-11-28T02:11:04.925Z page 790: +100 (total 79000) h-index now 68
+2026-11-28T02:11:05.849Z page 791: +100 (total 79100) h-index now 68
+2026-11-28T02:11:06.604Z page 792: +100 (total 79200) h-index now 68
+2026-11-28T02:11:07.502Z page 793: +100 (total 79300) h-index now 68
+2026-11-28T02:11:08.339Z page 794: +100 (total 79400) h-index now 68
+2026-11-28T02:11:09.135Z page 795: +100 (total 79500) h-index now 68
+2026-11-28T02:11:09.955Z page 796: +100 (total 79600) h-index now 68
+2026-11-28T02:11:10.903Z page 797: +100 (total 79700) h-index now 68
+2026-11-28T02:11:11.681Z page 798: +100 (total 79800) h-index now 68
+2026-11-28T02:11:12.172Z ... scraping | 79800/100000 scholars | page 798
+2026-11-28T02:11:12.468Z wrote 262 discipline files from 79800 scholars (0 had no topics); empty: none
+2026-11-28T02:11:12.511Z page 799: +100 (total 79900) h-index now 68
+2026-11-28T02:11:13.360Z page 800: +100 (total 80000) h-index now 68
+2026-11-28T02:11:14.210Z page 801: +100 (total 80100) h-index now 68
+2026-11-28T02:11:15.240Z page 802: +100 (total 80200) h-index now 68
+2026-11-28T02:11:16.307Z page 803: +100 (total 80300) h-index now 67
+2026-11-28T02:11:17.374Z page 804: +100 (total 80400) h-index now 67
+2026-11-28T02:11:18.458Z page 805: +100 (total 80500) h-index now 67
+2026-11-28T02:11:19.424Z page 806: +100 (total 80600) h-index now 67
+2026-11-28T02:11:20.359Z page 807: +100 (total 80700) h-index now 67
+2026-11-28T02:11:21.343Z page 808: +100 (total 80800) h-index now 67
+2026-11-28T02:11:22.356Z page 809: +100 (total 80900) h-index now 67
+2026-11-28T02:11:23.371Z page 810: +100 (total 81000) h-index now 67
+2026-11-28T02:11:24.381Z page 811: +100 (total 81100) h-index now 67
+2026-11-28T02:11:25.324Z page 812: +100 (total 81200) h-index now 67
+2026-11-28T02:11:26.358Z page 813: +100 (total 81300) h-index now 67
+2026-11-28T02:11:27.404Z page 814: +100 (total 81400) h-index now 67
+2026-11-28T02:11:28.194Z page 815: +100 (total 81500) h-index now 67
+2026-11-28T02:11:29.233Z page 816: +100 (total 81600) h-index now 67
+2026-11-28T02:11:30.028Z page 817: +100 (total 81700) h-index now 67
+2026-11-28T02:11:31.058Z page 818: +100 (total 81800) h-index now 67
+2026-11-28T02:11:31.928Z page 819: +100 (total 81900) h-index now 67
+2026-11-28T02:11:32.683Z page 820: +100 (total 82000) h-index now 67
+2026-11-28T02:11:33.408Z page 821: +100 (total 82100) h-index now 67
+2026-11-28T02:11:34.277Z page 822: +100 (total 82200) h-index now 67
+2026-11-28T02:11:35.043Z page 823: +100 (total 82300) h-index now 67
+2026-11-28T02:11:35.968Z page 824: +100 (total 82400) h-index now 67
+2026-11-28T02:11:36.913Z page 825: +100 (total 82500) h-index now 67
+2026-11-28T02:11:37.806Z page 826: +100 (total 82600) h-index now 67
+2026-11-28T02:11:38.643Z page 827: +100 (total 82700) h-index now 67
+2026-11-28T02:11:39.390Z page 828: +100 (total 82800) h-index now 67
+2026-11-28T02:11:40.179Z page 829: +100 (total 82900) h-index now 67
+2026-11-28T02:11:41.040Z page 830: +100 (total 83000) h-index now 67
+2026-11-28T02:11:41.902Z page 831: +100 (total 83100) h-index now 67
+2026-11-28T02:11:42.173Z ... scraping | 83100/100000 scholars | page 831
+2026-11-28T02:11:42.470Z wrote 262 discipline files from 83100 scholars (0 had no topics); empty: none
+2026-11-28T02:11:42.723Z page 832: +100 (total 83200) h-index now 67
+2026-11-28T02:11:43.690Z page 833: +100 (total 83300) h-index now 67
+2026-11-28T02:11:44.322Z page 834: +100 (total 83400) h-index now 67
+2026-11-28T02:11:44.975Z page 835: +100 (total 83500) h-index now 67
+2026-11-28T02:11:45.901Z page 836: +100 (total 83600) h-index now 67
+2026-11-28T02:11:46.632Z page 837: +100 (total 83700) h-index now 67
+2026-11-28T02:11:47.518Z page 838: +100 (total 83800) h-index now 67
+2026-11-28T02:11:48.281Z page 839: +100 (total 83900) h-index now 67
+2026-11-28T02:11:48.968Z page 840: +100 (total 84000) h-index now 67
+2026-11-28T02:11:49.685Z page 841: +100 (total 84100) h-index now 66
+2026-11-28T02:11:50.825Z page 842: +100 (total 84200) h-index now 66
+2026-11-28T02:11:51.839Z page 843: +100 (total 84300) h-index now 66
+2026-11-28T02:11:52.857Z page 844: +100 (total 84400) h-index now 66
+2026-11-28T02:11:53.686Z page 845: +100 (total 84500) h-index now 66
+2026-11-28T02:11:54.646Z page 846: +100 (total 84600) h-index now 66
+2026-11-28T02:11:55.643Z page 847: +100 (total 84700) h-index now 66
+2026-11-28T02:11:56.546Z page 848: +100 (total 84800) h-index now 66
+2026-11-28T02:11:57.510Z page 849: +100 (total 84900) h-index now 66
+2026-11-28T02:11:58.522Z page 850: +100 (total 85000) h-index now 66
+2026-11-28T02:11:59.412Z page 851: +100 (total 85100) h-index now 66
+2026-11-28T02:12:00.459Z page 852: +100 (total 85200) h-index now 66
+2026-11-28T02:12:01.402Z page 853: +100 (total 85300) h-index now 66
+2026-11-28T02:12:02.345Z page 854: +100 (total 85400) h-index now 66
+2026-11-28T02:12:03.310Z page 855: +100 (total 85500) h-index now 66
+2026-11-28T02:12:04.377Z page 856: +100 (total 85600) h-index now 66
+2026-11-28T02:12:05.298Z page 857: +100 (total 85700) h-index now 66
+2026-11-28T02:12:06.217Z page 858: +100 (total 85800) h-index now 66
+2026-11-28T02:12:07.167Z page 859: +100 (total 85900) h-index now 66
+2026-11-28T02:12:08.074Z page 860: +100 (total 86000) h-index now 66
+2026-11-28T02:12:08.779Z page 861: +100 (total 86100) h-index now 66
+2026-11-28T02:12:09.868Z page 862: +100 (total 86200) h-index now 66
+2026-11-28T02:12:10.740Z page 863: +100 (total 86300) h-index now 66
+2026-11-28T02:12:11.700Z page 864: +100 (total 86400) h-index now 66
+2026-11-28T02:12:12.174Z ... scraping | 86400/100000 scholars | page 864
+2026-11-28T02:12:12.483Z wrote 262 discipline files from 86400 scholars (0 had no topics); empty: none
+2026-11-28T02:12:12.620Z page 865: +100 (total 86500) h-index now 66
+2026-11-28T02:12:13.453Z page 866: +100 (total 86600) h-index now 66
+2026-11-28T02:12:14.296Z page 867: +100 (total 86700) h-index now 66
+2026-11-28T02:12:15.189Z page 868: +100 (total 86800) h-index now 66
+2026-11-28T02:12:15.959Z page 869: +100 (total 86900) h-index now 66
+2026-11-28T02:12:16.718Z page 870: +100 (total 87000) h-index now 66
+2026-11-28T02:12:17.483Z page 871: +100 (total 87100) h-index now 66
+2026-11-28T02:12:18.366Z page 872: +100 (total 87200) h-index now 66
+2026-11-28T02:12:19.420Z page 873: +100 (total 87300) h-index now 66
+2026-11-28T02:12:20.367Z page 874: +100 (total 87400) h-index now 66
+2026-11-28T02:12:21.222Z page 875: +100 (total 87500) h-index now 66
+2026-11-28T02:12:22.045Z page 876: +100 (total 87600) h-index now 66
+2026-11-28T02:12:22.861Z page 877: +100 (total 87700) h-index now 66
+2026-11-28T02:12:23.705Z page 878: +100 (total 87800) h-index now 66
+2026-11-28T02:12:24.299Z page 879: +100 (total 87900) h-index now 66
+2026-11-28T02:12:24.936Z page 880: +100 (total 88000) h-index now 66
+2026-11-28T02:12:25.638Z page 881: +100 (total 88100) h-index now 66
+2026-11-28T02:12:26.496Z page 882: +100 (total 88200) h-index now 66
+2026-11-28T02:12:27.508Z page 883: +100 (total 88300) h-index now 65
+2026-11-28T02:12:28.647Z page 884: +100 (total 88400) h-index now 65
+2026-11-28T02:12:29.719Z page 885: +100 (total 88500) h-index now 65
+2026-11-28T02:12:30.676Z page 886: +100 (total 88600) h-index now 65
+2026-11-28T02:12:31.701Z page 887: +100 (total 88700) h-index now 65
+2026-11-28T02:12:32.693Z page 888: +100 (total 88800) h-index now 65
+2026-11-28T02:12:33.714Z page 889: +100 (total 88900) h-index now 65
+2026-11-28T02:12:34.675Z page 890: +100 (total 89000) h-index now 65
+2026-11-28T02:12:35.766Z page 891: +100 (total 89100) h-index now 65
+2026-11-28T02:12:36.578Z page 892: +100 (total 89200) h-index now 65
+2026-11-28T02:12:37.299Z page 893: +100 (total 89300) h-index now 65
+2026-11-28T02:12:38.150Z page 894: +100 (total 89400) h-index now 65
+2026-11-28T02:12:39.062Z page 895: +100 (total 89500) h-index now 65
+2026-11-28T02:12:40.031Z page 896: +100 (total 89600) h-index now 65
+2026-11-28T02:12:40.901Z page 897: +100 (total 89700) h-index now 65
+2026-11-28T02:12:41.777Z page 898: +100 (total 89800) h-index now 65
+2026-11-28T02:12:42.175Z ... scraping | 89800/100000 scholars | page 898
+2026-11-28T02:12:42.506Z wrote 262 discipline files from 89800 scholars (0 had no topics); empty: none
+2026-11-28T02:12:42.553Z page 899: +100 (total 89900) h-index now 65
+2026-11-28T02:12:43.380Z page 900: +100 (total 90000) h-index now 65
+2026-11-28T02:12:44.291Z page 901: +100 (total 90100) h-index now 65
+2026-11-28T02:12:45.206Z page 902: +100 (total 90200) h-index now 65
+2026-11-28T02:12:46.069Z page 903: +100 (total 90300) h-index now 65
+2026-11-28T02:12:46.975Z page 904: +100 (total 90400) h-index now 65
+2026-11-28T02:12:47.799Z page 905: +100 (total 90500) h-index now 65
+2026-11-28T02:12:48.540Z page 906: +100 (total 90600) h-index now 65
+2026-11-28T02:12:49.589Z page 907: +100 (total 90700) h-index now 65
+2026-11-28T02:12:50.410Z page 908: +100 (total 90800) h-index now 65
+2026-11-28T02:12:51.279Z page 909: +100 (total 90900) h-index now 65
+2026-11-28T02:12:52.068Z page 910: +100 (total 91000) h-index now 65
+2026-11-28T02:12:53.052Z page 911: +100 (total 91100) h-index now 65
+2026-11-28T02:12:53.879Z page 912: +100 (total 91200) h-index now 65
+2026-11-28T02:12:54.714Z page 913: +100 (total 91300) h-index now 65
+2026-11-28T02:12:55.533Z page 914: +100 (total 91400) h-index now 65
+2026-11-28T02:12:56.159Z page 915: +100 (total 91500) h-index now 65
+2026-11-28T02:12:56.883Z page 916: +100 (total 91600) h-index now 65
+2026-11-28T02:12:57.634Z page 917: +100 (total 91700) h-index now 65
+2026-11-28T02:12:58.493Z page 918: +100 (total 91800) h-index now 65
+2026-11-28T02:12:59.358Z page 919: +100 (total 91900) h-index now 65
+2026-11-28T02:13:00.016Z page 920: +100 (total 92000) h-index now 65
+2026-11-28T02:13:00.684Z page 921: +100 (total 92100) h-index now 65
+2026-11-28T02:13:01.533Z page 922: +100 (total 92200) h-index now 65
+2026-11-28T02:13:02.271Z page 923: +100 (total 92300) h-index now 65
+2026-11-28T02:13:03.105Z page 924: +100 (total 92400) h-index now 65
+2026-11-28T02:13:03.977Z page 925: +100 (total 92500) h-index now 65
+2026-11-28T02:13:04.921Z page 926: +100 (total 92600) h-index now 64
+2026-11-28T02:13:05.968Z page 927: +100 (total 92700) h-index now 64
+2026-11-28T02:13:07.012Z page 928: +100 (total 92800) h-index now 64
+2026-11-28T02:13:07.867Z page 929: +100 (total 92900) h-index now 64
+2026-11-28T02:13:08.800Z page 930: +100 (total 93000) h-index now 64
+2026-11-28T02:13:09.980Z page 931: +100 (total 93100) h-index now 64
+2026-11-28T02:13:10.895Z page 932: +100 (total 93200) h-index now 64
+2026-11-28T02:13:11.883Z page 933: +100 (total 93300) h-index now 64
+2026-11-28T02:13:12.176Z ... scraping | 93300/100000 scholars | page 933
+2026-11-28T02:13:12.515Z wrote 262 discipline files from 93300 scholars (0 had no topics); empty: none
+2026-11-28T02:13:12.837Z page 934: +100 (total 93400) h-index now 64
+2026-11-28T02:13:13.865Z page 935: +100 (total 93500) h-index now 64
+2026-11-28T02:13:14.783Z page 936: +100 (total 93600) h-index now 64
+2026-11-28T02:13:15.664Z page 937: +100 (total 93700) h-index now 64
+2026-11-28T02:13:16.644Z page 938: +100 (total 93800) h-index now 64
+2026-11-28T02:13:17.548Z page 939: +100 (total 93900) h-index now 64
+2026-11-28T02:13:18.270Z page 940: +100 (total 94000) h-index now 64
+2026-11-28T02:13:19.186Z page 941: +100 (total 94100) h-index now 64
+2026-11-28T02:13:20.044Z page 942: +100 (total 94200) h-index now 64
+2026-11-28T02:13:20.954Z page 943: +100 (total 94300) h-index now 64
+2026-11-28T02:13:22.058Z page 944: +100 (total 94400) h-index now 64
+2026-11-28T02:13:22.871Z page 945: +100 (total 94500) h-index now 64
+2026-11-28T02:13:23.745Z page 946: +100 (total 94600) h-index now 64
+2026-11-28T02:13:24.579Z page 947: +100 (total 94700) h-index now 64
+2026-11-28T02:13:25.540Z page 948: +100 (total 94800) h-index now 64
+2026-11-28T02:13:26.453Z page 949: +100 (total 94900) h-index now 64
+2026-11-28T02:13:27.272Z page 950: +100 (total 95000) h-index now 64
+2026-11-28T02:13:28.206Z page 951: +100 (total 95100) h-index now 64
+2026-11-28T02:13:29.176Z page 952: +100 (total 95200) h-index now 64
+2026-11-28T02:13:30.081Z page 953: +100 (total 95300) h-index now 64
+2026-11-28T02:13:30.876Z page 954: +100 (total 95400) h-index now 64
+2026-11-28T02:13:31.518Z page 955: +100 (total 95500) h-index now 64
+2026-11-28T02:13:32.439Z page 956: +100 (total 95600) h-index now 64
+2026-11-28T02:13:33.119Z page 957: +100 (total 95700) h-index now 64
+2026-11-28T02:13:33.972Z page 958: +100 (total 95800) h-index now 64
+2026-11-28T02:13:34.819Z page 959: +100 (total 95900) h-index now 64
+2026-11-28T02:13:35.614Z page 960: +100 (total 96000) h-index now 64
+2026-11-28T02:13:36.395Z page 961: +100 (total 96100) h-index now 64
+2026-11-28T02:13:37.258Z page 962: +100 (total 96200) h-index now 64
+2026-11-28T02:13:37.920Z page 963: +100 (total 96300) h-index now 64
+2026-11-28T02:13:38.675Z page 964: +100 (total 96400) h-index now 64
+2026-11-28T02:13:39.516Z page 965: +100 (total 96500) h-index now 64
+2026-11-28T02:13:40.333Z page 966: +100 (total 96600) h-index now 64
+2026-11-28T02:13:41.100Z page 967: +100 (total 96700) h-index now 64
+2026-11-28T02:13:41.975Z page 968: +100 (total 96800) h-index now 64
+2026-11-28T02:13:42.177Z ... scraping | 96800/100000 scholars | page 968
+2026-11-28T02:13:42.505Z wrote 262 discipline files from 96800 scholars (0 had no topics); empty: none
+2026-11-28T02:13:42.786Z page 969: +100 (total 96900) h-index now 64
+2026-11-28T02:13:43.462Z page 970: +100 (total 97000) h-index now 64
+2026-11-28T02:13:44.171Z page 971: +100 (total 97100) h-index now 64
+2026-11-28T02:13:45.302Z page 972: +100 (total 97200) h-index now 63
+2026-11-28T02:13:46.546Z page 973: +100 (total 97300) h-index now 63
+2026-11-28T02:13:47.534Z page 974: +100 (total 97400) h-index now 63
+2026-11-28T02:13:48.600Z page 975: +100 (total 97500) h-index now 63
+2026-11-28T02:13:49.593Z page 976: +100 (total 97600) h-index now 63
+2026-11-28T02:13:50.589Z page 977: +100 (total 97700) h-index now 63
+2026-11-28T02:13:51.522Z page 978: +100 (total 97800) h-index now 63
+2026-11-28T02:13:52.512Z page 979: +100 (total 97900) h-index now 63
+2026-11-28T02:13:53.436Z page 980: +100 (total 98000) h-index now 63
+2026-11-28T02:13:54.317Z page 981: +100 (total 98100) h-index now 63
+2026-11-28T02:13:55.089Z page 982: +100 (total 98200) h-index now 63
+2026-11-28T02:13:56.126Z page 983: +100 (total 98300) h-index now 63
+2026-11-28T02:13:57.168Z page 984: +100 (total 98400) h-index now 63
+2026-11-28T02:13:58.103Z page 985: +100 (total 98500) h-index now 63
+2026-11-28T02:13:58.925Z page 986: +100 (total 98600) h-index now 63
+2026-11-28T02:13:59.941Z page 987: +100 (total 98700) h-index now 63
+2026-11-28T02:14:00.807Z page 988: +100 (total 98800) h-index now 63
+2026-11-28T02:14:01.639Z page 989: +100 (total 98900) h-index now 63
+2026-11-28T02:14:02.340Z page 990: +100 (total 99000) h-index now 63
+2026-11-28T02:14:03.013Z page 991: +100 (total 99100) h-index now 63
+2026-11-28T02:14:03.840Z page 992: +100 (total 99200) h-index now 63
+2026-11-28T02:14:04.690Z page 993: +100 (total 99300) h-index now 63
+2026-11-28T02:14:05.468Z page 994: +100 (total 99400) h-index now 63
+2026-11-28T02:14:06.261Z page 995: +100 (total 99500) h-index now 63
+2026-11-28T02:14:07.122Z page 996: +100 (total 99600) h-index now 63
+2026-11-28T02:14:08.031Z page 997: +100 (total 99700) h-index now 63
+2026-11-28T02:14:08.903Z page 998: +100 (total 99800) h-index now 63
+2026-11-28T02:14:09.586Z page 999: +100 (total 99900) h-index now 63
+2026-11-28T02:14:10.500Z page 1000: +100 (total 100000) h-index now 63
+2026-11-28T02:14:11.024Z wrote 262 discipline files from 100000 scholars (0 had no topics); empty: none
+2026-11-28T02:14:11.025Z finished: 100000 scholars -> /Users/admin/Developer/debate-ai/packages/scholar-rank/out

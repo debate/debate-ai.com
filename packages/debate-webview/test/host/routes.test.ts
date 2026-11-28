@@ -16,7 +16,9 @@ function pagePatterns(dir: string): string[] {
       // app, outside the app shell, and always entered with a full page load —
       // so it has no place in the host's client-side route table. `blog` is
       // the same: its posts are `debate-help-docs` content, rendered the same way.
-      if (name === "api" || name === "docs" || name === "blog" || name.startsWith("_")) continue
+      // `authors` indexes the authors cited in those docs' References, read
+      // from D1 on the server with no client API, so it is web-only too.
+      if (name === "api" || name === "docs" || name === "blog" || name === "authors" || name.startsWith("_")) continue
       out.push(...pagePatterns(path))
     } else if (name === "page.tsx") {
       const rel = relative(APP_DIR, dir).split(sep).join("/")

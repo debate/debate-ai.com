@@ -1,0 +1,4860 @@
+{
+  "kind": "subfield",
+  "id": 2706,
+  "name": "Critical Care and Intensive Care Medicine",
+  "total_in_scrape": 263,
+  "count": 263,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.9",
+      "id": "https://openalex.org/A5003379719",
+      "display_name": "Jean‐Louis Vincent",
+      "orcid": "https://orcid.org/0000-0001-6011-6951",
+      "h_index": 212,
+      "i10_index": 1143,
+      "works_count": 2397,
+      "cited_by_count": 283134,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.9",
+      "id": "https://openalex.org/A5041612225",
+      "display_name": "Ernest Eugene Moore",
+      "orcid": "https://orcid.org/0000-0002-0419-4848",
+      "h_index": 161,
+      "i10_index": 984,
+      "works_count": 1651,
+      "cited_by_count": 104963,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.9",
+      "id": "https://openalex.org/A5076578951",
+      "display_name": "Élie Azoulay",
+      "orcid": "https://orcid.org/0000-0002-8162-1508",
+      "h_index": 161,
+      "i10_index": 746,
+      "works_count": 1473,
+      "cited_by_count": 96137,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.9",
+      "id": "https://openalex.org/A5001670387",
+      "display_name": "Derek C. Angus",
+      "orcid": "https://orcid.org/0000-0002-7026-5181",
+      "h_index": 151,
+      "i10_index": 498,
+      "works_count": 816,
+      "cited_by_count": 204284,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.9",
+      "id": "https://openalex.org/A5074852854",
+      "display_name": "Eugene Wesley Ely",
+      "orcid": "https://orcid.org/0000-0003-3957-2172",
+      "h_index": 142,
+      "i10_index": 506,
+      "works_count": 912,
+      "cited_by_count": 105651,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.9",
+      "id": "https://openalex.org/A5042251160",
+      "display_name": "John Bradley Holcomb",
+      "orcid": "https://orcid.org/0000-0001-8312-9157",
+      "h_index": 140,
+      "i10_index": 676,
+      "works_count": 1086,
+      "cited_by_count": 77897,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5026604447",
+      "display_name": "Marin H. Kollef",
+      "orcid": "https://orcid.org/0000-0003-0671-0751",
+      "h_index": 136,
+      "i10_index": 493,
+      "works_count": 836,
+      "cited_by_count": 69405,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5112526338",
+      "display_name": "JF Timsit",
+      "orcid": "https://orcid.org/0000-0002-6063-7383",
+      "h_index": 133,
+      "i10_index": 609,
+      "works_count": 1305,
+      "cited_by_count": 67753,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5042990512",
+      "display_name": "Jordi Rello",
+      "orcid": "https://orcid.org/0000-0003-0676-6210",
+      "h_index": 131,
+      "i10_index": 562,
+      "works_count": 1099,
+      "cited_by_count": 56863,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5055970684",
+      "display_name": "Marc J. M. Bonten",
+      "orcid": "https://orcid.org/0000-0002-9095-9201",
+      "h_index": 130,
+      "i10_index": 657,
+      "works_count": 1240,
+      "cited_by_count": 73906,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5100752902",
+      "display_name": "Antoní Torres",
+      "orcid": "https://orcid.org/0000-0002-8643-2167",
+      "h_index": 130,
+      "i10_index": 655,
+      "works_count": 1538,
+      "cited_by_count": 77979,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5065187538",
+      "display_name": "Dean A. Fergusson",
+      "orcid": "https://orcid.org/0000-0002-3389-2485",
+      "h_index": 128,
+      "i10_index": 604,
+      "works_count": 1357,
+      "cited_by_count": 67723,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5070604004",
+      "display_name": "John C. Marshall",
+      "orcid": "https://orcid.org/0000-0002-7902-6291",
+      "h_index": 125,
+      "i10_index": 459,
+      "works_count": 726,
+      "cited_by_count": 129441,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5016451996",
+      "display_name": "Sharon K. Inouye",
+      "orcid": "https://orcid.org/0000-0002-3663-2937",
+      "h_index": 125,
+      "i10_index": 351,
+      "works_count": 598,
+      "cited_by_count": 85895,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5068616089",
+      "display_name": "Djillali Annane",
+      "orcid": "https://orcid.org/0000-0001-6805-8944",
+      "h_index": 123,
+      "i10_index": 460,
+      "works_count": 984,
+      "cited_by_count": 125449,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5090135498",
+      "display_name": "Dale M. Needham",
+      "orcid": "https://orcid.org/0000-0002-9538-0557",
+      "h_index": 123,
+      "i10_index": 371,
+      "works_count": 552,
+      "cited_by_count": 64528,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Critical Care and Intensive Care Medicine -- 9.8",
+      "id": "https://openalex.org/A5022102306",
+      "display_name": "Mervyn Singer",
+      "orcid": "https://orcid.org/0000-0002-1042-6350",
+      "h_index": 118,
+      "i10_index": 440,
+      "works_count": 1087,
+      "cited_by_count": 108158,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5052393113",
+      "display_name": "Gordon R. Bernard",
+      "orcid": "https://orcid.org/0000-0002-4721-3068",
+      "h_index": 116,
+      "i10_index": 275,
+      "works_count": 431,
+      "cited_by_count": 134148,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5021200051",
+      "display_name": "Yaseen M. Arabi",
+      "orcid": "https://orcid.org/0000-0001-5735-6241",
+      "h_index": 115,
+      "i10_index": 418,
+      "works_count": 769,
+      "cited_by_count": 73200,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5111808176",
+      "display_name": "Frederick Alan Moore",
+      "orcid": null,
+      "h_index": 113,
+      "i10_index": 422,
+      "works_count": 723,
+      "cited_by_count": 50150,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5025445136",
+      "display_name": "Peter Pickkers",
+      "orcid": "https://orcid.org/0000-0002-1104-4303",
+      "h_index": 111,
+      "i10_index": 433,
+      "works_count": 702,
+      "cited_by_count": 44680,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5056060130",
+      "display_name": "Charles E. Wade",
+      "orcid": "https://orcid.org/0000-0003-0055-5885",
+      "h_index": 109,
+      "i10_index": 504,
+      "works_count": 897,
+      "cited_by_count": 53693,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5100338632",
+      "display_name": "Ping Wang",
+      "orcid": "https://orcid.org/0000-0002-1557-0394",
+      "h_index": 108,
+      "i10_index": 936,
+      "works_count": 1712,
+      "cited_by_count": 53293,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5062367983",
+      "display_name": "Paul Ellis Marik",
+      "orcid": "https://orcid.org/0000-0001-5024-3949",
+      "h_index": 108,
+      "i10_index": 338,
+      "works_count": 1026,
+      "cited_by_count": 56411,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5009735497",
+      "display_name": "Michael Bailey",
+      "orcid": "https://orcid.org/0000-0002-5551-1401",
+      "h_index": 107,
+      "i10_index": 519,
+      "works_count": 855,
+      "cited_by_count": 50832,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5110340159",
+      "display_name": "Jean E. Chastre",
+      "orcid": null,
+      "h_index": 107,
+      "i10_index": 247,
+      "works_count": 436,
+      "cited_by_count": 45025,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5043980432",
+      "display_name": "Daniel De Backer",
+      "orcid": "https://orcid.org/0000-0001-9841-5762",
+      "h_index": 106,
+      "i10_index": 357,
+      "works_count": 766,
+      "cited_by_count": 58439,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Critical Care and Intensive Care Medicine -- 9.7",
+      "id": "https://openalex.org/A5026173219",
+      "display_name": "Christian Brun‐Buisson",
+      "orcid": "https://orcid.org/0000-0001-5909-576X",
+      "h_index": 106,
+      "i10_index": 325,
+      "works_count": 616,
+      "cited_by_count": 53498,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5055266417",
+      "display_name": "Edward R. Marcantonio",
+      "orcid": "https://orcid.org/0000-0002-2911-4250",
+      "h_index": 106,
+      "i10_index": 309,
+      "works_count": 482,
+      "cited_by_count": 44908,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5057342507",
+      "display_name": "Can İnce",
+      "orcid": "https://orcid.org/0000-0002-8298-0270",
+      "h_index": 104,
+      "i10_index": 420,
+      "works_count": 822,
+      "cited_by_count": 41398,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5016186200",
+      "display_name": "Claudia Spies",
+      "orcid": "https://orcid.org/0000-0002-1062-0495",
+      "h_index": 103,
+      "i10_index": 631,
+      "works_count": 1246,
+      "cited_by_count": 50981,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5034004394",
+      "display_name": "Ignacio Martín‐Loeches",
+      "orcid": "https://orcid.org/0000-0002-5834-4063",
+      "h_index": 102,
+      "i10_index": 455,
+      "works_count": 950,
+      "cited_by_count": 45256,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5040669754",
+      "display_name": "Richard G. Wunderink",
+      "orcid": "https://orcid.org/0000-0002-8527-4195",
+      "h_index": 102,
+      "i10_index": 304,
+      "works_count": 587,
+      "cited_by_count": 52010,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5082689888",
+      "display_name": "Kathy Rowan",
+      "orcid": "https://orcid.org/0000-0001-8217-5602",
+      "h_index": 100,
+      "i10_index": 286,
+      "works_count": 518,
+      "cited_by_count": 54303,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5034913846",
+      "display_name": "Christoph Frank Dietrich",
+      "orcid": "https://orcid.org/0000-0001-6015-6347",
+      "h_index": 99,
+      "i10_index": 574,
+      "works_count": 1208,
+      "cited_by_count": 46503,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5005920096",
+      "display_name": "Christoph Thiemermann",
+      "orcid": "https://orcid.org/0000-0003-4228-9722",
+      "h_index": 98,
+      "i10_index": 410,
+      "works_count": 662,
+      "cited_by_count": 37236,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5030337104",
+      "display_name": "Theodore John Iwashyna",
+      "orcid": "https://orcid.org/0000-0002-4226-9310",
+      "h_index": 97,
+      "i10_index": 347,
+      "works_count": 652,
+      "cited_by_count": 55655,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5039748898",
+      "display_name": "Nathan Ivan Shapiro",
+      "orcid": "https://orcid.org/0000-0003-3508-4390",
+      "h_index": 97,
+      "i10_index": 295,
+      "works_count": 452,
+      "cited_by_count": 35175,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Critical Care and Intensive Care Medicine -- 9.6",
+      "id": "https://openalex.org/A5014755004",
+      "display_name": "Jørn Wetterslev",
+      "orcid": "https://orcid.org/0000-0001-7778-1771",
+      "h_index": 96,
+      "i10_index": 267,
+      "works_count": 476,
+      "cited_by_count": 43967,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5068261184",
+      "display_name": "Michael W Bauer",
+      "orcid": "https://orcid.org/0000-0002-1521-3514",
+      "h_index": 95,
+      "i10_index": 431,
+      "works_count": 877,
+      "cited_by_count": 67827,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5011316933",
+      "display_name": "Evangelos J. Giamarellos‐Bourboulis",
+      "orcid": "https://orcid.org/0000-0003-4713-3911",
+      "h_index": 95,
+      "i10_index": 415,
+      "works_count": 743,
+      "cited_by_count": 43081,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5048385516",
+      "display_name": "Bram N. Rochwerg",
+      "orcid": "https://orcid.org/0000-0002-8293-7061",
+      "h_index": 95,
+      "i10_index": 325,
+      "works_count": 769,
+      "cited_by_count": 52195,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5108821314",
+      "display_name": "Jean Paul Mira",
+      "orcid": "https://orcid.org/0000-0001-8121-3769",
+      "h_index": 95,
+      "i10_index": 289,
+      "works_count": 558,
+      "cited_by_count": 42372,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5073088328",
+      "display_name": "Michaël Darmon",
+      "orcid": "https://orcid.org/0000-0003-4198-8038",
+      "h_index": 95,
+      "i10_index": 284,
+      "works_count": 595,
+      "cited_by_count": 33077,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5016832904",
+      "display_name": "Paul C. Hébert",
+      "orcid": "https://orcid.org/0000-0002-0440-8586",
+      "h_index": 95,
+      "i10_index": 265,
+      "works_count": 551,
+      "cited_by_count": 40421,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5083937518",
+      "display_name": "Ognjen Gajic",
+      "orcid": "https://orcid.org/0000-0003-4218-0890",
+      "h_index": 94,
+      "i10_index": 376,
+      "works_count": 886,
+      "cited_by_count": 33897,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5029089981",
+      "display_name": "Antonio Artigas",
+      "orcid": "https://orcid.org/0000-0002-8029-1017",
+      "h_index": 94,
+      "i10_index": 287,
+      "works_count": 767,
+      "cited_by_count": 48042,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5030769814",
+      "display_name": "Niranjan “Tex” Kissoon",
+      "orcid": "https://orcid.org/0000-0001-8847-9973",
+      "h_index": 93,
+      "i10_index": 383,
+      "works_count": 848,
+      "cited_by_count": 117277,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5109833390",
+      "display_name": "Edwin A. Deitch",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 330,
+      "works_count": 487,
+      "cited_by_count": 32403,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5108132317",
+      "display_name": "Charles Edouard Luyt",
+      "orcid": "https://orcid.org/0000-0001-7424-2705",
+      "h_index": 93,
+      "i10_index": 295,
+      "works_count": 592,
+      "cited_by_count": 38454,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Critical Care and Intensive Care Medicine -- 9.5",
+      "id": "https://openalex.org/A5072862143",
+      "display_name": "Konrad Reinhart",
+      "orcid": "https://orcid.org/0000-0002-8012-6548",
+      "h_index": 93,
+      "i10_index": 257,
+      "works_count": 474,
+      "cited_by_count": 64395,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5001543982",
+      "display_name": "Richard S. Hotchkiss",
+      "orcid": "https://orcid.org/0000-0002-5470-3655",
+      "h_index": 93,
+      "i10_index": 224,
+      "works_count": 333,
+      "cited_by_count": 78853,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5000157972",
+      "display_name": "Mitchell M. Levy",
+      "orcid": "https://orcid.org/0000-0001-8556-2405",
+      "h_index": 93,
+      "i10_index": 219,
+      "works_count": 371,
+      "cited_by_count": 133484,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5079184641",
+      "display_name": "Dennis G. Maki",
+      "orcid": "https://orcid.org/0000-0001-6762-2291",
+      "h_index": 92,
+      "i10_index": 171,
+      "works_count": 283,
+      "cited_by_count": 35075,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5080959000",
+      "display_name": "Felipe Dal‐Pizzol",
+      "orcid": "https://orcid.org/0000-0003-3003-8977",
+      "h_index": 91,
+      "i10_index": 405,
+      "works_count": 639,
+      "cited_by_count": 26763,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5082620094",
+      "display_name": "R. Brooke Jeffrey",
+      "orcid": "https://orcid.org/0000-0002-5678-8103",
+      "h_index": 91,
+      "i10_index": 347,
+      "works_count": 495,
+      "cited_by_count": 27435,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5028596742",
+      "display_name": "Ayumi Shintani",
+      "orcid": "https://orcid.org/0000-0002-3323-110X",
+      "h_index": 91,
+      "i10_index": 295,
+      "works_count": 500,
+      "cited_by_count": 42051,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5019348361",
+      "display_name": "Jan Bakker",
+      "orcid": "https://orcid.org/0000-0003-2236-7391",
+      "h_index": 91,
+      "i10_index": 281,
+      "works_count": 555,
+      "cited_by_count": 34856,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5086939755",
+      "display_name": "Antoine Vieillard‐Baron",
+      "orcid": "https://orcid.org/0000-0002-4179-3583",
+      "h_index": 91,
+      "i10_index": 276,
+      "works_count": 597,
+      "cited_by_count": 38220,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5109875382",
+      "display_name": "Joseph E. Parrillo",
+      "orcid": "https://orcid.org/0009-0001-0851-4503",
+      "h_index": 91,
+      "i10_index": 257,
+      "works_count": 590,
+      "cited_by_count": 44160,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5012821442",
+      "display_name": "Stijn I. Blot",
+      "orcid": "https://orcid.org/0000-0003-2145-0345",
+      "h_index": 91,
+      "i10_index": 249,
+      "works_count": 844,
+      "cited_by_count": 28952,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Critical Care and Intensive Care Medicine -- 9.4",
+      "id": "https://openalex.org/A5083275742",
+      "display_name": "Andrew Rhodes",
+      "orcid": "https://orcid.org/0000-0002-8737-574X",
+      "h_index": 91,
+      "i10_index": 216,
+      "works_count": 739,
+      "cited_by_count": 85713,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5080462509",
+      "display_name": "Marc Léone",
+      "orcid": "https://orcid.org/0000-0002-3097-758X",
+      "h_index": 90,
+      "i10_index": 412,
+      "works_count": 1039,
+      "cited_by_count": 31966,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5037540908",
+      "display_name": "Philipp Schüetz",
+      "orcid": "https://orcid.org/0000-0001-6400-4949",
+      "h_index": 90,
+      "i10_index": 391,
+      "works_count": 729,
+      "cited_by_count": 34303,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5072795432",
+      "display_name": "Bertrand Guidet",
+      "orcid": "https://orcid.org/0000-0002-7643-6770",
+      "h_index": 90,
+      "i10_index": 313,
+      "works_count": 830,
+      "cited_by_count": 31639,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5100662025",
+      "display_name": "Michael Levin",
+      "orcid": "https://orcid.org/0000-0003-2767-6919",
+      "h_index": 90,
+      "i10_index": 311,
+      "works_count": 568,
+      "cited_by_count": 40307,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5101640408",
+      "display_name": "Robert Fowler",
+      "orcid": "https://orcid.org/0000-0002-1002-2989",
+      "h_index": 90,
+      "i10_index": 297,
+      "works_count": 548,
+      "cited_by_count": 35086,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5110046973",
+      "display_name": "Michel Wolff",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 255,
+      "works_count": 521,
+      "cited_by_count": 28085,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5110348944",
+      "display_name": "Ramona O. Hopkins",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 238,
+      "works_count": 372,
+      "cited_by_count": 37166,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5030343627",
+      "display_name": "Heinz R. Redl",
+      "orcid": "https://orcid.org/0000-0003-1654-462X",
+      "h_index": 89,
+      "i10_index": 472,
+      "works_count": 912,
+      "cited_by_count": 33257,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5020609229",
+      "display_name": "Hector R. Wong",
+      "orcid": "https://orcid.org/0000-0001-7989-1173",
+      "h_index": 89,
+      "i10_index": 283,
+      "works_count": 524,
+      "cited_by_count": 27514,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5076649706",
+      "display_name": "Fernando A. Bozza",
+      "orcid": "https://orcid.org/0000-0003-4878-0256",
+      "h_index": 89,
+      "i10_index": 270,
+      "works_count": 505,
+      "cited_by_count": 27265,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Critical Care and Intensive Care Medicine -- 9.3",
+      "id": "https://openalex.org/A5085171919",
+      "display_name": "Irshad H. Chaudry",
+      "orcid": "https://orcid.org/0000-0002-3040-4925",
+      "h_index": 88,
+      "i10_index": 469,
+      "works_count": 666,
+      "cited_by_count": 31067,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5025379878",
+      "display_name": "Steven M. Opal",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 248,
+      "works_count": 439,
+      "cited_by_count": 95395,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5048315302",
+      "display_name": "Jordi Carratalà",
+      "orcid": "https://orcid.org/0000-0003-3209-2563",
+      "h_index": 87,
+      "i10_index": 337,
+      "works_count": 716,
+      "cited_by_count": 29240,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5102860136",
+      "display_name": "Martin A. Schreiber",
+      "orcid": "https://orcid.org/0000-0002-4430-6779",
+      "h_index": 87,
+      "i10_index": 313,
+      "works_count": 544,
+      "cited_by_count": 29378,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5012028041",
+      "display_name": "Joseph A. Carcillo",
+      "orcid": "https://orcid.org/0000-0001-8920-4330",
+      "h_index": 87,
+      "i10_index": 310,
+      "works_count": 589,
+      "cited_by_count": 43971,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5021020684",
+      "display_name": "Michael Klompas",
+      "orcid": "https://orcid.org/0000-0001-8641-4498",
+      "h_index": 87,
+      "i10_index": 294,
+      "works_count": 586,
+      "cited_by_count": 45256,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5009747210",
+      "display_name": "Kevin B. Laupland",
+      "orcid": "https://orcid.org/0000-0002-1205-5354",
+      "h_index": 87,
+      "i10_index": 285,
+      "works_count": 603,
+      "cited_by_count": 30247,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5022407641",
+      "display_name": "Michael S. Niederman",
+      "orcid": "https://orcid.org/0000-0003-0293-386X",
+      "h_index": 87,
+      "i10_index": 244,
+      "works_count": 464,
+      "cited_by_count": 37570,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5052569785",
+      "display_name": "Mitchell P. Fink",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 241,
+      "works_count": 442,
+      "cited_by_count": 39537,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5016750821",
+      "display_name": "Robert S. Dittus",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 218,
+      "works_count": 335,
+      "cited_by_count": 46002,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5041903193",
+      "display_name": "Muhammed K. Elhadi",
+      "orcid": "https://orcid.org/0000-0001-6406-4212",
+      "h_index": 87,
+      "i10_index": 196,
+      "works_count": 400,
+      "cited_by_count": 96255,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Critical Care and Intensive Care Medicine -- 9.2",
+      "id": "https://openalex.org/A5044189909",
+      "display_name": "Henriëtte A. Moll",
+      "orcid": "https://orcid.org/0000-0001-9304-3322",
+      "h_index": 86,
+      "i10_index": 344,
+      "works_count": 497,
+      "cited_by_count": 28896,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5022648071",
+      "display_name": "Pratik P. Pandharipande",
+      "orcid": "https://orcid.org/0000-0002-1389-8580",
+      "h_index": 86,
+      "i10_index": 204,
+      "works_count": 365,
+      "cited_by_count": 38199,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5013870163",
+      "display_name": "Oscar Joseph Bienvenu",
+      "orcid": "https://orcid.org/0000-0002-8466-102X",
+      "h_index": 86,
+      "i10_index": 200,
+      "works_count": 292,
+      "cited_by_count": 35473,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Psychology",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5040713731",
+      "display_name": "Didier M. Payen",
+      "orcid": "https://orcid.org/0000-0002-5242-6543",
+      "h_index": 85,
+      "i10_index": 272,
+      "works_count": 713,
+      "cited_by_count": 38803,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5020757594",
+      "display_name": "Andrew F. Shorr",
+      "orcid": "https://orcid.org/0000-0002-4537-8328",
+      "h_index": 85,
+      "i10_index": 269,
+      "works_count": 606,
+      "cited_by_count": 26060,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5090675988",
+      "display_name": "Bryan A. Cotton",
+      "orcid": "https://orcid.org/0000-0003-4184-6742",
+      "h_index": 85,
+      "i10_index": 250,
+      "works_count": 454,
+      "cited_by_count": 27121,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5044713281",
+      "display_name": "Maïté Garrouste-Orgeas",
+      "orcid": "https://orcid.org/0000-0003-4250-1666",
+      "h_index": 85,
+      "i10_index": 167,
+      "works_count": 292,
+      "cited_by_count": 24289,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5031081653",
+      "display_name": "Greg S. Martin",
+      "orcid": "https://orcid.org/0000-0002-9684-7593",
+      "h_index": 84,
+      "i10_index": 255,
+      "works_count": 595,
+      "cited_by_count": 70411,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5003446329",
+      "display_name": "Alfred Ayala",
+      "orcid": "https://orcid.org/0000-0002-5034-2995",
+      "h_index": 83,
+      "i10_index": 290,
+      "works_count": 511,
+      "cited_by_count": 23540,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5008601270",
+      "display_name": "Janneke Horn",
+      "orcid": "https://orcid.org/0000-0002-3788-7675",
+      "h_index": 83,
+      "i10_index": 262,
+      "works_count": 505,
+      "cited_by_count": 32928,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5050393463",
+      "display_name": "Pierre‐François Laterre",
+      "orcid": "https://orcid.org/0000-0001-5712-7449",
+      "h_index": 83,
+      "i10_index": 230,
+      "works_count": 387,
+      "cited_by_count": 37212,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Critical Care and Intensive Care Medicine -- 9.1",
+      "id": "https://openalex.org/A5046035017",
+      "display_name": "Henry T. Stelfox",
+      "orcid": "https://orcid.org/0000-0003-1231-1490",
+      "h_index": 82,
+      "i10_index": 338,
+      "works_count": 551,
+      "cited_by_count": 27820,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.0",
+      "id": "https://openalex.org/A5076307322",
+      "display_name": "Kirk Charles Hansen",
+      "orcid": "https://orcid.org/0000-0001-5054-838X",
+      "h_index": 82,
+      "i10_index": 274,
+      "works_count": 472,
+      "cited_by_count": 22748,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.0",
+      "id": "https://openalex.org/A5065319132",
+      "display_name": "Philippe Montravers",
+      "orcid": "https://orcid.org/0000-0002-3422-5705",
+      "h_index": 82,
+      "i10_index": 269,
+      "works_count": 713,
+      "cited_by_count": 23552,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.0",
+      "id": "https://openalex.org/A5002418559",
+      "display_name": "Jacques Duranteau",
+      "orcid": "https://orcid.org/0000-0003-1902-2624",
+      "h_index": 82,
+      "i10_index": 253,
+      "works_count": 610,
+      "cited_by_count": 28130,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.0",
+      "id": "https://openalex.org/A5020157030",
+      "display_name": "Waleed A. Alhazzani",
+      "orcid": "https://orcid.org/0000-0001-8076-9626",
+      "h_index": 82,
+      "i10_index": 175,
+      "works_count": 366,
+      "cited_by_count": 58150,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Critical Care and Intensive Care Medicine -- 9.0",
+      "id": "https://openalex.org/A5033820862",
+      "display_name": "Ricard Ferrer",
+      "orcid": "https://orcid.org/0000-0002-4859-4747",
+      "h_index": 81,
+      "i10_index": 299,
+      "works_count": 692,
+      "cited_by_count": 46968,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5030071794",
+      "display_name": "Willem Joost Wiersinga",
+      "orcid": "https://orcid.org/0000-0003-2277-1343",
+      "h_index": 81,
+      "i10_index": 262,
+      "works_count": 593,
+      "cited_by_count": 62118,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5025295131",
+      "display_name": "Lena M. Napolitano",
+      "orcid": "https://orcid.org/0000-0001-7174-3192",
+      "h_index": 81,
+      "i10_index": 242,
+      "works_count": 475,
+      "cited_by_count": 36612,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5018247103",
+      "display_name": "David A Harrison",
+      "orcid": "https://orcid.org/0000-0002-9002-9098",
+      "h_index": 81,
+      "i10_index": 232,
+      "works_count": 584,
+      "cited_by_count": 38057,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5010687095",
+      "display_name": "Keith R. Walley",
+      "orcid": "https://orcid.org/0000-0003-4232-7266",
+      "h_index": 81,
+      "i10_index": 227,
+      "works_count": 442,
+      "cited_by_count": 26225,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5039423041",
+      "display_name": "Carol Lynette Hodgson",
+      "orcid": "https://orcid.org/0000-0001-9002-2075",
+      "h_index": 81,
+      "i10_index": 223,
+      "works_count": 449,
+      "cited_by_count": 38054,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5110677728",
+      "display_name": "Lila Bouadma",
+      "orcid": "https://orcid.org/0000-0002-6849-7266",
+      "h_index": 81,
+      "i10_index": 214,
+      "works_count": 432,
+      "cited_by_count": 32800,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5106182596",
+      "display_name": "Kirby I. Bland",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 337,
+      "works_count": 673,
+      "cited_by_count": 26912,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5011278994",
+      "display_name": "Simon R. Finfer",
+      "orcid": "https://orcid.org/0000-0002-2785-5864",
+      "h_index": 79,
+      "i10_index": 257,
+      "works_count": 535,
+      "cited_by_count": 41342,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5015846826",
+      "display_name": "Joachim Struck",
+      "orcid": "https://orcid.org/0000-0002-9793-7160",
+      "h_index": 79,
+      "i10_index": 193,
+      "works_count": 348,
+      "cited_by_count": 19343,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5071094072",
+      "display_name": "Rui Paulo Moreno",
+      "orcid": "https://orcid.org/0000-0002-9795-8316",
+      "h_index": 79,
+      "i10_index": 180,
+      "works_count": 297,
+      "cited_by_count": 80030,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5111744132",
+      "display_name": "Benoît Schlemmer",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 143,
+      "works_count": 254,
+      "cited_by_count": 26118,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Critical Care and Intensive Care Medicine -- 8.9",
+      "id": "https://openalex.org/A5020727172",
+      "display_name": "Anders Perner",
+      "orcid": "https://orcid.org/0000-0002-4668-0123",
+      "h_index": 78,
+      "i10_index": 313,
+      "works_count": 782,
+      "cited_by_count": 50627,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5049019312",
+      "display_name": "Frédéric Pène",
+      "orcid": "https://orcid.org/0000-0003-3639-3849",
+      "h_index": 78,
+      "i10_index": 252,
+      "works_count": 548,
+      "cited_by_count": 22284,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5004819829",
+      "display_name": "Ori David Rotstein",
+      "orcid": "https://orcid.org/0009-0004-4388-5352",
+      "h_index": 78,
+      "i10_index": 250,
+      "works_count": 423,
+      "cited_by_count": 19101,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5082987136",
+      "display_name": "Towia A. Libermann",
+      "orcid": "https://orcid.org/0000-0002-4006-8179",
+      "h_index": 78,
+      "i10_index": 240,
+      "works_count": 426,
+      "cited_by_count": 38458,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5051142049",
+      "display_name": "Catherine Lee Hough",
+      "orcid": "https://orcid.org/0000-0001-6425-0867",
+      "h_index": 78,
+      "i10_index": 234,
+      "works_count": 375,
+      "cited_by_count": 23234,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5037956429",
+      "display_name": "François Lamontagne",
+      "orcid": "https://orcid.org/0000-0002-0360-3427",
+      "h_index": 78,
+      "i10_index": 230,
+      "works_count": 498,
+      "cited_by_count": 33237,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5011946979",
+      "display_name": "Ville Pettilä",
+      "orcid": "https://orcid.org/0000-0002-3921-4423",
+      "h_index": 78,
+      "i10_index": 217,
+      "works_count": 332,
+      "cited_by_count": 24824,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5072546336",
+      "display_name": "Karim Brohi",
+      "orcid": "https://orcid.org/0000-0003-0643-8866",
+      "h_index": 78,
+      "i10_index": 188,
+      "works_count": 334,
+      "cited_by_count": 29852,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5031026007",
+      "display_name": "Christian Richard",
+      "orcid": "https://orcid.org/0000-0002-4153-301X",
+      "h_index": 78,
+      "i10_index": 165,
+      "works_count": 361,
+      "cited_by_count": 25263,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5025056027",
+      "display_name": "Timothy D. Girard",
+      "orcid": "https://orcid.org/0000-0002-9833-4871",
+      "h_index": 78,
+      "i10_index": 163,
+      "works_count": 354,
+      "cited_by_count": 31528,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5012550644",
+      "display_name": "Craig M. Coopersmith",
+      "orcid": "https://orcid.org/0000-0003-2400-3217",
+      "h_index": 77,
+      "i10_index": 230,
+      "works_count": 397,
+      "cited_by_count": 65896,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5066119692",
+      "display_name": "Andrew G. Day",
+      "orcid": "https://orcid.org/0000-0002-1095-5703",
+      "h_index": 77,
+      "i10_index": 224,
+      "works_count": 357,
+      "cited_by_count": 24180,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5068867603",
+      "display_name": "Jeffrey L. Johnson",
+      "orcid": "https://orcid.org/0009-0003-3849-0746",
+      "h_index": 77,
+      "i10_index": 219,
+      "works_count": 357,
+      "cited_by_count": 25479,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5002897147",
+      "display_name": "Evert de Jonge",
+      "orcid": "https://orcid.org/0000-0003-1431-8039",
+      "h_index": 77,
+      "i10_index": 212,
+      "works_count": 430,
+      "cited_by_count": 19246,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5101508587",
+      "display_name": "Benoît Misset",
+      "orcid": "https://orcid.org/0000-0001-6466-0065",
+      "h_index": 77,
+      "i10_index": 210,
+      "works_count": 487,
+      "cited_by_count": 23052,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5052266669",
+      "display_name": "Margaret S. Herridge",
+      "orcid": "https://orcid.org/0000-0002-2903-1631",
+      "h_index": 77,
+      "i10_index": 181,
+      "works_count": 337,
+      "cited_by_count": 36333,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5033445263",
+      "display_name": "José Garnacho‐Montero",
+      "orcid": "https://orcid.org/0000-0003-2542-7601",
+      "h_index": 77,
+      "i10_index": 181,
+      "works_count": 536,
+      "cited_by_count": 21793,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5008447327",
+      "display_name": "Kai D. Zacharowski",
+      "orcid": "https://orcid.org/0000-0002-0212-9110",
+      "h_index": 76,
+      "i10_index": 345,
+      "works_count": 803,
+      "cited_by_count": 25357,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5064736877",
+      "display_name": "Saad Nseir",
+      "orcid": "https://orcid.org/0000-0002-7618-0357",
+      "h_index": 76,
+      "i10_index": 255,
+      "works_count": 544,
+      "cited_by_count": 24914,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5019221575",
+      "display_name": "Johannes G. van der Hoeven",
+      "orcid": "https://orcid.org/0000-0001-5362-0244",
+      "h_index": 76,
+      "i10_index": 251,
+      "works_count": 387,
+      "cited_by_count": 19547,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5046388349",
+      "display_name": "Wayne Conrad Liles",
+      "orcid": "https://orcid.org/0000-0002-1075-8275",
+      "h_index": 76,
+      "i10_index": 205,
+      "works_count": 307,
+      "cited_by_count": 20610,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5060270776",
+      "display_name": "Peter Dodek",
+      "orcid": "https://orcid.org/0000-0002-3314-4655",
+      "h_index": 76,
+      "i10_index": 195,
+      "works_count": 330,
+      "cited_by_count": 21783,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Critical Care and Intensive Care Medicine -- 8.8",
+      "id": "https://openalex.org/A5068674408",
+      "display_name": "Lucas Liaudet",
+      "orcid": "https://orcid.org/0000-0003-2670-4930",
+      "h_index": 76,
+      "i10_index": 184,
+      "works_count": 386,
+      "cited_by_count": 25846,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5079018056",
+      "display_name": "Stefan Kluge",
+      "orcid": "https://orcid.org/0000-0001-8391-3988",
+      "h_index": 75,
+      "i10_index": 296,
+      "works_count": 589,
+      "cited_by_count": 26505,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5102733596",
+      "display_name": "Anirban M. Banerjee",
+      "orcid": "https://orcid.org/0000-0003-1690-2618",
+      "h_index": 75,
+      "i10_index": 251,
+      "works_count": 407,
+      "cited_by_count": 18977,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5086344364",
+      "display_name": "Jean‐Pierre Quenot",
+      "orcid": "https://orcid.org/0000-0003-2351-682X",
+      "h_index": 75,
+      "i10_index": 243,
+      "works_count": 599,
+      "cited_by_count": 23033,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5030701030",
+      "display_name": "Bertrand Souweine",
+      "orcid": "https://orcid.org/0000-0002-7690-6779",
+      "h_index": 75,
+      "i10_index": 224,
+      "works_count": 553,
+      "cited_by_count": 21511,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5017318882",
+      "display_name": "Murray M. Pollack",
+      "orcid": "https://orcid.org/0000-0003-0966-8261",
+      "h_index": 75,
+      "i10_index": 216,
+      "works_count": 468,
+      "cited_by_count": 20388,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5082294777",
+      "display_name": "Hannah Wunsch",
+      "orcid": "https://orcid.org/0000-0001-5477-8422",
+      "h_index": 75,
+      "i10_index": 205,
+      "works_count": 446,
+      "cited_by_count": 30828,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5066835495",
+      "display_name": "Marcos I. Restrepo",
+      "orcid": "https://orcid.org/0000-0001-9107-3405",
+      "h_index": 75,
+      "i10_index": 202,
+      "works_count": 430,
+      "cited_by_count": 27458,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5030236781",
+      "display_name": "Timothy Simon Walsh",
+      "orcid": "https://orcid.org/0000-0002-3590-8540",
+      "h_index": 75,
+      "i10_index": 201,
+      "works_count": 398,
+      "cited_by_count": 22803,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5065061514",
+      "display_name": "Frank Martin Brunkhorst",
+      "orcid": "https://orcid.org/0000-0002-8132-8651",
+      "h_index": 75,
+      "i10_index": 177,
+      "works_count": 328,
+      "cited_by_count": 29857,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5066527726",
+      "display_name": "Thomas P. Shanley",
+      "orcid": "https://orcid.org/0000-0001-8936-377X",
+      "h_index": 75,
+      "i10_index": 164,
+      "works_count": 298,
+      "cited_by_count": 17354,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5057372078",
+      "display_name": "Christophe Adrie",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 127,
+      "works_count": 213,
+      "cited_by_count": 23960,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5059353158",
+      "display_name": "Francesco Squadrito",
+      "orcid": "https://orcid.org/0000-0002-8868-0762",
+      "h_index": 74,
+      "i10_index": 306,
+      "works_count": 469,
+      "cited_by_count": 24977,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5111749872",
+      "display_name": "Achille Patrizio Caputi",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 294,
+      "works_count": 459,
+      "cited_by_count": 19494,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5050444159",
+      "display_name": "Tarek Sharshar",
+      "orcid": "https://orcid.org/0000-0003-2276-0951",
+      "h_index": 74,
+      "i10_index": 222,
+      "works_count": 461,
+      "cited_by_count": 22682,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5112259159",
+      "display_name": "Jacques Lacroix",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 203,
+      "works_count": 459,
+      "cited_by_count": 21688,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5054928970",
+      "display_name": "Anthony  C. Gordon",
+      "orcid": "https://orcid.org/0000-0002-0419-547X",
+      "h_index": 74,
+      "i10_index": 161,
+      "works_count": 354,
+      "cited_by_count": 33549,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5083492592",
+      "display_name": "Jean M. Carlet",
+      "orcid": "https://orcid.org/0000-0003-4803-4309",
+      "h_index": 74,
+      "i10_index": 156,
+      "works_count": 324,
+      "cited_by_count": 46486,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5078153822",
+      "display_name": "Robert Grant Sawyer",
+      "orcid": "https://orcid.org/0000-0002-8155-2661",
+      "h_index": 73,
+      "i10_index": 293,
+      "works_count": 784,
+      "cited_by_count": 26529,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5005650728",
+      "display_name": "William C. Shoemaker",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 267,
+      "works_count": 511,
+      "cited_by_count": 19969,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5080680155",
+      "display_name": "Domenica Altavilla",
+      "orcid": "https://orcid.org/0000-0002-1033-0527",
+      "h_index": 73,
+      "i10_index": 258,
+      "works_count": 414,
+      "cited_by_count": 23121,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5015807294",
+      "display_name": "Pär I. Johansson",
+      "orcid": "https://orcid.org/0000-0001-9778-5964",
+      "h_index": 73,
+      "i10_index": 252,
+      "works_count": 390,
+      "cited_by_count": 19154,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Critical Care and Intensive Care Medicine -- 8.7",
+      "id": "https://openalex.org/A5037001275",
+      "display_name": "Beat Müeller",
+      "orcid": "https://orcid.org/0000-0002-1986-2511",
+      "h_index": 73,
+      "i10_index": 246,
+      "works_count": 407,
+      "cited_by_count": 21416,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5070216040",
+      "display_name": "Linda Denehy",
+      "orcid": "https://orcid.org/0000-0002-2926-8436",
+      "h_index": 73,
+      "i10_index": 237,
+      "works_count": 523,
+      "cited_by_count": 26262,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5050377625",
+      "display_name": "Mark John Peters",
+      "orcid": "https://orcid.org/0000-0003-3653-4808",
+      "h_index": 73,
+      "i10_index": 214,
+      "works_count": 469,
+      "cited_by_count": 25702,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5056404361",
+      "display_name": "Michelle N. Gong",
+      "orcid": "https://orcid.org/0000-0001-7952-5384",
+      "h_index": 73,
+      "i10_index": 200,
+      "works_count": 400,
+      "cited_by_count": 30344,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5107300515",
+      "display_name": "Sangeeta Mehta",
+      "orcid": "https://orcid.org/0000-0002-7073-4769",
+      "h_index": 73,
+      "i10_index": 200,
+      "works_count": 320,
+      "cited_by_count": 29458,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5113488715",
+      "display_name": "Peter Radermacher",
+      "orcid": "https://orcid.org/0000-0002-5913-3102",
+      "h_index": 72,
+      "i10_index": 320,
+      "works_count": 754,
+      "cited_by_count": 20945,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5086646404",
+      "display_name": "Nicole Petra Juffermans",
+      "orcid": "https://orcid.org/0000-0002-3039-6574",
+      "h_index": 72,
+      "i10_index": 282,
+      "works_count": 601,
+      "cited_by_count": 24952,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5070261387",
+      "display_name": "Karim Asehnoune",
+      "orcid": "https://orcid.org/0000-0003-1899-3517",
+      "h_index": 72,
+      "i10_index": 236,
+      "works_count": 514,
+      "cited_by_count": 20795,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5035729269",
+      "display_name": "Timothy G. Buchman",
+      "orcid": "https://orcid.org/0000-0001-7350-5921",
+      "h_index": 72,
+      "i10_index": 217,
+      "works_count": 466,
+      "cited_by_count": 22851,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5018007709",
+      "display_name": "Muriel sarah Fartoukh",
+      "orcid": "https://orcid.org/0000-0001-9506-6309",
+      "h_index": 72,
+      "i10_index": 207,
+      "works_count": 548,
+      "cited_by_count": 25388,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5071697044",
+      "display_name": "Rosemary Ann Kozar",
+      "orcid": "https://orcid.org/0000-0002-9582-8622",
+      "h_index": 72,
+      "i10_index": 199,
+      "works_count": 344,
+      "cited_by_count": 19571,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5108126286",
+      "display_name": "Virginie Lemiale",
+      "orcid": "https://orcid.org/0000-0002-1736-747X",
+      "h_index": 72,
+      "i10_index": 198,
+      "works_count": 401,
+      "cited_by_count": 19243,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5045762489",
+      "display_name": "Morten Hylander Møller",
+      "orcid": "https://orcid.org/0000-0002-6378-9673",
+      "h_index": 72,
+      "i10_index": 193,
+      "works_count": 449,
+      "cited_by_count": 37364,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5082629342",
+      "display_name": "Stephen James Brett",
+      "orcid": "https://orcid.org/0000-0003-4545-8413",
+      "h_index": 72,
+      "i10_index": 192,
+      "works_count": 396,
+      "cited_by_count": 23166,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5064970536",
+      "display_name": "Toshihiko Mayumi",
+      "orcid": "https://orcid.org/0000-0002-4462-9375",
+      "h_index": 72,
+      "i10_index": 191,
+      "works_count": 360,
+      "cited_by_count": 22273,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5101748257",
+      "display_name": "Bruno François",
+      "orcid": "https://orcid.org/0000-0002-2531-1652",
+      "h_index": 72,
+      "i10_index": 170,
+      "works_count": 317,
+      "cited_by_count": 23988,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5046059470",
+      "display_name": "James C. Jackson",
+      "orcid": "https://orcid.org/0000-0001-8089-2827",
+      "h_index": 72,
+      "i10_index": 153,
+      "works_count": 261,
+      "cited_by_count": 25773,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5076707735",
+      "display_name": "Hideo Yasunaga",
+      "orcid": "https://orcid.org/0000-0002-6017-469X",
+      "h_index": 71,
+      "i10_index": 707,
+      "works_count": 1412,
+      "cited_by_count": 27967,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5039164555",
+      "display_name": "Martijn van Griensven",
+      "orcid": "https://orcid.org/0000-0001-5104-9881",
+      "h_index": 71,
+      "i10_index": 298,
+      "works_count": 638,
+      "cited_by_count": 18933,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5002840696",
+      "display_name": "Laurent Argaud",
+      "orcid": "https://orcid.org/0000-0002-4565-2454",
+      "h_index": 71,
+      "i10_index": 273,
+      "works_count": 487,
+      "cited_by_count": 22669,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5047537688",
+      "display_name": "A. B. Johan Groeneveld",
+      "orcid": "https://orcid.org/0000-0002-7515-9425",
+      "h_index": 71,
+      "i10_index": 258,
+      "works_count": 487,
+      "cited_by_count": 17478,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5021970332",
+      "display_name": "Armand R. J. Girbes",
+      "orcid": "https://orcid.org/0000-0002-0711-0494",
+      "h_index": 71,
+      "i10_index": 250,
+      "works_count": 550,
+      "cited_by_count": 27410,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Critical Care and Intensive Care Medicine -- 8.6",
+      "id": "https://openalex.org/A5031943142",
+      "display_name": "Paul Singh Sidhu",
+      "orcid": "https://orcid.org/0000-0003-1928-4077",
+      "h_index": 71,
+      "i10_index": 245,
+      "works_count": 511,
+      "cited_by_count": 21781,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5073422869",
+      "display_name": "Samuel Morris Brown",
+      "orcid": "https://orcid.org/0000-0003-1206-6261",
+      "h_index": 71,
+      "i10_index": 230,
+      "works_count": 534,
+      "cited_by_count": 20581,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5031168832",
+      "display_name": "Philip S. Barie",
+      "orcid": "https://orcid.org/0000-0002-5848-527X",
+      "h_index": 71,
+      "i10_index": 227,
+      "works_count": 508,
+      "cited_by_count": 18421,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5022890528",
+      "display_name": "Toshiaki Iba",
+      "orcid": "https://orcid.org/0000-0002-0255-4088",
+      "h_index": 71,
+      "i10_index": 213,
+      "works_count": 430,
+      "cited_by_count": 22463,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5102705112",
+      "display_name": "Alan E. Jones",
+      "orcid": "https://orcid.org/0000-0001-5772-6222",
+      "h_index": 71,
+      "i10_index": 184,
+      "works_count": 305,
+      "cited_by_count": 30104,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5056099545",
+      "display_name": "Jérôme Pugin",
+      "orcid": "https://orcid.org/0000-0003-0265-5062",
+      "h_index": 71,
+      "i10_index": 182,
+      "works_count": 316,
+      "cited_by_count": 23199,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5105516666",
+      "display_name": "Ferhat Meziani",
+      "orcid": "https://orcid.org/0000-0002-1005-9095",
+      "h_index": 71,
+      "i10_index": 172,
+      "works_count": 363,
+      "cited_by_count": 26999,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5100752901",
+      "display_name": "Antoni Torres",
+      "orcid": "https://orcid.org/0000-0002-5649-7699",
+      "h_index": 71,
+      "i10_index": 158,
+      "works_count": 314,
+      "cited_by_count": 20745,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5056872170",
+      "display_name": "Christian Josef Wiedermann",
+      "orcid": "https://orcid.org/0000-0002-4639-8195",
+      "h_index": 70,
+      "i10_index": 284,
+      "works_count": 563,
+      "cited_by_count": 22746,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5079148203",
+      "display_name": "Hervé Dupont",
+      "orcid": "https://orcid.org/0000-0002-5644-3412",
+      "h_index": 70,
+      "i10_index": 223,
+      "works_count": 513,
+      "cited_by_count": 20138,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5067982688",
+      "display_name": "Jean‐François Pittet",
+      "orcid": "https://orcid.org/0000-0002-2196-9289",
+      "h_index": 70,
+      "i10_index": 197,
+      "works_count": 342,
+      "cited_by_count": 23691,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5004168407",
+      "display_name": "Angela Sauaia",
+      "orcid": "https://orcid.org/0000-0002-8493-389X",
+      "h_index": 70,
+      "i10_index": 181,
+      "works_count": 284,
+      "cited_by_count": 20023,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5035420634",
+      "display_name": "David V. Pilcher",
+      "orcid": "https://orcid.org/0000-0002-8939-7985",
+      "h_index": 69,
+      "i10_index": 299,
+      "works_count": 580,
+      "cited_by_count": 24789,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5050533134",
+      "display_name": "Hiroshi Ogura",
+      "orcid": "https://orcid.org/0000-0002-5013-2445",
+      "h_index": 69,
+      "i10_index": 258,
+      "works_count": 601,
+      "cited_by_count": 16160,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5074656281",
+      "display_name": "Jorge I. Salluh",
+      "orcid": "https://orcid.org/0000-0002-8164-1453",
+      "h_index": 69,
+      "i10_index": 207,
+      "works_count": 398,
+      "cited_by_count": 20222,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5018734910",
+      "display_name": "Basilia Zingarelli",
+      "orcid": "https://orcid.org/0000-0003-0152-700X",
+      "h_index": 69,
+      "i10_index": 191,
+      "works_count": 334,
+      "cited_by_count": 15619,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5025031461",
+      "display_name": "Leonard A. Mermel",
+      "orcid": "https://orcid.org/0000-0002-8898-7406",
+      "h_index": 69,
+      "i10_index": 173,
+      "works_count": 343,
+      "cited_by_count": 33209,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5012294390",
+      "display_name": "Bin Du",
+      "orcid": "https://orcid.org/0000-0001-6237-2895",
+      "h_index": 69,
+      "i10_index": 162,
+      "works_count": 332,
+      "cited_by_count": 73178,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5005725675",
+      "display_name": "Brian Scott Zuckerbraun",
+      "orcid": "https://orcid.org/0000-0002-5226-1857",
+      "h_index": 69,
+      "i10_index": 160,
+      "works_count": 293,
+      "cited_by_count": 20180,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5108449226",
+      "display_name": "Jean-François Dhainaut",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 134,
+      "works_count": 372,
+      "cited_by_count": 40821,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5048749306",
+      "display_name": "Claire M. Rickard",
+      "orcid": "https://orcid.org/0000-0002-6341-7415",
+      "h_index": 68,
+      "i10_index": 250,
+      "works_count": 558,
+      "cited_by_count": 16373,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5048823828",
+      "display_name": "Satoshi Gando",
+      "orcid": "https://orcid.org/0000-0002-3525-0750",
+      "h_index": 68,
+      "i10_index": 216,
+      "works_count": 449,
+      "cited_by_count": 18694,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5038005820",
+      "display_name": "Paul Jeffrey Young",
+      "orcid": "https://orcid.org/0000-0002-3428-3083",
+      "h_index": 68,
+      "i10_index": 215,
+      "works_count": 359,
+      "cited_by_count": 21492,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Critical Care and Intensive Care Medicine -- 8.5",
+      "id": "https://openalex.org/A5062287721",
+      "display_name": "Pedro Manuel Sarmento Rodrigues Póvoa",
+      "orcid": "https://orcid.org/0000-0002-7069-7304",
+      "h_index": 68,
+      "i10_index": 203,
+      "works_count": 521,
+      "cited_by_count": 15884,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5073280348",
+      "display_name": "Massimo Girardis",
+      "orcid": "https://orcid.org/0000-0002-2453-0829",
+      "h_index": 68,
+      "i10_index": 192,
+      "works_count": 443,
+      "cited_by_count": 19788,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5066168427",
+      "display_name": "Alasdair M. J. MacLullich",
+      "orcid": "https://orcid.org/0000-0003-3159-9370",
+      "h_index": 68,
+      "i10_index": 180,
+      "works_count": 353,
+      "cited_by_count": 19692,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5039514260",
+      "display_name": "Carole Schwebel",
+      "orcid": "https://orcid.org/0000-0003-1837-7415",
+      "h_index": 68,
+      "i10_index": 164,
+      "works_count": 348,
+      "cited_by_count": 17243,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5073463366",
+      "display_name": "Albertus Beishuizen",
+      "orcid": "https://orcid.org/0000-0002-0564-250X",
+      "h_index": 68,
+      "i10_index": 163,
+      "works_count": 354,
+      "cited_by_count": 19333,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5073851208",
+      "display_name": "Jean‐Daniel Chiche",
+      "orcid": "https://orcid.org/0000-0002-6433-6254",
+      "h_index": 68,
+      "i10_index": 158,
+      "works_count": 291,
+      "cited_by_count": 62365,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5068178034",
+      "display_name": "Víctor Rosenthal",
+      "orcid": "https://orcid.org/0000-0001-9138-4801",
+      "h_index": 68,
+      "i10_index": 146,
+      "works_count": 210,
+      "cited_by_count": 41226,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5066824327",
+      "display_name": "Yasser L. Sakr",
+      "orcid": "https://orcid.org/0000-0003-3163-1334",
+      "h_index": 68,
+      "i10_index": 125,
+      "works_count": 209,
+      "cited_by_count": 25967,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5010721603",
+      "display_name": "Kiyohide Fushimi",
+      "orcid": "https://orcid.org/0000-0002-1894-0290",
+      "h_index": 67,
+      "i10_index": 589,
+      "works_count": 1386,
+      "cited_by_count": 32775,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5011892284",
+      "display_name": "Kyeongman Jeon",
+      "orcid": "https://orcid.org/0000-0002-4822-1772",
+      "h_index": 67,
+      "i10_index": 298,
+      "works_count": 508,
+      "cited_by_count": 16606,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5070342971",
+      "display_name": "Andrea Cortegiani",
+      "orcid": "https://orcid.org/0000-0003-1416-9993",
+      "h_index": 67,
+      "i10_index": 247,
+      "works_count": 468,
+      "cited_by_count": 20297,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5064425085",
+      "display_name": "Stephan Matthias Jakob",
+      "orcid": "https://orcid.org/0000-0002-2195-0473",
+      "h_index": 67,
+      "i10_index": 242,
+      "works_count": 467,
+      "cited_by_count": 18620,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5031214939",
+      "display_name": "Philip Alexander Efron",
+      "orcid": "https://orcid.org/0000-0002-3931-650X",
+      "h_index": 67,
+      "i10_index": 221,
+      "works_count": 462,
+      "cited_by_count": 17006,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5047072223",
+      "display_name": "Arjen J. C. Slooter",
+      "orcid": "https://orcid.org/0000-0003-0804-8378",
+      "h_index": 67,
+      "i10_index": 201,
+      "works_count": 404,
+      "cited_by_count": 27608,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5108495347",
+      "display_name": "Frank B. Cerra",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 189,
+      "works_count": 369,
+      "cited_by_count": 25737,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5063775207",
+      "display_name": "William J. Sibbald",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 185,
+      "works_count": 348,
+      "cited_by_count": 36395,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5059033441",
+      "display_name": "Peter E. Spronk",
+      "orcid": "https://orcid.org/0000-0003-3319-8706",
+      "h_index": 67,
+      "i10_index": 178,
+      "works_count": 456,
+      "cited_by_count": 18643,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5043765709",
+      "display_name": "Ryan Zarychanski",
+      "orcid": "https://orcid.org/0000-0001-9455-6138",
+      "h_index": 67,
+      "i10_index": 173,
+      "works_count": 316,
+      "cited_by_count": 18422,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5082272833",
+      "display_name": "Gilles Clermont",
+      "orcid": "https://orcid.org/0000-0002-0163-1379",
+      "h_index": 67,
+      "i10_index": 172,
+      "works_count": 437,
+      "cited_by_count": 30403,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5084706902",
+      "display_name": "Lauralyn McIntyre",
+      "orcid": "https://orcid.org/0000-0001-7421-1407",
+      "h_index": 67,
+      "i10_index": 166,
+      "works_count": 422,
+      "cited_by_count": 38820,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5109885151",
+      "display_name": "Joseph P. Minei",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 157,
+      "works_count": 256,
+      "cited_by_count": 19600,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5085685364",
+      "display_name": "Addison K. May",
+      "orcid": "https://orcid.org/0000-0002-6496-3733",
+      "h_index": 67,
+      "i10_index": 157,
+      "works_count": 298,
+      "cited_by_count": 16397,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Critical Care and Intensive Care Medicine -- 8.4",
+      "id": "https://openalex.org/A5023138053",
+      "display_name": "Yves Cohen",
+      "orcid": "https://orcid.org/0000-0001-6022-9366",
+      "h_index": 67,
+      "i10_index": 150,
+      "works_count": 294,
+      "cited_by_count": 17634,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5059323632",
+      "display_name": "Jean‐Louis Trouillet",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 106,
+      "works_count": 164,
+      "cited_by_count": 17370,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5085914190",
+      "display_name": "Balasubramanian Venkatesh",
+      "orcid": "https://orcid.org/0000-0002-3234-5244",
+      "h_index": 66,
+      "i10_index": 227,
+      "works_count": 513,
+      "cited_by_count": 16943,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5100320372",
+      "display_name": "Zhongheng Zhang",
+      "orcid": "https://orcid.org/0000-0002-2336-5323",
+      "h_index": 66,
+      "i10_index": 225,
+      "works_count": 403,
+      "cited_by_count": 21748,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5085406499",
+      "display_name": "Peter Schlattmann",
+      "orcid": "https://orcid.org/0000-0001-7420-7707",
+      "h_index": 66,
+      "i10_index": 224,
+      "works_count": 444,
+      "cited_by_count": 28959,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5037283211",
+      "display_name": "Vineet Chopra",
+      "orcid": "https://orcid.org/0000-0001-8670-9376",
+      "h_index": 66,
+      "i10_index": 212,
+      "works_count": 470,
+      "cited_by_count": 16821,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5073910336",
+      "display_name": "Robert F. Wilson",
+      "orcid": "https://orcid.org/0000-0001-6906-8415",
+      "h_index": 66,
+      "i10_index": 209,
+      "works_count": 374,
+      "cited_by_count": 15449,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5048091736",
+      "display_name": "Kirsten Marie Fiest",
+      "orcid": "https://orcid.org/0000-0002-7299-6594",
+      "h_index": 66,
+      "i10_index": 196,
+      "works_count": 531,
+      "cited_by_count": 18455,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5108071925",
+      "display_name": "Josep Mensa",
+      "orcid": "https://orcid.org/0000-0002-6946-233X",
+      "h_index": 66,
+      "i10_index": 186,
+      "works_count": 299,
+      "cited_by_count": 16618,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5070558437",
+      "display_name": "André C. Kalil",
+      "orcid": "https://orcid.org/0000-0002-6489-6294",
+      "h_index": 66,
+      "i10_index": 180,
+      "works_count": 398,
+      "cited_by_count": 29938,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5113664842",
+      "display_name": "Rabih O. Darouiche",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 164,
+      "works_count": 232,
+      "cited_by_count": 22348,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5058688162",
+      "display_name": "Alain Lepape",
+      "orcid": "https://orcid.org/0000-0001-5950-7533",
+      "h_index": 66,
+      "i10_index": 148,
+      "works_count": 342,
+      "cited_by_count": 21200,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5014365740",
+      "display_name": "Heleen M. Oudemans–van Straaten",
+      "orcid": "https://orcid.org/0000-0001-9328-6703",
+      "h_index": 66,
+      "i10_index": 126,
+      "works_count": 256,
+      "cited_by_count": 18484,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5111618049",
+      "display_name": "William A. Knaus",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 108,
+      "works_count": 229,
+      "cited_by_count": 39536,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5005196213",
+      "display_name": "Hani Tamim",
+      "orcid": "https://orcid.org/0000-0002-2019-4362",
+      "h_index": 65,
+      "i10_index": 370,
+      "works_count": 668,
+      "cited_by_count": 19287,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5064776829",
+      "display_name": "Gernot Marx",
+      "orcid": "https://orcid.org/0000-0003-0866-4234",
+      "h_index": 65,
+      "i10_index": 240,
+      "works_count": 538,
+      "cited_by_count": 18936,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5064342139",
+      "display_name": "Matthijs Kox",
+      "orcid": "https://orcid.org/0000-0001-6537-6971",
+      "h_index": 65,
+      "i10_index": 180,
+      "works_count": 343,
+      "cited_by_count": 16616,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5109357672",
+      "display_name": "Julien Mayaux",
+      "orcid": "https://orcid.org/0000-0003-2799-5418",
+      "h_index": 65,
+      "i10_index": 166,
+      "works_count": 407,
+      "cited_by_count": 22160,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5081268468",
+      "display_name": "Ingeborg Dorothea Welters",
+      "orcid": "https://orcid.org/0000-0002-3408-8798",
+      "h_index": 65,
+      "i10_index": 163,
+      "works_count": 284,
+      "cited_by_count": 18579,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5012451930",
+      "display_name": "Thomas H. Shawker",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 158,
+      "works_count": 223,
+      "cited_by_count": 12066,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5073865207",
+      "display_name": "Michelle E. Kho",
+      "orcid": "https://orcid.org/0000-0003-3170-031X",
+      "h_index": 65,
+      "i10_index": 141,
+      "works_count": 327,
+      "cited_by_count": 40643,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5086542416",
+      "display_name": "Miquel Ferrer",
+      "orcid": "https://orcid.org/0000-0001-8171-6673",
+      "h_index": 65,
+      "i10_index": 139,
+      "works_count": 278,
+      "cited_by_count": 19256,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Critical Care and Intensive Care Medicine -- 8.3",
+      "id": "https://openalex.org/A5025157938",
+      "display_name": "Anthony F. Suffredini",
+      "orcid": "https://orcid.org/0000-0003-4179-0902",
+      "h_index": 65,
+      "i10_index": 138,
+      "works_count": 254,
+      "cited_by_count": 16041,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5011430386",
+      "display_name": "Bekele Afessa",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 126,
+      "works_count": 256,
+      "cited_by_count": 15521,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5054544080",
+      "display_name": "Steven M. Hollenberg",
+      "orcid": "https://orcid.org/0000-0003-1293-8496",
+      "h_index": 65,
+      "i10_index": 121,
+      "works_count": 334,
+      "cited_by_count": 43663,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5054197966",
+      "display_name": "Gregory J. Beilman",
+      "orcid": "https://orcid.org/0000-0001-5036-3027",
+      "h_index": 64,
+      "i10_index": 231,
+      "works_count": 494,
+      "cited_by_count": 29824,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5029068860",
+      "display_name": "Pierre Asfar",
+      "orcid": "https://orcid.org/0000-0002-1175-9149",
+      "h_index": 64,
+      "i10_index": 176,
+      "works_count": 549,
+      "cited_by_count": 17328,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5076834308",
+      "display_name": "Michael Blaivas",
+      "orcid": "https://orcid.org/0000-0001-7196-9765",
+      "h_index": 64,
+      "i10_index": 175,
+      "works_count": 349,
+      "cited_by_count": 19157,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5083885224",
+      "display_name": "Flávia Ribeiro Machado",
+      "orcid": "https://orcid.org/0000-0002-2356-4867",
+      "h_index": 64,
+      "i10_index": 170,
+      "works_count": 288,
+      "cited_by_count": 62495,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5063427876",
+      "display_name": "Hafid Ait‐Oufella",
+      "orcid": "https://orcid.org/0000-0002-2955-0183",
+      "h_index": 64,
+      "i10_index": 163,
+      "works_count": 457,
+      "cited_by_count": 16067,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5112793416",
+      "display_name": "Matthew Jay Kluger",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 141,
+      "works_count": 198,
+      "cited_by_count": 12810,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5025966668",
+      "display_name": "Alessandro Morandi",
+      "orcid": "https://orcid.org/0000-0003-4848-2507",
+      "h_index": 64,
+      "i10_index": 136,
+      "works_count": 225,
+      "cited_by_count": 18295,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5108220781",
+      "display_name": "Donald Edward Craven",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 135,
+      "works_count": 237,
+      "cited_by_count": 21086,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5078680614",
+      "display_name": "Alexander P. Wilmer",
+      "orcid": "https://orcid.org/0000-0002-4176-3608",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 234,
+      "cited_by_count": 29902,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 257,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5111727608",
+      "display_name": "Claude D Martin",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 124,
+      "works_count": 242,
+      "cited_by_count": 19210,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 258,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5014519093",
+      "display_name": "Bernard Allaouchiche",
+      "orcid": "https://orcid.org/0000-0003-0988-1716",
+      "h_index": 63,
+      "i10_index": 218,
+      "works_count": 510,
+      "cited_by_count": 16509,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 259,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5079788307",
+      "display_name": "Gavin Matthew Joynt",
+      "orcid": "https://orcid.org/0000-0002-5823-3435",
+      "h_index": 63,
+      "i10_index": 166,
+      "works_count": 379,
+      "cited_by_count": 20172,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 260,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5088547412",
+      "display_name": "Matthew M. Churpek",
+      "orcid": "https://orcid.org/0000-0002-4030-5250",
+      "h_index": 63,
+      "i10_index": 164,
+      "works_count": 358,
+      "cited_by_count": 15267,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 261,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5067168750",
+      "display_name": "Brian H. Cuthbertson",
+      "orcid": "https://orcid.org/0000-0003-4174-9424",
+      "h_index": 63,
+      "i10_index": 163,
+      "works_count": 328,
+      "cited_by_count": 22551,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 262,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5017974791",
+      "display_name": "Márcio Soares",
+      "orcid": "https://orcid.org/0000-0003-2503-6088",
+      "h_index": 63,
+      "i10_index": 162,
+      "works_count": 321,
+      "cited_by_count": 16882,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 263,
+      "score": 8.2,
+      "label": "Critical Care and Intensive Care Medicine -- 8.2",
+      "id": "https://openalex.org/A5023923739",
+      "display_name": "Julie Helms",
+      "orcid": "https://orcid.org/0000-0003-0895-6800",
+      "h_index": 63,
+      "i10_index": 144,
+      "works_count": 329,
+      "cited_by_count": 19271,
+      "discipline": "Critical Care and Intensive Care Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Critical Care and Intensive Care Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    }
+  ]
+}

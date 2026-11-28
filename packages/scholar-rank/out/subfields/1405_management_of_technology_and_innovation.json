@@ -1,0 +1,718 @@
+{
+  "kind": "subfield",
+  "id": 1405,
+  "name": "Management of Technology and Innovation",
+  "total_in_scrape": 36,
+  "count": 36,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Management of Technology and Innovation -- 9.9",
+      "id": "https://openalex.org/A5011084627",
+      "display_name": "Dean A. Shepherd",
+      "orcid": "https://orcid.org/0000-0003-4269-1826",
+      "h_index": 122,
+      "i10_index": 241,
+      "works_count": 590,
+      "cited_by_count": 71275,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Management of Technology and Innovation -- 9.9",
+      "id": "https://openalex.org/A5101936686",
+      "display_name": "Mario Coccia",
+      "orcid": "https://orcid.org/0000-0003-1957-6731",
+      "h_index": 104,
+      "i10_index": 261,
+      "works_count": 771,
+      "cited_by_count": 24205,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Mathematics",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Management of Technology and Innovation -- 9.9",
+      "id": "https://openalex.org/A5035643549",
+      "display_name": "Michael Fresé",
+      "orcid": "https://orcid.org/0000-0002-6462-4395",
+      "h_index": 104,
+      "i10_index": 239,
+      "works_count": 517,
+      "cited_by_count": 59056,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Management of Technology and Innovation -- 9.9",
+      "id": "https://openalex.org/A5012584139",
+      "display_name": "Robert G. Cooper",
+      "orcid": "https://orcid.org/0000-0001-8951-1541",
+      "h_index": 97,
+      "i10_index": 156,
+      "works_count": 220,
+      "cited_by_count": 43145,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Management of Technology and Innovation -- 9.9",
+      "id": "https://openalex.org/A5056682232",
+      "display_name": "Donald S. Siegel",
+      "orcid": "https://orcid.org/0000-0002-7668-9751",
+      "h_index": 93,
+      "i10_index": 214,
+      "works_count": 452,
+      "cited_by_count": 65569,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Management of Technology and Innovation -- 9.9",
+      "id": "https://openalex.org/A5108608616",
+      "display_name": "National Research Council",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 359,
+      "works_count": 811,
+      "cited_by_count": 49127,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5065903051",
+      "display_name": "Johan Wiklund",
+      "orcid": "https://orcid.org/0000-0002-1105-2469",
+      "h_index": 86,
+      "i10_index": 193,
+      "works_count": 422,
+      "cited_by_count": 48610,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5042387489",
+      "display_name": "João J. Ferreira",
+      "orcid": "https://orcid.org/0000-0002-5928-2474",
+      "h_index": 85,
+      "i10_index": 375,
+      "works_count": 635,
+      "cited_by_count": 31915,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5059930673",
+      "display_name": "Scott A. Shane",
+      "orcid": "https://orcid.org/0000-0002-4908-2321",
+      "h_index": 84,
+      "i10_index": 134,
+      "works_count": 328,
+      "cited_by_count": 75608,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5070430019",
+      "display_name": "Donald F. Kuratko",
+      "orcid": "https://orcid.org/0000-0003-2357-8879",
+      "h_index": 82,
+      "i10_index": 146,
+      "works_count": 372,
+      "cited_by_count": 31395,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5039923522",
+      "display_name": "Howard E. Aldrich",
+      "orcid": "https://orcid.org/0000-0003-2669-5536",
+      "h_index": 81,
+      "i10_index": 167,
+      "works_count": 323,
+      "cited_by_count": 42689,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5031226303",
+      "display_name": "Léo‐Paul Dana",
+      "orcid": "https://orcid.org/0000-0002-0806-1911",
+      "h_index": 80,
+      "i10_index": 352,
+      "works_count": 806,
+      "cited_by_count": 25795,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5002371565",
+      "display_name": "Pankaj C. Patel",
+      "orcid": "https://orcid.org/0000-0003-4934-8166",
+      "h_index": 79,
+      "i10_index": 232,
+      "works_count": 454,
+      "cited_by_count": 26357,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5069049451",
+      "display_name": "Vanessa Ratten",
+      "orcid": "https://orcid.org/0000-0002-2534-4550",
+      "h_index": 78,
+      "i10_index": 288,
+      "works_count": 745,
+      "cited_by_count": 20435,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5081877111",
+      "display_name": "Elias George Carayannis",
+      "orcid": "https://orcid.org/0000-0003-2348-4311",
+      "h_index": 76,
+      "i10_index": 258,
+      "works_count": 653,
+      "cited_by_count": 30265,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5049472298",
+      "display_name": "Henry Etzkowitz",
+      "orcid": "https://orcid.org/0000-0001-8185-8153",
+      "h_index": 76,
+      "i10_index": 173,
+      "works_count": 394,
+      "cited_by_count": 56020,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Management of Technology and Innovation -- 9.8",
+      "id": "https://openalex.org/A5073659236",
+      "display_name": "P. John Clarkson",
+      "orcid": "https://orcid.org/0000-0001-8018-7706",
+      "h_index": 75,
+      "i10_index": 393,
+      "works_count": 1166,
+      "cited_by_count": 25708,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Engineering",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Engineering",
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5015732156",
+      "display_name": "Timothy W. Simpson",
+      "orcid": "https://orcid.org/0000-0002-6287-0461",
+      "h_index": 75,
+      "i10_index": 291,
+      "works_count": 530,
+      "cited_by_count": 28113,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5073087540",
+      "display_name": "Erkko Autio",
+      "orcid": "https://orcid.org/0000-0003-1077-8193",
+      "h_index": 75,
+      "i10_index": 150,
+      "works_count": 339,
+      "cited_by_count": 45323,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5071908736",
+      "display_name": "Paul Westhead",
+      "orcid": "https://orcid.org/0000-0002-9492-4591",
+      "h_index": 75,
+      "i10_index": 129,
+      "works_count": 275,
+      "cited_by_count": 25773,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5078005785",
+      "display_name": "Candida G. Brush",
+      "orcid": "https://orcid.org/0000-0002-4876-9420",
+      "h_index": 73,
+      "i10_index": 143,
+      "works_count": 265,
+      "cited_by_count": 29875,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5055982314",
+      "display_name": "David Urbano",
+      "orcid": "https://orcid.org/0000-0001-7600-8656",
+      "h_index": 71,
+      "i10_index": 186,
+      "works_count": 396,
+      "cited_by_count": 23775,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5053684127",
+      "display_name": "Joern Block",
+      "orcid": "https://orcid.org/0000-0003-4564-0346",
+      "h_index": 71,
+      "i10_index": 167,
+      "works_count": 324,
+      "cited_by_count": 20296,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5068594960",
+      "display_name": "Sheila Jasanoff",
+      "orcid": "https://orcid.org/0000-0002-0488-8698",
+      "h_index": 71,
+      "i10_index": 150,
+      "works_count": 281,
+      "cited_by_count": 36858,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5025816011",
+      "display_name": "Abdullah Al Mamun",
+      "orcid": "https://orcid.org/0000-0002-9713-742X",
+      "h_index": 70,
+      "i10_index": 261,
+      "works_count": 407,
+      "cited_by_count": 15997,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5005977804",
+      "display_name": "Michael H. Morris",
+      "orcid": "https://orcid.org/0000-0003-2784-410X",
+      "h_index": 70,
+      "i10_index": 180,
+      "works_count": 417,
+      "cited_by_count": 25652,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5081821636",
+      "display_name": "Per Davidsson",
+      "orcid": "https://orcid.org/0000-0002-6363-1382",
+      "h_index": 70,
+      "i10_index": 163,
+      "works_count": 437,
+      "cited_by_count": 39788,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Management of Technology and Innovation -- 9.7",
+      "id": "https://openalex.org/A5080853912",
+      "display_name": "Alistair R. Anderson",
+      "orcid": "https://orcid.org/0000-0002-1072-4593",
+      "h_index": 70,
+      "i10_index": 139,
+      "works_count": 197,
+      "cited_by_count": 20391,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Management of Technology and Innovation -- 9.6",
+      "id": "https://openalex.org/A5059934493",
+      "display_name": "Tugrul Unsal Daim",
+      "orcid": "https://orcid.org/0000-0003-1432-8958",
+      "h_index": 69,
+      "i10_index": 334,
+      "works_count": 820,
+      "cited_by_count": 21559,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Management of Technology and Innovation -- 9.6",
+      "id": "https://openalex.org/A5007859213",
+      "display_name": "Alain Jean-Claude Fayolle",
+      "orcid": "https://orcid.org/0000-0002-6092-6898",
+      "h_index": 69,
+      "i10_index": 203,
+      "works_count": 540,
+      "cited_by_count": 29294,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Management of Technology and Innovation -- 9.6",
+      "id": "https://openalex.org/A5061568492",
+      "display_name": "David C. Mowery",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 141,
+      "works_count": 302,
+      "cited_by_count": 27632,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Management of Technology and Innovation -- 9.6",
+      "id": "https://openalex.org/A5080152304",
+      "display_name": "Paul K. Jones",
+      "orcid": "https://orcid.org/0000-0003-0417-9143",
+      "h_index": 66,
+      "i10_index": 174,
+      "works_count": 324,
+      "cited_by_count": 32123,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Management of Technology and Innovation -- 9.6",
+      "id": "https://openalex.org/A5019651281",
+      "display_name": "Alan L. Porter",
+      "orcid": "https://orcid.org/0000-0002-4520-6518",
+      "h_index": 65,
+      "i10_index": 204,
+      "works_count": 483,
+      "cited_by_count": 15884,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Management of Technology and Innovation -- 9.6",
+      "id": "https://openalex.org/A5017353394",
+      "display_name": "Marina Dabić",
+      "orcid": "https://orcid.org/0000-0001-8374-9719",
+      "h_index": 65,
+      "i10_index": 197,
+      "works_count": 436,
+      "cited_by_count": 20437,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Management of Technology and Innovation -- 9.6",
+      "id": "https://openalex.org/A5032073164",
+      "display_name": "Domingo Ribeiro Soriano",
+      "orcid": "https://orcid.org/0000-0003-3222-9101",
+      "h_index": 65,
+      "i10_index": 161,
+      "works_count": 279,
+      "cited_by_count": 18412,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Management of Technology and Innovation -- 9.6",
+      "id": "https://openalex.org/A5063968302",
+      "display_name": "Elgar Fleisch",
+      "orcid": "https://orcid.org/0000-0002-4842-1117",
+      "h_index": 63,
+      "i10_index": 204,
+      "works_count": 734,
+      "cited_by_count": 16525,
+      "discipline": "Management of Technology and Innovation",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management of Technology and Innovation",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Health Professions"
+      ]
+    }
+  ]
+}

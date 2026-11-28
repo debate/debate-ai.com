@@ -7,7 +7,7 @@ import {
   scheduleDockIdlePrefetch,
 } from "../../../src/lib/nav/dock-idle-prefetch"
 
-const HREFS = ["/videos", "/research/cards", "/debate", "/practice/versus-ai", "/research/docs"]
+const HREFS = ["/videos", "/research/cards", "/debate", "/practice/debates", "/research/docs"]
 
 describe("dockIdlePrefetchTargets", () => {
   it("skips the page on screen and the heavy routes", () => {
@@ -15,7 +15,7 @@ describe("dockIdlePrefetchTargets", () => {
   })
 
   it("never warms the practice stack from another page", () => {
-    expect(dockIdlePrefetchTargets(HREFS, "/research/cards")).not.toContain("/practice/versus-ai")
+    expect(dockIdlePrefetchTargets(HREFS, "/research/cards")).not.toContain("/practice/debates")
   })
 
   it("treats a page under a destination as that destination", () => {

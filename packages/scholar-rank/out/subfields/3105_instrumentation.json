@@ -1,0 +1,124 @@
+{
+  "kind": "subfield",
+  "id": 3105,
+  "name": "Instrumentation",
+  "total_in_scrape": 6,
+  "count": 6,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Instrumentation -- 9.9",
+      "id": "https://openalex.org/A5083971802",
+      "display_name": "Mark G. Swain",
+      "orcid": "https://orcid.org/0000-0002-0919-4468",
+      "h_index": 75,
+      "i10_index": 224,
+      "works_count": 576,
+      "cited_by_count": 22307,
+      "discipline": "Instrumentation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Instrumentation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Instrumentation -- 9.9",
+      "id": "https://openalex.org/A5032861079",
+      "display_name": "Olivier Guyon",
+      "orcid": "https://orcid.org/0000-0002-1097-9908",
+      "h_index": 74,
+      "i10_index": 364,
+      "works_count": 1094,
+      "cited_by_count": 22372,
+      "discipline": "Instrumentation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Instrumentation",
+      "fields": [
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Instrumentation -- 9.9",
+      "id": "https://openalex.org/A5027889631",
+      "display_name": "N. S. Xu",
+      "orcid": "https://orcid.org/0009-0009-0421-2354",
+      "h_index": 74,
+      "i10_index": 322,
+      "works_count": 781,
+      "cited_by_count": 26868,
+      "discipline": "Instrumentation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Instrumentation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Instrumentation -- 9.9",
+      "id": "https://openalex.org/A5084727263",
+      "display_name": "Shaozhi Deng",
+      "orcid": "https://orcid.org/0000-0003-1830-2026",
+      "h_index": 67,
+      "i10_index": 315,
+      "works_count": 861,
+      "cited_by_count": 18057,
+      "discipline": "Instrumentation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Instrumentation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Instrumentation -- 9.9",
+      "id": "https://openalex.org/A5052339291",
+      "display_name": "Peter Tenenbaum",
+      "orcid": "https://orcid.org/0000-0002-1949-4720",
+      "h_index": 67,
+      "i10_index": 126,
+      "works_count": 464,
+      "cited_by_count": 27541,
+      "discipline": "Instrumentation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Instrumentation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Instrumentation -- 9.9",
+      "id": "https://openalex.org/A5100450141",
+      "display_name": "Jun Chen",
+      "orcid": "https://orcid.org/0000-0001-7397-2714",
+      "h_index": 64,
+      "i10_index": 364,
+      "works_count": 975,
+      "cited_by_count": 18283,
+      "discipline": "Instrumentation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Instrumentation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    }
+  ]
+}
