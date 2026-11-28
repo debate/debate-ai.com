@@ -1,0 +1,48 @@
+{
+  "kind": "subfield",
+  "id": 2102,
+  "name": "Energy Engineering and Power Technology",
+  "total_in_scrape": 2,
+  "count": 2,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Energy Engineering and Power Technology -- 9.9",
+      "id": "https://openalex.org/A5029120429",
+      "display_name": "Abdul Ghani Olabi",
+      "orcid": "https://orcid.org/0000-0001-9209-3619",
+      "h_index": 135,
+      "i10_index": 541,
+      "works_count": 856,
+      "cited_by_count": 65197,
+      "discipline": "Energy Engineering and Power Technology",
+      "primary_field": "Energy",
+      "primary_subfield": "Energy Engineering and Power Technology",
+      "fields": [
+        "Energy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Energy Engineering and Power Technology -- 9.9",
+      "id": "https://openalex.org/A5078913350",
+      "display_name": "Christian Breyer",
+      "orcid": "https://orcid.org/0000-0002-7380-1816",
+      "h_index": 103,
+      "i10_index": 296,
+      "works_count": 576,
+      "cited_by_count": 35980,
+      "discipline": "Energy Engineering and Power Technology",
+      "primary_field": "Energy",
+      "primary_subfield": "Energy Engineering and Power Technology",
+      "fields": [
+        "Energy",
+        "Engineering"
+      ]
+    }
+  ]
+}

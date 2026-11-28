@@ -1,0 +1,1225 @@
+{
+  "kind": "subfield",
+  "id": 2802,
+  "name": "Behavioral Neuroscience",
+  "total_in_scrape": 62,
+  "count": 62,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Behavioral Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5035103174",
+      "display_name": "Bruce S. McEwen",
+      "orcid": "https://orcid.org/0000-0002-5288-7892",
+      "h_index": 237,
+      "i10_index": 1065,
+      "works_count": 1351,
+      "cited_by_count": 261336,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Behavioral Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5034400760",
+      "display_name": "Michael Joseph Meaney",
+      "orcid": "https://orcid.org/0000-0002-8605-1997",
+      "h_index": 147,
+      "i10_index": 515,
+      "works_count": 796,
+      "cited_by_count": 105645,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Behavioral Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5011957342",
+      "display_name": "Steven F. Maier",
+      "orcid": "https://orcid.org/0000-0002-3370-6160",
+      "h_index": 147,
+      "i10_index": 460,
+      "works_count": 577,
+      "cited_by_count": 74949,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Behavioral Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5083695665",
+      "display_name": "Clemens Kirschbaum",
+      "orcid": "https://orcid.org/0000-0003-3707-4444",
+      "h_index": 140,
+      "i10_index": 459,
+      "works_count": 689,
+      "cited_by_count": 89627,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Behavioral Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5085514973",
+      "display_name": "E. R. de Kloet",
+      "orcid": "https://orcid.org/0000-0001-9176-1830",
+      "h_index": 134,
+      "i10_index": 525,
+      "works_count": 864,
+      "cited_by_count": 73963,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Behavioral Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5085756728",
+      "display_name": "Carmine Maria Pariante",
+      "orcid": "https://orcid.org/0000-0002-9132-5091",
+      "h_index": 132,
+      "i10_index": 450,
+      "works_count": 1115,
+      "cited_by_count": 70527,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5072175765",
+      "display_name": "Robert Morris Sapolsky",
+      "orcid": "https://orcid.org/0000-0002-7435-5838",
+      "h_index": 126,
+      "i10_index": 364,
+      "works_count": 583,
+      "cited_by_count": 73983,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5005936736",
+      "display_name": "Michael R. Irwin",
+      "orcid": "https://orcid.org/0000-0002-1502-8431",
+      "h_index": 124,
+      "i10_index": 526,
+      "works_count": 801,
+      "cited_by_count": 65943,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5019172558",
+      "display_name": "Sheldon Cohen",
+      "orcid": "https://orcid.org/0000-0003-2248-4600",
+      "h_index": 123,
+      "i10_index": 255,
+      "works_count": 364,
+      "cited_by_count": 153853,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5050148319",
+      "display_name": "Janice K. Kiecolt‐Glaser",
+      "orcid": "https://orcid.org/0000-0003-4900-9578",
+      "h_index": 121,
+      "i10_index": 278,
+      "works_count": 421,
+      "cited_by_count": 59696,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5108799529",
+      "display_name": "Ronald Glaser",
+      "orcid": null,
+      "h_index": 117,
+      "i10_index": 260,
+      "works_count": 389,
+      "cited_by_count": 51330,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Medicine",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5011136538",
+      "display_name": "Steve W. Cole",
+      "orcid": "https://orcid.org/0000-0002-7168-8039",
+      "h_index": 116,
+      "i10_index": 378,
+      "works_count": 643,
+      "cited_by_count": 51285,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5017571758",
+      "display_name": "Stafford Louis Lightman",
+      "orcid": "https://orcid.org/0000-0002-8546-9646",
+      "h_index": 112,
+      "i10_index": 612,
+      "works_count": 1205,
+      "cited_by_count": 52040,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5069823044",
+      "display_name": "Marian Joëls",
+      "orcid": "https://orcid.org/0000-0002-4826-6209",
+      "h_index": 107,
+      "i10_index": 307,
+      "works_count": 509,
+      "cited_by_count": 50667,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5110122665",
+      "display_name": "Hymie Anisman",
+      "orcid": null,
+      "h_index": 106,
+      "i10_index": 400,
+      "works_count": 577,
+      "cited_by_count": 37833,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5110425058",
+      "display_name": "Philip W. Gold",
+      "orcid": "https://orcid.org/0000-0002-2199-6076",
+      "h_index": 103,
+      "i10_index": 330,
+      "works_count": 424,
+      "cited_by_count": 41419,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Behavioral Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5084148049",
+      "display_name": "Dirk Helmut Hellhammer",
+      "orcid": "https://orcid.org/0000-0001-9262-6681",
+      "h_index": 103,
+      "i10_index": 198,
+      "works_count": 365,
+      "cited_by_count": 60420,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5025043851",
+      "display_name": "Gregory E. Miller",
+      "orcid": "https://orcid.org/0000-0002-7217-1082",
+      "h_index": 102,
+      "i10_index": 284,
+      "works_count": 446,
+      "cited_by_count": 50594,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5056855507",
+      "display_name": "James P. Herman",
+      "orcid": "https://orcid.org/0000-0003-3571-2406",
+      "h_index": 101,
+      "i10_index": 259,
+      "works_count": 357,
+      "cited_by_count": 46631,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5007674783",
+      "display_name": "Cobi J. Heijnen",
+      "orcid": "https://orcid.org/0000-0002-1928-3050",
+      "h_index": 100,
+      "i10_index": 398,
+      "works_count": 700,
+      "cited_by_count": 32830,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5111437659",
+      "display_name": "Seymour Levine",
+      "orcid": null,
+      "h_index": 99,
+      "i10_index": 333,
+      "works_count": 424,
+      "cited_by_count": 31614,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5057051288",
+      "display_name": "Jens C. Pruessner",
+      "orcid": "https://orcid.org/0000-0002-8582-2980",
+      "h_index": 98,
+      "i10_index": 249,
+      "works_count": 501,
+      "cited_by_count": 44514,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5069663022",
+      "display_name": "Catherine L. Rivier",
+      "orcid": null,
+      "h_index": 97,
+      "i10_index": 301,
+      "works_count": 383,
+      "cited_by_count": 42715,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5110036441",
+      "display_name": "Mary F. Dallman",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 238,
+      "works_count": 285,
+      "cited_by_count": 31429,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5062318456",
+      "display_name": "Ned H. Kalin",
+      "orcid": "https://orcid.org/0000-0003-1184-0868",
+      "h_index": 92,
+      "i10_index": 251,
+      "works_count": 491,
+      "cited_by_count": 30639,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5033835492",
+      "display_name": "Jaap M. Koolhaas",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 214,
+      "works_count": 282,
+      "cited_by_count": 31188,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5042495041",
+      "display_name": "Manfred Schedlowski",
+      "orcid": "https://orcid.org/0000-0002-9968-9770",
+      "h_index": 90,
+      "i10_index": 272,
+      "works_count": 541,
+      "cited_by_count": 25874,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Behavioral Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5065208828",
+      "display_name": "Annemieke Kavelaars",
+      "orcid": "https://orcid.org/0000-0001-5162-0419",
+      "h_index": 89,
+      "i10_index": 265,
+      "works_count": 440,
+      "cited_by_count": 23719,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Medicine",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5000501122",
+      "display_name": "Paul John Lucassen",
+      "orcid": "https://orcid.org/0000-0001-9708-9133",
+      "h_index": 89,
+      "i10_index": 231,
+      "works_count": 404,
+      "cited_by_count": 25996,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5061175654",
+      "display_name": "John F. Sheridan",
+      "orcid": "https://orcid.org/0000-0002-6927-0266",
+      "h_index": 88,
+      "i10_index": 215,
+      "works_count": 365,
+      "cited_by_count": 29782,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5018246897",
+      "display_name": "David M. Almeida",
+      "orcid": "https://orcid.org/0000-0002-5233-8148",
+      "h_index": 86,
+      "i10_index": 292,
+      "works_count": 549,
+      "cited_by_count": 28298,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Psychology",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5033720615",
+      "display_name": "Monika Fleshner",
+      "orcid": "https://orcid.org/0000-0002-0470-0827",
+      "h_index": 85,
+      "i10_index": 190,
+      "works_count": 297,
+      "cited_by_count": 23336,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5073050075",
+      "display_name": "Douglas Alan Granger",
+      "orcid": "https://orcid.org/0000-0002-1355-0218",
+      "h_index": 82,
+      "i10_index": 299,
+      "works_count": 422,
+      "cited_by_count": 24440,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5073332867",
+      "display_name": "Sonia J. Lupien",
+      "orcid": "https://orcid.org/0000-0002-8763-393X",
+      "h_index": 82,
+      "i10_index": 204,
+      "works_count": 418,
+      "cited_by_count": 41002,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5091139449",
+      "display_name": "Naomi I. Eisenberger",
+      "orcid": "https://orcid.org/0009-0002-6425-4416",
+      "h_index": 81,
+      "i10_index": 165,
+      "works_count": 256,
+      "cited_by_count": 33193,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5005271615",
+      "display_name": "Manfred Uhr",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 194,
+      "works_count": 338,
+      "cited_by_count": 25782,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5036257304",
+      "display_name": "Owen M. Wolkowitz",
+      "orcid": "https://orcid.org/0000-0003-0655-5042",
+      "h_index": 77,
+      "i10_index": 206,
+      "works_count": 332,
+      "cited_by_count": 22008,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5027159489",
+      "display_name": "Johannes M. H. M. Reul",
+      "orcid": "https://orcid.org/0000-0002-8787-4012",
+      "h_index": 77,
+      "i10_index": 130,
+      "works_count": 198,
+      "cited_by_count": 20686,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Behavioral Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5049414539",
+      "display_name": "Ulrike Ehlert",
+      "orcid": "https://orcid.org/0000-0002-1982-8321",
+      "h_index": 76,
+      "i10_index": 255,
+      "works_count": 615,
+      "cited_by_count": 29753,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5023136649",
+      "display_name": "Christopher L. Coe",
+      "orcid": "https://orcid.org/0000-0001-9335-9060",
+      "h_index": 75,
+      "i10_index": 259,
+      "works_count": 469,
+      "cited_by_count": 18680,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Social Sciences",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5071397090",
+      "display_name": "Stephen G. Matthews",
+      "orcid": "https://orcid.org/0000-0002-9654-9940",
+      "h_index": 74,
+      "i10_index": 225,
+      "works_count": 333,
+      "cited_by_count": 18936,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Medicine",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5074716536",
+      "display_name": "Marcus Ising",
+      "orcid": "https://orcid.org/0000-0001-5421-5777",
+      "h_index": 74,
+      "i10_index": 173,
+      "works_count": 395,
+      "cited_by_count": 20730,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5051876711",
+      "display_name": "Tracy L. Bale",
+      "orcid": "https://orcid.org/0000-0002-5017-5162",
+      "h_index": 74,
+      "i10_index": 126,
+      "works_count": 198,
+      "cited_by_count": 22682,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5004391355",
+      "display_name": "Paul M. Plotsky",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 114,
+      "works_count": 153,
+      "cited_by_count": 30865,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5045948196",
+      "display_name": "Firdaus S. Dhabhar",
+      "orcid": "https://orcid.org/0000-0002-2721-6130",
+      "h_index": 73,
+      "i10_index": 109,
+      "works_count": 177,
+      "cited_by_count": 28803,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5038998667",
+      "display_name": "L. Michael Romero",
+      "orcid": "https://orcid.org/0000-0002-8854-8884",
+      "h_index": 72,
+      "i10_index": 185,
+      "works_count": 274,
+      "cited_by_count": 31621,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Neuroscience",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5063922971",
+      "display_name": "Osborne F. X. Almeida",
+      "orcid": "https://orcid.org/0000-0001-7331-6928",
+      "h_index": 72,
+      "i10_index": 160,
+      "works_count": 256,
+      "cited_by_count": 18040,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5042132328",
+      "display_name": "Robert J. Handa",
+      "orcid": "https://orcid.org/0000-0001-9131-2808",
+      "h_index": 71,
+      "i10_index": 214,
+      "works_count": 305,
+      "cited_by_count": 18757,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5002201058",
+      "display_name": "George M. Slavich",
+      "orcid": "https://orcid.org/0000-0001-5710-3818",
+      "h_index": 71,
+      "i10_index": 187,
+      "works_count": 411,
+      "cited_by_count": 29439,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5058281761",
+      "display_name": "Mathias V. Schmidt",
+      "orcid": "https://orcid.org/0000-0002-3788-2268",
+      "h_index": 70,
+      "i10_index": 153,
+      "works_count": 250,
+      "cited_by_count": 14187,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Behavioral Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5012617946",
+      "display_name": "Onno Cornelis Meijer",
+      "orcid": "https://orcid.org/0000-0002-8394-6859",
+      "h_index": 69,
+      "i10_index": 192,
+      "works_count": 361,
+      "cited_by_count": 15668,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5078574372",
+      "display_name": "Ulf Lundberg",
+      "orcid": "https://orcid.org/0000-0002-0232-5744",
+      "h_index": 68,
+      "i10_index": 153,
+      "works_count": 322,
+      "cited_by_count": 15251,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Medicine",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5110272322",
+      "display_name": "Greti Aguilera",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 152,
+      "works_count": 181,
+      "cited_by_count": 12974,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5108004671",
+      "display_name": "Anna C. Phillips",
+      "orcid": "https://orcid.org/0000-0002-5461-0598",
+      "h_index": 67,
+      "i10_index": 167,
+      "works_count": 507,
+      "cited_by_count": 12996,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Medicine",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5073588177",
+      "display_name": "Antonio Armario",
+      "orcid": "https://orcid.org/0000-0001-9524-3635",
+      "h_index": 66,
+      "i10_index": 205,
+      "works_count": 296,
+      "cited_by_count": 13072,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5049798556",
+      "display_name": "Holger Ursin",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 157,
+      "works_count": 296,
+      "cited_by_count": 17517,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5032583018",
+      "display_name": "Nicolas Rohleder",
+      "orcid": "https://orcid.org/0000-0003-2602-517X",
+      "h_index": 66,
+      "i10_index": 146,
+      "works_count": 319,
+      "cited_by_count": 21578,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5031323465",
+      "display_name": "Anna L. Marsland",
+      "orcid": "https://orcid.org/0000-0001-8951-7513",
+      "h_index": 65,
+      "i10_index": 150,
+      "works_count": 294,
+      "cited_by_count": 13545,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5031476821",
+      "display_name": "Raz Yirmiya",
+      "orcid": "https://orcid.org/0000-0002-4009-7316",
+      "h_index": 65,
+      "i10_index": 127,
+      "works_count": 213,
+      "cited_by_count": 19049,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5111867830",
+      "display_name": "Bruce S. Rabin",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 162,
+      "works_count": 253,
+      "cited_by_count": 15263,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5103128204",
+      "display_name": "Synthia H. Mellon",
+      "orcid": "https://orcid.org/0000-0002-6392-4089",
+      "h_index": 64,
+      "i10_index": 139,
+      "works_count": 204,
+      "cited_by_count": 17502,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Medicine",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Behavioral Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5005944709",
+      "display_name": "Seema Bhatnagar",
+      "orcid": "https://orcid.org/0000-0003-4371-0910",
+      "h_index": 64,
+      "i10_index": 106,
+      "works_count": 146,
+      "cited_by_count": 15827,
+      "discipline": "Behavioral Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Behavioral Neuroscience",
+      "fields": [
+        "Neuroscience"
+      ]
+    }
+  ]
+}

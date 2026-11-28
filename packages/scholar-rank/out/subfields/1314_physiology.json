@@ -1,0 +1,962 @@
+{
+  "kind": "subfield",
+  "id": 1314,
+  "name": "Physiology",
+  "total_in_scrape": 48,
+  "count": 48,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Physiology -- 9.9",
+      "id": "https://openalex.org/A5058369958",
+      "display_name": "Geoffrey Burnstock",
+      "orcid": "https://orcid.org/0000-0001-8152-7979",
+      "h_index": 158,
+      "i10_index": 1232,
+      "works_count": 1899,
+      "cited_by_count": 123229,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Physiology -- 9.9",
+      "id": "https://openalex.org/A5017854085",
+      "display_name": "Francesco Di Virgilio",
+      "orcid": "https://orcid.org/0000-0003-3566-1362",
+      "h_index": 120,
+      "i10_index": 322,
+      "works_count": 615,
+      "cited_by_count": 55563,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Physiology -- 9.9",
+      "id": "https://openalex.org/A5109316958",
+      "display_name": "Bertil B. Fredholm",
+      "orcid": null,
+      "h_index": 113,
+      "i10_index": 496,
+      "works_count": 659,
+      "cited_by_count": 54559,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Physiology -- 9.9",
+      "id": "https://openalex.org/A5091587615",
+      "display_name": "Kenneth A. Jacobson",
+      "orcid": "https://orcid.org/0000-0001-8104-1493",
+      "h_index": 111,
+      "i10_index": 735,
+      "works_count": 1120,
+      "cited_by_count": 59186,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Physiology -- 9.9",
+      "id": "https://openalex.org/A5041621533",
+      "display_name": "Simon Christopher Robson",
+      "orcid": "https://orcid.org/0000-0001-6374-0194",
+      "h_index": 107,
+      "i10_index": 415,
+      "works_count": 734,
+      "cited_by_count": 44469,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Physiology -- 9.9",
+      "id": "https://openalex.org/A5001509341",
+      "display_name": "Holger Klaus Eltzschig",
+      "orcid": "https://orcid.org/0000-0002-5676-6473",
+      "h_index": 107,
+      "i10_index": 282,
+      "works_count": 517,
+      "cited_by_count": 43187,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5100635825",
+      "display_name": "Christa Elisabeth Müller",
+      "orcid": "https://orcid.org/0000-0002-0013-6624",
+      "h_index": 98,
+      "i10_index": 481,
+      "works_count": 817,
+      "cited_by_count": 35604,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5111984532",
+      "display_name": "Yoshitaka Nagahama",
+      "orcid": null,
+      "h_index": 98,
+      "i10_index": 387,
+      "works_count": 596,
+      "cited_by_count": 37580,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5025561543",
+      "display_name": "Joel M Linden",
+      "orcid": "https://orcid.org/0000-0001-7874-0090",
+      "h_index": 96,
+      "i10_index": 308,
+      "works_count": 465,
+      "cited_by_count": 37363,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5048760718",
+      "display_name": "György Haskó",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 218,
+      "works_count": 327,
+      "cited_by_count": 30576,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5072159453",
+      "display_name": "Jiang‐Fan Chen",
+      "orcid": "https://orcid.org/0000-0002-0446-3956",
+      "h_index": 90,
+      "i10_index": 225,
+      "works_count": 315,
+      "cited_by_count": 28783,
+      "discipline": "Physiology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5059516590",
+      "display_name": "Bruce Neil Cronstein",
+      "orcid": "https://orcid.org/0000-0002-4295-7383",
+      "h_index": 90,
+      "i10_index": 224,
+      "works_count": 397,
+      "cited_by_count": 30279,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5045949797",
+      "display_name": "Annmarie Surprenant",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 144,
+      "works_count": 173,
+      "cited_by_count": 29823,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5101984820",
+      "display_name": "Kazuhide Inoue",
+      "orcid": "https://orcid.org/0000-0003-0385-9577",
+      "h_index": 82,
+      "i10_index": 215,
+      "works_count": 451,
+      "cited_by_count": 27286,
+      "discipline": "Physiology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5038155532",
+      "display_name": "George Dubyak",
+      "orcid": "https://orcid.org/0000-0001-9720-4226",
+      "h_index": 80,
+      "i10_index": 177,
+      "works_count": 251,
+      "cited_by_count": 22065,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5005780035",
+      "display_name": "Edwin Kerry Jackson",
+      "orcid": "https://orcid.org/0000-0002-8101-6009",
+      "h_index": 79,
+      "i10_index": 390,
+      "works_count": 604,
+      "cited_by_count": 25066,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Physiology -- 9.8",
+      "id": "https://openalex.org/A5029049466",
+      "display_name": "Peter Thomas",
+      "orcid": "https://orcid.org/0000-0001-6656-4907",
+      "h_index": 78,
+      "i10_index": 238,
+      "works_count": 279,
+      "cited_by_count": 21754,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5120593254",
+      "display_name": "Anthony Galione",
+      "orcid": "https://orcid.org/0000-0002-4132-7646",
+      "h_index": 78,
+      "i10_index": 167,
+      "works_count": 192,
+      "cited_by_count": 18714,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5013716423",
+      "display_name": "Pier Andrea Borea",
+      "orcid": "https://orcid.org/0000-0003-1118-9171",
+      "h_index": 75,
+      "i10_index": 307,
+      "works_count": 436,
+      "cited_by_count": 18965,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5018360276",
+      "display_name": "Katia Varani",
+      "orcid": "https://orcid.org/0000-0003-4562-1348",
+      "h_index": 74,
+      "i10_index": 280,
+      "works_count": 395,
+      "cited_by_count": 16934,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5007945612",
+      "display_name": "Oliana Carnevali",
+      "orcid": "https://orcid.org/0000-0001-5994-0572",
+      "h_index": 74,
+      "i10_index": 232,
+      "works_count": 371,
+      "cited_by_count": 30068,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5003933043",
+      "display_name": "Davide Ferrari",
+      "orcid": "https://orcid.org/0000-0002-7058-5011",
+      "h_index": 74,
+      "i10_index": 124,
+      "works_count": 182,
+      "cited_by_count": 22856,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5062628094",
+      "display_name": "Maria P. Abbracchio",
+      "orcid": "https://orcid.org/0000-0002-7833-3388",
+      "h_index": 73,
+      "i10_index": 190,
+      "works_count": 363,
+      "cited_by_count": 21291,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5070127090",
+      "display_name": "Michael R. Blackburn",
+      "orcid": "https://orcid.org/0000-0002-1394-9966",
+      "h_index": 73,
+      "i10_index": 163,
+      "works_count": 243,
+      "cited_by_count": 15812,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5028318519",
+      "display_name": "Péter Illés",
+      "orcid": "https://orcid.org/0000-0003-0484-9389",
+      "h_index": 72,
+      "i10_index": 284,
+      "works_count": 417,
+      "cited_by_count": 18833,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5057582462",
+      "display_name": "Jürgen Schrader",
+      "orcid": "https://orcid.org/0000-0002-7742-2768",
+      "h_index": 72,
+      "i10_index": 206,
+      "works_count": 322,
+      "cited_by_count": 17945,
+      "discipline": "Physiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5050544457",
+      "display_name": "Herbert Zimmermann",
+      "orcid": "https://orcid.org/0000-0001-5944-0463",
+      "h_index": 72,
+      "i10_index": 190,
+      "works_count": 288,
+      "cited_by_count": 20045,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Physiology -- 9.7",
+      "id": "https://openalex.org/A5063849560",
+      "display_name": "Yonathan Zohar",
+      "orcid": "https://orcid.org/0000-0003-1092-3557",
+      "h_index": 72,
+      "i10_index": 175,
+      "works_count": 257,
+      "cited_by_count": 15360,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5030100165",
+      "display_name": "Alexander P. Scott",
+      "orcid": "https://orcid.org/0000-0002-5540-1317",
+      "h_index": 71,
+      "i10_index": 183,
+      "works_count": 238,
+      "cited_by_count": 15380,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5109994348",
+      "display_name": "Olivier Kah",
+      "orcid": "https://orcid.org/0000-0002-7035-4133",
+      "h_index": 71,
+      "i10_index": 174,
+      "works_count": 405,
+      "cited_by_count": 15628,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5070324202",
+      "display_name": "Silvia Zanuy",
+      "orcid": "https://orcid.org/0000-0002-8231-8260",
+      "h_index": 71,
+      "i10_index": 172,
+      "works_count": 397,
+      "cited_by_count": 13538,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5004819710",
+      "display_name": "Vance Lionel Trudeau",
+      "orcid": "https://orcid.org/0000-0002-0845-9444",
+      "h_index": 70,
+      "i10_index": 265,
+      "works_count": 392,
+      "cited_by_count": 17569,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5062405338",
+      "display_name": "Friedrich Koch‐Nolte",
+      "orcid": "https://orcid.org/0000-0003-1730-6674",
+      "h_index": 70,
+      "i10_index": 219,
+      "works_count": 386,
+      "cited_by_count": 17523,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5068508088",
+      "display_name": "T.G. Pottinger",
+      "orcid": "https://orcid.org/0000-0001-7661-9369",
+      "h_index": 70,
+      "i10_index": 138,
+      "works_count": 197,
+      "cited_by_count": 15479,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5110219709",
+      "display_name": "Glen Van Der Kraak",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 174,
+      "works_count": 214,
+      "cited_by_count": 15126,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5109588191",
+      "display_name": "Roland Billard",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 211,
+      "works_count": 398,
+      "cited_by_count": 15367,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5022758375",
+      "display_name": "Mathilakath M. Vijayan",
+      "orcid": "https://orcid.org/0000-0002-4300-1965",
+      "h_index": 68,
+      "i10_index": 170,
+      "works_count": 221,
+      "cited_by_count": 18269,
+      "discipline": "Physiology",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5086060042",
+      "display_name": "Haoxing Xu",
+      "orcid": "https://orcid.org/0000-0003-3561-4654",
+      "h_index": 68,
+      "i10_index": 103,
+      "works_count": 153,
+      "cited_by_count": 29450,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Physiology -- 9.6",
+      "id": "https://openalex.org/A5076550118",
+      "display_name": "Peter William Sorensen",
+      "orcid": "https://orcid.org/0000-0003-0321-1279",
+      "h_index": 67,
+      "i10_index": 161,
+      "works_count": 215,
+      "cited_by_count": 12868,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Physiology -- 9.5",
+      "id": "https://openalex.org/A5005189798",
+      "display_name": "Francesc Piferrer",
+      "orcid": "https://orcid.org/0000-0003-0903-4736",
+      "h_index": 67,
+      "i10_index": 147,
+      "works_count": 407,
+      "cited_by_count": 14835,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Physiology -- 9.5",
+      "id": "https://openalex.org/A5040257436",
+      "display_name": "Eduardo Rodolfo Lazarowski",
+      "orcid": "https://orcid.org/0000-0002-5419-351X",
+      "h_index": 67,
+      "i10_index": 113,
+      "works_count": 138,
+      "cited_by_count": 17119,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Physiology -- 9.5",
+      "id": "https://openalex.org/A5015482665",
+      "display_name": "Deborah Mary Power",
+      "orcid": "https://orcid.org/0000-0003-1366-0246",
+      "h_index": 66,
+      "i10_index": 277,
+      "works_count": 440,
+      "cited_by_count": 16085,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Physiology -- 9.5",
+      "id": "https://openalex.org/A5012615383",
+      "display_name": "Jean Sévigny",
+      "orcid": "https://orcid.org/0000-0003-2922-1600",
+      "h_index": 66,
+      "i10_index": 249,
+      "works_count": 403,
+      "cited_by_count": 17388,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Physiology -- 9.5",
+      "id": "https://openalex.org/A5049722600",
+      "display_name": "Gary A. Weisman",
+      "orcid": "https://orcid.org/0000-0002-3246-6353",
+      "h_index": 66,
+      "i10_index": 147,
+      "works_count": 220,
+      "cited_by_count": 13034,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Physiology -- 9.5",
+      "id": "https://openalex.org/A5064737481",
+      "display_name": "Katsumi Aida",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 253,
+      "works_count": 364,
+      "cited_by_count": 13309,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Physiology -- 9.5",
+      "id": "https://openalex.org/A5045828863",
+      "display_name": "Stanko S. Stojilković",
+      "orcid": "https://orcid.org/0000-0002-7329-7488",
+      "h_index": 64,
+      "i10_index": 229,
+      "works_count": 309,
+      "cited_by_count": 13650,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Physiology -- 9.5",
+      "id": "https://openalex.org/A5067808979",
+      "display_name": "Claudia Martini",
+      "orcid": "https://orcid.org/0000-0001-9379-3027",
+      "h_index": 63,
+      "i10_index": 383,
+      "works_count": 946,
+      "cited_by_count": 16625,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Neuroscience",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Physiology -- 9.5",
+      "id": "https://openalex.org/A5052491753",
+      "display_name": "Adelino V. M. Canário",
+      "orcid": "https://orcid.org/0000-0002-6244-6468",
+      "h_index": 63,
+      "i10_index": 248,
+      "works_count": 465,
+      "cited_by_count": 14500,
+      "discipline": "Physiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Physiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Neuroscience"
+      ]
+    }
+  ]
+}

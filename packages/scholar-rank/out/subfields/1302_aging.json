@@ -1,0 +1,836 @@
+{
+  "kind": "subfield",
+  "id": 1302,
+  "name": "Aging",
+  "total_in_scrape": 43,
+  "count": 43,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Aging -- 9.9",
+      "id": "https://openalex.org/A5078302741",
+      "display_name": "Claudio Franceschi",
+      "orcid": "https://orcid.org/0000-0001-9841-6386",
+      "h_index": 145,
+      "i10_index": 790,
+      "works_count": 1123,
+      "cited_by_count": 107686,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Aging -- 9.9",
+      "id": "https://openalex.org/A5059311261",
+      "display_name": "Linda Partridge",
+      "orcid": "https://orcid.org/0000-0001-9615-0094",
+      "h_index": 136,
+      "i10_index": 407,
+      "works_count": 682,
+      "cited_by_count": 78257,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Aging -- 9.9",
+      "id": "https://openalex.org/A5038923785",
+      "display_name": "Rafael de Cabo",
+      "orcid": "https://orcid.org/0000-0003-2830-5693",
+      "h_index": 122,
+      "i10_index": 340,
+      "works_count": 508,
+      "cited_by_count": 61662,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Aging -- 9.9",
+      "id": "https://openalex.org/A5055979731",
+      "display_name": "Nir Barzilai",
+      "orcid": "https://orcid.org/0000-0002-7787-6268",
+      "h_index": 108,
+      "i10_index": 293,
+      "works_count": 474,
+      "cited_by_count": 46184,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Aging -- 9.9",
+      "id": "https://openalex.org/A5059964281",
+      "display_name": "Peter S. Rabinovitch",
+      "orcid": "https://orcid.org/0000-0001-7169-3543",
+      "h_index": 103,
+      "i10_index": 304,
+      "works_count": 429,
+      "cited_by_count": 39820,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Aging -- 9.9",
+      "id": "https://openalex.org/A5067445018",
+      "display_name": "José Viña",
+      "orcid": "https://orcid.org/0000-0001-9709-0089",
+      "h_index": 101,
+      "i10_index": 322,
+      "works_count": 563,
+      "cited_by_count": 40867,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5013113087",
+      "display_name": "Brian Keith Kennedy",
+      "orcid": "https://orcid.org/0000-0002-5754-1874",
+      "h_index": 99,
+      "i10_index": 245,
+      "works_count": 411,
+      "cited_by_count": 41149,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5088357328",
+      "display_name": "Anne Brunet",
+      "orcid": "https://orcid.org/0000-0002-4608-6845",
+      "h_index": 95,
+      "i10_index": 151,
+      "works_count": 239,
+      "cited_by_count": 58738,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5044264789",
+      "display_name": "Donald K. Ingram",
+      "orcid": "https://orcid.org/0000-0001-6509-6910",
+      "h_index": 94,
+      "i10_index": 335,
+      "works_count": 433,
+      "cited_by_count": 42771,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5037656057",
+      "display_name": "Thomas B. L. Kirkwood",
+      "orcid": "https://orcid.org/0000-0002-6675-8944",
+      "h_index": 93,
+      "i10_index": 283,
+      "works_count": 577,
+      "cited_by_count": 41369,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5061020688",
+      "display_name": "Arlan G Richardson",
+      "orcid": "https://orcid.org/0000-0001-9622-7311",
+      "h_index": 88,
+      "i10_index": 237,
+      "works_count": 329,
+      "cited_by_count": 32975,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5072624010",
+      "display_name": "Matt R. Kaeberlein",
+      "orcid": "https://orcid.org/0000-0002-1311-3421",
+      "h_index": 87,
+      "i10_index": 240,
+      "works_count": 433,
+      "cited_by_count": 37832,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5000553265",
+      "display_name": "Daniela Monti",
+      "orcid": "https://orcid.org/0000-0001-8651-8123",
+      "h_index": 86,
+      "i10_index": 217,
+      "works_count": 306,
+      "cited_by_count": 30786,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5075151701",
+      "display_name": "Richard H. Weindruch",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 193,
+      "works_count": 267,
+      "cited_by_count": 35582,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5052978985",
+      "display_name": "Vera A. Gorbunova",
+      "orcid": "https://orcid.org/0000-0001-8979-0333",
+      "h_index": 85,
+      "i10_index": 195,
+      "works_count": 419,
+      "cited_by_count": 29724,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5054492574",
+      "display_name": "Hae Young Chung",
+      "orcid": "https://orcid.org/0000-0002-3215-8828",
+      "h_index": 84,
+      "i10_index": 435,
+      "works_count": 602,
+      "cited_by_count": 29802,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Aging -- 9.8",
+      "id": "https://openalex.org/A5071420074",
+      "display_name": "Nektarios Tavernarakis",
+      "orcid": "https://orcid.org/0000-0002-5253-1466",
+      "h_index": 84,
+      "i10_index": 221,
+      "works_count": 401,
+      "cited_by_count": 52666,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5012398734",
+      "display_name": "Jan Vijg",
+      "orcid": "https://orcid.org/0000-0002-8457-9595",
+      "h_index": 83,
+      "i10_index": 289,
+      "works_count": 476,
+      "cited_by_count": 28811,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5066597539",
+      "display_name": "Richard A. Miller",
+      "orcid": "https://orcid.org/0000-0001-9266-9649",
+      "h_index": 82,
+      "i10_index": 303,
+      "works_count": 474,
+      "cited_by_count": 29712,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5053475144",
+      "display_name": "Cynthia J. Kenyon",
+      "orcid": "https://orcid.org/0000-0003-3446-2636",
+      "h_index": 82,
+      "i10_index": 131,
+      "works_count": 212,
+      "cited_by_count": 43557,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5054868676",
+      "display_name": "Fabiola Olivieri",
+      "orcid": "https://orcid.org/0000-0002-9606-1144",
+      "h_index": 80,
+      "i10_index": 243,
+      "works_count": 405,
+      "cited_by_count": 28326,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5015945590",
+      "display_name": "Calogero Caruso",
+      "orcid": "https://orcid.org/0000-0001-8004-2363",
+      "h_index": 79,
+      "i10_index": 322,
+      "works_count": 548,
+      "cited_by_count": 23719,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5048442961",
+      "display_name": "Daniel W. Belsky",
+      "orcid": "https://orcid.org/0000-0001-5463-2212",
+      "h_index": 78,
+      "i10_index": 179,
+      "works_count": 325,
+      "cited_by_count": 32142,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5054858013",
+      "display_name": "João Pedro de Magalhães",
+      "orcid": "https://orcid.org/0000-0002-6363-2465",
+      "h_index": 78,
+      "i10_index": 170,
+      "works_count": 259,
+      "cited_by_count": 20925,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5077419383",
+      "display_name": "Andrei Seluanov",
+      "orcid": "https://orcid.org/0000-0003-3400-538X",
+      "h_index": 78,
+      "i10_index": 141,
+      "works_count": 232,
+      "cited_by_count": 22101,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5030785284",
+      "display_name": "Massimiliano Bonafè",
+      "orcid": "https://orcid.org/0000-0002-5218-6551",
+      "h_index": 77,
+      "i10_index": 175,
+      "works_count": 267,
+      "cited_by_count": 24864,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5025931713",
+      "display_name": "Stefano Salvioli",
+      "orcid": "https://orcid.org/0000-0002-1489-5322",
+      "h_index": 77,
+      "i10_index": 172,
+      "works_count": 250,
+      "cited_by_count": 22368,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Aging -- 9.7",
+      "id": "https://openalex.org/A5059153511",
+      "display_name": "George M. Martin",
+      "orcid": "https://orcid.org/0000-0002-7974-818X",
+      "h_index": 76,
+      "i10_index": 254,
+      "works_count": 496,
+      "cited_by_count": 26776,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5050412857",
+      "display_name": "Manuel Portero‐Otín",
+      "orcid": "https://orcid.org/0000-0002-1823-0299",
+      "h_index": 76,
+      "i10_index": 224,
+      "works_count": 323,
+      "cited_by_count": 18470,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5015372011",
+      "display_name": "Andrew G. Dillin",
+      "orcid": "https://orcid.org/0000-0002-7427-2629",
+      "h_index": 74,
+      "i10_index": 131,
+      "works_count": 198,
+      "cited_by_count": 33089,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5056759771",
+      "display_name": "George A. Kuchel",
+      "orcid": "https://orcid.org/0000-0001-8387-7040",
+      "h_index": 73,
+      "i10_index": 210,
+      "works_count": 452,
+      "cited_by_count": 20549,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5054433356",
+      "display_name": "Giuseppina Candore",
+      "orcid": "https://orcid.org/0000-0002-9966-934X",
+      "h_index": 70,
+      "i10_index": 244,
+      "works_count": 395,
+      "cited_by_count": 16027,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5064987589",
+      "display_name": "Miriam Capri",
+      "orcid": "https://orcid.org/0000-0001-9077-0401",
+      "h_index": 70,
+      "i10_index": 169,
+      "works_count": 243,
+      "cited_by_count": 19808,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5036998014",
+      "display_name": "Steven N. Austad",
+      "orcid": "https://orcid.org/0000-0003-4798-8442",
+      "h_index": 70,
+      "i10_index": 163,
+      "works_count": 311,
+      "cited_by_count": 18465,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Psychology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5048615839",
+      "display_name": "Thomas E. Johnson",
+      "orcid": "https://orcid.org/0000-0003-4073-938X",
+      "h_index": 70,
+      "i10_index": 161,
+      "works_count": 238,
+      "cited_by_count": 20749,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5031579243",
+      "display_name": "Thomas T. Perls",
+      "orcid": "https://orcid.org/0000-0002-2492-4334",
+      "h_index": 70,
+      "i10_index": 157,
+      "works_count": 331,
+      "cited_by_count": 15546,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5076215352",
+      "display_name": "Pidder Jansen‐Dürr",
+      "orcid": "https://orcid.org/0000-0001-7771-3429",
+      "h_index": 68,
+      "i10_index": 160,
+      "works_count": 240,
+      "cited_by_count": 18146,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5002183519",
+      "display_name": "Daniel Promislow",
+      "orcid": "https://orcid.org/0000-0001-7088-4495",
+      "h_index": 67,
+      "i10_index": 171,
+      "works_count": 335,
+      "cited_by_count": 15642,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Aging -- 9.6",
+      "id": "https://openalex.org/A5022574094",
+      "display_name": "David Gems",
+      "orcid": "https://orcid.org/0000-0002-6653-4676",
+      "h_index": 67,
+      "i10_index": 129,
+      "works_count": 236,
+      "cited_by_count": 23206,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Aging -- 9.5",
+      "id": "https://openalex.org/A5110195708",
+      "display_name": "S. Michal Jazwinski",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 172,
+      "works_count": 275,
+      "cited_by_count": 13237,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Aging -- 9.5",
+      "id": "https://openalex.org/A5047224964",
+      "display_name": "Rochelle Buffenstein",
+      "orcid": "https://orcid.org/0000-0003-3285-8311",
+      "h_index": 65,
+      "i10_index": 163,
+      "works_count": 251,
+      "cited_by_count": 15387,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Aging -- 9.5",
+      "id": "https://openalex.org/A5048198050",
+      "display_name": "Marc Tatar",
+      "orcid": "https://orcid.org/0000-0003-3232-6884",
+      "h_index": 64,
+      "i10_index": 106,
+      "works_count": 175,
+      "cited_by_count": 24451,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Aging -- 9.5",
+      "id": "https://openalex.org/A5063424030",
+      "display_name": "Mónica De la Fuente",
+      "orcid": "https://orcid.org/0000-0002-5969-097X",
+      "h_index": 63,
+      "i10_index": 220,
+      "works_count": 353,
+      "cited_by_count": 12243,
+      "discipline": "Aging",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aging",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    }
+  ]
+}

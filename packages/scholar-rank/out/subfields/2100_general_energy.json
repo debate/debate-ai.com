@@ -1,0 +1,30 @@
+{
+  "kind": "subfield",
+  "id": 2100,
+  "name": "General Energy",
+  "total_in_scrape": 1,
+  "count": 1,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "General Energy -- 9.9",
+      "id": "https://openalex.org/A5013688046",
+      "display_name": "Morgan Bazilian",
+      "orcid": "https://orcid.org/0000-0003-1650-8071",
+      "h_index": 86,
+      "i10_index": 222,
+      "works_count": 422,
+      "cited_by_count": 34093,
+      "discipline": "General Energy",
+      "primary_field": "Energy",
+      "primary_subfield": "General Energy",
+      "fields": [
+        "Energy",
+        "Engineering",
+        "Economics, Econometrics and Finance",
+        "Environmental Science"
+      ]
+    }
+  ]
+}
