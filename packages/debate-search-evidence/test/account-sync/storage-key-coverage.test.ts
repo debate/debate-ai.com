@@ -184,6 +184,8 @@ const DEVICE_LOCAL = new Set([
   "visitorLocation:v1",
   // Sync bookkeeping: the ids the account held at this browser's last merge, per account (`synced-id-baseline.ts`).
   "toolRecordSyncedIds",
+  // Word-count rounds deleted here that the account hasn't confirmed removing yet (`pendingWordCountDeletes.ts`).
+  "wordCountRounds:pendingAccountDeletes",
   // Unsent setup drafts for a practice debate vs AI: restored on this device only.
   "botSelectionState",
   "practiceSetupWizard",

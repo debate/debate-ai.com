@@ -26,8 +26,13 @@ them with the user's `saved_word_count_rounds` rows (`/api/word-count-rounds`, k
 received used to come back on the next merge: the account `DELETE` was fire-and-forget with an
 empty `.catch`, and a delete made before the first merge settled was never sent at all.
 
-Every deleted `roundId` now waits in the module-level `pendingAccountDeletes` set until the
-account confirms it. The merge leaves pending ids out of the account's list before
+Every deleted `roundId` now waits in `pendingAccountDeletes` until the account confirms it.
+That set is persisted in `localStorage` under `wordCountRounds:pendingAccountDeletes`
+(`state/pendingWordCountDeletes.ts`, listed as device-local in the storage-key coverage guard),
+so a delete that failed before the tab closed is still sent by the next page load's merge
+instead of the round being adopted back. Every access reads and writes storage, so two tabs
+share one list; when storage can't be read or written it falls back to memory for that page
+load. The stored list keeps at most 500 ids (oldest dropped). The merge leaves pending ids out of the account's list before
 `planWordCountRoundMerge`, then deletes them from the account. A failed delete stays pending
 and is retried by the next merge (a refocus past the 10-minute TTL, or the next page load).
 The hook also returns it as `accountDeleteError` (`buildWordCountDeleteFailureMessage` in
@@ -39,12 +44,14 @@ is cleared.
 (`buildWordCountRoundDeleteConfirm` / `buildWordCountClearAllConfirm`; signed in, the prompt
 says the account copy goes too). It shows the failure as a `role="alert"` line with **Try
 again** and **Dismiss**, and counts the rounds beside the **Round history** heading.
-Tests: `test/useWordCountRounds.test.tsx` ("failed account deletes"),
+Tests: `test/useWordCountRounds.test.tsx` ("failed account deletes", including the
+page-reload cases), `test/pendingWordCountDeletes.test.ts`,
 `test/savedWordCountRounds.test.ts`, `test/WordCountRoundsPanel.test.tsx` and
 `test/WordCountRoundsPanel.sync.test.tsx`.
 
-Known gaps: pending deletes live in memory, so a failed delete is forgotten if the tab closes
-before a retry. There are no tombstones, so a second device that still has the round locally
+Known gaps: a page load that finds the browser signed out clears the pending deletes (round
+ids are typed freely, so they could name another account's rounds), so a delete still failing
+when the session ends is forgotten. There are no tombstones, so a second device that still has the round locally
 pushes it back up on its own merge.
 
 ## Dependency graph
