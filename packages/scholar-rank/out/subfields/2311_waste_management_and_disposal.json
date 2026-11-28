@@ -1,0 +1,700 @@
+{
+  "kind": "subfield",
+  "id": 2311,
+  "name": "Waste Management and Disposal",
+  "total_in_scrape": 36,
+  "count": 36,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Waste Management and Disposal -- 9.9",
+      "id": "https://openalex.org/A5056472365",
+      "display_name": "Huu Hao Ngo",
+      "orcid": "https://orcid.org/0000-0002-0296-2866",
+      "h_index": 129,
+      "i10_index": 700,
+      "works_count": 938,
+      "cited_by_count": 68865,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Waste Management and Disposal -- 9.9",
+      "id": "https://openalex.org/A5006059763",
+      "display_name": "Wenshan Guo",
+      "orcid": "https://orcid.org/0000-0001-5542-2858",
+      "h_index": 112,
+      "i10_index": 472,
+      "works_count": 620,
+      "cited_by_count": 51041,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Waste Management and Disposal -- 9.9",
+      "id": "https://openalex.org/A5078359435",
+      "display_name": "Thomas H. Christensen",
+      "orcid": "https://orcid.org/0000-0002-7006-4320",
+      "h_index": 105,
+      "i10_index": 301,
+      "works_count": 580,
+      "cited_by_count": 37500,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Waste Management and Disposal -- 9.9",
+      "id": "https://openalex.org/A5100325431",
+      "display_name": "Jinhui Li",
+      "orcid": "https://orcid.org/0000-0001-7819-478X",
+      "h_index": 96,
+      "i10_index": 324,
+      "works_count": 460,
+      "cited_by_count": 32088,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Waste Management and Disposal -- 9.9",
+      "id": "https://openalex.org/A5045272351",
+      "display_name": "Peter A. Vanrolleghem",
+      "orcid": "https://orcid.org/0000-0003-1695-1313",
+      "h_index": 94,
+      "i10_index": 441,
+      "works_count": 1189,
+      "cited_by_count": 33223,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Waste Management and Disposal -- 9.9",
+      "id": "https://openalex.org/A5079501192",
+      "display_name": "Sunil Kumar",
+      "orcid": "https://orcid.org/0000-0003-1090-2684",
+      "h_index": 91,
+      "i10_index": 340,
+      "works_count": 550,
+      "cited_by_count": 28216,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5054790596",
+      "display_name": "Hans Brix",
+      "orcid": "https://orcid.org/0000-0003-2771-2983",
+      "h_index": 90,
+      "i10_index": 271,
+      "works_count": 465,
+      "cited_by_count": 27658,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5044558041",
+      "display_name": "Pinjing He",
+      "orcid": "https://orcid.org/0000-0002-7105-7376",
+      "h_index": 83,
+      "i10_index": 331,
+      "works_count": 474,
+      "cited_by_count": 24779,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5021629663",
+      "display_name": "Krist V. Gernaey",
+      "orcid": "https://orcid.org/0000-0002-0364-1773",
+      "h_index": 82,
+      "i10_index": 374,
+      "works_count": 962,
+      "cited_by_count": 23120,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5069888950",
+      "display_name": "Jörg E. Drewes",
+      "orcid": "https://orcid.org/0000-0003-2520-7596",
+      "h_index": 82,
+      "i10_index": 279,
+      "works_count": 530,
+      "cited_by_count": 27381,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5090045323",
+      "display_name": "José Torrent",
+      "orcid": "https://orcid.org/0000-0001-7725-105X",
+      "h_index": 75,
+      "i10_index": 202,
+      "works_count": 250,
+      "cited_by_count": 17391,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5038452432",
+      "display_name": "Jan Vymazal",
+      "orcid": "https://orcid.org/0000-0002-8113-4670",
+      "h_index": 75,
+      "i10_index": 181,
+      "works_count": 250,
+      "cited_by_count": 29038,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5074314607",
+      "display_name": "Zhenming Xu",
+      "orcid": "https://orcid.org/0000-0002-4605-9409",
+      "h_index": 74,
+      "i10_index": 280,
+      "works_count": 388,
+      "cited_by_count": 20360,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5050672997",
+      "display_name": "Liming Shao",
+      "orcid": "https://orcid.org/0000-0003-0694-7011",
+      "h_index": 74,
+      "i10_index": 252,
+      "works_count": 318,
+      "cited_by_count": 18874,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5056627733",
+      "display_name": "Joan García",
+      "orcid": "https://orcid.org/0000-0003-1258-8174",
+      "h_index": 73,
+      "i10_index": 190,
+      "works_count": 278,
+      "cited_by_count": 17684,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5032962550",
+      "display_name": "Thomas Fruergaard Astrup",
+      "orcid": "https://orcid.org/0000-0002-2853-1001",
+      "h_index": 73,
+      "i10_index": 159,
+      "works_count": 335,
+      "cited_by_count": 17271,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Waste Management and Disposal -- 9.8",
+      "id": "https://openalex.org/A5100419271",
+      "display_name": "Yi Chen",
+      "orcid": "https://orcid.org/0000-0002-8298-0350",
+      "h_index": 72,
+      "i10_index": 287,
+      "works_count": 545,
+      "cited_by_count": 16865,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5014206235",
+      "display_name": "Rajeshwar Dayal Tyagi",
+      "orcid": "https://orcid.org/0000-0003-3921-4340",
+      "h_index": 71,
+      "i10_index": 264,
+      "works_count": 484,
+      "cited_by_count": 21176,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5069302026",
+      "display_name": "Timothy G. Townsend",
+      "orcid": "https://orcid.org/0000-0002-1222-0954",
+      "h_index": 71,
+      "i10_index": 259,
+      "works_count": 423,
+      "cited_by_count": 16059,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5079400371",
+      "display_name": "Hua Zhang",
+      "orcid": "https://orcid.org/0000-0002-6767-4750",
+      "h_index": 70,
+      "i10_index": 287,
+      "works_count": 576,
+      "cited_by_count": 17845,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5100688114",
+      "display_name": "Shuang Liang",
+      "orcid": "https://orcid.org/0009-0007-7142-781X",
+      "h_index": 70,
+      "i10_index": 204,
+      "works_count": 274,
+      "cited_by_count": 21725,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5024589014",
+      "display_name": "Morton A. Barlaz",
+      "orcid": "https://orcid.org/0000-0001-8028-3917",
+      "h_index": 70,
+      "i10_index": 168,
+      "works_count": 250,
+      "cited_by_count": 28433,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5042181780",
+      "display_name": "Erik Meers",
+      "orcid": "https://orcid.org/0000-0002-8296-3462",
+      "h_index": 69,
+      "i10_index": 225,
+      "works_count": 585,
+      "cited_by_count": 17659,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5064119983",
+      "display_name": "Siti Rozaimah Sheikh Abdullah",
+      "orcid": "https://orcid.org/0000-0002-5282-8702",
+      "h_index": 68,
+      "i10_index": 251,
+      "works_count": 453,
+      "cited_by_count": 16680,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5058404436",
+      "display_name": "Stuart J. Khan",
+      "orcid": "https://orcid.org/0000-0001-5147-145X",
+      "h_index": 67,
+      "i10_index": 177,
+      "works_count": 255,
+      "cited_by_count": 16093,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5057979719",
+      "display_name": "Miklas Scholz",
+      "orcid": "https://orcid.org/0000-0001-8919-3838",
+      "h_index": 66,
+      "i10_index": 269,
+      "works_count": 632,
+      "cited_by_count": 18981,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5019433309",
+      "display_name": "Ni‐Bin Chang",
+      "orcid": "https://orcid.org/0000-0002-7162-7017",
+      "h_index": 66,
+      "i10_index": 235,
+      "works_count": 415,
+      "cited_by_count": 15600,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Waste Management and Disposal -- 9.7",
+      "id": "https://openalex.org/A5088206241",
+      "display_name": "Yaqian Zhao",
+      "orcid": "https://orcid.org/0000-0002-2449-4370",
+      "h_index": 66,
+      "i10_index": 231,
+      "works_count": 321,
+      "cited_by_count": 16898,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Waste Management and Disposal -- 9.6",
+      "id": "https://openalex.org/A5102841670",
+      "display_name": "Qi Zhou",
+      "orcid": "https://orcid.org/0000-0003-2794-9091",
+      "h_index": 66,
+      "i10_index": 154,
+      "works_count": 299,
+      "cited_by_count": 13707,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Waste Management and Disposal -- 9.6",
+      "id": "https://openalex.org/A5062352149",
+      "display_name": "Pay Drechsel",
+      "orcid": "https://orcid.org/0000-0002-2592-8812",
+      "h_index": 65,
+      "i10_index": 168,
+      "works_count": 391,
+      "cited_by_count": 16392,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Waste Management and Disposal -- 9.6",
+      "id": "https://openalex.org/A5052549442",
+      "display_name": "Toshiaki Yoshioka",
+      "orcid": "https://orcid.org/0000-0002-1982-550X",
+      "h_index": 64,
+      "i10_index": 326,
+      "works_count": 593,
+      "cited_by_count": 15063,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Waste Management and Disposal -- 9.6",
+      "id": "https://openalex.org/A5081551124",
+      "display_name": "Antonis A. Zorpas",
+      "orcid": "https://orcid.org/0000-0002-8154-5656",
+      "h_index": 64,
+      "i10_index": 193,
+      "works_count": 306,
+      "cited_by_count": 12935,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Waste Management and Disposal -- 9.6",
+      "id": "https://openalex.org/A5108391164",
+      "display_name": "Willi Gujer",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 146,
+      "works_count": 345,
+      "cited_by_count": 18931,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Waste Management and Disposal -- 9.6",
+      "id": "https://openalex.org/A5111404539",
+      "display_name": "Yuk Shan Wong",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 138,
+      "works_count": 411,
+      "cited_by_count": 12180,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Waste Management and Disposal -- 9.6",
+      "id": "https://openalex.org/A5038013125",
+      "display_name": "Fan Lü",
+      "orcid": "https://orcid.org/0000-0002-8496-3941",
+      "h_index": 63,
+      "i10_index": 217,
+      "works_count": 343,
+      "cited_by_count": 14814,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Waste Management and Disposal -- 9.6",
+      "id": "https://openalex.org/A5024421228",
+      "display_name": "Charlotte Scheutz",
+      "orcid": "https://orcid.org/0000-0003-2218-5934",
+      "h_index": 63,
+      "i10_index": 154,
+      "works_count": 399,
+      "cited_by_count": 11687,
+      "discipline": "Waste Management and Disposal",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Waste Management and Disposal",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    }
+  ]
+}

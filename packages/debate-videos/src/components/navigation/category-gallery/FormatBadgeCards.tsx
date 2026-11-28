@@ -1,9 +1,9 @@
 /**
  * @fileoverview The four main format cards — College Policy, HS Policy,
- * Individual and Forum — each just a logo, a label and a video count. They
+ * Forum and Individual — each just a logo, a label and a video count. They
  * open the lecture library's category bar and sit at the top of every
- * division page (`/videos/college`, `/videos/policy`, `/videos/ld`,
- * `/videos/pf`), the open one drawn selected.
+ * division page (`/videos/college`, `/videos/policy`, `/videos/pf`,
+ * `/videos/ld`), the open one drawn selected.
  */
 
 import React from "react";
@@ -28,8 +28,8 @@ export interface MainFormatBadge {
 export const MAIN_FORMAT_BADGES: MainFormatBadge[] = [
   { id: "college", title: "College Policy", href: "/videos/college", division: "NDT", style: 4 },
   { id: "policy", title: "HS Policy", href: "/videos/policy", division: "VCX", style: 1 },
-  { id: "ld", title: "Individual", href: "/videos/ld", division: "VLD", style: 3 },
   { id: "pf", title: "Forum", href: "/videos/pf", division: "VPF", style: 2 },
+  { id: "ld", title: "Individual", href: "/videos/ld", division: "VLD", style: 3 },
 ];
 
 const DIVISION_LOGOS: Record<string, string> = Object.fromEntries(
@@ -43,7 +43,7 @@ export function formatBadgeIdForStyle(style: DebateStyle | "" | null | undefined
 }
 
 interface FormatBadgeCardsProps {
-  /** Video totals keyed by card id (`college`, `policy`, `ld`, `pf`). */
+  /** Video totals keyed by card id (`college`, `policy`, `pf`, `ld`). */
   counts?: Record<string, number | undefined>;
   /** Id of the card to draw selected: the division page being viewed. */
   activeId?: string;

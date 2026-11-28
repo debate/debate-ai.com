@@ -1,0 +1,5929 @@
+{
+  "kind": "subfield",
+  "id": 1103,
+  "name": "Animal Science and Zoology",
+  "total_in_scrape": 300,
+  "count": 300,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Animal Science and Zoology -- 9.9",
+      "id": "https://openalex.org/A5044475205",
+      "display_name": "Guoyao Wu",
+      "orcid": "https://orcid.org/0000-0001-8058-6969",
+      "h_index": 141,
+      "i10_index": 590,
+      "works_count": 729,
+      "cited_by_count": 85808,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Animal Science and Zoology -- 9.9",
+      "id": "https://openalex.org/A5067822505",
+      "display_name": "José Manuel Lorenzo",
+      "orcid": "https://orcid.org/0000-0002-7725-9294",
+      "h_index": 136,
+      "i10_index": 883,
+      "works_count": 1179,
+      "cited_by_count": 76343,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Animal Science and Zoology -- 9.9",
+      "id": "https://openalex.org/A5021286537",
+      "display_name": "Fuller W. Bazer",
+      "orcid": "https://orcid.org/0000-0002-5823-5086",
+      "h_index": 128,
+      "i10_index": 714,
+      "works_count": 1028,
+      "cited_by_count": 65553,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Animal Science and Zoology -- 9.9",
+      "id": "https://openalex.org/A5073166765",
+      "display_name": "Daniel Martin Weary",
+      "orcid": "https://orcid.org/0000-0002-0917-3982",
+      "h_index": 119,
+      "i10_index": 408,
+      "works_count": 653,
+      "cited_by_count": 45512,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Animal Science and Zoology -- 9.9",
+      "id": "https://openalex.org/A5076315257",
+      "display_name": "Thomas E. Spencer",
+      "orcid": "https://orcid.org/0000-0003-2815-766X",
+      "h_index": 119,
+      "i10_index": 352,
+      "works_count": 525,
+      "cited_by_count": 47172,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Animal Science and Zoology -- 9.9",
+      "id": "https://openalex.org/A5042633786",
+      "display_name": "Tim Angus McAllister",
+      "orcid": "https://orcid.org/0000-0002-8266-6513",
+      "h_index": 117,
+      "i10_index": 817,
+      "works_count": 1303,
+      "cited_by_count": 64953,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5077280993",
+      "display_name": "William Watters Thatcher",
+      "orcid": "https://orcid.org/0000-0001-6866-3431",
+      "h_index": 117,
+      "i10_index": 379,
+      "works_count": 519,
+      "cited_by_count": 42810,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5100617681",
+      "display_name": "Yulong Yin",
+      "orcid": "https://orcid.org/0000-0001-6112-6975",
+      "h_index": 115,
+      "i10_index": 880,
+      "works_count": 1483,
+      "cited_by_count": 65005,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5030445641",
+      "display_name": "Karen Ann Beauchemin",
+      "orcid": "https://orcid.org/0000-0002-5070-4554",
+      "h_index": 109,
+      "i10_index": 428,
+      "works_count": 591,
+      "cited_by_count": 43667,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5064559752",
+      "display_name": "Linda J. Saif",
+      "orcid": "https://orcid.org/0000-0002-3224-9009",
+      "h_index": 108,
+      "i10_index": 448,
+      "works_count": 547,
+      "cited_by_count": 42105,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5013261223",
+      "display_name": "M.A.G. von Keyserlingk",
+      "orcid": "https://orcid.org/0000-0002-1427-3152",
+      "h_index": 107,
+      "i10_index": 332,
+      "works_count": 575,
+      "cited_by_count": 36736,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5062115118",
+      "display_name": "Herman Wildrik Barkema",
+      "orcid": "https://orcid.org/0000-0002-9678-8378",
+      "h_index": 105,
+      "i10_index": 395,
+      "works_count": 677,
+      "cited_by_count": 43109,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5008514769",
+      "display_name": "Ynte Hein Schukken",
+      "orcid": "https://orcid.org/0000-0002-8250-4194",
+      "h_index": 105,
+      "i10_index": 348,
+      "works_count": 628,
+      "cited_by_count": 36067,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5010959513",
+      "display_name": "Eric J. Snijder",
+      "orcid": "https://orcid.org/0000-0003-3297-2309",
+      "h_index": 104,
+      "i10_index": 233,
+      "works_count": 374,
+      "cited_by_count": 40780,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5100741866",
+      "display_name": "Guanghong Zhou",
+      "orcid": "https://orcid.org/0000-0002-8960-2141",
+      "h_index": 103,
+      "i10_index": 650,
+      "works_count": 778,
+      "cited_by_count": 40792,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5038215233",
+      "display_name": "Alexander E. Gorbalenya",
+      "orcid": "https://orcid.org/0000-0002-4967-7341",
+      "h_index": 100,
+      "i10_index": 192,
+      "works_count": 257,
+      "cited_by_count": 46473,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Animal Science and Zoology -- 9.8",
+      "id": "https://openalex.org/A5036973907",
+      "display_name": "Martin Beer",
+      "orcid": "https://orcid.org/0000-0002-0598-5254",
+      "h_index": 99,
+      "i10_index": 645,
+      "works_count": 1182,
+      "cited_by_count": 42545,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5087502190",
+      "display_name": "Jan Dijkstra",
+      "orcid": "https://orcid.org/0000-0003-3728-6885",
+      "h_index": 98,
+      "i10_index": 335,
+      "works_count": 844,
+      "cited_by_count": 34187,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5075780100",
+      "display_name": "Xiang‐Jin Meng",
+      "orcid": "https://orcid.org/0000-0002-2739-1334",
+      "h_index": 98,
+      "i10_index": 276,
+      "works_count": 341,
+      "cited_by_count": 33085,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5016841848",
+      "display_name": "M. Koohmaraie",
+      "orcid": null,
+      "h_index": 98,
+      "i10_index": 266,
+      "works_count": 333,
+      "cited_by_count": 32444,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5049324673",
+      "display_name": "Christian Gortázar",
+      "orcid": "https://orcid.org/0000-0003-0012-4006",
+      "h_index": 95,
+      "i10_index": 506,
+      "works_count": 822,
+      "cited_by_count": 33648,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5073063058",
+      "display_name": "Eric Delwart",
+      "orcid": "https://orcid.org/0000-0002-6296-4484",
+      "h_index": 94,
+      "i10_index": 340,
+      "works_count": 476,
+      "cited_by_count": 35096,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5111984851",
+      "display_name": "Peter J. M. Rottier",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 234,
+      "works_count": 345,
+      "cited_by_count": 29238,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5086111456",
+      "display_name": "K. Becker",
+      "orcid": "https://orcid.org/0000-0002-2406-0476",
+      "h_index": 92,
+      "i10_index": 272,
+      "works_count": 400,
+      "cited_by_count": 40182,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5044984230",
+      "display_name": "Marc A. Van Ranst",
+      "orcid": "https://orcid.org/0000-0002-1674-4157",
+      "h_index": 91,
+      "i10_index": 399,
+      "works_count": 784,
+      "cited_by_count": 34709,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5010023312",
+      "display_name": "Mark E. J. Woolhouse",
+      "orcid": "https://orcid.org/0000-0003-3765-8167",
+      "h_index": 91,
+      "i10_index": 337,
+      "works_count": 563,
+      "cited_by_count": 40318,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Mathematics",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5112072323",
+      "display_name": "George C Fahey Jr",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 314,
+      "works_count": 426,
+      "cited_by_count": 36146,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Animal Science and Zoology -- 9.7",
+      "id": "https://openalex.org/A5058938204",
+      "display_name": "Harinder P. S. Makkar",
+      "orcid": "https://orcid.org/0000-0002-4500-3868",
+      "h_index": 91,
+      "i10_index": 242,
+      "works_count": 326,
+      "cited_by_count": 41447,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5017327154",
+      "display_name": "Frank Rowland Dunshea",
+      "orcid": "https://orcid.org/0000-0003-3998-1240",
+      "h_index": 90,
+      "i10_index": 468,
+      "works_count": 862,
+      "cited_by_count": 30515,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5078514449",
+      "display_name": "Joaquím Segalés",
+      "orcid": "https://orcid.org/0000-0002-1539-7261",
+      "h_index": 90,
+      "i10_index": 382,
+      "works_count": 788,
+      "cited_by_count": 29379,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5002664009",
+      "display_name": "Jeffrey Rushen",
+      "orcid": "https://orcid.org/0000-0003-1951-5250",
+      "h_index": 90,
+      "i10_index": 215,
+      "works_count": 316,
+      "cited_by_count": 21146,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5068600177",
+      "display_name": "Mohamed Ezzat Abd El-Hack",
+      "orcid": "https://orcid.org/0000-0002-2831-8534",
+      "h_index": 89,
+      "i10_index": 400,
+      "works_count": 581,
+      "cited_by_count": 30479,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5073799617",
+      "display_name": "Ádám Miklósi",
+      "orcid": "https://orcid.org/0000-0003-4831-8985",
+      "h_index": 89,
+      "i10_index": 282,
+      "works_count": 512,
+      "cited_by_count": 26536,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5035053381",
+      "display_name": "Hyun Soon Lillehoj",
+      "orcid": "https://orcid.org/0000-0001-7755-6216",
+      "h_index": 88,
+      "i10_index": 358,
+      "works_count": 511,
+      "cited_by_count": 25975,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5028606515",
+      "display_name": "Peter James Hansen",
+      "orcid": "https://orcid.org/0000-0003-3061-9333",
+      "h_index": 87,
+      "i10_index": 343,
+      "works_count": 532,
+      "cited_by_count": 26218,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5042152780",
+      "display_name": "Jeroen Dewulf",
+      "orcid": "https://orcid.org/0000-0001-9843-5990",
+      "h_index": 87,
+      "i10_index": 325,
+      "works_count": 785,
+      "cited_by_count": 24541,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5111616691",
+      "display_name": "Hans Lutz",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 306,
+      "works_count": 486,
+      "cited_by_count": 22723,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5007426729",
+      "display_name": "Filip Van Immerseel",
+      "orcid": "https://orcid.org/0000-0003-0455-3350",
+      "h_index": 87,
+      "i10_index": 235,
+      "works_count": 527,
+      "cited_by_count": 27618,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Animal Science and Zoology -- 9.6",
+      "id": "https://openalex.org/A5005839027",
+      "display_name": "B. Kemp",
+      "orcid": "https://orcid.org/0000-0002-9765-9105",
+      "h_index": 86,
+      "i10_index": 416,
+      "works_count": 635,
+      "cited_by_count": 27671,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5011951036",
+      "display_name": "Ilias Kyriazakis",
+      "orcid": "https://orcid.org/0000-0001-7703-3626",
+      "h_index": 86,
+      "i10_index": 344,
+      "works_count": 586,
+      "cited_by_count": 25290,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5053740616",
+      "display_name": "Mahmoud M. Alagawany",
+      "orcid": "https://orcid.org/0000-0002-8020-0971",
+      "h_index": 86,
+      "i10_index": 333,
+      "works_count": 484,
+      "cited_by_count": 25508,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5053014239",
+      "display_name": "James L. N. Wood",
+      "orcid": "https://orcid.org/0000-0002-0258-3188",
+      "h_index": 86,
+      "i10_index": 277,
+      "works_count": 538,
+      "cited_by_count": 27080,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5005674722",
+      "display_name": "José E.P. Santos",
+      "orcid": "https://orcid.org/0000-0003-3403-1465",
+      "h_index": 86,
+      "i10_index": 273,
+      "works_count": 452,
+      "cited_by_count": 24230,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5024124598",
+      "display_name": "James B. Russell",
+      "orcid": "https://orcid.org/0000-0003-4732-6588",
+      "h_index": 86,
+      "i10_index": 231,
+      "works_count": 324,
+      "cited_by_count": 34167,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5046036187",
+      "display_name": "Rupert Palme",
+      "orcid": "https://orcid.org/0000-0001-9466-3662",
+      "h_index": 85,
+      "i10_index": 396,
+      "works_count": 652,
+      "cited_by_count": 31120,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Neuroscience",
+        "Environmental Science",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5067662662",
+      "display_name": "Lei Qin",
+      "orcid": "https://orcid.org/0000-0002-3902-3192",
+      "h_index": 85,
+      "i10_index": 316,
+      "works_count": 489,
+      "cited_by_count": 27449,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Energy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5040719611",
+      "display_name": "Joseph P. Kerry",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 291,
+      "works_count": 403,
+      "cited_by_count": 23321,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5064099505",
+      "display_name": "Robert C. Burghardt",
+      "orcid": "https://orcid.org/0000-0003-1021-8444",
+      "h_index": 85,
+      "i10_index": 261,
+      "works_count": 378,
+      "cited_by_count": 23469,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5100326547",
+      "display_name": "Sung Woo Kim",
+      "orcid": "https://orcid.org/0000-0003-4591-1943",
+      "h_index": 85,
+      "i10_index": 248,
+      "works_count": 466,
+      "cited_by_count": 24242,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5076710343",
+      "display_name": "Donald Maurice Broom",
+      "orcid": "https://orcid.org/0000-0002-1573-7182",
+      "h_index": 85,
+      "i10_index": 238,
+      "works_count": 621,
+      "cited_by_count": 26457,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Animal Science and Zoology -- 9.5",
+      "id": "https://openalex.org/A5078504589",
+      "display_name": "Juan J. Loor",
+      "orcid": "https://orcid.org/0000-0003-1586-4365",
+      "h_index": 84,
+      "i10_index": 494,
+      "works_count": 780,
+      "cited_by_count": 29899,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5037362773",
+      "display_name": "Ermias Kebreab",
+      "orcid": "https://orcid.org/0000-0002-0833-1352",
+      "h_index": 84,
+      "i10_index": 273,
+      "works_count": 524,
+      "cited_by_count": 26700,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5005307281",
+      "display_name": "Christine Janet Nicol",
+      "orcid": "https://orcid.org/0000-0001-6734-2177",
+      "h_index": 84,
+      "i10_index": 224,
+      "works_count": 418,
+      "cited_by_count": 19998,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5090076861",
+      "display_name": "José Ángel Pérez‐Álvarez",
+      "orcid": "https://orcid.org/0000-0002-1143-5646",
+      "h_index": 84,
+      "i10_index": 222,
+      "works_count": 392,
+      "cited_by_count": 26325,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5028593821",
+      "display_name": "Ken E. Leslie",
+      "orcid": "https://orcid.org/0000-0001-9804-2628",
+      "h_index": 84,
+      "i10_index": 220,
+      "works_count": 349,
+      "cited_by_count": 26440,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5079330921",
+      "display_name": "Lorne A. Babiuk",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 483,
+      "works_count": 619,
+      "cited_by_count": 28470,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5062878756",
+      "display_name": "Hans Nauwynck",
+      "orcid": "https://orcid.org/0000-0001-5470-0713",
+      "h_index": 83,
+      "i10_index": 403,
+      "works_count": 796,
+      "cited_by_count": 27751,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5081110079",
+      "display_name": "Velmurugu Ravindran",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 256,
+      "works_count": 366,
+      "cited_by_count": 24782,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5068450512",
+      "display_name": "Roderick Ian Mackie",
+      "orcid": "https://orcid.org/0000-0002-4767-9300",
+      "h_index": 83,
+      "i10_index": 228,
+      "works_count": 324,
+      "cited_by_count": 27972,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5087532242",
+      "display_name": "Sarah Cleaveland",
+      "orcid": "https://orcid.org/0000-0002-0456-0959",
+      "h_index": 82,
+      "i10_index": 220,
+      "works_count": 377,
+      "cited_by_count": 27067,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5057012596",
+      "display_name": "Vito Martella",
+      "orcid": "https://orcid.org/0000-0002-5740-6947",
+      "h_index": 81,
+      "i10_index": 390,
+      "works_count": 545,
+      "cited_by_count": 27879,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Animal Science and Zoology -- 9.4",
+      "id": "https://openalex.org/A5016266491",
+      "display_name": "Dirk Udo Pfeiffer",
+      "orcid": "https://orcid.org/0000-0001-7000-0530",
+      "h_index": 81,
+      "i10_index": 343,
+      "works_count": 665,
+      "cited_by_count": 30638,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5015609281",
+      "display_name": "Katrin Hartmann",
+      "orcid": "https://orcid.org/0000-0002-5256-863X",
+      "h_index": 81,
+      "i10_index": 338,
+      "works_count": 685,
+      "cited_by_count": 23211,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5087812453",
+      "display_name": "J. France",
+      "orcid": "https://orcid.org/0000-0003-2923-7098",
+      "h_index": 81,
+      "i10_index": 246,
+      "works_count": 425,
+      "cited_by_count": 22848,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5006724287",
+      "display_name": "Mirian Pateiro",
+      "orcid": "https://orcid.org/0000-0002-9682-4594",
+      "h_index": 81,
+      "i10_index": 233,
+      "works_count": 336,
+      "cited_by_count": 23247,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5029306506",
+      "display_name": "T.F. Duffield",
+      "orcid": "https://orcid.org/0000-0001-6035-4669",
+      "h_index": 81,
+      "i10_index": 226,
+      "works_count": 387,
+      "cited_by_count": 25614,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5081087868",
+      "display_name": "Alexander Nikolov Hristov",
+      "orcid": "https://orcid.org/0000-0002-0884-4203",
+      "h_index": 81,
+      "i10_index": 215,
+      "works_count": 368,
+      "cited_by_count": 23484,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5041131914",
+      "display_name": "C. J. Newbold",
+      "orcid": "https://orcid.org/0000-0001-9561-300X",
+      "h_index": 81,
+      "i10_index": 202,
+      "works_count": 375,
+      "cited_by_count": 22204,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5055759623",
+      "display_name": "Michael Kreuzer",
+      "orcid": "https://orcid.org/0000-0002-9978-1171",
+      "h_index": 80,
+      "i10_index": 400,
+      "works_count": 963,
+      "cited_by_count": 26846,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5087556846",
+      "display_name": "Eddy M. P. Decuypere",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 399,
+      "works_count": 747,
+      "cited_by_count": 24896,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5084774699",
+      "display_name": "Jakob Zinsstag",
+      "orcid": "https://orcid.org/0000-0002-8899-6097",
+      "h_index": 80,
+      "i10_index": 326,
+      "works_count": 611,
+      "cited_by_count": 29421,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5002281608",
+      "display_name": "Alaa El‐Din A. Bekhit",
+      "orcid": "https://orcid.org/0000-0003-2569-8620",
+      "h_index": 80,
+      "i10_index": 309,
+      "works_count": 448,
+      "cited_by_count": 22950,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Animal Science and Zoology -- 9.3",
+      "id": "https://openalex.org/A5083147563",
+      "display_name": "Paul Damien McGreevy",
+      "orcid": "https://orcid.org/0000-0001-7220-8378",
+      "h_index": 80,
+      "i10_index": 307,
+      "works_count": 508,
+      "cited_by_count": 22529,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5107841911",
+      "display_name": "Marian C. Horzinek",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 284,
+      "works_count": 517,
+      "cited_by_count": 21649,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5079699937",
+      "display_name": "Niels C. Pedersen",
+      "orcid": "https://orcid.org/0000-0001-6269-929X",
+      "h_index": 80,
+      "i10_index": 206,
+      "works_count": 253,
+      "cited_by_count": 21265,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5045974493",
+      "display_name": "Juana Fernández‐López",
+      "orcid": "https://orcid.org/0000-0002-4771-8437",
+      "h_index": 80,
+      "i10_index": 196,
+      "works_count": 322,
+      "cited_by_count": 22390,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5100396686",
+      "display_name": "Daiwen Chen",
+      "orcid": "https://orcid.org/0000-0002-8351-7421",
+      "h_index": 79,
+      "i10_index": 535,
+      "works_count": 761,
+      "cited_by_count": 37722,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5070097811",
+      "display_name": "Canio Buonavoglia",
+      "orcid": "https://orcid.org/0000-0002-6149-0678",
+      "h_index": 79,
+      "i10_index": 315,
+      "works_count": 543,
+      "cited_by_count": 21284,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5037219390",
+      "display_name": "S.A. Edwards",
+      "orcid": "https://orcid.org/0000-0002-8890-0112",
+      "h_index": 79,
+      "i10_index": 314,
+      "works_count": 655,
+      "cited_by_count": 21818,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5076953122",
+      "display_name": "Yrjo Tapio Grohn",
+      "orcid": "https://orcid.org/0000-0002-2721-9833",
+      "h_index": 79,
+      "i10_index": 267,
+      "works_count": 363,
+      "cited_by_count": 21515,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5054212402",
+      "display_name": "Le Luo Guan",
+      "orcid": "https://orcid.org/0000-0002-8420-4371",
+      "h_index": 79,
+      "i10_index": 248,
+      "works_count": 415,
+      "cited_by_count": 24041,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5021585194",
+      "display_name": "Tommy L. Wheeler",
+      "orcid": "https://orcid.org/0000-0002-6571-9097",
+      "h_index": 79,
+      "i10_index": 235,
+      "works_count": 349,
+      "cited_by_count": 21100,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5027162909",
+      "display_name": "Patrick Gerard Halbur",
+      "orcid": "https://orcid.org/0000-0003-0294-821X",
+      "h_index": 79,
+      "i10_index": 207,
+      "works_count": 295,
+      "cited_by_count": 22105,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Animal Science and Zoology -- 9.2",
+      "id": "https://openalex.org/A5061303796",
+      "display_name": "David J. Fraser",
+      "orcid": "https://orcid.org/0000-0001-8875-7865",
+      "h_index": 79,
+      "i10_index": 176,
+      "works_count": 392,
+      "cited_by_count": 21682,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5062096040",
+      "display_name": "Paulo E. S. Munekata",
+      "orcid": "https://orcid.org/0000-0001-5559-1408",
+      "h_index": 79,
+      "i10_index": 173,
+      "works_count": 261,
+      "cited_by_count": 18827,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5064611708",
+      "display_name": "Bernd Hoffmann",
+      "orcid": "https://orcid.org/0000-0001-5358-6445",
+      "h_index": 78,
+      "i10_index": 292,
+      "works_count": 536,
+      "cited_by_count": 20496,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5072415523",
+      "display_name": "Pekka J Huhtanen",
+      "orcid": "https://orcid.org/0000-0001-7855-7448",
+      "h_index": 78,
+      "i10_index": 247,
+      "works_count": 534,
+      "cited_by_count": 20220,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5109949537",
+      "display_name": "Aart de Kruif",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 240,
+      "works_count": 898,
+      "cited_by_count": 20004,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Veterinary",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5001135432",
+      "display_name": "Zhongtang Yu",
+      "orcid": "https://orcid.org/0000-0002-6165-8522",
+      "h_index": 78,
+      "i10_index": 212,
+      "works_count": 276,
+      "cited_by_count": 24238,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5046491417",
+      "display_name": "Alistair B Lawrence",
+      "orcid": "https://orcid.org/0000-0002-2083-4243",
+      "h_index": 78,
+      "i10_index": 210,
+      "works_count": 358,
+      "cited_by_count": 18052,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5110568372",
+      "display_name": "Jean Noblet",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 196,
+      "works_count": 501,
+      "cited_by_count": 18203,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5074707535",
+      "display_name": "Huanchun Chen",
+      "orcid": "https://orcid.org/0000-0003-0680-5953",
+      "h_index": 77,
+      "i10_index": 621,
+      "works_count": 1058,
+      "cited_by_count": 27730,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5020420094",
+      "display_name": "Cheorun Jo",
+      "orcid": "https://orcid.org/0000-0003-2109-3798",
+      "h_index": 77,
+      "i10_index": 383,
+      "works_count": 597,
+      "cited_by_count": 21858,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5090421412",
+      "display_name": "Baruch Rinkevich",
+      "orcid": "https://orcid.org/0000-0002-2401-0145",
+      "h_index": 77,
+      "i10_index": 326,
+      "works_count": 485,
+      "cited_by_count": 20993,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Animal Science and Zoology -- 9.1",
+      "id": "https://openalex.org/A5012468987",
+      "display_name": "Paul Becher",
+      "orcid": "https://orcid.org/0000-0001-7857-1354",
+      "h_index": 77,
+      "i10_index": 286,
+      "works_count": 580,
+      "cited_by_count": 21859,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Materials Science",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Animal Science and Zoology -- 9.0",
+      "id": "https://openalex.org/A5062550388",
+      "display_name": "John Patrick Kastelic",
+      "orcid": "https://orcid.org/0000-0003-4607-3355",
+      "h_index": 77,
+      "i10_index": 285,
+      "works_count": 530,
+      "cited_by_count": 21360,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Animal Science and Zoology -- 9.0",
+      "id": "https://openalex.org/A5037209199",
+      "display_name": "Nicola Decaro",
+      "orcid": "https://orcid.org/0000-0001-6348-7969",
+      "h_index": 77,
+      "i10_index": 285,
+      "works_count": 535,
+      "cited_by_count": 19207,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Animal Science and Zoology -- 9.0",
+      "id": "https://openalex.org/A5048196993",
+      "display_name": "Mohamed T. El‐Saadony",
+      "orcid": "https://orcid.org/0000-0001-8633-1836",
+      "h_index": 77,
+      "i10_index": 206,
+      "works_count": 262,
+      "cited_by_count": 20168,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Animal Science and Zoology -- 9.0",
+      "id": "https://openalex.org/A5057971839",
+      "display_name": "Peter F. Surai",
+      "orcid": "https://orcid.org/0000-0002-5012-8681",
+      "h_index": 77,
+      "i10_index": 163,
+      "works_count": 244,
+      "cited_by_count": 18570,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Animal Science and Zoology -- 9.0",
+      "id": "https://openalex.org/A5038695813",
+      "display_name": "Dominiek G D Maes",
+      "orcid": "https://orcid.org/0000-0003-1149-9348",
+      "h_index": 76,
+      "i10_index": 292,
+      "works_count": 625,
+      "cited_by_count": 18515,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5032945914",
+      "display_name": "Dong Uk Ahn",
+      "orcid": "https://orcid.org/0000-0001-9523-7630",
+      "h_index": 76,
+      "i10_index": 285,
+      "works_count": 463,
+      "cited_by_count": 21403,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5043980773",
+      "display_name": "D.F. Kelton",
+      "orcid": "https://orcid.org/0000-0001-9606-7602",
+      "h_index": 76,
+      "i10_index": 283,
+      "works_count": 496,
+      "cited_by_count": 20784,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5016395681",
+      "display_name": "Seiji Kondo",
+      "orcid": "https://orcid.org/0000-0001-9341-5069",
+      "h_index": 76,
+      "i10_index": 273,
+      "works_count": 684,
+      "cited_by_count": 28205,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5109877645",
+      "display_name": "Peter J. Van Soest",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 149,
+      "works_count": 190,
+      "cited_by_count": 85620,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5048342605",
+      "display_name": "Michael P. Ward",
+      "orcid": "https://orcid.org/0000-0002-9921-4986",
+      "h_index": 75,
+      "i10_index": 419,
+      "works_count": 704,
+      "cited_by_count": 26323,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5100697277",
+      "display_name": "Yizhen Wang",
+      "orcid": "https://orcid.org/0000-0002-3908-7102",
+      "h_index": 75,
+      "i10_index": 366,
+      "works_count": 639,
+      "cited_by_count": 19476,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5020459193",
+      "display_name": "Ian Andrew Gardner",
+      "orcid": "https://orcid.org/0000-0002-2147-0672",
+      "h_index": 75,
+      "i10_index": 279,
+      "works_count": 361,
+      "cited_by_count": 17523,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Mathematics",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5024454005",
+      "display_name": "J.W. Savell",
+      "orcid": "https://orcid.org/0000-0003-0354-1286",
+      "h_index": 75,
+      "i10_index": 257,
+      "works_count": 416,
+      "cited_by_count": 19284,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5032398586",
+      "display_name": "Paul Hamilton Hemsworth",
+      "orcid": "https://orcid.org/0000-0002-0211-0751",
+      "h_index": 75,
+      "i10_index": 250,
+      "works_count": 417,
+      "cited_by_count": 19750,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5029230958",
+      "display_name": "Stefaan DE SMET",
+      "orcid": "https://orcid.org/0000-0003-1422-805X",
+      "h_index": 75,
+      "i10_index": 248,
+      "works_count": 655,
+      "cited_by_count": 19515,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5000432534",
+      "display_name": "Norbert R. Nowotny",
+      "orcid": "https://orcid.org/0000-0002-3548-571X",
+      "h_index": 75,
+      "i10_index": 248,
+      "works_count": 384,
+      "cited_by_count": 19332,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Animal Science and Zoology -- 8.9",
+      "id": "https://openalex.org/A5056460237",
+      "display_name": "David J. Sklan",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 219,
+      "works_count": 275,
+      "cited_by_count": 19892,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5050603691",
+      "display_name": "James Kent Drackley",
+      "orcid": "https://orcid.org/0000-0002-4560-5594",
+      "h_index": 75,
+      "i10_index": 209,
+      "works_count": 335,
+      "cited_by_count": 21133,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5102952708",
+      "display_name": "David H. Baker",
+      "orcid": "https://orcid.org/0000-0002-8020-3275",
+      "h_index": 74,
+      "i10_index": 397,
+      "works_count": 517,
+      "cited_by_count": 22456,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5071115462",
+      "display_name": "M.R. Bedford",
+      "orcid": "https://orcid.org/0000-0002-5308-4290",
+      "h_index": 74,
+      "i10_index": 306,
+      "works_count": 474,
+      "cited_by_count": 21120,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5084884183",
+      "display_name": "Regina Hofmann‐Lehmann",
+      "orcid": "https://orcid.org/0000-0001-9750-4296",
+      "h_index": 74,
+      "i10_index": 294,
+      "works_count": 442,
+      "cited_by_count": 18507,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5056813181",
+      "display_name": "Knud Erik Bach Knudsen",
+      "orcid": "https://orcid.org/0000-0001-8345-9236",
+      "h_index": 74,
+      "i10_index": 250,
+      "works_count": 486,
+      "cited_by_count": 19535,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5050426056",
+      "display_name": "S.J. LeBlanc",
+      "orcid": "https://orcid.org/0000-0003-2027-7704",
+      "h_index": 74,
+      "i10_index": 200,
+      "works_count": 346,
+      "cited_by_count": 24147,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5057006422",
+      "display_name": "D.E. Bauman",
+      "orcid": "https://orcid.org/0000-0001-9115-6518",
+      "h_index": 74,
+      "i10_index": 144,
+      "works_count": 176,
+      "cited_by_count": 19210,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5100365347",
+      "display_name": "Jiaqi Wang",
+      "orcid": "https://orcid.org/0000-0001-8841-0124",
+      "h_index": 73,
+      "i10_index": 489,
+      "works_count": 828,
+      "cited_by_count": 24357,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5015725603",
+      "display_name": "R.M. Bruckmaier",
+      "orcid": "https://orcid.org/0000-0002-9374-5890",
+      "h_index": 73,
+      "i10_index": 349,
+      "works_count": 702,
+      "cited_by_count": 19620,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5023770508",
+      "display_name": "Janine L. Brown",
+      "orcid": "https://orcid.org/0000-0003-3898-7755",
+      "h_index": 73,
+      "i10_index": 331,
+      "works_count": 499,
+      "cited_by_count": 20948,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5109249334",
+      "display_name": "M.W.A. Verstegen",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 298,
+      "works_count": 552,
+      "cited_by_count": 18614,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5109964851",
+      "display_name": "Steve Leeson",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 272,
+      "works_count": 399,
+      "cited_by_count": 17226,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5101741702",
+      "display_name": "Xinglian Xu",
+      "orcid": "https://orcid.org/0000-0003-4507-3214",
+      "h_index": 73,
+      "i10_index": 272,
+      "works_count": 340,
+      "cited_by_count": 16209,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5105414345",
+      "display_name": "Gary C. Smith",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 255,
+      "works_count": 334,
+      "cited_by_count": 17932,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5085725824",
+      "display_name": "D. Claire Wathes",
+      "orcid": "https://orcid.org/0000-0002-8206-6091",
+      "h_index": 73,
+      "i10_index": 224,
+      "works_count": 327,
+      "cited_by_count": 17911,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5042895504",
+      "display_name": "Edward J. Dubovi",
+      "orcid": "https://orcid.org/0000-0003-4776-5759",
+      "h_index": 73,
+      "i10_index": 222,
+      "works_count": 276,
+      "cited_by_count": 16267,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5081942763",
+      "display_name": "Ian R. Dohoo",
+      "orcid": "https://orcid.org/0000-0001-9270-2680",
+      "h_index": 73,
+      "i10_index": 220,
+      "works_count": 335,
+      "cited_by_count": 17893,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5083188367",
+      "display_name": "Lance H. Baumgard",
+      "orcid": "https://orcid.org/0000-0002-3077-5996",
+      "h_index": 73,
+      "i10_index": 213,
+      "works_count": 428,
+      "cited_by_count": 23628,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5077745371",
+      "display_name": "Paul J. Weimer",
+      "orcid": "https://orcid.org/0000-0002-9278-6535",
+      "h_index": 73,
+      "i10_index": 137,
+      "works_count": 203,
+      "cited_by_count": 21646,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5014633542",
+      "display_name": "Zhiqing Huang",
+      "orcid": "https://orcid.org/0000-0001-5092-9297",
+      "h_index": 72,
+      "i10_index": 355,
+      "works_count": 582,
+      "cited_by_count": 20552,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5056793891",
+      "display_name": "Simon J. More",
+      "orcid": "https://orcid.org/0000-0002-4270-0385",
+      "h_index": 72,
+      "i10_index": 330,
+      "works_count": 536,
+      "cited_by_count": 22539,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Animal Science and Zoology -- 8.8",
+      "id": "https://openalex.org/A5053407147",
+      "display_name": "Paul J. Moughan",
+      "orcid": "https://orcid.org/0000-0001-9644-9133",
+      "h_index": 72,
+      "i10_index": 296,
+      "works_count": 425,
+      "cited_by_count": 20460,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5058678580",
+      "display_name": "Paul D. Allen",
+      "orcid": "https://orcid.org/0000-0002-4924-4730",
+      "h_index": 72,
+      "i10_index": 254,
+      "works_count": 455,
+      "cited_by_count": 19356,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5052718849",
+      "display_name": "Duane H. Keisler",
+      "orcid": "https://orcid.org/0000-0002-8792-7030",
+      "h_index": 72,
+      "i10_index": 240,
+      "works_count": 331,
+      "cited_by_count": 16840,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5028109870",
+      "display_name": "R.J. Collier",
+      "orcid": "https://orcid.org/0000-0002-1552-9711",
+      "h_index": 72,
+      "i10_index": 199,
+      "works_count": 324,
+      "cited_by_count": 21549,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5006289277",
+      "display_name": "Robyn Dorothy Warner",
+      "orcid": "https://orcid.org/0000-0001-5313-8773",
+      "h_index": 72,
+      "i10_index": 198,
+      "works_count": 315,
+      "cited_by_count": 17664,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5052900765",
+      "display_name": "Rubén Domínguez",
+      "orcid": "https://orcid.org/0000-0002-2764-504X",
+      "h_index": 72,
+      "i10_index": 197,
+      "works_count": 321,
+      "cited_by_count": 18364,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5110510646",
+      "display_name": "Stephen P. Ford",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 196,
+      "works_count": 278,
+      "cited_by_count": 15415,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5014427910",
+      "display_name": "Daniel T. Haydon",
+      "orcid": "https://orcid.org/0000-0002-1240-1886",
+      "h_index": 72,
+      "i10_index": 190,
+      "works_count": 313,
+      "cited_by_count": 22603,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Mathematics",
+        "Environmental Science",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5029029931",
+      "display_name": "David John Miller",
+      "orcid": "https://orcid.org/0000-0003-0291-9531",
+      "h_index": 72,
+      "i10_index": 190,
+      "works_count": 300,
+      "cited_by_count": 17594,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5009145312",
+      "display_name": "J.D. Wood",
+      "orcid": "https://orcid.org/0000-0002-5132-9004",
+      "h_index": 72,
+      "i10_index": 177,
+      "works_count": 403,
+      "cited_by_count": 25930,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5103160381",
+      "display_name": "Anne Marie de Passille",
+      "orcid": "https://orcid.org/0000-0001-9744-5759",
+      "h_index": 72,
+      "i10_index": 135,
+      "works_count": 168,
+      "cited_by_count": 14499,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5100783614",
+      "display_name": "In Ho Kim",
+      "orcid": "https://orcid.org/0000-0001-6652-2504",
+      "h_index": 71,
+      "i10_index": 500,
+      "works_count": 1136,
+      "cited_by_count": 22693,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5065484857",
+      "display_name": "David Laurence Hopkins",
+      "orcid": "https://orcid.org/0000-0002-2743-5894",
+      "h_index": 71,
+      "i10_index": 319,
+      "works_count": 600,
+      "cited_by_count": 19599,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5050325358",
+      "display_name": "E.L. Squires",
+      "orcid": "https://orcid.org/0000-0002-4569-2886",
+      "h_index": 71,
+      "i10_index": 318,
+      "works_count": 609,
+      "cited_by_count": 17117,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5045572371",
+      "display_name": "Weiyun Zhu",
+      "orcid": "https://orcid.org/0000-0001-9222-6581",
+      "h_index": 71,
+      "i10_index": 306,
+      "works_count": 525,
+      "cited_by_count": 19564,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5088004444",
+      "display_name": "Xin Zhao",
+      "orcid": "https://orcid.org/0000-0002-1078-7332",
+      "h_index": 71,
+      "i10_index": 262,
+      "works_count": 452,
+      "cited_by_count": 18233,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5005300801",
+      "display_name": "Pierre Mormède",
+      "orcid": "https://orcid.org/0000-0003-0345-1432",
+      "h_index": 71,
+      "i10_index": 246,
+      "works_count": 529,
+      "cited_by_count": 18402,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5009770853",
+      "display_name": "Daniel  Simon Mills",
+      "orcid": "https://orcid.org/0000-0002-4765-9625",
+      "h_index": 71,
+      "i10_index": 230,
+      "works_count": 408,
+      "cited_by_count": 14866,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5109132494",
+      "display_name": "Yves Chilliard",
+      "orcid": "https://orcid.org/0000-0002-8107-5949",
+      "h_index": 71,
+      "i10_index": 225,
+      "works_count": 518,
+      "cited_by_count": 22388,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5040685692",
+      "display_name": "Shai Barbut",
+      "orcid": "https://orcid.org/0000-0002-7724-499X",
+      "h_index": 71,
+      "i10_index": 223,
+      "works_count": 361,
+      "cited_by_count": 16091,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5001927756",
+      "display_name": "Graham J. Belsham",
+      "orcid": "https://orcid.org/0000-0003-1187-4873",
+      "h_index": 71,
+      "i10_index": 207,
+      "works_count": 331,
+      "cited_by_count": 17556,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5057826667",
+      "display_name": "A. Bannink",
+      "orcid": "https://orcid.org/0000-0001-9916-3202",
+      "h_index": 71,
+      "i10_index": 195,
+      "works_count": 416,
+      "cited_by_count": 18672,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Animal Science and Zoology -- 8.7",
+      "id": "https://openalex.org/A5113482394",
+      "display_name": "Frederick D. Provenza",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 195,
+      "works_count": 293,
+      "cited_by_count": 15317,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5041819836",
+      "display_name": "Ruth N. Zadoks",
+      "orcid": "https://orcid.org/0000-0002-1164-8000",
+      "h_index": 71,
+      "i10_index": 183,
+      "works_count": 347,
+      "cited_by_count": 17220,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5073820315",
+      "display_name": "Thomas C. G. Bosch",
+      "orcid": "https://orcid.org/0000-0002-9488-5545",
+      "h_index": 71,
+      "i10_index": 176,
+      "works_count": 318,
+      "cited_by_count": 20477,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5056397416",
+      "display_name": "Glen A. Broderick",
+      "orcid": "https://orcid.org/0000-0002-3466-9728",
+      "h_index": 71,
+      "i10_index": 157,
+      "works_count": 209,
+      "cited_by_count": 17795,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5110430437",
+      "display_name": "Anton C. Beynen",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 379,
+      "works_count": 1014,
+      "cited_by_count": 20970,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5084543492",
+      "display_name": "Johan W. Schrama",
+      "orcid": "https://orcid.org/0000-0001-7156-8806",
+      "h_index": 70,
+      "i10_index": 252,
+      "works_count": 526,
+      "cited_by_count": 16291,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5091154351",
+      "display_name": "H. Hogeveen",
+      "orcid": "https://orcid.org/0000-0002-9443-1412",
+      "h_index": 70,
+      "i10_index": 244,
+      "works_count": 657,
+      "cited_by_count": 19055,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5076424727",
+      "display_name": "Tanja Opriessnig",
+      "orcid": "https://orcid.org/0000-0001-9642-0904",
+      "h_index": 70,
+      "i10_index": 236,
+      "works_count": 360,
+      "cited_by_count": 17396,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5083261553",
+      "display_name": "Jean-François J.-F. Hocquette",
+      "orcid": "https://orcid.org/0000-0003-2409-3881",
+      "h_index": 70,
+      "i10_index": 229,
+      "works_count": 945,
+      "cited_by_count": 18618,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5039764442",
+      "display_name": "R.L. Baldwin",
+      "orcid": "https://orcid.org/0000-0002-0753-4377",
+      "h_index": 70,
+      "i10_index": 229,
+      "works_count": 337,
+      "cited_by_count": 15862,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5085685045",
+      "display_name": "Floyd K. McKeith",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 221,
+      "works_count": 275,
+      "cited_by_count": 14046,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5047197237",
+      "display_name": "L. V. Cundiff",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 192,
+      "works_count": 322,
+      "cited_by_count": 13549,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5056707966",
+      "display_name": "Francisco Jiménez-Colmenero",
+      "orcid": "https://orcid.org/0000-0002-7422-7895",
+      "h_index": 70,
+      "i10_index": 188,
+      "works_count": 293,
+      "cited_by_count": 15825,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5032571503",
+      "display_name": "M. Choct",
+      "orcid": "https://orcid.org/0000-0002-2242-8222",
+      "h_index": 70,
+      "i10_index": 180,
+      "works_count": 308,
+      "cited_by_count": 18197,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5052078209",
+      "display_name": "Marius Gilbert",
+      "orcid": "https://orcid.org/0000-0003-3708-3359",
+      "h_index": 70,
+      "i10_index": 175,
+      "works_count": 309,
+      "cited_by_count": 31925,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5080289058",
+      "display_name": "Linda Jane Keeling",
+      "orcid": "https://orcid.org/0000-0003-2629-0117",
+      "h_index": 70,
+      "i10_index": 171,
+      "works_count": 312,
+      "cited_by_count": 15525,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5111902815",
+      "display_name": "Willy J. M. Spaan",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 144,
+      "works_count": 206,
+      "cited_by_count": 15020,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5075051313",
+      "display_name": "Marcus Clauß",
+      "orcid": "https://orcid.org/0000-0003-3841-6207",
+      "h_index": 69,
+      "i10_index": 414,
+      "works_count": 860,
+      "cited_by_count": 19479,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5102788031",
+      "display_name": "James W. Thomas",
+      "orcid": "https://orcid.org/0000-0002-2098-6458",
+      "h_index": 69,
+      "i10_index": 293,
+      "works_count": 476,
+      "cited_by_count": 23642,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5014928981",
+      "display_name": "Arjan Stegeman",
+      "orcid": "https://orcid.org/0000-0003-4361-3846",
+      "h_index": 69,
+      "i10_index": 293,
+      "works_count": 594,
+      "cited_by_count": 17824,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5091858305",
+      "display_name": "Sagar Mal Goyal",
+      "orcid": "https://orcid.org/0000-0002-7781-3080",
+      "h_index": 69,
+      "i10_index": 291,
+      "works_count": 498,
+      "cited_by_count": 18586,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5058860895",
+      "display_name": "Daniël Berckmans",
+      "orcid": "https://orcid.org/0000-0002-2974-6055",
+      "h_index": 69,
+      "i10_index": 266,
+      "works_count": 1104,
+      "cited_by_count": 17702,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Animal Science and Zoology -- 8.6",
+      "id": "https://openalex.org/A5100412471",
+      "display_name": "Gang Liu",
+      "orcid": "https://orcid.org/0000-0002-9475-5134",
+      "h_index": 69,
+      "i10_index": 260,
+      "works_count": 446,
+      "cited_by_count": 17696,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5033815083",
+      "display_name": "Kazım Şahin",
+      "orcid": "https://orcid.org/0000-0001-9542-5244",
+      "h_index": 69,
+      "i10_index": 257,
+      "works_count": 528,
+      "cited_by_count": 15065,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5082120164",
+      "display_name": "Charles Martin Nyachoti",
+      "orcid": "https://orcid.org/0000-0001-7075-7226",
+      "h_index": 69,
+      "i10_index": 239,
+      "works_count": 372,
+      "cited_by_count": 16372,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5053823114",
+      "display_name": "Kelly Scott Swanson",
+      "orcid": "https://orcid.org/0000-0001-5518-3076",
+      "h_index": 69,
+      "i10_index": 236,
+      "works_count": 485,
+      "cited_by_count": 26433,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Veterinary",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5006949356",
+      "display_name": "K. E. Belk",
+      "orcid": "https://orcid.org/0000-0002-7171-8824",
+      "h_index": 69,
+      "i10_index": 230,
+      "works_count": 411,
+      "cited_by_count": 15450,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5013778650",
+      "display_name": "Temple Grandin",
+      "orcid": "https://orcid.org/0000-0001-7231-7101",
+      "h_index": 69,
+      "i10_index": 229,
+      "works_count": 551,
+      "cited_by_count": 19277,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Neuroscience",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5023910062",
+      "display_name": "Michael P. Murtaugh",
+      "orcid": "https://orcid.org/0000-0002-1538-7151",
+      "h_index": 69,
+      "i10_index": 223,
+      "works_count": 317,
+      "cited_by_count": 18471,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5063464092",
+      "display_name": "E. R. Ørskov",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 218,
+      "works_count": 345,
+      "cited_by_count": 23947,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5074780781",
+      "display_name": "Seerp Tamminga",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 213,
+      "works_count": 479,
+      "cited_by_count": 17551,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5082790535",
+      "display_name": "Laura Elizabeth Green",
+      "orcid": "https://orcid.org/0000-0003-2957-8773",
+      "h_index": 69,
+      "i10_index": 210,
+      "works_count": 340,
+      "cited_by_count": 18093,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Veterinary",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5083089906",
+      "display_name": "Nick J. Knowles",
+      "orcid": "https://orcid.org/0000-0002-6696-1344",
+      "h_index": 69,
+      "i10_index": 199,
+      "works_count": 301,
+      "cited_by_count": 18475,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5003198193",
+      "display_name": "Julia Francis Ridpath",
+      "orcid": "https://orcid.org/0000-0001-7182-8161",
+      "h_index": 69,
+      "i10_index": 196,
+      "works_count": 269,
+      "cited_by_count": 13504,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5072575845",
+      "display_name": "Leon J. Spicer",
+      "orcid": "https://orcid.org/0000-0003-2911-6130",
+      "h_index": 69,
+      "i10_index": 193,
+      "works_count": 274,
+      "cited_by_count": 14549,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5073634663",
+      "display_name": "Zhiqiang Lu",
+      "orcid": "https://orcid.org/0000-0002-7803-8442",
+      "h_index": 69,
+      "i10_index": 162,
+      "works_count": 225,
+      "cited_by_count": 16612,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5063530594",
+      "display_name": "James A. Serpell",
+      "orcid": "https://orcid.org/0000-0002-2826-1187",
+      "h_index": 69,
+      "i10_index": 156,
+      "works_count": 274,
+      "cited_by_count": 15034,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5103334267",
+      "display_name": "Kathryn V. Holmes",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 152,
+      "works_count": 211,
+      "cited_by_count": 17429,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5111438399",
+      "display_name": "Garry C Waghorn",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 145,
+      "works_count": 202,
+      "cited_by_count": 19806,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5076176227",
+      "display_name": "Stuart G. Siddell",
+      "orcid": "https://orcid.org/0000-0002-8702-7868",
+      "h_index": 69,
+      "i10_index": 134,
+      "works_count": 196,
+      "cited_by_count": 19070,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5064883394",
+      "display_name": "P.B. Siegel",
+      "orcid": "https://orcid.org/0000-0003-1415-7781",
+      "h_index": 68,
+      "i10_index": 428,
+      "works_count": 664,
+      "cited_by_count": 21309,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5085919986",
+      "display_name": "Terry J. Klopfenstein",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 358,
+      "works_count": 972,
+      "cited_by_count": 19260,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5077016034",
+      "display_name": "Étienne Thiry",
+      "orcid": "https://orcid.org/0000-0002-9585-7933",
+      "h_index": 68,
+      "i10_index": 286,
+      "works_count": 734,
+      "cited_by_count": 17689,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5083765384",
+      "display_name": "Søren Saxmose Nielsen",
+      "orcid": "https://orcid.org/0000-0003-2417-0787",
+      "h_index": 68,
+      "i10_index": 277,
+      "works_count": 577,
+      "cited_by_count": 17491,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5100607460",
+      "display_name": "Junjun Wang",
+      "orcid": "https://orcid.org/0000-0001-9427-3824",
+      "h_index": 68,
+      "i10_index": 265,
+      "works_count": 394,
+      "cited_by_count": 17897,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Animal Science and Zoology -- 8.5",
+      "id": "https://openalex.org/A5073767607",
+      "display_name": "T. G. Nagaraja",
+      "orcid": "https://orcid.org/0000-0002-0899-878X",
+      "h_index": 68,
+      "i10_index": 259,
+      "works_count": 495,
+      "cited_by_count": 18525,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5025628629",
+      "display_name": "Lawrence P. Reynolds",
+      "orcid": "https://orcid.org/0000-0002-6838-7809",
+      "h_index": 68,
+      "i10_index": 248,
+      "works_count": 406,
+      "cited_by_count": 16710,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5067345562",
+      "display_name": "Sándór Belák",
+      "orcid": "https://orcid.org/0000-0002-2486-268X",
+      "h_index": 68,
+      "i10_index": 246,
+      "works_count": 333,
+      "cited_by_count": 14783,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5105881142",
+      "display_name": "David James Paton",
+      "orcid": "https://orcid.org/0000-0002-9097-2262",
+      "h_index": 68,
+      "i10_index": 218,
+      "works_count": 324,
+      "cited_by_count": 15414,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5063436262",
+      "display_name": "B.W. McBride",
+      "orcid": "https://orcid.org/0000-0002-4211-5362",
+      "h_index": 68,
+      "i10_index": 217,
+      "works_count": 290,
+      "cited_by_count": 18487,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5023372056",
+      "display_name": "T.J. DeVries",
+      "orcid": "https://orcid.org/0000-0001-9364-2456",
+      "h_index": 68,
+      "i10_index": 188,
+      "works_count": 335,
+      "cited_by_count": 13655,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5082760891",
+      "display_name": "Michael Mendl",
+      "orcid": "https://orcid.org/0000-0002-5302-1871",
+      "h_index": 68,
+      "i10_index": 179,
+      "works_count": 498,
+      "cited_by_count": 18903,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5079173646",
+      "display_name": "Mario Estévez",
+      "orcid": "https://orcid.org/0000-0002-8509-2789",
+      "h_index": 68,
+      "i10_index": 177,
+      "works_count": 250,
+      "cited_by_count": 16958,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5104439849",
+      "display_name": "Mǎng Shī",
+      "orcid": "https://orcid.org/0000-0002-6154-4437",
+      "h_index": 68,
+      "i10_index": 164,
+      "works_count": 266,
+      "cited_by_count": 21707,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5112234370",
+      "display_name": "William E. Huff",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 164,
+      "works_count": 197,
+      "cited_by_count": 11843,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5018502975",
+      "display_name": "Daniel L. Rock",
+      "orcid": "https://orcid.org/0000-0002-8548-3317",
+      "h_index": 68,
+      "i10_index": 123,
+      "works_count": 140,
+      "cited_by_count": 14009,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5072617804",
+      "display_name": "Bing Yu",
+      "orcid": "https://orcid.org/0000-0001-6605-6742",
+      "h_index": 67,
+      "i10_index": 367,
+      "works_count": 609,
+      "cited_by_count": 16842,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5031772788",
+      "display_name": "Annette Kjær Ersbøll",
+      "orcid": "https://orcid.org/0000-0002-9407-3387",
+      "h_index": 67,
+      "i10_index": 239,
+      "works_count": 528,
+      "cited_by_count": 14800,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5061949454",
+      "display_name": "Michael L. Galyean",
+      "orcid": "https://orcid.org/0000-0002-8321-2505",
+      "h_index": 67,
+      "i10_index": 210,
+      "works_count": 326,
+      "cited_by_count": 15484,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5108023353",
+      "display_name": "Katharina D.C. Stärk",
+      "orcid": "https://orcid.org/0000-0002-0553-5499",
+      "h_index": 67,
+      "i10_index": 210,
+      "works_count": 408,
+      "cited_by_count": 14650,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5089813494",
+      "display_name": "David Anthony Kenny",
+      "orcid": "https://orcid.org/0000-0001-9204-098X",
+      "h_index": 67,
+      "i10_index": 184,
+      "works_count": 338,
+      "cited_by_count": 13991,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5023576853",
+      "display_name": "Xi Ma",
+      "orcid": "https://orcid.org/0000-0003-4562-9331",
+      "h_index": 67,
+      "i10_index": 177,
+      "works_count": 237,
+      "cited_by_count": 19213,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Veterinary",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5007212586",
+      "display_name": "David J. Rowlands",
+      "orcid": "https://orcid.org/0000-0002-4742-9272",
+      "h_index": 67,
+      "i10_index": 164,
+      "works_count": 315,
+      "cited_by_count": 15807,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5113557562",
+      "display_name": "S.W. Martin",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 164,
+      "works_count": 193,
+      "cited_by_count": 11161,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5086701293",
+      "display_name": "M.C. Lucy",
+      "orcid": "https://orcid.org/0000-0001-5771-9460",
+      "h_index": 67,
+      "i10_index": 161,
+      "works_count": 260,
+      "cited_by_count": 15928,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5058660107",
+      "display_name": "C.K. Reynolds",
+      "orcid": "https://orcid.org/0000-0002-4152-1190",
+      "h_index": 67,
+      "i10_index": 156,
+      "works_count": 277,
+      "cited_by_count": 14139,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5034143919",
+      "display_name": "Diego Morgavi",
+      "orcid": "https://orcid.org/0000-0002-3883-0937",
+      "h_index": 67,
+      "i10_index": 146,
+      "works_count": 468,
+      "cited_by_count": 16102,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Animal Science and Zoology -- 8.4",
+      "id": "https://openalex.org/A5082570257",
+      "display_name": "Kevin J. Shingfield",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 117,
+      "works_count": 233,
+      "cited_by_count": 16006,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5022164324",
+      "display_name": "Heinz‐Jürgen Thiel",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 116,
+      "works_count": 153,
+      "cited_by_count": 14210,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5051479835",
+      "display_name": "Satu Pyörälä",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 116,
+      "works_count": 216,
+      "cited_by_count": 13165,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5103560656",
+      "display_name": "Dale Elton Bauman",
+      "orcid": "https://orcid.org/0000-0002-0024-297X",
+      "h_index": 67,
+      "i10_index": 103,
+      "works_count": 148,
+      "cited_by_count": 19462,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5100627020",
+      "display_name": "Jianxin Liu",
+      "orcid": "https://orcid.org/0000-0002-5812-5186",
+      "h_index": 66,
+      "i10_index": 331,
+      "works_count": 504,
+      "cited_by_count": 16802,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5008456514",
+      "display_name": "Wouter Hendrikus Hendriks",
+      "orcid": "https://orcid.org/0000-0001-8242-7953",
+      "h_index": 66,
+      "i10_index": 277,
+      "works_count": 772,
+      "cited_by_count": 14877,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5082947432",
+      "display_name": "W.R. Twink Allen",
+      "orcid": "https://orcid.org/0000-0001-7945-0669",
+      "h_index": 66,
+      "i10_index": 258,
+      "works_count": 414,
+      "cited_by_count": 14463,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5048307365",
+      "display_name": "Pietro Sampaio Baruselli",
+      "orcid": "https://orcid.org/0000-0002-6773-4450",
+      "h_index": 66,
+      "i10_index": 245,
+      "works_count": 562,
+      "cited_by_count": 16524,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5075509676",
+      "display_name": "Barbara Rasco",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 224,
+      "works_count": 286,
+      "cited_by_count": 16031,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5022548683",
+      "display_name": "Avtar Kaur Singh",
+      "orcid": "https://orcid.org/0000-0002-5184-9085",
+      "h_index": 66,
+      "i10_index": 214,
+      "works_count": 346,
+      "cited_by_count": 13565,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Materials Science",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5007343116",
+      "display_name": "Uwe Truyen",
+      "orcid": "https://orcid.org/0000-0003-1275-9586",
+      "h_index": 66,
+      "i10_index": 194,
+      "works_count": 403,
+      "cited_by_count": 14161,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5102809113",
+      "display_name": "Jerry W. Spears",
+      "orcid": "https://orcid.org/0000-0003-0927-609X",
+      "h_index": 66,
+      "i10_index": 183,
+      "works_count": 264,
+      "cited_by_count": 12808,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5058340179",
+      "display_name": "Christian M. Leutenegger",
+      "orcid": "https://orcid.org/0000-0003-0345-3024",
+      "h_index": 66,
+      "i10_index": 180,
+      "works_count": 283,
+      "cited_by_count": 13090,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5033751547",
+      "display_name": "Mariano Domingo",
+      "orcid": "https://orcid.org/0000-0002-9623-4826",
+      "h_index": 66,
+      "i10_index": 173,
+      "works_count": 318,
+      "cited_by_count": 14258,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5080769544",
+      "display_name": "Jie Yin",
+      "orcid": "https://orcid.org/0000-0003-1852-1042",
+      "h_index": 66,
+      "i10_index": 171,
+      "works_count": 231,
+      "cited_by_count": 14263,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5054597701",
+      "display_name": "Kelly Milton Lager",
+      "orcid": "https://orcid.org/0000-0001-5328-2337",
+      "h_index": 66,
+      "i10_index": 170,
+      "works_count": 231,
+      "cited_by_count": 13052,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5045418448",
+      "display_name": "Frank J. Monahan",
+      "orcid": "https://orcid.org/0000-0002-0938-6435",
+      "h_index": 66,
+      "i10_index": 166,
+      "works_count": 249,
+      "cited_by_count": 13747,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5110357661",
+      "display_name": "Yves Y. Nys",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 158,
+      "works_count": 487,
+      "cited_by_count": 13733,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Materials Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5011491152",
+      "display_name": "Jonathan C.W. Brooks",
+      "orcid": "https://orcid.org/0000-0003-3335-6209",
+      "h_index": 66,
+      "i10_index": 152,
+      "works_count": 313,
+      "cited_by_count": 13843,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5111995942",
+      "display_name": "Kirk C. Klasing",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 151,
+      "works_count": 229,
+      "cited_by_count": 14707,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5031873422",
+      "display_name": "Charles R. Staples",
+      "orcid": "https://orcid.org/0000-0002-0237-946X",
+      "h_index": 66,
+      "i10_index": 148,
+      "works_count": 207,
+      "cited_by_count": 12122,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5018809275",
+      "display_name": "Marian Stamp Dawkins",
+      "orcid": "https://orcid.org/0000-0002-7909-5916",
+      "h_index": 66,
+      "i10_index": 116,
+      "works_count": 255,
+      "cited_by_count": 18338,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Social Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Animal Science and Zoology -- 8.3",
+      "id": "https://openalex.org/A5030990365",
+      "display_name": "Sebastião de Campos Valadares Filho",
+      "orcid": "https://orcid.org/0000-0003-4544-6316",
+      "h_index": 65,
+      "i10_index": 472,
+      "works_count": 702,
+      "cited_by_count": 22138,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5042434598",
+      "display_name": "Claude Saegerman",
+      "orcid": "https://orcid.org/0000-0001-9087-7436",
+      "h_index": 65,
+      "i10_index": 331,
+      "works_count": 849,
+      "cited_by_count": 19677,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5010144767",
+      "display_name": "Anshan Shan",
+      "orcid": "https://orcid.org/0000-0003-2830-7509",
+      "h_index": 65,
+      "i10_index": 262,
+      "works_count": 449,
+      "cited_by_count": 14151,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5109119263",
+      "display_name": "Roger Valentine Short",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 219,
+      "works_count": 375,
+      "cited_by_count": 15346,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5075627115",
+      "display_name": "Mark E. Siddall",
+      "orcid": "https://orcid.org/0000-0002-3977-7517",
+      "h_index": 65,
+      "i10_index": 192,
+      "works_count": 403,
+      "cited_by_count": 18010,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5077683193",
+      "display_name": "Christopher S. McSweeney",
+      "orcid": "https://orcid.org/0000-0002-0114-5151",
+      "h_index": 65,
+      "i10_index": 188,
+      "works_count": 291,
+      "cited_by_count": 17476,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5058964430",
+      "display_name": "Warren Charles McNabb",
+      "orcid": "https://orcid.org/0000-0003-2514-6551",
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 441,
+      "cited_by_count": 17210,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5044001561",
+      "display_name": "Toby Grahame Knowles",
+      "orcid": "https://orcid.org/0000-0002-3845-0942",
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 314,
+      "cited_by_count": 12117,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5009284638",
+      "display_name": "David W. Miller",
+      "orcid": "https://orcid.org/0000-0002-4634-5819",
+      "h_index": 65,
+      "i10_index": 174,
+      "works_count": 352,
+      "cited_by_count": 20507,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5038858265",
+      "display_name": "Robert J. Moore",
+      "orcid": "https://orcid.org/0000-0002-0776-5861",
+      "h_index": 65,
+      "i10_index": 172,
+      "works_count": 290,
+      "cited_by_count": 18972,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5053815416",
+      "display_name": "Daniel Franco",
+      "orcid": "https://orcid.org/0000-0002-0093-7042",
+      "h_index": 65,
+      "i10_index": 162,
+      "works_count": 244,
+      "cited_by_count": 13871,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5113452050",
+      "display_name": "K.L. Smith",
+      "orcid": "https://orcid.org/0000-0003-3042-6312",
+      "h_index": 65,
+      "i10_index": 161,
+      "works_count": 217,
+      "cited_by_count": 13664,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 257,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5011888903",
+      "display_name": "Gordon M Allan",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 154,
+      "works_count": 182,
+      "cited_by_count": 16419,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 258,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5054421086",
+      "display_name": "Kyoungjin J. Yoon",
+      "orcid": "https://orcid.org/0000-0002-3969-7285",
+      "h_index": 65,
+      "i10_index": 147,
+      "works_count": 213,
+      "cited_by_count": 14162,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 259,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5031671880",
+      "display_name": "Jennifer E. Purcell",
+      "orcid": "https://orcid.org/0000-0002-6977-6558",
+      "h_index": 65,
+      "i10_index": 112,
+      "works_count": 168,
+      "cited_by_count": 14011,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 260,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5110479812",
+      "display_name": "Greg A. Johnson",
+      "orcid": "https://orcid.org/0000-0003-1949-1797",
+      "h_index": 65,
+      "i10_index": 97,
+      "works_count": 141,
+      "cited_by_count": 11864,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 261,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5026470015",
+      "display_name": "Sven Dänicke",
+      "orcid": "https://orcid.org/0000-0002-4913-4726",
+      "h_index": 64,
+      "i10_index": 355,
+      "works_count": 824,
+      "cited_by_count": 16020,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 262,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5026320132",
+      "display_name": "A.E. Harper",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 282,
+      "works_count": 436,
+      "cited_by_count": 16408,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 263,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5022478430",
+      "display_name": "Todd R. Callaway",
+      "orcid": "https://orcid.org/0000-0002-3310-4979",
+      "h_index": 64,
+      "i10_index": 244,
+      "works_count": 419,
+      "cited_by_count": 15322,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 264,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5084494052",
+      "display_name": "Ludwig Huber",
+      "orcid": "https://orcid.org/0000-0002-0217-136X",
+      "h_index": 64,
+      "i10_index": 227,
+      "works_count": 569,
+      "cited_by_count": 14268,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 265,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5044512568",
+      "display_name": "José Manuel Sánchez‐Vizcaíno",
+      "orcid": "https://orcid.org/0000-0002-1502-8968",
+      "h_index": 64,
+      "i10_index": 227,
+      "works_count": 356,
+      "cited_by_count": 13247,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 266,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5011760436",
+      "display_name": "Hannes Lohi",
+      "orcid": "https://orcid.org/0000-0003-1087-5532",
+      "h_index": 64,
+      "i10_index": 209,
+      "works_count": 480,
+      "cited_by_count": 14193,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 267,
+      "score": 8.2,
+      "label": "Animal Science and Zoology -- 8.2",
+      "id": "https://openalex.org/A5077445932",
+      "display_name": "Stephen Brent Smith",
+      "orcid": "https://orcid.org/0000-0002-2779-8281",
+      "h_index": 64,
+      "i10_index": 205,
+      "works_count": 294,
+      "cited_by_count": 15686,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 268,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5045419973",
+      "display_name": "David Ian Givens",
+      "orcid": "https://orcid.org/0000-0002-6754-6935",
+      "h_index": 64,
+      "i10_index": 199,
+      "works_count": 409,
+      "cited_by_count": 14415,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 269,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5018040630",
+      "display_name": "Jonathan Rushton",
+      "orcid": "https://orcid.org/0000-0001-5450-4202",
+      "h_index": 64,
+      "i10_index": 195,
+      "works_count": 420,
+      "cited_by_count": 15701,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 270,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5010255089",
+      "display_name": "Martin J. Green",
+      "orcid": "https://orcid.org/0000-0002-6408-6443",
+      "h_index": 64,
+      "i10_index": 194,
+      "works_count": 360,
+      "cited_by_count": 13050,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 271,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5064954619",
+      "display_name": "Jeffrey J. Zimmerman",
+      "orcid": "https://orcid.org/0000-0002-8107-2422",
+      "h_index": 64,
+      "i10_index": 176,
+      "works_count": 346,
+      "cited_by_count": 14441,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Veterinary",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 272,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5043600815",
+      "display_name": "Gerald E. Lobley",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 163,
+      "works_count": 211,
+      "cited_by_count": 16304,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 273,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5102918335",
+      "display_name": "Xiufang Xia",
+      "orcid": "https://orcid.org/0000-0003-3780-3707",
+      "h_index": 64,
+      "i10_index": 161,
+      "works_count": 195,
+      "cited_by_count": 12587,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 274,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5088405344",
+      "display_name": "Jeffrey Lynn Firkins",
+      "orcid": "https://orcid.org/0000-0003-3518-1940",
+      "h_index": 64,
+      "i10_index": 151,
+      "works_count": 204,
+      "cited_by_count": 13582,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 275,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5070238675",
+      "display_name": "P.L. Ruegg",
+      "orcid": "https://orcid.org/0000-0002-7211-4512",
+      "h_index": 64,
+      "i10_index": 149,
+      "works_count": 264,
+      "cited_by_count": 13695,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 276,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5043021615",
+      "display_name": "Rodrigo Carvalho Bicalho",
+      "orcid": "https://orcid.org/0000-0003-4680-1981",
+      "h_index": 64,
+      "i10_index": 143,
+      "works_count": 213,
+      "cited_by_count": 11492,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 277,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5111719509",
+      "display_name": "Gonzalo González Mateos",
+      "orcid": "https://orcid.org/0000-0001-9438-7207",
+      "h_index": 64,
+      "i10_index": 143,
+      "works_count": 344,
+      "cited_by_count": 11336,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 278,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5112549766",
+      "display_name": "Hanno Würbel",
+      "orcid": "https://orcid.org/0000-0002-2934-3010",
+      "h_index": 64,
+      "i10_index": 142,
+      "works_count": 286,
+      "cited_by_count": 26975,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 279,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5061458512",
+      "display_name": "Jesse Paul Goff",
+      "orcid": "https://orcid.org/0000-0002-7531-7286",
+      "h_index": 64,
+      "i10_index": 139,
+      "works_count": 202,
+      "cited_by_count": 16665,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 280,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5086288367",
+      "display_name": "Joy A. Mench",
+      "orcid": "https://orcid.org/0000-0001-8890-1193",
+      "h_index": 64,
+      "i10_index": 129,
+      "works_count": 177,
+      "cited_by_count": 11589,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 281,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5088400278",
+      "display_name": "Jing Xie",
+      "orcid": "https://orcid.org/0000-0002-3194-9273",
+      "h_index": 63,
+      "i10_index": 413,
+      "works_count": 788,
+      "cited_by_count": 17976,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Materials Science",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 282,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5048174088",
+      "display_name": "Clive J. C. Phillips",
+      "orcid": "https://orcid.org/0000-0002-1926-6357",
+      "h_index": 63,
+      "i10_index": 350,
+      "works_count": 759,
+      "cited_by_count": 16215,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 283,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5100329473",
+      "display_name": "Chong Wang",
+      "orcid": "https://orcid.org/0000-0003-4489-4344",
+      "h_index": 63,
+      "i10_index": 301,
+      "works_count": 470,
+      "cited_by_count": 15020,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 284,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5009482845",
+      "display_name": "Jürgen Zentek",
+      "orcid": "https://orcid.org/0000-0003-2864-9250",
+      "h_index": 63,
+      "i10_index": 261,
+      "works_count": 478,
+      "cited_by_count": 13719,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 285,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5012405943",
+      "display_name": "O. Adeola",
+      "orcid": "https://orcid.org/0000-0003-2737-7679",
+      "h_index": 63,
+      "i10_index": 259,
+      "works_count": 422,
+      "cited_by_count": 15005,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 286,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5058892714",
+      "display_name": "Luis Orlindo Tedeschi",
+      "orcid": "https://orcid.org/0000-0003-1883-4911",
+      "h_index": 63,
+      "i10_index": 256,
+      "works_count": 594,
+      "cited_by_count": 16484,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 287,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5066099820",
+      "display_name": "Shaobo Xiao",
+      "orcid": "https://orcid.org/0000-0003-0023-9188",
+      "h_index": 63,
+      "i10_index": 239,
+      "works_count": 367,
+      "cited_by_count": 12788,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 288,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5077160641",
+      "display_name": "Shayan Sharif",
+      "orcid": "https://orcid.org/0000-0002-3158-012X",
+      "h_index": 63,
+      "i10_index": 226,
+      "works_count": 368,
+      "cited_by_count": 14849,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 289,
+      "score": 8.1,
+      "label": "Animal Science and Zoology -- 8.1",
+      "id": "https://openalex.org/A5108384815",
+      "display_name": "Fred Brown",
+      "orcid": "https://orcid.org/0009-0006-3225-5915",
+      "h_index": 63,
+      "i10_index": 225,
+      "works_count": 405,
+      "cited_by_count": 15892,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 290,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5031539708",
+      "display_name": "Brigitte B. Picard",
+      "orcid": "https://orcid.org/0000-0002-8075-6718",
+      "h_index": 63,
+      "i10_index": 213,
+      "works_count": 655,
+      "cited_by_count": 14778,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 291,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5023490569",
+      "display_name": "M.C.M. de Jong",
+      "orcid": "https://orcid.org/0000-0002-5339-1995",
+      "h_index": 63,
+      "i10_index": 212,
+      "works_count": 513,
+      "cited_by_count": 12633,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Mathematics",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 292,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5018208670",
+      "display_name": "P.D. Eckersall",
+      "orcid": "https://orcid.org/0000-0001-5254-5502",
+      "h_index": 63,
+      "i10_index": 202,
+      "works_count": 375,
+      "cited_by_count": 16345,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Chemistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 293,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5105297965",
+      "display_name": "Martine Hausberger",
+      "orcid": "https://orcid.org/0000-0002-4867-5408",
+      "h_index": 63,
+      "i10_index": 201,
+      "works_count": 682,
+      "cited_by_count": 11548,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 294,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5058590776",
+      "display_name": "Sandra L. Rodriguez‐Zas",
+      "orcid": "https://orcid.org/0000-0003-1122-4758",
+      "h_index": 63,
+      "i10_index": 199,
+      "works_count": 321,
+      "cited_by_count": 17975,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 295,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5083684557",
+      "display_name": "Joan K. Lunney",
+      "orcid": "https://orcid.org/0000-0002-1147-8662",
+      "h_index": 63,
+      "i10_index": 188,
+      "works_count": 329,
+      "cited_by_count": 16049,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 296,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5059421725",
+      "display_name": "Katleen Raes",
+      "orcid": "https://orcid.org/0000-0003-2382-120X",
+      "h_index": 63,
+      "i10_index": 183,
+      "works_count": 362,
+      "cited_by_count": 13835,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 297,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5032109404",
+      "display_name": "Alan David Radford",
+      "orcid": "https://orcid.org/0000-0002-4590-1334",
+      "h_index": 63,
+      "i10_index": 174,
+      "works_count": 311,
+      "cited_by_count": 12075,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 298,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5108530974",
+      "display_name": "Maurice B. Pensaert",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 159,
+      "works_count": 318,
+      "cited_by_count": 13711,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 299,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5088401601",
+      "display_name": "Isabelle Veissier",
+      "orcid": "https://orcid.org/0000-0002-8497-5395",
+      "h_index": 63,
+      "i10_index": 149,
+      "works_count": 584,
+      "cited_by_count": 16827,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 300,
+      "score": 8,
+      "label": "Animal Science and Zoology -- 8.0",
+      "id": "https://openalex.org/A5029927612",
+      "display_name": "Reimar Johne",
+      "orcid": "https://orcid.org/0000-0001-9597-6724",
+      "h_index": 63,
+      "i10_index": 146,
+      "works_count": 294,
+      "cited_by_count": 15889,
+      "discipline": "Animal Science and Zoology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Animal Science and Zoology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    }
+  ]
+}

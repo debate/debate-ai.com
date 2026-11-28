@@ -1,0 +1,1650 @@
+{
+  "kind": "subfield",
+  "id": 1406,
+  "name": "Marketing",
+  "total_in_scrape": 87,
+  "count": 87,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Marketing -- 9.9",
+      "id": "https://openalex.org/A5060663003",
+      "display_name": "Heesup Han",
+      "orcid": "https://orcid.org/0000-0001-6356-3001",
+      "h_index": 127,
+      "i10_index": 572,
+      "works_count": 735,
+      "cited_by_count": 67361,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Marketing -- 9.9",
+      "id": "https://openalex.org/A5068331895",
+      "display_name": "Richard P. Bagozzi",
+      "orcid": "https://orcid.org/0000-0002-8807-8210",
+      "h_index": 126,
+      "i10_index": 295,
+      "works_count": 536,
+      "cited_by_count": 173055,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Marketing -- 9.9",
+      "id": "https://openalex.org/A5001048299",
+      "display_name": "Philip Kotler",
+      "orcid": null,
+      "h_index": 119,
+      "i10_index": 308,
+      "works_count": 641,
+      "cited_by_count": 75807,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Marketing -- 9.9",
+      "id": "https://openalex.org/A5008359350",
+      "display_name": "Amandeep Dhir",
+      "orcid": "https://orcid.org/0000-0002-6006-6058",
+      "h_index": 118,
+      "i10_index": 253,
+      "works_count": 317,
+      "cited_by_count": 44806,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Marketing -- 9.9",
+      "id": "https://openalex.org/A5090726146",
+      "display_name": "Charbel José Chiappetta Jabbour",
+      "orcid": "https://orcid.org/0000-0001-5963-3556",
+      "h_index": 111,
+      "i10_index": 277,
+      "works_count": 400,
+      "cited_by_count": 47231,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Marketing -- 9.9",
+      "id": "https://openalex.org/A5076693618",
+      "display_name": "Dhruv Grewal",
+      "orcid": "https://orcid.org/0000-0002-7046-6063",
+      "h_index": 111,
+      "i10_index": 235,
+      "works_count": 408,
+      "cited_by_count": 85742,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5078843987",
+      "display_name": "Justin Paul",
+      "orcid": "https://orcid.org/0000-0001-5062-8371",
+      "h_index": 103,
+      "i10_index": 204,
+      "works_count": 291,
+      "cited_by_count": 51246,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5007144884",
+      "display_name": "Anna S. Mattila",
+      "orcid": "https://orcid.org/0000-0001-8872-5521",
+      "h_index": 101,
+      "i10_index": 313,
+      "works_count": 469,
+      "cited_by_count": 35819,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5045594204",
+      "display_name": "Weng Marc Lim",
+      "orcid": "https://orcid.org/0000-0001-7196-1923",
+      "h_index": 98,
+      "i10_index": 292,
+      "works_count": 414,
+      "cited_by_count": 68828,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5110291306",
+      "display_name": "Ko de Ruyter",
+      "orcid": "https://orcid.org/0000-0002-1391-697X",
+      "h_index": 93,
+      "i10_index": 187,
+      "works_count": 376,
+      "cited_by_count": 39172,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5048887562",
+      "display_name": "Russell W. Belk",
+      "orcid": "https://orcid.org/0000-0001-6674-9792",
+      "h_index": 92,
+      "i10_index": 278,
+      "works_count": 587,
+      "cited_by_count": 64658,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5066449919",
+      "display_name": "Mohammad Iranmanesh",
+      "orcid": "https://orcid.org/0000-0001-6964-6238",
+      "h_index": 92,
+      "i10_index": 188,
+      "works_count": 209,
+      "cited_by_count": 24913,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5056889851",
+      "display_name": "Andreas Peter Herrmann",
+      "orcid": "https://orcid.org/0000-0002-8886-0894",
+      "h_index": 91,
+      "i10_index": 293,
+      "works_count": 850,
+      "cited_by_count": 30919,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5079113507",
+      "display_name": "Stefan Schaltegger",
+      "orcid": "https://orcid.org/0000-0001-7756-5526",
+      "h_index": 90,
+      "i10_index": 229,
+      "works_count": 592,
+      "cited_by_count": 43194,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5040330589",
+      "display_name": "Christian Homburg",
+      "orcid": "https://orcid.org/0000-0002-3584-9181",
+      "h_index": 89,
+      "i10_index": 281,
+      "works_count": 1088,
+      "cited_by_count": 43525,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5050664628",
+      "display_name": "Muhammad Turki Alshurideh",
+      "orcid": "https://orcid.org/0000-0002-7336-381X",
+      "h_index": 87,
+      "i10_index": 310,
+      "works_count": 524,
+      "cited_by_count": 26721,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Marketing -- 9.8",
+      "id": "https://openalex.org/A5040054558",
+      "display_name": "SooCheong Shawn Jang",
+      "orcid": "https://orcid.org/0000-0001-8132-0388",
+      "h_index": 87,
+      "i10_index": 240,
+      "works_count": 304,
+      "cited_by_count": 32985,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5034066593",
+      "display_name": "Adamantios Diamantopoulos",
+      "orcid": "https://orcid.org/0000-0001-5537-717X",
+      "h_index": 87,
+      "i10_index": 170,
+      "works_count": 279,
+      "cited_by_count": 49774,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5064998398",
+      "display_name": "Jochen Wirtz",
+      "orcid": "https://orcid.org/0000-0002-6297-4498",
+      "h_index": 84,
+      "i10_index": 181,
+      "works_count": 391,
+      "cited_by_count": 41016,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5103470214",
+      "display_name": "Donald R. Lehmann",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 191,
+      "works_count": 371,
+      "cited_by_count": 40222,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5084536778",
+      "display_name": "Ronald Earl Goldsmith",
+      "orcid": "https://orcid.org/0009-0000-2913-2910",
+      "h_index": 82,
+      "i10_index": 164,
+      "works_count": 279,
+      "cited_by_count": 32478,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5085703840",
+      "display_name": "Zillur Rahman",
+      "orcid": "https://orcid.org/0000-0003-2785-0200",
+      "h_index": 81,
+      "i10_index": 203,
+      "works_count": 333,
+      "cited_by_count": 23622,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5111420232",
+      "display_name": "Jan‐Benedict E.M. Steenkamp",
+      "orcid": "https://orcid.org/0000-0002-3839-0425",
+      "h_index": 81,
+      "i10_index": 126,
+      "works_count": 200,
+      "cited_by_count": 51133,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5079887059",
+      "display_name": "Shelby D. Hunt",
+      "orcid": "https://orcid.org/0000-0002-8928-3400",
+      "h_index": 80,
+      "i10_index": 162,
+      "works_count": 227,
+      "cited_by_count": 66166,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5073384960",
+      "display_name": "John B. Thøgersen",
+      "orcid": "https://orcid.org/0000-0003-0613-8062",
+      "h_index": 80,
+      "i10_index": 150,
+      "works_count": 412,
+      "cited_by_count": 26808,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Environmental Science",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5063744940",
+      "display_name": "Peter C. Verhoef",
+      "orcid": "https://orcid.org/0000-0002-3448-2656",
+      "h_index": 80,
+      "i10_index": 144,
+      "works_count": 330,
+      "cited_by_count": 66612,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5008128129",
+      "display_name": "Puneet Kaur",
+      "orcid": "https://orcid.org/0000-0002-8309-8888",
+      "h_index": 80,
+      "i10_index": 125,
+      "works_count": 153,
+      "cited_by_count": 23574,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Marketing -- 9.7",
+      "id": "https://openalex.org/A5082016079",
+      "display_name": "Arch George Woodside",
+      "orcid": "https://orcid.org/0000-0002-2373-6243",
+      "h_index": 79,
+      "i10_index": 305,
+      "works_count": 712,
+      "cited_by_count": 31400,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5102812510",
+      "display_name": "Michel Wedel",
+      "orcid": "https://orcid.org/0000-0002-1244-4923",
+      "h_index": 79,
+      "i10_index": 158,
+      "works_count": 320,
+      "cited_by_count": 27326,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5044113079",
+      "display_name": "Carlos Flavián",
+      "orcid": "https://orcid.org/0000-0001-7118-9013",
+      "h_index": 79,
+      "i10_index": 146,
+      "works_count": 289,
+      "cited_by_count": 42288,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5012900375",
+      "display_name": "Bo Edvardsson",
+      "orcid": "https://orcid.org/0000-0003-2705-0836",
+      "h_index": 77,
+      "i10_index": 181,
+      "works_count": 848,
+      "cited_by_count": 25608,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5029486418",
+      "display_name": "Jagdish N. Sheth",
+      "orcid": "https://orcid.org/0000-0002-1163-5760",
+      "h_index": 77,
+      "i10_index": 172,
+      "works_count": 539,
+      "cited_by_count": 40072,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5001700317",
+      "display_name": "Leyland F. Pitt",
+      "orcid": "https://orcid.org/0000-0002-3099-9164",
+      "h_index": 76,
+      "i10_index": 275,
+      "works_count": 553,
+      "cited_by_count": 27864,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5074149080",
+      "display_name": "Michel Laroche",
+      "orcid": "https://orcid.org/0000-0002-5829-668X",
+      "h_index": 76,
+      "i10_index": 177,
+      "works_count": 273,
+      "cited_by_count": 27012,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5091527821",
+      "display_name": "David A. Aaker",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 145,
+      "works_count": 269,
+      "cited_by_count": 50427,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5089373138",
+      "display_name": "Christian Grönroos",
+      "orcid": "https://orcid.org/0000-0003-0720-8819",
+      "h_index": 76,
+      "i10_index": 121,
+      "works_count": 158,
+      "cited_by_count": 69157,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5020587678",
+      "display_name": "Woo Gon Kim",
+      "orcid": "https://orcid.org/0000-0002-5898-7528",
+      "h_index": 75,
+      "i10_index": 164,
+      "works_count": 247,
+      "cited_by_count": 27268,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5032115040",
+      "display_name": "Leonard L. Berry",
+      "orcid": "https://orcid.org/0000-0002-9110-7502",
+      "h_index": 75,
+      "i10_index": 159,
+      "works_count": 295,
+      "cited_by_count": 150325,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Marketing -- 9.6",
+      "id": "https://openalex.org/A5057283784",
+      "display_name": "Robert F. Lusch",
+      "orcid": "https://orcid.org/0000-0002-8341-9581",
+      "h_index": 75,
+      "i10_index": 157,
+      "works_count": 270,
+      "cited_by_count": 78582,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5034061494",
+      "display_name": "Stephen Louis Vargo",
+      "orcid": "https://orcid.org/0000-0002-2401-8358",
+      "h_index": 75,
+      "i10_index": 133,
+      "works_count": 200,
+      "cited_by_count": 83840,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5037954003",
+      "display_name": "Roland T. Rust",
+      "orcid": "https://orcid.org/0000-0003-2433-7719",
+      "h_index": 75,
+      "i10_index": 130,
+      "works_count": 222,
+      "cited_by_count": 50488,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5007289920",
+      "display_name": "Leslie de Chernatony",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 126,
+      "works_count": 277,
+      "cited_by_count": 24621,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5075368873",
+      "display_name": "Geoffrey N. Soutar",
+      "orcid": "https://orcid.org/0000-0003-1478-788X",
+      "h_index": 74,
+      "i10_index": 198,
+      "works_count": 458,
+      "cited_by_count": 36344,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5038481372",
+      "display_name": "Morris B. Holbrook",
+      "orcid": "https://orcid.org/0000-0002-5452-9773",
+      "h_index": 74,
+      "i10_index": 182,
+      "works_count": 327,
+      "cited_by_count": 61578,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5108505096",
+      "display_name": "Naresh K. Malhotra",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 159,
+      "works_count": 294,
+      "cited_by_count": 35205,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5073290467",
+      "display_name": "Kevin Lane Keller",
+      "orcid": "https://orcid.org/0000-0001-5836-4315",
+      "h_index": 74,
+      "i10_index": 140,
+      "works_count": 234,
+      "cited_by_count": 73001,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5109243479",
+      "display_name": "Rik G. M. Pieters",
+      "orcid": "https://orcid.org/0000-0002-8387-5827",
+      "h_index": 74,
+      "i10_index": 132,
+      "works_count": 295,
+      "cited_by_count": 28396,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5076709338",
+      "display_name": "Suhaiza Hanim Mohamad Zailani",
+      "orcid": "https://orcid.org/0000-0002-8484-1821",
+      "h_index": 73,
+      "i10_index": 189,
+      "works_count": 286,
+      "cited_by_count": 19157,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5031171331",
+      "display_name": "Jan Marco Leimeister",
+      "orcid": "https://orcid.org/0000-0002-1990-2894",
+      "h_index": 72,
+      "i10_index": 306,
+      "works_count": 1063,
+      "cited_by_count": 22286,
+      "discipline": "Marketing",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Computer Science",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5024582454",
+      "display_name": "Pradeep K. Chintagunta",
+      "orcid": "https://orcid.org/0000-0003-2854-5216",
+      "h_index": 72,
+      "i10_index": 147,
+      "works_count": 231,
+      "cited_by_count": 18203,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Marketing -- 9.5",
+      "id": "https://openalex.org/A5051848146",
+      "display_name": "Sandra María Correia Loureiro",
+      "orcid": "https://orcid.org/0000-0001-8362-4430",
+      "h_index": 71,
+      "i10_index": 196,
+      "works_count": 535,
+      "cited_by_count": 20005,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5068350949",
+      "display_name": "Linda D. Hollebeek",
+      "orcid": "https://orcid.org/0000-0002-1282-0319",
+      "h_index": 71,
+      "i10_index": 138,
+      "works_count": 198,
+      "cited_by_count": 39980,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5028206189",
+      "display_name": "Jun‐Hwa Cheah",
+      "orcid": "https://orcid.org/0000-0001-8440-9564",
+      "h_index": 71,
+      "i10_index": 138,
+      "works_count": 200,
+      "cited_by_count": 36088,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5074473734",
+      "display_name": "Naveen Donthu",
+      "orcid": "https://orcid.org/0000-0002-8525-3159",
+      "h_index": 71,
+      "i10_index": 127,
+      "works_count": 194,
+      "cited_by_count": 62009,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5108603030",
+      "display_name": "A. Parasuraman",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 116,
+      "works_count": 159,
+      "cited_by_count": 167884,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5018380385",
+      "display_name": "Aron O’Cass",
+      "orcid": "https://orcid.org/0000-0003-0127-3759",
+      "h_index": 70,
+      "i10_index": 131,
+      "works_count": 259,
+      "cited_by_count": 23906,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5017416692",
+      "display_name": "Richard G. Netemeyer",
+      "orcid": "https://orcid.org/0009-0005-9009-848X",
+      "h_index": 70,
+      "i10_index": 101,
+      "works_count": 156,
+      "cited_by_count": 42218,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5081823893",
+      "display_name": "Ian Phau",
+      "orcid": "https://orcid.org/0000-0002-0759-6092",
+      "h_index": 69,
+      "i10_index": 192,
+      "works_count": 496,
+      "cited_by_count": 16155,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5027733699",
+      "display_name": "Jinsoo Hwang",
+      "orcid": "https://orcid.org/0000-0001-6243-8524",
+      "h_index": 69,
+      "i10_index": 178,
+      "works_count": 367,
+      "cited_by_count": 15501,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5050081082",
+      "display_name": "Garry Wei‐Han Tan",
+      "orcid": "https://orcid.org/0000-0003-2974-2270",
+      "h_index": 69,
+      "i10_index": 126,
+      "works_count": 183,
+      "cited_by_count": 23367,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5111739188",
+      "display_name": "T.C. Melewar",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 152,
+      "works_count": 294,
+      "cited_by_count": 15823,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Marketing -- 9.4",
+      "id": "https://openalex.org/A5050303775",
+      "display_name": "Zhilin Yang",
+      "orcid": "https://orcid.org/0000-0003-0944-4903",
+      "h_index": 68,
+      "i10_index": 148,
+      "works_count": 209,
+      "cited_by_count": 49282,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5044538090",
+      "display_name": "Gordon R. Foxall",
+      "orcid": "https://orcid.org/0000-0002-3572-6456",
+      "h_index": 67,
+      "i10_index": 223,
+      "works_count": 507,
+      "cited_by_count": 17771,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5046988234",
+      "display_name": "Adam Lindgreen",
+      "orcid": "https://orcid.org/0000-0001-7881-7350",
+      "h_index": 67,
+      "i10_index": 156,
+      "works_count": 461,
+      "cited_by_count": 18030,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5037714329",
+      "display_name": "Sunghyup Sean Hyun",
+      "orcid": "https://orcid.org/0000-0003-3932-5948",
+      "h_index": 67,
+      "i10_index": 155,
+      "works_count": 227,
+      "cited_by_count": 15208,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5067083720",
+      "display_name": "Wesley James Johnston",
+      "orcid": "https://orcid.org/0000-0001-8394-8873",
+      "h_index": 67,
+      "i10_index": 154,
+      "works_count": 249,
+      "cited_by_count": 17969,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5008496192",
+      "display_name": "Paul A. Pavlou",
+      "orcid": "https://orcid.org/0000-0002-8830-5727",
+      "h_index": 67,
+      "i10_index": 134,
+      "works_count": 253,
+      "cited_by_count": 57946,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5101448713",
+      "display_name": "Anders Gustafsson",
+      "orcid": "https://orcid.org/0000-0001-8278-1442",
+      "h_index": 67,
+      "i10_index": 131,
+      "works_count": 317,
+      "cited_by_count": 31488,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5025026600",
+      "display_name": "Lloyd C. Harris",
+      "orcid": "https://orcid.org/0000-0002-9919-5762",
+      "h_index": 67,
+      "i10_index": 128,
+      "works_count": 185,
+      "cited_by_count": 22086,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5063343149",
+      "display_name": "Barry J. Babin",
+      "orcid": "https://orcid.org/0000-0002-0393-2810",
+      "h_index": 67,
+      "i10_index": 116,
+      "works_count": 205,
+      "cited_by_count": 43089,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5058997661",
+      "display_name": "Patrick De Pelsmacker",
+      "orcid": "https://orcid.org/0000-0003-1258-662X",
+      "h_index": 66,
+      "i10_index": 164,
+      "works_count": 541,
+      "cited_by_count": 17602,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5079010914",
+      "display_name": "Bodo B. Schlegelmilch",
+      "orcid": "https://orcid.org/0000-0001-8886-955X",
+      "h_index": 66,
+      "i10_index": 139,
+      "works_count": 339,
+      "cited_by_count": 18292,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Marketing -- 9.3",
+      "id": "https://openalex.org/A5077484930",
+      "display_name": "James R. Bettman",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 111,
+      "works_count": 184,
+      "cited_by_count": 38049,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5061822065",
+      "display_name": "Darren W. Dahl",
+      "orcid": "https://orcid.org/0000-0002-0976-3739",
+      "h_index": 66,
+      "i10_index": 102,
+      "works_count": 250,
+      "cited_by_count": 17333,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5110487435",
+      "display_name": "Robert W. Palmatier",
+      "orcid": "https://orcid.org/0000-0002-5862-8082",
+      "h_index": 66,
+      "i10_index": 97,
+      "works_count": 171,
+      "cited_by_count": 24350,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5072609493",
+      "display_name": "Anil Bilgihan",
+      "orcid": "https://orcid.org/0000-0003-2770-9637",
+      "h_index": 65,
+      "i10_index": 134,
+      "works_count": 184,
+      "cited_by_count": 19042,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5031824280",
+      "display_name": "Martin G. M. Wetzels",
+      "orcid": "https://orcid.org/0000-0001-8569-5320",
+      "h_index": 65,
+      "i10_index": 131,
+      "works_count": 341,
+      "cited_by_count": 33898,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5000637410",
+      "display_name": "Scot Burton",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 125,
+      "works_count": 168,
+      "cited_by_count": 16695,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5028677953",
+      "display_name": "Faizan Ali",
+      "orcid": "https://orcid.org/0000-0003-4528-3764",
+      "h_index": 65,
+      "i10_index": 119,
+      "works_count": 191,
+      "cited_by_count": 16677,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5102961473",
+      "display_name": "V. Kumar",
+      "orcid": "https://orcid.org/0000-0002-6603-310X",
+      "h_index": 65,
+      "i10_index": 96,
+      "works_count": 153,
+      "cited_by_count": 28234,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5022840590",
+      "display_name": "Lester W. Johnson",
+      "orcid": "https://orcid.org/0000-0003-3577-2804",
+      "h_index": 64,
+      "i10_index": 175,
+      "works_count": 351,
+      "cited_by_count": 21552,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5103487931",
+      "display_name": "Scott A. Neslin",
+      "orcid": "https://orcid.org/0009-0004-0086-4412",
+      "h_index": 64,
+      "i10_index": 99,
+      "works_count": 177,
+      "cited_by_count": 22776,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5010238940",
+      "display_name": "Victor R. Prybutok",
+      "orcid": "https://orcid.org/0000-0003-3810-9039",
+      "h_index": 63,
+      "i10_index": 206,
+      "works_count": 398,
+      "cited_by_count": 17797,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Marketing -- 9.2",
+      "id": "https://openalex.org/A5027657372",
+      "display_name": "Michael Jay Polonsky",
+      "orcid": "https://orcid.org/0000-0003-2395-1311",
+      "h_index": 63,
+      "i10_index": 176,
+      "works_count": 389,
+      "cited_by_count": 16192,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Marketing -- 9.1",
+      "id": "https://openalex.org/A5021176930",
+      "display_name": "Stuart John Barnes",
+      "orcid": "https://orcid.org/0000-0001-6480-7100",
+      "h_index": 63,
+      "i10_index": 159,
+      "works_count": 336,
+      "cited_by_count": 18917,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Marketing -- 9.1",
+      "id": "https://openalex.org/A5112194786",
+      "display_name": "Robert B. Johnston",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 138,
+      "works_count": 292,
+      "cited_by_count": 16451,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Marketing -- 9.1",
+      "id": "https://openalex.org/A5031083378",
+      "display_name": "Nigel F. Piercy",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 128,
+      "works_count": 306,
+      "cited_by_count": 12122,
+      "discipline": "Marketing",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Marketing",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    }
+  ]
+}
