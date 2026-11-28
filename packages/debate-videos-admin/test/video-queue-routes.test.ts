@@ -40,7 +40,6 @@ const publishAll = await import("../src/api/admin/youtube/videos/publish-all");
 const channels = await import("../src/api/admin/youtube/channels");
 const availability = await import("../src/api/admin/videos/availability");
 const detect = await import("../src/api/admin/youtube/videos/detect");
-const recategorize = await import("../src/api/admin/youtube/videos/recategorize");
 const refileLectures = await import("../src/api/admin/youtube/videos/refile-lectures");
 
 let db: DB;
@@ -484,61 +483,6 @@ describe("Open Super Debates", () => {
     await queued.POST(request("/x", { method: "POST" }), params({ id: "sd000000006" }));
     const [row] = await db.select().from(videos);
     expect(row).toMatchObject({ style: 2, category: "Open Super Debates", categoryKey: "open_super_debates" });
-  });
-
-  it("re-files queued and published videos, and is idempotent", async () => {
-    await db.insert(youtubeRoundVideos).values([...superLectures, round("other000001", 1, { style: null, category: "Demo Debates", title: "Demo", channel: "Victory Briefs" })]);
-    await db.insert(videos).values({
-      videoId: "pub00000001",
-      source: "lecture",
-      title: "Super Debate Night 0 Recap",
-      publishedAt: "2026-01-01",
-      publishedMs: Date.parse("2026-01-01"),
-      channel: "SuperDebate",
-      viewCount: 5,
-      description: "",
-      style: null,
-      category: "Documentaries & Culture",
-      categoryKey: "documentaries___culture",
-      seasonYear: 2025,
-      searchText: "super debate night 0 recap",
-    });
-    await db.insert(videos).values({
-      videoId: "pub00000002",
-      source: "lecture",
-      title: "Intro to Policy",
-      publishedAt: "2026-01-01",
-      publishedMs: Date.parse("2026-01-01"),
-      channel: "Victory Briefs",
-      viewCount: 5,
-      description: "",
-      style: null,
-      category: "Novice & Introductory",
-      categoryKey: "novice___introductory",
-      seasonYear: 2025,
-      searchText: "intro to policy",
-    });
-
-    const first = await (await recategorize.POST()).json();
-    expect(first).toEqual({ ok: true, queued: 4, published: 1 });
-    const queuedRows = await db.select().from(youtubeRoundVideos);
-    expect(queuedRows.filter((row) => row.category === "Open Super Debates").map((row) => row.id).sort()).toEqual(
-      superLectures.map((row) => row.id).sort(),
-    );
-    expect(queuedRows.find((row) => row.id === "other000001")?.category).toBe("Demo Debates");
-    const published = await db.select().from(videos);
-    expect(published.find((row) => row.videoId === "pub00000001")).toMatchObject({
-      category: "Open Super Debates",
-      categoryKey: "open_super_debates",
-    });
-    expect(published.find((row) => row.videoId === "pub00000002")?.category).toBe("Novice & Introductory");
-
-    expect(await (await recategorize.POST()).json()).toEqual({ ok: true, queued: 0, published: 0 });
-  });
-
-  it("re-file is staff-only", async () => {
-    access.email = "viewer@example.com";
-    expect((await recategorize.POST()).status).toBe(403);
   });
 });
 

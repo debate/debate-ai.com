@@ -73,6 +73,11 @@ export function useThemeState() {
   const [colorTheme, setColorTheme] = useState("modern-minimal")
   const [mounted, setMounted] = useState(false)
   const [previewTheme, setPreviewTheme] = useState<string | null>(null)
+  // Mirrors of `previewTheme`/`colorTheme` for handlers that run from a stale
+  // closure — e.g. a menu's close callback firing in the same event as a click
+  // that has just committed a theme, which must not be reverted.
+  const previewRef = useRef<string | null>(null)
+  const colorThemeRef = useRef("modern-minimal")
   // Whether `/api/settings` resolved (i.e. the user is signed in) rather than
   // 401ing, so change handlers below know whether a sync push is worth
   // attempting instead of firing a doomed request on every theme change.
@@ -88,6 +93,7 @@ export function useThemeState() {
     const saved = localStorage.getItem("color-theme")
     if (saved && themeNames.includes(saved)) {
       setColorTheme(saved)
+      colorThemeRef.current = saved
       applyColorTheme(saved)
     } else {
       document.documentElement.classList.add("theme-modern-minimal")
@@ -100,6 +106,7 @@ export function useThemeState() {
         remoteAvailable.current = true
         if (isValidColorTheme(remote.colorTheme) && remote.colorTheme !== (saved ?? "modern-minimal")) {
           setColorTheme(remote.colorTheme)
+          colorThemeRef.current = remote.colorTheme
           localStorage.setItem("color-theme", remote.colorTheme)
           document.cookie = `color-theme=${remote.colorTheme}; path=/; max-age=31536000`
           applyColorTheme(remote.colorTheme)
@@ -128,6 +135,8 @@ export function useThemeState() {
 
   const handleThemeChange = (newTheme: string) => {
     setColorTheme(newTheme)
+    colorThemeRef.current = newTheme
+    previewRef.current = null
     localStorage.setItem("color-theme", newTheme)
     document.cookie = `color-theme=${newTheme}; path=/; max-age=31536000`
     applyColorTheme(newTheme)
@@ -140,13 +149,15 @@ export function useThemeState() {
   }
 
   const handleThemePreview = (themeName: string) => {
+    previewRef.current = themeName
     setPreviewTheme(themeName)
     applyColorTheme(themeName)
   }
 
   const handlePreviewEnd = () => {
-    if (previewTheme) {
-      applyColorTheme(colorTheme)
+    if (previewRef.current) {
+      previewRef.current = null
+      applyColorTheme(colorThemeRef.current)
       setPreviewTheme(null)
     }
   }
