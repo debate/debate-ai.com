@@ -35,10 +35,12 @@ vi.mock("resend", () => ({
   },
 }));
 
-const claims = await import("@/app/api/school-claims/route");
-const oneClaim = await import("@/app/api/school-claims/[id]/route");
-const school = await import("@/app/api/schools/[slug]/route");
-const members = await import("@/app/api/schools/[slug]/members/route");
+type Handler = (req: NextRequest, ctx?: unknown) => Promise<Response>;
+type Routes = Record<"GET" | "POST" | "PATCH" | "PUT" | "DELETE", Handler>;
+const claims = (await import("@/app/api/school-claims/route")) as unknown as Routes;
+const oneClaim = (await import("@/app/api/school-claims/[id]/route")) as unknown as Routes;
+const school = (await import("@/app/api/schools/[slug]/route")) as unknown as Routes;
+const members = (await import("@/app/api/schools/[slug]/members/route")) as unknown as Routes;
 
 const json = (url: string, method: string, body?: unknown) =>
   new NextRequest(`https://debate-ai.com${url}`, {
