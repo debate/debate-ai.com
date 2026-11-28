@@ -1,0 +1,2233 @@
+{
+  "kind": "subfield",
+  "id": 1104,
+  "name": "Aquatic Science",
+  "total_in_scrape": 111,
+  "count": 111,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Aquatic Science -- 9.9",
+      "id": "https://openalex.org/A5008317354",
+      "display_name": "Daniel F Pauly",
+      "orcid": "https://orcid.org/0000-0003-3756-4793",
+      "h_index": 153,
+      "i10_index": 586,
+      "works_count": 1007,
+      "cited_by_count": 110508,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Aquatic Science -- 9.9",
+      "id": "https://openalex.org/A5037284987",
+      "display_name": "Se‐Kwon Kim",
+      "orcid": "https://orcid.org/0000-0001-6507-9539",
+      "h_index": 131,
+      "i10_index": 580,
+      "works_count": 1097,
+      "cited_by_count": 62075,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Aquatic Science -- 9.9",
+      "id": "https://openalex.org/A5056988172",
+      "display_name": "Simon Jennings",
+      "orcid": "https://orcid.org/0000-0002-2390-7225",
+      "h_index": 115,
+      "i10_index": 207,
+      "works_count": 266,
+      "cited_by_count": 43864,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Aquatic Science -- 9.9",
+      "id": "https://openalex.org/A5055137150",
+      "display_name": "Douglas Redford Tocher",
+      "orcid": "https://orcid.org/0000-0002-8603-9410",
+      "h_index": 111,
+      "i10_index": 390,
+      "works_count": 510,
+      "cited_by_count": 47700,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Aquatic Science -- 9.9",
+      "id": "https://openalex.org/A5053964476",
+      "display_name": "Steven D. Gaines",
+      "orcid": "https://orcid.org/0000-0002-7604-3483",
+      "h_index": 107,
+      "i10_index": 254,
+      "works_count": 640,
+      "cited_by_count": 48428,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Aquatic Science -- 9.9",
+      "id": "https://openalex.org/A5054099655",
+      "display_name": "Sadasivam Kaushik",
+      "orcid": "https://orcid.org/0000-0001-7856-8374",
+      "h_index": 106,
+      "i10_index": 330,
+      "works_count": 683,
+      "cited_by_count": 34730,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5034464331",
+      "display_name": "U. Rashid Sumaila",
+      "orcid": "https://orcid.org/0000-0002-1851-1621",
+      "h_index": 105,
+      "i10_index": 365,
+      "works_count": 597,
+      "cited_by_count": 48732,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5022171172",
+      "display_name": "Ray W. Hilborn",
+      "orcid": "https://orcid.org/0000-0003-2326-2305",
+      "h_index": 105,
+      "i10_index": 337,
+      "works_count": 616,
+      "cited_by_count": 50470,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5057373201",
+      "display_name": "Larry B. Crowder",
+      "orcid": "https://orcid.org/0000-0003-3131-2579",
+      "h_index": 100,
+      "i10_index": 257,
+      "works_count": 391,
+      "cited_by_count": 42912,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5102764867",
+      "display_name": "You‐Jin Jeon",
+      "orcid": "https://orcid.org/0000-0003-3299-7266",
+      "h_index": 96,
+      "i10_index": 526,
+      "works_count": 908,
+      "cited_by_count": 37483,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5011034527",
+      "display_name": "Alistair James Hobday",
+      "orcid": "https://orcid.org/0000-0002-3194-8326",
+      "h_index": 95,
+      "i10_index": 328,
+      "works_count": 636,
+      "cited_by_count": 47559,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5047226659",
+      "display_name": "Patrick Sorgeloos",
+      "orcid": "https://orcid.org/0000-0003-2435-8237",
+      "h_index": 93,
+      "i10_index": 468,
+      "works_count": 751,
+      "cited_by_count": 37681,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5077865056",
+      "display_name": "Kangsen Mai",
+      "orcid": "https://orcid.org/0000-0002-4597-543X",
+      "h_index": 92,
+      "i10_index": 598,
+      "works_count": 835,
+      "cited_by_count": 34208,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5111450318",
+      "display_name": "John R. Sargent",
+      "orcid": null,
+      "h_index": 92,
+      "i10_index": 224,
+      "works_count": 335,
+      "cited_by_count": 29349,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5028527609",
+      "display_name": "Reg A. Watson",
+      "orcid": "https://orcid.org/0000-0001-7201-8865",
+      "h_index": 92,
+      "i10_index": 160,
+      "works_count": 202,
+      "cited_by_count": 60018,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5090037543",
+      "display_name": "Mahmoud A.O. Dawood",
+      "orcid": "https://orcid.org/0000-0002-4887-8838",
+      "h_index": 91,
+      "i10_index": 322,
+      "works_count": 397,
+      "cited_by_count": 27064,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Aquatic Science -- 9.8",
+      "id": "https://openalex.org/A5080801101",
+      "display_name": "Gert Flik",
+      "orcid": "https://orcid.org/0000-0001-9285-7957",
+      "h_index": 90,
+      "i10_index": 291,
+      "works_count": 395,
+      "cited_by_count": 21900,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5019669154",
+      "display_name": "Marta Coll",
+      "orcid": "https://orcid.org/0000-0001-6235-5868",
+      "h_index": 89,
+      "i10_index": 285,
+      "works_count": 835,
+      "cited_by_count": 29243,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5064392284",
+      "display_name": "Carl J. Walters",
+      "orcid": "https://orcid.org/0000-0002-7652-0964",
+      "h_index": 87,
+      "i10_index": 254,
+      "works_count": 370,
+      "cited_by_count": 39732,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5021899823",
+      "display_name": "Rocky de Nys",
+      "orcid": "https://orcid.org/0000-0003-3869-4928",
+      "h_index": 86,
+      "i10_index": 249,
+      "works_count": 294,
+      "cited_by_count": 26297,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Earth and Planetary Sciences",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5090026772",
+      "display_name": "Peter C. Wainwright",
+      "orcid": "https://orcid.org/0000-0003-0498-4759",
+      "h_index": 86,
+      "i10_index": 210,
+      "works_count": 369,
+      "cited_by_count": 23682,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5004505440",
+      "display_name": "Adriaan D. Rijnsdorp",
+      "orcid": "https://orcid.org/0000-0003-0785-9662",
+      "h_index": 86,
+      "i10_index": 176,
+      "works_count": 347,
+      "cited_by_count": 20611,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5086152481",
+      "display_name": "Malcolm Jobling",
+      "orcid": "https://orcid.org/0000-0003-2806-4439",
+      "h_index": 85,
+      "i10_index": 189,
+      "works_count": 327,
+      "cited_by_count": 20023,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5067857337",
+      "display_name": "Bror Jönsson",
+      "orcid": "https://orcid.org/0000-0002-0614-6233",
+      "h_index": 85,
+      "i10_index": 178,
+      "works_count": 324,
+      "cited_by_count": 23344,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5034724010",
+      "display_name": "Boris Worm",
+      "orcid": "https://orcid.org/0000-0002-5742-8716",
+      "h_index": 85,
+      "i10_index": 155,
+      "works_count": 265,
+      "cited_by_count": 53816,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5019126433",
+      "display_name": "Changhu Xue",
+      "orcid": "https://orcid.org/0000-0002-6976-2906",
+      "h_index": 84,
+      "i10_index": 653,
+      "works_count": 1071,
+      "cited_by_count": 32750,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5084581769",
+      "display_name": "Delbert Monroe Gatlin",
+      "orcid": "https://orcid.org/0000-0003-2534-6422",
+      "h_index": 84,
+      "i10_index": 307,
+      "works_count": 397,
+      "cited_by_count": 25888,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Aquatic Science -- 9.7",
+      "id": "https://openalex.org/A5036640118",
+      "display_name": "Peter D. Nichols",
+      "orcid": "https://orcid.org/0000-0003-4658-4665",
+      "h_index": 84,
+      "i10_index": 233,
+      "works_count": 252,
+      "cited_by_count": 23114,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5056431614",
+      "display_name": "Villy Christensen",
+      "orcid": "https://orcid.org/0000-0003-0688-2633",
+      "h_index": 84,
+      "i10_index": 196,
+      "works_count": 342,
+      "cited_by_count": 39308,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5001796283",
+      "display_name": "Edward H. Allison",
+      "orcid": "https://orcid.org/0000-0003-4663-1396",
+      "h_index": 83,
+      "i10_index": 181,
+      "works_count": 286,
+      "cited_by_count": 30668,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5072886707",
+      "display_name": "Max Fredrik Troell",
+      "orcid": "https://orcid.org/0000-0002-7509-8140",
+      "h_index": 83,
+      "i10_index": 157,
+      "works_count": 208,
+      "cited_by_count": 49816,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5060216580",
+      "display_name": "André Eric Punt",
+      "orcid": "https://orcid.org/0000-0001-8489-2488",
+      "h_index": 82,
+      "i10_index": 411,
+      "works_count": 601,
+      "cited_by_count": 27283,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5015810608",
+      "display_name": "Mutsumi Nishida",
+      "orcid": "https://orcid.org/0000-0002-8406-7311",
+      "h_index": 82,
+      "i10_index": 266,
+      "works_count": 463,
+      "cited_by_count": 22503,
+      "discipline": "Aquatic Science",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5067755105",
+      "display_name": "Marisol S. Izquierdo",
+      "orcid": "https://orcid.org/0000-0003-3583-6660",
+      "h_index": 82,
+      "i10_index": 252,
+      "works_count": 349,
+      "cited_by_count": 23438,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5033537582",
+      "display_name": "Jeffrey A. Hutchings",
+      "orcid": "https://orcid.org/0000-0003-1572-5429",
+      "h_index": 82,
+      "i10_index": 228,
+      "works_count": 372,
+      "cited_by_count": 27232,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5036243903",
+      "display_name": "Åshild Krogdahl",
+      "orcid": "https://orcid.org/0000-0002-1384-5446",
+      "h_index": 82,
+      "i10_index": 179,
+      "works_count": 315,
+      "cited_by_count": 26089,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5019693951",
+      "display_name": "Masaki U. Miya",
+      "orcid": "https://orcid.org/0000-0002-9791-9886",
+      "h_index": 82,
+      "i10_index": 169,
+      "works_count": 239,
+      "cited_by_count": 22929,
+      "discipline": "Aquatic Science",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5030759745",
+      "display_name": "Elizabeth A. Fulton",
+      "orcid": "https://orcid.org/0000-0002-5904-7917",
+      "h_index": 81,
+      "i10_index": 243,
+      "works_count": 354,
+      "cited_by_count": 28217,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Mathematics",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Aquatic Science -- 9.6",
+      "id": "https://openalex.org/A5056042586",
+      "display_name": "Maria Byrne",
+      "orcid": "https://orcid.org/0000-0002-8902-9808",
+      "h_index": 80,
+      "i10_index": 388,
+      "works_count": 615,
+      "cited_by_count": 27913,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5108199472",
+      "display_name": "Carl B. Schreck",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 228,
+      "works_count": 302,
+      "cited_by_count": 19109,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5058376171",
+      "display_name": "Michel J. Kaiser",
+      "orcid": "https://orcid.org/0000-0001-8782-3621",
+      "h_index": 79,
+      "i10_index": 216,
+      "works_count": 332,
+      "cited_by_count": 22164,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5087370269",
+      "display_name": "Bronwyn May Gillanders",
+      "orcid": "https://orcid.org/0000-0002-7680-2240",
+      "h_index": 78,
+      "i10_index": 246,
+      "works_count": 361,
+      "cited_by_count": 22798,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5001013694",
+      "display_name": "Ronald W. Hardy",
+      "orcid": "https://orcid.org/0000-0002-4521-864X",
+      "h_index": 78,
+      "i10_index": 192,
+      "works_count": 242,
+      "cited_by_count": 25125,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5113507932",
+      "display_name": "Katsumi Tsukamoto",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 368,
+      "works_count": 522,
+      "cited_by_count": 21374,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5004825896",
+      "display_name": "Henrique N. Cabral",
+      "orcid": "https://orcid.org/0000-0002-7646-6208",
+      "h_index": 77,
+      "i10_index": 307,
+      "works_count": 459,
+      "cited_by_count": 18943,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5105570344",
+      "display_name": "Toshio Takeuchi",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 303,
+      "works_count": 427,
+      "cited_by_count": 17719,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5001507501",
+      "display_name": "Rolf Erik Olsen",
+      "orcid": "https://orcid.org/0000-0002-6633-5837",
+      "h_index": 76,
+      "i10_index": 220,
+      "works_count": 294,
+      "cited_by_count": 19422,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5034438889",
+      "display_name": "Steven E. Campana",
+      "orcid": "https://orcid.org/0000-0002-7453-3761",
+      "h_index": 76,
+      "i10_index": 167,
+      "works_count": 228,
+      "cited_by_count": 26800,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5050359778",
+      "display_name": "David Ross Robertson",
+      "orcid": "https://orcid.org/0000-0003-3972-149X",
+      "h_index": 76,
+      "i10_index": 163,
+      "works_count": 443,
+      "cited_by_count": 20031,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5064910774",
+      "display_name": "Ian C. Potter",
+      "orcid": "https://orcid.org/0000-0001-5922-4621",
+      "h_index": 75,
+      "i10_index": 348,
+      "works_count": 451,
+      "cited_by_count": 20202,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Aquatic Science -- 9.5",
+      "id": "https://openalex.org/A5028491224",
+      "display_name": "Jason S. Link",
+      "orcid": "https://orcid.org/0000-0003-2740-7161",
+      "h_index": 75,
+      "i10_index": 203,
+      "works_count": 330,
+      "cited_by_count": 21236,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Mathematics",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5084940588",
+      "display_name": "Lin Feng",
+      "orcid": "https://orcid.org/0000-0002-3924-9466",
+      "h_index": 74,
+      "i10_index": 289,
+      "works_count": 365,
+      "cited_by_count": 16779,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5108283919",
+      "display_name": "Tony J. Pitcher",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 194,
+      "works_count": 294,
+      "cited_by_count": 25108,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5047035656",
+      "display_name": "Julia L. Blanchard",
+      "orcid": "https://orcid.org/0000-0003-0532-4824",
+      "h_index": 74,
+      "i10_index": 167,
+      "works_count": 303,
+      "cited_by_count": 24861,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5027278305",
+      "display_name": "Xiao‐Qiu Zhou",
+      "orcid": "https://orcid.org/0000-0001-5266-0041",
+      "h_index": 73,
+      "i10_index": 302,
+      "works_count": 380,
+      "cited_by_count": 16959,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5113166241",
+      "display_name": "Marc Mangel",
+      "orcid": "https://orcid.org/0000-0002-9406-697X",
+      "h_index": 73,
+      "i10_index": 226,
+      "works_count": 361,
+      "cited_by_count": 23324,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Mathematics",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5021374141",
+      "display_name": "Aires Oliva‐Teles",
+      "orcid": "https://orcid.org/0000-0002-5730-836X",
+      "h_index": 73,
+      "i10_index": 218,
+      "works_count": 306,
+      "cited_by_count": 17192,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5022934878",
+      "display_name": "Björn Thrándur Björnsson",
+      "orcid": "https://orcid.org/0000-0002-1310-9756",
+      "h_index": 73,
+      "i10_index": 191,
+      "works_count": 252,
+      "cited_by_count": 16823,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5102798162",
+      "display_name": "John Gordon Bell",
+      "orcid": "https://orcid.org/0000-0002-3131-2256",
+      "h_index": 73,
+      "i10_index": 125,
+      "works_count": 134,
+      "cited_by_count": 17104,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5076603275",
+      "display_name": "Stéphane Panserat",
+      "orcid": "https://orcid.org/0000-0002-4479-9868",
+      "h_index": 72,
+      "i10_index": 183,
+      "works_count": 404,
+      "cited_by_count": 15231,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5110227495",
+      "display_name": "William C. Leggett",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 157,
+      "works_count": 214,
+      "cited_by_count": 16749,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Aquatic Science -- 9.4",
+      "id": "https://openalex.org/A5016826191",
+      "display_name": "John J. Magnuson",
+      "orcid": "https://orcid.org/0000-0001-5612-8765",
+      "h_index": 72,
+      "i10_index": 153,
+      "works_count": 243,
+      "cited_by_count": 21164,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5004496813",
+      "display_name": "José‐Luis Zambonino‐Infante",
+      "orcid": "https://orcid.org/0000-0001-8436-4773",
+      "h_index": 72,
+      "i10_index": 141,
+      "works_count": 290,
+      "cited_by_count": 15841,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5089927877",
+      "display_name": "J. Widdows",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 132,
+      "works_count": 155,
+      "cited_by_count": 15192,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5009077174",
+      "display_name": "Liqiao Chen",
+      "orcid": "https://orcid.org/0000-0003-0138-7828",
+      "h_index": 71,
+      "i10_index": 341,
+      "works_count": 505,
+      "cited_by_count": 18078,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5108378628",
+      "display_name": "Wei‐Dan Jiang",
+      "orcid": "https://orcid.org/0000-0003-3278-5474",
+      "h_index": 71,
+      "i10_index": 292,
+      "works_count": 375,
+      "cited_by_count": 16175,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5030996780",
+      "display_name": "Takeshi Watanabe",
+      "orcid": "https://orcid.org/0000-0002-4532-0556",
+      "h_index": 71,
+      "i10_index": 269,
+      "works_count": 434,
+      "cited_by_count": 18544,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5084658463",
+      "display_name": "Alan K. Whitfield",
+      "orcid": "https://orcid.org/0000-0003-1452-7367",
+      "h_index": 71,
+      "i10_index": 207,
+      "works_count": 269,
+      "cited_by_count": 18038,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5084210964",
+      "display_name": "Sigurd Olav Stefansson",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 174,
+      "works_count": 225,
+      "cited_by_count": 13835,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5075161740",
+      "display_name": "Qinghui Ai",
+      "orcid": "https://orcid.org/0000-0002-3958-474X",
+      "h_index": 70,
+      "i10_index": 306,
+      "works_count": 471,
+      "cited_by_count": 17265,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5079814177",
+      "display_name": "Johan A.J. Verreth",
+      "orcid": "https://orcid.org/0000-0001-7277-5129",
+      "h_index": 70,
+      "i10_index": 232,
+      "works_count": 496,
+      "cited_by_count": 16427,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5061053995",
+      "display_name": "Simon J. Davies",
+      "orcid": "https://orcid.org/0000-0002-4483-0503",
+      "h_index": 70,
+      "i10_index": 220,
+      "works_count": 345,
+      "cited_by_count": 18051,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Aquatic Science -- 9.3",
+      "id": "https://openalex.org/A5067868204",
+      "display_name": "Rune Waagbø",
+      "orcid": "https://orcid.org/0000-0001-6075-3221",
+      "h_index": 70,
+      "i10_index": 172,
+      "works_count": 266,
+      "cited_by_count": 14557,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5111652433",
+      "display_name": "D. F. Houlihan",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 154,
+      "works_count": 228,
+      "cited_by_count": 12460,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5007830198",
+      "display_name": "William W. L. Cheung",
+      "orcid": "https://orcid.org/0000-0003-3626-1045",
+      "h_index": 70,
+      "i10_index": 128,
+      "works_count": 169,
+      "cited_by_count": 25390,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5101792681",
+      "display_name": "Jun Jiang",
+      "orcid": "https://orcid.org/0000-0001-6786-4741",
+      "h_index": 69,
+      "i10_index": 241,
+      "works_count": 284,
+      "cited_by_count": 14753,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5007459215",
+      "display_name": "Jaume Pérez‐Sánchez",
+      "orcid": "https://orcid.org/0000-0003-2506-1523",
+      "h_index": 69,
+      "i10_index": 198,
+      "works_count": 370,
+      "cited_by_count": 13914,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5042387797",
+      "display_name": "Michael E. Alfaro",
+      "orcid": "https://orcid.org/0000-0002-8898-8230",
+      "h_index": 69,
+      "i10_index": 121,
+      "works_count": 437,
+      "cited_by_count": 18092,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5032876459",
+      "display_name": "Robert H. Devlin",
+      "orcid": "https://orcid.org/0000-0002-9661-2989",
+      "h_index": 68,
+      "i10_index": 208,
+      "works_count": 305,
+      "cited_by_count": 16769,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5069292897",
+      "display_name": "Won‐Kyo Jung",
+      "orcid": "https://orcid.org/0000-0002-1615-750X",
+      "h_index": 67,
+      "i10_index": 243,
+      "works_count": 460,
+      "cited_by_count": 15657,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5013674756",
+      "display_name": "Richard D. Brodeur",
+      "orcid": "https://orcid.org/0000-0002-6629-5564",
+      "h_index": 67,
+      "i10_index": 193,
+      "works_count": 284,
+      "cited_by_count": 14626,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5068612321",
+      "display_name": "Philippe Soudant",
+      "orcid": "https://orcid.org/0000-0003-3090-5612",
+      "h_index": 67,
+      "i10_index": 189,
+      "works_count": 319,
+      "cited_by_count": 20336,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5111685545",
+      "display_name": "John A. Musick",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 145,
+      "works_count": 197,
+      "cited_by_count": 17500,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Aquatic Science -- 9.2",
+      "id": "https://openalex.org/A5102754549",
+      "display_name": "William W. L. Cheung",
+      "orcid": "https://orcid.org/0000-0001-9998-0384",
+      "h_index": 67,
+      "i10_index": 144,
+      "works_count": 232,
+      "cited_by_count": 31584,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5022276222",
+      "display_name": "Konrad R Dabrowski",
+      "orcid": "https://orcid.org/0000-0003-2501-8509",
+      "h_index": 66,
+      "i10_index": 287,
+      "works_count": 406,
+      "cited_by_count": 17105,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5049926988",
+      "display_name": "Pei Wu",
+      "orcid": "https://orcid.org/0000-0002-5675-5950",
+      "h_index": 66,
+      "i10_index": 279,
+      "works_count": 375,
+      "cited_by_count": 14724,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5057903887",
+      "display_name": "Ricardo Serrão Santos",
+      "orcid": "https://orcid.org/0000-0002-2536-1369",
+      "h_index": 66,
+      "i10_index": 215,
+      "works_count": 314,
+      "cited_by_count": 13162,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5066704732",
+      "display_name": "Shunsuke Koshio",
+      "orcid": "https://orcid.org/0000-0001-6577-4670",
+      "h_index": 66,
+      "i10_index": 202,
+      "works_count": 267,
+      "cited_by_count": 14634,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5023494490",
+      "display_name": "Gretta T. Pecl",
+      "orcid": "https://orcid.org/0000-0003-0192-4339",
+      "h_index": 66,
+      "i10_index": 189,
+      "works_count": 517,
+      "cited_by_count": 20181,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5088952270",
+      "display_name": "Thomas J. Near",
+      "orcid": "https://orcid.org/0000-0002-7398-6670",
+      "h_index": 66,
+      "i10_index": 157,
+      "works_count": 672,
+      "cited_by_count": 17159,
+      "discipline": "Aquatic Science",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5051765082",
+      "display_name": "Michel Kulbicki",
+      "orcid": "https://orcid.org/0000-0003-1258-5061",
+      "h_index": 66,
+      "i10_index": 153,
+      "works_count": 389,
+      "cited_by_count": 14928,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5042049771",
+      "display_name": "Christopher Costello",
+      "orcid": "https://orcid.org/0000-0002-9646-7806",
+      "h_index": 66,
+      "i10_index": 137,
+      "works_count": 290,
+      "cited_by_count": 20702,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5038623375",
+      "display_name": "Patrick Kestemont",
+      "orcid": "https://orcid.org/0000-0002-0682-2844",
+      "h_index": 65,
+      "i10_index": 270,
+      "works_count": 451,
+      "cited_by_count": 15308,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5011215065",
+      "display_name": "Jian G. Qin",
+      "orcid": "https://orcid.org/0000-0003-2448-8058",
+      "h_index": 65,
+      "i10_index": 267,
+      "works_count": 395,
+      "cited_by_count": 14538,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Aquatic Science -- 9.1",
+      "id": "https://openalex.org/A5051450792",
+      "display_name": "Akio Kanazawa",
+      "orcid": "https://orcid.org/0000-0003-2292-395X",
+      "h_index": 65,
+      "i10_index": 245,
+      "works_count": 372,
+      "cited_by_count": 13928,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Aquatic Science -- 9.0",
+      "id": "https://openalex.org/A5017903451",
+      "display_name": "Zhen‐Yu Du",
+      "orcid": "https://orcid.org/0000-0001-6581-5313",
+      "h_index": 65,
+      "i10_index": 237,
+      "works_count": 304,
+      "cited_by_count": 14935,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Aquatic Science -- 9.0",
+      "id": "https://openalex.org/A5061647490",
+      "display_name": "Shuichi Satoh",
+      "orcid": "https://orcid.org/0000-0002-6383-274X",
+      "h_index": 65,
+      "i10_index": 206,
+      "works_count": 349,
+      "cited_by_count": 13791,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Aquatic Science -- 9.0",
+      "id": "https://openalex.org/A5053007253",
+      "display_name": "Yngvar Ôlsen",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 164,
+      "works_count": 247,
+      "cited_by_count": 13526,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Aquatic Science -- 9.0",
+      "id": "https://openalex.org/A5015378445",
+      "display_name": "David H. Secor",
+      "orcid": "https://orcid.org/0000-0001-6007-4827",
+      "h_index": 65,
+      "i10_index": 162,
+      "works_count": 215,
+      "cited_by_count": 15343,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Aquatic Science -- 9.0",
+      "id": "https://openalex.org/A5029411990",
+      "display_name": "Tim Dempster",
+      "orcid": "https://orcid.org/0000-0001-8041-426X",
+      "h_index": 65,
+      "i10_index": 161,
+      "works_count": 235,
+      "cited_by_count": 13502,
+      "discipline": "Aquatic Science",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5030502671",
+      "display_name": "Ôlav Vadstein",
+      "orcid": "https://orcid.org/0000-0001-8256-3939",
+      "h_index": 65,
+      "i10_index": 158,
+      "works_count": 264,
+      "cited_by_count": 11823,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5100355935",
+      "display_name": "Yang Liu",
+      "orcid": "https://orcid.org/0000-0002-5717-471X",
+      "h_index": 64,
+      "i10_index": 291,
+      "works_count": 526,
+      "cited_by_count": 14740,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5063470604",
+      "display_name": "David G. Reid",
+      "orcid": "https://orcid.org/0000-0002-8494-0918",
+      "h_index": 64,
+      "i10_index": 216,
+      "works_count": 309,
+      "cited_by_count": 16404,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5029840022",
+      "display_name": "Julian J. Dodson",
+      "orcid": "https://orcid.org/0000-0001-6526-980X",
+      "h_index": 64,
+      "i10_index": 172,
+      "works_count": 204,
+      "cited_by_count": 11698,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5069117192",
+      "display_name": "Paolo Guidetti",
+      "orcid": "https://orcid.org/0000-0002-7983-8775",
+      "h_index": 64,
+      "i10_index": 169,
+      "works_count": 319,
+      "cited_by_count": 14494,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5079444204",
+      "display_name": "M.C.J. Verdegem",
+      "orcid": "https://orcid.org/0000-0002-2058-3894",
+      "h_index": 64,
+      "i10_index": 164,
+      "works_count": 378,
+      "cited_by_count": 13225,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5058179480",
+      "display_name": "Chantal L. Cahu",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 88,
+      "works_count": 159,
+      "cited_by_count": 12108,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5054916699",
+      "display_name": "Francis Juanes",
+      "orcid": "https://orcid.org/0000-0001-7397-0014",
+      "h_index": 63,
+      "i10_index": 216,
+      "works_count": 463,
+      "cited_by_count": 18214,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5024684992",
+      "display_name": "James T. Thorson",
+      "orcid": "https://orcid.org/0000-0001-7415-1010",
+      "h_index": 63,
+      "i10_index": 205,
+      "works_count": 326,
+      "cited_by_count": 14328,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5041304494",
+      "display_name": "Neil R. Loneragan",
+      "orcid": "https://orcid.org/0000-0003-2536-8656",
+      "h_index": 63,
+      "i10_index": 172,
+      "works_count": 324,
+      "cited_by_count": 13521,
+      "discipline": "Aquatic Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Aquatic Science -- 8.9",
+      "id": "https://openalex.org/A5048378520",
+      "display_name": "Dirk C. Zeller",
+      "orcid": "https://orcid.org/0000-0001-7304-4125",
+      "h_index": 63,
+      "i10_index": 168,
+      "works_count": 408,
+      "cited_by_count": 25509,
+      "discipline": "Aquatic Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aquatic Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

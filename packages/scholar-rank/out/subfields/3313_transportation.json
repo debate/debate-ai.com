@@ -1,0 +1,1589 @@
+{
+  "kind": "subfield",
+  "id": 3313,
+  "name": "Transportation",
+  "total_in_scrape": 82,
+  "count": 82,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Transportation -- 9.9",
+      "id": "https://openalex.org/A5080615785",
+      "display_name": "Billie Giles‐Corti",
+      "orcid": "https://orcid.org/0000-0003-0102-0225",
+      "h_index": 118,
+      "i10_index": 362,
+      "works_count": 711,
+      "cited_by_count": 52421,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Transportation -- 9.9",
+      "id": "https://openalex.org/A5045678583",
+      "display_name": "David A. Hensher",
+      "orcid": "https://orcid.org/0000-0003-0058-2242",
+      "h_index": 115,
+      "i10_index": 515,
+      "works_count": 1207,
+      "cited_by_count": 67077,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Transportation -- 9.9",
+      "id": "https://openalex.org/A5103326255",
+      "display_name": "Carlo Ratti",
+      "orcid": "https://orcid.org/0000-0003-2026-5631",
+      "h_index": 105,
+      "i10_index": 358,
+      "works_count": 771,
+      "cited_by_count": 42351,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Transportation -- 9.9",
+      "id": "https://openalex.org/A5100355277",
+      "display_name": "Yong Li",
+      "orcid": "https://orcid.org/0000-0001-5617-1659",
+      "h_index": 104,
+      "i10_index": 621,
+      "works_count": 1313,
+      "cited_by_count": 53989,
+      "discipline": "Transportation",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Transportation -- 9.9",
+      "id": "https://openalex.org/A5069115743",
+      "display_name": "Chandra R. Bhat",
+      "orcid": "https://orcid.org/0000-0002-0715-8121",
+      "h_index": 101,
+      "i10_index": 326,
+      "works_count": 682,
+      "cited_by_count": 39512,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Transportation -- 9.9",
+      "id": "https://openalex.org/A5009185228",
+      "display_name": "Mei‐Po Kwan",
+      "orcid": "https://orcid.org/0000-0001-8602-9258",
+      "h_index": 99,
+      "i10_index": 409,
+      "works_count": 697,
+      "cited_by_count": 37782,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5029085275",
+      "display_name": "Moshe E Ben-Akiva",
+      "orcid": "https://orcid.org/0000-0002-9635-9987",
+      "h_index": 99,
+      "i10_index": 371,
+      "works_count": 638,
+      "cited_by_count": 36760,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5029816714",
+      "display_name": "Lawrence Douglas Frank",
+      "orcid": "https://orcid.org/0000-0001-7892-8771",
+      "h_index": 98,
+      "i10_index": 186,
+      "works_count": 269,
+      "cited_by_count": 45999,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5028278516",
+      "display_name": "Kay Werner Axhausen",
+      "orcid": "https://orcid.org/0000-0003-3331-1318",
+      "h_index": 96,
+      "i10_index": 523,
+      "works_count": 1699,
+      "cited_by_count": 39938,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5045705475",
+      "display_name": "Hai Yang",
+      "orcid": "https://orcid.org/0000-0001-5210-8468",
+      "h_index": 96,
+      "i10_index": 361,
+      "works_count": 714,
+      "cited_by_count": 35597,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5111383531",
+      "display_name": "Harry J.P. Timmermans",
+      "orcid": "https://orcid.org/0000-0002-8737-4632",
+      "h_index": 93,
+      "i10_index": 491,
+      "works_count": 1058,
+      "cited_by_count": 32104,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5019060426",
+      "display_name": "Patricia Lyon Mokhtarian",
+      "orcid": "https://orcid.org/0000-0001-7104-499X",
+      "h_index": 92,
+      "i10_index": 250,
+      "works_count": 471,
+      "cited_by_count": 33656,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5100681023",
+      "display_name": "Yu Zheng",
+      "orcid": "https://orcid.org/0000-0002-5224-4344",
+      "h_index": 92,
+      "i10_index": 221,
+      "works_count": 299,
+      "cited_by_count": 45695,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5107868380",
+      "display_name": "Piet Rietveld",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 346,
+      "works_count": 1220,
+      "cited_by_count": 30985,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5044594327",
+      "display_name": "Matthew William Knuiman",
+      "orcid": "https://orcid.org/0000-0001-8874-2305",
+      "h_index": 88,
+      "i10_index": 299,
+      "works_count": 499,
+      "cited_by_count": 32689,
+      "discipline": "Transportation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5078157167",
+      "display_name": "Tommy Gärling",
+      "orcid": "https://orcid.org/0000-0002-8757-7552",
+      "h_index": 87,
+      "i10_index": 274,
+      "works_count": 519,
+      "cited_by_count": 34219,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Transportation -- 9.8",
+      "id": "https://openalex.org/A5017565781",
+      "display_name": "Tim Schwanen",
+      "orcid": "https://orcid.org/0000-0001-7376-5854",
+      "h_index": 87,
+      "i10_index": 203,
+      "works_count": 366,
+      "cited_by_count": 26170,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5077352940",
+      "display_name": "Serge Paul Hoogendoorn",
+      "orcid": "https://orcid.org/0000-0002-1579-1939",
+      "h_index": 86,
+      "i10_index": 453,
+      "works_count": 1023,
+      "cited_by_count": 28955,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5026147899",
+      "display_name": "Hani S. Mahmassani",
+      "orcid": "https://orcid.org/0000-0002-8443-8928",
+      "h_index": 86,
+      "i10_index": 378,
+      "works_count": 940,
+      "cited_by_count": 27158,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5100404067",
+      "display_name": "Qingquan Li",
+      "orcid": "https://orcid.org/0000-0002-2438-6046",
+      "h_index": 84,
+      "i10_index": 427,
+      "works_count": 827,
+      "cited_by_count": 28697,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5025167426",
+      "display_name": "Bert van Wee",
+      "orcid": "https://orcid.org/0000-0002-0370-3575",
+      "h_index": 84,
+      "i10_index": 242,
+      "works_count": 603,
+      "cited_by_count": 33325,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5025061454",
+      "display_name": "Robert Cervero",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 186,
+      "works_count": 389,
+      "cited_by_count": 49369,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5046475090",
+      "display_name": "Carlos F. Daganzo",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 201,
+      "works_count": 408,
+      "cited_by_count": 32520,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5090791456",
+      "display_name": "Frank Witlox",
+      "orcid": "https://orcid.org/0000-0002-8966-6823",
+      "h_index": 81,
+      "i10_index": 343,
+      "works_count": 1065,
+      "cited_by_count": 25357,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5071405020",
+      "display_name": "Markos Papageorgiou",
+      "orcid": "https://orcid.org/0000-0001-5821-4982",
+      "h_index": 79,
+      "i10_index": 284,
+      "works_count": 547,
+      "cited_by_count": 26015,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5070594059",
+      "display_name": "Susan Handy",
+      "orcid": "https://orcid.org/0000-0002-4141-1290",
+      "h_index": 79,
+      "i10_index": 218,
+      "works_count": 398,
+      "cited_by_count": 38214,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5085688534",
+      "display_name": "Andrew Rundle",
+      "orcid": "https://orcid.org/0000-0003-0211-7707",
+      "h_index": 77,
+      "i10_index": 257,
+      "works_count": 491,
+      "cited_by_count": 22369,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Transportation -- 9.7",
+      "id": "https://openalex.org/A5049135480",
+      "display_name": "Ziyou Gao",
+      "orcid": "https://orcid.org/0000-0002-6519-4681",
+      "h_index": 76,
+      "i10_index": 339,
+      "works_count": 498,
+      "cited_by_count": 19697,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5029977089",
+      "display_name": "S.C. Wong",
+      "orcid": "https://orcid.org/0000-0003-1169-7045",
+      "h_index": 76,
+      "i10_index": 321,
+      "works_count": 880,
+      "cited_by_count": 20270,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5073956981",
+      "display_name": "William H. K. Lam",
+      "orcid": "https://orcid.org/0000-0002-7625-3712",
+      "h_index": 75,
+      "i10_index": 279,
+      "works_count": 577,
+      "cited_by_count": 17512,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5077884116",
+      "display_name": "Ahmed El-Geneidy",
+      "orcid": "https://orcid.org/0000-0002-0942-4016",
+      "h_index": 75,
+      "i10_index": 202,
+      "works_count": 337,
+      "cited_by_count": 19451,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5084766858",
+      "display_name": "David Matthew Levinson",
+      "orcid": "https://orcid.org/0000-0002-4563-2963",
+      "h_index": 74,
+      "i10_index": 316,
+      "works_count": 965,
+      "cited_by_count": 25116,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5018158882",
+      "display_name": "Satish V. Ukkusuri",
+      "orcid": "https://orcid.org/0000-0001-8754-9925",
+      "h_index": 74,
+      "i10_index": 236,
+      "works_count": 445,
+      "cited_by_count": 16771,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5079909615",
+      "display_name": "David Banister",
+      "orcid": "https://orcid.org/0000-0002-9002-588X",
+      "h_index": 74,
+      "i10_index": 162,
+      "works_count": 598,
+      "cited_by_count": 28641,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5051450879",
+      "display_name": "William Dana Middleton",
+      "orcid": "https://orcid.org/0000-0002-9869-1107",
+      "h_index": 74,
+      "i10_index": 145,
+      "works_count": 415,
+      "cited_by_count": 25347,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5012268687",
+      "display_name": "Yinhai Wang",
+      "orcid": "https://orcid.org/0000-0002-4180-5628",
+      "h_index": 73,
+      "i10_index": 288,
+      "works_count": 544,
+      "cited_by_count": 23260,
+      "discipline": "Transportation",
+      "primary_field": "Engineering",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5048883335",
+      "display_name": "David Ogilvie",
+      "orcid": "https://orcid.org/0000-0002-0270-4672",
+      "h_index": 73,
+      "i10_index": 167,
+      "works_count": 337,
+      "cited_by_count": 21693,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5086445428",
+      "display_name": "University of Washington",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 699,
+      "works_count": 2666,
+      "cited_by_count": 30895,
+      "discipline": "Transportation",
+      "primary_field": "Engineering",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Engineering",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Transportation -- 9.6",
+      "id": "https://openalex.org/A5018239054",
+      "display_name": "Hai Huang",
+      "orcid": "https://orcid.org/0000-0002-9001-9172",
+      "h_index": 72,
+      "i10_index": 318,
+      "works_count": 696,
+      "cited_by_count": 17900,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5067908158",
+      "display_name": "Tao Tang",
+      "orcid": "https://orcid.org/0000-0001-7838-8525",
+      "h_index": 72,
+      "i10_index": 243,
+      "works_count": 554,
+      "cited_by_count": 19700,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5045282556",
+      "display_name": "Kara Maria Kockelman",
+      "orcid": "https://orcid.org/0000-0003-4763-1304",
+      "h_index": 71,
+      "i10_index": 232,
+      "works_count": 397,
+      "cited_by_count": 32650,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5071367817",
+      "display_name": "Reid Ewing",
+      "orcid": "https://orcid.org/0000-0002-4117-3456",
+      "h_index": 71,
+      "i10_index": 171,
+      "works_count": 308,
+      "cited_by_count": 36798,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5078076463",
+      "display_name": "Audrey J. de Nazelle",
+      "orcid": "https://orcid.org/0000-0002-1092-3971",
+      "h_index": 71,
+      "i10_index": 132,
+      "works_count": 312,
+      "cited_by_count": 21235,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5011629776",
+      "display_name": "John D. Nelson",
+      "orcid": "https://orcid.org/0000-0003-2199-7412",
+      "h_index": 69,
+      "i10_index": 324,
+      "works_count": 945,
+      "cited_by_count": 17827,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5087171054",
+      "display_name": "Anthony Chen",
+      "orcid": "https://orcid.org/0000-0003-4363-5041",
+      "h_index": 69,
+      "i10_index": 263,
+      "works_count": 428,
+      "cited_by_count": 30894,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5045648021",
+      "display_name": "Michel Bierlaire",
+      "orcid": "https://orcid.org/0000-0002-5275-7692",
+      "h_index": 69,
+      "i10_index": 230,
+      "works_count": 1238,
+      "cited_by_count": 20151,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5006022561",
+      "display_name": "Cathy Macharis",
+      "orcid": "https://orcid.org/0000-0003-0702-0496",
+      "h_index": 69,
+      "i10_index": 226,
+      "works_count": 948,
+      "cited_by_count": 17468,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5059686481",
+      "display_name": "Dick Ettema",
+      "orcid": "https://orcid.org/0000-0001-8404-5510",
+      "h_index": 69,
+      "i10_index": 193,
+      "works_count": 414,
+      "cited_by_count": 15969,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5075389676",
+      "display_name": "Nikolas Geroliminis",
+      "orcid": "https://orcid.org/0000-0001-6940-3607",
+      "h_index": 69,
+      "i10_index": 161,
+      "works_count": 430,
+      "cited_by_count": 18927,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5089795664",
+      "display_name": "David Rojas‐Rueda",
+      "orcid": "https://orcid.org/0000-0001-5854-2484",
+      "h_index": 69,
+      "i10_index": 132,
+      "works_count": 264,
+      "cited_by_count": 78303,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Transportation -- 9.5",
+      "id": "https://openalex.org/A5058766860",
+      "display_name": "Oded Cats",
+      "orcid": "https://orcid.org/0000-0002-4506-0459",
+      "h_index": 68,
+      "i10_index": 226,
+      "works_count": 495,
+      "cited_by_count": 14941,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5083695605",
+      "display_name": "Henry  X. Liu",
+      "orcid": "https://orcid.org/0000-0002-3685-9920",
+      "h_index": 68,
+      "i10_index": 209,
+      "works_count": 460,
+      "cited_by_count": 16266,
+      "discipline": "Transportation",
+      "primary_field": "Engineering",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5073230220",
+      "display_name": "Michael G.H. Bell",
+      "orcid": "https://orcid.org/0000-0001-8137-065X",
+      "h_index": 68,
+      "i10_index": 199,
+      "works_count": 474,
+      "cited_by_count": 16042,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5085072734",
+      "display_name": "Martin Dijst",
+      "orcid": "https://orcid.org/0000-0002-7666-3455",
+      "h_index": 68,
+      "i10_index": 145,
+      "works_count": 296,
+      "cited_by_count": 15765,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5100345691",
+      "display_name": "Yu Liu",
+      "orcid": "https://orcid.org/0000-0002-0016-2902",
+      "h_index": 67,
+      "i10_index": 254,
+      "works_count": 545,
+      "cited_by_count": 22142,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5060311599",
+      "display_name": "Theo Arentze",
+      "orcid": "https://orcid.org/0000-0003-2551-8650",
+      "h_index": 67,
+      "i10_index": 243,
+      "works_count": 520,
+      "cited_by_count": 15098,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5030507508",
+      "display_name": "Bart van Arem",
+      "orcid": "https://orcid.org/0000-0001-8316-7794",
+      "h_index": 67,
+      "i10_index": 231,
+      "works_count": 685,
+      "cited_by_count": 19447,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5035901540",
+      "display_name": "Xinyu Cao",
+      "orcid": "https://orcid.org/0000-0002-4403-9762",
+      "h_index": 67,
+      "i10_index": 132,
+      "works_count": 270,
+      "cited_by_count": 16369,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5040786132",
+      "display_name": "Lixing Yang",
+      "orcid": "https://orcid.org/0000-0003-1628-5015",
+      "h_index": 66,
+      "i10_index": 207,
+      "works_count": 303,
+      "cited_by_count": 16091,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5108118535",
+      "display_name": "André de Palma",
+      "orcid": "https://orcid.org/0000-0003-4364-3068",
+      "h_index": 66,
+      "i10_index": 191,
+      "works_count": 607,
+      "cited_by_count": 20645,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Engineering",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5010005236",
+      "display_name": "Susan Shaheen",
+      "orcid": "https://orcid.org/0000-0002-3350-856X",
+      "h_index": 66,
+      "i10_index": 186,
+      "works_count": 446,
+      "cited_by_count": 22219,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Transportation -- 9.4",
+      "id": "https://openalex.org/A5044787869",
+      "display_name": "Robert B. Noland",
+      "orcid": "https://orcid.org/0000-0003-0775-0624",
+      "h_index": 66,
+      "i10_index": 166,
+      "works_count": 322,
+      "cited_by_count": 16981,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5064520786",
+      "display_name": "Geert Wets",
+      "orcid": "https://orcid.org/0000-0002-5485-9705",
+      "h_index": 65,
+      "i10_index": 302,
+      "works_count": 842,
+      "cited_by_count": 16494,
+      "discipline": "Transportation",
+      "primary_field": "Engineering",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5060394098",
+      "display_name": "Bin Ran",
+      "orcid": "https://orcid.org/0000-0002-5464-0930",
+      "h_index": 65,
+      "i10_index": 302,
+      "works_count": 624,
+      "cited_by_count": 16131,
+      "discipline": "Transportation",
+      "primary_field": "Engineering",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5039155779",
+      "display_name": "Asad Jan Khattak",
+      "orcid": "https://orcid.org/0000-0002-0790-7794",
+      "h_index": 65,
+      "i10_index": 231,
+      "works_count": 417,
+      "cited_by_count": 14290,
+      "discipline": "Transportation",
+      "primary_field": "Engineering",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5079634925",
+      "display_name": "Marco Helbich",
+      "orcid": "https://orcid.org/0000-0003-0392-8915",
+      "h_index": 65,
+      "i10_index": 182,
+      "works_count": 300,
+      "cited_by_count": 15210,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5020601268",
+      "display_name": "Basile Chaix",
+      "orcid": "https://orcid.org/0000-0003-1631-8630",
+      "h_index": 65,
+      "i10_index": 169,
+      "works_count": 306,
+      "cited_by_count": 15558,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5009464945",
+      "display_name": "Haris N. Koutsopoulos",
+      "orcid": "https://orcid.org/0000-0003-3830-9794",
+      "h_index": 65,
+      "i10_index": 165,
+      "works_count": 320,
+      "cited_by_count": 12711,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5049031617",
+      "display_name": "Daniel A. Rodríguez",
+      "orcid": "https://orcid.org/0000-0001-6550-5518",
+      "h_index": 65,
+      "i10_index": 164,
+      "works_count": 251,
+      "cited_by_count": 17982,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5086045813",
+      "display_name": "Yafeng Yin",
+      "orcid": "https://orcid.org/0000-0003-3117-5463",
+      "h_index": 65,
+      "i10_index": 162,
+      "works_count": 290,
+      "cited_by_count": 13571,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5100778479",
+      "display_name": "Junbo Zhang",
+      "orcid": "https://orcid.org/0000-0001-5947-1374",
+      "h_index": 65,
+      "i10_index": 145,
+      "works_count": 265,
+      "cited_by_count": 19502,
+      "discipline": "Transportation",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Computer Science",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5021116704",
+      "display_name": "Alexandre M. Bayen",
+      "orcid": "https://orcid.org/0000-0002-6697-222X",
+      "h_index": 64,
+      "i10_index": 247,
+      "works_count": 526,
+      "cited_by_count": 22835,
+      "discipline": "Transportation",
+      "primary_field": "Engineering",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Transportation -- 9.3",
+      "id": "https://openalex.org/A5078886343",
+      "display_name": "Mirco Musolesi",
+      "orcid": "https://orcid.org/0000-0001-9712-4090",
+      "h_index": 64,
+      "i10_index": 161,
+      "works_count": 383,
+      "cited_by_count": 16816,
+      "discipline": "Transportation",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Computer Science",
+        "Social Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Transportation -- 9.2",
+      "id": "https://openalex.org/A5046266340",
+      "display_name": "Tom Van Woensel",
+      "orcid": "https://orcid.org/0000-0003-4766-2346",
+      "h_index": 64,
+      "i10_index": 154,
+      "works_count": 314,
+      "cited_by_count": 14281,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Transportation -- 9.2",
+      "id": "https://openalex.org/A5001459918",
+      "display_name": "Constantinos Antoniou",
+      "orcid": "https://orcid.org/0000-0003-0203-9542",
+      "h_index": 63,
+      "i10_index": 249,
+      "works_count": 590,
+      "cited_by_count": 14770,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Transportation -- 9.2",
+      "id": "https://openalex.org/A5020244234",
+      "display_name": "Kai Nagel",
+      "orcid": "https://orcid.org/0000-0003-2775-6898",
+      "h_index": 63,
+      "i10_index": 221,
+      "works_count": 615,
+      "cited_by_count": 19174,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Transportation -- 9.2",
+      "id": "https://openalex.org/A5048326922",
+      "display_name": "Graham Currie",
+      "orcid": "https://orcid.org/0000-0001-7190-7548",
+      "h_index": 63,
+      "i10_index": 203,
+      "works_count": 494,
+      "cited_by_count": 14932,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Transportation -- 9.2",
+      "id": "https://openalex.org/A5040302830",
+      "display_name": "Xiaobo Qu",
+      "orcid": "https://orcid.org/0000-0003-0973-3756",
+      "h_index": 63,
+      "i10_index": 199,
+      "works_count": 323,
+      "cited_by_count": 13532,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Transportation -- 9.2",
+      "id": "https://openalex.org/A5043268555",
+      "display_name": "Ram M. Pendyala",
+      "orcid": "https://orcid.org/0000-0002-1552-9447",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 335,
+      "cited_by_count": 12933,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Transportation -- 9.2",
+      "id": "https://openalex.org/A5050071734",
+      "display_name": "Jennifer Susan Mindell",
+      "orcid": "https://orcid.org/0000-0002-7604-6131",
+      "h_index": 63,
+      "i10_index": 171,
+      "works_count": 477,
+      "cited_by_count": 13603,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Transportation -- 9.2",
+      "id": "https://openalex.org/A5041617337",
+      "display_name": "Chris T. Hendrickson",
+      "orcid": "https://orcid.org/0000-0002-9812-3580",
+      "h_index": 63,
+      "i10_index": 166,
+      "works_count": 422,
+      "cited_by_count": 14928,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Transportation -- 9.2",
+      "id": "https://openalex.org/A5088515938",
+      "display_name": "Hannah M Badland",
+      "orcid": "https://orcid.org/0000-0002-8936-2715",
+      "h_index": 63,
+      "i10_index": 159,
+      "works_count": 355,
+      "cited_by_count": 14968,
+      "discipline": "Transportation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Transportation",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    }
+  ]
+}

@@ -4,8 +4,9 @@ import { drizzle } from "drizzle-orm/libsql";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import { applySchema } from "../../database/__tests__/schema-sql";
-import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedToolRecords, savedWordCountRounds, user } from "../../database/schema";
-import { DRILL_SETS_HREF, EXPORT_MAX_ITEMS, exportOwnToolCollection, exportOwnToolRecords, TOOL_RECORD_EXPORT_PAGE_SIZE, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle, WORD_COUNT_TITLE_ROUND_ID_MAX } from "../saved-data-items";
+import { documents, practiceVsAiDebates, savedCustomOpponentPersonas, savedLearnCards, savedQuickCards, savedStrategyRecommendations, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedToolRecords, savedWordCountRounds, user } from "../../database/schema";
+import { SAVED_SQL_TOOLS } from "../saved-data";
+import { exportOwnSqlTools, DRILL_SETS_HREF, EXPORT_MAX_ITEMS, exportOwnToolCollection, exportOwnToolRecords, TOOL_RECORD_EXPORT_PAGE_SIZE, JUDGE_DECISIONS_HREF, SPEECHES_HREF, WORD_COUNT_HREF, judgeDecisionTitle, speechSendTitle, EXPORT_PAGE_SIZE, MAX_ITEMS, deleteOwnSavedItem, drillSetTitle, exportAllOwnSavedData, exportOwnSavedItem, isDeletableItemKind, isItemKind, listOwnSavedItems, listOwnSavedItemsPage, titleContains, wordCountRoundTitle, WORD_COUNT_TITLE_ROUND_ID_MAX } from "../saved-data-items";
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
@@ -489,6 +490,61 @@ describe("bulk export", () => {
     expect(body.flows).toHaveLength(total);
     expect(body.limitPerKind).toBe(EXPORT_MAX_ITEMS);
     expect(body.truncated).toEqual([]);
+  });
+});
+
+describe("More saved work in the export", () => {
+  it("puts every SAVED_SQL_TOOLS table in the archive, empty for a user with nothing saved", async () => {
+    const body = JSON.parse((await exportAllOwnSavedData(await freshDb(), "a")).body);
+    expect(Object.keys(body.moreSavedWork).sort()).toEqual(SAVED_SQL_TOOLS.map((t) => t.key).sort());
+    for (const rows of Object.values(body.moreSavedWork)) expect(rows).toEqual([]);
+    expect(body.moreSavedWorkTruncated).toEqual([]);
+  });
+
+  it("exports only the caller's rows, data parsed, extra columns kept, no user id", async () => {
+    const db = await freshDb();
+    const at = new Date("2026-11-01T10:00:00.000Z");
+    await db.insert(savedQuickCards).values([
+      { userId: "a", clientId: "q1", data: '{"tag":"Mine"}', createdAt: at, updatedAt: at },
+      { userId: "b", clientId: "q2", data: '{"tag":"Theirs"}' },
+    ]);
+    await db.insert(savedStrategyRecommendations).values({ userId: "a", clientId: "s1", matchupId: "m9", data: '{"plan":"x"}' });
+    await db.insert(savedCustomOpponentPersonas).values({ userId: "a", clientId: "p1", shared: true, data: '{"name":"Pat"}' });
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a")).body);
+    expect(body.moreSavedWork.quickCards).toEqual([
+      { id: expect.any(Number), clientId: "q1", data: { tag: "Mine" }, createdAt: at.toISOString(), updatedAt: at.toISOString() },
+    ]);
+    expect(body.moreSavedWork.strategyRecommendations).toMatchObject([{ clientId: "s1", matchupId: "m9", data: { plan: "x" } }]);
+    expect(body.moreSavedWork.customOpponentPersonas).toMatchObject([{ clientId: "p1", shared: true, data: { name: "Pat" } }]);
+    expect(JSON.stringify(body.moreSavedWork)).not.toContain("userId");
+    expect(JSON.stringify(body.moreSavedWork)).not.toContain("Theirs");
+  });
+
+  it("keeps a row whose data isn't JSON as its raw text", async () => {
+    const db = await freshDb();
+    await db.insert(savedLearnCards).values({ userId: "a", clientId: "c1", data: "not json" });
+    const { moreSavedWork } = await exportOwnSqlTools(db, "a");
+    expect(moreSavedWork.learnCards).toMatchObject([{ clientId: "c1", data: "not json" }]);
+  });
+
+  it("pages oldest first across page boundaries", async () => {
+    const db = await freshDb();
+    const total = EXPORT_PAGE_SIZE + 7;
+    await db.insert(savedQuickCards).values(Array.from({ length: total }, (_, i) => ({ userId: "a", clientId: `q${i}`, data: "{}" })));
+    const { moreSavedWork, truncated } = await exportOwnSqlTools(db, "a");
+    expect(moreSavedWork.quickCards).toHaveLength(total);
+    expect(moreSavedWork.quickCards.map((r) => r.clientId)).toEqual(Array.from({ length: total }, (_, i) => `q${i}`));
+    expect(truncated).toEqual([]);
+  });
+
+  it("stops at the ceiling and names only the tables that had more", async () => {
+    const db = await freshDb();
+    await db.insert(savedQuickCards).values([1, 2, 3, 4].map((n) => ({ userId: "a", clientId: `q${n}`, data: "{}" })));
+    await db.insert(savedLearnCards).values([1, 2, 3].map((n) => ({ userId: "a", clientId: `c${n}`, data: "{}" })));
+    const body = JSON.parse((await exportAllOwnSavedData(db, "a", new Date(), 3)).body);
+    expect(body.moreSavedWork.quickCards.map((r: { clientId: string }) => r.clientId)).toEqual(["q1", "q2", "q3"]);
+    expect(body.moreSavedWork.learnCards).toHaveLength(3);
+    expect(body.moreSavedWorkTruncated).toEqual(["quickCards"]);
   });
 });
 

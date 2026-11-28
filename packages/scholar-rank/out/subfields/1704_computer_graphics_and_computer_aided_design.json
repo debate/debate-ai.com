@@ -1,0 +1,1595 @@
+{
+  "kind": "subfield",
+  "id": 1704,
+  "name": "Computer Graphics and Computer-Aided Design",
+  "total_in_scrape": 85,
+  "count": 85,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.9",
+      "id": "https://openalex.org/A5111954013",
+      "display_name": "Leonidas J. Guibas",
+      "orcid": "https://orcid.org/0000-0002-8315-4886",
+      "h_index": 130,
+      "i10_index": 532,
+      "works_count": 688,
+      "cited_by_count": 128395,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.9",
+      "id": "https://openalex.org/A5056503617",
+      "display_name": "Jan Kautz",
+      "orcid": "https://orcid.org/0000-0002-8830-429X",
+      "h_index": 129,
+      "i10_index": 392,
+      "works_count": 570,
+      "cited_by_count": 81733,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.9",
+      "id": "https://openalex.org/A5036688260",
+      "display_name": "Daniel Cohen‐Or",
+      "orcid": "https://orcid.org/0000-0001-6777-7445",
+      "h_index": 128,
+      "i10_index": 447,
+      "works_count": 657,
+      "cited_by_count": 68276,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.9",
+      "id": "https://openalex.org/A5020664641",
+      "display_name": "Christian Theobalt",
+      "orcid": "https://orcid.org/0000-0001-6104-6625",
+      "h_index": 119,
+      "i10_index": 409,
+      "works_count": 698,
+      "cited_by_count": 56078,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.9",
+      "id": "https://openalex.org/A5006181255",
+      "display_name": "Vladlen Koltun",
+      "orcid": "https://orcid.org/0000-0003-0858-0970",
+      "h_index": 115,
+      "i10_index": 218,
+      "works_count": 294,
+      "cited_by_count": 114085,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.9",
+      "id": "https://openalex.org/A5058028526",
+      "display_name": "Hans‐Peter Seidel",
+      "orcid": "https://orcid.org/0000-0002-1343-8613",
+      "h_index": 112,
+      "i10_index": 690,
+      "works_count": 1348,
+      "cited_by_count": 47994,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5004194238",
+      "display_name": "Dinesh Manocha",
+      "orcid": "https://orcid.org/0000-0001-7047-9801",
+      "h_index": 107,
+      "i10_index": 739,
+      "works_count": 1398,
+      "cited_by_count": 57125,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5075155488",
+      "display_name": "Frédo Durand",
+      "orcid": "https://orcid.org/0000-0001-9919-069X",
+      "h_index": 107,
+      "i10_index": 273,
+      "works_count": 475,
+      "cited_by_count": 50161,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5033076979",
+      "display_name": "Markus H. Groß",
+      "orcid": "https://orcid.org/0009-0003-9324-779X",
+      "h_index": 103,
+      "i10_index": 446,
+      "works_count": 879,
+      "cited_by_count": 42850,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5066335313",
+      "display_name": "Nils Gehlenborg",
+      "orcid": "https://orcid.org/0000-0003-0327-8297",
+      "h_index": 103,
+      "i10_index": 184,
+      "works_count": 420,
+      "cited_by_count": 130921,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5014044649",
+      "display_name": "Gordon Wetzstein",
+      "orcid": "https://orcid.org/0000-0002-9243-6885",
+      "h_index": 95,
+      "i10_index": 278,
+      "works_count": 491,
+      "cited_by_count": 41810,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5018111215",
+      "display_name": "Pat Hanrahan",
+      "orcid": "https://orcid.org/0000-0002-3474-9752",
+      "h_index": 95,
+      "i10_index": 232,
+      "works_count": 392,
+      "cited_by_count": 42826,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5061000201",
+      "display_name": "Heung‐Yeung Shum",
+      "orcid": "https://orcid.org/0000-0002-4684-911X",
+      "h_index": 94,
+      "i10_index": 308,
+      "works_count": 506,
+      "cited_by_count": 42301,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5018010391",
+      "display_name": "Wojciech Matusik",
+      "orcid": "https://orcid.org/0000-0003-0212-5643",
+      "h_index": 92,
+      "i10_index": 302,
+      "works_count": 500,
+      "cited_by_count": 30836,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5043151044",
+      "display_name": "Hanspeter Pfister",
+      "orcid": "https://orcid.org/0000-0002-3620-2582",
+      "h_index": 91,
+      "i10_index": 350,
+      "works_count": 561,
+      "cited_by_count": 44493,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5088583491",
+      "display_name": "Matthias Nießner",
+      "orcid": "https://orcid.org/0000-0001-6093-5199",
+      "h_index": 91,
+      "i10_index": 204,
+      "works_count": 295,
+      "cited_by_count": 47903,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.8",
+      "id": "https://openalex.org/A5079619886",
+      "display_name": "Thomas A. Funkhouser",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 183,
+      "works_count": 262,
+      "cited_by_count": 56684,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5023495279",
+      "display_name": "Ramesh Raskar",
+      "orcid": "https://orcid.org/0000-0002-3254-3224",
+      "h_index": 89,
+      "i10_index": 354,
+      "works_count": 827,
+      "cited_by_count": 49989,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5090570042",
+      "display_name": "Jeffrey Heer",
+      "orcid": "https://orcid.org/0000-0002-6175-1655",
+      "h_index": 88,
+      "i10_index": 174,
+      "works_count": 296,
+      "cited_by_count": 32177,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5034397232",
+      "display_name": "Demetri Terzopoulos",
+      "orcid": "https://orcid.org/0000-0003-4672-1279",
+      "h_index": 87,
+      "i10_index": 426,
+      "works_count": 925,
+      "cited_by_count": 62289,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5100627109",
+      "display_name": "Hao Su",
+      "orcid": "https://orcid.org/0000-0002-1796-2682",
+      "h_index": 87,
+      "i10_index": 206,
+      "works_count": 285,
+      "cited_by_count": 135508,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5034754633",
+      "display_name": "Ravi Ramamoorthi",
+      "orcid": "https://orcid.org/0000-0003-3993-5789",
+      "h_index": 85,
+      "i10_index": 259,
+      "works_count": 418,
+      "cited_by_count": 51129,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5045835385",
+      "display_name": "Maneesh Agrawala",
+      "orcid": "https://orcid.org/0000-0002-8996-7327",
+      "h_index": 85,
+      "i10_index": 227,
+      "works_count": 390,
+      "cited_by_count": 34718,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5073919282",
+      "display_name": "Daniel A. Keim",
+      "orcid": "https://orcid.org/0000-0001-7966-9740",
+      "h_index": 84,
+      "i10_index": 393,
+      "works_count": 833,
+      "cited_by_count": 36863,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5015798012",
+      "display_name": "Nadia Magnenat‐Thalmann",
+      "orcid": "https://orcid.org/0000-0002-3897-4041",
+      "h_index": 83,
+      "i10_index": 431,
+      "works_count": 1437,
+      "cited_by_count": 26491,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5069999967",
+      "display_name": "Herbert Edelsbrunner",
+      "orcid": "https://orcid.org/0000-0002-9823-6833",
+      "h_index": 83,
+      "i10_index": 265,
+      "works_count": 513,
+      "cited_by_count": 39540,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5011498939",
+      "display_name": "Jessica K. Hodgins",
+      "orcid": "https://orcid.org/0000-0002-1778-883X",
+      "h_index": 83,
+      "i10_index": 231,
+      "works_count": 339,
+      "cited_by_count": 22804,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.7",
+      "id": "https://openalex.org/A5100668416",
+      "display_name": "Wenping Wang",
+      "orcid": "https://orcid.org/0000-0002-2284-3952",
+      "h_index": 81,
+      "i10_index": 349,
+      "works_count": 654,
+      "cited_by_count": 27444,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5059021869",
+      "display_name": "Hujun Bao",
+      "orcid": "https://orcid.org/0000-0002-2662-0334",
+      "h_index": 81,
+      "i10_index": 324,
+      "works_count": 571,
+      "cited_by_count": 29382,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5058170430",
+      "display_name": "Niloy J. Mitra",
+      "orcid": "https://orcid.org/0000-0002-2597-0914",
+      "h_index": 81,
+      "i10_index": 230,
+      "works_count": 421,
+      "cited_by_count": 26881,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5055296785",
+      "display_name": "Micha Sharir",
+      "orcid": "https://orcid.org/0000-0002-2541-3763",
+      "h_index": 80,
+      "i10_index": 410,
+      "works_count": 710,
+      "cited_by_count": 25982,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5091260693",
+      "display_name": "Dani Lischinski",
+      "orcid": "https://orcid.org/0000-0002-6191-0361",
+      "h_index": 79,
+      "i10_index": 148,
+      "works_count": 241,
+      "cited_by_count": 28834,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5102878981",
+      "display_name": "Ming C. Lin",
+      "orcid": "https://orcid.org/0000-0003-3736-6949",
+      "h_index": 77,
+      "i10_index": 318,
+      "works_count": 654,
+      "cited_by_count": 27750,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5101666011",
+      "display_name": "Baining Guo",
+      "orcid": "https://orcid.org/0000-0001-8349-8868",
+      "h_index": 77,
+      "i10_index": 243,
+      "works_count": 331,
+      "cited_by_count": 80320,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5064927253",
+      "display_name": "Olga Sorkine‐Hornung",
+      "orcid": "https://orcid.org/0000-0002-8089-3974",
+      "h_index": 77,
+      "i10_index": 180,
+      "works_count": 319,
+      "cited_by_count": 20451,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5005709068",
+      "display_name": "Daniël Thalmann",
+      "orcid": "https://orcid.org/0000-0002-0451-7491",
+      "h_index": 76,
+      "i10_index": 392,
+      "works_count": 1149,
+      "cited_by_count": 21589,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5076768552",
+      "display_name": "Peter Wonka",
+      "orcid": "https://orcid.org/0000-0003-0627-9746",
+      "h_index": 76,
+      "i10_index": 231,
+      "works_count": 359,
+      "cited_by_count": 25800,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5073712698",
+      "display_name": "Wolfgang Heidrich",
+      "orcid": "https://orcid.org/0000-0002-4227-8508",
+      "h_index": 75,
+      "i10_index": 236,
+      "works_count": 426,
+      "cited_by_count": 20880,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.6",
+      "id": "https://openalex.org/A5076561653",
+      "display_name": "Ronald P. Fedkiw",
+      "orcid": "https://orcid.org/0009-0008-6853-2499",
+      "h_index": 75,
+      "i10_index": 149,
+      "works_count": 278,
+      "cited_by_count": 30994,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5036300670",
+      "display_name": "Leif P. Kobbelt",
+      "orcid": "https://orcid.org/0000-0002-7880-9470",
+      "h_index": 74,
+      "i10_index": 232,
+      "works_count": 372,
+      "cited_by_count": 21649,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5054382056",
+      "display_name": "Chi‐Wing Fu",
+      "orcid": "https://orcid.org/0000-0002-5238-593X",
+      "h_index": 74,
+      "i10_index": 225,
+      "works_count": 356,
+      "cited_by_count": 29398,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5091366774",
+      "display_name": "Ron Kimmel",
+      "orcid": "https://orcid.org/0000-0002-3180-7961",
+      "h_index": 74,
+      "i10_index": 223,
+      "works_count": 383,
+      "cited_by_count": 26791,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5032875389",
+      "display_name": "Yebin Liu",
+      "orcid": "https://orcid.org/0000-0003-3215-0225",
+      "h_index": 74,
+      "i10_index": 173,
+      "works_count": 264,
+      "cited_by_count": 16267,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5061237128",
+      "display_name": "Aaron Hertzmann",
+      "orcid": "https://orcid.org/0000-0001-9667-0292",
+      "h_index": 74,
+      "i10_index": 143,
+      "works_count": 247,
+      "cited_by_count": 25421,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5005789795",
+      "display_name": "Michael Zollhöfer",
+      "orcid": "https://orcid.org/0000-0003-1219-0625",
+      "h_index": 74,
+      "i10_index": 117,
+      "works_count": 143,
+      "cited_by_count": 28062,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5024117395",
+      "display_name": "Jonathan T. Barron",
+      "orcid": "https://orcid.org/0009-0008-4016-9448",
+      "h_index": 73,
+      "i10_index": 107,
+      "works_count": 128,
+      "cited_by_count": 71130,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5037161857",
+      "display_name": "Kwan‐Liu Ma",
+      "orcid": "https://orcid.org/0000-0001-8086-0366",
+      "h_index": 72,
+      "i10_index": 371,
+      "works_count": 651,
+      "cited_by_count": 18721,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5016258462",
+      "display_name": "Katsushi Ikeuchi",
+      "orcid": "https://orcid.org/0000-0001-9758-9357",
+      "h_index": 72,
+      "i10_index": 302,
+      "works_count": 757,
+      "cited_by_count": 20335,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5101500646",
+      "display_name": "Jingyi Yu",
+      "orcid": "https://orcid.org/0000-0001-9198-6853",
+      "h_index": 72,
+      "i10_index": 259,
+      "works_count": 487,
+      "cited_by_count": 21065,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5084953118",
+      "display_name": "Ping Tan",
+      "orcid": "https://orcid.org/0000-0002-4506-6973",
+      "h_index": 72,
+      "i10_index": 197,
+      "works_count": 282,
+      "cited_by_count": 20803,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.5",
+      "id": "https://openalex.org/A5037233582",
+      "display_name": "Shi‐Min Hu",
+      "orcid": "https://orcid.org/0000-0001-7507-6542",
+      "h_index": 71,
+      "i10_index": 243,
+      "works_count": 348,
+      "cited_by_count": 25225,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5100784734",
+      "display_name": "Xin Tong",
+      "orcid": "https://orcid.org/0000-0001-8788-2453",
+      "h_index": 71,
+      "i10_index": 192,
+      "works_count": 325,
+      "cited_by_count": 17199,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5011858791",
+      "display_name": "Brian Curless",
+      "orcid": "https://orcid.org/0000-0002-0095-5400",
+      "h_index": 71,
+      "i10_index": 125,
+      "works_count": 208,
+      "cited_by_count": 29732,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5108804931",
+      "display_name": "Marc Levoy",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 108,
+      "works_count": 172,
+      "cited_by_count": 41673,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5082668404",
+      "display_name": "John Stasko",
+      "orcid": "https://orcid.org/0000-0003-4129-7659",
+      "h_index": 70,
+      "i10_index": 207,
+      "works_count": 324,
+      "cited_by_count": 20959,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5010714340",
+      "display_name": "Baoquan Chen",
+      "orcid": "https://orcid.org/0000-0003-4702-036X",
+      "h_index": 70,
+      "i10_index": 207,
+      "works_count": 320,
+      "cited_by_count": 17702,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5021634773",
+      "display_name": "Szymon M. Rusinkiewicz",
+      "orcid": "https://orcid.org/0000-0002-4253-2588",
+      "h_index": 70,
+      "i10_index": 148,
+      "works_count": 243,
+      "cited_by_count": 22992,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5150822699",
+      "display_name": "Mark V. Pauly",
+      "orcid": "https://orcid.org/0000-0003-4957-4825",
+      "h_index": 70,
+      "i10_index": 142,
+      "works_count": 274,
+      "cited_by_count": 19267,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5100397026",
+      "display_name": "Hao Zhang",
+      "orcid": "https://orcid.org/0000-0003-1991-119X",
+      "h_index": 69,
+      "i10_index": 191,
+      "works_count": 302,
+      "cited_by_count": 20819,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5044565966",
+      "display_name": "Bernard Chazelle",
+      "orcid": "https://orcid.org/0000-0001-8542-0247",
+      "h_index": 69,
+      "i10_index": 174,
+      "works_count": 314,
+      "cited_by_count": 19678,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5031491881",
+      "display_name": "Angjoo Kanazawa",
+      "orcid": "https://orcid.org/0000-0003-2592-8430",
+      "h_index": 69,
+      "i10_index": 98,
+      "works_count": 124,
+      "cited_by_count": 32557,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.4",
+      "id": "https://openalex.org/A5091466289",
+      "display_name": "Huamin Qu",
+      "orcid": "https://orcid.org/0000-0002-3344-9694",
+      "h_index": 68,
+      "i10_index": 285,
+      "works_count": 509,
+      "cited_by_count": 16321,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5027671723",
+      "display_name": "Kun Zhou",
+      "orcid": "https://orcid.org/0000-0003-4243-6112",
+      "h_index": 68,
+      "i10_index": 206,
+      "works_count": 329,
+      "cited_by_count": 15073,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5022153785",
+      "display_name": "Mathieu Desbrun",
+      "orcid": "https://orcid.org/0000-0003-3424-6079",
+      "h_index": 68,
+      "i10_index": 180,
+      "works_count": 298,
+      "cited_by_count": 20618,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5084778474",
+      "display_name": "Michael Lee Gleicher",
+      "orcid": "https://orcid.org/0000-0003-3295-4071",
+      "h_index": 68,
+      "i10_index": 174,
+      "works_count": 331,
+      "cited_by_count": 16967,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5048338914",
+      "display_name": "C. Karen Liu",
+      "orcid": "https://orcid.org/0000-0001-5926-0905",
+      "h_index": 67,
+      "i10_index": 163,
+      "works_count": 260,
+      "cited_by_count": 14269,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5065644953",
+      "display_name": "Bongshin Lee",
+      "orcid": "https://orcid.org/0000-0002-4217-627X",
+      "h_index": 67,
+      "i10_index": 161,
+      "works_count": 238,
+      "cited_by_count": 15693,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5067456877",
+      "display_name": "Greg Turk",
+      "orcid": "https://orcid.org/0000-0002-3419-6369",
+      "h_index": 67,
+      "i10_index": 126,
+      "works_count": 205,
+      "cited_by_count": 18432,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5082851874",
+      "display_name": "David Salesin",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 118,
+      "works_count": 218,
+      "cited_by_count": 18431,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5047876260",
+      "display_name": "Paul E. Debevec",
+      "orcid": "https://orcid.org/0000-0001-7381-2323",
+      "h_index": 66,
+      "i10_index": 158,
+      "works_count": 359,
+      "cited_by_count": 23054,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5101814482",
+      "display_name": "Xiaowei Zhou",
+      "orcid": "https://orcid.org/0000-0003-1926-5597",
+      "h_index": 66,
+      "i10_index": 144,
+      "works_count": 205,
+      "cited_by_count": 22437,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5100353783",
+      "display_name": "Xin Shane Li",
+      "orcid": "https://orcid.org/0000-0002-0144-9489",
+      "h_index": 65,
+      "i10_index": 302,
+      "works_count": 663,
+      "cited_by_count": 24076,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.3",
+      "id": "https://openalex.org/A5012561411",
+      "display_name": "Sheelagh Carpendale",
+      "orcid": "https://orcid.org/0000-0002-5127-9780",
+      "h_index": 65,
+      "i10_index": 190,
+      "works_count": 440,
+      "cited_by_count": 14818,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5061986862",
+      "display_name": "Denis Zorin",
+      "orcid": "https://orcid.org/0000-0001-7733-5501",
+      "h_index": 65,
+      "i10_index": 144,
+      "works_count": 249,
+      "cited_by_count": 14235,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5056912277",
+      "display_name": "Hugues Hoppe",
+      "orcid": "https://orcid.org/0000-0002-9699-2539",
+      "h_index": 65,
+      "i10_index": 115,
+      "works_count": 182,
+      "cited_by_count": 33038,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5009460413",
+      "display_name": "Valerio Pascucci",
+      "orcid": "https://orcid.org/0000-0002-8877-2042",
+      "h_index": 64,
+      "i10_index": 237,
+      "works_count": 616,
+      "cited_by_count": 14086,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5109840277",
+      "display_name": "Ross Whitaker",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 180,
+      "works_count": 322,
+      "cited_by_count": 13547,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5074549097",
+      "display_name": "Donald P. Greenberg",
+      "orcid": "https://orcid.org/0009-0005-0626-5020",
+      "h_index": 64,
+      "i10_index": 136,
+      "works_count": 241,
+      "cited_by_count": 16646,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5076908763",
+      "display_name": "Gerard Pons‐Moll",
+      "orcid": "https://orcid.org/0000-0001-5115-7794",
+      "h_index": 64,
+      "i10_index": 108,
+      "works_count": 153,
+      "cited_by_count": 29634,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5001740205",
+      "display_name": "James F. O’Brien",
+      "orcid": "https://orcid.org/0000-0001-9513-0542",
+      "h_index": 64,
+      "i10_index": 108,
+      "works_count": 160,
+      "cited_by_count": 12173,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5039995559",
+      "display_name": "Yaron Lipman",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 107,
+      "works_count": 124,
+      "cited_by_count": 26838,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5058649592",
+      "display_name": "Pankaj K. Agarwal",
+      "orcid": "https://orcid.org/0000-0002-9439-181X",
+      "h_index": 63,
+      "i10_index": 263,
+      "works_count": 445,
+      "cited_by_count": 15476,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5067850699",
+      "display_name": "Yu‐Kun Lai",
+      "orcid": "https://orcid.org/0000-0002-2094-5680",
+      "h_index": 63,
+      "i10_index": 224,
+      "works_count": 400,
+      "cited_by_count": 15218,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.2",
+      "id": "https://openalex.org/A5022699013",
+      "display_name": "Gennady Andrienko",
+      "orcid": "https://orcid.org/0000-0002-8574-6295",
+      "h_index": 63,
+      "i10_index": 202,
+      "works_count": 385,
+      "cited_by_count": 17416,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Computer Graphics and Computer-Aided Design -- 9.1",
+      "id": "https://openalex.org/A5001979394",
+      "display_name": "Norman I. Badler",
+      "orcid": "https://orcid.org/0000-0001-8659-3828",
+      "h_index": 63,
+      "i10_index": 201,
+      "works_count": 538,
+      "cited_by_count": 15836,
+      "discipline": "Computer Graphics and Computer-Aided Design",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Graphics and Computer-Aided Design",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Psychology",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1865 @@
+{
+  "kind": "subfield",
+  "id": 1703,
+  "name": "Computational Theory and Mathematics",
+  "total_in_scrape": 96,
+  "count": 96,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Computational Theory and Mathematics -- 9.9",
+      "id": "https://openalex.org/A5051027549",
+      "display_name": "Robert Endre Tarjan",
+      "orcid": "https://orcid.org/0000-0001-7505-5768",
+      "h_index": 117,
+      "i10_index": 308,
+      "works_count": 511,
+      "cited_by_count": 75157,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Computational Theory and Mathematics -- 9.9",
+      "id": "https://openalex.org/A5080555605",
+      "display_name": "Thomas A. Henzinger",
+      "orcid": "https://orcid.org/0000-0002-2985-7724",
+      "h_index": 108,
+      "i10_index": 428,
+      "works_count": 860,
+      "cited_by_count": 51253,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Computational Theory and Mathematics -- 9.9",
+      "id": "https://openalex.org/A5110003399",
+      "display_name": "Gene Howard Golub",
+      "orcid": null,
+      "h_index": 103,
+      "i10_index": 265,
+      "works_count": 493,
+      "cited_by_count": 78020,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Computational Theory and Mathematics -- 9.9",
+      "id": "https://openalex.org/A5000059818",
+      "display_name": "Moshe Y. Vardi",
+      "orcid": "https://orcid.org/0000-0002-0661-5773",
+      "h_index": 101,
+      "i10_index": 694,
+      "works_count": 1484,
+      "cited_by_count": 53808,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Computational Theory and Mathematics -- 9.9",
+      "id": "https://openalex.org/A5013698877",
+      "display_name": "Oded Goldreich",
+      "orcid": "https://orcid.org/0000-0002-4329-135X",
+      "h_index": 99,
+      "i10_index": 265,
+      "works_count": 670,
+      "cited_by_count": 51765,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Computational Theory and Mathematics -- 9.9",
+      "id": "https://openalex.org/A5068875104",
+      "display_name": "Richard M. Karp",
+      "orcid": null,
+      "h_index": 99,
+      "i10_index": 224,
+      "works_count": 361,
+      "cited_by_count": 71094,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5013638126",
+      "display_name": "Michael M. Bronstein",
+      "orcid": "https://orcid.org/0000-0002-1262-7252",
+      "h_index": 98,
+      "i10_index": 309,
+      "works_count": 596,
+      "cited_by_count": 55925,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5028448267",
+      "display_name": "David Ron Karger",
+      "orcid": "https://orcid.org/0000-0002-0024-5847",
+      "h_index": 97,
+      "i10_index": 258,
+      "works_count": 510,
+      "cited_by_count": 53973,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5067889485",
+      "display_name": "László Lovász",
+      "orcid": "https://orcid.org/0000-0001-6596-0465",
+      "h_index": 97,
+      "i10_index": 257,
+      "works_count": 559,
+      "cited_by_count": 50669,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5039911471",
+      "display_name": "Dimitri P. Bertsekas",
+      "orcid": "https://orcid.org/0000-0001-6909-7208",
+      "h_index": 94,
+      "i10_index": 251,
+      "works_count": 476,
+      "cited_by_count": 52543,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5063696855",
+      "display_name": "Yiyu Y. Yao",
+      "orcid": "https://orcid.org/0000-0001-6502-6226",
+      "h_index": 93,
+      "i10_index": 330,
+      "works_count": 565,
+      "cited_by_count": 33319,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5046903273",
+      "display_name": "Ralph Tyrrell Rockafellar",
+      "orcid": "https://orcid.org/0000-0003-1703-5069",
+      "h_index": 92,
+      "i10_index": 203,
+      "works_count": 346,
+      "cited_by_count": 77410,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5103209777",
+      "display_name": "Sanjeev Arora",
+      "orcid": "https://orcid.org/0000-0002-8636-9970",
+      "h_index": 91,
+      "i10_index": 190,
+      "works_count": 333,
+      "cited_by_count": 39545,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5043084405",
+      "display_name": "Mihalis Yannakakis",
+      "orcid": "https://orcid.org/0000-0003-2857-1860",
+      "h_index": 90,
+      "i10_index": 218,
+      "works_count": 319,
+      "cited_by_count": 34499,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5112649653",
+      "display_name": "Rajeev Motwani",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 202,
+      "works_count": 322,
+      "cited_by_count": 63660,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5065059795",
+      "display_name": "Rajeev Alur",
+      "orcid": "https://orcid.org/0000-0003-1733-7083",
+      "h_index": 89,
+      "i10_index": 273,
+      "works_count": 494,
+      "cited_by_count": 40908,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Computational Theory and Mathematics -- 9.8",
+      "id": "https://openalex.org/A5109219790",
+      "display_name": "Amir Pnueli",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 245,
+      "works_count": 446,
+      "cited_by_count": 40457,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5104056982",
+      "display_name": "Christos H. Papadimitriou",
+      "orcid": "https://orcid.org/0009-0000-7264-8015",
+      "h_index": 87,
+      "i10_index": 197,
+      "works_count": 362,
+      "cited_by_count": 34624,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5039043184",
+      "display_name": "Avi Wigderson",
+      "orcid": "https://orcid.org/0000-0002-1539-1417",
+      "h_index": 85,
+      "i10_index": 276,
+      "works_count": 512,
+      "cited_by_count": 33661,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5070559820",
+      "display_name": "Tianrui Li",
+      "orcid": "https://orcid.org/0000-0001-7780-104X",
+      "h_index": 84,
+      "i10_index": 454,
+      "works_count": 1044,
+      "cited_by_count": 29968,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5107701187",
+      "display_name": "Robert C. Thompson",
+      "orcid": "https://orcid.org/0000-0001-6297-3340",
+      "h_index": 84,
+      "i10_index": 279,
+      "works_count": 436,
+      "cited_by_count": 36232,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Materials Science",
+        "Chemistry",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5076825233",
+      "display_name": "James Weldon Demmel",
+      "orcid": "https://orcid.org/0000-0002-0550-5476",
+      "h_index": 84,
+      "i10_index": 269,
+      "works_count": 423,
+      "cited_by_count": 34914,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5016419713",
+      "display_name": "Yousef Saad",
+      "orcid": "https://orcid.org/0000-0002-8614-5360",
+      "h_index": 83,
+      "i10_index": 254,
+      "works_count": 529,
+      "cited_by_count": 56869,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5076056716",
+      "display_name": "Piotr Indyk",
+      "orcid": "https://orcid.org/0009-0005-2022-8429",
+      "h_index": 82,
+      "i10_index": 221,
+      "works_count": 407,
+      "cited_by_count": 37272,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5045305170",
+      "display_name": "Zhiwu Li",
+      "orcid": "https://orcid.org/0000-0003-1547-5503",
+      "h_index": 81,
+      "i10_index": 487,
+      "works_count": 899,
+      "cited_by_count": 25864,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5069339254",
+      "display_name": "Nicholas J. Higham",
+      "orcid": "https://orcid.org/0000-0001-5956-4976",
+      "h_index": 80,
+      "i10_index": 192,
+      "works_count": 428,
+      "cited_by_count": 27307,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5033672550",
+      "display_name": "Olvi L. Mangasarian",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 185,
+      "works_count": 298,
+      "cited_by_count": 27948,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Computational Theory and Mathematics -- 9.7",
+      "id": "https://openalex.org/A5103200572",
+      "display_name": "Christos H. Papadimitriou",
+      "orcid": "https://orcid.org/0009-0000-7264-8015",
+      "h_index": 80,
+      "i10_index": 176,
+      "works_count": 287,
+      "cited_by_count": 26409,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5056419022",
+      "display_name": "David Peleg",
+      "orcid": "https://orcid.org/0000-0003-1590-0506",
+      "h_index": 79,
+      "i10_index": 291,
+      "works_count": 603,
+      "cited_by_count": 22320,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5027670183",
+      "display_name": "Bernd Sturmfels",
+      "orcid": "https://orcid.org/0000-0002-6642-1479",
+      "h_index": 79,
+      "i10_index": 280,
+      "works_count": 490,
+      "cited_by_count": 27889,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5069969191",
+      "display_name": "Weiping Ding",
+      "orcid": "https://orcid.org/0000-0002-3180-7347",
+      "h_index": 78,
+      "i10_index": 470,
+      "works_count": 930,
+      "cited_by_count": 26349,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5038480864",
+      "display_name": "Pierre Hansen",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 305,
+      "works_count": 689,
+      "cited_by_count": 32633,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5007907571",
+      "display_name": "Nima Jafari Navimipour",
+      "orcid": "https://orcid.org/0000-0002-5514-5536",
+      "h_index": 78,
+      "i10_index": 235,
+      "works_count": 294,
+      "cited_by_count": 18897,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5043211393",
+      "display_name": "John E. Hopcroft",
+      "orcid": "https://orcid.org/0000-0001-8681-6075",
+      "h_index": 78,
+      "i10_index": 161,
+      "works_count": 275,
+      "cited_by_count": 33457,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5002789695",
+      "display_name": "Jong‐Shi Pang",
+      "orcid": "https://orcid.org/0000-0002-2224-6787",
+      "h_index": 77,
+      "i10_index": 216,
+      "works_count": 320,
+      "cited_by_count": 28186,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5057281816",
+      "display_name": "George L. Nemhauser",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 205,
+      "works_count": 306,
+      "cited_by_count": 38600,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5031220156",
+      "display_name": "Guoyin Wang",
+      "orcid": "https://orcid.org/0000-0002-8521-5232",
+      "h_index": 76,
+      "i10_index": 381,
+      "works_count": 989,
+      "cited_by_count": 23785,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5081710233",
+      "display_name": "Marta Kwiatkowska",
+      "orcid": "https://orcid.org/0000-0001-9022-7599",
+      "h_index": 76,
+      "i10_index": 308,
+      "works_count": 502,
+      "cited_by_count": 25579,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Computational Theory and Mathematics -- 9.6",
+      "id": "https://openalex.org/A5041526408",
+      "display_name": "Yinyu Ye",
+      "orcid": "https://orcid.org/0009-0001-3239-2622",
+      "h_index": 76,
+      "i10_index": 272,
+      "works_count": 599,
+      "cited_by_count": 31223,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5036720066",
+      "display_name": "Poom Kumam",
+      "orcid": "https://orcid.org/0000-0002-5463-4581",
+      "h_index": 75,
+      "i10_index": 718,
+      "works_count": 1340,
+      "cited_by_count": 29907,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5050062467",
+      "display_name": "Pãnos M. Pardalos",
+      "orcid": "https://orcid.org/0000-0001-9623-8053",
+      "h_index": 75,
+      "i10_index": 434,
+      "works_count": 849,
+      "cited_by_count": 24536,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5031948088",
+      "display_name": "Paul D. Seymour",
+      "orcid": "https://orcid.org/0000-0003-0067-4534",
+      "h_index": 75,
+      "i10_index": 267,
+      "works_count": 388,
+      "cited_by_count": 31365,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5101983359",
+      "display_name": "Santosh Vempala",
+      "orcid": "https://orcid.org/0000-0002-3779-433X",
+      "h_index": 75,
+      "i10_index": 217,
+      "works_count": 385,
+      "cited_by_count": 22840,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5069362159",
+      "display_name": "Kim G. Larsen",
+      "orcid": "https://orcid.org/0000-0002-5953-3384",
+      "h_index": 74,
+      "i10_index": 383,
+      "works_count": 769,
+      "cited_by_count": 28006,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5101519422",
+      "display_name": "Madhu Sudan",
+      "orcid": "https://orcid.org/0000-0003-3718-6489",
+      "h_index": 74,
+      "i10_index": 366,
+      "works_count": 817,
+      "cited_by_count": 30539,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5043357545",
+      "display_name": "Hanif D. Sherali",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 298,
+      "works_count": 510,
+      "cited_by_count": 24254,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5064230639",
+      "display_name": "Sanjit Arunkumar Seshia",
+      "orcid": "https://orcid.org/0000-0001-6190-8707",
+      "h_index": 74,
+      "i10_index": 252,
+      "works_count": 532,
+      "cited_by_count": 22259,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5083684609",
+      "display_name": "Erik D. Demaine",
+      "orcid": "https://orcid.org/0000-0003-3803-5703",
+      "h_index": 72,
+      "i10_index": 368,
+      "works_count": 1061,
+      "cited_by_count": 23055,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5082922326",
+      "display_name": "Peter Sanders",
+      "orcid": "https://orcid.org/0000-0003-3330-9349",
+      "h_index": 72,
+      "i10_index": 241,
+      "works_count": 699,
+      "cited_by_count": 20086,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5110486000",
+      "display_name": "Grzegorz Rozenberg",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 314,
+      "works_count": 1099,
+      "cited_by_count": 22382,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Computational Theory and Mathematics -- 9.5",
+      "id": "https://openalex.org/A5003563112",
+      "display_name": "Yuhua Qian",
+      "orcid": "https://orcid.org/0000-0001-6772-4247",
+      "h_index": 71,
+      "i10_index": 207,
+      "works_count": 374,
+      "cited_by_count": 16985,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5101911266",
+      "display_name": "Tao Jiang",
+      "orcid": "https://orcid.org/0000-0003-3833-4498",
+      "h_index": 70,
+      "i10_index": 307,
+      "works_count": 596,
+      "cited_by_count": 19114,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5080746477",
+      "display_name": "Gerhard J. Woeginger",
+      "orcid": "https://orcid.org/0000-0001-8816-2693",
+      "h_index": 69,
+      "i10_index": 275,
+      "works_count": 531,
+      "cited_by_count": 14785,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5071944803",
+      "display_name": "Nancy Lynch",
+      "orcid": "https://orcid.org/0000-0003-3045-265X",
+      "h_index": 69,
+      "i10_index": 273,
+      "works_count": 732,
+      "cited_by_count": 32148,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5108527295",
+      "display_name": "David Eppstein",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 273,
+      "works_count": 581,
+      "cited_by_count": 18080,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5005122439",
+      "display_name": "Xianfu Wang",
+      "orcid": "https://orcid.org/0000-0002-2066-7473",
+      "h_index": 69,
+      "i10_index": 197,
+      "works_count": 319,
+      "cited_by_count": 19171,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5018886883",
+      "display_name": "Walter Murray Wonham",
+      "orcid": "https://orcid.org/0000-0002-9918-4481",
+      "h_index": 69,
+      "i10_index": 185,
+      "works_count": 363,
+      "cited_by_count": 34255,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5016656677",
+      "display_name": "Salil Vadhan",
+      "orcid": "https://orcid.org/0000-0002-4059-4072",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 343,
+      "cited_by_count": 19260,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5100385498",
+      "display_name": "Wenjie Zhang",
+      "orcid": "https://orcid.org/0000-0001-6572-2600",
+      "h_index": 68,
+      "i10_index": 318,
+      "works_count": 621,
+      "cited_by_count": 16617,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5056950019",
+      "display_name": "Alan M. Frieze",
+      "orcid": "https://orcid.org/0000-0002-8481-5615",
+      "h_index": 68,
+      "i10_index": 313,
+      "works_count": 688,
+      "cited_by_count": 21597,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5090819329",
+      "display_name": "Joost-Pieter Katoen",
+      "orcid": "https://orcid.org/0000-0002-6143-1926",
+      "h_index": 68,
+      "i10_index": 306,
+      "works_count": 604,
+      "cited_by_count": 23515,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Computational Theory and Mathematics -- 9.4",
+      "id": "https://openalex.org/A5052607806",
+      "display_name": "Krishnendu Chatterjee",
+      "orcid": "https://orcid.org/0000-0002-4561-241X",
+      "h_index": 68,
+      "i10_index": 292,
+      "works_count": 525,
+      "cited_by_count": 16884,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5072294897",
+      "display_name": "Anna Nagurney",
+      "orcid": "https://orcid.org/0000-0002-1645-5363",
+      "h_index": 68,
+      "i10_index": 263,
+      "works_count": 595,
+      "cited_by_count": 17715,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5032730524",
+      "display_name": "Hans L. Bodlaender",
+      "orcid": "https://orcid.org/0000-0002-9297-3330",
+      "h_index": 68,
+      "i10_index": 239,
+      "works_count": 528,
+      "cited_by_count": 20763,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5022272025",
+      "display_name": "Francesco Bonchi",
+      "orcid": "https://orcid.org/0000-0001-9464-8315",
+      "h_index": 67,
+      "i10_index": 188,
+      "works_count": 373,
+      "cited_by_count": 15849,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5034436241",
+      "display_name": "Zohar Manna",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 187,
+      "works_count": 359,
+      "cited_by_count": 19798,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5067792459",
+      "display_name": "Yurii E. Nesterov",
+      "orcid": "https://orcid.org/0000-0002-0542-8757",
+      "h_index": 67,
+      "i10_index": 159,
+      "works_count": 324,
+      "cited_by_count": 43584,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5063808461",
+      "display_name": "Pãnos M. Pardalos",
+      "orcid": "https://orcid.org/0000-0003-2824-101X",
+      "h_index": 66,
+      "i10_index": 276,
+      "works_count": 746,
+      "cited_by_count": 21499,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5010961023",
+      "display_name": "Kurt Mehlhorn",
+      "orcid": "https://orcid.org/0000-0003-4020-4334",
+      "h_index": 66,
+      "i10_index": 254,
+      "works_count": 523,
+      "cited_by_count": 17016,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5100762970",
+      "display_name": "Jason Li",
+      "orcid": "https://orcid.org/0000-0002-1150-3549",
+      "h_index": 66,
+      "i10_index": 196,
+      "works_count": 438,
+      "cited_by_count": 16109,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5022164041",
+      "display_name": "Aristides Gionis",
+      "orcid": "https://orcid.org/0000-0002-5211-112X",
+      "h_index": 66,
+      "i10_index": 194,
+      "works_count": 371,
+      "cited_by_count": 23137,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5075683085",
+      "display_name": "Michael Elkin",
+      "orcid": "https://orcid.org/0000-0003-2034-812X",
+      "h_index": 66,
+      "i10_index": 160,
+      "works_count": 255,
+      "cited_by_count": 13352,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Computational Theory and Mathematics -- 9.3",
+      "id": "https://openalex.org/A5070306586",
+      "display_name": "Laurence A. Wolsey",
+      "orcid": "https://orcid.org/0000-0001-5330-6239",
+      "h_index": 66,
+      "i10_index": 150,
+      "works_count": 283,
+      "cited_by_count": 28756,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5101772779",
+      "display_name": "Ravi Kumar",
+      "orcid": "https://orcid.org/0000-0002-2203-2586",
+      "h_index": 66,
+      "i10_index": 149,
+      "works_count": 234,
+      "cited_by_count": 16438,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5050520268",
+      "display_name": "Jen‐Chih Yao",
+      "orcid": "https://orcid.org/0000-0001-9041-3375",
+      "h_index": 65,
+      "i10_index": 373,
+      "works_count": 698,
+      "cited_by_count": 16319,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5068388812",
+      "display_name": "Venkatesan Guruswami",
+      "orcid": "https://orcid.org/0000-0001-7926-3396",
+      "h_index": 65,
+      "i10_index": 261,
+      "works_count": 564,
+      "cited_by_count": 15041,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5081010207",
+      "display_name": "Rupak Majumdar",
+      "orcid": "https://orcid.org/0000-0003-2136-0542",
+      "h_index": 65,
+      "i10_index": 242,
+      "works_count": 424,
+      "cited_by_count": 16711,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5039232562",
+      "display_name": "Mikkel Thorup",
+      "orcid": "https://orcid.org/0000-0001-5237-1709",
+      "h_index": 65,
+      "i10_index": 195,
+      "works_count": 466,
+      "cited_by_count": 17174,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5111783338",
+      "display_name": "Andrew V. Goldberg",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 141,
+      "works_count": 217,
+      "cited_by_count": 19832,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5005383495",
+      "display_name": "Matthias Althoff",
+      "orcid": "https://orcid.org/0000-0003-3733-842X",
+      "h_index": 64,
+      "i10_index": 280,
+      "works_count": 445,
+      "cited_by_count": 15912,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5057413218",
+      "display_name": "Simeon Reich",
+      "orcid": "https://orcid.org/0000-0003-0780-1559",
+      "h_index": 64,
+      "i10_index": 249,
+      "works_count": 648,
+      "cited_by_count": 20690,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5039619350",
+      "display_name": "Sanjeev Khanna",
+      "orcid": "https://orcid.org/0009-0000-2601-1689",
+      "h_index": 64,
+      "i10_index": 202,
+      "works_count": 357,
+      "cited_by_count": 15037,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5013190102",
+      "display_name": "Uriel Feige",
+      "orcid": "https://orcid.org/0009-0006-3749-4392",
+      "h_index": 64,
+      "i10_index": 190,
+      "works_count": 342,
+      "cited_by_count": 21510,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Computational Theory and Mathematics -- 9.2",
+      "id": "https://openalex.org/A5025400832",
+      "display_name": "Joseph Seffi Naor",
+      "orcid": "https://orcid.org/0009-0009-4234-9466",
+      "h_index": 64,
+      "i10_index": 183,
+      "works_count": 312,
+      "cited_by_count": 15911,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5054676766",
+      "display_name": "Michael R. Fellows",
+      "orcid": "https://orcid.org/0000-0002-6148-9212",
+      "h_index": 64,
+      "i10_index": 178,
+      "works_count": 329,
+      "cited_by_count": 18358,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5071016611",
+      "display_name": "Moses Charikar",
+      "orcid": "https://orcid.org/0000-0003-0807-3389",
+      "h_index": 64,
+      "i10_index": 165,
+      "works_count": 280,
+      "cited_by_count": 23514,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5065782725",
+      "display_name": "Ting‐Zhu Huang",
+      "orcid": "https://orcid.org/0000-0001-7766-230X",
+      "h_index": 63,
+      "i10_index": 304,
+      "works_count": 707,
+      "cited_by_count": 15236,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5079716343",
+      "display_name": "Roberto Tamassia",
+      "orcid": "https://orcid.org/0000-0003-2445-6064",
+      "h_index": 63,
+      "i10_index": 216,
+      "works_count": 462,
+      "cited_by_count": 18359,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5027585653",
+      "display_name": "Stéphane Lafortune",
+      "orcid": "https://orcid.org/0000-0002-7526-6642",
+      "h_index": 63,
+      "i10_index": 209,
+      "works_count": 378,
+      "cited_by_count": 19830,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5072397842",
+      "display_name": "Subhash Suri",
+      "orcid": "https://orcid.org/0000-0002-5668-7521",
+      "h_index": 63,
+      "i10_index": 204,
+      "works_count": 376,
+      "cited_by_count": 14323,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5110573976",
+      "display_name": "Gheorghe Pǎun",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 197,
+      "works_count": 582,
+      "cited_by_count": 18647,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5050009387",
+      "display_name": "Nathan Linial",
+      "orcid": "https://orcid.org/0000-0002-0918-3136",
+      "h_index": 63,
+      "i10_index": 191,
+      "works_count": 331,
+      "cited_by_count": 17587,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5028869858",
+      "display_name": "Eli Upfal",
+      "orcid": "https://orcid.org/0000-0002-9321-9460",
+      "h_index": 63,
+      "i10_index": 166,
+      "works_count": 321,
+      "cited_by_count": 26318,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5084653980",
+      "display_name": "Wolfgang Hackbusch",
+      "orcid": "https://orcid.org/0000-0002-4801-6189",
+      "h_index": 63,
+      "i10_index": 160,
+      "works_count": 554,
+      "cited_by_count": 20079,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Computational Theory and Mathematics -- 9.1",
+      "id": "https://openalex.org/A5072685560",
+      "display_name": "James B. Orlin",
+      "orcid": "https://orcid.org/0000-0002-7488-094X",
+      "h_index": 63,
+      "i10_index": 150,
+      "works_count": 304,
+      "cited_by_count": 23958,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Computational Theory and Mathematics -- 9.0",
+      "id": "https://openalex.org/A5081924048",
+      "display_name": "Patrick L. Combettes",
+      "orcid": "https://orcid.org/0000-0001-9730-5932",
+      "h_index": 63,
+      "i10_index": 117,
+      "works_count": 301,
+      "cited_by_count": 27365,
+      "discipline": "Computational Theory and Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Theory and Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    }
+  ]
+}

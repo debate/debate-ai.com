@@ -1,0 +1,1383 @@
+{
+  "kind": "subfield",
+  "id": 1310,
+  "name": "Endocrinology",
+  "total_in_scrape": 70,
+  "count": 70,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Endocrinology -- 9.9",
+      "id": "https://openalex.org/A5085801141",
+      "display_name": "Jan-Ακε Gustafsson",
+      "orcid": "https://orcid.org/0000-0002-1472-1373",
+      "h_index": 166,
+      "i10_index": 1042,
+      "works_count": 1400,
+      "cited_by_count": 118555,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Endocrinology -- 9.9",
+      "id": "https://openalex.org/A5057978718",
+      "display_name": "Bert W. O’Malley",
+      "orcid": "https://orcid.org/0000-0003-3332-1399",
+      "h_index": 165,
+      "i10_index": 743,
+      "works_count": 1118,
+      "cited_by_count": 104222,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Endocrinology -- 9.9",
+      "id": "https://openalex.org/A5037771157",
+      "display_name": "Kenneth Steven Korach",
+      "orcid": "https://orcid.org/0000-0002-7765-418X",
+      "h_index": 134,
+      "i10_index": 409,
+      "works_count": 572,
+      "cited_by_count": 66087,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Endocrinology -- 9.9",
+      "id": "https://openalex.org/A5001320954",
+      "display_name": "John Anthony Cidlowski",
+      "orcid": "https://orcid.org/0000-0003-1420-0516",
+      "h_index": 123,
+      "i10_index": 337,
+      "works_count": 560,
+      "cited_by_count": 62525,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Endocrinology -- 9.9",
+      "id": "https://openalex.org/A5080531304",
+      "display_name": "Benita S. Katzenellenbogen",
+      "orcid": "https://orcid.org/0000-0002-8847-2752",
+      "h_index": 120,
+      "i10_index": 360,
+      "works_count": 554,
+      "cited_by_count": 45624,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Endocrinology -- 9.9",
+      "id": "https://openalex.org/A5069048623",
+      "display_name": "Francesco John DeMayo",
+      "orcid": "https://orcid.org/0000-0002-9480-7336",
+      "h_index": 112,
+      "i10_index": 362,
+      "works_count": 595,
+      "cited_by_count": 45694,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5113521074",
+      "display_name": "Herman Adlercreutz",
+      "orcid": null,
+      "h_index": 110,
+      "i10_index": 428,
+      "works_count": 614,
+      "cited_by_count": 46627,
+      "discipline": "Endocrinology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5025650833",
+      "display_name": "Luis Miguel García‐Segura",
+      "orcid": "https://orcid.org/0000-0002-2450-2916",
+      "h_index": 107,
+      "i10_index": 429,
+      "works_count": 630,
+      "cited_by_count": 36574,
+      "discipline": "Endocrinology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5062055452",
+      "display_name": "Donald Patrick McDonnell",
+      "orcid": "https://orcid.org/0000-0002-7331-4700",
+      "h_index": 105,
+      "i10_index": 257,
+      "works_count": 552,
+      "cited_by_count": 35267,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5054090841",
+      "display_name": "John A. Katzenellenbogen",
+      "orcid": "https://orcid.org/0000-0003-0914-0010",
+      "h_index": 104,
+      "i10_index": 558,
+      "works_count": 914,
+      "cited_by_count": 46496,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5030184373",
+      "display_name": "Frederick Nicholas Naftolin",
+      "orcid": "https://orcid.org/0000-0002-9447-6266",
+      "h_index": 100,
+      "i10_index": 426,
+      "works_count": 703,
+      "cited_by_count": 34830,
+      "discipline": "Endocrinology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5083296600",
+      "display_name": "John D. Baxter",
+      "orcid": "https://orcid.org/0000-0002-0704-9603",
+      "h_index": 99,
+      "i10_index": 263,
+      "works_count": 398,
+      "cited_by_count": 31274,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5109171376",
+      "display_name": "Evan R. Simpson",
+      "orcid": "https://orcid.org/0009-0004-6507-5326",
+      "h_index": 96,
+      "i10_index": 299,
+      "works_count": 399,
+      "cited_by_count": 32290,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5009298625",
+      "display_name": "Serdar Ekrem Bulun",
+      "orcid": "https://orcid.org/0000-0003-0850-8637",
+      "h_index": 94,
+      "i10_index": 224,
+      "works_count": 443,
+      "cited_by_count": 31355,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5081817848",
+      "display_name": "Richard J. Santen",
+      "orcid": "https://orcid.org/0000-0002-6715-5192",
+      "h_index": 93,
+      "i10_index": 306,
+      "works_count": 479,
+      "cited_by_count": 28161,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5034271311",
+      "display_name": "Yasuyoshi Ouchi",
+      "orcid": "https://orcid.org/0000-0002-8178-6994",
+      "h_index": 91,
+      "i10_index": 352,
+      "works_count": 603,
+      "cited_by_count": 29573,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Endocrinology -- 9.8",
+      "id": "https://openalex.org/A5064070422",
+      "display_name": "John P. Lydon",
+      "orcid": "https://orcid.org/0000-0001-6472-636X",
+      "h_index": 89,
+      "i10_index": 231,
+      "works_count": 431,
+      "cited_by_count": 25307,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5083722213",
+      "display_name": "Malcolm G. Parker",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 198,
+      "works_count": 292,
+      "cited_by_count": 34784,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5111370326",
+      "display_name": "James W. Simpkins",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 320,
+      "works_count": 450,
+      "cited_by_count": 24304,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5110047411",
+      "display_name": "Bernd Groner",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 234,
+      "works_count": 315,
+      "cited_by_count": 24377,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5005756055",
+      "display_name": "Virgil Craig Jordan",
+      "orcid": "https://orcid.org/0000-0002-5818-037X",
+      "h_index": 86,
+      "i10_index": 306,
+      "works_count": 554,
+      "cited_by_count": 29069,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5109058217",
+      "display_name": "Dennis B. Lubahn",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 175,
+      "works_count": 265,
+      "cited_by_count": 33857,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5105781312",
+      "display_name": "Étienne-Émile Baulieu",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 276,
+      "works_count": 429,
+      "cited_by_count": 24165,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5087862105",
+      "display_name": "Carmen Buchrieser",
+      "orcid": "https://orcid.org/0000-0003-3477-9190",
+      "h_index": 85,
+      "i10_index": 176,
+      "works_count": 291,
+      "cited_by_count": 31290,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5001039341",
+      "display_name": "Geoffrey L. Greene",
+      "orcid": "https://orcid.org/0000-0001-6894-8728",
+      "h_index": 84,
+      "i10_index": 249,
+      "works_count": 595,
+      "cited_by_count": 36942,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5015114638",
+      "display_name": "John A. McLachlan",
+      "orcid": "https://orcid.org/0000-0002-9039-1361",
+      "h_index": 84,
+      "i10_index": 221,
+      "works_count": 275,
+      "cited_by_count": 24690,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5053560361",
+      "display_name": "E.E. Baulieu",
+      "orcid": "https://orcid.org/0000-0002-2532-5085",
+      "h_index": 83,
+      "i10_index": 283,
+      "works_count": 600,
+      "cited_by_count": 26812,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Endocrinology -- 9.7",
+      "id": "https://openalex.org/A5059343766",
+      "display_name": "Neil James MacLusky",
+      "orcid": "https://orcid.org/0000-0002-9202-0564",
+      "h_index": 83,
+      "i10_index": 229,
+      "works_count": 310,
+      "cited_by_count": 22588,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5062218852",
+      "display_name": "Edwin Milgröm",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 196,
+      "works_count": 323,
+      "cited_by_count": 21847,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5011322600",
+      "display_name": "Robert C. Clarke",
+      "orcid": "https://orcid.org/0000-0002-9278-0854",
+      "h_index": 80,
+      "i10_index": 313,
+      "works_count": 691,
+      "cited_by_count": 32013,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5022540272",
+      "display_name": "William R. Miller",
+      "orcid": "https://orcid.org/0000-0002-1518-2973",
+      "h_index": 80,
+      "i10_index": 253,
+      "works_count": 486,
+      "cited_by_count": 25710,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5102010816",
+      "display_name": "Sebastiano Andò",
+      "orcid": "https://orcid.org/0000-0002-5412-7045",
+      "h_index": 78,
+      "i10_index": 271,
+      "works_count": 768,
+      "cited_by_count": 20953,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5027267648",
+      "display_name": "Carlos Sonnenschein",
+      "orcid": "https://orcid.org/0000-0003-3475-6423",
+      "h_index": 78,
+      "i10_index": 174,
+      "works_count": 284,
+      "cited_by_count": 27776,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5086745151",
+      "display_name": "Gordon M. Tomkins",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 153,
+      "works_count": 183,
+      "cited_by_count": 17981,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5109529667",
+      "display_name": "Howard A. Bern",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 355,
+      "works_count": 530,
+      "cited_by_count": 21776,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5062035305",
+      "display_name": "Marinus A. Blankenstein",
+      "orcid": "https://orcid.org/0000-0003-1186-0770",
+      "h_index": 77,
+      "i10_index": 268,
+      "works_count": 432,
+      "cited_by_count": 21342,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5080222404",
+      "display_name": "Craig R. Roy",
+      "orcid": "https://orcid.org/0000-0003-4490-440X",
+      "h_index": 76,
+      "i10_index": 137,
+      "works_count": 259,
+      "cited_by_count": 17176,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5109205302",
+      "display_name": "Olli A. Jänne",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 243,
+      "works_count": 312,
+      "cited_by_count": 19912,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Endocrinology -- 9.6",
+      "id": "https://openalex.org/A5109436041",
+      "display_name": "Dean P. Edwards",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 181,
+      "works_count": 282,
+      "cited_by_count": 16656,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5090010000",
+      "display_name": "Ratna K. Vadlamudi",
+      "orcid": "https://orcid.org/0000-0003-2849-4076",
+      "h_index": 74,
+      "i10_index": 194,
+      "works_count": 585,
+      "cited_by_count": 17207,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5027996098",
+      "display_name": "Carole R. Mendelson",
+      "orcid": "https://orcid.org/0000-0003-1696-9791",
+      "h_index": 74,
+      "i10_index": 168,
+      "works_count": 222,
+      "cited_by_count": 18233,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5032390983",
+      "display_name": "Ellis Robert Levin",
+      "orcid": "https://orcid.org/0000-0003-3015-4177",
+      "h_index": 74,
+      "i10_index": 129,
+      "works_count": 183,
+      "cited_by_count": 23285,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5108446582",
+      "display_name": "Laurence M. Demers",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 289,
+      "works_count": 451,
+      "cited_by_count": 20419,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5112005916",
+      "display_name": "Michael E. Mendelsohn",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 129,
+      "works_count": 199,
+      "cited_by_count": 25883,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5039328210",
+      "display_name": "H. Leon Bradlow",
+      "orcid": "https://orcid.org/0000-0002-2397-3679",
+      "h_index": 71,
+      "i10_index": 235,
+      "works_count": 360,
+      "cited_by_count": 17681,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5041163845",
+      "display_name": "Jianming Xu",
+      "orcid": "https://orcid.org/0000-0002-8208-9162",
+      "h_index": 71,
+      "i10_index": 192,
+      "works_count": 273,
+      "cited_by_count": 18138,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5057077440",
+      "display_name": "Ping Yin",
+      "orcid": "https://orcid.org/0000-0001-8001-221X",
+      "h_index": 71,
+      "i10_index": 189,
+      "works_count": 295,
+      "cited_by_count": 16640,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5055666393",
+      "display_name": "Adriana C. Maggi",
+      "orcid": "https://orcid.org/0000-0001-5700-5273",
+      "h_index": 71,
+      "i10_index": 183,
+      "works_count": 335,
+      "cited_by_count": 16590,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5089957002",
+      "display_name": "Margaret N. Warner",
+      "orcid": "https://orcid.org/0000-0002-7946-2675",
+      "h_index": 71,
+      "i10_index": 157,
+      "works_count": 197,
+      "cited_by_count": 21965,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5004083793",
+      "display_name": "Tommaso Simoncini",
+      "orcid": "https://orcid.org/0000-0002-2971-0079",
+      "h_index": 70,
+      "i10_index": 257,
+      "works_count": 589,
+      "cited_by_count": 23098,
+      "discipline": "Endocrinology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Endocrinology -- 9.5",
+      "id": "https://openalex.org/A5111831698",
+      "display_name": "Walter E. Stumpf",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 250,
+      "works_count": 381,
+      "cited_by_count": 17652,
+      "discipline": "Endocrinology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5070386484",
+      "display_name": "Nobuhiro Harada",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 210,
+      "works_count": 433,
+      "cited_by_count": 15213,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Medicine",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5074738070",
+      "display_name": "Marcello Maggiolini",
+      "orcid": "https://orcid.org/0000-0002-7485-854X",
+      "h_index": 70,
+      "i10_index": 190,
+      "works_count": 397,
+      "cited_by_count": 16890,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5043815002",
+      "display_name": "Jean‐François Arnal",
+      "orcid": "https://orcid.org/0000-0003-2229-6300",
+      "h_index": 70,
+      "i10_index": 185,
+      "works_count": 409,
+      "cited_by_count": 17167,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5109601937",
+      "display_name": "Andrée Krust",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 103,
+      "works_count": 151,
+      "cited_by_count": 27805,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5113769876",
+      "display_name": "Kenneth Joseph Ryan",
+      "orcid": "https://orcid.org/0000-0002-6547-9273",
+      "h_index": 69,
+      "i10_index": 239,
+      "works_count": 399,
+      "cited_by_count": 18954,
+      "discipline": "Endocrinology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5033070497",
+      "display_name": "Naveed Ahmed Khan",
+      "orcid": "https://orcid.org/0000-0001-7667-8553",
+      "h_index": 67,
+      "i10_index": 318,
+      "works_count": 623,
+      "cited_by_count": 17349,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5035110273",
+      "display_name": "Orla M. Conneely",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 116,
+      "works_count": 146,
+      "cited_by_count": 17477,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5023224521",
+      "display_name": "Gary L. Firestone",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 139,
+      "works_count": 168,
+      "cited_by_count": 14076,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5109938922",
+      "display_name": "Pentti K. Siiteri",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 125,
+      "works_count": 155,
+      "cited_by_count": 17836,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5045826055",
+      "display_name": "Christopher John Ormandy",
+      "orcid": "https://orcid.org/0000-0002-2504-7919",
+      "h_index": 66,
+      "i10_index": 117,
+      "works_count": 197,
+      "cited_by_count": 11649,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Endocrinology -- 9.4",
+      "id": "https://openalex.org/A5015325500",
+      "display_name": "Herbert H. Samuels",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 108,
+      "works_count": 154,
+      "cited_by_count": 11535,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Endocrinology -- 9.3",
+      "id": "https://openalex.org/A5060665424",
+      "display_name": "Tomoshige Kino",
+      "orcid": "https://orcid.org/0000-0003-0220-9396",
+      "h_index": 65,
+      "i10_index": 142,
+      "works_count": 234,
+      "cited_by_count": 13662,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Endocrinology -- 9.3",
+      "id": "https://openalex.org/A5109239611",
+      "display_name": "E R Simpson",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 119,
+      "works_count": 145,
+      "cited_by_count": 14870,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Endocrinology -- 9.3",
+      "id": "https://openalex.org/A5009069351",
+      "display_name": "Holly A. Ingraham",
+      "orcid": "https://orcid.org/0000-0001-6739-2967",
+      "h_index": 65,
+      "i10_index": 94,
+      "works_count": 155,
+      "cited_by_count": 18141,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Endocrinology -- 9.3",
+      "id": "https://openalex.org/A5113603781",
+      "display_name": "Michael J. Reed",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 228,
+      "works_count": 358,
+      "cited_by_count": 14628,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Endocrinology -- 9.3",
+      "id": "https://openalex.org/A5003694440",
+      "display_name": "Jan Peter Tuckermann",
+      "orcid": "https://orcid.org/0000-0003-3691-275X",
+      "h_index": 64,
+      "i10_index": 161,
+      "works_count": 273,
+      "cited_by_count": 14931,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Endocrinology -- 9.3",
+      "id": "https://openalex.org/A5055145006",
+      "display_name": "Simak Ali",
+      "orcid": "https://orcid.org/0000-0002-1320-0816",
+      "h_index": 64,
+      "i10_index": 127,
+      "works_count": 326,
+      "cited_by_count": 18783,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Endocrinology -- 9.3",
+      "id": "https://openalex.org/A5046462982",
+      "display_name": "Karolien De Bosscher",
+      "orcid": "https://orcid.org/0000-0001-5059-9718",
+      "h_index": 64,
+      "i10_index": 122,
+      "works_count": 199,
+      "cited_by_count": 19205,
+      "discipline": "Endocrinology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Endocrinology -- 9.3",
+      "id": "https://openalex.org/A5083968750",
+      "display_name": "Íñigo Azcoitia",
+      "orcid": "https://orcid.org/0000-0002-5791-9144",
+      "h_index": 64,
+      "i10_index": 91,
+      "works_count": 125,
+      "cited_by_count": 11065,
+      "discipline": "Endocrinology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrinology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    }
+  ]
+}

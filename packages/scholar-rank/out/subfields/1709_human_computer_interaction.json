@@ -1,0 +1,1356 @@
+{
+  "kind": "subfield",
+  "id": 1709,
+  "name": "Human-Computer Interaction",
+  "total_in_scrape": 70,
+  "count": 70,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Human-Computer Interaction -- 9.9",
+      "id": "https://openalex.org/A5052623072",
+      "display_name": "Ben Shneiderman",
+      "orcid": "https://orcid.org/0000-0002-8298-1097",
+      "h_index": 127,
+      "i10_index": 478,
+      "works_count": 1148,
+      "cited_by_count": 72862,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Human-Computer Interaction -- 9.9",
+      "id": "https://openalex.org/A5073802250",
+      "display_name": "Mel Slater",
+      "orcid": "https://orcid.org/0000-0002-6223-0050",
+      "h_index": 115,
+      "i10_index": 330,
+      "works_count": 668,
+      "cited_by_count": 67384,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Human-Computer Interaction -- 9.9",
+      "id": "https://openalex.org/A5043804253",
+      "display_name": "Giuseppe Riva",
+      "orcid": "https://orcid.org/0000-0003-3657-106X",
+      "h_index": 114,
+      "i10_index": 650,
+      "works_count": 1397,
+      "cited_by_count": 50459,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Psychology",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Human-Computer Interaction -- 9.9",
+      "id": "https://openalex.org/A5084649058",
+      "display_name": "Robert E. Kraut",
+      "orcid": "https://orcid.org/0000-0002-8554-2137",
+      "h_index": 105,
+      "i10_index": 261,
+      "works_count": 380,
+      "cited_by_count": 49020,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Human-Computer Interaction -- 9.9",
+      "id": "https://openalex.org/A5034657358",
+      "display_name": "Andreas Holzinger",
+      "orcid": "https://orcid.org/0000-0002-6786-5194",
+      "h_index": 98,
+      "i10_index": 492,
+      "works_count": 968,
+      "cited_by_count": 41868,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Human-Computer Interaction -- 9.9",
+      "id": "https://openalex.org/A5005887313",
+      "display_name": "Brad A. Myers",
+      "orcid": "https://orcid.org/0000-0002-4769-0219",
+      "h_index": 98,
+      "i10_index": 323,
+      "works_count": 527,
+      "cited_by_count": 35791,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5084294553",
+      "display_name": "Jeremy N. Bailenson",
+      "orcid": "https://orcid.org/0000-0003-2813-3297",
+      "h_index": 92,
+      "i10_index": 223,
+      "works_count": 431,
+      "cited_by_count": 40641,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5021195349",
+      "display_name": "Mark Billinghurst",
+      "orcid": "https://orcid.org/0000-0003-4172-6759",
+      "h_index": 91,
+      "i10_index": 476,
+      "works_count": 904,
+      "cited_by_count": 39211,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5054610664",
+      "display_name": "John M. Carroll",
+      "orcid": "https://orcid.org/0000-0001-5189-337X",
+      "h_index": 90,
+      "i10_index": 426,
+      "works_count": 899,
+      "cited_by_count": 35235,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5081457786",
+      "display_name": "Pattie Maes",
+      "orcid": "https://orcid.org/0000-0002-7722-6038",
+      "h_index": 89,
+      "i10_index": 329,
+      "works_count": 701,
+      "cited_by_count": 37158,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5017564609",
+      "display_name": "Gregory D. Abowd",
+      "orcid": "https://orcid.org/0000-0002-3408-587X",
+      "h_index": 88,
+      "i10_index": 308,
+      "works_count": 514,
+      "cited_by_count": 38199,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5078288310",
+      "display_name": "Jodi Forlizzi",
+      "orcid": "https://orcid.org/0000-0002-7161-075X",
+      "h_index": 87,
+      "i10_index": 215,
+      "works_count": 395,
+      "cited_by_count": 31935,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5087845806",
+      "display_name": "Olaf Blanke",
+      "orcid": "https://orcid.org/0000-0002-9745-3983",
+      "h_index": 86,
+      "i10_index": 306,
+      "works_count": 646,
+      "cited_by_count": 31845,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Neuroscience",
+        "Psychology",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5072285921",
+      "display_name": "James A. Landay",
+      "orcid": "https://orcid.org/0000-0003-1520-8894",
+      "h_index": 85,
+      "i10_index": 223,
+      "works_count": 466,
+      "cited_by_count": 28207,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5031920284",
+      "display_name": "Donald A. Norman",
+      "orcid": "https://orcid.org/0000-0002-8273-6534",
+      "h_index": 85,
+      "i10_index": 176,
+      "works_count": 343,
+      "cited_by_count": 60657,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Neuroscience",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5062196262",
+      "display_name": "Albrecht Schmidt",
+      "orcid": "https://orcid.org/0000-0003-3890-1990",
+      "h_index": 84,
+      "i10_index": 437,
+      "works_count": 787,
+      "cited_by_count": 44848,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Human-Computer Interaction -- 9.8",
+      "id": "https://openalex.org/A5037460388",
+      "display_name": "Yvonne Rogers",
+      "orcid": "https://orcid.org/0000-0001-7612-0234",
+      "h_index": 84,
+      "i10_index": 250,
+      "works_count": 577,
+      "cited_by_count": 29888,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5103114181",
+      "display_name": "Saul Greenberg",
+      "orcid": "https://orcid.org/0000-0003-0174-9665",
+      "h_index": 84,
+      "i10_index": 219,
+      "works_count": 498,
+      "cited_by_count": 25163,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5101577450",
+      "display_name": "Hiroshi Ishii",
+      "orcid": "https://orcid.org/0000-0003-4918-8908",
+      "h_index": 83,
+      "i10_index": 228,
+      "works_count": 474,
+      "cited_by_count": 30859,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5062285844",
+      "display_name": "Meredith Ringel Morris",
+      "orcid": "https://orcid.org/0000-0003-1436-9223",
+      "h_index": 82,
+      "i10_index": 190,
+      "works_count": 311,
+      "cited_by_count": 35329,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5009893200",
+      "display_name": "S. Shyam Sundar",
+      "orcid": "https://orcid.org/0000-0002-5779-8864",
+      "h_index": 80,
+      "i10_index": 216,
+      "works_count": 346,
+      "cited_by_count": 28044,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Business, Management and Accounting",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5020340631",
+      "display_name": "Mary P. Czerwinski",
+      "orcid": "https://orcid.org/0000-0003-0881-401X",
+      "h_index": 80,
+      "i10_index": 197,
+      "works_count": 396,
+      "cited_by_count": 18849,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5032134965",
+      "display_name": "Anind K. Dey",
+      "orcid": "https://orcid.org/0000-0002-3004-0770",
+      "h_index": 78,
+      "i10_index": 236,
+      "works_count": 344,
+      "cited_by_count": 37094,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5025000908",
+      "display_name": "Otmar Hilliges",
+      "orcid": "https://orcid.org/0000-0002-5068-3474",
+      "h_index": 76,
+      "i10_index": 187,
+      "works_count": 268,
+      "cited_by_count": 26475,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5014927177",
+      "display_name": "Shahram Izadi",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 152,
+      "works_count": 286,
+      "cited_by_count": 28614,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5016893285",
+      "display_name": "Stephen Anthony Brewster",
+      "orcid": "https://orcid.org/0000-0001-9720-3899",
+      "h_index": 75,
+      "i10_index": 325,
+      "works_count": 597,
+      "cited_by_count": 20958,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5039238746",
+      "display_name": "Scott E. Hudson",
+      "orcid": "https://orcid.org/0000-0002-0948-3251",
+      "h_index": 75,
+      "i10_index": 218,
+      "works_count": 345,
+      "cited_by_count": 17403,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Human-Computer Interaction -- 9.7",
+      "id": "https://openalex.org/A5048047909",
+      "display_name": "Dieter Schmalstieg",
+      "orcid": "https://orcid.org/0000-0003-2813-2235",
+      "h_index": 74,
+      "i10_index": 292,
+      "works_count": 524,
+      "cited_by_count": 19392,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5081930058",
+      "display_name": "Carl A. Gutwin",
+      "orcid": "https://orcid.org/0000-0003-4470-9495",
+      "h_index": 74,
+      "i10_index": 251,
+      "works_count": 516,
+      "cited_by_count": 22246,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5086377685",
+      "display_name": "Jacob Otto Wobbrock",
+      "orcid": "https://orcid.org/0000-0003-3675-5491",
+      "h_index": 74,
+      "i10_index": 190,
+      "works_count": 351,
+      "cited_by_count": 25185,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5054544784",
+      "display_name": "Abigail J. Sellen",
+      "orcid": "https://orcid.org/0000-0001-9065-3061",
+      "h_index": 74,
+      "i10_index": 176,
+      "works_count": 321,
+      "cited_by_count": 21099,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5039879761",
+      "display_name": "Shwetak Patel",
+      "orcid": "https://orcid.org/0000-0002-6300-4389",
+      "h_index": 73,
+      "i10_index": 211,
+      "works_count": 322,
+      "cited_by_count": 20593,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5090310268",
+      "display_name": "Jason Hong",
+      "orcid": "https://orcid.org/0000-0002-9856-9654",
+      "h_index": 73,
+      "i10_index": 199,
+      "works_count": 313,
+      "cited_by_count": 24398,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5063443025",
+      "display_name": "Ravin Balakrishnan",
+      "orcid": "https://orcid.org/0000-0002-3379-7680",
+      "h_index": 73,
+      "i10_index": 143,
+      "works_count": 246,
+      "cited_by_count": 16497,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5003084232",
+      "display_name": "Antti Oulasvirta",
+      "orcid": "https://orcid.org/0000-0002-2498-7837",
+      "h_index": 72,
+      "i10_index": 232,
+      "works_count": 437,
+      "cited_by_count": 19749,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5045801671",
+      "display_name": "Thad E. Starner",
+      "orcid": "https://orcid.org/0000-0001-8442-7842",
+      "h_index": 72,
+      "i10_index": 230,
+      "works_count": 450,
+      "cited_by_count": 24725,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5080792995",
+      "display_name": "Alexander Maedche",
+      "orcid": "https://orcid.org/0000-0001-6546-4816",
+      "h_index": 72,
+      "i10_index": 217,
+      "works_count": 444,
+      "cited_by_count": 22519,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Business, Management and Accounting",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5075713144",
+      "display_name": "Steve Whittaker",
+      "orcid": "https://orcid.org/0000-0003-3893-2551",
+      "h_index": 72,
+      "i10_index": 165,
+      "works_count": 251,
+      "cited_by_count": 17152,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Human-Computer Interaction -- 9.6",
+      "id": "https://openalex.org/A5011020333",
+      "display_name": "Steven Feiner",
+      "orcid": "https://orcid.org/0000-0001-9978-7090",
+      "h_index": 71,
+      "i10_index": 201,
+      "works_count": 394,
+      "cited_by_count": 25795,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5086725824",
+      "display_name": "Steve Benford",
+      "orcid": "https://orcid.org/0000-0001-8041-2520",
+      "h_index": 70,
+      "i10_index": 299,
+      "works_count": 565,
+      "cited_by_count": 21365,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5083871571",
+      "display_name": "Mary Beth Rosson",
+      "orcid": "https://orcid.org/0000-0001-6101-3401",
+      "h_index": 70,
+      "i10_index": 225,
+      "works_count": 444,
+      "cited_by_count": 20546,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5010621134",
+      "display_name": "Patrick Baudisch",
+      "orcid": "https://orcid.org/0000-0002-5005-6868",
+      "h_index": 70,
+      "i10_index": 148,
+      "works_count": 244,
+      "cited_by_count": 15059,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5015840697",
+      "display_name": "Patrick L. Olivier",
+      "orcid": "https://orcid.org/0000-0003-2841-7580",
+      "h_index": 69,
+      "i10_index": 268,
+      "works_count": 710,
+      "cited_by_count": 18517,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5013835523",
+      "display_name": "Rafael A. Calvo",
+      "orcid": "https://orcid.org/0000-0003-2238-0684",
+      "h_index": 69,
+      "i10_index": 222,
+      "works_count": 428,
+      "cited_by_count": 19734,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5073661463",
+      "display_name": "Andreas Bulling",
+      "orcid": "https://orcid.org/0000-0001-6317-7303",
+      "h_index": 69,
+      "i10_index": 212,
+      "works_count": 431,
+      "cited_by_count": 20347,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5083024795",
+      "display_name": "Paul Dourish",
+      "orcid": "https://orcid.org/0000-0002-9203-0631",
+      "h_index": 69,
+      "i10_index": 135,
+      "works_count": 195,
+      "cited_by_count": 29423,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5071447827",
+      "display_name": "Anthony J. Steed",
+      "orcid": "https://orcid.org/0000-0001-9034-3020",
+      "h_index": 68,
+      "i10_index": 225,
+      "works_count": 489,
+      "cited_by_count": 19169,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5071914909",
+      "display_name": "Andrea Gaggioli",
+      "orcid": "https://orcid.org/0000-0001-7818-7598",
+      "h_index": 68,
+      "i10_index": 212,
+      "works_count": 535,
+      "cited_by_count": 20566,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5024343435",
+      "display_name": "Hans W. Gellersen",
+      "orcid": "https://orcid.org/0000-0003-2233-2121",
+      "h_index": 68,
+      "i10_index": 212,
+      "works_count": 383,
+      "cited_by_count": 17656,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5014889758",
+      "display_name": "Henry Fuchs",
+      "orcid": "https://orcid.org/0000-0002-8834-4638",
+      "h_index": 68,
+      "i10_index": 202,
+      "works_count": 428,
+      "cited_by_count": 16253,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Human-Computer Interaction -- 9.5",
+      "id": "https://openalex.org/A5040915036",
+      "display_name": "Jennifer C. Mankoff",
+      "orcid": "https://orcid.org/0000-0001-9235-5324",
+      "h_index": 68,
+      "i10_index": 193,
+      "works_count": 286,
+      "cited_by_count": 14613,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5058485609",
+      "display_name": "Tovi Grossman",
+      "orcid": "https://orcid.org/0000-0002-0494-5373",
+      "h_index": 68,
+      "i10_index": 170,
+      "works_count": 280,
+      "cited_by_count": 14785,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5005685978",
+      "display_name": "Terry A. Winograd",
+      "orcid": "https://orcid.org/0000-0003-4435-7215",
+      "h_index": 68,
+      "i10_index": 148,
+      "works_count": 303,
+      "cited_by_count": 34469,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5018207578",
+      "display_name": "Mariano Alcañíz",
+      "orcid": "https://orcid.org/0000-0001-9207-0636",
+      "h_index": 66,
+      "i10_index": 230,
+      "works_count": 476,
+      "cited_by_count": 21101,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5091744677",
+      "display_name": "Brenda K. Wiederhold",
+      "orcid": "https://orcid.org/0000-0002-3320-0303",
+      "h_index": 66,
+      "i10_index": 224,
+      "works_count": 600,
+      "cited_by_count": 15362,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Psychology",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5102992984",
+      "display_name": "Gerhard Fischer",
+      "orcid": "https://orcid.org/0000-0001-8927-4363",
+      "h_index": 66,
+      "i10_index": 208,
+      "works_count": 345,
+      "cited_by_count": 17504,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5113437182",
+      "display_name": "Tom A. Rodden",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 208,
+      "works_count": 401,
+      "cited_by_count": 16169,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5006886273",
+      "display_name": "Wijnand A. IJsselsteijn",
+      "orcid": "https://orcid.org/0000-0001-6856-9269",
+      "h_index": 66,
+      "i10_index": 204,
+      "works_count": 406,
+      "cited_by_count": 18566,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5026440334",
+      "display_name": "Bonnie Anna Nardi",
+      "orcid": "https://orcid.org/0009-0008-1366-8778",
+      "h_index": 66,
+      "i10_index": 178,
+      "works_count": 396,
+      "cited_by_count": 23310,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5083432344",
+      "display_name": "George W. Fitzmaurice",
+      "orcid": "https://orcid.org/0000-0002-2834-7757",
+      "h_index": 66,
+      "i10_index": 139,
+      "works_count": 261,
+      "cited_by_count": 13114,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5068315756",
+      "display_name": "Hunter G. Hoffman",
+      "orcid": "https://orcid.org/0000-0002-6934-3568",
+      "h_index": 66,
+      "i10_index": 110,
+      "works_count": 155,
+      "cited_by_count": 17245,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Medicine",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Human-Computer Interaction -- 9.4",
+      "id": "https://openalex.org/A5045627721",
+      "display_name": "Lennart E. Nacke",
+      "orcid": "https://orcid.org/0000-0003-4290-8829",
+      "h_index": 65,
+      "i10_index": 202,
+      "works_count": 368,
+      "cited_by_count": 37574,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Human-Computer Interaction -- 9.3",
+      "id": "https://openalex.org/A5011947087",
+      "display_name": "Thomas D. Parsons",
+      "orcid": "https://orcid.org/0000-0003-0331-5019",
+      "h_index": 64,
+      "i10_index": 192,
+      "works_count": 363,
+      "cited_by_count": 17298,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Agricultural and Biological Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Human-Computer Interaction -- 9.3",
+      "id": "https://openalex.org/A5069853790",
+      "display_name": "Doug A. Bowman",
+      "orcid": "https://orcid.org/0000-0003-0491-5067",
+      "h_index": 64,
+      "i10_index": 182,
+      "works_count": 300,
+      "cited_by_count": 18668,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Human-Computer Interaction -- 9.3",
+      "id": "https://openalex.org/A5076671145",
+      "display_name": "Christian Heath",
+      "orcid": "https://orcid.org/0000-0003-3196-0197",
+      "h_index": 64,
+      "i10_index": 138,
+      "works_count": 322,
+      "cited_by_count": 17313,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Arts and Humanities",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Human-Computer Interaction -- 9.3",
+      "id": "https://openalex.org/A5005293560",
+      "display_name": "Shumin Zhai",
+      "orcid": "https://orcid.org/0000-0003-0752-2090",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 184,
+      "cited_by_count": 13795,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Human-Computer Interaction -- 9.3",
+      "id": "https://openalex.org/A5066304043",
+      "display_name": "Julie A. Kientz",
+      "orcid": "https://orcid.org/0000-0001-7437-7861",
+      "h_index": 64,
+      "i10_index": 131,
+      "works_count": 237,
+      "cited_by_count": 14340,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Human-Computer Interaction -- 9.3",
+      "id": "https://openalex.org/A5085867312",
+      "display_name": "Honghai Liu",
+      "orcid": "https://orcid.org/0000-0002-2880-4698",
+      "h_index": 63,
+      "i10_index": 276,
+      "works_count": 690,
+      "cited_by_count": 15062,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Human-Computer Interaction -- 9.3",
+      "id": "https://openalex.org/A5026028381",
+      "display_name": "Michael J. Muller",
+      "orcid": "https://orcid.org/0000-0001-7860-163X",
+      "h_index": 63,
+      "i10_index": 187,
+      "works_count": 373,
+      "cited_by_count": 18427,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Human-Computer Interaction -- 9.3",
+      "id": "https://openalex.org/A5000167011",
+      "display_name": "Ian Scott MacKenzie",
+      "orcid": "https://orcid.org/0000-0003-1731-9651",
+      "h_index": 63,
+      "i10_index": 166,
+      "works_count": 317,
+      "cited_by_count": 18217,
+      "discipline": "Human-Computer Interaction",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human-Computer Interaction",
+      "fields": [
+        "Computer Science",
+        "Neuroscience"
+      ]
+    }
+  ]
+}
