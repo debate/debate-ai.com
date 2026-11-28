@@ -77,5 +77,18 @@ there; a trimmed local-only one is never pushed up. If that delete fails, the ne
 load's merge trims and deletes it again. Tests: `test/judgeDecisions.test.ts`
 (`trimJudgeDecisionsToCap`) and `test/useJudgeDecisions.test.tsx` (merge cases).
 
-Known gaps: the cap is enforced only by the client; `/api/judge-decisions` accepts any number
-of rows per round from an older client.
+The account enforces the same cap. `MAX_JUDGE_DECISIONS_PER_ROUND` and the trim rule live in
+`state/savedJudgeDecisions.ts` (`judgeDecisionIdsOverCap`, re-exported for
+`trimJudgeDecisionsToCap`), so `PUT /api/judge-decisions/[decisionId]` uses them too: after
+the upsert it reads that user's rows for the decision's round, deletes those beyond the 20
+newest (in chunks of 50 ids, under D1's bound-parameter limit) and answers
+`{ decisionId, updatedAt, trimmedIds }`. `trimmedIds` can hold the saved decision itself when it
+is older than the round's 20 newest. A row whose `data` can't be parsed is neither counted nor
+deleted. An older client that never trims therefore can't grow a round past 20 in the account.
+Tests: `test/savedJudgeDecisions.test.ts` (`judgeDecisionIdsOverCap`) and the app's
+`lib/database/__tests__/judge-decisions-round-cap-route.test.ts` (in-memory SQLite).
+
+Known gaps: the route trims only the round it just saved, so a round an older client grew
+past 20 stays over in the account until its next save (the next merge on a current client
+still trims it locally and deletes the extras). `useJudgeDecisions` ignores the response's
+`trimmedIds`; the device drops the same decisions on its next merge.

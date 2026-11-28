@@ -18,6 +18,55 @@
 
 import type { JudgeDecisionRecord } from "./judgeDecisions";
 
+/**
+ * Idea #5's third "Next" bullet ("a per-round decision count cap, now that a
+ * heavily-re-judged round can accumulate many entries even with the new
+ * bulk-clear action available"). Once a round's history log exceeds this
+ * many entries, the oldest ones are trimmed — by `appendJudgeDecision` and
+ * `trimJudgeDecisionsToCap` on the device, and by
+ * `PUT /api/judge-decisions/[decisionId]` in the account. Lives here, with
+ * the other helpers both sides share; `state/judgeDecisions.ts` re-exports it.
+ */
+export const MAX_JUDGE_DECISIONS_PER_ROUND = 20;
+
+/** The fields {@link judgeDecisionIdsOverCap} reads from each decision. */
+export type JudgeDecisionCapEntry = Pick<JudgeDecisionRecord, "id" | "roundId" | "generatedAt">;
+
+/**
+ * The ids of every decision beyond `cap` in its round, so that each round
+ * keeps its `cap` newest decisions. Ties on `generatedAt` keep the smaller
+ * `id`, so the device (`trimJudgeDecisionsToCap`) and the account route trim
+ * exactly the same decisions. Ids come round by round (in first-seen round
+ * order), oldest first within a round. Never mutates `records`.
+ */
+export function judgeDecisionIdsOverCap(
+  records: readonly JudgeDecisionCapEntry[],
+  cap: number = MAX_JUDGE_DECISIONS_PER_ROUND,
+): string[] {
+  const byRound = new Map<string, JudgeDecisionCapEntry[]>();
+  for (const record of records) {
+    const round = byRound.get(record.roundId);
+    if (round) round.push(record);
+    else byRound.set(record.roundId, [record]);
+  }
+
+  const keep = Math.max(0, Math.floor(cap));
+  const overCap: string[] = [];
+  for (const round of byRound.values()) {
+    if (round.length <= keep) continue;
+    const newestFirst = [...round].sort(
+      (a, b) => b.generatedAt - a.generatedAt || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
+    );
+    overCap.push(
+      ...newestFirst
+        .slice(keep)
+        .reverse()
+        .map((record) => record.id),
+    );
+  }
+  return overCap;
+}
+
 /** Hard cap on a single decision's JSON size — generous for even a long rationale, well short of D1's row-size limits. */
 export const MAX_SAVED_JUDGE_DECISION_BYTES = 200_000;
 

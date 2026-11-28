@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server"
-import { and, eq } from "drizzle-orm"
+import { and, eq, inArray } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedJudgeDecisions } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidJudgeDecisionRecord, MAX_SAVED_JUDGE_DECISION_BYTES } from "@debate-ai/practice-rounds"
+import {
+  isValidJudgeDecisionRecord,
+  judgeDecisionIdsOverCap,
+  MAX_SAVED_JUDGE_DECISION_BYTES,
+  type JudgeDecisionCapEntry,
+} from "@debate-ai/practice-rounds"
+import { parseSavedRowData } from "@/lib/api/saved-rows"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
@@ -18,6 +24,13 @@ import { withRouteErrors } from "@/lib/api/route-errors"
  * PUT    { record: JudgeDecisionRecord } — validates
  *   (`isValidJudgeDecisionRecord`) and upserts, keyed by
  *   `(userId, decisionId)`; the route's `decisionId` must match `record.id`.
+ *   Then re-applies the per-round cap (`MAX_JUDGE_DECISIONS_PER_ROUND`, 20)
+ *   to that round's rows in the account, deleting the oldest beyond it with
+ *   the same tie rule the device uses (`judgeDecisionIdsOverCap`), so an older
+ *   client that never trims can't grow a round without bound. Answers
+ *   `{ decisionId, updatedAt, trimmedIds }`; `trimmedIds` can include
+ *   `decisionId` itself when the saved decision is older than the round's 20
+ *   newest. Rows whose `data` can't be read are neither counted nor deleted.
  * DELETE — removes the synced decision for this `decisionId`.
  *
  * No GET here: `GET /api/judge-decisions` already returns every record in
@@ -66,9 +79,50 @@ export const PUT = withRouteErrors(
         set: { data, updatedAt: now },
       })
 
-    return NextResponse.json({ decisionId, updatedAt: now.toISOString() })
+    const trimmedIds = await trimRoundToCap(db, userId, record.roundId)
+
+    return NextResponse.json({ decisionId, updatedAt: now.toISOString(), trimmedIds })
   },
 )
+
+/** D1 caps bound parameters per statement at 100; stay well under it alongside `userId`. */
+const DELETE_CHUNK = 50
+
+/**
+ * Deletes the caller's decisions for `roundId` beyond the per-round cap and
+ * returns their ids (oldest first). Only this user's rows are read or deleted.
+ */
+async function trimRoundToCap(
+  db: Awaited<ReturnType<typeof getDBFromContext>>,
+  userId: string,
+  roundId: string,
+): Promise<string[]> {
+  const rows = await db
+    .select({ clientId: savedJudgeDecisions.clientId, data: savedJudgeDecisions.data })
+    .from(savedJudgeDecisions)
+    .where(and(eq(savedJudgeDecisions.userId, userId), eq(savedJudgeDecisions.roundId, roundId)))
+
+  const entries: JudgeDecisionCapEntry[] = []
+  for (const row of rows) {
+    const parsed = parseSavedRowData(row.data)
+    if (!parsed.ok || !isValidJudgeDecisionRecord(parsed.value)) continue
+    // Key by the row's own client_id: that's what the delete below matches.
+    entries.push({ id: row.clientId, roundId, generatedAt: parsed.value.generatedAt })
+  }
+
+  const trimmedIds = judgeDecisionIdsOverCap(entries)
+  for (let i = 0; i < trimmedIds.length; i += DELETE_CHUNK) {
+    await db
+      .delete(savedJudgeDecisions)
+      .where(
+        and(
+          eq(savedJudgeDecisions.userId, userId),
+          inArray(savedJudgeDecisions.clientId, trimmedIds.slice(i, i + DELETE_CHUNK)),
+        ),
+      )
+  }
+  return trimmedIds
+}
 
 export const DELETE = withRouteErrors(
   "DELETE /api/judge-decisions/[decisionId]",
