@@ -30,8 +30,11 @@ Locally the same schema runs on SQLite through libSQL.
   work", linked to their page; `saved_tool_records` is counted per collection under
   "Tool data". A new per-user `saved_*` table should join one of these lists.
   Not counted: `saved_learn_review_log` (history), `saved_coach_material_versions`
-  (earlier versions) and `saved_tournament_results` (no page opens them). The "More
-  saved work" tables are not yet in **Export all** or **Manage**.
+  (earlier versions) and `saved_tournament_results` (no page opens them). **Export all**
+  carries the "More saved work" tables' rows under `moreSavedWork` (keyed like
+  `SAVED_SQL_TOOLS`, `exportOwnSqlTools` in `lib/saved-data/saved-data-items.ts`;
+  tables past the per-kind ceiling named in `moreSavedWorkTruncated`). They are not
+  yet in **Manage**, and **Restore from export…** doesn't read them back.
 
 See [Database setup](../setup/database.md) for how these tables
 get created.

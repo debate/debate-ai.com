@@ -1,0 +1,3829 @@
+{
+  "kind": "subfield",
+  "id": 3304,
+  "name": "Education",
+  "total_in_scrape": 198,
+  "count": 198,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Education -- 9.9",
+      "id": "https://openalex.org/A5058726534",
+      "display_name": "James J. Heckman",
+      "orcid": "https://orcid.org/0000-0002-0399-662X",
+      "h_index": 174,
+      "i10_index": 543,
+      "works_count": 1667,
+      "cited_by_count": 209097,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Nursing",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Education -- 9.9",
+      "id": "https://openalex.org/A5080296268",
+      "display_name": "Cees P. M. van der Vleuten",
+      "orcid": "https://orcid.org/0000-0001-6802-3119",
+      "h_index": 133,
+      "i10_index": 645,
+      "works_count": 968,
+      "cited_by_count": 64491,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Education -- 9.9",
+      "id": "https://openalex.org/A5082559715",
+      "display_name": "Robert C. Pianta",
+      "orcid": "https://orcid.org/0000-0002-6280-8051",
+      "h_index": 133,
+      "i10_index": 322,
+      "works_count": 487,
+      "cited_by_count": 80357,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Education -- 9.9",
+      "id": "https://openalex.org/A5075388625",
+      "display_name": "Linda Darling‐Hammond",
+      "orcid": "https://orcid.org/0000-0003-0795-0618",
+      "h_index": 128,
+      "i10_index": 370,
+      "works_count": 711,
+      "cited_by_count": 97794,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Education -- 9.9",
+      "id": "https://openalex.org/A5018045318",
+      "display_name": "Chin‐Chung Tsai",
+      "orcid": "https://orcid.org/0000-0001-7744-9971",
+      "h_index": 118,
+      "i10_index": 397,
+      "works_count": 547,
+      "cited_by_count": 49939,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Education -- 9.9",
+      "id": "https://openalex.org/A5033930246",
+      "display_name": "Greg J. Duncan",
+      "orcid": "https://orcid.org/0000-0002-9869-6311",
+      "h_index": 117,
+      "i10_index": 323,
+      "works_count": 581,
+      "cited_by_count": 64945,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5036216924",
+      "display_name": "Eric Alan Hanushek",
+      "orcid": "https://orcid.org/0000-0002-7090-7535",
+      "h_index": 114,
+      "i10_index": 315,
+      "works_count": 702,
+      "cited_by_count": 76325,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5066374036",
+      "display_name": "Walter Leal Filho",
+      "orcid": "https://orcid.org/0000-0002-1241-5225",
+      "h_index": 112,
+      "i10_index": 557,
+      "works_count": 1255,
+      "cited_by_count": 50360,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5072107604",
+      "display_name": "Robert E. Slavin",
+      "orcid": "https://orcid.org/0000-0003-3117-7477",
+      "h_index": 110,
+      "i10_index": 302,
+      "works_count": 556,
+      "cited_by_count": 48824,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5003352720",
+      "display_name": "Henry Armand Giroux",
+      "orcid": "https://orcid.org/0000-0003-1637-9142",
+      "h_index": 107,
+      "i10_index": 414,
+      "works_count": 1070,
+      "cited_by_count": 44566,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5002486518",
+      "display_name": "Michael L. Wehmeyer",
+      "orcid": "https://orcid.org/0000-0001-9220-7508",
+      "h_index": 106,
+      "i10_index": 322,
+      "works_count": 527,
+      "cited_by_count": 37984,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5000691828",
+      "display_name": "David J. Boud",
+      "orcid": "https://orcid.org/0000-0002-6883-2722",
+      "h_index": 106,
+      "i10_index": 272,
+      "works_count": 445,
+      "cited_by_count": 53047,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5021118413",
+      "display_name": "Margaret Burchinal",
+      "orcid": "https://orcid.org/0000-0002-3606-7843",
+      "h_index": 106,
+      "i10_index": 220,
+      "works_count": 284,
+      "cited_by_count": 44423,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5054756377",
+      "display_name": "Werner Friedrich Blum",
+      "orcid": "https://orcid.org/0000-0001-6914-4457",
+      "h_index": 104,
+      "i10_index": 354,
+      "works_count": 592,
+      "cited_by_count": 41206,
+      "discipline": "Education",
+      "primary_field": "Medicine",
+      "primary_subfield": "Education",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5033869597",
+      "display_name": "Henk G. Schmidt",
+      "orcid": "https://orcid.org/0000-0001-8706-0978",
+      "h_index": 104,
+      "i10_index": 305,
+      "works_count": 574,
+      "cited_by_count": 40277,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5026565009",
+      "display_name": "Jürgen Baumert",
+      "orcid": "https://orcid.org/0000-0001-9839-9395",
+      "h_index": 102,
+      "i10_index": 309,
+      "works_count": 689,
+      "cited_by_count": 47574,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Education -- 9.8",
+      "id": "https://openalex.org/A5062902247",
+      "display_name": "Kenneth A. Leithwood",
+      "orcid": "https://orcid.org/0000-0002-8053-7347",
+      "h_index": 102,
+      "i10_index": 214,
+      "works_count": 348,
+      "cited_by_count": 58197,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5016659824",
+      "display_name": "Philip Hallinger",
+      "orcid": "https://orcid.org/0000-0002-5935-7544",
+      "h_index": 101,
+      "i10_index": 262,
+      "works_count": 421,
+      "cited_by_count": 48497,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5046125367",
+      "display_name": "Opan Arifudin",
+      "orcid": null,
+      "h_index": 101,
+      "i10_index": 179,
+      "works_count": 196,
+      "cited_by_count": 24956,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5011074768",
+      "display_name": "Anthony John Onwuegbuzie",
+      "orcid": "https://orcid.org/0000-0002-4569-5796",
+      "h_index": 99,
+      "i10_index": 325,
+      "works_count": 579,
+      "cited_by_count": 87869,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5002786012",
+      "display_name": "Dimitri Christakis",
+      "orcid": "https://orcid.org/0000-0003-0726-7253",
+      "h_index": 97,
+      "i10_index": 265,
+      "works_count": 480,
+      "cited_by_count": 36238,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5003881064",
+      "display_name": "Neil Selwyn",
+      "orcid": "https://orcid.org/0000-0001-9489-2692",
+      "h_index": 95,
+      "i10_index": 261,
+      "works_count": 500,
+      "cited_by_count": 45121,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5073345871",
+      "display_name": "Janice M. Morse",
+      "orcid": "https://orcid.org/0000-0002-9017-1940",
+      "h_index": 94,
+      "i10_index": 294,
+      "works_count": 530,
+      "cited_by_count": 67805,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5110194419",
+      "display_name": "Ernest T. Pascarella",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 235,
+      "works_count": 312,
+      "cited_by_count": 40782,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5028201055",
+      "display_name": "Wolff‐Michael Roth",
+      "orcid": "https://orcid.org/0000-0001-9344-496X",
+      "h_index": 93,
+      "i10_index": 459,
+      "works_count": 1130,
+      "cited_by_count": 31955,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5109581806",
+      "display_name": "Joshua D. Angrist",
+      "orcid": "https://orcid.org/0000-0001-6992-8956",
+      "h_index": 93,
+      "i10_index": 192,
+      "works_count": 483,
+      "cited_by_count": 80704,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5056347293",
+      "display_name": "Olle ten Cate",
+      "orcid": "https://orcid.org/0000-0002-6379-8780",
+      "h_index": 92,
+      "i10_index": 329,
+      "works_count": 565,
+      "cited_by_count": 40145,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Health Professions",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Education -- 9.7",
+      "id": "https://openalex.org/A5013173265",
+      "display_name": "Ludger Woessmann",
+      "orcid": "https://orcid.org/0000-0002-6912-2319",
+      "h_index": 92,
+      "i10_index": 296,
+      "works_count": 788,
+      "cited_by_count": 43846,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5074661038",
+      "display_name": "Mark Warschauer",
+      "orcid": "https://orcid.org/0000-0002-6817-4416",
+      "h_index": 92,
+      "i10_index": 231,
+      "works_count": 384,
+      "cited_by_count": 36875,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5035167001",
+      "display_name": "Ching Sing Chai",
+      "orcid": "https://orcid.org/0000-0002-6298-4813",
+      "h_index": 92,
+      "i10_index": 218,
+      "works_count": 358,
+      "cited_by_count": 34778,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5102930007",
+      "display_name": "David A. Cook",
+      "orcid": "https://orcid.org/0000-0003-2383-4633",
+      "h_index": 92,
+      "i10_index": 210,
+      "works_count": 315,
+      "cited_by_count": 51032,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5035981377",
+      "display_name": "John Hattie",
+      "orcid": "https://orcid.org/0000-0003-3873-4854",
+      "h_index": 91,
+      "i10_index": 258,
+      "works_count": 641,
+      "cited_by_count": 78925,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5046393565",
+      "display_name": "Barry J. Fraser",
+      "orcid": "https://orcid.org/0000-0003-1026-9495",
+      "h_index": 90,
+      "i10_index": 287,
+      "works_count": 527,
+      "cited_by_count": 28555,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5003304547",
+      "display_name": "Jane Waldfogel",
+      "orcid": "https://orcid.org/0000-0002-9213-182X",
+      "h_index": 90,
+      "i10_index": 253,
+      "works_count": 445,
+      "cited_by_count": 35137,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5026240487",
+      "display_name": "Glenn Regehr",
+      "orcid": "https://orcid.org/0000-0002-3144-331X",
+      "h_index": 90,
+      "i10_index": 242,
+      "works_count": 313,
+      "cited_by_count": 32310,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5049834792",
+      "display_name": "Alma Harris",
+      "orcid": "https://orcid.org/0000-0002-5554-3470",
+      "h_index": 89,
+      "i10_index": 200,
+      "works_count": 418,
+      "cited_by_count": 41653,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5040428157",
+      "display_name": "George D. Kuh",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 187,
+      "works_count": 374,
+      "cited_by_count": 46265,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5111993188",
+      "display_name": "Geoffrey R. Norman",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 208,
+      "works_count": 366,
+      "cited_by_count": 43260,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Decision Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Education -- 9.6",
+      "id": "https://openalex.org/A5033443943",
+      "display_name": "Michalinos Zembylas",
+      "orcid": "https://orcid.org/0000-0001-6896-7347",
+      "h_index": 87,
+      "i10_index": 352,
+      "works_count": 659,
+      "cited_by_count": 29635,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5010184764",
+      "display_name": "Albert J J A Scherpbier",
+      "orcid": "https://orcid.org/0000-0001-9652-0163",
+      "h_index": 87,
+      "i10_index": 328,
+      "works_count": 523,
+      "cited_by_count": 24137,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5025339678",
+      "display_name": "John W. Creswell",
+      "orcid": "https://orcid.org/0000-0002-5006-880X",
+      "h_index": 87,
+      "i10_index": 144,
+      "works_count": 189,
+      "cited_by_count": 227883,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5033282266",
+      "display_name": "David Franklin Treagust",
+      "orcid": "https://orcid.org/0000-0001-5340-0970",
+      "h_index": 86,
+      "i10_index": 275,
+      "works_count": 510,
+      "cited_by_count": 29860,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5062441538",
+      "display_name": "Gary R. Bond",
+      "orcid": "https://orcid.org/0000-0003-1587-9823",
+      "h_index": 86,
+      "i10_index": 266,
+      "works_count": 443,
+      "cited_by_count": 26643,
+      "discipline": "Education",
+      "primary_field": "Medicine",
+      "primary_subfield": "Education",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5025550330",
+      "display_name": "Carollee H. Howes",
+      "orcid": "https://orcid.org/0000-0001-5902-7855",
+      "h_index": 86,
+      "i10_index": 165,
+      "works_count": 252,
+      "cited_by_count": 32498,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5064064771",
+      "display_name": "Eric S. Holmboe",
+      "orcid": "https://orcid.org/0000-0003-0108-6021",
+      "h_index": 85,
+      "i10_index": 300,
+      "works_count": 425,
+      "cited_by_count": 30948,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Nursing",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5032878842",
+      "display_name": "James R. Stone",
+      "orcid": "https://orcid.org/0000-0001-9122-3311",
+      "h_index": 85,
+      "i10_index": 261,
+      "works_count": 540,
+      "cited_by_count": 34298,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Chemical Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5090727748",
+      "display_name": "Joseph S. Krajcik",
+      "orcid": "https://orcid.org/0000-0002-5413-507X",
+      "h_index": 85,
+      "i10_index": 215,
+      "works_count": 316,
+      "cited_by_count": 38689,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5007098783",
+      "display_name": "Clancy Blair",
+      "orcid": "https://orcid.org/0000-0003-2738-238X",
+      "h_index": 85,
+      "i10_index": 210,
+      "works_count": 294,
+      "cited_by_count": 37737,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5065443408",
+      "display_name": "Mareike Kunter",
+      "orcid": "https://orcid.org/0000-0001-9842-7683",
+      "h_index": 85,
+      "i10_index": 171,
+      "works_count": 304,
+      "cited_by_count": 37016,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5085403074",
+      "display_name": "Yrjö Engeström",
+      "orcid": "https://orcid.org/0000-0002-6949-4278",
+      "h_index": 85,
+      "i10_index": 167,
+      "works_count": 351,
+      "cited_by_count": 49250,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Education -- 9.5",
+      "id": "https://openalex.org/A5054435095",
+      "display_name": "Andy Hargreaves",
+      "orcid": "https://orcid.org/0000-0002-8774-156X",
+      "h_index": 85,
+      "i10_index": 162,
+      "works_count": 293,
+      "cited_by_count": 37620,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5050368394",
+      "display_name": "Francisco José García‐Peñalvo",
+      "orcid": "https://orcid.org/0000-0001-9987-5584",
+      "h_index": 84,
+      "i10_index": 619,
+      "works_count": 1788,
+      "cited_by_count": 36013,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5002260422",
+      "display_name": "Julio Cabero Almenara",
+      "orcid": "https://orcid.org/0000-0002-1133-6031",
+      "h_index": 84,
+      "i10_index": 353,
+      "works_count": 713,
+      "cited_by_count": 25631,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5086692496",
+      "display_name": "Marcia C. Linn",
+      "orcid": "https://orcid.org/0000-0003-2257-9474",
+      "h_index": 83,
+      "i10_index": 244,
+      "works_count": 484,
+      "cited_by_count": 34461,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5109436303",
+      "display_name": "Michael Fullan",
+      "orcid": "https://orcid.org/0000-0002-2443-9347",
+      "h_index": 83,
+      "i10_index": 153,
+      "works_count": 252,
+      "cited_by_count": 38759,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5019661834",
+      "display_name": "Charles Henderson",
+      "orcid": "https://orcid.org/0000-0003-0334-6739",
+      "h_index": 82,
+      "i10_index": 358,
+      "works_count": 679,
+      "cited_by_count": 40238,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5025151392",
+      "display_name": "Jean E. Rhodes",
+      "orcid": "https://orcid.org/0000-0002-1469-6948",
+      "h_index": 81,
+      "i10_index": 173,
+      "works_count": 293,
+      "cited_by_count": 23759,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5052685450",
+      "display_name": "Simon Marginson",
+      "orcid": "https://orcid.org/0000-0002-6738-3128",
+      "h_index": 80,
+      "i10_index": 253,
+      "works_count": 707,
+      "cited_by_count": 34196,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5058480727",
+      "display_name": "Donald Huisingh",
+      "orcid": "https://orcid.org/0000-0003-4062-1568",
+      "h_index": 80,
+      "i10_index": 156,
+      "works_count": 239,
+      "cited_by_count": 23240,
+      "discipline": "Education",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Education",
+      "fields": [
+        "Business, Management and Accounting",
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5030477185",
+      "display_name": "Lieven Verschaffel",
+      "orcid": "https://orcid.org/0000-0002-5283-6470",
+      "h_index": 79,
+      "i10_index": 339,
+      "works_count": 1124,
+      "cited_by_count": 24085,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5074280176",
+      "display_name": "Douglas H. Clements",
+      "orcid": "https://orcid.org/0000-0003-1800-5099",
+      "h_index": 79,
+      "i10_index": 207,
+      "works_count": 432,
+      "cited_by_count": 23726,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Education -- 9.4",
+      "id": "https://openalex.org/A5078421041",
+      "display_name": "James Paul Gee",
+      "orcid": "https://orcid.org/0000-0002-4653-5313",
+      "h_index": 79,
+      "i10_index": 169,
+      "works_count": 451,
+      "cited_by_count": 51987,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5004127362",
+      "display_name": "Margarete Sandelowski",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 167,
+      "works_count": 221,
+      "cited_by_count": 65762,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5070979641",
+      "display_name": "Stephen Richard Billett",
+      "orcid": "https://orcid.org/0000-0002-9926-3518",
+      "h_index": 78,
+      "i10_index": 281,
+      "works_count": 583,
+      "cited_by_count": 25837,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5087255690",
+      "display_name": "I. C. McManus",
+      "orcid": "https://orcid.org/0000-0003-3510-4814",
+      "h_index": 78,
+      "i10_index": 278,
+      "works_count": 618,
+      "cited_by_count": 21191,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5086520872",
+      "display_name": "Kaisa Aunola",
+      "orcid": "https://orcid.org/0000-0001-8866-6736",
+      "h_index": 78,
+      "i10_index": 174,
+      "works_count": 246,
+      "cited_by_count": 18786,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5018285089",
+      "display_name": "Marilyn Cochran‐Smith",
+      "orcid": "https://orcid.org/0000-0002-9262-4042",
+      "h_index": 78,
+      "i10_index": 171,
+      "works_count": 322,
+      "cited_by_count": 35031,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5035343851",
+      "display_name": "Judy A. Shea",
+      "orcid": "https://orcid.org/0000-0002-7334-4192",
+      "h_index": 77,
+      "i10_index": 298,
+      "works_count": 480,
+      "cited_by_count": 22357,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Health Professions",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5029729439",
+      "display_name": "Martín Valcke",
+      "orcid": "https://orcid.org/0000-0001-9544-4197",
+      "h_index": 77,
+      "i10_index": 273,
+      "works_count": 778,
+      "cited_by_count": 26445,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5016157521",
+      "display_name": "Christian Dieter Schunn",
+      "orcid": "https://orcid.org/0000-0003-3589-297X",
+      "h_index": 77,
+      "i10_index": 265,
+      "works_count": 514,
+      "cited_by_count": 22016,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5079407465",
+      "display_name": "Hirokazu Yoshikawa",
+      "orcid": "https://orcid.org/0000-0001-5607-8526",
+      "h_index": 77,
+      "i10_index": 232,
+      "works_count": 445,
+      "cited_by_count": 22626,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5035812453",
+      "display_name": "Marja‐Kristiina Lerkkanen",
+      "orcid": "https://orcid.org/0000-0002-5709-5800",
+      "h_index": 77,
+      "i10_index": 228,
+      "works_count": 331,
+      "cited_by_count": 16561,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Education -- 9.3",
+      "id": "https://openalex.org/A5022164743",
+      "display_name": "Teodor Grantcharov",
+      "orcid": "https://orcid.org/0000-0002-3424-5618",
+      "h_index": 77,
+      "i10_index": 194,
+      "works_count": 358,
+      "cited_by_count": 18075,
+      "discipline": "Education",
+      "primary_field": "Medicine",
+      "primary_subfield": "Education",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5079039756",
+      "display_name": "Jonathan Francis Osborne",
+      "orcid": "https://orcid.org/0000-0001-8096-208X",
+      "h_index": 77,
+      "i10_index": 143,
+      "works_count": 275,
+      "cited_by_count": 40848,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5004841038",
+      "display_name": "Wayne K. Hoy",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 132,
+      "works_count": 200,
+      "cited_by_count": 38156,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5034483397",
+      "display_name": "Richard J. Shavelson",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 210,
+      "works_count": 403,
+      "cited_by_count": 43523,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5025513758",
+      "display_name": "Douglas O. Staiger",
+      "orcid": "https://orcid.org/0009-0005-4711-2629",
+      "h_index": 76,
+      "i10_index": 149,
+      "works_count": 222,
+      "cited_by_count": 29307,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5042518168",
+      "display_name": "P. S. Aithal",
+      "orcid": "https://orcid.org/0000-0002-4691-8736",
+      "h_index": 75,
+      "i10_index": 544,
+      "works_count": 1485,
+      "cited_by_count": 25774,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5090902762",
+      "display_name": "Kamran Ahmed",
+      "orcid": "https://orcid.org/0000-0002-5135-9211",
+      "h_index": 75,
+      "i10_index": 244,
+      "works_count": 537,
+      "cited_by_count": 17642,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5073914508",
+      "display_name": "Susanna Loeb",
+      "orcid": "https://orcid.org/0000-0003-1854-8843",
+      "h_index": 75,
+      "i10_index": 214,
+      "works_count": 534,
+      "cited_by_count": 28631,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5039294872",
+      "display_name": "Erik William Carter",
+      "orcid": "https://orcid.org/0000-0001-7153-2782",
+      "h_index": 75,
+      "i10_index": 207,
+      "works_count": 315,
+      "cited_by_count": 15896,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5017707686",
+      "display_name": "Mohammadreza Hojat",
+      "orcid": "https://orcid.org/0000-0002-8841-3269",
+      "h_index": 75,
+      "i10_index": 176,
+      "works_count": 302,
+      "cited_by_count": 25268,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5078223990",
+      "display_name": "Stamatios Papadakis",
+      "orcid": "https://orcid.org/0000-0003-3184-1147",
+      "h_index": 75,
+      "i10_index": 144,
+      "works_count": 226,
+      "cited_by_count": 15535,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Education -- 9.2",
+      "id": "https://openalex.org/A5064045936",
+      "display_name": "Herbert J. Walberg",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 268,
+      "works_count": 526,
+      "cited_by_count": 24980,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5045077246",
+      "display_name": "Philip G. Altbach",
+      "orcid": "https://orcid.org/0000-0003-1307-9339",
+      "h_index": 74,
+      "i10_index": 262,
+      "works_count": 958,
+      "cited_by_count": 28714,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5101453260",
+      "display_name": "Rajesh Aggarwal",
+      "orcid": "https://orcid.org/0000-0001-9424-9621",
+      "h_index": 74,
+      "i10_index": 223,
+      "works_count": 361,
+      "cited_by_count": 19183,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5017821261",
+      "display_name": "Jonathan Ashley Smith",
+      "orcid": "https://orcid.org/0000-0002-3135-3111",
+      "h_index": 74,
+      "i10_index": 163,
+      "works_count": 276,
+      "cited_by_count": 41140,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5048782852",
+      "display_name": "Karen Seashore Louis",
+      "orcid": "https://orcid.org/0000-0003-1070-0273",
+      "h_index": 74,
+      "i10_index": 157,
+      "works_count": 366,
+      "cited_by_count": 25723,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5010413032",
+      "display_name": "Karen Linn Bierman",
+      "orcid": "https://orcid.org/0000-0003-1295-7259",
+      "h_index": 74,
+      "i10_index": 151,
+      "works_count": 202,
+      "cited_by_count": 19914,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5001093690",
+      "display_name": "Alan E. Bryman",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 145,
+      "works_count": 405,
+      "cited_by_count": 79637,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5053712975",
+      "display_name": "James P. Spillane",
+      "orcid": "https://orcid.org/0000-0001-5744-9085",
+      "h_index": 74,
+      "i10_index": 143,
+      "works_count": 231,
+      "cited_by_count": 28544,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5084316206",
+      "display_name": "Stephen A.C. Gorard",
+      "orcid": "https://orcid.org/0000-0002-9381-5991",
+      "h_index": 73,
+      "i10_index": 284,
+      "works_count": 668,
+      "cited_by_count": 19907,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5009378142",
+      "display_name": "Olaf Köller",
+      "orcid": "https://orcid.org/0000-0001-5652-8101",
+      "h_index": 73,
+      "i10_index": 266,
+      "works_count": 595,
+      "cited_by_count": 22176,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5018286194",
+      "display_name": "Khe Foon Hew",
+      "orcid": "https://orcid.org/0000-0003-4149-533X",
+      "h_index": 73,
+      "i10_index": 150,
+      "works_count": 274,
+      "cited_by_count": 29248,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Education -- 9.1",
+      "id": "https://openalex.org/A5047273943",
+      "display_name": "Steven J. Durning",
+      "orcid": "https://orcid.org/0000-0001-5223-1597",
+      "h_index": 72,
+      "i10_index": 320,
+      "works_count": 638,
+      "cited_by_count": 24789,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Education -- 9.0",
+      "id": "https://openalex.org/A5046526403",
+      "display_name": "David Kirk",
+      "orcid": "https://orcid.org/0000-0001-9884-9106",
+      "h_index": 72,
+      "i10_index": 221,
+      "works_count": 509,
+      "cited_by_count": 22538,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Health Professions",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Education -- 9.0",
+      "id": "https://openalex.org/A5030421646",
+      "display_name": "Kevin W. Eva",
+      "orcid": "https://orcid.org/0000-0002-8672-2500",
+      "h_index": 72,
+      "i10_index": 208,
+      "works_count": 380,
+      "cited_by_count": 20345,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Education -- 9.0",
+      "id": "https://openalex.org/A5019196767",
+      "display_name": "Ton de Jong",
+      "orcid": "https://orcid.org/0000-0003-0416-4304",
+      "h_index": 72,
+      "i10_index": 197,
+      "works_count": 555,
+      "cited_by_count": 25023,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Education -- 9.0",
+      "id": "https://openalex.org/A5062174672",
+      "display_name": "David Wagner",
+      "orcid": "https://orcid.org/0000-0001-7728-4273",
+      "h_index": 72,
+      "i10_index": 172,
+      "works_count": 338,
+      "cited_by_count": 41061,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Education -- 9.0",
+      "id": "https://openalex.org/A5044116198",
+      "display_name": "Theo Wubbels",
+      "orcid": "https://orcid.org/0000-0001-8471-8199",
+      "h_index": 72,
+      "i10_index": 165,
+      "works_count": 378,
+      "cited_by_count": 18760,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5030357705",
+      "display_name": "Mel Ainscow",
+      "orcid": "https://orcid.org/0000-0002-0449-9668",
+      "h_index": 72,
+      "i10_index": 161,
+      "works_count": 430,
+      "cited_by_count": 30129,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5076457346",
+      "display_name": "Robert L. Crosnoe",
+      "orcid": "https://orcid.org/0000-0001-5861-0555",
+      "h_index": 72,
+      "i10_index": 161,
+      "works_count": 270,
+      "cited_by_count": 27192,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5072233503",
+      "display_name": "Paul Cobb",
+      "orcid": "https://orcid.org/0000-0003-4014-2970",
+      "h_index": 72,
+      "i10_index": 143,
+      "works_count": 210,
+      "cited_by_count": 31426,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5004785840",
+      "display_name": "Leandro S. Almeida",
+      "orcid": "https://orcid.org/0000-0002-0651-7014",
+      "h_index": 71,
+      "i10_index": 358,
+      "works_count": 769,
+      "cited_by_count": 18468,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5033206485",
+      "display_name": "Karrie A. Shogren",
+      "orcid": "https://orcid.org/0000-0001-7925-1299",
+      "h_index": 71,
+      "i10_index": 253,
+      "works_count": 540,
+      "cited_by_count": 21087,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5046245561",
+      "display_name": "Sally Elizabeth Thorne",
+      "orcid": "https://orcid.org/0000-0002-1156-9425",
+      "h_index": 71,
+      "i10_index": 208,
+      "works_count": 418,
+      "cited_by_count": 28145,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Nursing",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5078721379",
+      "display_name": "Elliot M. Soloway",
+      "orcid": "https://orcid.org/0000-0002-5724-1556",
+      "h_index": 71,
+      "i10_index": 182,
+      "works_count": 411,
+      "cited_by_count": 28979,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5043030933",
+      "display_name": "Robert H. Bradley",
+      "orcid": "https://orcid.org/0000-0001-7098-1818",
+      "h_index": 71,
+      "i10_index": 175,
+      "works_count": 283,
+      "cited_by_count": 26846,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5053615849",
+      "display_name": "Adam Cheng",
+      "orcid": "https://orcid.org/0000-0002-1039-7502",
+      "h_index": 71,
+      "i10_index": 168,
+      "works_count": 274,
+      "cited_by_count": 20723,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5079974670",
+      "display_name": "Helen F. Ladd",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 152,
+      "works_count": 318,
+      "cited_by_count": 19766,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5004515522",
+      "display_name": "Christopher Murray",
+      "orcid": "https://orcid.org/0000-0003-2574-8149",
+      "h_index": 71,
+      "i10_index": 147,
+      "works_count": 294,
+      "cited_by_count": 40251,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Education -- 8.9",
+      "id": "https://openalex.org/A5022532481",
+      "display_name": "George Farkas",
+      "orcid": "https://orcid.org/0000-0002-1751-5612",
+      "h_index": 71,
+      "i10_index": 147,
+      "works_count": 265,
+      "cited_by_count": 18069,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5111894233",
+      "display_name": "Filip J. R. C. Dochy",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 143,
+      "works_count": 403,
+      "cited_by_count": 31026,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5068537958",
+      "display_name": "David R. Kember",
+      "orcid": "https://orcid.org/0000-0002-4780-6533",
+      "h_index": 71,
+      "i10_index": 142,
+      "works_count": 226,
+      "cited_by_count": 23996,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5076644385",
+      "display_name": "Jo Tondeur",
+      "orcid": "https://orcid.org/0000-0002-3807-5361",
+      "h_index": 71,
+      "i10_index": 124,
+      "works_count": 310,
+      "cited_by_count": 30654,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5016514903",
+      "display_name": "D. Randy Garrison",
+      "orcid": "https://orcid.org/0000-0002-8259-5671",
+      "h_index": 71,
+      "i10_index": 101,
+      "works_count": 177,
+      "cited_by_count": 60565,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5024427669",
+      "display_name": "John T. E. Richardson",
+      "orcid": "https://orcid.org/0000-0002-6267-0603",
+      "h_index": 70,
+      "i10_index": 254,
+      "works_count": 563,
+      "cited_by_count": 28592,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5032090572",
+      "display_name": "Gerald M. Fried",
+      "orcid": "https://orcid.org/0000-0001-6434-0555",
+      "h_index": 70,
+      "i10_index": 228,
+      "works_count": 356,
+      "cited_by_count": 19421,
+      "discipline": "Education",
+      "primary_field": "Medicine",
+      "primary_subfield": "Education",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5070338213",
+      "display_name": "Tim Dornan",
+      "orcid": "https://orcid.org/0000-0001-7830-0183",
+      "h_index": 70,
+      "i10_index": 198,
+      "works_count": 376,
+      "cited_by_count": 23015,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5027555740",
+      "display_name": "Yvonna S. Lincoln",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 136,
+      "works_count": 242,
+      "cited_by_count": 135552,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5061495028",
+      "display_name": "Patrick T. Terenzini",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 114,
+      "works_count": 187,
+      "cited_by_count": 29311,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5075917730",
+      "display_name": "Patricia O’Sullivan",
+      "orcid": "https://orcid.org/0000-0002-8706-4095",
+      "h_index": 69,
+      "i10_index": 302,
+      "works_count": 535,
+      "cited_by_count": 19345,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5046078124",
+      "display_name": "Edward Zigler",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 272,
+      "works_count": 535,
+      "cited_by_count": 20439,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5004873819",
+      "display_name": "Pam Sammons",
+      "orcid": "https://orcid.org/0000-0001-6988-6784",
+      "h_index": 69,
+      "i10_index": 212,
+      "works_count": 483,
+      "cited_by_count": 24931,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5061442407",
+      "display_name": "Gabriele Kaiser",
+      "orcid": "https://orcid.org/0000-0002-6239-0169",
+      "h_index": 69,
+      "i10_index": 199,
+      "works_count": 380,
+      "cited_by_count": 16881,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5015876786",
+      "display_name": "Daniel F. McCaffrey",
+      "orcid": "https://orcid.org/0000-0003-1196-5273",
+      "h_index": 69,
+      "i10_index": 187,
+      "works_count": 388,
+      "cited_by_count": 20711,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5084027736",
+      "display_name": "William R. Penuel",
+      "orcid": "https://orcid.org/0000-0001-7096-6669",
+      "h_index": 69,
+      "i10_index": 179,
+      "works_count": 376,
+      "cited_by_count": 22834,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5028961881",
+      "display_name": "William C. McGaghie",
+      "orcid": "https://orcid.org/0000-0003-1672-0398",
+      "h_index": 69,
+      "i10_index": 178,
+      "works_count": 338,
+      "cited_by_count": 27112,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5045427635",
+      "display_name": "Tina Seidel",
+      "orcid": "https://orcid.org/0000-0002-2578-1208",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 293,
+      "cited_by_count": 34850,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5075927939",
+      "display_name": "Sarah Marie Coyne",
+      "orcid": "https://orcid.org/0000-0002-1403-8726",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 353,
+      "cited_by_count": 19186,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5003869746",
+      "display_name": "David C. Berliner",
+      "orcid": "https://orcid.org/0000-0003-3930-7280",
+      "h_index": 69,
+      "i10_index": 169,
+      "works_count": 461,
+      "cited_by_count": 22602,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5085206812",
+      "display_name": "Victor J. Callan",
+      "orcid": "https://orcid.org/0000-0002-4305-2615",
+      "h_index": 69,
+      "i10_index": 153,
+      "works_count": 313,
+      "cited_by_count": 14603,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5000450663",
+      "display_name": "John W. Fantuzzo",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 146,
+      "works_count": 233,
+      "cited_by_count": 17412,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Education -- 8.8",
+      "id": "https://openalex.org/A5061932695",
+      "display_name": "Wilfried Admiraal",
+      "orcid": "https://orcid.org/0000-0002-1627-3420",
+      "h_index": 68,
+      "i10_index": 218,
+      "works_count": 446,
+      "cited_by_count": 20531,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5029718910",
+      "display_name": "Tracy L. Levett-Jones",
+      "orcid": "https://orcid.org/0000-0003-4279-8957",
+      "h_index": 68,
+      "i10_index": 197,
+      "works_count": 364,
+      "cited_by_count": 17038,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5002275664",
+      "display_name": "Lambert Schuwirth",
+      "orcid": "https://orcid.org/0000-0002-6279-5158",
+      "h_index": 68,
+      "i10_index": 183,
+      "works_count": 312,
+      "cited_by_count": 18121,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5020267037",
+      "display_name": "Nian‐Shing Chen",
+      "orcid": "https://orcid.org/0000-0001-7768-0997",
+      "h_index": 68,
+      "i10_index": 183,
+      "works_count": 316,
+      "cited_by_count": 16569,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5005581267",
+      "display_name": "Christopher W. Day",
+      "orcid": "https://orcid.org/0000-0002-4512-4213",
+      "h_index": 68,
+      "i10_index": 177,
+      "works_count": 342,
+      "cited_by_count": 32941,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5036567109",
+      "display_name": "Roy D. Pea",
+      "orcid": "https://orcid.org/0000-0001-6301-3536",
+      "h_index": 68,
+      "i10_index": 174,
+      "works_count": 366,
+      "cited_by_count": 27467,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5072004363",
+      "display_name": "Martin Mulder",
+      "orcid": "https://orcid.org/0000-0002-8729-2477",
+      "h_index": 68,
+      "i10_index": 157,
+      "works_count": 528,
+      "cited_by_count": 15900,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Psychology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5079431798",
+      "display_name": "Arthur J. Reynolds",
+      "orcid": "https://orcid.org/0000-0003-2472-214X",
+      "h_index": 68,
+      "i10_index": 146,
+      "works_count": 255,
+      "cited_by_count": 17088,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5077800138",
+      "display_name": "Norman G. Lederman",
+      "orcid": "https://orcid.org/0000-0003-0957-3887",
+      "h_index": 68,
+      "i10_index": 143,
+      "works_count": 292,
+      "cited_by_count": 26694,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5091397663",
+      "display_name": "Richard J. Murnane",
+      "orcid": "https://orcid.org/0000-0002-9744-8471",
+      "h_index": 68,
+      "i10_index": 142,
+      "works_count": 286,
+      "cited_by_count": 28974,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5052566272",
+      "display_name": "Fred A. J. Korthagen",
+      "orcid": "https://orcid.org/0000-0002-2037-4814",
+      "h_index": 68,
+      "i10_index": 130,
+      "works_count": 416,
+      "cited_by_count": 26197,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5032577431",
+      "display_name": "Susanne Ayers Denham",
+      "orcid": "https://orcid.org/0000-0001-8411-4782",
+      "h_index": 68,
+      "i10_index": 127,
+      "works_count": 194,
+      "cited_by_count": 25462,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5038649068",
+      "display_name": "Vineet M. Arora",
+      "orcid": "https://orcid.org/0000-0002-4745-7599",
+      "h_index": 67,
+      "i10_index": 260,
+      "works_count": 514,
+      "cited_by_count": 18201,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Nursing",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5059889838",
+      "display_name": "Eckhard Klieme",
+      "orcid": "https://orcid.org/0000-0003-0728-4950",
+      "h_index": 67,
+      "i10_index": 210,
+      "works_count": 473,
+      "cited_by_count": 22389,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5002810077",
+      "display_name": "Diana H. J. M. Dolmans",
+      "orcid": "https://orcid.org/0000-0002-4802-1156",
+      "h_index": 67,
+      "i10_index": 208,
+      "works_count": 371,
+      "cited_by_count": 19882,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5053605630",
+      "display_name": "Stephen Nelson Elliott",
+      "orcid": "https://orcid.org/0000-0003-1643-0489",
+      "h_index": 67,
+      "i10_index": 205,
+      "works_count": 356,
+      "cited_by_count": 16326,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5021511350",
+      "display_name": "Adrianna J. Kezar",
+      "orcid": "https://orcid.org/0000-0002-8560-4051",
+      "h_index": 67,
+      "i10_index": 201,
+      "works_count": 490,
+      "cited_by_count": 16948,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5004705401",
+      "display_name": "Karine Verschueren",
+      "orcid": "https://orcid.org/0000-0003-2172-1424",
+      "h_index": 67,
+      "i10_index": 196,
+      "works_count": 622,
+      "cited_by_count": 16654,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5008962923",
+      "display_name": "Bart Rienties",
+      "orcid": "https://orcid.org/0000-0003-3749-9629",
+      "h_index": 67,
+      "i10_index": 187,
+      "works_count": 389,
+      "cited_by_count": 16589,
+      "discipline": "Education",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Education",
+      "fields": [
+        "Computer Science",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5057686363",
+      "display_name": "Troy D. Sadler",
+      "orcid": "https://orcid.org/0000-0002-9401-0300",
+      "h_index": 67,
+      "i10_index": 133,
+      "works_count": 242,
+      "cited_by_count": 23236,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5007097327",
+      "display_name": "Waleed Mugahed Al-Rahmi",
+      "orcid": "https://orcid.org/0000-0002-0980-7439",
+      "h_index": 67,
+      "i10_index": 117,
+      "works_count": 161,
+      "cited_by_count": 14045,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5023880578",
+      "display_name": "Thomas K. F. Chiu",
+      "orcid": "https://orcid.org/0000-0003-2887-5477",
+      "h_index": 67,
+      "i10_index": 114,
+      "works_count": 210,
+      "cited_by_count": 22532,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Education -- 8.7",
+      "id": "https://openalex.org/A5026083501",
+      "display_name": "Sigrid Blömeke",
+      "orcid": "https://orcid.org/0000-0001-6068-4932",
+      "h_index": 66,
+      "i10_index": 165,
+      "works_count": 294,
+      "cited_by_count": 15274,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5078467902",
+      "display_name": "Alexander W. Astin",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 143,
+      "works_count": 278,
+      "cited_by_count": 28676,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5055701476",
+      "display_name": "Lorainne Tudor Car",
+      "orcid": "https://orcid.org/0000-0001-8414-7664",
+      "h_index": 66,
+      "i10_index": 137,
+      "works_count": 267,
+      "cited_by_count": 105806,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5068313228",
+      "display_name": "Joyce L. Epstein",
+      "orcid": "https://orcid.org/0000-0002-3032-6613",
+      "h_index": 66,
+      "i10_index": 126,
+      "works_count": 225,
+      "cited_by_count": 27406,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5062710574",
+      "display_name": "Neil Mercer",
+      "orcid": "https://orcid.org/0000-0002-6829-8072",
+      "h_index": 66,
+      "i10_index": 118,
+      "works_count": 274,
+      "cited_by_count": 27174,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5016319197",
+      "display_name": "Jeffrey E. Janis",
+      "orcid": "https://orcid.org/0000-0001-6103-4798",
+      "h_index": 65,
+      "i10_index": 241,
+      "works_count": 514,
+      "cited_by_count": 16887,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5010724774",
+      "display_name": "Carl J. Dunst",
+      "orcid": "https://orcid.org/0000-0002-3857-9869",
+      "h_index": 65,
+      "i10_index": 193,
+      "works_count": 288,
+      "cited_by_count": 16757,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5072266383",
+      "display_name": "Anthony R. Artino",
+      "orcid": "https://orcid.org/0000-0003-2661-7853",
+      "h_index": 65,
+      "i10_index": 191,
+      "works_count": 337,
+      "cited_by_count": 25900,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5051151250",
+      "display_name": "Peter Van Petegem",
+      "orcid": "https://orcid.org/0000-0002-4078-7800",
+      "h_index": 65,
+      "i10_index": 187,
+      "works_count": 548,
+      "cited_by_count": 13091,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5077159626",
+      "display_name": "Lorelei Lingard",
+      "orcid": "https://orcid.org/0000-0002-4150-3355",
+      "h_index": 65,
+      "i10_index": 186,
+      "works_count": 311,
+      "cited_by_count": 16688,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5070099420",
+      "display_name": "Howard Thomas",
+      "orcid": "https://orcid.org/0000-0003-2010-2031",
+      "h_index": 65,
+      "i10_index": 185,
+      "works_count": 537,
+      "cited_by_count": 20608,
+      "discipline": "Education",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Education",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5076148890",
+      "display_name": "Francisco Rogelio Manzano-Agugliaro",
+      "orcid": "https://orcid.org/0000-0002-0085-030X",
+      "h_index": 65,
+      "i10_index": 180,
+      "works_count": 357,
+      "cited_by_count": 17173,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5044178961",
+      "display_name": "Arjen E. J. Wals",
+      "orcid": "https://orcid.org/0000-0003-4735-1126",
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 460,
+      "cited_by_count": 20347,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5067949412",
+      "display_name": "Cindy E. Hmelo‐Silver",
+      "orcid": "https://orcid.org/0000-0003-2275-5212",
+      "h_index": 65,
+      "i10_index": 177,
+      "works_count": 453,
+      "cited_by_count": 30151,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5058039405",
+      "display_name": "Neil Humphrey",
+      "orcid": "https://orcid.org/0000-0002-8148-9500",
+      "h_index": 65,
+      "i10_index": 169,
+      "works_count": 503,
+      "cited_by_count": 15367,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5045077650",
+      "display_name": "Gavin Brown",
+      "orcid": "https://orcid.org/0000-0002-8352-2351",
+      "h_index": 65,
+      "i10_index": 162,
+      "works_count": 442,
+      "cited_by_count": 15704,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5027061949",
+      "display_name": "Jan H. VAN DRIEL",
+      "orcid": "https://orcid.org/0000-0002-8185-124X",
+      "h_index": 65,
+      "i10_index": 159,
+      "works_count": 322,
+      "cited_by_count": 17948,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5019751778",
+      "display_name": "Charles R. Graham",
+      "orcid": "https://orcid.org/0000-0001-8598-2602",
+      "h_index": 65,
+      "i10_index": 127,
+      "works_count": 226,
+      "cited_by_count": 27025,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5046790571",
+      "display_name": "Charles T. Clotfelter",
+      "orcid": "https://orcid.org/0000-0002-4723-2947",
+      "h_index": 65,
+      "i10_index": 119,
+      "works_count": 288,
+      "cited_by_count": 14722,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5069020369",
+      "display_name": "Ernesto Panadero",
+      "orcid": "https://orcid.org/0000-0003-0859-3616",
+      "h_index": 65,
+      "i10_index": 112,
+      "works_count": 204,
+      "cited_by_count": 23481,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5039433821",
+      "display_name": "Frederick J. Morrison",
+      "orcid": "https://orcid.org/0000-0001-9071-3482",
+      "h_index": 65,
+      "i10_index": 110,
+      "works_count": 214,
+      "cited_by_count": 22335,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5040089226",
+      "display_name": "Kathryn R. Wentzel",
+      "orcid": "https://orcid.org/0000-0003-3164-1233",
+      "h_index": 65,
+      "i10_index": 102,
+      "works_count": 181,
+      "cited_by_count": 26107,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Education -- 8.6",
+      "id": "https://openalex.org/A5004470851",
+      "display_name": "Lawrence Kohlberg",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 98,
+      "works_count": 158,
+      "cited_by_count": 30544,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Neuroscience",
+        "Arts and Humanities",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5025447121",
+      "display_name": "Lisa McKenna",
+      "orcid": "https://orcid.org/0000-0002-0437-6449",
+      "h_index": 64,
+      "i10_index": 252,
+      "works_count": 518,
+      "cited_by_count": 13222,
+      "discipline": "Education",
+      "primary_field": "Nursing",
+      "primary_subfield": "Education",
+      "fields": [
+        "Nursing",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5031240015",
+      "display_name": "Francisco Javier Murillo",
+      "orcid": "https://orcid.org/0000-0002-8003-4133",
+      "h_index": 64,
+      "i10_index": 202,
+      "works_count": 420,
+      "cited_by_count": 13048,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5029862985",
+      "display_name": "Franz Xaver Bogner",
+      "orcid": "https://orcid.org/0000-0002-6319-7942",
+      "h_index": 64,
+      "i10_index": 199,
+      "works_count": 416,
+      "cited_by_count": 15004,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5010797648",
+      "display_name": "Jonathan N. Lund",
+      "orcid": "https://orcid.org/0000-0001-5195-2181",
+      "h_index": 64,
+      "i10_index": 188,
+      "works_count": 336,
+      "cited_by_count": 12870,
+      "discipline": "Education",
+      "primary_field": "Medicine",
+      "primary_subfield": "Education",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5060125902",
+      "display_name": "Kenneth G. Tobin",
+      "orcid": "https://orcid.org/0000-0001-9962-2309",
+      "h_index": 64,
+      "i10_index": 183,
+      "works_count": 430,
+      "cited_by_count": 13304,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5030575155",
+      "display_name": "Joke M. Voogt",
+      "orcid": "https://orcid.org/0000-0001-5035-9263",
+      "h_index": 64,
+      "i10_index": 163,
+      "works_count": 524,
+      "cited_by_count": 23229,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5018804352",
+      "display_name": "Curtis Jay Bonk",
+      "orcid": "https://orcid.org/0000-0002-6365-9502",
+      "h_index": 64,
+      "i10_index": 151,
+      "works_count": 325,
+      "cited_by_count": 15692,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5049412968",
+      "display_name": "Rolando F. Del Maestro",
+      "orcid": "https://orcid.org/0000-0003-3733-8921",
+      "h_index": 64,
+      "i10_index": 151,
+      "works_count": 239,
+      "cited_by_count": 11606,
+      "discipline": "Education",
+      "primary_field": "Medicine",
+      "primary_subfield": "Education",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5108429498",
+      "display_name": "James W. Pellegrino",
+      "orcid": "https://orcid.org/0000-0003-4921-0052",
+      "h_index": 64,
+      "i10_index": 149,
+      "works_count": 277,
+      "cited_by_count": 17302,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5091639377",
+      "display_name": "Simon JR Cooper",
+      "orcid": "https://orcid.org/0000-0001-5561-3099",
+      "h_index": 64,
+      "i10_index": 147,
+      "works_count": 243,
+      "cited_by_count": 13642,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5103624323",
+      "display_name": "Karen V. Mann",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 128,
+      "works_count": 187,
+      "cited_by_count": 18334,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5076012620",
+      "display_name": "Richard K. Reznick",
+      "orcid": "https://orcid.org/0000-0003-4830-2115",
+      "h_index": 64,
+      "i10_index": 121,
+      "works_count": 174,
+      "cited_by_count": 28007,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5056645301",
+      "display_name": "Kenneth M. Zeichner",
+      "orcid": "https://orcid.org/0000-0003-0412-5575",
+      "h_index": 64,
+      "i10_index": 111,
+      "works_count": 144,
+      "cited_by_count": 20690,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5100654977",
+      "display_name": "Hui Li",
+      "orcid": "https://orcid.org/0000-0001-9355-1116",
+      "h_index": 63,
+      "i10_index": 263,
+      "works_count": 754,
+      "cited_by_count": 14406,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5091497538",
+      "display_name": "Patricia A. Carney",
+      "orcid": "https://orcid.org/0000-0002-2937-655X",
+      "h_index": 63,
+      "i10_index": 227,
+      "works_count": 398,
+      "cited_by_count": 17947,
+      "discipline": "Education",
+      "primary_field": "Medicine",
+      "primary_subfield": "Education",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5076462332",
+      "display_name": "James M. Kauffman",
+      "orcid": "https://orcid.org/0000-0001-7327-3526",
+      "h_index": 63,
+      "i10_index": 209,
+      "works_count": 422,
+      "cited_by_count": 13948,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5109141309",
+      "display_name": "Edward A. Silver",
+      "orcid": "https://orcid.org/0000-0003-1771-933X",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 335,
+      "cited_by_count": 17364,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5058789191",
+      "display_name": "Richard M. Felder",
+      "orcid": "https://orcid.org/0000-0001-6959-4087",
+      "h_index": 63,
+      "i10_index": 153,
+      "works_count": 340,
+      "cited_by_count": 31960,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5076095544",
+      "display_name": "Susan M. Sheridan",
+      "orcid": "https://orcid.org/0000-0001-5255-5364",
+      "h_index": 63,
+      "i10_index": 146,
+      "works_count": 342,
+      "cited_by_count": 12824,
+      "discipline": "Education",
+      "primary_field": "Psychology",
+      "primary_subfield": "Education",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Education -- 8.5",
+      "id": "https://openalex.org/A5018654688",
+      "display_name": "Ronny Scherer",
+      "orcid": "https://orcid.org/0000-0003-3630-0710",
+      "h_index": 63,
+      "i10_index": 114,
+      "works_count": 319,
+      "cited_by_count": 18067,
+      "discipline": "Education",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Education",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    }
+  ]
+}

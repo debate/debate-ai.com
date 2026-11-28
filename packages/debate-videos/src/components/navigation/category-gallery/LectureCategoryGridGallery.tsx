@@ -6,7 +6,7 @@
  * open one is drawn selected.
  *
  * The top of the bar is a row of badges for the main round collections —
- * College Policy, HS Policy, Individual and Forum — drawn with the logos the
+ * College Policy, HS Policy, Forum and Individual — drawn with the logos the
  * rankings page shows beside its topic names. Parli has no logo and is listed
  * under Formats instead.
  *
@@ -40,7 +40,6 @@ import {
   Landmark,
   Presentation,
   Vote,
-  Swords,
   Megaphone,
   Archive,
 } from "lucide-react";
@@ -149,7 +148,7 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
   },
   {
     title: "Formats",
-    labels: ["WSD", "Demo Debates", "Open Public", "Open Super Debates", "Congress", "Speech"],
+    labels: ["WSD", "Demo Debates", "Open Public", "Congress", "Speech"],
   },
 ];
 
@@ -157,12 +156,22 @@ export const LECTURE_CATEGORY_SECTIONS: { title: string; labels: string[] }[] = 
 const FORMATS_SECTION_TITLE = "Formats";
 
 /**
+ * Format categories that get no card in the gallery. Open Super Debates is
+ * still a Format (its page lists under Debate Rounds, and Open Public draws on
+ * it); it is just not linked from the category bar.
+ */
+const UNLISTED_FORMAT_LABELS = ["Open Super Debates"];
+
+/**
  * Whether a stored lecture category label sits in the Formats section — the
  * categories Debate Rounds lists, rather than Strategy Lectures.
  */
 export function isFormatsSectionLabel(label: string): boolean {
-  return LECTURE_CATEGORY_SECTIONS.some(
-    (section) => section.title === FORMATS_SECTION_TITLE && section.labels.includes(label),
+  return (
+    UNLISTED_FORMAT_LABELS.includes(label) ||
+    LECTURE_CATEGORY_SECTIONS.some(
+      (section) => section.title === FORMATS_SECTION_TITLE && section.labels.includes(label),
+    )
   );
 }
 
@@ -198,7 +207,6 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "Speech": <Mic className="h-4 w-4" />, // Example icon, adjust as needed
   "NSDA Speech": <Mic className="h-4 w-4" />,
   "Open Public": <Megaphone className="h-4 w-4" />,
-  "Open Super Debates": <Swords className="h-4 w-4" />,
   "Miscellaneous": <Archive className="h-4 w-4" />,
 };
 
@@ -217,17 +225,19 @@ export function LectureCategoryGridGallery({
   const cards = useMemo(() => {
     if (!categories || categories.length === 0) return null;
 
-    const categoryCards = categories.map((category) => ({
-      id: category.key,
-      // The stored label places the card in its section; the title is what shows.
-      label: category.label,
-      title: lectureCategoryDisplayLabel(category.label),
-      description:
-        typedCategoryDescriptions[category.label] || "Debate lecture videos",
-      videoCount: category.count,
-      icon: CATEGORY_ICONS[category.label] || <BookOpen className="h-4 w-4" />,
-      maxViews: category.maxViews,
-    }));
+    const categoryCards = categories
+      .filter((category) => !UNLISTED_FORMAT_LABELS.includes(category.label))
+      .map((category) => ({
+        id: category.key,
+        // The stored label places the card in its section; the title is what shows.
+        label: category.label,
+        title: lectureCategoryDisplayLabel(category.label),
+        description:
+          typedCategoryDescriptions[category.label] || "Debate lecture videos",
+        videoCount: category.count,
+        icon: CATEGORY_ICONS[category.label] || <BookOpen className="h-4 w-4" />,
+        maxViews: category.maxViews,
+      }));
 
     return { categoryCards };
   }, [categories]);

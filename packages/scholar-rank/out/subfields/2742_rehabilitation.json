@@ -1,0 +1,1107 @@
+{
+  "kind": "subfield",
+  "id": 2742,
+  "name": "Rehabilitation",
+  "total_in_scrape": 56,
+  "count": 56,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5011617106",
+      "display_name": "Peter Rosenbaum",
+      "orcid": "https://orcid.org/0000-0001-6751-5613",
+      "h_index": 126,
+      "i10_index": 415,
+      "works_count": 701,
+      "cited_by_count": 78350,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5061413982",
+      "display_name": "Gert Kwakkel",
+      "orcid": "https://orcid.org/0000-0002-4041-4043",
+      "h_index": 107,
+      "i10_index": 272,
+      "works_count": 553,
+      "cited_by_count": 49428,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5016901707",
+      "display_name": "Pamela Woods Duncan",
+      "orcid": "https://orcid.org/0000-0002-4838-3253",
+      "h_index": 106,
+      "i10_index": 253,
+      "works_count": 466,
+      "cited_by_count": 50064,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5107485822",
+      "display_name": "Robert G. Robinson",
+      "orcid": null,
+      "h_index": 104,
+      "i10_index": 251,
+      "works_count": 386,
+      "cited_by_count": 35014,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5013051967",
+      "display_name": "Janice Jennifer Eng",
+      "orcid": "https://orcid.org/0000-0002-2093-0788",
+      "h_index": 103,
+      "i10_index": 308,
+      "works_count": 559,
+      "cited_by_count": 38404,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5029975016",
+      "display_name": "Steven C. Cramer",
+      "orcid": "https://orcid.org/0000-0002-6214-6211",
+      "h_index": 102,
+      "i10_index": 300,
+      "works_count": 595,
+      "cited_by_count": 40880,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5048601259",
+      "display_name": "Robert William Teasell",
+      "orcid": "https://orcid.org/0000-0002-2644-7957",
+      "h_index": 91,
+      "i10_index": 300,
+      "works_count": 587,
+      "cited_by_count": 31403,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5056125336",
+      "display_name": "Edward Taub",
+      "orcid": "https://orcid.org/0000-0002-9586-2396",
+      "h_index": 91,
+      "i10_index": 168,
+      "works_count": 266,
+      "cited_by_count": 40021,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5046913023",
+      "display_name": "Bruce T. Volpe",
+      "orcid": "https://orcid.org/0000-0002-1098-1848",
+      "h_index": 88,
+      "i10_index": 215,
+      "works_count": 335,
+      "cited_by_count": 29875,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5027380083",
+      "display_name": "Roslyn Nancy Boyd",
+      "orcid": "https://orcid.org/0000-0002-4919-5975",
+      "h_index": 87,
+      "i10_index": 353,
+      "works_count": 582,
+      "cited_by_count": 30444,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5047243893",
+      "display_name": "H. Kerr Graham",
+      "orcid": "https://orcid.org/0000-0001-6607-7631",
+      "h_index": 87,
+      "i10_index": 237,
+      "works_count": 408,
+      "cited_by_count": 25034,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5101505512",
+      "display_name": "Steven L. Wolf",
+      "orcid": "https://orcid.org/0000-0002-9446-8995",
+      "h_index": 86,
+      "i10_index": 239,
+      "works_count": 378,
+      "cited_by_count": 31147,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5045668671",
+      "display_name": "Katharina Stibrant Sunnerhagen",
+      "orcid": "https://orcid.org/0000-0002-5940-4400",
+      "h_index": 81,
+      "i10_index": 318,
+      "works_count": 513,
+      "cited_by_count": 36446,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5105405728",
+      "display_name": "Henk J. Stam",
+      "orcid": "https://orcid.org/0000-0003-0451-0705",
+      "h_index": 78,
+      "i10_index": 222,
+      "works_count": 288,
+      "cited_by_count": 18646,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5089717716",
+      "display_name": "Mindy F. Levin",
+      "orcid": "https://orcid.org/0000-0002-8965-7484",
+      "h_index": 77,
+      "i10_index": 182,
+      "works_count": 332,
+      "cited_by_count": 21454,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5108215625",
+      "display_name": "Richard F. Macko",
+      "orcid": "https://orcid.org/0009-0000-3810-9464",
+      "h_index": 77,
+      "i10_index": 138,
+      "works_count": 187,
+      "cited_by_count": 25738,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5036876344",
+      "display_name": "Nadina Berrice Lincoln",
+      "orcid": "https://orcid.org/0000-0001-5604-2339",
+      "h_index": 75,
+      "i10_index": 213,
+      "works_count": 323,
+      "cited_by_count": 17731,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5091307119",
+      "display_name": "Gillian Elizabeth Mead",
+      "orcid": "https://orcid.org/0000-0001-7494-2023",
+      "h_index": 75,
+      "i10_index": 201,
+      "works_count": 341,
+      "cited_by_count": 21258,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5058731366",
+      "display_name": "Annette Majnemer",
+      "orcid": "https://orcid.org/0000-0001-7712-3509",
+      "h_index": 74,
+      "i10_index": 208,
+      "works_count": 306,
+      "cited_by_count": 19372,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5028509018",
+      "display_name": "Julie A Bernhardt",
+      "orcid": "https://orcid.org/0000-0002-2787-8484",
+      "h_index": 73,
+      "i10_index": 242,
+      "works_count": 448,
+      "cited_by_count": 27453,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5002384334",
+      "display_name": "Andrew M. Gordon",
+      "orcid": "https://orcid.org/0000-0003-1041-0479",
+      "h_index": 72,
+      "i10_index": 187,
+      "works_count": 251,
+      "cited_by_count": 18259,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5025426659",
+      "display_name": "Jenny M. Ziviani",
+      "orcid": "https://orcid.org/0000-0002-8185-3405",
+      "h_index": 71,
+      "i10_index": 242,
+      "works_count": 474,
+      "cited_by_count": 16198,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5031159209",
+      "display_name": "Carolee Joyce Winstein",
+      "orcid": "https://orcid.org/0000-0001-9789-4626",
+      "h_index": 71,
+      "i10_index": 184,
+      "works_count": 361,
+      "cited_by_count": 23636,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5047765476",
+      "display_name": "Dale Corbett",
+      "orcid": "https://orcid.org/0000-0003-0217-4576",
+      "h_index": 71,
+      "i10_index": 170,
+      "works_count": 242,
+      "cited_by_count": 20680,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5017840420",
+      "display_name": "Steven A. Kautz",
+      "orcid": "https://orcid.org/0000-0003-3151-8235",
+      "h_index": 71,
+      "i10_index": 153,
+      "works_count": 249,
+      "cited_by_count": 18588,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5008743688",
+      "display_name": "Eline Lindeman",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 141,
+      "works_count": 207,
+      "cited_by_count": 14891,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5009889086",
+      "display_name": "Nick Ward",
+      "orcid": "https://orcid.org/0000-0002-7688-9649",
+      "h_index": 71,
+      "i10_index": 133,
+      "works_count": 283,
+      "cited_by_count": 19818,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5012347119",
+      "display_name": "David J. Reinkensmeyer",
+      "orcid": "https://orcid.org/0000-0002-3196-8706",
+      "h_index": 70,
+      "i10_index": 186,
+      "works_count": 304,
+      "cited_by_count": 18504,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5087870639",
+      "display_name": "Alexander C. H. Geurts",
+      "orcid": "https://orcid.org/0000-0001-7478-1119",
+      "h_index": 69,
+      "i10_index": 250,
+      "works_count": 358,
+      "cited_by_count": 19779,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5100756277",
+      "display_name": "Yun‐Hee Kim",
+      "orcid": "https://orcid.org/0000-0001-6101-8851",
+      "h_index": 69,
+      "i10_index": 231,
+      "works_count": 539,
+      "cited_by_count": 18186,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5071352897",
+      "display_name": "Michael Hunter Schwartz",
+      "orcid": "https://orcid.org/0000-0003-3388-7413",
+      "h_index": 69,
+      "i10_index": 207,
+      "works_count": 610,
+      "cited_by_count": 17673,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Health Professions",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5053273700",
+      "display_name": "Mary Pauline Galea",
+      "orcid": "https://orcid.org/0000-0003-0045-7978",
+      "h_index": 69,
+      "i10_index": 200,
+      "works_count": 336,
+      "cited_by_count": 16739,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5088911615",
+      "display_name": "Lara A. Boyd",
+      "orcid": "https://orcid.org/0000-0002-2828-4549",
+      "h_index": 69,
+      "i10_index": 196,
+      "works_count": 316,
+      "cited_by_count": 18426,
+      "discipline": "Rehabilitation",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5060978364",
+      "display_name": "Robert Stuart Ware",
+      "orcid": "https://orcid.org/0000-0002-6129-6736",
+      "h_index": 68,
+      "i10_index": 358,
+      "works_count": 776,
+      "cited_by_count": 17800,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5027109158",
+      "display_name": "Stefano Paolucci",
+      "orcid": "https://orcid.org/0000-0002-3105-1148",
+      "h_index": 68,
+      "i10_index": 194,
+      "works_count": 324,
+      "cited_by_count": 15119,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5009416336",
+      "display_name": "Diane L. Damiano",
+      "orcid": "https://orcid.org/0000-0002-2770-5356",
+      "h_index": 68,
+      "i10_index": 162,
+      "works_count": 251,
+      "cited_by_count": 28261,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5016164716",
+      "display_name": "Hilde Feys",
+      "orcid": "https://orcid.org/0000-0002-8025-4910",
+      "h_index": 68,
+      "i10_index": 151,
+      "works_count": 403,
+      "cited_by_count": 12650,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5033728974",
+      "display_name": "Erwin E. H. van Wegen",
+      "orcid": "https://orcid.org/0000-0002-7920-9995",
+      "h_index": 68,
+      "i10_index": 137,
+      "works_count": 300,
+      "cited_by_count": 18573,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5018309733",
+      "display_name": "Jan E. Lexell",
+      "orcid": "https://orcid.org/0000-0001-5294-3332",
+      "h_index": 67,
+      "i10_index": 211,
+      "works_count": 373,
+      "cited_by_count": 22288,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5002606526",
+      "display_name": "Carel G. M. Meskers",
+      "orcid": "https://orcid.org/0000-0002-5056-5611",
+      "h_index": 67,
+      "i10_index": 187,
+      "works_count": 370,
+      "cited_by_count": 15265,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5020962468",
+      "display_name": "Bruce H. Dobkin",
+      "orcid": "https://orcid.org/0000-0001-8545-499X",
+      "h_index": 67,
+      "i10_index": 126,
+      "works_count": 229,
+      "cited_by_count": 19378,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5112379179",
+      "display_name": "Norine C. Foley",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 110,
+      "works_count": 164,
+      "cited_by_count": 16237,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5068995498",
+      "display_name": "Ching‐Yi Wu",
+      "orcid": "https://orcid.org/0000-0003-4726-2916",
+      "h_index": 66,
+      "i10_index": 250,
+      "works_count": 425,
+      "cited_by_count": 14853,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5029047194",
+      "display_name": "Kaat Desloovere",
+      "orcid": "https://orcid.org/0000-0002-8507-5276",
+      "h_index": 66,
+      "i10_index": 231,
+      "works_count": 791,
+      "cited_by_count": 14992,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5066306966",
+      "display_name": "Rocco Salvatore Calabrò",
+      "orcid": "https://orcid.org/0000-0002-8566-3166",
+      "h_index": 65,
+      "i10_index": 395,
+      "works_count": 846,
+      "cited_by_count": 17883,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5017472525",
+      "display_name": "Freeman Miller",
+      "orcid": "https://orcid.org/0000-0002-0033-5623",
+      "h_index": 65,
+      "i10_index": 225,
+      "works_count": 525,
+      "cited_by_count": 12277,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5084467163",
+      "display_name": "Sing Kai Lo",
+      "orcid": "https://orcid.org/0000-0001-8401-1759",
+      "h_index": 65,
+      "i10_index": 185,
+      "works_count": 333,
+      "cited_by_count": 15678,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5037576805",
+      "display_name": "Dinah Susan Reddihough",
+      "orcid": "https://orcid.org/0000-0003-3634-7906",
+      "h_index": 65,
+      "i10_index": 177,
+      "works_count": 325,
+      "cited_by_count": 14630,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5050101042",
+      "display_name": "Sharon Wood-Dauphinée",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 108,
+      "works_count": 157,
+      "cited_by_count": 25267,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5038454882",
+      "display_name": "Nicola Smania",
+      "orcid": "https://orcid.org/0000-0001-7630-1887",
+      "h_index": 64,
+      "i10_index": 201,
+      "works_count": 440,
+      "cited_by_count": 13113,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5018558028",
+      "display_name": "Michael Nilsson",
+      "orcid": "https://orcid.org/0000-0002-8826-1621",
+      "h_index": 64,
+      "i10_index": 199,
+      "works_count": 321,
+      "cited_by_count": 19620,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5006770351",
+      "display_name": "Maree Lisa Hackett",
+      "orcid": "https://orcid.org/0000-0003-1211-9087",
+      "h_index": 64,
+      "i10_index": 169,
+      "works_count": 386,
+      "cited_by_count": 18034,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5029560239",
+      "display_name": "Catherine E. Lang",
+      "orcid": "https://orcid.org/0000-0002-7120-0136",
+      "h_index": 64,
+      "i10_index": 127,
+      "works_count": 213,
+      "cited_by_count": 20247,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5052675469",
+      "display_name": "Carol L. Richards",
+      "orcid": "https://orcid.org/0000-0002-1824-0817",
+      "h_index": 64,
+      "i10_index": 115,
+      "works_count": 154,
+      "cited_by_count": 18390,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5001969860",
+      "display_name": "Francine Malouin",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 102,
+      "works_count": 139,
+      "cited_by_count": 14791,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5071624312",
+      "display_name": "Adam Kirton",
+      "orcid": "https://orcid.org/0000-0001-5209-3374",
+      "h_index": 63,
+      "i10_index": 233,
+      "works_count": 563,
+      "cited_by_count": 16520,
+      "discipline": "Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    }
+  ]
+}

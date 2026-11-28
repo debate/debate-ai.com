@@ -1,0 +1,634 @@
+{
+  "kind": "subfield",
+  "id": 3302,
+  "name": "Archeology",
+  "total_in_scrape": 31,
+  "count": 31,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Archeology -- 9.9",
+      "id": "https://openalex.org/A5004927268",
+      "display_name": "Richard P. Evershed",
+      "orcid": "https://orcid.org/0000-0002-9483-2750",
+      "h_index": 114,
+      "i10_index": 418,
+      "works_count": 630,
+      "cited_by_count": 43371,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Archeology -- 9.9",
+      "id": "https://openalex.org/A5091266806",
+      "display_name": "Dorian Q. Fuller",
+      "orcid": "https://orcid.org/0000-0002-4859-080X",
+      "h_index": 102,
+      "i10_index": 294,
+      "works_count": 564,
+      "cited_by_count": 36919,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Archeology -- 9.9",
+      "id": "https://openalex.org/A5063132189",
+      "display_name": "Thomas Higham",
+      "orcid": "https://orcid.org/0000-0002-5949-598X",
+      "h_index": 100,
+      "i10_index": 312,
+      "works_count": 467,
+      "cited_by_count": 41020,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Archeology -- 9.9",
+      "id": "https://openalex.org/A5031325455",
+      "display_name": "Henry P. Schwarcz",
+      "orcid": "https://orcid.org/0000-0002-8936-9984",
+      "h_index": 94,
+      "i10_index": 312,
+      "works_count": 452,
+      "cited_by_count": 28302,
+      "discipline": "Archeology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Archeology -- 9.9",
+      "id": "https://openalex.org/A5019751266",
+      "display_name": "Christopher Bronk Ramsey",
+      "orcid": "https://orcid.org/0000-0002-8641-9309",
+      "h_index": 92,
+      "i10_index": 302,
+      "works_count": 506,
+      "cited_by_count": 80513,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Archeology -- 9.9",
+      "id": "https://openalex.org/A5007270655",
+      "display_name": "Matthew J. Collins",
+      "orcid": "https://orcid.org/0000-0003-4226-5501",
+      "h_index": 92,
+      "i10_index": 253,
+      "works_count": 515,
+      "cited_by_count": 29624,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5005684483",
+      "display_name": "Michael P. Richards",
+      "orcid": "https://orcid.org/0000-0001-5274-8887",
+      "h_index": 90,
+      "i10_index": 273,
+      "works_count": 475,
+      "cited_by_count": 31258,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5100616648",
+      "display_name": "Richard E. Lee Jr.",
+      "orcid": "https://orcid.org/0000-0002-2397-0443",
+      "h_index": 89,
+      "i10_index": 408,
+      "works_count": 1482,
+      "cited_by_count": 30768,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5113722681",
+      "display_name": "Robert E. M. Hedges",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 242,
+      "works_count": 336,
+      "cited_by_count": 27575,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5069540793",
+      "display_name": "Ian A. Simpson",
+      "orcid": "https://orcid.org/0000-0003-2447-7877",
+      "h_index": 85,
+      "i10_index": 232,
+      "works_count": 382,
+      "cited_by_count": 24409,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5040652620",
+      "display_name": "Julia A. Lee‐Thorp",
+      "orcid": "https://orcid.org/0000-0002-3291-0258",
+      "h_index": 80,
+      "i10_index": 184,
+      "works_count": 292,
+      "cited_by_count": 23297,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5043183135",
+      "display_name": "A. J. T. Jull",
+      "orcid": "https://orcid.org/0000-0002-4079-4947",
+      "h_index": 79,
+      "i10_index": 336,
+      "works_count": 604,
+      "cited_by_count": 22766,
+      "discipline": "Archeology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5014664106",
+      "display_name": "Rainer Grün",
+      "orcid": "https://orcid.org/0000-0003-1366-3674",
+      "h_index": 78,
+      "i10_index": 245,
+      "works_count": 436,
+      "cited_by_count": 21511,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5087183374",
+      "display_name": "Johannes van der Plicht",
+      "orcid": "https://orcid.org/0000-0003-4298-7037",
+      "h_index": 76,
+      "i10_index": 304,
+      "works_count": 610,
+      "cited_by_count": 40919,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5075100197",
+      "display_name": "Hervé Bocherens",
+      "orcid": "https://orcid.org/0000-0002-0494-0126",
+      "h_index": 76,
+      "i10_index": 259,
+      "works_count": 473,
+      "cited_by_count": 23592,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5028926528",
+      "display_name": "Douglas J. Kennett",
+      "orcid": "https://orcid.org/0000-0001-6144-7365",
+      "h_index": 76,
+      "i10_index": 213,
+      "works_count": 380,
+      "cited_by_count": 21127,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Archeology -- 9.8",
+      "id": "https://openalex.org/A5007592785",
+      "display_name": "Ofer Bar‐Yosef",
+      "orcid": "https://orcid.org/0000-0003-2054-2264",
+      "h_index": 75,
+      "i10_index": 179,
+      "works_count": 274,
+      "cited_by_count": 21810,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5018232883",
+      "display_name": "Julio L. Betancourt",
+      "orcid": "https://orcid.org/0000-0002-7165-0743",
+      "h_index": 74,
+      "i10_index": 147,
+      "works_count": 379,
+      "cited_by_count": 27207,
+      "discipline": "Archeology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5011473459",
+      "display_name": "G.A.T. Duller",
+      "orcid": "https://orcid.org/0000-0002-2694-4590",
+      "h_index": 73,
+      "i10_index": 186,
+      "works_count": 286,
+      "cited_by_count": 19392,
+      "discipline": "Archeology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5037677505",
+      "display_name": "Dolores R. Piperno",
+      "orcid": "https://orcid.org/0000-0002-0584-3133",
+      "h_index": 72,
+      "i10_index": 119,
+      "works_count": 178,
+      "cited_by_count": 20280,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5051164999",
+      "display_name": "Hans‐Arno Synal",
+      "orcid": "https://orcid.org/0000-0001-5621-3089",
+      "h_index": 71,
+      "i10_index": 244,
+      "works_count": 432,
+      "cited_by_count": 17946,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Physics and Astronomy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5109965150",
+      "display_name": "Ann G. Wintle",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 179,
+      "works_count": 258,
+      "cited_by_count": 26659,
+      "discipline": "Archeology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5037966215",
+      "display_name": "Michael D. Petraglia",
+      "orcid": "https://orcid.org/0000-0003-2522-5727",
+      "h_index": 67,
+      "i10_index": 232,
+      "works_count": 440,
+      "cited_by_count": 16808,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5077946180",
+      "display_name": "R. Lee Lyman",
+      "orcid": "https://orcid.org/0000-0003-2651-7959",
+      "h_index": 67,
+      "i10_index": 212,
+      "works_count": 378,
+      "cited_by_count": 19784,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5028899889",
+      "display_name": "Zenobia L. Jacobs",
+      "orcid": "https://orcid.org/0000-0001-5424-5837",
+      "h_index": 67,
+      "i10_index": 147,
+      "works_count": 229,
+      "cited_by_count": 18629,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5047680880",
+      "display_name": "Richard G. Klein",
+      "orcid": "https://orcid.org/0000-0002-6180-2168",
+      "h_index": 67,
+      "i10_index": 119,
+      "works_count": 214,
+      "cited_by_count": 14875,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5053711058",
+      "display_name": "Nicole L. Boivin",
+      "orcid": "https://orcid.org/0000-0002-7783-4199",
+      "h_index": 66,
+      "i10_index": 192,
+      "works_count": 358,
+      "cited_by_count": 18458,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Archeology -- 9.7",
+      "id": "https://openalex.org/A5084852187",
+      "display_name": "Nicholas J. Conard",
+      "orcid": "https://orcid.org/0000-0002-4633-0385",
+      "h_index": 65,
+      "i10_index": 202,
+      "works_count": 415,
+      "cited_by_count": 17583,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Archeology -- 9.6",
+      "id": "https://openalex.org/A5070763697",
+      "display_name": "Jean‐Denis Vigne",
+      "orcid": "https://orcid.org/0000-0002-7367-7552",
+      "h_index": 65,
+      "i10_index": 147,
+      "works_count": 688,
+      "cited_by_count": 14706,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Archeology -- 9.6",
+      "id": "https://openalex.org/A5049271223",
+      "display_name": "Oliver E. Craig",
+      "orcid": "https://orcid.org/0000-0002-4296-8402",
+      "h_index": 64,
+      "i10_index": 149,
+      "works_count": 254,
+      "cited_by_count": 12249,
+      "discipline": "Archeology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Archeology -- 9.6",
+      "id": "https://openalex.org/A5053424267",
+      "display_name": "Jan Heinemeier",
+      "orcid": "https://orcid.org/0000-0003-3024-6709",
+      "h_index": 63,
+      "i10_index": 163,
+      "works_count": 346,
+      "cited_by_count": 13448,
+      "discipline": "Archeology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Archeology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    }
+  ]
+}

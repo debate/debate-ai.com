@@ -1,0 +1,1797 @@
+{
+  "kind": "subfield",
+  "id": 2604,
+  "name": "Applied Mathematics",
+  "total_in_scrape": 91,
+  "count": 91,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Applied Mathematics -- 9.9",
+      "id": "https://openalex.org/A5080792075",
+      "display_name": "Robert Mccredie May",
+      "orcid": null,
+      "h_index": 156,
+      "i10_index": 375,
+      "works_count": 768,
+      "cited_by_count": 128525,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Applied Mathematics -- 9.9",
+      "id": "https://openalex.org/A5077712228",
+      "display_name": "Simon A. Levin",
+      "orcid": "https://orcid.org/0000-0002-8216-5639",
+      "h_index": 143,
+      "i10_index": 523,
+      "works_count": 821,
+      "cited_by_count": 113709,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Applied Mathematics -- 9.9",
+      "id": "https://openalex.org/A5058338534",
+      "display_name": "Alan S. Perelson",
+      "orcid": "https://orcid.org/0000-0002-2455-0002",
+      "h_index": 128,
+      "i10_index": 527,
+      "works_count": 723,
+      "cited_by_count": 77934,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Immunology and Microbiology",
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Applied Mathematics -- 9.9",
+      "id": "https://openalex.org/A5065355421",
+      "display_name": "David L. Donoho",
+      "orcid": "https://orcid.org/0000-0003-1830-710X",
+      "h_index": 118,
+      "i10_index": 249,
+      "works_count": 408,
+      "cited_by_count": 152656,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Applied Mathematics -- 9.9",
+      "id": "https://openalex.org/A5018222452",
+      "display_name": "Bryan Thomas Grenfell",
+      "orcid": "https://orcid.org/0000-0003-3227-5909",
+      "h_index": 115,
+      "i10_index": 392,
+      "works_count": 604,
+      "cited_by_count": 63259,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Applied Mathematics -- 9.9",
+      "id": "https://openalex.org/A5110316992",
+      "display_name": "Pierre‐Louis Lions",
+      "orcid": null,
+      "h_index": 112,
+      "i10_index": 286,
+      "works_count": 475,
+      "cited_by_count": 79608,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Economics, Econometrics and Finance",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5066728260",
+      "display_name": "Terence Tao",
+      "orcid": "https://orcid.org/0000-0002-0140-7641",
+      "h_index": 103,
+      "i10_index": 337,
+      "works_count": 670,
+      "cited_by_count": 84363,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5071854504",
+      "display_name": "E Weinan",
+      "orcid": "https://orcid.org/0000-0003-0272-9500",
+      "h_index": 103,
+      "i10_index": 282,
+      "works_count": 412,
+      "cited_by_count": 47150,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5071749890",
+      "display_name": "Alan Hastings",
+      "orcid": "https://orcid.org/0000-0002-0717-8026",
+      "h_index": 98,
+      "i10_index": 286,
+      "works_count": 526,
+      "cited_by_count": 43267,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Environmental Science",
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5079512627",
+      "display_name": "H. M. Srivastava",
+      "orcid": "https://orcid.org/0000-0002-9277-8092",
+      "h_index": 96,
+      "i10_index": 892,
+      "works_count": 1626,
+      "cited_by_count": 64073,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5070686513",
+      "display_name": "Luis  A. Caffarelli",
+      "orcid": "https://orcid.org/0000-0001-9283-7083",
+      "h_index": 93,
+      "i10_index": 244,
+      "works_count": 388,
+      "cited_by_count": 38424,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5069878224",
+      "display_name": "Ira M. Longini",
+      "orcid": "https://orcid.org/0000-0002-2780-9382",
+      "h_index": 92,
+      "i10_index": 221,
+      "works_count": 301,
+      "cited_by_count": 36139,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5114032769",
+      "display_name": "Haïm Brézis",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 201,
+      "works_count": 357,
+      "cited_by_count": 46042,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5010543213",
+      "display_name": "Joel E. Cohen",
+      "orcid": "https://orcid.org/0000-0002-9746-6725",
+      "h_index": 89,
+      "i10_index": 256,
+      "works_count": 537,
+      "cited_by_count": 31404,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5054236642",
+      "display_name": "Sebastian Bonhoeffer",
+      "orcid": "https://orcid.org/0000-0001-8052-3925",
+      "h_index": 89,
+      "i10_index": 224,
+      "works_count": 417,
+      "cited_by_count": 36024,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5046314241",
+      "display_name": "Yu‐Ming Chu",
+      "orcid": "https://orcid.org/0000-0002-0944-2134",
+      "h_index": 88,
+      "i10_index": 723,
+      "works_count": 1015,
+      "cited_by_count": 37633,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Applied Mathematics -- 9.8",
+      "id": "https://openalex.org/A5077785558",
+      "display_name": "Ulf Dieckmann",
+      "orcid": "https://orcid.org/0000-0001-7089-0393",
+      "h_index": 88,
+      "i10_index": 211,
+      "works_count": 509,
+      "cited_by_count": 30684,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5083451202",
+      "display_name": "Hal Caswell",
+      "orcid": "https://orcid.org/0000-0003-4394-6894",
+      "h_index": 86,
+      "i10_index": 218,
+      "works_count": 326,
+      "cited_by_count": 32251,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Environmental Science",
+        "Mathematics",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5033751815",
+      "display_name": "Carlos E. Kenig",
+      "orcid": "https://orcid.org/0000-0001-9414-5451",
+      "h_index": 85,
+      "i10_index": 234,
+      "works_count": 397,
+      "cited_by_count": 28153,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5074260133",
+      "display_name": "Peter A. Abrams",
+      "orcid": "https://orcid.org/0000-0002-1828-326X",
+      "h_index": 85,
+      "i10_index": 193,
+      "works_count": 254,
+      "cited_by_count": 25281,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Environmental Science",
+        "Mathematics",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5055431798",
+      "display_name": "Ravi P. Agarwal",
+      "orcid": "https://orcid.org/0000-0003-0634-2370",
+      "h_index": 84,
+      "i10_index": 667,
+      "works_count": 1758,
+      "cited_by_count": 38150,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5076973014",
+      "display_name": "Richard Bellman",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 359,
+      "works_count": 1034,
+      "cited_by_count": 68046,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5046878011",
+      "display_name": "Ricard V. Solé",
+      "orcid": "https://orcid.org/0000-0001-6974-1008",
+      "h_index": 83,
+      "i10_index": 284,
+      "works_count": 486,
+      "cited_by_count": 28188,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics",
+        "Physics and Astronomy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5018915016",
+      "display_name": "Stephen P. Ellner",
+      "orcid": "https://orcid.org/0000-0002-8351-9734",
+      "h_index": 83,
+      "i10_index": 176,
+      "works_count": 501,
+      "cited_by_count": 24873,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5074558033",
+      "display_name": "Juan Jose Nieto",
+      "orcid": "https://orcid.org/0000-0001-8202-6578",
+      "h_index": 82,
+      "i10_index": 395,
+      "works_count": 676,
+      "cited_by_count": 27146,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5031916507",
+      "display_name": "Yoh Iwasa",
+      "orcid": "https://orcid.org/0000-0003-0691-1852",
+      "h_index": 82,
+      "i10_index": 282,
+      "works_count": 450,
+      "cited_by_count": 26147,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5021493301",
+      "display_name": "Graham Francis Medley",
+      "orcid": "https://orcid.org/0000-0002-0030-7278",
+      "h_index": 82,
+      "i10_index": 275,
+      "works_count": 497,
+      "cited_by_count": 23730,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Applied Mathematics -- 9.7",
+      "id": "https://openalex.org/A5111728290",
+      "display_name": "Lennart Persson",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 147,
+      "works_count": 217,
+      "cited_by_count": 21929,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Environmental Science",
+        "Mathematics",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5039648333",
+      "display_name": "Justin Lessler",
+      "orcid": "https://orcid.org/0000-0002-9741-8109",
+      "h_index": 81,
+      "i10_index": 216,
+      "works_count": 342,
+      "cited_by_count": 35225,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5008815494",
+      "display_name": "Ottar N. Bjørnstad",
+      "orcid": "https://orcid.org/0000-0002-1158-3753",
+      "h_index": 81,
+      "i10_index": 194,
+      "works_count": 328,
+      "cited_by_count": 25612,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5068889155",
+      "display_name": "Alison P. Galvani",
+      "orcid": "https://orcid.org/0000-0002-2059-6716",
+      "h_index": 80,
+      "i10_index": 284,
+      "works_count": 412,
+      "cited_by_count": 25480,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Social Sciences",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5061988258",
+      "display_name": "Benoît Perthame",
+      "orcid": "https://orcid.org/0000-0002-7091-1200",
+      "h_index": 80,
+      "i10_index": 235,
+      "works_count": 476,
+      "cited_by_count": 24247,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5077672620",
+      "display_name": "Bashir Ahmad",
+      "orcid": "https://orcid.org/0000-0001-5350-2977",
+      "h_index": 79,
+      "i10_index": 523,
+      "works_count": 935,
+      "cited_by_count": 26939,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5091820514",
+      "display_name": "Shigui Ruan",
+      "orcid": "https://orcid.org/0000-0002-6348-8205",
+      "h_index": 79,
+      "i10_index": 245,
+      "works_count": 324,
+      "cited_by_count": 22420,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5062282222",
+      "display_name": "Roger M. Nisbet",
+      "orcid": "https://orcid.org/0000-0002-3838-0411",
+      "h_index": 79,
+      "i10_index": 220,
+      "works_count": 349,
+      "cited_by_count": 21423,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5027260022",
+      "display_name": "Avner Friedman",
+      "orcid": "https://orcid.org/0000-0002-7875-174X",
+      "h_index": 78,
+      "i10_index": 316,
+      "works_count": 608,
+      "cited_by_count": 25167,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5030616211",
+      "display_name": "Mark A. Lewis",
+      "orcid": "https://orcid.org/0000-0002-7155-7426",
+      "h_index": 78,
+      "i10_index": 249,
+      "works_count": 446,
+      "cited_by_count": 26507,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5086651355",
+      "display_name": "Matt J. Keeling",
+      "orcid": "https://orcid.org/0000-0003-4639-4765",
+      "h_index": 78,
+      "i10_index": 233,
+      "works_count": 458,
+      "cited_by_count": 29235,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Applied Mathematics -- 9.6",
+      "id": "https://openalex.org/A5074156162",
+      "display_name": "Roger Témam",
+      "orcid": "https://orcid.org/0000-0003-1927-4805",
+      "h_index": 77,
+      "i10_index": 306,
+      "works_count": 642,
+      "cited_by_count": 40096,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5076835339",
+      "display_name": "Edriss Saleh Titi",
+      "orcid": "https://orcid.org/0000-0002-5004-1746",
+      "h_index": 77,
+      "i10_index": 230,
+      "works_count": 398,
+      "cited_by_count": 17976,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5043412155",
+      "display_name": "Thabet Abdeljawad",
+      "orcid": "https://orcid.org/0000-0002-8889-3768",
+      "h_index": 76,
+      "i10_index": 574,
+      "works_count": 1049,
+      "cited_by_count": 30232,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5068722101",
+      "display_name": "Michael E. Begon",
+      "orcid": "https://orcid.org/0000-0003-1715-5327",
+      "h_index": 76,
+      "i10_index": 231,
+      "works_count": 392,
+      "cited_by_count": 22110,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Environmental Science",
+        "Mathematics",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5078240002",
+      "display_name": "Nader Masmoudi",
+      "orcid": "https://orcid.org/0000-0002-8102-8130",
+      "h_index": 75,
+      "i10_index": 180,
+      "works_count": 342,
+      "cited_by_count": 14934,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5033337407",
+      "display_name": "Jens Randel Nyengaard",
+      "orcid": "https://orcid.org/0000-0002-8084-4646",
+      "h_index": 73,
+      "i10_index": 321,
+      "works_count": 530,
+      "cited_by_count": 24073,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5065363123",
+      "display_name": "Lloyd Nicholas Trefethen",
+      "orcid": "https://orcid.org/0000-0003-2504-1709",
+      "h_index": 73,
+      "i10_index": 174,
+      "works_count": 384,
+      "cited_by_count": 36638,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5025732300",
+      "display_name": "Donal O’Regan",
+      "orcid": "https://orcid.org/0000-0002-4096-1469",
+      "h_index": 72,
+      "i10_index": 601,
+      "works_count": 1775,
+      "cited_by_count": 28889,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5022412709",
+      "display_name": "José Antonio Carrillo",
+      "orcid": "https://orcid.org/0000-0001-8819-4660",
+      "h_index": 72,
+      "i10_index": 299,
+      "works_count": 522,
+      "cited_by_count": 19860,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5110014906",
+      "display_name": "Charlotte Jessica E. Metcalf",
+      "orcid": "https://orcid.org/0000-0003-3166-7521",
+      "h_index": 72,
+      "i10_index": 218,
+      "works_count": 443,
+      "cited_by_count": 21903,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5104728881",
+      "display_name": "Michael Winkler",
+      "orcid": "https://orcid.org/0000-0002-3151-064X",
+      "h_index": 72,
+      "i10_index": 202,
+      "works_count": 303,
+      "cited_by_count": 24591,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5110436903",
+      "display_name": "Ronald R. Coifman",
+      "orcid": "https://orcid.org/0000-0001-7336-7784",
+      "h_index": 71,
+      "i10_index": 179,
+      "works_count": 308,
+      "cited_by_count": 40835,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Applied Mathematics -- 9.5",
+      "id": "https://openalex.org/A5071611289",
+      "display_name": "Jonathan G. Dushoff",
+      "orcid": "https://orcid.org/0000-0003-0506-4794",
+      "h_index": 71,
+      "i10_index": 161,
+      "works_count": 385,
+      "cited_by_count": 22008,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5057351789",
+      "display_name": "Juncheng Wei",
+      "orcid": "https://orcid.org/0000-0001-5262-477X",
+      "h_index": 70,
+      "i10_index": 384,
+      "works_count": 582,
+      "cited_by_count": 19711,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5068525348",
+      "display_name": "Carlos Castillo‐Chávez",
+      "orcid": "https://orcid.org/0000-0002-1046-3901",
+      "h_index": 70,
+      "i10_index": 200,
+      "works_count": 377,
+      "cited_by_count": 22673,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5107519484",
+      "display_name": "Ingrid C. Daubechies",
+      "orcid": "https://orcid.org/0000-0002-6472-1056",
+      "h_index": 70,
+      "i10_index": 160,
+      "works_count": 273,
+      "cited_by_count": 69367,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5066320010",
+      "display_name": "Mirjam Kretzschmar",
+      "orcid": "https://orcid.org/0000-0002-4394-7697",
+      "h_index": 69,
+      "i10_index": 236,
+      "works_count": 515,
+      "cited_by_count": 23464,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5108251084",
+      "display_name": "J. L. Lions",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 169,
+      "works_count": 424,
+      "cited_by_count": 38043,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5110621862",
+      "display_name": "Frank Merle",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 134,
+      "works_count": 206,
+      "cited_by_count": 14603,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5002807639",
+      "display_name": "Michael Patrick Hassell",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 132,
+      "works_count": 198,
+      "cited_by_count": 20802,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5072990982",
+      "display_name": "Jürgen Jost",
+      "orcid": "https://orcid.org/0000-0001-5258-6590",
+      "h_index": 68,
+      "i10_index": 285,
+      "works_count": 866,
+      "cited_by_count": 17593,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5110483019",
+      "display_name": "Donald Lee Deangelis",
+      "orcid": "https://orcid.org/0000-0001-5058-8664",
+      "h_index": 68,
+      "i10_index": 227,
+      "works_count": 556,
+      "cited_by_count": 33518,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5070558970",
+      "display_name": "Luigi Ambrosio",
+      "orcid": "https://orcid.org/0000-0001-5077-159X",
+      "h_index": 68,
+      "i10_index": 166,
+      "works_count": 290,
+      "cited_by_count": 25327,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Applied Mathematics -- 9.4",
+      "id": "https://openalex.org/A5013462956",
+      "display_name": "Andrew C. Harvey",
+      "orcid": "https://orcid.org/0000-0003-3082-0440",
+      "h_index": 68,
+      "i10_index": 150,
+      "works_count": 382,
+      "cited_by_count": 28206,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Economics, Econometrics and Finance",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5056315791",
+      "display_name": "William W. Murdoch",
+      "orcid": "https://orcid.org/0000-0002-3576-4436",
+      "h_index": 68,
+      "i10_index": 108,
+      "works_count": 153,
+      "cited_by_count": 19139,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5029805261",
+      "display_name": "Iain D. Boyd",
+      "orcid": "https://orcid.org/0000-0002-3725-9206",
+      "h_index": 67,
+      "i10_index": 339,
+      "works_count": 917,
+      "cited_by_count": 16823,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5105977470",
+      "display_name": "Vicenţiu D. Rădulescu",
+      "orcid": "https://orcid.org/0000-0003-4615-5537",
+      "h_index": 67,
+      "i10_index": 287,
+      "works_count": 709,
+      "cited_by_count": 19109,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5037968657",
+      "display_name": "Peter Constantin",
+      "orcid": "https://orcid.org/0000-0002-3934-7146",
+      "h_index": 67,
+      "i10_index": 164,
+      "works_count": 279,
+      "cited_by_count": 18087,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5014553334",
+      "display_name": "James Mac Hyman",
+      "orcid": "https://orcid.org/0000-0001-5247-5794",
+      "h_index": 67,
+      "i10_index": 157,
+      "works_count": 243,
+      "cited_by_count": 22950,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5059708665",
+      "display_name": "Mercedes Pascual",
+      "orcid": "https://orcid.org/0000-0003-3575-7233",
+      "h_index": 67,
+      "i10_index": 152,
+      "works_count": 311,
+      "cited_by_count": 22760,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Medicine",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5062156030",
+      "display_name": "Louis Nirenberg",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 91,
+      "works_count": 219,
+      "cited_by_count": 35150,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5081792390",
+      "display_name": "Erdal Karapınar",
+      "orcid": "https://orcid.org/0000-0002-6798-3254",
+      "h_index": 66,
+      "i10_index": 353,
+      "works_count": 573,
+      "cited_by_count": 16798,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5020293284",
+      "display_name": "Madhav V. Marathe",
+      "orcid": "https://orcid.org/0000-0003-1653-0658",
+      "h_index": 66,
+      "i10_index": 270,
+      "works_count": 622,
+      "cited_by_count": 19160,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5087578803",
+      "display_name": "Muhammad Aslam Noor",
+      "orcid": "https://orcid.org/0000-0001-6105-2435",
+      "h_index": 65,
+      "i10_index": 463,
+      "works_count": 958,
+      "cited_by_count": 21436,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Applied Mathematics -- 9.3",
+      "id": "https://openalex.org/A5061093752",
+      "display_name": "Sever S Dragomir",
+      "orcid": "https://orcid.org/0000-0003-2902-6805",
+      "h_index": 65,
+      "i10_index": 367,
+      "works_count": 1374,
+      "cited_by_count": 19594,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5001104212",
+      "display_name": "Stevo Stević",
+      "orcid": "https://orcid.org/0000-0002-7202-9764",
+      "h_index": 65,
+      "i10_index": 272,
+      "works_count": 481,
+      "cited_by_count": 11993,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5112069509",
+      "display_name": "Philip E. Hartman",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 210,
+      "works_count": 456,
+      "cited_by_count": 17128,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5090606361",
+      "display_name": "Stefano Merler",
+      "orcid": "https://orcid.org/0000-0002-5117-0611",
+      "h_index": 65,
+      "i10_index": 168,
+      "works_count": 309,
+      "cited_by_count": 25865,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5055486184",
+      "display_name": "Giuseppe Mingione",
+      "orcid": "https://orcid.org/0000-0001-8552-2550",
+      "h_index": 65,
+      "i10_index": 104,
+      "works_count": 158,
+      "cited_by_count": 14938,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5100779363",
+      "display_name": "Zhen Jin",
+      "orcid": "https://orcid.org/0000-0002-9763-707X",
+      "h_index": 64,
+      "i10_index": 284,
+      "works_count": 581,
+      "cited_by_count": 14442,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5057131265",
+      "display_name": "Delfim F. M. Torres",
+      "orcid": "https://orcid.org/0000-0001-8641-2505",
+      "h_index": 64,
+      "i10_index": 267,
+      "works_count": 527,
+      "cited_by_count": 14523,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5021471659",
+      "display_name": "Peter E. Kloeden",
+      "orcid": "https://orcid.org/0000-0001-9505-2257",
+      "h_index": 64,
+      "i10_index": 258,
+      "works_count": 657,
+      "cited_by_count": 22597,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5016943819",
+      "display_name": "Yong Zhou",
+      "orcid": "https://orcid.org/0000-0002-4099-8077",
+      "h_index": 64,
+      "i10_index": 228,
+      "works_count": 452,
+      "cited_by_count": 16227,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5029099999",
+      "display_name": "Christopher Aidan Gilligan",
+      "orcid": "https://orcid.org/0000-0002-6845-0003",
+      "h_index": 64,
+      "i10_index": 213,
+      "works_count": 364,
+      "cited_by_count": 14889,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5043521825",
+      "display_name": "Felix E. Browder",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 147,
+      "works_count": 269,
+      "cited_by_count": 16935,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Applied Mathematics -- 9.2",
+      "id": "https://openalex.org/A5061813475",
+      "display_name": "Robert V. Kohn",
+      "orcid": "https://orcid.org/0000-0002-4386-6889",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 213,
+      "cited_by_count": 17162,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Applied Mathematics -- 9.1",
+      "id": "https://openalex.org/A5084149439",
+      "display_name": "Henri Berestycki",
+      "orcid": "https://orcid.org/0000-0003-1724-2279",
+      "h_index": 64,
+      "i10_index": 122,
+      "works_count": 238,
+      "cited_by_count": 17951,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Applied Mathematics -- 9.1",
+      "id": "https://openalex.org/A5081806740",
+      "display_name": "Omar Abu Arqub",
+      "orcid": "https://orcid.org/0000-0001-9526-6095",
+      "h_index": 64,
+      "i10_index": 121,
+      "works_count": 170,
+      "cited_by_count": 12106,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Applied Mathematics -- 9.1",
+      "id": "https://openalex.org/A5043788108",
+      "display_name": "Peter Turchin",
+      "orcid": "https://orcid.org/0000-0002-1292-8100",
+      "h_index": 64,
+      "i10_index": 116,
+      "works_count": 193,
+      "cited_by_count": 15520,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Social Sciences",
+        "Mathematics",
+        "Environmental Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Applied Mathematics -- 9.1",
+      "id": "https://openalex.org/A5080780430",
+      "display_name": "Pierre Degond",
+      "orcid": "https://orcid.org/0000-0002-4886-6968",
+      "h_index": 63,
+      "i10_index": 236,
+      "works_count": 556,
+      "cited_by_count": 13692,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Applied Mathematics -- 9.1",
+      "id": "https://openalex.org/A5071740877",
+      "display_name": "John M. Drake",
+      "orcid": "https://orcid.org/0000-0003-4646-1235",
+      "h_index": 63,
+      "i10_index": 194,
+      "works_count": 354,
+      "cited_by_count": 27823,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Environmental Science",
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Applied Mathematics -- 9.1",
+      "id": "https://openalex.org/A5002096458",
+      "display_name": "Charles A. Micchelli",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 174,
+      "works_count": 310,
+      "cited_by_count": 15893,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Applied Mathematics -- 9.1",
+      "id": "https://openalex.org/A5055282911",
+      "display_name": "Pejman Rohani",
+      "orcid": "https://orcid.org/0000-0002-7221-3801",
+      "h_index": 63,
+      "i10_index": 152,
+      "works_count": 310,
+      "cited_by_count": 19767,
+      "discipline": "Applied Mathematics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Applied Mathematics",
+      "fields": [
+        "Mathematics",
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Medicine"
+      ]
+    }
+  ]
+}

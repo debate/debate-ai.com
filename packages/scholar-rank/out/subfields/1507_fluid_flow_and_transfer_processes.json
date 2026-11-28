@@ -1,0 +1,2484 @@
+{
+  "kind": "subfield",
+  "id": 1507,
+  "name": "Fluid Flow and Transfer Processes",
+  "total_in_scrape": 123,
+  "count": 123,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Fluid Flow and Transfer Processes -- 9.9",
+      "id": "https://openalex.org/A5038905661",
+      "display_name": "David A. Weitz",
+      "orcid": "https://orcid.org/0000-0001-6678-5208",
+      "h_index": 205,
+      "i10_index": 817,
+      "works_count": 1466,
+      "cited_by_count": 157752,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Fluid Flow and Transfer Processes -- 9.9",
+      "id": "https://openalex.org/A5045617932",
+      "display_name": "Mohsen Sheikholeslami",
+      "orcid": "https://orcid.org/0000-0002-8839-0458",
+      "h_index": 146,
+      "i10_index": 520,
+      "works_count": 698,
+      "cited_by_count": 58674,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Fluid Flow and Transfer Processes -- 9.9",
+      "id": "https://openalex.org/A5071010920",
+      "display_name": "Klavs F. Jensen",
+      "orcid": "https://orcid.org/0000-0001-7192-580X",
+      "h_index": 134,
+      "i10_index": 505,
+      "works_count": 774,
+      "cited_by_count": 73760,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Fluid Flow and Transfer Processes -- 9.9",
+      "id": "https://openalex.org/A5055968208",
+      "display_name": "Gareth H. McKinley",
+      "orcid": "https://orcid.org/0000-0001-8323-2779",
+      "h_index": 116,
+      "i10_index": 369,
+      "works_count": 762,
+      "cited_by_count": 52185,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Fluid Flow and Transfer Processes -- 9.9",
+      "id": "https://openalex.org/A5055610449",
+      "display_name": "Rolf D. Reitz",
+      "orcid": "https://orcid.org/0000-0002-4488-0463",
+      "h_index": 114,
+      "i10_index": 531,
+      "works_count": 719,
+      "cited_by_count": 54553,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Fluid Flow and Transfer Processes -- 9.9",
+      "id": "https://openalex.org/A5039442806",
+      "display_name": "Ronald Kenneth Hanson",
+      "orcid": "https://orcid.org/0000-0002-8030-5327",
+      "h_index": 107,
+      "i10_index": 729,
+      "works_count": 1322,
+      "cited_by_count": 49440,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Chemistry",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5034312242",
+      "display_name": "Masoud Afrand",
+      "orcid": "https://orcid.org/0000-0003-4841-650X",
+      "h_index": 105,
+      "i10_index": 295,
+      "works_count": 332,
+      "cited_by_count": 28358,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5076177399",
+      "display_name": "Chung King Law",
+      "orcid": "https://orcid.org/0000-0002-9624-0441",
+      "h_index": 104,
+      "i10_index": 480,
+      "works_count": 805,
+      "cited_by_count": 43958,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5016696201",
+      "display_name": "Henry J. Curran",
+      "orcid": "https://orcid.org/0000-0002-5124-8562",
+      "h_index": 104,
+      "i10_index": 287,
+      "works_count": 524,
+      "cited_by_count": 39801,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5017056586",
+      "display_name": "R. Ellahi",
+      "orcid": "https://orcid.org/0000-0002-7805-8259",
+      "h_index": 101,
+      "i10_index": 320,
+      "works_count": 366,
+      "cited_by_count": 29707,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5003448404",
+      "display_name": "Volker Hessel",
+      "orcid": "https://orcid.org/0000-0002-9494-1519",
+      "h_index": 97,
+      "i10_index": 455,
+      "works_count": 886,
+      "cited_by_count": 39011,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5029067826",
+      "display_name": "Ronald G. Larson",
+      "orcid": "https://orcid.org/0000-0001-7465-1963",
+      "h_index": 97,
+      "i10_index": 407,
+      "works_count": 589,
+      "cited_by_count": 44449,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5060107939",
+      "display_name": "Eugenia Kumacheva",
+      "orcid": "https://orcid.org/0000-0001-5942-3890",
+      "h_index": 97,
+      "i10_index": 292,
+      "works_count": 374,
+      "cited_by_count": 40559,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5060098801",
+      "display_name": "Stephen J. Klippenstein",
+      "orcid": "https://orcid.org/0000-0001-6297-9187",
+      "h_index": 96,
+      "i10_index": 297,
+      "works_count": 445,
+      "cited_by_count": 33019,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Physics and Astronomy",
+        "Chemistry",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5015772240",
+      "display_name": "Thierry J. Poinsot",
+      "orcid": "https://orcid.org/0000-0001-8383-3961",
+      "h_index": 95,
+      "i10_index": 307,
+      "works_count": 518,
+      "cited_by_count": 38971,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5004157625",
+      "display_name": "Charles K. Westbrook",
+      "orcid": "https://orcid.org/0000-0001-6552-2342",
+      "h_index": 94,
+      "i10_index": 206,
+      "works_count": 390,
+      "cited_by_count": 35332,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Fluid Flow and Transfer Processes -- 9.8",
+      "id": "https://openalex.org/A5050011498",
+      "display_name": "Zuohua Huang",
+      "orcid": "https://orcid.org/0000-0002-8932-5842",
+      "h_index": 92,
+      "i10_index": 529,
+      "works_count": 836,
+      "cited_by_count": 35754,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5048936220",
+      "display_name": "Heinz G. Pitsch",
+      "orcid": "https://orcid.org/0000-0001-5656-0961",
+      "h_index": 92,
+      "i10_index": 434,
+      "works_count": 1146,
+      "cited_by_count": 34339,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5051475129",
+      "display_name": "William H. Green",
+      "orcid": "https://orcid.org/0000-0003-2603-9694",
+      "h_index": 91,
+      "i10_index": 327,
+      "works_count": 540,
+      "cited_by_count": 30504,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Physics and Astronomy",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5081250081",
+      "display_name": "Yiguang Ju",
+      "orcid": "https://orcid.org/0000-0002-5656-2075",
+      "h_index": 91,
+      "i10_index": 306,
+      "works_count": 615,
+      "cited_by_count": 27748,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5101903678",
+      "display_name": "William J. Pitz",
+      "orcid": "https://orcid.org/0000-0003-4238-4500",
+      "h_index": 91,
+      "i10_index": 252,
+      "works_count": 444,
+      "cited_by_count": 30942,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5022742649",
+      "display_name": "Frederick L. Dryer",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 229,
+      "works_count": 351,
+      "cited_by_count": 30735,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5041408531",
+      "display_name": "Rizalman Mamat",
+      "orcid": "https://orcid.org/0000-0002-6562-0994",
+      "h_index": 89,
+      "i10_index": 305,
+      "works_count": 491,
+      "cited_by_count": 24019,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5067224059",
+      "display_name": "Arash Karimipour",
+      "orcid": "https://orcid.org/0000-0001-7596-7134",
+      "h_index": 89,
+      "i10_index": 264,
+      "works_count": 395,
+      "cited_by_count": 20133,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5046919396",
+      "display_name": "Peter Glarborg",
+      "orcid": "https://orcid.org/0000-0002-6856-852X",
+      "h_index": 88,
+      "i10_index": 291,
+      "works_count": 491,
+      "cited_by_count": 30390,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Energy",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5090788005",
+      "display_name": "Stephen Bailey Pope",
+      "orcid": "https://orcid.org/0000-0001-5629-0420",
+      "h_index": 88,
+      "i10_index": 227,
+      "works_count": 415,
+      "cited_by_count": 47683,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5075501475",
+      "display_name": "Philippe Dagaut",
+      "orcid": "https://orcid.org/0000-0003-4825-3288",
+      "h_index": 85,
+      "i10_index": 307,
+      "works_count": 461,
+      "cited_by_count": 23667,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Fluid Flow and Transfer Processes -- 9.7",
+      "id": "https://openalex.org/A5107990234",
+      "display_name": "R. Saidur",
+      "orcid": "https://orcid.org/0000-0001-7962-7049",
+      "h_index": 85,
+      "i10_index": 189,
+      "works_count": 235,
+      "cited_by_count": 32734,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5033178403",
+      "display_name": "Norman J. Wagner",
+      "orcid": "https://orcid.org/0000-0001-9565-619X",
+      "h_index": 84,
+      "i10_index": 305,
+      "works_count": 523,
+      "cited_by_count": 26773,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5060989553",
+      "display_name": "Ralph H. Colby",
+      "orcid": "https://orcid.org/0000-0002-5492-6189",
+      "h_index": 84,
+      "i10_index": 262,
+      "works_count": 900,
+      "cited_by_count": 34792,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5060964189",
+      "display_name": "Wolfgang P. Meier",
+      "orcid": "https://orcid.org/0000-0002-7551-8272",
+      "h_index": 83,
+      "i10_index": 272,
+      "works_count": 567,
+      "cited_by_count": 22026,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5037597582",
+      "display_name": "Alvin William Nienow",
+      "orcid": "https://orcid.org/0000-0002-8182-0988",
+      "h_index": 83,
+      "i10_index": 248,
+      "works_count": 388,
+      "cited_by_count": 18839,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5082358143",
+      "display_name": "Gholamhassan Najafi",
+      "orcid": "https://orcid.org/0000-0003-3125-3804",
+      "h_index": 82,
+      "i10_index": 252,
+      "works_count": 345,
+      "cited_by_count": 23024,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Energy",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Energy",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5109081418",
+      "display_name": "Forman Arthur Williams",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 335,
+      "works_count": 654,
+      "cited_by_count": 23007,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5089472429",
+      "display_name": "L. Gary Leal",
+      "orcid": "https://orcid.org/0000-0002-6358-7828",
+      "h_index": 80,
+      "i10_index": 268,
+      "works_count": 943,
+      "cited_by_count": 24594,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5046407143",
+      "display_name": "Sébastien M. Candel",
+      "orcid": "https://orcid.org/0000-0003-2286-8460",
+      "h_index": 80,
+      "i10_index": 249,
+      "works_count": 488,
+      "cited_by_count": 25451,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5100382773",
+      "display_name": "Hai Wang",
+      "orcid": "https://orcid.org/0000-0001-6507-5503",
+      "h_index": 80,
+      "i10_index": 199,
+      "works_count": 291,
+      "cited_by_count": 23534,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5033225635",
+      "display_name": "Tiziano Faravelli",
+      "orcid": "https://orcid.org/0000-0001-8382-7342",
+      "h_index": 79,
+      "i10_index": 256,
+      "works_count": 556,
+      "cited_by_count": 24175,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Fluid Flow and Transfer Processes -- 9.6",
+      "id": "https://openalex.org/A5031241305",
+      "display_name": "Goodarz Ahmadi",
+      "orcid": "https://orcid.org/0000-0001-5277-7960",
+      "h_index": 78,
+      "i10_index": 495,
+      "works_count": 1103,
+      "cited_by_count": 29144,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5052499598",
+      "display_name": "Mohamed M. Pourkashanian",
+      "orcid": "https://orcid.org/0000-0002-8399-5351",
+      "h_index": 78,
+      "i10_index": 358,
+      "works_count": 616,
+      "cited_by_count": 23995,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5060598395",
+      "display_name": "Michael Schlüter",
+      "orcid": "https://orcid.org/0000-0001-5969-2150",
+      "h_index": 78,
+      "i10_index": 270,
+      "works_count": 625,
+      "cited_by_count": 25655,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Medicine",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5025254137",
+      "display_name": "E Jiaqiang",
+      "orcid": "https://orcid.org/0000-0002-2820-0472",
+      "h_index": 78,
+      "i10_index": 246,
+      "works_count": 351,
+      "cited_by_count": 18036,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5082632641",
+      "display_name": "Adel F. Sarofim",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 247,
+      "works_count": 531,
+      "cited_by_count": 21376,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5089403906",
+      "display_name": "Clement Kleinstreuer",
+      "orcid": "https://orcid.org/0000-0002-0584-4750",
+      "h_index": 77,
+      "i10_index": 207,
+      "works_count": 363,
+      "cited_by_count": 20407,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5111680042",
+      "display_name": "G. M. Faeth",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 206,
+      "works_count": 405,
+      "cited_by_count": 20478,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5077835835",
+      "display_name": "E. Ranzi",
+      "orcid": "https://orcid.org/0000-0002-1395-6074",
+      "h_index": 77,
+      "i10_index": 187,
+      "works_count": 326,
+      "cited_by_count": 20785,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Energy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5027454138",
+      "display_name": "John F. Brady",
+      "orcid": "https://orcid.org/0000-0001-5817-9128",
+      "h_index": 77,
+      "i10_index": 159,
+      "works_count": 243,
+      "cited_by_count": 23328,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5007095988",
+      "display_name": "Chih‐Jen Sung",
+      "orcid": "https://orcid.org/0000-0003-2046-8076",
+      "h_index": 76,
+      "i10_index": 207,
+      "works_count": 346,
+      "cited_by_count": 18798,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5002186164",
+      "display_name": "Andrew D. Griffiths",
+      "orcid": "https://orcid.org/0000-0002-0808-3539",
+      "h_index": 76,
+      "i10_index": 122,
+      "works_count": 189,
+      "cited_by_count": 34019,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5100377274",
+      "display_name": "Wei Yu",
+      "orcid": "https://orcid.org/0000-0002-0536-5637",
+      "h_index": 75,
+      "i10_index": 364,
+      "works_count": 610,
+      "cited_by_count": 23777,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Fluid Flow and Transfer Processes -- 9.5",
+      "id": "https://openalex.org/A5062571604",
+      "display_name": "Markus Kraft",
+      "orcid": "https://orcid.org/0000-0002-4293-8924",
+      "h_index": 75,
+      "i10_index": 355,
+      "works_count": 597,
+      "cited_by_count": 22226,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Earth and Planetary Sciences",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5032712637",
+      "display_name": "Jaap C Schouten",
+      "orcid": "https://orcid.org/0000-0001-5706-7087",
+      "h_index": 75,
+      "i10_index": 311,
+      "works_count": 664,
+      "cited_by_count": 19506,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5036966643",
+      "display_name": "Katharina Kohse‐Höinghaus",
+      "orcid": "https://orcid.org/0000-0002-4891-9038",
+      "h_index": 75,
+      "i10_index": 220,
+      "works_count": 429,
+      "cited_by_count": 19066,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5109098746",
+      "display_name": "Andreas Acrivos",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 181,
+      "works_count": 290,
+      "cited_by_count": 25159,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5005332754",
+      "display_name": "S. Mani Sarathy",
+      "orcid": "https://orcid.org/0000-0002-3975-6206",
+      "h_index": 74,
+      "i10_index": 331,
+      "works_count": 559,
+      "cited_by_count": 21706,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5101690849",
+      "display_name": "Takeshi Kobayashi",
+      "orcid": "https://orcid.org/0000-0002-4372-5285",
+      "h_index": 74,
+      "i10_index": 306,
+      "works_count": 611,
+      "cited_by_count": 19999,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering",
+        "Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5033333915",
+      "display_name": "Yizhak Marcus",
+      "orcid": "https://orcid.org/0000-0002-3138-9704",
+      "h_index": 74,
+      "i10_index": 272,
+      "works_count": 483,
+      "cited_by_count": 31352,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5086184098",
+      "display_name": "Frédérique Battin‐Leclerc",
+      "orcid": "https://orcid.org/0000-0001-8265-7492",
+      "h_index": 74,
+      "i10_index": 196,
+      "works_count": 328,
+      "cited_by_count": 17422,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5108095110",
+      "display_name": "Armand Ajdari",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 123,
+      "works_count": 171,
+      "cited_by_count": 30737,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5058494124",
+      "display_name": "Robert J. Kee",
+      "orcid": "https://orcid.org/0000-0003-3930-4784",
+      "h_index": 73,
+      "i10_index": 216,
+      "works_count": 430,
+      "cited_by_count": 27040,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5110909217",
+      "display_name": "Stanley G. Mason",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 175,
+      "works_count": 226,
+      "cited_by_count": 17640,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Fluid Flow and Transfer Processes -- 9.4",
+      "id": "https://openalex.org/A5100356886",
+      "display_name": "Zhihua Wang",
+      "orcid": "https://orcid.org/0000-0002-7521-2900",
+      "h_index": 72,
+      "i10_index": 449,
+      "works_count": 841,
+      "cited_by_count": 23596,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5034893080",
+      "display_name": "Bengt Johansson",
+      "orcid": "https://orcid.org/0000-0002-0163-5062",
+      "h_index": 72,
+      "i10_index": 325,
+      "works_count": 482,
+      "cited_by_count": 19949,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5088887279",
+      "display_name": "Gerald G. Fuller",
+      "orcid": "https://orcid.org/0000-0002-2924-053X",
+      "h_index": 72,
+      "i10_index": 276,
+      "works_count": 488,
+      "cited_by_count": 17067,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5066467473",
+      "display_name": "Masao Doi",
+      "orcid": "https://orcid.org/0000-0003-4166-4914",
+      "h_index": 72,
+      "i10_index": 243,
+      "works_count": 423,
+      "cited_by_count": 28746,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5058524150",
+      "display_name": "Saad A. Khan",
+      "orcid": "https://orcid.org/0000-0002-1530-8249",
+      "h_index": 72,
+      "i10_index": 238,
+      "works_count": 365,
+      "cited_by_count": 17354,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5100624303",
+      "display_name": "Dan Zhao",
+      "orcid": "https://orcid.org/0000-0002-4484-6505",
+      "h_index": 72,
+      "i10_index": 234,
+      "works_count": 424,
+      "cited_by_count": 14729,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5022091127",
+      "display_name": "Marcus Aldén",
+      "orcid": "https://orcid.org/0000-0003-3533-3588",
+      "h_index": 71,
+      "i10_index": 394,
+      "works_count": 593,
+      "cited_by_count": 18637,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5031825429",
+      "display_name": "David Frank Davidson",
+      "orcid": "https://orcid.org/0000-0002-4470-0135",
+      "h_index": 71,
+      "i10_index": 233,
+      "works_count": 321,
+      "cited_by_count": 16465,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5078826017",
+      "display_name": "Michael Frenklach",
+      "orcid": "https://orcid.org/0000-0002-9174-3306",
+      "h_index": 71,
+      "i10_index": 194,
+      "works_count": 296,
+      "cited_by_count": 24370,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Earth and Planetary Sciences",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5018476457",
+      "display_name": "S.K. Chou",
+      "orcid": "https://orcid.org/0000-0001-7989-0955",
+      "h_index": 71,
+      "i10_index": 168,
+      "works_count": 224,
+      "cited_by_count": 16537,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5029872194",
+      "display_name": "William W. Graessley",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 148,
+      "works_count": 205,
+      "cited_by_count": 17324,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Fluid Flow and Transfer Processes -- 9.3",
+      "id": "https://openalex.org/A5045101447",
+      "display_name": "Avinash Kumar Ágarwal",
+      "orcid": "https://orcid.org/0000-0002-7777-785X",
+      "h_index": 70,
+      "i10_index": 352,
+      "works_count": 628,
+      "cited_by_count": 25307,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5100325566",
+      "display_name": "Haifeng Liu",
+      "orcid": "https://orcid.org/0000-0003-0861-4966",
+      "h_index": 70,
+      "i10_index": 291,
+      "works_count": 542,
+      "cited_by_count": 17938,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5056100212",
+      "display_name": "Wenming Yang",
+      "orcid": "https://orcid.org/0000-0003-4982-0854",
+      "h_index": 70,
+      "i10_index": 270,
+      "works_count": 362,
+      "cited_by_count": 16028,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5109250511",
+      "display_name": "W.‐D. Deckwer",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 183,
+      "works_count": 274,
+      "cited_by_count": 18517,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5067099296",
+      "display_name": "Richard Buchner",
+      "orcid": "https://orcid.org/0000-0003-3029-1278",
+      "h_index": 70,
+      "i10_index": 178,
+      "works_count": 259,
+      "cited_by_count": 15323,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Chemistry",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5050131122",
+      "display_name": "Talal F. Yusaf",
+      "orcid": "https://orcid.org/0000-0002-5332-4792",
+      "h_index": 69,
+      "i10_index": 208,
+      "works_count": 332,
+      "cited_by_count": 15766,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5100778507",
+      "display_name": "Zhen Huang",
+      "orcid": "https://orcid.org/0009-0005-6302-0206",
+      "h_index": 68,
+      "i10_index": 399,
+      "works_count": 771,
+      "cited_by_count": 20631,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5031392176",
+      "display_name": "Roger Ian Tanner",
+      "orcid": "https://orcid.org/0000-0003-1365-6052",
+      "h_index": 68,
+      "i10_index": 237,
+      "works_count": 399,
+      "cited_by_count": 15576,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5040619932",
+      "display_name": "Paula Moldenaers",
+      "orcid": "https://orcid.org/0000-0003-4197-2626",
+      "h_index": 68,
+      "i10_index": 227,
+      "works_count": 513,
+      "cited_by_count": 15388,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5015973400",
+      "display_name": "Lisa D. Pfefferle",
+      "orcid": "https://orcid.org/0000-0003-4760-631X",
+      "h_index": 68,
+      "i10_index": 217,
+      "works_count": 309,
+      "cited_by_count": 19043,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5033567196",
+      "display_name": "Epaminondas Mastorakos",
+      "orcid": "https://orcid.org/0000-0001-8245-5188",
+      "h_index": 68,
+      "i10_index": 208,
+      "works_count": 453,
+      "cited_by_count": 14483,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Fluid Flow and Transfer Processes -- 9.2",
+      "id": "https://openalex.org/A5014879185",
+      "display_name": "Philippe Coussot",
+      "orcid": "https://orcid.org/0000-0003-3980-0825",
+      "h_index": 68,
+      "i10_index": 190,
+      "works_count": 508,
+      "cited_by_count": 18144,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5033429280",
+      "display_name": "Jacqueline H. Chen",
+      "orcid": "https://orcid.org/0000-0002-9268-0634",
+      "h_index": 68,
+      "i10_index": 157,
+      "works_count": 272,
+      "cited_by_count": 13225,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5110881494",
+      "display_name": "David V. Boger",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 145,
+      "works_count": 199,
+      "cited_by_count": 16464,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5055064927",
+      "display_name": "Adam R. Abate",
+      "orcid": "https://orcid.org/0000-0001-9614-4831",
+      "h_index": 68,
+      "i10_index": 141,
+      "works_count": 207,
+      "cited_by_count": 21559,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5076375120",
+      "display_name": "Fei Qi",
+      "orcid": "https://orcid.org/0000-0003-3638-714X",
+      "h_index": 67,
+      "i10_index": 266,
+      "works_count": 499,
+      "cited_by_count": 19563,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5049124791",
+      "display_name": "A. Zeeshan",
+      "orcid": "https://orcid.org/0000-0002-2641-1575",
+      "h_index": 67,
+      "i10_index": 226,
+      "works_count": 304,
+      "cited_by_count": 14605,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5108669888",
+      "display_name": "Han E. H. Meijer",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 194,
+      "works_count": 333,
+      "cited_by_count": 14151,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5113725612",
+      "display_name": "Horst Henning Winter",
+      "orcid": "https://orcid.org/0000-0002-5470-7736",
+      "h_index": 67,
+      "i10_index": 178,
+      "works_count": 300,
+      "cited_by_count": 19315,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5076123496",
+      "display_name": "Pierre‐Alexandre Glaude",
+      "orcid": "https://orcid.org/0000-0001-9166-8388",
+      "h_index": 67,
+      "i10_index": 154,
+      "works_count": 264,
+      "cited_by_count": 12334,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5000506504",
+      "display_name": "Guangsheng Luo",
+      "orcid": "https://orcid.org/0000-0002-8466-4618",
+      "h_index": 66,
+      "i10_index": 436,
+      "works_count": 584,
+      "cited_by_count": 19344,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5042096581",
+      "display_name": "Noreen Sher Akbar",
+      "orcid": "https://orcid.org/0000-0003-4530-5978",
+      "h_index": 66,
+      "i10_index": 306,
+      "works_count": 454,
+      "cited_by_count": 15564,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Fluid Flow and Transfer Processes -- 9.1",
+      "id": "https://openalex.org/A5101421714",
+      "display_name": "Ahmed F. Ghoniem",
+      "orcid": "https://orcid.org/0000-0001-8730-272X",
+      "h_index": 66,
+      "i10_index": 286,
+      "works_count": 593,
+      "cited_by_count": 16838,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Fluid Flow and Transfer Processes -- 9.0",
+      "id": "https://openalex.org/A5040929731",
+      "display_name": "Nhan Phan-Thien",
+      "orcid": "https://orcid.org/0000-0003-3716-7907",
+      "h_index": 66,
+      "i10_index": 278,
+      "works_count": 511,
+      "cited_by_count": 15828,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Fluid Flow and Transfer Processes -- 9.0",
+      "id": "https://openalex.org/A5043422507",
+      "display_name": "William A. Wakeham",
+      "orcid": "https://orcid.org/0000-0002-0838-370X",
+      "h_index": 66,
+      "i10_index": 272,
+      "works_count": 487,
+      "cited_by_count": 18930,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemistry",
+        "Chemical Engineering",
+        "Mathematics",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Fluid Flow and Transfer Processes -- 9.0",
+      "id": "https://openalex.org/A5038307738",
+      "display_name": "Matthias Kraume",
+      "orcid": "https://orcid.org/0000-0002-3116-7220",
+      "h_index": 66,
+      "i10_index": 262,
+      "works_count": 667,
+      "cited_by_count": 16583,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Fluid Flow and Transfer Processes -- 9.0",
+      "id": "https://openalex.org/A5108480205",
+      "display_name": "Howard Brenner",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 217,
+      "works_count": 370,
+      "cited_by_count": 23717,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Fluid Flow and Transfer Processes -- 9.0",
+      "id": "https://openalex.org/A5000218278",
+      "display_name": "John B. Heywood",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 186,
+      "works_count": 326,
+      "cited_by_count": 13486,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5101979117",
+      "display_name": "Alan Williams",
+      "orcid": "https://orcid.org/0000-0002-9841-3203",
+      "h_index": 66,
+      "i10_index": 185,
+      "works_count": 269,
+      "cited_by_count": 12993,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Energy",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5054068264",
+      "display_name": "Constantine D. Rakopoulos",
+      "orcid": "https://orcid.org/0000-0002-1378-1171",
+      "h_index": 66,
+      "i10_index": 174,
+      "works_count": 203,
+      "cited_by_count": 14671,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5042065845",
+      "display_name": "M. Hatami",
+      "orcid": "https://orcid.org/0000-0001-5657-6445",
+      "h_index": 66,
+      "i10_index": 171,
+      "works_count": 248,
+      "cited_by_count": 13305,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5033277028",
+      "display_name": "Nils Peters",
+      "orcid": "https://orcid.org/0000-0003-0860-5517",
+      "h_index": 66,
+      "i10_index": 166,
+      "works_count": 247,
+      "cited_by_count": 18265,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5042161653",
+      "display_name": "Martin Kröger",
+      "orcid": "https://orcid.org/0000-0003-1402-6714",
+      "h_index": 65,
+      "i10_index": 301,
+      "works_count": 1445,
+      "cited_by_count": 17493,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Chemistry",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5016858149",
+      "display_name": "Savvas George Hatzikiriakos",
+      "orcid": "https://orcid.org/0000-0002-1456-7927",
+      "h_index": 65,
+      "i10_index": 243,
+      "works_count": 369,
+      "cited_by_count": 14721,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5039784451",
+      "display_name": "Rodney O. Fox",
+      "orcid": "https://orcid.org/0000-0003-1944-1861",
+      "h_index": 65,
+      "i10_index": 205,
+      "works_count": 504,
+      "cited_by_count": 16589,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5029434875",
+      "display_name": "Christof Schulz",
+      "orcid": "https://orcid.org/0000-0002-6879-4826",
+      "h_index": 64,
+      "i10_index": 315,
+      "works_count": 630,
+      "cited_by_count": 16569,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5043925036",
+      "display_name": "Hongming Xu",
+      "orcid": "https://orcid.org/0000-0001-7241-8383",
+      "h_index": 64,
+      "i10_index": 284,
+      "works_count": 482,
+      "cited_by_count": 13988,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5065939686",
+      "display_name": "Mingfa Yao",
+      "orcid": "https://orcid.org/0000-0002-7293-8714",
+      "h_index": 64,
+      "i10_index": 276,
+      "works_count": 447,
+      "cited_by_count": 16853,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5060232456",
+      "display_name": "Suk Ho Chung",
+      "orcid": "https://orcid.org/0000-0001-8782-312X",
+      "h_index": 64,
+      "i10_index": 215,
+      "works_count": 388,
+      "cited_by_count": 12793,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Fluid Flow and Transfer Processes -- 8.9",
+      "id": "https://openalex.org/A5000053135",
+      "display_name": "Bin Yang",
+      "orcid": "https://orcid.org/0000-0001-7333-0017",
+      "h_index": 64,
+      "i10_index": 211,
+      "works_count": 386,
+      "cited_by_count": 13500,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Earth and Planetary Sciences",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5062457472",
+      "display_name": "Craig A. Taatjes",
+      "orcid": "https://orcid.org/0000-0002-9271-0282",
+      "h_index": 64,
+      "i10_index": 196,
+      "works_count": 385,
+      "cited_by_count": 15131,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Earth and Planetary Sciences",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5086566046",
+      "display_name": "Eric S. G. Shaqfeh",
+      "orcid": "https://orcid.org/0000-0001-8241-2946",
+      "h_index": 64,
+      "i10_index": 192,
+      "works_count": 338,
+      "cited_by_count": 14110,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5052385071",
+      "display_name": "Tom C. B. McLeish",
+      "orcid": "https://orcid.org/0000-0002-2025-0299",
+      "h_index": 64,
+      "i10_index": 182,
+      "works_count": 492,
+      "cited_by_count": 19425,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5032355967",
+      "display_name": "Gregory J. Smallwood",
+      "orcid": "https://orcid.org/0000-0002-6602-1926",
+      "h_index": 64,
+      "i10_index": 174,
+      "works_count": 311,
+      "cited_by_count": 13664,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5068871394",
+      "display_name": "C.S. Cheung",
+      "orcid": "https://orcid.org/0000-0002-7704-7021",
+      "h_index": 64,
+      "i10_index": 162,
+      "works_count": 239,
+      "cited_by_count": 12287,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5010697127",
+      "display_name": "Lyle M. Pickett",
+      "orcid": "https://orcid.org/0000-0002-0925-7027",
+      "h_index": 64,
+      "i10_index": 133,
+      "works_count": 268,
+      "cited_by_count": 12930,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5077581382",
+      "display_name": "Andreas M. Dreizler",
+      "orcid": "https://orcid.org/0000-0001-5803-7947",
+      "h_index": 63,
+      "i10_index": 288,
+      "works_count": 628,
+      "cited_by_count": 13595,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5004238860",
+      "display_name": "Changwei Ji",
+      "orcid": "https://orcid.org/0000-0002-9160-1500",
+      "h_index": 63,
+      "i10_index": 239,
+      "works_count": 299,
+      "cited_by_count": 11539,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5069221650",
+      "display_name": "Donald L. Koch",
+      "orcid": "https://orcid.org/0000-0002-5474-879X",
+      "h_index": 63,
+      "i10_index": 187,
+      "works_count": 330,
+      "cited_by_count": 15056,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5063337828",
+      "display_name": "Roland G. Winkler",
+      "orcid": "https://orcid.org/0000-0002-7513-0796",
+      "h_index": 63,
+      "i10_index": 179,
+      "works_count": 319,
+      "cited_by_count": 12822,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Chemistry",
+        "Physics and Astronomy",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Fluid Flow and Transfer Processes -- 8.8",
+      "id": "https://openalex.org/A5046627006",
+      "display_name": "Fengshan Liu",
+      "orcid": "https://orcid.org/0000-0002-1790-6381",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 339,
+      "cited_by_count": 12608,
+      "discipline": "Fluid Flow and Transfer Processes",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Fluid Flow and Transfer Processes",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    }
+  ]
+}

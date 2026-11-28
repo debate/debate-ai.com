@@ -54,7 +54,7 @@ export interface SidebarVideoLink {
 
 /** Debate Rounds — the round videos of every format combined (no per-format
  *  split), with the lecture library's Formats section (Worlds, NSDA Speech,
- *  Demo Debates, Open Super Debates, Parli …) listed on its page. First child
+ *  Demo Debates, Open Public, Parli …) listed on its page. First child
  *  under "Videos". The per-format pages (`/videos/college`, `/videos/policy`,
  *  `/videos/ld`, `/videos/pf`) and bare `/videos` still render; the page links
  *  to them from its format badges. */
