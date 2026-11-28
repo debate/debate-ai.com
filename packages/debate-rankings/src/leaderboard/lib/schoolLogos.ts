@@ -38,6 +38,7 @@ import {
   IconSchoolKinkaid,
   IconSchoolLexington,
   IconSchoolLiberty,
+  IconSchoolLouisville,
   IconSchoolLoyola,
   IconSchoolLoyolaChicago,
   IconSchoolLiberalArtsAndScience,
@@ -126,6 +127,7 @@ export const SCHOOL_LOGO_MAP: Record<string, SchoolLogo> = {
   "lexington": logoSrc(IconSchoolLexington),
   "liberal-arts-and-science": logoSrc(IconSchoolLiberalArtsAndScience),
   "liberty": logoSrc(IconSchoolLiberty),
+  "louisville": logoSrc(IconSchoolLouisville),
   // Plain "loyola" is Loyola High School (CA) in the rankings, not Loyola Chicago.
   "loyola": logoSrc(IconSchoolLoyola),
   "loyola-chicago": logoSrc(IconSchoolLoyolaChicago),
@@ -233,6 +235,9 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
   "kinkaid-school": "kinkaid",
   // Liberty
   "liberty-flames": "liberty",
+  // Louisville
+  uofl: "louisville",
+  "louisville-cardinals": "louisville",
   // Loyola Chicago
   "loyola-university-chicago": "loyola-chicago",
   "loyola-university-chicago-il": "loyola-chicago",
@@ -323,9 +328,11 @@ const SCHOOL_LOGO_ALIASES: Record<string, string> = {
 
 /**
  * Schools whose name trims down to another school's short name, so they
- * would borrow its logo: Berkeley Preparatory School (Tampa) is not Cal.
+ * would borrow its logo: Berkeley Preparatory School (Tampa) is not Cal, and
+ * Louisville High School (Woodland Hills, CA) is not the University of Louisville.
  */
-const NOT_THE_SHORT_NAME = /^(?:the-)?berkeley-prep(?:aratory)?(?:-school)?$/;
+const NOT_THE_SHORT_NAME =
+  /^(?:the-)?(?:berkeley-prep(?:aratory)?(?:-school)?|louisville-(?:high-school|hs))$/;
 
 /** Trailing words a school name can carry that never change the school. */
 const SCHOOL_SUFFIXES =

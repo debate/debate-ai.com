@@ -262,6 +262,10 @@ const NOT_LOCAL_STORAGE = new Set([
   "toolRecordSyncHydratedAt",
   // Demo Debates category slug (`DEMO_CATEGORY_KEY`, the `/videos/demo_debates` URL and the `category` query value), not a store.
   "demo_debates",
+  // Open Public view and Open Super Debates category slugs (`OPEN_PUBLIC_CATEGORY_KEY`, `SUPER_DEBATE_CATEGORY_KEY`
+  // in packages/debate-videos/src/data/open-public.ts, the `/lectures/open_public` URLs), not stores.
+  "open_public",
+  "open_super_debates",
   // Admin Emails Resend API key: the `email_settings` row key in D1 (apps/debate-web/lib/emails/settings.ts).
   // A secret stored encrypted server-side and never sent to the browser, so it can never sync or sit in any storage.
   "resend_api_key",

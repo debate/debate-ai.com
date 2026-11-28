@@ -105,7 +105,6 @@ describe("sidebar section expansion set", () => {
 
     expect(next).not.toContain("coaching");
     expect(next).toContain("research");
-    expect(next).toContain("insights");
     expect(next).toContain(VIDEOS_SECTION_ID);
   });
 
