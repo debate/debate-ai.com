@@ -1,0 +1,6207 @@
+{
+  "kind": "subfield",
+  "id": 2708,
+  "name": "Dermatology",
+  "total_in_scrape": 325,
+  "count": 325,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Dermatology -- 9.9",
+      "id": "https://openalex.org/A5080337749",
+      "display_name": "James G. Krueger",
+      "orcid": "https://orcid.org/0000-0002-3775-1778",
+      "h_index": 149,
+      "i10_index": 465,
+      "works_count": 753,
+      "cited_by_count": 76634,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Dermatology -- 9.9",
+      "id": "https://openalex.org/A5055585390",
+      "display_name": "Richard L. Gallo",
+      "orcid": "https://orcid.org/0000-0002-1401-7861",
+      "h_index": 145,
+      "i10_index": 396,
+      "works_count": 705,
+      "cited_by_count": 80991,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Dermatology -- 9.9",
+      "id": "https://openalex.org/A5050608918",
+      "display_name": "Peter M. Elias",
+      "orcid": "https://orcid.org/0000-0001-7989-4032",
+      "h_index": 144,
+      "i10_index": 517,
+      "works_count": 705,
+      "cited_by_count": 64804,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Dermatology -- 9.9",
+      "id": "https://openalex.org/A5091156366",
+      "display_name": "Marcus Maurer",
+      "orcid": "https://orcid.org/0000-0002-4121-481X",
+      "h_index": 142,
+      "i10_index": 766,
+      "works_count": 1335,
+      "cited_by_count": 73795,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Dermatology -- 9.9",
+      "id": "https://openalex.org/A5026388597",
+      "display_name": "Donald Y.M. Leung",
+      "orcid": "https://orcid.org/0000-0002-0177-3844",
+      "h_index": 141,
+      "i10_index": 498,
+      "works_count": 1161,
+      "cited_by_count": 72249,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Dermatology -- 9.9",
+      "id": "https://openalex.org/A5082322510",
+      "display_name": "Ralf Paus",
+      "orcid": "https://orcid.org/0000-0002-3492-9358",
+      "h_index": 139,
+      "i10_index": 652,
+      "works_count": 1247,
+      "cited_by_count": 69754,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5078821076",
+      "display_name": "Christopher E.M. Griffiths",
+      "orcid": "https://orcid.org/0000-0001-5371-4427",
+      "h_index": 137,
+      "i10_index": 701,
+      "works_count": 1562,
+      "cited_by_count": 81959,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5038505651",
+      "display_name": "Mark Lebwohl",
+      "orcid": "https://orcid.org/0000-0002-4705-5303",
+      "h_index": 129,
+      "i10_index": 597,
+      "works_count": 1537,
+      "cited_by_count": 64611,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5024365532",
+      "display_name": "Emma Guttman‐Yassky",
+      "orcid": "https://orcid.org/0000-0002-9363-324X",
+      "h_index": 122,
+      "i10_index": 400,
+      "works_count": 870,
+      "cited_by_count": 53756,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5020273160",
+      "display_name": "Hywel C Williams",
+      "orcid": "https://orcid.org/0000-0002-5646-3093",
+      "h_index": 121,
+      "i10_index": 463,
+      "works_count": 900,
+      "cited_by_count": 132621,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5108080994",
+      "display_name": "Kenneth R. Feingold",
+      "orcid": null,
+      "h_index": 121,
+      "i10_index": 389,
+      "works_count": 545,
+      "cited_by_count": 47658,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5005798011",
+      "display_name": "John J. Voorhees",
+      "orcid": "https://orcid.org/0000-0003-1856-785X",
+      "h_index": 120,
+      "i10_index": 456,
+      "works_count": 616,
+      "cited_by_count": 56422,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5007042386",
+      "display_name": "Christos C. Zouboulis",
+      "orcid": "https://orcid.org/0000-0003-1646-2608",
+      "h_index": 119,
+      "i10_index": 599,
+      "works_count": 1178,
+      "cited_by_count": 54039,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5021862730",
+      "display_name": "Thomas R.M. Bieber",
+      "orcid": "https://orcid.org/0000-0002-8800-3817",
+      "h_index": 117,
+      "i10_index": 485,
+      "works_count": 1066,
+      "cited_by_count": 60524,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5020095047",
+      "display_name": "Amy S. Paller",
+      "orcid": "https://orcid.org/0000-0001-6187-6549",
+      "h_index": 116,
+      "i10_index": 551,
+      "works_count": 1233,
+      "cited_by_count": 56632,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5000572878",
+      "display_name": "Kristian Reich",
+      "orcid": "https://orcid.org/0000-0001-5248-4332",
+      "h_index": 114,
+      "i10_index": 405,
+      "works_count": 899,
+      "cited_by_count": 48195,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Dermatology -- 9.8",
+      "id": "https://openalex.org/A5011739266",
+      "display_name": "Jonathan I. Silverberg",
+      "orcid": "https://orcid.org/0000-0003-3686-7805",
+      "h_index": 113,
+      "i10_index": 576,
+      "works_count": 1297,
+      "cited_by_count": 70793,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5046500631",
+      "display_name": "Adèle C. Green",
+      "orcid": "https://orcid.org/0000-0002-2753-4841",
+      "h_index": 113,
+      "i10_index": 517,
+      "works_count": 823,
+      "cited_by_count": 48734,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5079571425",
+      "display_name": "Thomas Anton Luger",
+      "orcid": "https://orcid.org/0000-0003-1397-1626",
+      "h_index": 111,
+      "i10_index": 433,
+      "works_count": 762,
+      "cited_by_count": 44316,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5087050293",
+      "display_name": "Gregor B. E. Jemec",
+      "orcid": "https://orcid.org/0000-0002-0712-2540",
+      "h_index": 110,
+      "i10_index": 549,
+      "works_count": 1017,
+      "cited_by_count": 47462,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5030460763",
+      "display_name": "Madeleine A. Duvic",
+      "orcid": "https://orcid.org/0000-0002-8971-4565",
+      "h_index": 108,
+      "i10_index": 508,
+      "works_count": 910,
+      "cited_by_count": 46777,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5057661348",
+      "display_name": "David J. Margolis",
+      "orcid": "https://orcid.org/0000-0002-0506-8085",
+      "h_index": 108,
+      "i10_index": 352,
+      "works_count": 603,
+      "cited_by_count": 77716,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5110049863",
+      "display_name": "Wolfram Sterry",
+      "orcid": null,
+      "h_index": 107,
+      "i10_index": 525,
+      "works_count": 960,
+      "cited_by_count": 45837,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5006964107",
+      "display_name": "Steven R. Feldman",
+      "orcid": "https://orcid.org/0000-0002-0090-6289",
+      "h_index": 106,
+      "i10_index": 873,
+      "works_count": 2038,
+      "cited_by_count": 61344,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5016730691",
+      "display_name": "Thomas Werfel",
+      "orcid": "https://orcid.org/0000-0001-6830-7672",
+      "h_index": 106,
+      "i10_index": 504,
+      "works_count": 1219,
+      "cited_by_count": 45641,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5016818733",
+      "display_name": "Giampiero Girolomoni",
+      "orcid": "https://orcid.org/0000-0001-8548-0493",
+      "h_index": 106,
+      "i10_index": 493,
+      "works_count": 909,
+      "cited_by_count": 42799,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5080652339",
+      "display_name": "W.H. Irwin McLean",
+      "orcid": "https://orcid.org/0000-0001-5539-5757",
+      "h_index": 105,
+      "i10_index": 277,
+      "works_count": 392,
+      "cited_by_count": 40400,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Dermatology -- 9.7",
+      "id": "https://openalex.org/A5023533946",
+      "display_name": "Kenji Kabashima",
+      "orcid": "https://orcid.org/0000-0002-0773-0554",
+      "h_index": 103,
+      "i10_index": 460,
+      "works_count": 1201,
+      "cited_by_count": 42541,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5037531417",
+      "display_name": "Thomas Ruzicka",
+      "orcid": "https://orcid.org/0000-0002-9596-1749",
+      "h_index": 102,
+      "i10_index": 524,
+      "works_count": 1059,
+      "cited_by_count": 42679,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5100603158",
+      "display_name": "Aditya K. Gupta",
+      "orcid": "https://orcid.org/0000-0002-8664-7723",
+      "h_index": 101,
+      "i10_index": 537,
+      "works_count": 1024,
+      "cited_by_count": 37649,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5069079748",
+      "display_name": "Rein Willemze",
+      "orcid": "https://orcid.org/0000-0002-4561-7616",
+      "h_index": 100,
+      "i10_index": 313,
+      "works_count": 531,
+      "cited_by_count": 41595,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5102906652",
+      "display_name": "Howard I. Maïbach",
+      "orcid": "https://orcid.org/0000-0002-6762-4016",
+      "h_index": 99,
+      "i10_index": 623,
+      "works_count": 1272,
+      "cited_by_count": 39386,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5090549024",
+      "display_name": "Detlef Zillikens",
+      "orcid": "https://orcid.org/0000-0002-5668-307X",
+      "h_index": 98,
+      "i10_index": 475,
+      "works_count": 758,
+      "cited_by_count": 36518,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5071887916",
+      "display_name": "Jean Krutmann",
+      "orcid": "https://orcid.org/0000-0001-8433-1517",
+      "h_index": 98,
+      "i10_index": 311,
+      "works_count": 664,
+      "cited_by_count": 31537,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5015006218",
+      "display_name": "Jacob Pontoppidan Thyssen",
+      "orcid": "https://orcid.org/0000-0003-3770-1743",
+      "h_index": 96,
+      "i10_index": 554,
+      "works_count": 1001,
+      "cited_by_count": 40160,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5085384594",
+      "display_name": "Ian Kimber",
+      "orcid": "https://orcid.org/0000-0002-3538-8581",
+      "h_index": 96,
+      "i10_index": 491,
+      "works_count": 849,
+      "cited_by_count": 35338,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5032105584",
+      "display_name": "Gil Yosipovitch",
+      "orcid": "https://orcid.org/0000-0001-6303-1822",
+      "h_index": 96,
+      "i10_index": 443,
+      "works_count": 966,
+      "cited_by_count": 33575,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5042296138",
+      "display_name": "Alain Taïeb",
+      "orcid": "https://orcid.org/0000-0002-0928-8608",
+      "h_index": 96,
+      "i10_index": 383,
+      "works_count": 832,
+      "cited_by_count": 39116,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Dermatology -- 9.6",
+      "id": "https://openalex.org/A5045431309",
+      "display_name": "Takashi Hashimoto",
+      "orcid": "https://orcid.org/0000-0002-0144-3255",
+      "h_index": 95,
+      "i10_index": 641,
+      "works_count": 1343,
+      "cited_by_count": 38329,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5109356977",
+      "display_name": "David Samuel Alberts",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 460,
+      "works_count": 810,
+      "cited_by_count": 43810,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5075752283",
+      "display_name": "Masayuki Amagai",
+      "orcid": "https://orcid.org/0000-0003-3314-7052",
+      "h_index": 95,
+      "i10_index": 397,
+      "works_count": 795,
+      "cited_by_count": 37872,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5087084947",
+      "display_name": "Stephan Weidinger",
+      "orcid": "https://orcid.org/0000-0003-3944-252X",
+      "h_index": 95,
+      "i10_index": 291,
+      "works_count": 639,
+      "cited_by_count": 38956,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5040541115",
+      "display_name": "Martin S. Steinhoff",
+      "orcid": "https://orcid.org/0000-0002-7090-2187",
+      "h_index": 95,
+      "i10_index": 266,
+      "works_count": 476,
+      "cited_by_count": 33435,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5086926559",
+      "display_name": "Iris Zalaudek",
+      "orcid": "https://orcid.org/0000-0002-7878-4955",
+      "h_index": 94,
+      "i10_index": 450,
+      "works_count": 872,
+      "cited_by_count": 35143,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5082011794",
+      "display_name": "Carle F. Paul",
+      "orcid": "https://orcid.org/0000-0003-0165-5263",
+      "h_index": 94,
+      "i10_index": 336,
+      "works_count": 921,
+      "cited_by_count": 31945,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5080237247",
+      "display_name": "Andrew Blauvelt",
+      "orcid": "https://orcid.org/0000-0002-2633-985X",
+      "h_index": 94,
+      "i10_index": 316,
+      "works_count": 823,
+      "cited_by_count": 42236,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5073971261",
+      "display_name": "Mark R. Pittelkow",
+      "orcid": "https://orcid.org/0000-0001-7913-0294",
+      "h_index": 94,
+      "i10_index": 295,
+      "works_count": 506,
+      "cited_by_count": 30618,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5072653864",
+      "display_name": "Giuseppe Argenziano",
+      "orcid": "https://orcid.org/0000-0003-1413-8214",
+      "h_index": 93,
+      "i10_index": 614,
+      "works_count": 1325,
+      "cited_by_count": 39367,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5081156249",
+      "display_name": "Jeanne Duus Johansen",
+      "orcid": "https://orcid.org/0000-0002-3537-8463",
+      "h_index": 93,
+      "i10_index": 508,
+      "works_count": 695,
+      "cited_by_count": 32518,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5071022580",
+      "display_name": "Daniel C. Liebler",
+      "orcid": "https://orcid.org/0000-0002-7873-3031",
+      "h_index": 93,
+      "i10_index": 344,
+      "works_count": 1957,
+      "cited_by_count": 45750,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Dermatology -- 9.5",
+      "id": "https://openalex.org/A5108385554",
+      "display_name": "Jan Dositheus Bos",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 292,
+      "works_count": 470,
+      "cited_by_count": 31894,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5077876525",
+      "display_name": "Jacek Cezary Szepietowski",
+      "orcid": "https://orcid.org/0000-0003-0766-6342",
+      "h_index": 92,
+      "i10_index": 502,
+      "works_count": 1052,
+      "cited_by_count": 39730,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5091680581",
+      "display_name": "John Alexander McGrath",
+      "orcid": "https://orcid.org/0000-0002-3708-9964",
+      "h_index": 92,
+      "i10_index": 485,
+      "works_count": 1089,
+      "cited_by_count": 35986,
+      "discipline": "Dermatology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5021906809",
+      "display_name": "Lars Einar French",
+      "orcid": "https://orcid.org/0000-0002-4629-1486",
+      "h_index": 92,
+      "i10_index": 440,
+      "works_count": 864,
+      "cited_by_count": 37789,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5066793527",
+      "display_name": "Jürgen M. Lademann",
+      "orcid": "https://orcid.org/0000-0003-1828-7460",
+      "h_index": 92,
+      "i10_index": 411,
+      "works_count": 645,
+      "cited_by_count": 30820,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5080662298",
+      "display_name": "Luigi Naldi",
+      "orcid": "https://orcid.org/0000-0002-3160-2835",
+      "h_index": 92,
+      "i10_index": 308,
+      "works_count": 635,
+      "cited_by_count": 151556,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5032356095",
+      "display_name": "Barbara A. Gilchrest",
+      "orcid": "https://orcid.org/0000-0001-9906-1898",
+      "h_index": 92,
+      "i10_index": 271,
+      "works_count": 450,
+      "cited_by_count": 27552,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5067167243",
+      "display_name": "Martin Metz",
+      "orcid": "https://orcid.org/0000-0002-4070-9976",
+      "h_index": 92,
+      "i10_index": 249,
+      "works_count": 516,
+      "cited_by_count": 28629,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5086349143",
+      "display_name": "Gary J. Fisher",
+      "orcid": "https://orcid.org/0000-0002-6065-6242",
+      "h_index": 92,
+      "i10_index": 241,
+      "works_count": 310,
+      "cited_by_count": 32336,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5084157436",
+      "display_name": "Antonellá Tosti",
+      "orcid": "https://orcid.org/0000-0001-5516-4043",
+      "h_index": 91,
+      "i10_index": 669,
+      "works_count": 1469,
+      "cited_by_count": 41402,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5031933716",
+      "display_name": "Howard Ira Maibach",
+      "orcid": "https://orcid.org/0000-0003-0430-475X",
+      "h_index": 91,
+      "i10_index": 620,
+      "works_count": 1260,
+      "cited_by_count": 36226,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Dermatology -- 9.4",
+      "id": "https://openalex.org/A5044490713",
+      "display_name": "Angela M. Christiano",
+      "orcid": "https://orcid.org/0000-0002-6071-9784",
+      "h_index": 91,
+      "i10_index": 336,
+      "works_count": 590,
+      "cited_by_count": 31444,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5077872633",
+      "display_name": "Alan David Irvine",
+      "orcid": "https://orcid.org/0000-0002-9048-2044",
+      "h_index": 91,
+      "i10_index": 293,
+      "works_count": 701,
+      "cited_by_count": 43430,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5015713295",
+      "display_name": "Irene M. Leigh",
+      "orcid": "https://orcid.org/0000-0001-8536-6439",
+      "h_index": 91,
+      "i10_index": 262,
+      "works_count": 372,
+      "cited_by_count": 26790,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5000478173",
+      "display_name": "Stephen Keith Tyring",
+      "orcid": "https://orcid.org/0000-0002-3337-0580",
+      "h_index": 90,
+      "i10_index": 496,
+      "works_count": 936,
+      "cited_by_count": 38289,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5034864957",
+      "display_name": "Torkil Menné",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 423,
+      "works_count": 565,
+      "cited_by_count": 27195,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5071907436",
+      "display_name": "Lawrence F. Eichenfield",
+      "orcid": "https://orcid.org/0000-0002-2760-0474",
+      "h_index": 90,
+      "i10_index": 360,
+      "works_count": 792,
+      "cited_by_count": 32608,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5044024585",
+      "display_name": "François Aubin",
+      "orcid": "https://orcid.org/0000-0002-1421-4996",
+      "h_index": 90,
+      "i10_index": 347,
+      "works_count": 1059,
+      "cited_by_count": 48472,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5073242624",
+      "display_name": "Mauro Picardo",
+      "orcid": "https://orcid.org/0000-0003-4899-6639",
+      "h_index": 90,
+      "i10_index": 312,
+      "works_count": 516,
+      "cited_by_count": 29156,
+      "discipline": "Dermatology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5058475475",
+      "display_name": "Johann Eli Gudjonsson",
+      "orcid": "https://orcid.org/0000-0002-0080-0812",
+      "h_index": 90,
+      "i10_index": 300,
+      "works_count": 766,
+      "cited_by_count": 33011,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5015233764",
+      "display_name": "Wolfgang J. C. Uter",
+      "orcid": "https://orcid.org/0000-0002-4498-3710",
+      "h_index": 89,
+      "i10_index": 402,
+      "works_count": 938,
+      "cited_by_count": 30518,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5002599922",
+      "display_name": "Mario E. Lacouture",
+      "orcid": "https://orcid.org/0000-0002-4818-3710",
+      "h_index": 89,
+      "i10_index": 296,
+      "works_count": 684,
+      "cited_by_count": 31954,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Dermatology -- 9.3",
+      "id": "https://openalex.org/A5068469347",
+      "display_name": "Martine Bagot",
+      "orcid": "https://orcid.org/0000-0002-1631-5192",
+      "h_index": 88,
+      "i10_index": 451,
+      "works_count": 1530,
+      "cited_by_count": 32003,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5112719471",
+      "display_name": "Albert M. Kligman",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 341,
+      "works_count": 851,
+      "cited_by_count": 32810,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5016449107",
+      "display_name": "Alexander Kapp",
+      "orcid": "https://orcid.org/0000-0002-1748-6276",
+      "h_index": 88,
+      "i10_index": 312,
+      "works_count": 620,
+      "cited_by_count": 29686,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5079550119",
+      "display_name": "Martin Schaller",
+      "orcid": "https://orcid.org/0000-0002-7930-1919",
+      "h_index": 88,
+      "i10_index": 297,
+      "works_count": 581,
+      "cited_by_count": 27264,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5085815516",
+      "display_name": "Jon M. Hanifin",
+      "orcid": "https://orcid.org/0000-0003-1736-4073",
+      "h_index": 88,
+      "i10_index": 240,
+      "works_count": 368,
+      "cited_by_count": 39064,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5003599279",
+      "display_name": "Tamar E. C. Nijsten",
+      "orcid": "https://orcid.org/0000-0001-9940-2875",
+      "h_index": 87,
+      "i10_index": 323,
+      "works_count": 560,
+      "cited_by_count": 28968,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5112106941",
+      "display_name": "Thomas Ludwig Diepgen",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 298,
+      "works_count": 528,
+      "cited_by_count": 24707,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5111551156",
+      "display_name": "J.‐P. Ortonne",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 284,
+      "works_count": 661,
+      "cited_by_count": 21944,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5008906753",
+      "display_name": "Andrew Yule Finlay",
+      "orcid": "https://orcid.org/0000-0003-2143-1646",
+      "h_index": 87,
+      "i10_index": 257,
+      "works_count": 510,
+      "cited_by_count": 39083,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Immunology and Microbiology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5073881883",
+      "display_name": "Robert Allen Schwartz",
+      "orcid": "https://orcid.org/0000-0003-3036-3825",
+      "h_index": 86,
+      "i10_index": 401,
+      "works_count": 807,
+      "cited_by_count": 29227,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5000798990",
+      "display_name": "Henry W. Lim",
+      "orcid": "https://orcid.org/0000-0002-1576-1115",
+      "h_index": 86,
+      "i10_index": 322,
+      "works_count": 596,
+      "cited_by_count": 26142,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Dermatology -- 9.2",
+      "id": "https://openalex.org/A5059337854",
+      "display_name": "Alexa B. Kimball",
+      "orcid": "https://orcid.org/0000-0001-9405-0479",
+      "h_index": 86,
+      "i10_index": 301,
+      "works_count": 599,
+      "cited_by_count": 32039,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5073722593",
+      "display_name": "Andreas Wollenberg",
+      "orcid": "https://orcid.org/0000-0003-0177-8722",
+      "h_index": 86,
+      "i10_index": 293,
+      "works_count": 599,
+      "cited_by_count": 33008,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5112170700",
+      "display_name": "Jean‐Claude Roujeau",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 215,
+      "works_count": 516,
+      "cited_by_count": 34412,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5074081568",
+      "display_name": "Mayte Suárez‐Fariñas",
+      "orcid": "https://orcid.org/0000-0001-8712-3553",
+      "h_index": 86,
+      "i10_index": 209,
+      "works_count": 401,
+      "cited_by_count": 30314,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5013763025",
+      "display_name": "Matthias Augustin",
+      "orcid": "https://orcid.org/0000-0002-4026-8728",
+      "h_index": 85,
+      "i10_index": 565,
+      "works_count": 1442,
+      "cited_by_count": 33759,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5014865981",
+      "display_name": "J.‐H. Saurat",
+      "orcid": "https://orcid.org/0000-0002-6668-2337",
+      "h_index": 85,
+      "i10_index": 470,
+      "works_count": 1094,
+      "cited_by_count": 27800,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5036164605",
+      "display_name": "Sonja Ständer",
+      "orcid": "https://orcid.org/0000-0003-3612-7786",
+      "h_index": 85,
+      "i10_index": 352,
+      "works_count": 844,
+      "cited_by_count": 28324,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5050985511",
+      "display_name": "P. Joly",
+      "orcid": "https://orcid.org/0000-0002-5734-0255",
+      "h_index": 85,
+      "i10_index": 341,
+      "works_count": 1028,
+      "cited_by_count": 29248,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5035658428",
+      "display_name": "Erwin Tschachler",
+      "orcid": "https://orcid.org/0000-0002-0248-1798",
+      "h_index": 85,
+      "i10_index": 287,
+      "works_count": 482,
+      "cited_by_count": 25289,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5065423939",
+      "display_name": "Sewon Kang",
+      "orcid": "https://orcid.org/0000-0002-7841-9392",
+      "h_index": 85,
+      "i10_index": 214,
+      "works_count": 320,
+      "cited_by_count": 32872,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5000163818",
+      "display_name": "Giovanni Pellacani",
+      "orcid": "https://orcid.org/0000-0002-7222-2951",
+      "h_index": 84,
+      "i10_index": 588,
+      "works_count": 1172,
+      "cited_by_count": 30282,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Dermatology -- 9.1",
+      "id": "https://openalex.org/A5101674678",
+      "display_name": "Hideoki Ogawa",
+      "orcid": "https://orcid.org/0000-0003-4268-8790",
+      "h_index": 84,
+      "i10_index": 478,
+      "works_count": 774,
+      "cited_by_count": 28051,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Dermatology -- 9.0",
+      "id": "https://openalex.org/A5067198663",
+      "display_name": "Enno Schmidt",
+      "orcid": "https://orcid.org/0000-0002-1206-8913",
+      "h_index": 84,
+      "i10_index": 326,
+      "works_count": 660,
+      "cited_by_count": 24870,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Dermatology -- 9.0",
+      "id": "https://openalex.org/A5077630026",
+      "display_name": "Lorenzo Cerroni",
+      "orcid": "https://orcid.org/0000-0003-4986-9113",
+      "h_index": 84,
+      "i10_index": 276,
+      "works_count": 689,
+      "cited_by_count": 32383,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Dermatology -- 9.0",
+      "id": "https://openalex.org/A5055081212",
+      "display_name": "Mark Boguniewicz",
+      "orcid": "https://orcid.org/0000-0002-1015-4439",
+      "h_index": 84,
+      "i10_index": 176,
+      "works_count": 402,
+      "cited_by_count": 30003,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Dermatology -- 9.0",
+      "id": "https://openalex.org/A5103111528",
+      "display_name": "Peter C.M. van de Kerkhof",
+      "orcid": "https://orcid.org/0000-0003-0084-3131",
+      "h_index": 83,
+      "i10_index": 422,
+      "works_count": 721,
+      "cited_by_count": 25973,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Dermatology -- 9.0",
+      "id": "https://openalex.org/A5071894286",
+      "display_name": "Jochen M. Schmitt",
+      "orcid": "https://orcid.org/0000-0003-0264-0960",
+      "h_index": 83,
+      "i10_index": 393,
+      "works_count": 762,
+      "cited_by_count": 29238,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5000743912",
+      "display_name": "Neil H. Shear",
+      "orcid": "https://orcid.org/0000-0001-9151-1145",
+      "h_index": 83,
+      "i10_index": 305,
+      "works_count": 618,
+      "cited_by_count": 25108,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5006480686",
+      "display_name": "Martin A. Weinstock",
+      "orcid": "https://orcid.org/0000-0001-5445-142X",
+      "h_index": 83,
+      "i10_index": 272,
+      "works_count": 503,
+      "cited_by_count": 64985,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5080883696",
+      "display_name": "Wolfgang Weninger",
+      "orcid": "https://orcid.org/0000-0003-3133-8699",
+      "h_index": 83,
+      "i10_index": 251,
+      "works_count": 557,
+      "cited_by_count": 31953,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5034101869",
+      "display_name": "Peter Ulrich Elsner",
+      "orcid": "https://orcid.org/0000-0001-7696-3274",
+      "h_index": 82,
+      "i10_index": 434,
+      "works_count": 1091,
+      "cited_by_count": 27066,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5087905603",
+      "display_name": "L. Misery",
+      "orcid": "https://orcid.org/0000-0001-8088-7059",
+      "h_index": 82,
+      "i10_index": 420,
+      "works_count": 1492,
+      "cited_by_count": 27441,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5109059209",
+      "display_name": "Yoshiki Miyachi",
+      "orcid": "https://orcid.org/0000-0003-1861-8071",
+      "h_index": 82,
+      "i10_index": 416,
+      "works_count": 889,
+      "cited_by_count": 27766,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5102825573",
+      "display_name": "David Arthur Basketter",
+      "orcid": "https://orcid.org/0000-0002-8239-0721",
+      "h_index": 82,
+      "i10_index": 301,
+      "works_count": 411,
+      "cited_by_count": 22392,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5066206543",
+      "display_name": "Werner Aberer",
+      "orcid": "https://orcid.org/0000-0001-6431-658X",
+      "h_index": 82,
+      "i10_index": 267,
+      "works_count": 504,
+      "cited_by_count": 27445,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5046056281",
+      "display_name": "Kevin D. Cooper",
+      "orcid": "https://orcid.org/0000-0002-1986-3602",
+      "h_index": 82,
+      "i10_index": 261,
+      "works_count": 440,
+      "cited_by_count": 25723,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5039354354",
+      "display_name": "Philip E. LeBoit",
+      "orcid": "https://orcid.org/0000-0002-8427-7730",
+      "h_index": 82,
+      "i10_index": 222,
+      "works_count": 482,
+      "cited_by_count": 24182,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5078564033",
+      "display_name": "O. Chosidow",
+      "orcid": "https://orcid.org/0000-0002-8400-4310",
+      "h_index": 81,
+      "i10_index": 365,
+      "works_count": 1080,
+      "cited_by_count": 27093,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Dermatology -- 8.9",
+      "id": "https://openalex.org/A5064465434",
+      "display_name": "Christine Bodemer",
+      "orcid": "https://orcid.org/0000-0001-8772-0905",
+      "h_index": 81,
+      "i10_index": 326,
+      "works_count": 907,
+      "cited_by_count": 30217,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5015290431",
+      "display_name": "Ulrike Blume‐Peytavi",
+      "orcid": "https://orcid.org/0000-0003-3528-3752",
+      "h_index": 81,
+      "i10_index": 296,
+      "works_count": 605,
+      "cited_by_count": 23249,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5071905026",
+      "display_name": "Annika Scheynius",
+      "orcid": "https://orcid.org/0000-0001-5520-990X",
+      "h_index": 81,
+      "i10_index": 282,
+      "works_count": 374,
+      "cited_by_count": 26288,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5015690708",
+      "display_name": "Alain Hovnanian",
+      "orcid": "https://orcid.org/0000-0003-3412-7512",
+      "h_index": 81,
+      "i10_index": 209,
+      "works_count": 434,
+      "cited_by_count": 25443,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5043225877",
+      "display_name": "Masutaka Furue",
+      "orcid": "https://orcid.org/0000-0002-2967-1073",
+      "h_index": 80,
+      "i10_index": 541,
+      "works_count": 1285,
+      "cited_by_count": 28357,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5031368365",
+      "display_name": "John P. Sundberg",
+      "orcid": "https://orcid.org/0000-0002-1523-5430",
+      "h_index": 80,
+      "i10_index": 399,
+      "works_count": 708,
+      "cited_by_count": 29787,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5036743590",
+      "display_name": "Santosh K. Katiyar",
+      "orcid": "https://orcid.org/0000-0001-5830-7652",
+      "h_index": 80,
+      "i10_index": 158,
+      "works_count": 241,
+      "cited_by_count": 19232,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5041025684",
+      "display_name": "Roland Kaufmann",
+      "orcid": "https://orcid.org/0000-0002-1614-694X",
+      "h_index": 79,
+      "i10_index": 392,
+      "works_count": 808,
+      "cited_by_count": 24589,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5037235635",
+      "display_name": "Karin Scharffetter‐Kochanek",
+      "orcid": "https://orcid.org/0000-0002-9655-685X",
+      "h_index": 79,
+      "i10_index": 249,
+      "works_count": 534,
+      "cited_by_count": 23251,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5016170192",
+      "display_name": "Harri Tapio Alenius",
+      "orcid": "https://orcid.org/0000-0003-0106-8923",
+      "h_index": 79,
+      "i10_index": 230,
+      "works_count": 407,
+      "cited_by_count": 26824,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5103275168",
+      "display_name": "Youn H. Kim",
+      "orcid": "https://orcid.org/0000-0003-2686-5873",
+      "h_index": 79,
+      "i10_index": 210,
+      "works_count": 388,
+      "cited_by_count": 24386,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5026963044",
+      "display_name": "Michael J. Cork",
+      "orcid": "https://orcid.org/0000-0003-4428-2428",
+      "h_index": 79,
+      "i10_index": 195,
+      "works_count": 417,
+      "cited_by_count": 26342,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5061849637",
+      "display_name": "Richard G B Langley",
+      "orcid": "https://orcid.org/0000-0003-4730-2164",
+      "h_index": 79,
+      "i10_index": 189,
+      "works_count": 443,
+      "cited_by_count": 29644,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5113532492",
+      "display_name": "Constantin E. Orfanos",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 403,
+      "works_count": 905,
+      "cited_by_count": 23896,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5032610869",
+      "display_name": "Michael H. Gold",
+      "orcid": "https://orcid.org/0000-0002-5183-5433",
+      "h_index": 78,
+      "i10_index": 372,
+      "works_count": 743,
+      "cited_by_count": 28986,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5037033048",
+      "display_name": "Hans Christian Wulf",
+      "orcid": "https://orcid.org/0000-0001-8060-6413",
+      "h_index": 78,
+      "i10_index": 339,
+      "works_count": 582,
+      "cited_by_count": 23046,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5079917691",
+      "display_name": "Mohammad Athar",
+      "orcid": "https://orcid.org/0000-0001-5829-7992",
+      "h_index": 78,
+      "i10_index": 313,
+      "works_count": 534,
+      "cited_by_count": 23965,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5066775464",
+      "display_name": "Khaled Ezzedine",
+      "orcid": "https://orcid.org/0000-0002-5468-4589",
+      "h_index": 78,
+      "i10_index": 280,
+      "works_count": 719,
+      "cited_by_count": 24317,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5111714319",
+      "display_name": "Helmut Kerl",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 251,
+      "works_count": 441,
+      "cited_by_count": 24037,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5029971595",
+      "display_name": "Robert Bissonnette",
+      "orcid": "https://orcid.org/0000-0001-5927-6587",
+      "h_index": 78,
+      "i10_index": 231,
+      "works_count": 537,
+      "cited_by_count": 20234,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5101490549",
+      "display_name": "Hiroshi Shimizu",
+      "orcid": "https://orcid.org/0000-0002-9930-1326",
+      "h_index": 77,
+      "i10_index": 474,
+      "works_count": 989,
+      "cited_by_count": 28404,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5064411755",
+      "display_name": "Cynthia M.J. Magro",
+      "orcid": "https://orcid.org/0000-0003-2099-2636",
+      "h_index": 77,
+      "i10_index": 310,
+      "works_count": 617,
+      "cited_by_count": 22829,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Dermatology -- 8.8",
+      "id": "https://openalex.org/A5051982352",
+      "display_name": "Craig A. Elmets",
+      "orcid": "https://orcid.org/0000-0001-7131-4697",
+      "h_index": 77,
+      "i10_index": 226,
+      "works_count": 500,
+      "cited_by_count": 27488,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5031168277",
+      "display_name": "Jiali Han",
+      "orcid": "https://orcid.org/0000-0002-8309-7092",
+      "h_index": 77,
+      "i10_index": 223,
+      "works_count": 367,
+      "cited_by_count": 19638,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5069028114",
+      "display_name": "Patricia Joan Nelemans",
+      "orcid": "https://orcid.org/0000-0002-9669-7353",
+      "h_index": 77,
+      "i10_index": 220,
+      "works_count": 362,
+      "cited_by_count": 22067,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5015905197",
+      "display_name": "Eric Lawrence Simpson",
+      "orcid": "https://orcid.org/0000-0003-0853-0252",
+      "h_index": 77,
+      "i10_index": 219,
+      "works_count": 592,
+      "cited_by_count": 26371,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5034272199",
+      "display_name": "Michael Hertl",
+      "orcid": "https://orcid.org/0000-0002-5494-2461",
+      "h_index": 77,
+      "i10_index": 218,
+      "works_count": 433,
+      "cited_by_count": 17847,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5000557894",
+      "display_name": "Sinéad Langan",
+      "orcid": "https://orcid.org/0000-0002-7022-7441",
+      "h_index": 77,
+      "i10_index": 217,
+      "works_count": 609,
+      "cited_by_count": 61490,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5090696492",
+      "display_name": "Sean J Whittaker",
+      "orcid": "https://orcid.org/0000-0003-0972-2600",
+      "h_index": 77,
+      "i10_index": 208,
+      "works_count": 473,
+      "cited_by_count": 27625,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5045699592",
+      "display_name": "Robert S. Stern",
+      "orcid": "https://orcid.org/0000-0001-5491-149X",
+      "h_index": 77,
+      "i10_index": 192,
+      "works_count": 307,
+      "cited_by_count": 26755,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5081892653",
+      "display_name": "Lisa A. Beck",
+      "orcid": "https://orcid.org/0000-0002-8452-667X",
+      "h_index": 77,
+      "i10_index": 176,
+      "works_count": 438,
+      "cited_by_count": 28153,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5009118689",
+      "display_name": "Lone Skov",
+      "orcid": "https://orcid.org/0000-0002-4784-9680",
+      "h_index": 76,
+      "i10_index": 337,
+      "works_count": 607,
+      "cited_by_count": 22385,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5035044854",
+      "display_name": "Rodney Daniel Sinclair",
+      "orcid": "https://orcid.org/0000-0001-6751-1428",
+      "h_index": 76,
+      "i10_index": 316,
+      "works_count": 709,
+      "cited_by_count": 22748,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5085831636",
+      "display_name": "Diamant Thaçi",
+      "orcid": "https://orcid.org/0000-0001-8513-550X",
+      "h_index": 76,
+      "i10_index": 273,
+      "works_count": 747,
+      "cited_by_count": 27394,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5004655672",
+      "display_name": "Eggert Stockfleth",
+      "orcid": "https://orcid.org/0000-0002-1922-9062",
+      "h_index": 76,
+      "i10_index": 270,
+      "works_count": 462,
+      "cited_by_count": 18069,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5010643311",
+      "display_name": "Enno Christophers",
+      "orcid": "https://orcid.org/0009-0001-8593-2266",
+      "h_index": 76,
+      "i10_index": 266,
+      "works_count": 574,
+      "cited_by_count": 28845,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5074599399",
+      "display_name": "Tove Agner",
+      "orcid": "https://orcid.org/0000-0002-7543-8299",
+      "h_index": 76,
+      "i10_index": 255,
+      "works_count": 405,
+      "cited_by_count": 19658,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5076078511",
+      "display_name": "Matthias Goebeler",
+      "orcid": "https://orcid.org/0000-0001-7095-9848",
+      "h_index": 76,
+      "i10_index": 249,
+      "works_count": 563,
+      "cited_by_count": 21915,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5059022065",
+      "display_name": "Joost Schalkwijk",
+      "orcid": "https://orcid.org/0000-0002-1308-1319",
+      "h_index": 76,
+      "i10_index": 245,
+      "works_count": 344,
+      "cited_by_count": 22117,
+      "discipline": "Dermatology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5042971072",
+      "display_name": "Damiano D Abeni",
+      "orcid": "https://orcid.org/0000-0002-0167-7617",
+      "h_index": 76,
+      "i10_index": 219,
+      "works_count": 435,
+      "cited_by_count": 16947,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5074658404",
+      "display_name": "Natalija Novak",
+      "orcid": "https://orcid.org/0000-0001-8146-8673",
+      "h_index": 76,
+      "i10_index": 215,
+      "works_count": 349,
+      "cited_by_count": 23064,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5044488136",
+      "display_name": "Carla A.F.M. Bruijnzeel-Koomen",
+      "orcid": "https://orcid.org/0000-0001-7027-1883",
+      "h_index": 76,
+      "i10_index": 211,
+      "works_count": 348,
+      "cited_by_count": 19859,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5004997535",
+      "display_name": "Cheng‐Ming Chuong",
+      "orcid": "https://orcid.org/0000-0001-9673-3994",
+      "h_index": 76,
+      "i10_index": 195,
+      "works_count": 302,
+      "cited_by_count": 17271,
+      "discipline": "Dermatology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5107983741",
+      "display_name": "Julia A. Segre",
+      "orcid": "https://orcid.org/0000-0001-6860-348X",
+      "h_index": 76,
+      "i10_index": 129,
+      "works_count": 230,
+      "cited_by_count": 56423,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Dermatology -- 8.7",
+      "id": "https://openalex.org/A5076209858",
+      "display_name": "Thomas J. Slaga",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 395,
+      "works_count": 691,
+      "cited_by_count": 20601,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5065164200",
+      "display_name": "Andrea W.M. Evers",
+      "orcid": "https://orcid.org/0000-0002-0090-5091",
+      "h_index": 75,
+      "i10_index": 295,
+      "works_count": 610,
+      "cited_by_count": 21736,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5062536923",
+      "display_name": "Ana Maria Giménez‐Arnau",
+      "orcid": "https://orcid.org/0000-0001-5434-7753",
+      "h_index": 75,
+      "i10_index": 288,
+      "works_count": 634,
+      "cited_by_count": 27369,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5089682153",
+      "display_name": "Alan B. Fleischer",
+      "orcid": "https://orcid.org/0000-0001-8679-3352",
+      "h_index": 75,
+      "i10_index": 287,
+      "works_count": 518,
+      "cited_by_count": 20438,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5039090860",
+      "display_name": "Rebecca Jane Dearman",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 273,
+      "works_count": 444,
+      "cited_by_count": 19842,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5065805653",
+      "display_name": "Bernhard Homey",
+      "orcid": "https://orcid.org/0000-0002-5784-4146",
+      "h_index": 75,
+      "i10_index": 213,
+      "works_count": 452,
+      "cited_by_count": 36745,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5039777507",
+      "display_name": "Carsten Flohr",
+      "orcid": "https://orcid.org/0000-0003-4884-6286",
+      "h_index": 75,
+      "i10_index": 197,
+      "works_count": 571,
+      "cited_by_count": 50024,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5044662843",
+      "display_name": "Catherine A Harwood",
+      "orcid": "https://orcid.org/0000-0002-1375-0965",
+      "h_index": 75,
+      "i10_index": 186,
+      "works_count": 419,
+      "cited_by_count": 20564,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5012251345",
+      "display_name": "Tina S. Alster",
+      "orcid": "https://orcid.org/0000-0002-2434-9448",
+      "h_index": 75,
+      "i10_index": 174,
+      "works_count": 243,
+      "cited_by_count": 15598,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5076611539",
+      "display_name": "Rudolf Happle",
+      "orcid": "https://orcid.org/0000-0002-6338-1766",
+      "h_index": 74,
+      "i10_index": 405,
+      "works_count": 799,
+      "cited_by_count": 21451,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5105367142",
+      "display_name": "Louis Dubertret",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 283,
+      "works_count": 554,
+      "cited_by_count": 19429,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5107838755",
+      "display_name": "Hans Friedrich Merk",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 253,
+      "works_count": 610,
+      "cited_by_count": 19812,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5050212078",
+      "display_name": "Lisette Schoonhoven",
+      "orcid": "https://orcid.org/0000-0002-7129-3766",
+      "h_index": 74,
+      "i10_index": 225,
+      "works_count": 456,
+      "cited_by_count": 20927,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5044522566",
+      "display_name": "M. Bruze",
+      "orcid": "https://orcid.org/0000-0002-2919-3227",
+      "h_index": 73,
+      "i10_index": 476,
+      "works_count": 2579,
+      "cited_by_count": 26403,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5112791463",
+      "display_name": "Peter Josef Altmeyer",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 427,
+      "works_count": 924,
+      "cited_by_count": 20482,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5109138350",
+      "display_name": "Richard K. Winkelmann",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 332,
+      "works_count": 488,
+      "cited_by_count": 18179,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5084171462",
+      "display_name": "Gerd Plewig",
+      "orcid": "https://orcid.org/0000-0003-3338-4330",
+      "h_index": 73,
+      "i10_index": 328,
+      "works_count": 1260,
+      "cited_by_count": 19966,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5084483753",
+      "display_name": "Thomas M. Vogt",
+      "orcid": "https://orcid.org/0000-0002-2824-5005",
+      "h_index": 73,
+      "i10_index": 317,
+      "works_count": 660,
+      "cited_by_count": 44254,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5000758369",
+      "display_name": "Dedee Frances Murrell",
+      "orcid": "https://orcid.org/0000-0003-2971-0199",
+      "h_index": 73,
+      "i10_index": 295,
+      "works_count": 765,
+      "cited_by_count": 23183,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5060318832",
+      "display_name": "Amit Gefen",
+      "orcid": "https://orcid.org/0000-0002-0223-7218",
+      "h_index": 73,
+      "i10_index": 286,
+      "works_count": 499,
+      "cited_by_count": 22707,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5077862296",
+      "display_name": "Rachel Ε. Neale",
+      "orcid": "https://orcid.org/0000-0001-7162-0854",
+      "h_index": 73,
+      "i10_index": 260,
+      "works_count": 508,
+      "cited_by_count": 26146,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5111643649",
+      "display_name": "Michael Landthaler",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 253,
+      "works_count": 428,
+      "cited_by_count": 19292,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Dermatology -- 8.6",
+      "id": "https://openalex.org/A5053736763",
+      "display_name": "Iltefat H. Hamzavi",
+      "orcid": "https://orcid.org/0000-0002-3137-5601",
+      "h_index": 73,
+      "i10_index": 216,
+      "works_count": 569,
+      "cited_by_count": 19633,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5026402548",
+      "display_name": "Gabriella Fabbrocini",
+      "orcid": "https://orcid.org/0000-0002-0064-1874",
+      "h_index": 72,
+      "i10_index": 459,
+      "works_count": 1002,
+      "cited_by_count": 23218,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5101898812",
+      "display_name": "Masashi Akiyama",
+      "orcid": "https://orcid.org/0000-0001-5863-9315",
+      "h_index": 72,
+      "i10_index": 424,
+      "works_count": 949,
+      "cited_by_count": 22236,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5011182804",
+      "display_name": "Caterina Longo",
+      "orcid": "https://orcid.org/0000-0002-8218-3896",
+      "h_index": 72,
+      "i10_index": 351,
+      "works_count": 723,
+      "cited_by_count": 20578,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5062861253",
+      "display_name": "Abrar A. Qureshi",
+      "orcid": "https://orcid.org/0000-0001-6157-6474",
+      "h_index": 72,
+      "i10_index": 247,
+      "works_count": 525,
+      "cited_by_count": 19005,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5076386746",
+      "display_name": "Sergij Goerdt",
+      "orcid": "https://orcid.org/0000-0002-5718-415X",
+      "h_index": 72,
+      "i10_index": 235,
+      "works_count": 447,
+      "cited_by_count": 23774,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5067793114",
+      "display_name": "Dan L. Bader",
+      "orcid": "https://orcid.org/0000-0002-1208-3507",
+      "h_index": 72,
+      "i10_index": 229,
+      "works_count": 441,
+      "cited_by_count": 16006,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5041682292",
+      "display_name": "Joachim W. Fluhr",
+      "orcid": "https://orcid.org/0000-0003-3610-0698",
+      "h_index": 72,
+      "i10_index": 216,
+      "works_count": 431,
+      "cited_by_count": 16743,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5080370646",
+      "display_name": "Eduardo J. Calonje",
+      "orcid": "https://orcid.org/0000-0001-7475-6423",
+      "h_index": 72,
+      "i10_index": 216,
+      "works_count": 505,
+      "cited_by_count": 16492,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5064550852",
+      "display_name": "Errol Prospero Prens",
+      "orcid": "https://orcid.org/0000-0002-8158-660X",
+      "h_index": 72,
+      "i10_index": 214,
+      "works_count": 342,
+      "cited_by_count": 24329,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5100407341",
+      "display_name": "Hervé Bachelez",
+      "orcid": "https://orcid.org/0000-0002-2845-4384",
+      "h_index": 72,
+      "i10_index": 181,
+      "works_count": 473,
+      "cited_by_count": 18402,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5069075055",
+      "display_name": "R. Rox Anderson",
+      "orcid": "https://orcid.org/0000-0003-4966-3035",
+      "h_index": 72,
+      "i10_index": 172,
+      "works_count": 286,
+      "cited_by_count": 20906,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5075947127",
+      "display_name": "Maarten H. Vermeer",
+      "orcid": "https://orcid.org/0000-0002-5872-4613",
+      "h_index": 72,
+      "i10_index": 171,
+      "works_count": 424,
+      "cited_by_count": 21401,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5059337810",
+      "display_name": "Sergei A. Grando",
+      "orcid": "https://orcid.org/0000-0001-5769-8938",
+      "h_index": 72,
+      "i10_index": 159,
+      "works_count": 222,
+      "cited_by_count": 13796,
+      "discipline": "Dermatology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5079084283",
+      "display_name": "Robert Sabat",
+      "orcid": "https://orcid.org/0000-0002-0198-940X",
+      "h_index": 72,
+      "i10_index": 148,
+      "works_count": 270,
+      "cited_by_count": 21505,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5005532978",
+      "display_name": "Angelo Valerio Marzano",
+      "orcid": "https://orcid.org/0000-0002-8160-4169",
+      "h_index": 71,
+      "i10_index": 357,
+      "works_count": 681,
+      "cited_by_count": 20209,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5055279662",
+      "display_name": "Thilo Gambichler",
+      "orcid": "https://orcid.org/0000-0001-7862-3695",
+      "h_index": 71,
+      "i10_index": 347,
+      "works_count": 629,
+      "cited_by_count": 18366,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5109928816",
+      "display_name": "Hachiro Tagami",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 335,
+      "works_count": 625,
+      "cited_by_count": 17934,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5082098822",
+      "display_name": "Heinz Kutzner",
+      "orcid": "https://orcid.org/0000-0001-6248-3050",
+      "h_index": 71,
+      "i10_index": 289,
+      "works_count": 606,
+      "cited_by_count": 21528,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5074461596",
+      "display_name": "Debra L. Laskin",
+      "orcid": "https://orcid.org/0000-0003-1832-7311",
+      "h_index": 71,
+      "i10_index": 254,
+      "works_count": 605,
+      "cited_by_count": 18176,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5042832623",
+      "display_name": "Harald P. M. Gollnick",
+      "orcid": "https://orcid.org/0000-0003-1178-1765",
+      "h_index": 71,
+      "i10_index": 248,
+      "works_count": 486,
+      "cited_by_count": 18509,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5102727788",
+      "display_name": "John Y. M. Koo",
+      "orcid": "https://orcid.org/0009-0004-1005-5221",
+      "h_index": 71,
+      "i10_index": 239,
+      "works_count": 592,
+      "cited_by_count": 21262,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5111626971",
+      "display_name": "Malcolm Watson Greaves",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 220,
+      "works_count": 383,
+      "cited_by_count": 18642,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Dermatology -- 8.5",
+      "id": "https://openalex.org/A5072890715",
+      "display_name": "Nicholas J. Lowe",
+      "orcid": "https://orcid.org/0000-0002-2339-7800",
+      "h_index": 71,
+      "i10_index": 209,
+      "works_count": 344,
+      "cited_by_count": 16021,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5067235495",
+      "display_name": "Alain H. Rook",
+      "orcid": "https://orcid.org/0000-0002-8356-0569",
+      "h_index": 71,
+      "i10_index": 197,
+      "works_count": 307,
+      "cited_by_count": 19129,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5111415986",
+      "display_name": "Eva‐Bettina Bröcker",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 195,
+      "works_count": 305,
+      "cited_by_count": 17380,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5051459543",
+      "display_name": "Gary S. Wood",
+      "orcid": "https://orcid.org/0000-0001-5449-2432",
+      "h_index": 71,
+      "i10_index": 189,
+      "works_count": 267,
+      "cited_by_count": 19312,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5112718117",
+      "display_name": "Robin A.J. Eady",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 167,
+      "works_count": 254,
+      "cited_by_count": 15733,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5074630013",
+      "display_name": "Lynda C. Schneider",
+      "orcid": "https://orcid.org/0000-0002-5633-0178",
+      "h_index": 71,
+      "i10_index": 166,
+      "works_count": 300,
+      "cited_by_count": 21561,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5023109735",
+      "display_name": "Jan Nico Bouwes Bavinck",
+      "orcid": "https://orcid.org/0000-0001-9130-1244",
+      "h_index": 71,
+      "i10_index": 159,
+      "works_count": 231,
+      "cited_by_count": 19107,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5038415410",
+      "display_name": "Uwe Wollina",
+      "orcid": "https://orcid.org/0000-0001-5933-2913",
+      "h_index": 70,
+      "i10_index": 542,
+      "works_count": 1605,
+      "cited_by_count": 24978,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5066790760",
+      "display_name": "Pietro Quaglino",
+      "orcid": "https://orcid.org/0000-0003-4185-9586",
+      "h_index": 70,
+      "i10_index": 392,
+      "works_count": 1187,
+      "cited_by_count": 21403,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5035988449",
+      "display_name": "Donald V. Belsito",
+      "orcid": "https://orcid.org/0000-0003-1229-6673",
+      "h_index": 70,
+      "i10_index": 367,
+      "works_count": 2504,
+      "cited_by_count": 20779,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5022246846",
+      "display_name": "Bianca Maria Piraccini",
+      "orcid": "https://orcid.org/0000-0001-6537-9689",
+      "h_index": 70,
+      "i10_index": 336,
+      "works_count": 928,
+      "cited_by_count": 18678,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5090377619",
+      "display_name": "Lajos Vince Kemény",
+      "orcid": "https://orcid.org/0000-0002-2119-9501",
+      "h_index": 70,
+      "i10_index": 311,
+      "works_count": 728,
+      "cited_by_count": 22388,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5027088581",
+      "display_name": "Klaus E. Andersen",
+      "orcid": "https://orcid.org/0000-0002-6181-824X",
+      "h_index": 70,
+      "i10_index": 308,
+      "works_count": 488,
+      "cited_by_count": 18375,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5062276217",
+      "display_name": "Adam Reich",
+      "orcid": "https://orcid.org/0000-0002-5573-1754",
+      "h_index": 70,
+      "i10_index": 280,
+      "works_count": 630,
+      "cited_by_count": 18663,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5113731041",
+      "display_name": "Mitchel P. Goldman",
+      "orcid": "https://orcid.org/0009-0002-1954-0210",
+      "h_index": 70,
+      "i10_index": 279,
+      "works_count": 527,
+      "cited_by_count": 15582,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5035700990",
+      "display_name": "Lars Iversen",
+      "orcid": "https://orcid.org/0000-0003-1816-4508",
+      "h_index": 70,
+      "i10_index": 269,
+      "works_count": 482,
+      "cited_by_count": 20947,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5004376273",
+      "display_name": "Günter Burg",
+      "orcid": "https://orcid.org/0009-0005-5302-2769",
+      "h_index": 70,
+      "i10_index": 262,
+      "works_count": 629,
+      "cited_by_count": 27157,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5103744867",
+      "display_name": "Yiong‐Huak Chan",
+      "orcid": "https://orcid.org/0000-0002-5076-5269",
+      "h_index": 70,
+      "i10_index": 241,
+      "works_count": 378,
+      "cited_by_count": 20741,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5024212007",
+      "display_name": "Roy G. Geronemus",
+      "orcid": "https://orcid.org/0009-0003-9803-8276",
+      "h_index": 70,
+      "i10_index": 212,
+      "works_count": 402,
+      "cited_by_count": 14526,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5043309306",
+      "display_name": "Petra Staubach",
+      "orcid": "https://orcid.org/0000-0002-2276-0284",
+      "h_index": 70,
+      "i10_index": 181,
+      "works_count": 447,
+      "cited_by_count": 21153,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5066635027",
+      "display_name": "Corrado Lodovico Galli",
+      "orcid": "https://orcid.org/0000-0003-0078-5488",
+      "h_index": 69,
+      "i10_index": 270,
+      "works_count": 604,
+      "cited_by_count": 18958,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5087333640",
+      "display_name": "Emilio Berti",
+      "orcid": "https://orcid.org/0000-0001-6753-4910",
+      "h_index": 69,
+      "i10_index": 251,
+      "works_count": 575,
+      "cited_by_count": 35065,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Dermatology -- 8.4",
+      "id": "https://openalex.org/A5109189207",
+      "display_name": "Peter J. Frosch",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 237,
+      "works_count": 390,
+      "cited_by_count": 14770,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5083484570",
+      "display_name": "Marcel F. Jonkman",
+      "orcid": "https://orcid.org/0000-0002-8471-9340",
+      "h_index": 69,
+      "i10_index": 232,
+      "works_count": 412,
+      "cited_by_count": 18254,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5002280676",
+      "display_name": "Alexander Stratigos",
+      "orcid": "https://orcid.org/0000-0002-4989-9075",
+      "h_index": 69,
+      "i10_index": 230,
+      "works_count": 507,
+      "cited_by_count": 19918,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5100712342",
+      "display_name": "Salvador González",
+      "orcid": "https://orcid.org/0000-0001-9282-4784",
+      "h_index": 69,
+      "i10_index": 209,
+      "works_count": 374,
+      "cited_by_count": 15715,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5040921378",
+      "display_name": "Alexander Nast",
+      "orcid": "https://orcid.org/0000-0003-3504-2203",
+      "h_index": 69,
+      "i10_index": 204,
+      "works_count": 392,
+      "cited_by_count": 22759,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5102825453",
+      "display_name": "Thomas Schwarz",
+      "orcid": "https://orcid.org/0000-0002-5023-3887",
+      "h_index": 69,
+      "i10_index": 181,
+      "works_count": 312,
+      "cited_by_count": 15911,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5057653412",
+      "display_name": "Lam C. Tsoi",
+      "orcid": "https://orcid.org/0000-0003-1627-5722",
+      "h_index": 69,
+      "i10_index": 179,
+      "works_count": 450,
+      "cited_by_count": 16474,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5075725987",
+      "display_name": "Diane M. Thiboutot",
+      "orcid": "https://orcid.org/0000-0002-7342-2357",
+      "h_index": 69,
+      "i10_index": 170,
+      "works_count": 281,
+      "cited_by_count": 18437,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5108125821",
+      "display_name": "Maria Ponec",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 164,
+      "works_count": 212,
+      "cited_by_count": 13433,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5068807193",
+      "display_name": "Elise A. Olsen",
+      "orcid": "https://orcid.org/0000-0002-7033-0676",
+      "h_index": 69,
+      "i10_index": 138,
+      "works_count": 199,
+      "cited_by_count": 20810,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5091892106",
+      "display_name": "John R. Stanley",
+      "orcid": "https://orcid.org/0000-0002-4922-5820",
+      "h_index": 69,
+      "i10_index": 125,
+      "works_count": 166,
+      "cited_by_count": 17780,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5065002240",
+      "display_name": "Elson B. Helwig",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 115,
+      "works_count": 142,
+      "cited_by_count": 13946,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5041887229",
+      "display_name": "Alexander K. C. Leung",
+      "orcid": "https://orcid.org/0000-0003-2254-6971",
+      "h_index": 68,
+      "i10_index": 307,
+      "works_count": 830,
+      "cited_by_count": 16145,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5049420784",
+      "display_name": "Keiji Iwatsuki",
+      "orcid": "https://orcid.org/0000-0003-4666-3179",
+      "h_index": 68,
+      "i10_index": 282,
+      "works_count": 532,
+      "cited_by_count": 16823,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5058938160",
+      "display_name": "J.‐P. Lacour",
+      "orcid": "https://orcid.org/0000-0001-7663-2053",
+      "h_index": 68,
+      "i10_index": 281,
+      "works_count": 768,
+      "cited_by_count": 21941,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5113838921",
+      "display_name": "Martin Munro Black",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 250,
+      "works_count": 402,
+      "cited_by_count": 16418,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5053520157",
+      "display_name": "Akemi Ishida‐Yamamoto",
+      "orcid": "https://orcid.org/0000-0002-3104-102X",
+      "h_index": 68,
+      "i10_index": 243,
+      "works_count": 490,
+      "cited_by_count": 16733,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5035971257",
+      "display_name": "Uwe Gieler",
+      "orcid": "https://orcid.org/0000-0003-0546-3269",
+      "h_index": 68,
+      "i10_index": 224,
+      "works_count": 434,
+      "cited_by_count": 19724,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5004073759",
+      "display_name": "Sylvie Fraitag",
+      "orcid": "https://orcid.org/0000-0002-2258-2051",
+      "h_index": 68,
+      "i10_index": 217,
+      "works_count": 626,
+      "cited_by_count": 17316,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5069645530",
+      "display_name": "Annamari Ranki",
+      "orcid": "https://orcid.org/0000-0003-4335-0396",
+      "h_index": 68,
+      "i10_index": 213,
+      "works_count": 397,
+      "cited_by_count": 20554,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5109978711",
+      "display_name": "David R. Bickers",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 211,
+      "works_count": 318,
+      "cited_by_count": 16622,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5021906179",
+      "display_name": "Charles W Lynde",
+      "orcid": "https://orcid.org/0000-0001-9163-5463",
+      "h_index": 68,
+      "i10_index": 209,
+      "works_count": 455,
+      "cited_by_count": 17327,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Dermatology -- 8.3",
+      "id": "https://openalex.org/A5073877780",
+      "display_name": "Rolf‐Markus Szeimies",
+      "orcid": "https://orcid.org/0000-0002-8452-0737",
+      "h_index": 68,
+      "i10_index": 202,
+      "works_count": 353,
+      "cited_by_count": 18487,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5007703201",
+      "display_name": "Charles N. Ellis",
+      "orcid": "https://orcid.org/0000-0001-9436-7628",
+      "h_index": 68,
+      "i10_index": 188,
+      "works_count": 265,
+      "cited_by_count": 15599,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5068644382",
+      "display_name": "Dagmar Simon",
+      "orcid": "https://orcid.org/0000-0001-8965-9407",
+      "h_index": 68,
+      "i10_index": 173,
+      "works_count": 315,
+      "cited_by_count": 18079,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5112798861",
+      "display_name": "Maria L Chanco Turner",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 123,
+      "works_count": 164,
+      "cited_by_count": 32354,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5111461056",
+      "display_name": "Ichiro Katayama",
+      "orcid": "https://orcid.org/0000-0002-3270-1085",
+      "h_index": 67,
+      "i10_index": 422,
+      "works_count": 1069,
+      "cited_by_count": 21211,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5008668373",
+      "display_name": "Vera Rogiers",
+      "orcid": "https://orcid.org/0000-0003-0635-7740",
+      "h_index": 67,
+      "i10_index": 302,
+      "works_count": 689,
+      "cited_by_count": 19255,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Veterinary",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5039824829",
+      "display_name": "An E. Goossens",
+      "orcid": "https://orcid.org/0000-0002-9805-3439",
+      "h_index": 67,
+      "i10_index": 277,
+      "works_count": 459,
+      "cited_by_count": 16080,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5006277322",
+      "display_name": "Marie Beylot-Barry",
+      "orcid": "https://orcid.org/0000-0001-6150-1229",
+      "h_index": 67,
+      "i10_index": 261,
+      "works_count": 1092,
+      "cited_by_count": 17551,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5110358897",
+      "display_name": "Kunihiko Tamaki",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 260,
+      "works_count": 397,
+      "cited_by_count": 17407,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5034396531",
+      "display_name": "Thierry Passeron",
+      "orcid": "https://orcid.org/0000-0002-0797-6570",
+      "h_index": 67,
+      "i10_index": 256,
+      "works_count": 813,
+      "cited_by_count": 17954,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5007302064",
+      "display_name": "Robert Gniadecki",
+      "orcid": "https://orcid.org/0000-0002-2310-8300",
+      "h_index": 67,
+      "i10_index": 231,
+      "works_count": 453,
+      "cited_by_count": 15539,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5042438814",
+      "display_name": "S. Barbarot",
+      "orcid": "https://orcid.org/0000-0002-6629-9100",
+      "h_index": 67,
+      "i10_index": 217,
+      "works_count": 804,
+      "cited_by_count": 20544,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 257,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5072786878",
+      "display_name": "Phyllis Ira Spuls",
+      "orcid": "https://orcid.org/0000-0002-6035-2863",
+      "h_index": 67,
+      "i10_index": 215,
+      "works_count": 451,
+      "cited_by_count": 19463,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 258,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5014379743",
+      "display_name": "Philippe Bernard",
+      "orcid": "https://orcid.org/0000-0002-4420-617X",
+      "h_index": 67,
+      "i10_index": 207,
+      "works_count": 585,
+      "cited_by_count": 16572,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 259,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5064410212",
+      "display_name": "Antony Richard Young",
+      "orcid": "https://orcid.org/0000-0002-4163-6772",
+      "h_index": 67,
+      "i10_index": 174,
+      "works_count": 269,
+      "cited_by_count": 13678,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 260,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5039279211",
+      "display_name": "Neil J. Korman",
+      "orcid": "https://orcid.org/0000-0002-9785-3442",
+      "h_index": 67,
+      "i10_index": 141,
+      "works_count": 255,
+      "cited_by_count": 23137,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 261,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5009762734",
+      "display_name": "Takeshi Fukumoto",
+      "orcid": "https://orcid.org/0000-0003-0364-711X",
+      "h_index": 67,
+      "i10_index": 104,
+      "works_count": 216,
+      "cited_by_count": 133713,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 262,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5028781129",
+      "display_name": "Ken Hashimoto",
+      "orcid": "https://orcid.org/0000-0001-6194-9971",
+      "h_index": 66,
+      "i10_index": 358,
+      "works_count": 624,
+      "cited_by_count": 16003,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 263,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5059911951",
+      "display_name": "Setsuya Aiba",
+      "orcid": "https://orcid.org/0000-0003-0632-2388",
+      "h_index": 66,
+      "i10_index": 352,
+      "works_count": 718,
+      "cited_by_count": 20141,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 264,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5056955219",
+      "display_name": "Aimilios Lallas",
+      "orcid": "https://orcid.org/0000-0002-7193-0964",
+      "h_index": 66,
+      "i10_index": 306,
+      "works_count": 682,
+      "cited_by_count": 21958,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 265,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5050718731",
+      "display_name": "Eli Sprecher",
+      "orcid": "https://orcid.org/0000-0002-4093-1032",
+      "h_index": 66,
+      "i10_index": 279,
+      "works_count": 566,
+      "cited_by_count": 18041,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 266,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5041361796",
+      "display_name": "Werner Kempf",
+      "orcid": "https://orcid.org/0000-0002-6552-8629",
+      "h_index": 66,
+      "i10_index": 261,
+      "works_count": 680,
+      "cited_by_count": 26789,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 267,
+      "score": 8.2,
+      "label": "Dermatology -- 8.2",
+      "id": "https://openalex.org/A5009079207",
+      "display_name": "Alexander Egeberg",
+      "orcid": "https://orcid.org/0000-0001-8257-1816",
+      "h_index": 66,
+      "i10_index": 260,
+      "works_count": 557,
+      "cited_by_count": 15833,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 268,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5079170974",
+      "display_name": "Joan Guitart",
+      "orcid": "https://orcid.org/0000-0001-7635-9237",
+      "h_index": 66,
+      "i10_index": 222,
+      "works_count": 406,
+      "cited_by_count": 20617,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 269,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5078552585",
+      "display_name": "Luca Borradori",
+      "orcid": "https://orcid.org/0000-0003-0424-6297",
+      "h_index": 66,
+      "i10_index": 215,
+      "works_count": 467,
+      "cited_by_count": 16053,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 270,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5013511707",
+      "display_name": "Genji Imokawa",
+      "orcid": "https://orcid.org/0000-0001-7312-4475",
+      "h_index": 66,
+      "i10_index": 173,
+      "works_count": 281,
+      "cited_by_count": 14749,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 271,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5042019508",
+      "display_name": "Susan Gibbs",
+      "orcid": "https://orcid.org/0000-0002-3446-6138",
+      "h_index": 66,
+      "i10_index": 170,
+      "works_count": 305,
+      "cited_by_count": 12210,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 272,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5043382789",
+      "display_name": "Charlotte M. Proby",
+      "orcid": "https://orcid.org/0000-0002-3292-4836",
+      "h_index": 66,
+      "i10_index": 165,
+      "works_count": 280,
+      "cited_by_count": 12874,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 273,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5102828941",
+      "display_name": "Gary Mark Halliday",
+      "orcid": "https://orcid.org/0000-0003-1040-2321",
+      "h_index": 66,
+      "i10_index": 163,
+      "works_count": 211,
+      "cited_by_count": 12219,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 274,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5063308144",
+      "display_name": "Andrzej Antoni Dlugosz",
+      "orcid": "https://orcid.org/0000-0002-9791-3257",
+      "h_index": 66,
+      "i10_index": 115,
+      "works_count": 299,
+      "cited_by_count": 16327,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 275,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5043652685",
+      "display_name": "Yoshiki Tokura",
+      "orcid": "https://orcid.org/0000-0001-7452-6919",
+      "h_index": 65,
+      "i10_index": 390,
+      "works_count": 2307,
+      "cited_by_count": 21344,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 276,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5016746558",
+      "display_name": "Luis C. Requena",
+      "orcid": "https://orcid.org/0000-0002-1347-3507",
+      "h_index": 65,
+      "i10_index": 385,
+      "works_count": 744,
+      "cited_by_count": 19641,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 277,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5048575128",
+      "display_name": "Bernard J. Cribier",
+      "orcid": "https://orcid.org/0000-0002-6306-770X",
+      "h_index": 65,
+      "i10_index": 239,
+      "works_count": 771,
+      "cited_by_count": 16687,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 278,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5027554519",
+      "display_name": "Michihiro Hide",
+      "orcid": "https://orcid.org/0000-0002-1569-6034",
+      "h_index": 65,
+      "i10_index": 227,
+      "works_count": 561,
+      "cited_by_count": 20994,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 279,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5028273586",
+      "display_name": "Jean‐François Nicolas",
+      "orcid": "https://orcid.org/0000-0003-4204-803X",
+      "h_index": 65,
+      "i10_index": 226,
+      "works_count": 650,
+      "cited_by_count": 13655,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 280,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5006526834",
+      "display_name": "Melinda Gooderham",
+      "orcid": "https://orcid.org/0000-0001-8926-0113",
+      "h_index": 65,
+      "i10_index": 224,
+      "works_count": 773,
+      "cited_by_count": 18699,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 281,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5037156136",
+      "display_name": "Axel Schnuch",
+      "orcid": "https://orcid.org/0000-0002-5725-7734",
+      "h_index": 65,
+      "i10_index": 210,
+      "works_count": 376,
+      "cited_by_count": 12809,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 282,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5113650513",
+      "display_name": "Jean E. Revuz",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 200,
+      "works_count": 658,
+      "cited_by_count": 18622,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 283,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5026346343",
+      "display_name": "M. Aleth Richard",
+      "orcid": "https://orcid.org/0000-0002-0870-9132",
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 676,
+      "cited_by_count": 13863,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 284,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5109201858",
+      "display_name": "Hans Christian Körting",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 175,
+      "works_count": 374,
+      "cited_by_count": 15504,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 285,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5102799520",
+      "display_name": "David Albert Norris",
+      "orcid": "https://orcid.org/0000-0001-7481-737X",
+      "h_index": 65,
+      "i10_index": 175,
+      "works_count": 336,
+      "cited_by_count": 15486,
+      "discipline": "Dermatology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 286,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5087628766",
+      "display_name": "Daniel Hohl",
+      "orcid": "https://orcid.org/0000-0001-6337-7110",
+      "h_index": 65,
+      "i10_index": 152,
+      "works_count": 276,
+      "cited_by_count": 15749,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 287,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5003691102",
+      "display_name": "John J. DiGiovanna",
+      "orcid": "https://orcid.org/0000-0002-2750-2313",
+      "h_index": 65,
+      "i10_index": 142,
+      "works_count": 240,
+      "cited_by_count": 21685,
+      "discipline": "Dermatology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 288,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5004172149",
+      "display_name": "Clive E.H. Grattan",
+      "orcid": "https://orcid.org/0000-0002-8466-4351",
+      "h_index": 65,
+      "i10_index": 139,
+      "works_count": 301,
+      "cited_by_count": 22091,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 289,
+      "score": 8.1,
+      "label": "Dermatology -- 8.1",
+      "id": "https://openalex.org/A5012298728",
+      "display_name": "Jean Kanitakis",
+      "orcid": "https://orcid.org/0000-0003-0469-257X",
+      "h_index": 64,
+      "i10_index": 297,
+      "works_count": 680,
+      "cited_by_count": 18384,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 290,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5022792929",
+      "display_name": "Simon Francis Thomsen",
+      "orcid": "https://orcid.org/0000-0002-4838-300X",
+      "h_index": 64,
+      "i10_index": 288,
+      "works_count": 623,
+      "cited_by_count": 16468,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 291,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5107844707",
+      "display_name": "James G. Marks",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 282,
+      "works_count": 625,
+      "cited_by_count": 13507,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 292,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5082909666",
+      "display_name": "Akimichi Morita",
+      "orcid": "https://orcid.org/0000-0001-8372-3754",
+      "h_index": 64,
+      "i10_index": 267,
+      "works_count": 682,
+      "cited_by_count": 16125,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 293,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5052928814",
+      "display_name": "Erin M. Warshaw",
+      "orcid": "https://orcid.org/0000-0001-6177-0656",
+      "h_index": 64,
+      "i10_index": 231,
+      "works_count": 431,
+      "cited_by_count": 13078,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 294,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5056846121",
+      "display_name": "Jin Ho Chung",
+      "orcid": "https://orcid.org/0000-0002-0582-6392",
+      "h_index": 64,
+      "i10_index": 229,
+      "works_count": 377,
+      "cited_by_count": 13595,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 295,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5068079740",
+      "display_name": "Knud Kragballe",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 221,
+      "works_count": 373,
+      "cited_by_count": 14408,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 296,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5045731013",
+      "display_name": "Alexander  Andreas Navarini",
+      "orcid": "https://orcid.org/0000-0001-7059-632X",
+      "h_index": 64,
+      "i10_index": 217,
+      "works_count": 607,
+      "cited_by_count": 16215,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 297,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5064574530",
+      "display_name": "Peter Wolf",
+      "orcid": "https://orcid.org/0000-0001-7777-9444",
+      "h_index": 64,
+      "i10_index": 216,
+      "works_count": 483,
+      "cited_by_count": 16008,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 298,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5025545596",
+      "display_name": "Boni Elizabeth Elewski",
+      "orcid": "https://orcid.org/0000-0002-1475-2874",
+      "h_index": 64,
+      "i10_index": 206,
+      "works_count": 414,
+      "cited_by_count": 19765,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 299,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5010901410",
+      "display_name": "Anne W. Lucky",
+      "orcid": "https://orcid.org/0000-0002-6115-7584",
+      "h_index": 64,
+      "i10_index": 190,
+      "works_count": 324,
+      "cited_by_count": 17213,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 300,
+      "score": 8,
+      "label": "Dermatology -- 8.0",
+      "id": "https://openalex.org/A5070890272",
+      "display_name": "David M. Pariser",
+      "orcid": "https://orcid.org/0000-0003-2250-9361",
+      "h_index": 64,
+      "i10_index": 187,
+      "works_count": 343,
+      "cited_by_count": 16891,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 301,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5002475506",
+      "display_name": "Jerry Shapiro",
+      "orcid": "https://orcid.org/0000-0002-2971-1223",
+      "h_index": 64,
+      "i10_index": 175,
+      "works_count": 360,
+      "cited_by_count": 15177,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 302,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5090247994",
+      "display_name": "Kilian Eyerich",
+      "orcid": "https://orcid.org/0000-0003-0094-2674",
+      "h_index": 64,
+      "i10_index": 173,
+      "works_count": 435,
+      "cited_by_count": 16275,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 303,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5068423216",
+      "display_name": "Herbert Hönigsmann",
+      "orcid": "https://orcid.org/0000-0001-6401-6966",
+      "h_index": 64,
+      "i10_index": 157,
+      "works_count": 295,
+      "cited_by_count": 12042,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 304,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5111705571",
+      "display_name": "John Albert Parrish",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 156,
+      "works_count": 309,
+      "cited_by_count": 21331,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 305,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5076678927",
+      "display_name": "Amit G. Pandya",
+      "orcid": "https://orcid.org/0000-0002-3916-2651",
+      "h_index": 64,
+      "i10_index": 149,
+      "works_count": 268,
+      "cited_by_count": 14346,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 306,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5046614905",
+      "display_name": "Mary‐Margaret Chren",
+      "orcid": "https://orcid.org/0000-0001-8009-7014",
+      "h_index": 64,
+      "i10_index": 143,
+      "works_count": 244,
+      "cited_by_count": 14082,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 307,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5100727640",
+      "display_name": "Brian Kim",
+      "orcid": "https://orcid.org/0000-0002-8100-7161",
+      "h_index": 64,
+      "i10_index": 136,
+      "works_count": 356,
+      "cited_by_count": 16938,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 308,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5083628557",
+      "display_name": "Mary L.K. Williams",
+      "orcid": "https://orcid.org/0000-0001-5660-4311",
+      "h_index": 64,
+      "i10_index": 122,
+      "works_count": 186,
+      "cited_by_count": 12869,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 309,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5063314679",
+      "display_name": "Debra A. Crumrine",
+      "orcid": "https://orcid.org/0000-0002-8492-5670",
+      "h_index": 64,
+      "i10_index": 111,
+      "works_count": 142,
+      "cited_by_count": 11817,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 310,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5037326193",
+      "display_name": "Torello Lotti",
+      "orcid": "https://orcid.org/0000-0003-0840-1936",
+      "h_index": 63,
+      "i10_index": 482,
+      "works_count": 1259,
+      "cited_by_count": 20100,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 311,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5076616017",
+      "display_name": "Wilma Fowler Bergfeld",
+      "orcid": "https://orcid.org/0000-0002-5981-3925",
+      "h_index": 63,
+      "i10_index": 327,
+      "works_count": 694,
+      "cited_by_count": 16645,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 312,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5089977110",
+      "display_name": "Michael Peter Schön",
+      "orcid": "https://orcid.org/0000-0002-0698-4130",
+      "h_index": 63,
+      "i10_index": 264,
+      "works_count": 740,
+      "cited_by_count": 20289,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 313,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5061762229",
+      "display_name": "Lidia Rudnicka",
+      "orcid": "https://orcid.org/0000-0002-8308-1023",
+      "h_index": 63,
+      "i10_index": 252,
+      "works_count": 608,
+      "cited_by_count": 13870,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 314,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5073367427",
+      "display_name": "Christian Apfelbacher",
+      "orcid": "https://orcid.org/0000-0003-3805-8219",
+      "h_index": 63,
+      "i10_index": 240,
+      "works_count": 877,
+      "cited_by_count": 14713,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 315,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5070447748",
+      "display_name": "Stefania Jabłońska",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 225,
+      "works_count": 441,
+      "cited_by_count": 13647,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 316,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5080613931",
+      "display_name": "Murad Alam",
+      "orcid": "https://orcid.org/0000-0001-8752-3821",
+      "h_index": 63,
+      "i10_index": 212,
+      "works_count": 522,
+      "cited_by_count": 15277,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 317,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5043220171",
+      "display_name": "Andreas Katsambas",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 212,
+      "works_count": 374,
+      "cited_by_count": 12584,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 318,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5059190475",
+      "display_name": "Vincent Piguet",
+      "orcid": "https://orcid.org/0000-0001-6079-4517",
+      "h_index": 63,
+      "i10_index": 202,
+      "works_count": 548,
+      "cited_by_count": 15941,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 319,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5023108791",
+      "display_name": "Yunes Panahi",
+      "orcid": "https://orcid.org/0000-0002-2504-8356",
+      "h_index": 63,
+      "i10_index": 198,
+      "works_count": 320,
+      "cited_by_count": 16192,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 320,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5111643455",
+      "display_name": "Peter O Fritsch",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 194,
+      "works_count": 576,
+      "cited_by_count": 14852,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 321,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5059394217",
+      "display_name": "Seth J. Orlow",
+      "orcid": "https://orcid.org/0000-0003-2548-7380",
+      "h_index": 63,
+      "i10_index": 188,
+      "works_count": 312,
+      "cited_by_count": 13567,
+      "discipline": "Dermatology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 322,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5081257602",
+      "display_name": "Mattia Barbareschi",
+      "orcid": "https://orcid.org/0000-0003-0217-3223",
+      "h_index": 63,
+      "i10_index": 183,
+      "works_count": 460,
+      "cited_by_count": 11921,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 323,
+      "score": 7.9,
+      "label": "Dermatology -- 7.9",
+      "id": "https://openalex.org/A5112221079",
+      "display_name": "John I Harper",
+      "orcid": "https://orcid.org/0000-0001-5392-0327",
+      "h_index": 63,
+      "i10_index": 181,
+      "works_count": 338,
+      "cited_by_count": 16917,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 324,
+      "score": 7.8,
+      "label": "Dermatology -- 7.8",
+      "id": "https://openalex.org/A5019483239",
+      "display_name": "Frank R. de Gruijl",
+      "orcid": "https://orcid.org/0000-0001-6264-3982",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 321,
+      "cited_by_count": 15234,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 325,
+      "score": 7.8,
+      "label": "Dermatology -- 7.8",
+      "id": "https://openalex.org/A5074921066",
+      "display_name": "Regina Fölster‐Holst",
+      "orcid": "https://orcid.org/0000-0001-9114-2351",
+      "h_index": 63,
+      "i10_index": 171,
+      "works_count": 425,
+      "cited_by_count": 14286,
+      "discipline": "Dermatology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Dermatology",
+      "fields": [
+        "Medicine"
+      ]
+    }
+  ]
+}

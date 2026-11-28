@@ -1,0 +1,2075 @@
+{
+  "kind": "subfield",
+  "id": 1911,
+  "name": "Paleontology",
+  "total_in_scrape": 109,
+  "count": 109,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Paleontology -- 9.9",
+      "id": "https://openalex.org/A5016662094",
+      "display_name": "Andrew H. Knoll",
+      "orcid": "https://orcid.org/0000-0003-1308-8585",
+      "h_index": 138,
+      "i10_index": 357,
+      "works_count": 659,
+      "cited_by_count": 69626,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Paleontology -- 9.9",
+      "id": "https://openalex.org/A5019727889",
+      "display_name": "Donald E. Canfield",
+      "orcid": "https://orcid.org/0000-0001-7602-8366",
+      "h_index": 120,
+      "i10_index": 269,
+      "works_count": 474,
+      "cited_by_count": 65345,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Paleontology -- 9.9",
+      "id": "https://openalex.org/A5032943949",
+      "display_name": "Robert A. Berner",
+      "orcid": null,
+      "h_index": 117,
+      "i10_index": 198,
+      "works_count": 297,
+      "cited_by_count": 59031,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Paleontology -- 9.9",
+      "id": "https://openalex.org/A5067547169",
+      "display_name": "Roger Everett Summons",
+      "orcid": "https://orcid.org/0000-0002-7144-8537",
+      "h_index": 116,
+      "i10_index": 404,
+      "works_count": 786,
+      "cited_by_count": 51644,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Paleontology -- 9.9",
+      "id": "https://openalex.org/A5083615083",
+      "display_name": "Bernd R.T. Simoneit",
+      "orcid": null,
+      "h_index": 114,
+      "i10_index": 464,
+      "works_count": 659,
+      "cited_by_count": 58025,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Paleontology -- 9.9",
+      "id": "https://openalex.org/A5082069395",
+      "display_name": "Henry Elderfield",
+      "orcid": null,
+      "h_index": 106,
+      "i10_index": 241,
+      "works_count": 742,
+      "cited_by_count": 41528,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5081723964",
+      "display_name": "J.W. de Leeuw",
+      "orcid": "https://orcid.org/0000-0001-5028-8055",
+      "h_index": 105,
+      "i10_index": 345,
+      "works_count": 486,
+      "cited_by_count": 34821,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5101679416",
+      "display_name": "Xing Xu",
+      "orcid": "https://orcid.org/0000-0001-7245-179X",
+      "h_index": 104,
+      "i10_index": 470,
+      "works_count": 772,
+      "cited_by_count": 39279,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5015162860",
+      "display_name": "Richard D. Pancost",
+      "orcid": "https://orcid.org/0000-0003-0298-4026",
+      "h_index": 101,
+      "i10_index": 291,
+      "works_count": 629,
+      "cited_by_count": 33405,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5017746355",
+      "display_name": "James C. Zachos",
+      "orcid": "https://orcid.org/0000-0001-8439-1886",
+      "h_index": 101,
+      "i10_index": 197,
+      "works_count": 1105,
+      "cited_by_count": 53403,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5003371806",
+      "display_name": "G. Eglinton",
+      "orcid": null,
+      "h_index": 97,
+      "i10_index": 320,
+      "works_count": 476,
+      "cited_by_count": 41247,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5029744192",
+      "display_name": "Michael J. Benton",
+      "orcid": "https://orcid.org/0000-0002-4323-1824",
+      "h_index": 96,
+      "i10_index": 465,
+      "works_count": 1035,
+      "cited_by_count": 36206,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5070746201",
+      "display_name": "Thomas J. Algeo",
+      "orcid": "https://orcid.org/0000-0002-3333-7035",
+      "h_index": 96,
+      "i10_index": 397,
+      "works_count": 703,
+      "cited_by_count": 43058,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5014981063",
+      "display_name": "Dennis V. Kent",
+      "orcid": "https://orcid.org/0000-0002-7677-2993",
+      "h_index": 95,
+      "i10_index": 299,
+      "works_count": 670,
+      "cited_by_count": 38870,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5081994751",
+      "display_name": "Stefano Michele Bernasconi",
+      "orcid": "https://orcid.org/0000-0001-7672-8856",
+      "h_index": 92,
+      "i10_index": 338,
+      "works_count": 994,
+      "cited_by_count": 29267,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5079561999",
+      "display_name": "Hugh C. Jenkyns",
+      "orcid": "https://orcid.org/0000-0002-2728-0984",
+      "h_index": 92,
+      "i10_index": 201,
+      "works_count": 440,
+      "cited_by_count": 32143,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Paleontology -- 9.8",
+      "id": "https://openalex.org/A5089742767",
+      "display_name": "Adina Paytan",
+      "orcid": "https://orcid.org/0000-0001-8360-4712",
+      "h_index": 90,
+      "i10_index": 285,
+      "works_count": 848,
+      "cited_by_count": 25124,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5024294177",
+      "display_name": "Shuhai Xiao",
+      "orcid": "https://orcid.org/0000-0003-4655-2663",
+      "h_index": 89,
+      "i10_index": 240,
+      "works_count": 472,
+      "cited_by_count": 23449,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5056603005",
+      "display_name": "S. Blair Hedges",
+      "orcid": "https://orcid.org/0000-0002-0652-2411",
+      "h_index": 88,
+      "i10_index": 219,
+      "works_count": 313,
+      "cited_by_count": 38635,
+      "discipline": "Paleontology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5021026152",
+      "display_name": "John M. Hayes",
+      "orcid": "https://orcid.org/0000-0002-5677-2216",
+      "h_index": 88,
+      "i10_index": 180,
+      "works_count": 312,
+      "cited_by_count": 32283,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5080454473",
+      "display_name": "Philip C. J. Donoghue",
+      "orcid": "https://orcid.org/0000-0003-3116-7463",
+      "h_index": 87,
+      "i10_index": 245,
+      "works_count": 467,
+      "cited_by_count": 26900,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5003484610",
+      "display_name": "Paul B. Wignall",
+      "orcid": "https://orcid.org/0000-0003-0074-9129",
+      "h_index": 87,
+      "i10_index": 237,
+      "works_count": 442,
+      "cited_by_count": 27251,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5012752876",
+      "display_name": "Mark Allen Norell",
+      "orcid": "https://orcid.org/0000-0002-1084-5555",
+      "h_index": 86,
+      "i10_index": 223,
+      "works_count": 336,
+      "cited_by_count": 19903,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5078340275",
+      "display_name": "John K. Volkman",
+      "orcid": "https://orcid.org/0000-0003-4932-0534",
+      "h_index": 86,
+      "i10_index": 182,
+      "works_count": 239,
+      "cited_by_count": 28885,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5074677894",
+      "display_name": "Gerta Keller",
+      "orcid": "https://orcid.org/0000-0001-5518-2014",
+      "h_index": 85,
+      "i10_index": 217,
+      "works_count": 561,
+      "cited_by_count": 19104,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5063324707",
+      "display_name": "Henk Brinkhuis",
+      "orcid": "https://orcid.org/0000-0003-0253-6610",
+      "h_index": 83,
+      "i10_index": 199,
+      "works_count": 753,
+      "cited_by_count": 25798,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5074849392",
+      "display_name": "Andy J. Ridgwell",
+      "orcid": "https://orcid.org/0000-0003-2333-0128",
+      "h_index": 83,
+      "i10_index": 180,
+      "works_count": 509,
+      "cited_by_count": 27159,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Paleontology -- 9.7",
+      "id": "https://openalex.org/A5045726922",
+      "display_name": "Wout Krijgsman",
+      "orcid": "https://orcid.org/0000-0002-1472-1074",
+      "h_index": 82,
+      "i10_index": 257,
+      "works_count": 582,
+      "cited_by_count": 25687,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5078633655",
+      "display_name": "John L. Gittleman",
+      "orcid": "https://orcid.org/0009-0002-6694-1711",
+      "h_index": 82,
+      "i10_index": 119,
+      "works_count": 213,
+      "cited_by_count": 48737,
+      "discipline": "Paleontology",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5007300553",
+      "display_name": "Gert J. de Lange",
+      "orcid": "https://orcid.org/0000-0002-9420-3022",
+      "h_index": 80,
+      "i10_index": 202,
+      "works_count": 501,
+      "cited_by_count": 18412,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5030139784",
+      "display_name": "Russell A. Mittermeier",
+      "orcid": "https://orcid.org/0000-0002-8002-826X",
+      "h_index": 80,
+      "i10_index": 177,
+      "works_count": 571,
+      "cited_by_count": 71652,
+      "discipline": "Paleontology",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5074548157",
+      "display_name": "Martin Frank",
+      "orcid": "https://orcid.org/0000-0002-8606-4421",
+      "h_index": 79,
+      "i10_index": 246,
+      "works_count": 1190,
+      "cited_by_count": 21294,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5059470202",
+      "display_name": "James E T Channell",
+      "orcid": "https://orcid.org/0000-0003-2382-3985",
+      "h_index": 79,
+      "i10_index": 197,
+      "works_count": 777,
+      "cited_by_count": 17894,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5011497856",
+      "display_name": "Katherine H. Freeman",
+      "orcid": "https://orcid.org/0000-0002-3350-7671",
+      "h_index": 78,
+      "i10_index": 159,
+      "works_count": 408,
+      "cited_by_count": 22131,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5031110356",
+      "display_name": "Paul L. Koch",
+      "orcid": "https://orcid.org/0000-0001-5248-1529",
+      "h_index": 78,
+      "i10_index": 135,
+      "works_count": 202,
+      "cited_by_count": 23676,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5023598080",
+      "display_name": "Philip J. Currie",
+      "orcid": "https://orcid.org/0000-0001-6857-3161",
+      "h_index": 77,
+      "i10_index": 299,
+      "works_count": 491,
+      "cited_by_count": 20664,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5043879539",
+      "display_name": "Philip D. Gingerich",
+      "orcid": "https://orcid.org/0000-0002-1550-2674",
+      "h_index": 77,
+      "i10_index": 273,
+      "works_count": 507,
+      "cited_by_count": 19743,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5053582890",
+      "display_name": "Mark D. Pagel",
+      "orcid": "https://orcid.org/0000-0001-7287-8865",
+      "h_index": 77,
+      "i10_index": 138,
+      "works_count": 255,
+      "cited_by_count": 38402,
+      "discipline": "Paleontology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Paleontology -- 9.6",
+      "id": "https://openalex.org/A5068525678",
+      "display_name": "Mark S. Springer",
+      "orcid": "https://orcid.org/0000-0001-7335-6946",
+      "h_index": 76,
+      "i10_index": 170,
+      "works_count": 307,
+      "cited_by_count": 23270,
+      "discipline": "Paleontology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5004295287",
+      "display_name": "David Jablonski",
+      "orcid": "https://orcid.org/0000-0001-9163-8824",
+      "h_index": 76,
+      "i10_index": 141,
+      "works_count": 282,
+      "cited_by_count": 18332,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5050486511",
+      "display_name": "Peter Koenraad Swart",
+      "orcid": "https://orcid.org/0000-0002-6743-6162",
+      "h_index": 75,
+      "i10_index": 248,
+      "works_count": 1031,
+      "cited_by_count": 19356,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5022208734",
+      "display_name": "James Matthew Clark",
+      "orcid": "https://orcid.org/0000-0003-0980-4315",
+      "h_index": 75,
+      "i10_index": 186,
+      "works_count": 366,
+      "cited_by_count": 19232,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5031820796",
+      "display_name": "Erwin Suess",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 150,
+      "works_count": 1153,
+      "cited_by_count": 21180,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5036503406",
+      "display_name": "Gert‐Jan Reichart",
+      "orcid": "https://orcid.org/0000-0002-7256-2243",
+      "h_index": 74,
+      "i10_index": 264,
+      "works_count": 806,
+      "cited_by_count": 20533,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5049565354",
+      "display_name": "Gregory J. Retallack",
+      "orcid": "https://orcid.org/0000-0003-4356-9240",
+      "h_index": 74,
+      "i10_index": 218,
+      "works_count": 466,
+      "cited_by_count": 19147,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5082968355",
+      "display_name": "Ellen Thomas",
+      "orcid": "https://orcid.org/0000-0002-7141-9904",
+      "h_index": 74,
+      "i10_index": 175,
+      "works_count": 747,
+      "cited_by_count": 31384,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5032261602",
+      "display_name": "W. Irene C. Rijpstra",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 139,
+      "works_count": 175,
+      "cited_by_count": 17869,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5033878600",
+      "display_name": "Thierry Adatte",
+      "orcid": "https://orcid.org/0000-0002-4319-2212",
+      "h_index": 73,
+      "i10_index": 265,
+      "works_count": 728,
+      "cited_by_count": 17357,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5065044005",
+      "display_name": "Lee R. Kump",
+      "orcid": "https://orcid.org/0000-0001-6009-8247",
+      "h_index": 73,
+      "i10_index": 139,
+      "works_count": 283,
+      "cited_by_count": 21948,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5039737037",
+      "display_name": "Appy Sluijs",
+      "orcid": "https://orcid.org/0000-0003-2382-0215",
+      "h_index": 72,
+      "i10_index": 151,
+      "works_count": 686,
+      "cited_by_count": 20947,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Paleontology -- 9.5",
+      "id": "https://openalex.org/A5112740310",
+      "display_name": "Judith Ann McKenzie",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 148,
+      "works_count": 933,
+      "cited_by_count": 17941,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5033563702",
+      "display_name": "Jeremy B. C. Jackson",
+      "orcid": "https://orcid.org/0000-0002-6080-2254",
+      "h_index": 72,
+      "i10_index": 135,
+      "works_count": 238,
+      "cited_by_count": 54864,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5061379088",
+      "display_name": "David J. Bottjer",
+      "orcid": "https://orcid.org/0000-0002-8450-4139",
+      "h_index": 71,
+      "i10_index": 223,
+      "works_count": 505,
+      "cited_by_count": 19719,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5044621318",
+      "display_name": "Hans‐Jürgen Brumsack",
+      "orcid": "https://orcid.org/0000-0002-5549-5018",
+      "h_index": 71,
+      "i10_index": 201,
+      "works_count": 630,
+      "cited_by_count": 17874,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5043542444",
+      "display_name": "Conrad C. Labandeira",
+      "orcid": "https://orcid.org/0000-0002-4838-5099",
+      "h_index": 70,
+      "i10_index": 183,
+      "works_count": 382,
+      "cited_by_count": 14841,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5110657867",
+      "display_name": "Dick Kroon",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 179,
+      "works_count": 1382,
+      "cited_by_count": 18408,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5042740302",
+      "display_name": "Karim Benzerara",
+      "orcid": "https://orcid.org/0000-0002-0553-0137",
+      "h_index": 70,
+      "i10_index": 169,
+      "works_count": 465,
+      "cited_by_count": 14751,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5035749133",
+      "display_name": "Timothy J. Bralower",
+      "orcid": "https://orcid.org/0000-0002-3503-859X",
+      "h_index": 70,
+      "i10_index": 157,
+      "works_count": 461,
+      "cited_by_count": 18651,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5104029147",
+      "display_name": "Martin D. Brasier",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 145,
+      "works_count": 192,
+      "cited_by_count": 14614,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5012673184",
+      "display_name": "Michael A. Arthur",
+      "orcid": "https://orcid.org/0000-0002-7996-4915",
+      "h_index": 70,
+      "i10_index": 135,
+      "works_count": 283,
+      "cited_by_count": 18911,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5032109623",
+      "display_name": "Scott L. Wing",
+      "orcid": "https://orcid.org/0000-0002-2954-8905",
+      "h_index": 70,
+      "i10_index": 129,
+      "works_count": 296,
+      "cited_by_count": 20719,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Paleontology -- 9.4",
+      "id": "https://openalex.org/A5023646775",
+      "display_name": "Emmanuel Douzery",
+      "orcid": "https://orcid.org/0000-0001-5286-647X",
+      "h_index": 69,
+      "i10_index": 115,
+      "works_count": 328,
+      "cited_by_count": 15242,
+      "discipline": "Paleontology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5037697610",
+      "display_name": "Gregory D. Edgecombe",
+      "orcid": "https://orcid.org/0000-0002-9591-8011",
+      "h_index": 68,
+      "i10_index": 263,
+      "works_count": 1048,
+      "cited_by_count": 21188,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5103366337",
+      "display_name": "Zhonghe Zhou",
+      "orcid": "https://orcid.org/0000-0002-8996-2884",
+      "h_index": 68,
+      "i10_index": 179,
+      "works_count": 271,
+      "cited_by_count": 14219,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5060909735",
+      "display_name": "Luis María Chiappe",
+      "orcid": "https://orcid.org/0000-0001-9661-0601",
+      "h_index": 68,
+      "i10_index": 176,
+      "works_count": 269,
+      "cited_by_count": 12268,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5090028813",
+      "display_name": "John R. Hutchinson",
+      "orcid": "https://orcid.org/0000-0002-6767-7038",
+      "h_index": 68,
+      "i10_index": 171,
+      "works_count": 788,
+      "cited_by_count": 17218,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5011907670",
+      "display_name": "Robert Andrew Spicer",
+      "orcid": "https://orcid.org/0000-0003-1076-2693",
+      "h_index": 68,
+      "i10_index": 168,
+      "works_count": 272,
+      "cited_by_count": 15802,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5052108259",
+      "display_name": "Michael M. Joachimski",
+      "orcid": "https://orcid.org/0000-0001-6088-3261",
+      "h_index": 68,
+      "i10_index": 167,
+      "works_count": 304,
+      "cited_by_count": 15974,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5111738454",
+      "display_name": "S. George Pemberton",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 164,
+      "works_count": 297,
+      "cited_by_count": 14396,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5112713998",
+      "display_name": "Morris Goodman",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 175,
+      "works_count": 231,
+      "cited_by_count": 14143,
+      "discipline": "Paleontology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5077220397",
+      "display_name": "Jeremy R. Young",
+      "orcid": "https://orcid.org/0000-0001-9320-9804",
+      "h_index": 67,
+      "i10_index": 171,
+      "works_count": 475,
+      "cited_by_count": 15777,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5021563999",
+      "display_name": "Paul Nicholas Pearson",
+      "orcid": "https://orcid.org/0000-0003-4628-9818",
+      "h_index": 67,
+      "i10_index": 158,
+      "works_count": 501,
+      "cited_by_count": 20114,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Paleontology -- 9.3",
+      "id": "https://openalex.org/A5062385838",
+      "display_name": "Zhong‐Qiang Chen",
+      "orcid": "https://orcid.org/0000-0001-5341-6913",
+      "h_index": 66,
+      "i10_index": 243,
+      "works_count": 416,
+      "cited_by_count": 15266,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5010528662",
+      "display_name": "Joachim Reitner",
+      "orcid": "https://orcid.org/0000-0002-6361-3555",
+      "h_index": 66,
+      "i10_index": 235,
+      "works_count": 631,
+      "cited_by_count": 15557,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5068585319",
+      "display_name": "Carlos Alberto Jaramillo",
+      "orcid": "https://orcid.org/0000-0002-2616-5079",
+      "h_index": 66,
+      "i10_index": 218,
+      "works_count": 541,
+      "cited_by_count": 20522,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5002420294",
+      "display_name": "Christophe Lécuyer",
+      "orcid": "https://orcid.org/0000-0001-6462-8727",
+      "h_index": 66,
+      "i10_index": 210,
+      "works_count": 408,
+      "cited_by_count": 15980,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5044575924",
+      "display_name": "Colin P. Groves",
+      "orcid": "https://orcid.org/0000-0002-7630-9683",
+      "h_index": 66,
+      "i10_index": 197,
+      "works_count": 410,
+      "cited_by_count": 14330,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5103343437",
+      "display_name": "James Rankin Maxwell",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 193,
+      "works_count": 238,
+      "cited_by_count": 14608,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5056950495",
+      "display_name": "Michael S. Y. Lee",
+      "orcid": "https://orcid.org/0000-0002-3905-0887",
+      "h_index": 66,
+      "i10_index": 158,
+      "works_count": 483,
+      "cited_by_count": 12421,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5023442531",
+      "display_name": "William M. Berelson",
+      "orcid": "https://orcid.org/0000-0002-1526-3802",
+      "h_index": 66,
+      "i10_index": 146,
+      "works_count": 276,
+      "cited_by_count": 13204,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5028823778",
+      "display_name": "Douglas H. Erwin",
+      "orcid": "https://orcid.org/0000-0003-2518-5614",
+      "h_index": 66,
+      "i10_index": 144,
+      "works_count": 323,
+      "cited_by_count": 23049,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5044399708",
+      "display_name": "Martin J. Head",
+      "orcid": "https://orcid.org/0000-0003-3026-5483",
+      "h_index": 66,
+      "i10_index": 141,
+      "works_count": 342,
+      "cited_by_count": 13955,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5040272894",
+      "display_name": "Davide Pisani",
+      "orcid": "https://orcid.org/0000-0003-0949-6682",
+      "h_index": 66,
+      "i10_index": 126,
+      "works_count": 274,
+      "cited_by_count": 14911,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Paleontology -- 9.2",
+      "id": "https://openalex.org/A5069813400",
+      "display_name": "Luís A. Buatois",
+      "orcid": "https://orcid.org/0000-0001-9523-750X",
+      "h_index": 65,
+      "i10_index": 264,
+      "works_count": 461,
+      "cited_by_count": 15890,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5018255598",
+      "display_name": "Federica Marone",
+      "orcid": "https://orcid.org/0000-0002-3467-8763",
+      "h_index": 65,
+      "i10_index": 208,
+      "works_count": 477,
+      "cited_by_count": 15119,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5038815359",
+      "display_name": "Derek E. G. Briggs",
+      "orcid": "https://orcid.org/0000-0003-0649-6417",
+      "h_index": 65,
+      "i10_index": 189,
+      "works_count": 318,
+      "cited_by_count": 12473,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5006707617",
+      "display_name": "Roger Benson",
+      "orcid": "https://orcid.org/0000-0001-8244-6177",
+      "h_index": 65,
+      "i10_index": 186,
+      "works_count": 1339,
+      "cited_by_count": 13143,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5066882594",
+      "display_name": "Geerat J. Vermeij",
+      "orcid": "https://orcid.org/0000-0002-6450-5687",
+      "h_index": 65,
+      "i10_index": 170,
+      "works_count": 285,
+      "cited_by_count": 20787,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5108908861",
+      "display_name": "Pierre Albrecht",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 166,
+      "works_count": 228,
+      "cited_by_count": 14174,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5020431923",
+      "display_name": "Richard F. Kay",
+      "orcid": "https://orcid.org/0000-0002-4219-7580",
+      "h_index": 65,
+      "i10_index": 145,
+      "works_count": 226,
+      "cited_by_count": 13700,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5038666906",
+      "display_name": "Stephen P. Hesselbo",
+      "orcid": "https://orcid.org/0000-0001-6178-5401",
+      "h_index": 65,
+      "i10_index": 138,
+      "works_count": 367,
+      "cited_by_count": 16031,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5040487936",
+      "display_name": "Anna K. Behrensmeyer",
+      "orcid": "https://orcid.org/0000-0001-6857-368X",
+      "h_index": 65,
+      "i10_index": 120,
+      "works_count": 212,
+      "cited_by_count": 17466,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5112084325",
+      "display_name": "Olivier C. Rieppel",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 269,
+      "works_count": 453,
+      "cited_by_count": 14359,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5091123441",
+      "display_name": "François Baudin",
+      "orcid": "https://orcid.org/0000-0003-3180-459X",
+      "h_index": 64,
+      "i10_index": 241,
+      "works_count": 657,
+      "cited_by_count": 14641,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Paleontology -- 9.1",
+      "id": "https://openalex.org/A5082852673",
+      "display_name": "Kliti Grice",
+      "orcid": "https://orcid.org/0000-0003-2136-3508",
+      "h_index": 64,
+      "i10_index": 208,
+      "works_count": 397,
+      "cited_by_count": 13399,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Paleontology -- 9.0",
+      "id": "https://openalex.org/A5053220301",
+      "display_name": "Paul M. Barrett",
+      "orcid": "https://orcid.org/0000-0003-0412-3000",
+      "h_index": 64,
+      "i10_index": 201,
+      "works_count": 762,
+      "cited_by_count": 13554,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Paleontology -- 9.0",
+      "id": "https://openalex.org/A5090660772",
+      "display_name": "Andrew C. Scott",
+      "orcid": "https://orcid.org/0000-0002-1998-3508",
+      "h_index": 64,
+      "i10_index": 183,
+      "works_count": 375,
+      "cited_by_count": 20213,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Paleontology -- 9.0",
+      "id": "https://openalex.org/A5038759665",
+      "display_name": "Richard J. Butler",
+      "orcid": "https://orcid.org/0000-0003-2136-7541",
+      "h_index": 64,
+      "i10_index": 163,
+      "works_count": 794,
+      "cited_by_count": 11356,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Paleontology -- 9.0",
+      "id": "https://openalex.org/A5108378908",
+      "display_name": "William A. Berggren",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 161,
+      "works_count": 383,
+      "cited_by_count": 20659,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Paleontology -- 9.0",
+      "id": "https://openalex.org/A5037041743",
+      "display_name": "Adrian Immenhauser",
+      "orcid": "https://orcid.org/0000-0001-9494-2450",
+      "h_index": 64,
+      "i10_index": 161,
+      "works_count": 365,
+      "cited_by_count": 10710,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Paleontology -- 8.9",
+      "id": "https://openalex.org/A5057776184",
+      "display_name": "Richard D. Norris",
+      "orcid": "https://orcid.org/0000-0001-5288-1733",
+      "h_index": 64,
+      "i10_index": 155,
+      "works_count": 484,
+      "cited_by_count": 17806,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Paleontology -- 8.9",
+      "id": "https://openalex.org/A5045626612",
+      "display_name": "Joel L. Cracraft",
+      "orcid": "https://orcid.org/0000-0001-7587-8342",
+      "h_index": 64,
+      "i10_index": 141,
+      "works_count": 320,
+      "cited_by_count": 19069,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Paleontology -- 8.9",
+      "id": "https://openalex.org/A5011307993",
+      "display_name": "Mark Williams",
+      "orcid": "https://orcid.org/0000-0002-7987-6069",
+      "h_index": 63,
+      "i10_index": 231,
+      "works_count": 539,
+      "cited_by_count": 25396,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Paleontology -- 8.9",
+      "id": "https://openalex.org/A5078376177",
+      "display_name": "María Gabriela Mángano",
+      "orcid": "https://orcid.org/0000-0001-8747-6033",
+      "h_index": 63,
+      "i10_index": 199,
+      "works_count": 333,
+      "cited_by_count": 13025,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Paleontology -- 8.9",
+      "id": "https://openalex.org/A5005996014",
+      "display_name": "Lorenz Schwark",
+      "orcid": "https://orcid.org/0000-0003-0683-0817",
+      "h_index": 63,
+      "i10_index": 171,
+      "works_count": 343,
+      "cited_by_count": 16494,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Paleontology -- 8.9",
+      "id": "https://openalex.org/A5109811500",
+      "display_name": "Anthony Hallam",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 143,
+      "works_count": 294,
+      "cited_by_count": 14995,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Paleontology -- 8.9",
+      "id": "https://openalex.org/A5002863478",
+      "display_name": "Alex L. Sessions",
+      "orcid": "https://orcid.org/0000-0001-6120-2763",
+      "h_index": 63,
+      "i10_index": 121,
+      "works_count": 306,
+      "cited_by_count": 14128,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Paleontology -- 8.9",
+      "id": "https://openalex.org/A5086846320",
+      "display_name": "Paul Upchurch",
+      "orcid": "https://orcid.org/0000-0002-8823-4164",
+      "h_index": 63,
+      "i10_index": 117,
+      "works_count": 384,
+      "cited_by_count": 11866,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Paleontology -- 8.9",
+      "id": "https://openalex.org/A5120898144",
+      "display_name": "Lloyd D Keigwin",
+      "orcid": "https://orcid.org/0000-0002-3055-7454",
+      "h_index": 63,
+      "i10_index": 105,
+      "works_count": 992,
+      "cited_by_count": 16977,
+      "discipline": "Paleontology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Paleontology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    }
+  ]
+}

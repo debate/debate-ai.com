@@ -1,0 +1,51 @@
+{
+  "kind": "subfield",
+  "id": 2214,
+  "name": "Media Technology",
+  "total_in_scrape": 2,
+  "count": 2,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Media Technology -- 9.9",
+      "id": "https://openalex.org/A5080556169",
+      "display_name": "Byoungho Lee",
+      "orcid": "https://orcid.org/0000-0002-0477-9539",
+      "h_index": 76,
+      "i10_index": 360,
+      "works_count": 1067,
+      "cited_by_count": 24032,
+      "discipline": "Media Technology",
+      "primary_field": "Engineering",
+      "primary_subfield": "Media Technology",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Media Technology -- 9.9",
+      "id": "https://openalex.org/A5026250850",
+      "display_name": "Yongtian Wang",
+      "orcid": "https://orcid.org/0000-0001-9422-0888",
+      "h_index": 72,
+      "i10_index": 415,
+      "works_count": 918,
+      "cited_by_count": 21993,
+      "discipline": "Media Technology",
+      "primary_field": "Engineering",
+      "primary_subfield": "Media Technology",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    }
+  ]
+}

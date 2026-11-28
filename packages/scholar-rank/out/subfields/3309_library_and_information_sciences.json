@@ -1,0 +1,525 @@
+{
+  "kind": "subfield",
+  "id": 3309,
+  "name": "Library and Information Sciences",
+  "total_in_scrape": 26,
+  "count": 26,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Library and Information Sciences -- 9.9",
+      "id": "https://openalex.org/A5024996172",
+      "display_name": "Loet Leydesdorff",
+      "orcid": "https://orcid.org/0000-0002-7835-3098",
+      "h_index": 116,
+      "i10_index": 426,
+      "works_count": 882,
+      "cited_by_count": 65415,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Library and Information Sciences -- 9.9",
+      "id": "https://openalex.org/A5052807182",
+      "display_name": "Christopher W. Jones",
+      "orcid": "https://orcid.org/0000-0003-3255-5791",
+      "h_index": 107,
+      "i10_index": 385,
+      "works_count": 704,
+      "cited_by_count": 43116,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Library and Information Sciences -- 9.9",
+      "id": "https://openalex.org/A5034823602",
+      "display_name": "Mike A Thelwall",
+      "orcid": "https://orcid.org/0000-0001-6065-205X",
+      "h_index": 103,
+      "i10_index": 474,
+      "works_count": 878,
+      "cited_by_count": 45833,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Library and Information Sciences -- 9.9",
+      "id": "https://openalex.org/A5013993870",
+      "display_name": "Paul S. Weiss",
+      "orcid": "https://orcid.org/0000-0001-5527-6248",
+      "h_index": 101,
+      "i10_index": 395,
+      "works_count": 838,
+      "cited_by_count": 43455,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Chemistry",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Library and Information Sciences -- 9.9",
+      "id": "https://openalex.org/A5100777365",
+      "display_name": "Satish Kumar",
+      "orcid": "https://orcid.org/0000-0001-5200-1476",
+      "h_index": 100,
+      "i10_index": 284,
+      "works_count": 385,
+      "cited_by_count": 64550,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Library and Information Sciences -- 9.9",
+      "id": "https://openalex.org/A5046852323",
+      "display_name": "Yuh‐Shan Ho",
+      "orcid": "https://orcid.org/0000-0002-2557-8736",
+      "h_index": 97,
+      "i10_index": 264,
+      "works_count": 483,
+      "cited_by_count": 73317,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5032114980",
+      "display_name": "M. G. Finn",
+      "orcid": "https://orcid.org/0000-0001-8247-3108",
+      "h_index": 95,
+      "i10_index": 238,
+      "works_count": 489,
+      "cited_by_count": 53448,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Chemistry",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5032927012",
+      "display_name": "Jennifer Rowley",
+      "orcid": "https://orcid.org/0000-0003-3437-6914",
+      "h_index": 93,
+      "i10_index": 246,
+      "works_count": 452,
+      "cited_by_count": 47443,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5027052270",
+      "display_name": "Lutz Bornmann",
+      "orcid": "https://orcid.org/0000-0003-0810-7091",
+      "h_index": 87,
+      "i10_index": 351,
+      "works_count": 647,
+      "cited_by_count": 32772,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5055115361",
+      "display_name": "Adrian Gerard Barnett",
+      "orcid": "https://orcid.org/0000-0001-6339-0374",
+      "h_index": 85,
+      "i10_index": 327,
+      "works_count": 830,
+      "cited_by_count": 27307,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5068542997",
+      "display_name": "Vincent Larivière",
+      "orcid": "https://orcid.org/0000-0002-2733-0689",
+      "h_index": 82,
+      "i10_index": 239,
+      "works_count": 679,
+      "cited_by_count": 32321,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5087016011",
+      "display_name": "Jaime A. Teixeira da Silva",
+      "orcid": "https://orcid.org/0000-0003-3299-2772",
+      "h_index": 80,
+      "i10_index": 659,
+      "works_count": 1224,
+      "cited_by_count": 32075,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5004960218",
+      "display_name": "Phillip E. Savage",
+      "orcid": "https://orcid.org/0000-0002-7902-3744",
+      "h_index": 80,
+      "i10_index": 252,
+      "works_count": 504,
+      "cited_by_count": 24934,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Chemical Engineering",
+        "Social Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5066183935",
+      "display_name": "Wolfgang Glänzel",
+      "orcid": "https://orcid.org/0000-0001-7529-5198",
+      "h_index": 79,
+      "i10_index": 212,
+      "works_count": 446,
+      "cited_by_count": 22410,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5044625101",
+      "display_name": "Julie Beth Zimmerman",
+      "orcid": "https://orcid.org/0000-0002-5392-312X",
+      "h_index": 75,
+      "i10_index": 197,
+      "works_count": 458,
+      "cited_by_count": 20287,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5034467077",
+      "display_name": "Howard Bauchner",
+      "orcid": "https://orcid.org/0000-0003-3012-420X",
+      "h_index": 71,
+      "i10_index": 199,
+      "works_count": 1073,
+      "cited_by_count": 16496,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Library and Information Sciences -- 9.8",
+      "id": "https://openalex.org/A5034511172",
+      "display_name": "Joan‐Emma Shea",
+      "orcid": "https://orcid.org/0000-0002-9801-9273",
+      "h_index": 71,
+      "i10_index": 163,
+      "works_count": 451,
+      "cited_by_count": 15385,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Library and Information Sciences -- 9.7",
+      "id": "https://openalex.org/A5100403882",
+      "display_name": "Grace Kim",
+      "orcid": "https://orcid.org/0000-0003-4603-9448",
+      "h_index": 70,
+      "i10_index": 155,
+      "works_count": 546,
+      "cited_by_count": 26776,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Library and Information Sciences -- 9.7",
+      "id": "https://openalex.org/A5032077625",
+      "display_name": "Dennis C. Liotta",
+      "orcid": "https://orcid.org/0000-0002-7736-7113",
+      "h_index": 68,
+      "i10_index": 264,
+      "works_count": 552,
+      "cited_by_count": 16631,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Library and Information Sciences -- 9.7",
+      "id": "https://openalex.org/A5055624045",
+      "display_name": "Sa’ed H. Zyoud",
+      "orcid": "https://orcid.org/0000-0002-7369-2058",
+      "h_index": 67,
+      "i10_index": 276,
+      "works_count": 448,
+      "cited_by_count": 34851,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Library and Information Sciences -- 9.7",
+      "id": "https://openalex.org/A5072726253",
+      "display_name": "David Nicholas",
+      "orcid": "https://orcid.org/0000-0001-8046-2835",
+      "h_index": 67,
+      "i10_index": 240,
+      "works_count": 561,
+      "cited_by_count": 14435,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Library and Information Sciences -- 9.7",
+      "id": "https://openalex.org/A5027467000",
+      "display_name": "Ludo Waltman",
+      "orcid": "https://orcid.org/0000-0001-8249-1752",
+      "h_index": 67,
+      "i10_index": 128,
+      "works_count": 420,
+      "cited_by_count": 68949,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Library and Information Sciences -- 9.7",
+      "id": "https://openalex.org/A5046187244",
+      "display_name": "Ana Marušić",
+      "orcid": "https://orcid.org/0000-0001-6272-0917",
+      "h_index": 66,
+      "i10_index": 314,
+      "works_count": 769,
+      "cited_by_count": 28772,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Library and Information Sciences -- 9.7",
+      "id": "https://openalex.org/A5012967837",
+      "display_name": "Jillian M. Buriak",
+      "orcid": "https://orcid.org/0000-0002-9567-4328",
+      "h_index": 64,
+      "i10_index": 162,
+      "works_count": 455,
+      "cited_by_count": 16672,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Library and Information Sciences -- 9.7",
+      "id": "https://openalex.org/A5018542454",
+      "display_name": "Anthony F. J. van Raan",
+      "orcid": "https://orcid.org/0000-0001-8980-5937",
+      "h_index": 64,
+      "i10_index": 133,
+      "works_count": 209,
+      "cited_by_count": 16627,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Library and Information Sciences -- 9.7",
+      "id": "https://openalex.org/A5022989782",
+      "display_name": "Marília Sá Carvalho",
+      "orcid": "https://orcid.org/0000-0002-9566-0284",
+      "h_index": 63,
+      "i10_index": 147,
+      "works_count": 306,
+      "cited_by_count": 14837,
+      "discipline": "Library and Information Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Library and Information Sciences",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    }
+  ]
+}

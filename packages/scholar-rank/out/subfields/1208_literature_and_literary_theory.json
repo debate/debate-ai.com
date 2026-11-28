@@ -1,0 +1,143 @@
+{
+  "kind": "subfield",
+  "id": 1208,
+  "name": "Literature and Literary Theory",
+  "total_in_scrape": 7,
+  "count": 7,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Literature and Literary Theory -- 9.9",
+      "id": "https://openalex.org/A5026388329",
+      "display_name": "Janet B. Croft",
+      "orcid": "https://orcid.org/0000-0003-2692-3586",
+      "h_index": 97,
+      "i10_index": 271,
+      "works_count": 506,
+      "cited_by_count": 42236,
+      "discipline": "Literature and Literary Theory",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Literature and Literary Theory -- 9.9",
+      "id": "https://openalex.org/A5026078859",
+      "display_name": "Umberto Eco",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 232,
+      "works_count": 710,
+      "cited_by_count": 27877,
+      "discipline": "Literature and Literary Theory",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Literature and Literary Theory -- 9.9",
+      "id": "https://openalex.org/A5036392428",
+      "display_name": "Roland Barthes",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 181,
+      "works_count": 439,
+      "cited_by_count": 44522,
+      "discipline": "Literature and Literary Theory",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Literature and Literary Theory -- 9.9",
+      "id": "https://openalex.org/A5088841767",
+      "display_name": "Joel Myerson",
+      "orcid": "https://orcid.org/0000-0001-8108-9892",
+      "h_index": 71,
+      "i10_index": 172,
+      "works_count": 474,
+      "cited_by_count": 21980,
+      "discipline": "Literature and Literary Theory",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Decision Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Literature and Literary Theory -- 9.9",
+      "id": "https://openalex.org/A5004599362",
+      "display_name": "John Joseph O'Connor",
+      "orcid": "https://orcid.org/0000-0001-8229-8602",
+      "h_index": 69,
+      "i10_index": 238,
+      "works_count": 773,
+      "cited_by_count": 16722,
+      "discipline": "Literature and Literary Theory",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Literature and Literary Theory -- 9.9",
+      "id": "https://openalex.org/A5112755778",
+      "display_name": "Theodor Wiesengrund Adorno",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 265,
+      "works_count": 864,
+      "cited_by_count": 24320,
+      "discipline": "Literature and Literary Theory",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Literature and Literary Theory -- 9.8",
+      "id": "https://openalex.org/A5019765592",
+      "display_name": "Fredric Jameson",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 178,
+      "works_count": 447,
+      "cited_by_count": 33257,
+      "discipline": "Literature and Literary Theory",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

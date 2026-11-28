@@ -1,0 +1,707 @@
+{
+  "kind": "subfield",
+  "id": 1603,
+  "name": "Electrochemistry",
+  "total_in_scrape": 35,
+  "count": 35,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Electrochemistry -- 9.9",
+      "id": "https://openalex.org/A5005657217",
+      "display_name": "Allen J. Bard",
+      "orcid": "https://orcid.org/0000-0002-8517-0230",
+      "h_index": 174,
+      "i10_index": 1004,
+      "works_count": 1381,
+      "cited_by_count": 134815,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Electrochemistry -- 9.9",
+      "id": "https://openalex.org/A5076368908",
+      "display_name": "Richard G. Compton",
+      "orcid": "https://orcid.org/0000-0001-9841-5041",
+      "h_index": 133,
+      "i10_index": 1470,
+      "works_count": 1862,
+      "cited_by_count": 93060,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Electrochemistry -- 9.9",
+      "id": "https://openalex.org/A5013799893",
+      "display_name": "Erkang Wang",
+      "orcid": "https://orcid.org/0000-0001-9843-1834",
+      "h_index": 124,
+      "i10_index": 776,
+      "works_count": 979,
+      "cited_by_count": 70723,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Electrochemistry -- 9.9",
+      "id": "https://openalex.org/A5066967247",
+      "display_name": "Royce W. Murray",
+      "orcid": null,
+      "h_index": 118,
+      "i10_index": 416,
+      "works_count": 729,
+      "cited_by_count": 54681,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Electrochemistry -- 9.9",
+      "id": "https://openalex.org/A5103055437",
+      "display_name": "Jean‐Michel Savéant",
+      "orcid": "https://orcid.org/0000-0003-1651-3153",
+      "h_index": 105,
+      "i10_index": 340,
+      "works_count": 419,
+      "cited_by_count": 39791,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Electrochemistry -- 9.9",
+      "id": "https://openalex.org/A5059003251",
+      "display_name": "Christian Andre Amatore",
+      "orcid": "https://orcid.org/0000-0002-2561-1137",
+      "h_index": 97,
+      "i10_index": 482,
+      "works_count": 728,
+      "cited_by_count": 36811,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5063156360",
+      "display_name": "Patrick R. Unwin",
+      "orcid": "https://orcid.org/0000-0003-3106-2178",
+      "h_index": 95,
+      "i10_index": 410,
+      "works_count": 550,
+      "cited_by_count": 31649,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5010061178",
+      "display_name": "Hubert H. Girault",
+      "orcid": "https://orcid.org/0000-0001-5573-5774",
+      "h_index": 90,
+      "i10_index": 546,
+      "works_count": 796,
+      "cited_by_count": 33632,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5083791733",
+      "display_name": "Henry S. White",
+      "orcid": "https://orcid.org/0000-0002-5053-0996",
+      "h_index": 90,
+      "i10_index": 283,
+      "works_count": 435,
+      "cited_by_count": 26798,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5046460191",
+      "display_name": "Andrew G. Ewing",
+      "orcid": "https://orcid.org/0000-0002-2084-0133",
+      "h_index": 87,
+      "i10_index": 345,
+      "works_count": 526,
+      "cited_by_count": 25227,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5100749714",
+      "display_name": "George Zheng Chen",
+      "orcid": "https://orcid.org/0000-0002-5589-5767",
+      "h_index": 86,
+      "i10_index": 264,
+      "works_count": 413,
+      "cited_by_count": 26516,
+      "discipline": "Electrochemistry",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5066751558",
+      "display_name": "Alan M. Bond",
+      "orcid": "https://orcid.org/0000-0002-1113-5205",
+      "h_index": 84,
+      "i10_index": 821,
+      "works_count": 1271,
+      "cited_by_count": 38362,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5027301994",
+      "display_name": "Philip Nigel Bartlett",
+      "orcid": "https://orcid.org/0000-0002-7300-6900",
+      "h_index": 84,
+      "i10_index": 319,
+      "works_count": 566,
+      "cited_by_count": 26006,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5009700689",
+      "display_name": "René Kizek",
+      "orcid": "https://orcid.org/0000-0002-0467-6169",
+      "h_index": 83,
+      "i10_index": 428,
+      "works_count": 1219,
+      "cited_by_count": 28043,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5051925552",
+      "display_name": "Fred C. Anson",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 293,
+      "works_count": 370,
+      "cited_by_count": 22948,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5108980726",
+      "display_name": "Takeo Ohsaka",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 343,
+      "works_count": 681,
+      "cited_by_count": 19464,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Electrochemistry -- 9.8",
+      "id": "https://openalex.org/A5042695054",
+      "display_name": "David J. Schiffrin",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 217,
+      "works_count": 305,
+      "cited_by_count": 27885,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5071095075",
+      "display_name": "Frank Marken",
+      "orcid": "https://orcid.org/0000-0003-3177-4562",
+      "h_index": 73,
+      "i10_index": 471,
+      "works_count": 762,
+      "cited_by_count": 24015,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5108629389",
+      "display_name": "Tomokazu Matsue",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 313,
+      "works_count": 542,
+      "cited_by_count": 17077,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5054233331",
+      "display_name": "Yasuhiko Ito",
+      "orcid": "https://orcid.org/0000-0002-9676-6961",
+      "h_index": 70,
+      "i10_index": 418,
+      "works_count": 823,
+      "cited_by_count": 21716,
+      "discipline": "Electrochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Medicine",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5054069544",
+      "display_name": "Yasuaki Einaga",
+      "orcid": "https://orcid.org/0000-0001-7057-4358",
+      "h_index": 70,
+      "i10_index": 348,
+      "works_count": 681,
+      "cited_by_count": 18266,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5058417111",
+      "display_name": "Daniel Mandler",
+      "orcid": "https://orcid.org/0000-0003-2490-1084",
+      "h_index": 69,
+      "i10_index": 280,
+      "works_count": 381,
+      "cited_by_count": 17246,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5041014026",
+      "display_name": "Michael V. Mirkin",
+      "orcid": "https://orcid.org/0000-0002-3424-5810",
+      "h_index": 69,
+      "i10_index": 158,
+      "works_count": 279,
+      "cited_by_count": 15875,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5063431640",
+      "display_name": "Yuri E. Korchev",
+      "orcid": "https://orcid.org/0000-0002-4872-8696",
+      "h_index": 69,
+      "i10_index": 147,
+      "works_count": 236,
+      "cited_by_count": 14430,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Engineering",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5005800766",
+      "display_name": "Robert J. Forster",
+      "orcid": "https://orcid.org/0000-0001-5079-3123",
+      "h_index": 68,
+      "i10_index": 281,
+      "works_count": 412,
+      "cited_by_count": 17864,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5006747745",
+      "display_name": "Fritz Scholz",
+      "orcid": "https://orcid.org/0000-0001-6287-1184",
+      "h_index": 68,
+      "i10_index": 258,
+      "works_count": 548,
+      "cited_by_count": 16267,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5018900276",
+      "display_name": "Robert A. W. Dryfe",
+      "orcid": "https://orcid.org/0000-0002-9335-4451",
+      "h_index": 68,
+      "i10_index": 245,
+      "works_count": 356,
+      "cited_by_count": 17375,
+      "discipline": "Electrochemistry",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Electrochemistry -- 9.7",
+      "id": "https://openalex.org/A5073071247",
+      "display_name": "Francesco Paolucci",
+      "orcid": "https://orcid.org/0000-0003-4614-8740",
+      "h_index": 68,
+      "i10_index": 222,
+      "works_count": 432,
+      "cited_by_count": 15661,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Electrochemistry -- 9.6",
+      "id": "https://openalex.org/A5075103147",
+      "display_name": "Marc D. Porter",
+      "orcid": "https://orcid.org/0000-0002-9046-5789",
+      "h_index": 68,
+      "i10_index": 174,
+      "works_count": 277,
+      "cited_by_count": 23587,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Electrochemistry -- 9.6",
+      "id": "https://openalex.org/A5001972742",
+      "display_name": "Dihua Wang",
+      "orcid": "https://orcid.org/0000-0003-2364-8718",
+      "h_index": 67,
+      "i10_index": 262,
+      "works_count": 387,
+      "cited_by_count": 14196,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Electrochemistry -- 9.6",
+      "id": "https://openalex.org/A5100650337",
+      "display_name": "Hongyan Yuan",
+      "orcid": "https://orcid.org/0000-0001-8225-0211",
+      "h_index": 67,
+      "i10_index": 252,
+      "works_count": 437,
+      "cited_by_count": 18875,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Electrochemistry -- 9.6",
+      "id": "https://openalex.org/A5086468225",
+      "display_name": "Sérgio Antônio Spínola Machado",
+      "orcid": "https://orcid.org/0000-0002-5371-8468",
+      "h_index": 67,
+      "i10_index": 210,
+      "works_count": 323,
+      "cited_by_count": 12741,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Electrochemistry -- 9.6",
+      "id": "https://openalex.org/A5052058935",
+      "display_name": "Julie V. Macpherson",
+      "orcid": "https://orcid.org/0000-0002-4249-8383",
+      "h_index": 67,
+      "i10_index": 202,
+      "works_count": 269,
+      "cited_by_count": 15384,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Energy",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Electrochemistry -- 9.6",
+      "id": "https://openalex.org/A5004731553",
+      "display_name": "M. Fleischmann",
+      "orcid": "https://orcid.org/0000-0002-6317-2796",
+      "h_index": 65,
+      "i10_index": 266,
+      "works_count": 475,
+      "cited_by_count": 25773,
+      "discipline": "Electrochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Electrochemistry -- 9.6",
+      "id": "https://openalex.org/A5111788438",
+      "display_name": "C. Gabrielli",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 242,
+      "works_count": 388,
+      "cited_by_count": 13341,
+      "discipline": "Electrochemistry",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Electrochemistry",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1431 @@
+{
+  "kind": "subfield",
+  "id": 3202,
+  "name": "Applied Psychology",
+  "total_in_scrape": 71,
+  "count": 71,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Applied Psychology -- 9.9",
+      "id": "https://openalex.org/A5080370996",
+      "display_name": "Gerhard Andersson",
+      "orcid": "https://orcid.org/0000-0003-4753-6745",
+      "h_index": 157,
+      "i10_index": 806,
+      "works_count": 1625,
+      "cited_by_count": 93838,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Applied Psychology -- 9.9",
+      "id": "https://openalex.org/A5064981523",
+      "display_name": "Martin E. P. Seligman",
+      "orcid": "https://orcid.org/0000-0002-2028-0009",
+      "h_index": 138,
+      "i10_index": 279,
+      "works_count": 440,
+      "cited_by_count": 151537,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Applied Psychology -- 9.9",
+      "id": "https://openalex.org/A5050785530",
+      "display_name": "Charles S. Carver",
+      "orcid": "https://orcid.org/0000-0002-3688-8545",
+      "h_index": 130,
+      "i10_index": 351,
+      "works_count": 559,
+      "cited_by_count": 139863,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Applied Psychology -- 9.9",
+      "id": "https://openalex.org/A5059734965",
+      "display_name": "Mark T. Conner",
+      "orcid": "https://orcid.org/0000-0002-6229-8143",
+      "h_index": 119,
+      "i10_index": 355,
+      "works_count": 523,
+      "cited_by_count": 68227,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Nursing",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Applied Psychology -- 9.9",
+      "id": "https://openalex.org/A5057291202",
+      "display_name": "Martin S. Hagger",
+      "orcid": "https://orcid.org/0000-0002-2685-1546",
+      "h_index": 116,
+      "i10_index": 409,
+      "works_count": 1180,
+      "cited_by_count": 53928,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Applied Psychology -- 9.9",
+      "id": "https://openalex.org/A5071206281",
+      "display_name": "Edward Tory Higgins",
+      "orcid": "https://orcid.org/0000-0003-4157-8207",
+      "h_index": 115,
+      "i10_index": 339,
+      "works_count": 545,
+      "cited_by_count": 86445,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5056903564",
+      "display_name": "Edwin A. Locke",
+      "orcid": "https://orcid.org/0000-0002-6044-3167",
+      "h_index": 114,
+      "i10_index": 216,
+      "works_count": 383,
+      "cited_by_count": 115496,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5055481613",
+      "display_name": "Ralf Schwarzer",
+      "orcid": "https://orcid.org/0000-0002-0069-3826",
+      "h_index": 108,
+      "i10_index": 340,
+      "works_count": 636,
+      "cited_by_count": 57306,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Health Professions",
+        "Social Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5082635131",
+      "display_name": "Per Carlbring",
+      "orcid": "https://orcid.org/0000-0002-2172-8813",
+      "h_index": 107,
+      "i10_index": 334,
+      "works_count": 716,
+      "cited_by_count": 39317,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5051245888",
+      "display_name": "David C. Mohr",
+      "orcid": "https://orcid.org/0000-0002-5443-7596",
+      "h_index": 106,
+      "i10_index": 303,
+      "works_count": 430,
+      "cited_by_count": 45768,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5082833967",
+      "display_name": "James O. Prochaska",
+      "orcid": "https://orcid.org/0000-0002-7004-1348",
+      "h_index": 103,
+      "i10_index": 239,
+      "works_count": 333,
+      "cited_by_count": 78479,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5026523515",
+      "display_name": "John Blake Torous",
+      "orcid": "https://orcid.org/0000-0002-5362-7937",
+      "h_index": 101,
+      "i10_index": 433,
+      "works_count": 795,
+      "cited_by_count": 46008,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5048453813",
+      "display_name": "Paschal Sheeran",
+      "orcid": "https://orcid.org/0000-0001-7449-4590",
+      "h_index": 101,
+      "i10_index": 215,
+      "works_count": 304,
+      "cited_by_count": 56744,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5036233252",
+      "display_name": "Peter M. Gollwitzer",
+      "orcid": "https://orcid.org/0000-0003-4872-2929",
+      "h_index": 98,
+      "i10_index": 251,
+      "works_count": 539,
+      "cited_by_count": 49059,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5091292039",
+      "display_name": "David Daniel Ebert",
+      "orcid": "https://orcid.org/0000-0001-6820-0146",
+      "h_index": 97,
+      "i10_index": 307,
+      "works_count": 618,
+      "cited_by_count": 39830,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5005635678",
+      "display_name": "Marie Johnston",
+      "orcid": "https://orcid.org/0000-0003-0124-4827",
+      "h_index": 95,
+      "i10_index": 339,
+      "works_count": 777,
+      "cited_by_count": 66924,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Applied Psychology -- 9.8",
+      "id": "https://openalex.org/A5077813096",
+      "display_name": "Michael F. Scheier",
+      "orcid": "https://orcid.org/0000-0003-1005-3598",
+      "h_index": 93,
+      "i10_index": 155,
+      "works_count": 250,
+      "cited_by_count": 80109,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5038084567",
+      "display_name": "Icek Ajzen",
+      "orcid": "https://orcid.org/0000-0001-8101-6300",
+      "h_index": 92,
+      "i10_index": 129,
+      "works_count": 170,
+      "cited_by_count": 351844,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5008373383",
+      "display_name": "Gerjo Kok",
+      "orcid": "https://orcid.org/0000-0002-3501-4096",
+      "h_index": 91,
+      "i10_index": 362,
+      "works_count": 721,
+      "cited_by_count": 36391,
+      "discipline": "Applied Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5113789173",
+      "display_name": "Bernard L. Weiner",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 166,
+      "works_count": 297,
+      "cited_by_count": 59857,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5044060263",
+      "display_name": "Heleen M. Riper",
+      "orcid": "https://orcid.org/0000-0002-8144-8901",
+      "h_index": 90,
+      "i10_index": 257,
+      "works_count": 500,
+      "cited_by_count": 35659,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5113525106",
+      "display_name": "Charles R. R. Snyder",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 163,
+      "works_count": 278,
+      "cited_by_count": 50100,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5030172403",
+      "display_name": "Wayne F. Velicer",
+      "orcid": "https://orcid.org/0000-0003-2254-7261",
+      "h_index": 89,
+      "i10_index": 188,
+      "works_count": 267,
+      "cited_by_count": 58927,
+      "discipline": "Applied Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Decision Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5065215114",
+      "display_name": "Martin Fishbein",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 195,
+      "works_count": 253,
+      "cited_by_count": 134040,
+      "discipline": "Applied Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5007875474",
+      "display_name": "Charles Abraham",
+      "orcid": "https://orcid.org/0000-0002-0901-1975",
+      "h_index": 87,
+      "i10_index": 238,
+      "works_count": 447,
+      "cited_by_count": 46576,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5026810155",
+      "display_name": "Robert W. Lent",
+      "orcid": "https://orcid.org/0000-0001-6327-8091",
+      "h_index": 87,
+      "i10_index": 162,
+      "works_count": 255,
+      "cited_by_count": 52795,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5046422882",
+      "display_name": "Denise T. D. de Ridder",
+      "orcid": "https://orcid.org/0000-0002-8237-9506",
+      "h_index": 86,
+      "i10_index": 221,
+      "works_count": 501,
+      "cited_by_count": 27711,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Nursing",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Applied Psychology -- 9.7",
+      "id": "https://openalex.org/A5058337569",
+      "display_name": "Cristina Botella",
+      "orcid": "https://orcid.org/0000-0001-8783-6959",
+      "h_index": 84,
+      "i10_index": 335,
+      "works_count": 537,
+      "cited_by_count": 32447,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5111635476",
+      "display_name": "Raymond B. Cattell",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 310,
+      "works_count": 554,
+      "cited_by_count": 55022,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5053707510",
+      "display_name": "Nanné K. de Vries",
+      "orcid": "https://orcid.org/0000-0002-4348-707X",
+      "h_index": 82,
+      "i10_index": 279,
+      "works_count": 557,
+      "cited_by_count": 24193,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Health Professions",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5018377905",
+      "display_name": "Falko F. Sniehotta",
+      "orcid": "https://orcid.org/0000-0003-1738-4269",
+      "h_index": 81,
+      "i10_index": 233,
+      "works_count": 634,
+      "cited_by_count": 33537,
+      "discipline": "Applied Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5036171155",
+      "display_name": "Rosa Baños",
+      "orcid": "https://orcid.org/0000-0003-0626-7665",
+      "h_index": 79,
+      "i10_index": 311,
+      "works_count": 535,
+      "cited_by_count": 23312,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5020278901",
+      "display_name": "Christopher J. Armitage",
+      "orcid": "https://orcid.org/0000-0003-2365-1765",
+      "h_index": 79,
+      "i10_index": 241,
+      "works_count": 579,
+      "cited_by_count": 43501,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5028803733",
+      "display_name": "Henk Aarts",
+      "orcid": "https://orcid.org/0000-0001-8676-1692",
+      "h_index": 77,
+      "i10_index": 188,
+      "works_count": 421,
+      "cited_by_count": 26046,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5030568071",
+      "display_name": "Harald Baumeister",
+      "orcid": "https://orcid.org/0000-0002-2040-661X",
+      "h_index": 76,
+      "i10_index": 299,
+      "works_count": 635,
+      "cited_by_count": 23309,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5070616555",
+      "display_name": "Wendy Wood",
+      "orcid": "https://orcid.org/0000-0002-6117-558X",
+      "h_index": 76,
+      "i10_index": 122,
+      "works_count": 184,
+      "cited_by_count": 42818,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5084324515",
+      "display_name": "Nickolai Titov",
+      "orcid": "https://orcid.org/0000-0002-7268-729X",
+      "h_index": 75,
+      "i10_index": 225,
+      "works_count": 375,
+      "cited_by_count": 22710,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5091463482",
+      "display_name": "Jeffrey H. Greenhaus",
+      "orcid": "https://orcid.org/0000-0002-0826-9018",
+      "h_index": 74,
+      "i10_index": 127,
+      "works_count": 486,
+      "cited_by_count": 47828,
+      "discipline": "Applied Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Applied Psychology -- 9.6",
+      "id": "https://openalex.org/A5035100120",
+      "display_name": "Wilhelm Hofmann",
+      "orcid": "https://orcid.org/0000-0003-0295-4679",
+      "h_index": 73,
+      "i10_index": 186,
+      "works_count": 452,
+      "cited_by_count": 31097,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Materials Science",
+        "Decision Sciences",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5079099541",
+      "display_name": "Brjánn Ljótsson",
+      "orcid": "https://orcid.org/0000-0001-8086-1668",
+      "h_index": 72,
+      "i10_index": 187,
+      "works_count": 307,
+      "cited_by_count": 16885,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5054459766",
+      "display_name": "Alexander J. Rothman",
+      "orcid": "https://orcid.org/0000-0003-3163-1895",
+      "h_index": 72,
+      "i10_index": 159,
+      "works_count": 314,
+      "cited_by_count": 25049,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5038379078",
+      "display_name": "David L. Blustein",
+      "orcid": "https://orcid.org/0000-0002-4097-0314",
+      "h_index": 72,
+      "i10_index": 153,
+      "works_count": 274,
+      "cited_by_count": 22048,
+      "discipline": "Applied Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5063464298",
+      "display_name": "Kevin R. Murphy",
+      "orcid": "https://orcid.org/0000-0002-4886-9499",
+      "h_index": 71,
+      "i10_index": 155,
+      "works_count": 287,
+      "cited_by_count": 21973,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Medicine",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5009591120",
+      "display_name": "Peter A. Creed",
+      "orcid": "https://orcid.org/0000-0002-8671-501X",
+      "h_index": 70,
+      "i10_index": 180,
+      "works_count": 305,
+      "cited_by_count": 14808,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5055286139",
+      "display_name": "Terence J. G. Tracey",
+      "orcid": "https://orcid.org/0000-0003-4376-6738",
+      "h_index": 70,
+      "i10_index": 169,
+      "works_count": 284,
+      "cited_by_count": 16324,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5047138295",
+      "display_name": "Katherine Marie White",
+      "orcid": "https://orcid.org/0000-0002-0345-4724",
+      "h_index": 69,
+      "i10_index": 227,
+      "works_count": 420,
+      "cited_by_count": 24690,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5001275298",
+      "display_name": "William M. P. Klein",
+      "orcid": "https://orcid.org/0000-0002-8847-8193",
+      "h_index": 69,
+      "i10_index": 204,
+      "works_count": 326,
+      "cited_by_count": 19536,
+      "discipline": "Applied Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5061086659",
+      "display_name": "Nancy E. Betz",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 128,
+      "works_count": 187,
+      "cited_by_count": 29523,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5019699877",
+      "display_name": "Gaston Godin",
+      "orcid": "https://orcid.org/0000-0003-3436-6783",
+      "h_index": 68,
+      "i10_index": 224,
+      "works_count": 334,
+      "cited_by_count": 28658,
+      "discipline": "Applied Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5041285887",
+      "display_name": "Daryl Brian O'Connor",
+      "orcid": "https://orcid.org/0000-0003-4117-4093",
+      "h_index": 68,
+      "i10_index": 168,
+      "works_count": 380,
+      "cited_by_count": 19307,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Applied Psychology -- 9.5",
+      "id": "https://openalex.org/A5071079404",
+      "display_name": "Andreas Hirschi",
+      "orcid": "https://orcid.org/0000-0001-8766-3314",
+      "h_index": 68,
+      "i10_index": 142,
+      "works_count": 363,
+      "cited_by_count": 18597,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5047171683",
+      "display_name": "Victor J. Strecher",
+      "orcid": "https://orcid.org/0000-0002-0587-2305",
+      "h_index": 68,
+      "i10_index": 128,
+      "works_count": 171,
+      "cited_by_count": 26831,
+      "discipline": "Applied Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5034983879",
+      "display_name": "Auke Tellegen",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 109,
+      "works_count": 155,
+      "cited_by_count": 90497,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5057505413",
+      "display_name": "Robert A. C. Ruiter",
+      "orcid": "https://orcid.org/0000-0001-5017-3258",
+      "h_index": 67,
+      "i10_index": 239,
+      "works_count": 502,
+      "cited_by_count": 20055,
+      "discipline": "Applied Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5038748788",
+      "display_name": "Manoj Sharma",
+      "orcid": "https://orcid.org/0000-0002-4624-2414",
+      "h_index": 66,
+      "i10_index": 290,
+      "works_count": 632,
+      "cited_by_count": 43664,
+      "discipline": "Applied Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5031212319",
+      "display_name": "Kyra Hamilton",
+      "orcid": "https://orcid.org/0000-0001-9975-685X",
+      "h_index": 66,
+      "i10_index": 190,
+      "works_count": 451,
+      "cited_by_count": 12657,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5017817794",
+      "display_name": "Gabriele Oettingen",
+      "orcid": "https://orcid.org/0000-0002-6139-1493",
+      "h_index": 66,
+      "i10_index": 180,
+      "works_count": 390,
+      "cited_by_count": 16343,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5013359305",
+      "display_name": "Stephen Matthew Schueller",
+      "orcid": "https://orcid.org/0000-0002-1003-0399",
+      "h_index": 66,
+      "i10_index": 139,
+      "works_count": 247,
+      "cited_by_count": 18420,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5033803383",
+      "display_name": "David French",
+      "orcid": "https://orcid.org/0000-0002-7663-7804",
+      "h_index": 65,
+      "i10_index": 227,
+      "works_count": 615,
+      "cited_by_count": 33378,
+      "discipline": "Applied Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5029613256",
+      "display_name": "Azucena García‐Palacios",
+      "orcid": "https://orcid.org/0000-0001-9250-8714",
+      "h_index": 65,
+      "i10_index": 226,
+      "works_count": 458,
+      "cited_by_count": 17454,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5074246625",
+      "display_name": "Sonia Lippke",
+      "orcid": "https://orcid.org/0000-0002-8272-0399",
+      "h_index": 65,
+      "i10_index": 214,
+      "works_count": 487,
+      "cited_by_count": 13897,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Applied Psychology -- 9.4",
+      "id": "https://openalex.org/A5027515475",
+      "display_name": "Blake Farran Dear",
+      "orcid": "https://orcid.org/0000-0001-9324-3092",
+      "h_index": 65,
+      "i10_index": 201,
+      "works_count": 430,
+      "cited_by_count": 16072,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Applied Psychology -- 9.3",
+      "id": "https://openalex.org/A5088065185",
+      "display_name": "Annamaria Di Fabio",
+      "orcid": "https://orcid.org/0000-0002-5150-1273",
+      "h_index": 65,
+      "i10_index": 173,
+      "works_count": 571,
+      "cited_by_count": 13491,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Applied Psychology -- 9.3",
+      "id": "https://openalex.org/A5102808130",
+      "display_name": "David C. McClelland",
+      "orcid": "https://orcid.org/0000-0003-2244-5935",
+      "h_index": 65,
+      "i10_index": 141,
+      "works_count": 262,
+      "cited_by_count": 51046,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Applied Psychology -- 9.3",
+      "id": "https://openalex.org/A5010713792",
+      "display_name": "Bas Verplanken",
+      "orcid": "https://orcid.org/0000-0001-7217-0293",
+      "h_index": 65,
+      "i10_index": 109,
+      "works_count": 171,
+      "cited_by_count": 28246,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Environmental Science",
+        "Decision Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Applied Psychology -- 9.3",
+      "id": "https://openalex.org/A5102780114",
+      "display_name": "Cecil R. Reynolds",
+      "orcid": "https://orcid.org/0009-0005-3837-1936",
+      "h_index": 64,
+      "i10_index": 230,
+      "works_count": 587,
+      "cited_by_count": 18317,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Applied Psychology -- 9.3",
+      "id": "https://openalex.org/A5088490618",
+      "display_name": "Edward C. Chang",
+      "orcid": "https://orcid.org/0000-0002-9179-8542",
+      "h_index": 64,
+      "i10_index": 213,
+      "works_count": 384,
+      "cited_by_count": 14815,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Applied Psychology -- 9.3",
+      "id": "https://openalex.org/A5079941194",
+      "display_name": "Barbara Ann Mullan",
+      "orcid": "https://orcid.org/0000-0002-0177-8899",
+      "h_index": 64,
+      "i10_index": 198,
+      "works_count": 384,
+      "cited_by_count": 13200,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Nursing",
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Applied Psychology -- 9.3",
+      "id": "https://openalex.org/A5075940230",
+      "display_name": "Jérôme Rossier",
+      "orcid": "https://orcid.org/0000-0002-9924-3672",
+      "h_index": 64,
+      "i10_index": 173,
+      "works_count": 372,
+      "cited_by_count": 15846,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Applied Psychology -- 9.3",
+      "id": "https://openalex.org/A5066244316",
+      "display_name": "Richard C Gershon",
+      "orcid": "https://orcid.org/0000-0003-0085-0112",
+      "h_index": 64,
+      "i10_index": 145,
+      "works_count": 360,
+      "cited_by_count": 29975,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Applied Psychology -- 9.3",
+      "id": "https://openalex.org/A5038941114",
+      "display_name": "Benjamin Gardner",
+      "orcid": "https://orcid.org/0000-0003-1223-5934",
+      "h_index": 63,
+      "i10_index": 153,
+      "works_count": 412,
+      "cited_by_count": 18656,
+      "discipline": "Applied Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Applied Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    }
+  ]
+}
