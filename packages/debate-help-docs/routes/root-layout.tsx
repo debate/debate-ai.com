@@ -16,6 +16,7 @@ import { Provider } from './provider';
 import { HIGHLIGHT_INIT_SCRIPT } from '../components/guides/highlight-toggle';
 import { DOCS_ZOOM_INIT_SCRIPT } from '../lib/docs-zoom';
 import { docsConfig } from '../lib/fumadocs/customize-docs';
+import 'katex/dist/katex.min.css';
 import '../styles/docs.css';
 
 export const metadata: Metadata = {

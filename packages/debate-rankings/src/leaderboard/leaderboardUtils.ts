@@ -5,7 +5,7 @@
  * @module leaderboard/leaderboardUtils
  */
 
-import { normalizeSchool } from "../index";
+import { RATING_METHOD_DOCS_HREF, RATING_TOOLTIP_SUMMARY, normalizeSchool } from "../index";
 import { balancedSchoolScore } from "./schoolScore";
 import { TEAM_RANK_CHANGE_TOOLTIP } from "./rankChange";
 import type { RankingDataset, RankingDatasetId, RankingEntry } from "../index";
@@ -189,8 +189,7 @@ export function hasLiveLeaderboard(division: Division): boolean {
  */
 export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
   rank: "Position by rating.",
-  adjustedRating:
-    "Elo rating compiled from Tabroom round results; ranks are sorted on it.",
+  adjustedRating: RATING_TOOLTIP_SUMMARY,
   affWinRate: "Share of rounds won on the affirmative (Pro in PF).",
   negWinRate: "Share of rounds won on the negative (Con in PF).",
   affElimWinRate: "Share of elimination rounds won on the affirmative.",
@@ -200,10 +199,17 @@ export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
 };
 
 /**
+ * Links shown under a header tooltip, for columns whose full explanation
+ * (here, formulas a tooltip cannot render) lives on a help docs page.
+ */
+export const COLUMN_TOOLTIP_LINKS: Partial<Record<SortKey, { href: string; label: string }>> = {
+  adjustedRating: { href: RATING_METHOD_DOCS_HREF, label: "How the rating is computed" },
+};
+
+/**
  * Tooltip text for the Elo column.
  */
-export const ELO_TOOLTIP =
-  "Elo rating compiled from Tabroom round results and openCaselist. Higher values indicate stronger teams.";
+export const ELO_TOOLTIP = RATING_TOOLTIP_SUMMARY;
 
 /**
  * Checks if a value is present and not a placeholder.

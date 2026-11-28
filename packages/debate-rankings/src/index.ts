@@ -54,6 +54,8 @@ export {
   formatSiteRating,
   RATING_DISPLAY_DIVISOR,
 } from "./rating-offset";
+// How the Elo rating is made: constants, helpers and the LaTeX formulas the help docs print.
+export * from "./rating-method";
 // The official rankings: live Elo ratings + TOC bids, 2015-16 to now, with the
 // CSVs' aff/neg win rates merged into the current season (see extinction.ts).
 export {

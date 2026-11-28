@@ -22,7 +22,7 @@ import {
 import { cn } from "./ui/lib/utils"
 import { ColumnResizeHandle } from "./grid/ColumnResizeHandle"
 import { useResizableColumns } from "./grid/useResizableColumns"
-import { COLUMN_TOOLTIPS, DIVISION_SHORT_LABELS, schoolRankOf } from "./leaderboardUtils"
+import { COLUMN_TOOLTIPS, COLUMN_TOOLTIP_LINKS, DIVISION_SHORT_LABELS, schoolRankOf } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
 import { TeamLabel } from "./team-label/TeamLabel"
@@ -252,6 +252,7 @@ export function RankingsTable({ entries, legendary, schoolRanks, division, sort,
           <TableRow>
             {columns.map((col) => {
               const tip = col.key === "rankChange" && rankChangeTooltip ? rankChangeTooltip : COLUMN_TOOLTIPS[col.key]
+              const tipLink = COLUMN_TOOLTIP_LINKS[col.key]
               const active = sort?.key === col.key
               return (
                 <TableHead
@@ -282,7 +283,17 @@ export function RankingsTable({ entries, legendary, schoolRanks, division, sort,
                         <TooltipTrigger asChild>
                           <Info className="h-3 w-3 cursor-help opacity-60" aria-label={`About ${col.key === "rank" ? "rank" : col.key === "rankChange" ? "rank change" : col.label}`} />
                         </TooltipTrigger>
-                        <TooltipContent className="max-w-xs text-xs font-normal">{tip}</TooltipContent>
+                        <TooltipContent className="max-w-xs text-xs font-normal">
+                          {tip}
+                          {tipLink && (
+                            <>
+                              {" "}
+                              <Link href={tipLink.href} className="font-medium underline underline-offset-2">
+                                {tipLink.label}
+                              </Link>
+                            </>
+                          )}
+                        </TooltipContent>
                       </Tooltip>
                     )}
                   </span>

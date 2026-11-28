@@ -18,12 +18,14 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import Link from "next/link"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { Search } from "lucide-react"
 import {
   getRankingDatasetInfo,
   hasCollegeHistory,
   hasExtinctionSeason,
+  RATING_METHOD_DOCS_HREF,
   type RankingDataset,
 } from "../index"
 import { TooltipProvider } from "./ui/primitives/tooltip"
@@ -621,7 +623,10 @@ return (
                 {dataset.source === "extinction" && (
                   <p className="mb-3 text-xs text-muted-foreground">
                     Elo ratings{division !== "NDT" ? " and TOC bids" : ""} compiled from Tabroom round results and openCaselist
-                    {isCurrentYear && dataset.field ? "; aff/neg win rates from this season's ballots" : ""}.
+                    {isCurrentYear && dataset.field ? "; aff/neg win rates from this season's ballots" : ""}.{" "}
+                    <Link href={RATING_METHOD_DOCS_HREF} className="font-medium underline underline-offset-2">
+                      How the rating is computed
+                    </Link>
                   </p>
                 )}
                 <div className="relative mb-3 max-w-sm">
