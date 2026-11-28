@@ -1,0 +1,587 @@
+{
+  "kind": "subfield",
+  "id": 3314,
+  "name": "Anthropology",
+  "total_in_scrape": 29,
+  "count": 29,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Anthropology -- 9.9",
+      "id": "https://openalex.org/A5037700111",
+      "display_name": "Jean‐Jacques Hublin",
+      "orcid": "https://orcid.org/0000-0001-6283-8114",
+      "h_index": 96,
+      "i10_index": 337,
+      "works_count": 815,
+      "cited_by_count": 35533,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Anthropology -- 9.9",
+      "id": "https://openalex.org/A5069656957",
+      "display_name": "Juan Luís Arsuaga",
+      "orcid": "https://orcid.org/0000-0001-5361-2295",
+      "h_index": 90,
+      "i10_index": 327,
+      "works_count": 603,
+      "cited_by_count": 30699,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Anthropology -- 9.9",
+      "id": "https://openalex.org/A5080550633",
+      "display_name": "Victoria Reyes‐García",
+      "orcid": "https://orcid.org/0000-0002-2914-8055",
+      "h_index": 87,
+      "i10_index": 313,
+      "works_count": 648,
+      "cited_by_count": 27240,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Anthropology -- 9.9",
+      "id": "https://openalex.org/A5054685005",
+      "display_name": "José María Bermúdez de Castro",
+      "orcid": "https://orcid.org/0000-0003-1314-3273",
+      "h_index": 87,
+      "i10_index": 247,
+      "works_count": 461,
+      "cited_by_count": 25735,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Anthropology -- 9.9",
+      "id": "https://openalex.org/A5018755406",
+      "display_name": "Tim Ingold",
+      "orcid": "https://orcid.org/0000-0001-6703-6137",
+      "h_index": 87,
+      "i10_index": 222,
+      "works_count": 713,
+      "cited_by_count": 51552,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Anthropology -- 9.9",
+      "id": "https://openalex.org/A5074743669",
+      "display_name": "Didier Fassin",
+      "orcid": "https://orcid.org/0000-0002-7684-2410",
+      "h_index": 86,
+      "i10_index": 255,
+      "works_count": 757,
+      "cited_by_count": 33648,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5036488110",
+      "display_name": "Eudald Carbonell",
+      "orcid": "https://orcid.org/0000-0001-6306-3621",
+      "h_index": 86,
+      "i10_index": 251,
+      "works_count": 625,
+      "cited_by_count": 24236,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5081630101",
+      "display_name": "Francesco d’Errico",
+      "orcid": "https://orcid.org/0000-0002-2422-3079",
+      "h_index": 85,
+      "i10_index": 229,
+      "works_count": 492,
+      "cited_by_count": 29981,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5069480024",
+      "display_name": "Daniel E. Lieberman",
+      "orcid": "https://orcid.org/0000-0002-6194-9127",
+      "h_index": 85,
+      "i10_index": 173,
+      "works_count": 272,
+      "cited_by_count": 27311,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5051525798",
+      "display_name": "Walter D. Mignolo",
+      "orcid": "https://orcid.org/0000-0002-2948-0656",
+      "h_index": 83,
+      "i10_index": 197,
+      "works_count": 429,
+      "cited_by_count": 49817,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5070324408",
+      "display_name": "Boaventura de Sousa Santos",
+      "orcid": "https://orcid.org/0000-0003-3359-3626",
+      "h_index": 80,
+      "i10_index": 225,
+      "works_count": 522,
+      "cited_by_count": 32374,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5089418366",
+      "display_name": "Chris B. Stringer",
+      "orcid": "https://orcid.org/0000-0002-9183-7337",
+      "h_index": 79,
+      "i10_index": 193,
+      "works_count": 316,
+      "cited_by_count": 23563,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5101718511",
+      "display_name": "Paul S. Goldberg",
+      "orcid": "https://orcid.org/0000-0002-7059-1446",
+      "h_index": 77,
+      "i10_index": 183,
+      "works_count": 400,
+      "cited_by_count": 18713,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5083550209",
+      "display_name": "Manuel Domínguez‐Rodrigo",
+      "orcid": "https://orcid.org/0000-0002-7233-331X",
+      "h_index": 74,
+      "i10_index": 220,
+      "works_count": 352,
+      "cited_by_count": 17048,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5026510296",
+      "display_name": "Bernard A. Wood",
+      "orcid": "https://orcid.org/0000-0003-0273-7332",
+      "h_index": 73,
+      "i10_index": 199,
+      "works_count": 433,
+      "cited_by_count": 17505,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5110330477",
+      "display_name": "Clifford Geertz",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 132,
+      "works_count": 288,
+      "cited_by_count": 57332,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Anthropology -- 9.8",
+      "id": "https://openalex.org/A5112805826",
+      "display_name": "George E. Marcus",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 171,
+      "works_count": 396,
+      "cited_by_count": 43574,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5066731553",
+      "display_name": "Peter S. Ungar",
+      "orcid": "https://orcid.org/0000-0002-5936-471X",
+      "h_index": 70,
+      "i10_index": 171,
+      "works_count": 344,
+      "cited_by_count": 15291,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5080601068",
+      "display_name": "Arturo Escobar",
+      "orcid": "https://orcid.org/0000-0002-6392-1726",
+      "h_index": 69,
+      "i10_index": 162,
+      "works_count": 336,
+      "cited_by_count": 35053,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5009367344",
+      "display_name": "Antonio Rosas",
+      "orcid": "https://orcid.org/0000-0002-5829-9952",
+      "h_index": 67,
+      "i10_index": 160,
+      "works_count": 301,
+      "cited_by_count": 22881,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5043544948",
+      "display_name": "Curtis W. Marean",
+      "orcid": "https://orcid.org/0000-0002-2670-5733",
+      "h_index": 67,
+      "i10_index": 124,
+      "works_count": 224,
+      "cited_by_count": 17892,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5068733918",
+      "display_name": "Christophe Falguères",
+      "orcid": "https://orcid.org/0000-0003-0644-4852",
+      "h_index": 66,
+      "i10_index": 214,
+      "works_count": 521,
+      "cited_by_count": 13336,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5049831489",
+      "display_name": "Peter Andrews",
+      "orcid": "https://orcid.org/0000-0003-4578-725X",
+      "h_index": 66,
+      "i10_index": 164,
+      "works_count": 277,
+      "cited_by_count": 14525,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5109985607",
+      "display_name": "Mary Douglas",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 160,
+      "works_count": 588,
+      "cited_by_count": 29911,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5111902179",
+      "display_name": "Jack R. Goody",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 157,
+      "works_count": 668,
+      "cited_by_count": 21646,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5036448244",
+      "display_name": "C. Owen Lovejoy",
+      "orcid": "https://orcid.org/0000-0003-0053-4523",
+      "h_index": 65,
+      "i10_index": 124,
+      "works_count": 174,
+      "cited_by_count": 23215,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5015682792",
+      "display_name": "Jean‐Jacques Bahain",
+      "orcid": "https://orcid.org/0000-0002-1446-5568",
+      "h_index": 64,
+      "i10_index": 220,
+      "works_count": 573,
+      "cited_by_count": 12373,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Anthropology -- 9.7",
+      "id": "https://openalex.org/A5084912400",
+      "display_name": "Tim D. White",
+      "orcid": "https://orcid.org/0000-0003-1266-7489",
+      "h_index": 64,
+      "i10_index": 109,
+      "works_count": 229,
+      "cited_by_count": 18278,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Anthropology -- 9.6",
+      "id": "https://openalex.org/A5004470217",
+      "display_name": "Lenore H. Manderson",
+      "orcid": "https://orcid.org/0000-0002-7883-1790",
+      "h_index": 63,
+      "i10_index": 288,
+      "works_count": 646,
+      "cited_by_count": 15391,
+      "discipline": "Anthropology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Anthropology",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    }
+  ]
+}

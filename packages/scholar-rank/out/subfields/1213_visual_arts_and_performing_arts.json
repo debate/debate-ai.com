@@ -1,0 +1,68 @@
+{
+  "kind": "subfield",
+  "id": 1213,
+  "name": "Visual Arts and Performing Arts",
+  "total_in_scrape": 3,
+  "count": 3,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Visual Arts and Performing Arts -- 9.9",
+      "id": "https://openalex.org/A5091064969",
+      "display_name": "Bruce A. Barton",
+      "orcid": "https://orcid.org/0000-0001-7878-8895",
+      "h_index": 85,
+      "i10_index": 272,
+      "works_count": 530,
+      "cited_by_count": 30660,
+      "discipline": "Visual Arts and Performing Arts",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Visual Arts and Performing Arts",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Visual Arts and Performing Arts -- 9.9",
+      "id": "https://openalex.org/A5075530900",
+      "display_name": "Ellen Winner",
+      "orcid": "https://orcid.org/0000-0003-0494-6621",
+      "h_index": 73,
+      "i10_index": 156,
+      "works_count": 331,
+      "cited_by_count": 20116,
+      "discipline": "Visual Arts and Performing Arts",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Visual Arts and Performing Arts",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Visual Arts and Performing Arts -- 9.9",
+      "id": "https://openalex.org/A5103971086",
+      "display_name": "Elliot W. Eisner",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 180,
+      "works_count": 454,
+      "cited_by_count": 24868,
+      "discipline": "Visual Arts and Performing Arts",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Visual Arts and Performing Arts",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

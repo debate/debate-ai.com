@@ -7,8 +7,8 @@
  * scoring printed underneath. A picker ranks people three ways
  * ({@link NdtRankingMode}): individual debaters, teams with their debaters'
  * other partnerships, or teams strictly on what the pair did together. The
- * debater ranking also takes in high school-only debaters (TOC and NDCA
- * policy, no NDT points), scored on their high school record. The list
+ * debater ranking lists only college NDT debaters with points (a debater
+ * known only from the high school TOC and NDCA results is left out). The list
  * scrolls all the way down, loading more rows as it nears the end. Teams
  * link to their past-team pages, schools to their school pages. The school
  * whose page it is is highlighted. The same ranking also sits inline on the
@@ -183,14 +183,6 @@ function RankedRows({
                       <span className="font-medium text-foreground">{row.team}</span>
                     )}
                     <span className="text-sm text-muted-foreground">{ndtSchoolDisplayName(row.school)}</span>
-                    {row.highSchoolOnly && (
-                      <span
-                        className="self-center rounded-full border px-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground"
-                        title="Never scored at the NDT: ranked on high school TOC and NDCA results only"
-                      >
-                        High school only
-                      </span>
-                    )}
                   </>
                 ) : kind === "teams" ? (
                   <>
@@ -340,9 +332,8 @@ export function NdtAllSeasonsScoring() {
       <ul className="mt-2 list-disc space-y-0.5 pl-5">
         <li>
           <span className="text-foreground">Individual debaters</span>: each debater's NDT elims, Copeland Awards and
-          bids with every partner in full, their own speaker awards, and their own high school results. Debaters
-          who never scored at the NDT are ranked too, on their high school TOC and NDCA policy results alone (at the
-          same half weight), marked "High school only".
+          bids with every partner in full, their own speaker awards, and their own high school results. The list
+          is college NDT debaters with points; high school-only debaters are not ranked.
         </li>
         <li>
           <span className="text-foreground">Teams, with partners' points</span>: each debater's best partnership,
@@ -466,7 +457,7 @@ export function NdtAllSeasonsRankings({
             <p className="text-sm text-muted-foreground">
               Every NDT team and school since 1947, ranked by points for elim finishes, Copeland Awards,
               first-round bids and speaker awards, plus each debater's high school TOC and NDCA results.
-              Individual debaters include high school-only debaters, ranked on their TOC and NDCA record.
+              Individual debaters are college NDT debaters with points.
               Seasons before {NDT_ERA_CUTOFF_YEAR} count {NDT_PRE_ERA_MULTIPLIER}×.
               {season && seasonCounted && <> The {seasonLabel(season.year)} season counts so far through the live rankings.</>}
             </p>

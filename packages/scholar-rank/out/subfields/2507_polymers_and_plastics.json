@@ -1,0 +1,4935 @@
+{
+  "kind": "subfield",
+  "id": 2507,
+  "name": "Polymers and Plastics",
+  "total_in_scrape": 257,
+  "count": 257,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Polymers and Plastics -- 9.9",
+      "id": "https://openalex.org/A5002152167",
+      "display_name": "Jean M. J. Fréchet",
+      "orcid": "https://orcid.org/0000-0001-6419-0163",
+      "h_index": 182,
+      "i10_index": 688,
+      "works_count": 892,
+      "cited_by_count": 122028,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Polymers and Plastics -- 9.9",
+      "id": "https://openalex.org/A5074748535",
+      "display_name": "Gordon G. Wallace",
+      "orcid": "https://orcid.org/0000-0002-0381-7273",
+      "h_index": 147,
+      "i10_index": 1044,
+      "works_count": 1493,
+      "cited_by_count": 99546,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Polymers and Plastics -- 9.9",
+      "id": "https://openalex.org/A5107944136",
+      "display_name": "Sabu Thomas",
+      "orcid": "https://orcid.org/0000-0003-4726-5746",
+      "h_index": 144,
+      "i10_index": 1241,
+      "works_count": 2239,
+      "cited_by_count": 99343,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Polymers and Plastics -- 9.9",
+      "id": "https://openalex.org/A5075217418",
+      "display_name": "Jianyong Yu",
+      "orcid": "https://orcid.org/0000-0002-9350-7817",
+      "h_index": 138,
+      "i10_index": 866,
+      "works_count": 1231,
+      "cited_by_count": 70248,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Polymers and Plastics -- 9.9",
+      "id": "https://openalex.org/A5102741855",
+      "display_name": "Donald R. Paul",
+      "orcid": "https://orcid.org/0000-0003-1546-8514",
+      "h_index": 138,
+      "i10_index": 624,
+      "works_count": 753,
+      "cited_by_count": 78400,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Polymers and Plastics -- 9.9",
+      "id": "https://openalex.org/A5010868339",
+      "display_name": "Yuan Z. Hu",
+      "orcid": "https://orcid.org/0000-0003-0753-5430",
+      "h_index": 132,
+      "i10_index": 1056,
+      "works_count": 1312,
+      "cited_by_count": 72059,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5031207407",
+      "display_name": "Benjamin S. Hsiao",
+      "orcid": "https://orcid.org/0000-0002-3180-1826",
+      "h_index": 130,
+      "i10_index": 559,
+      "works_count": 858,
+      "cited_by_count": 57871,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5079164874",
+      "display_name": "Philippe Dúbois",
+      "orcid": "https://orcid.org/0000-0003-1534-1564",
+      "h_index": 125,
+      "i10_index": 698,
+      "works_count": 1425,
+      "cited_by_count": 66631,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5100711346",
+      "display_name": "Yu‐Zhong Wang",
+      "orcid": "https://orcid.org/0000-0001-8694-4106",
+      "h_index": 124,
+      "i10_index": 823,
+      "works_count": 988,
+      "cited_by_count": 57380,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5086903953",
+      "display_name": "Mohammad Jawaid",
+      "orcid": "https://orcid.org/0000-0001-5348-5740",
+      "h_index": 122,
+      "i10_index": 588,
+      "works_count": 881,
+      "cited_by_count": 59916,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5100457313",
+      "display_name": "Liqun Zhang",
+      "orcid": "https://orcid.org/0000-0002-2103-6294",
+      "h_index": 121,
+      "i10_index": 1067,
+      "works_count": 1557,
+      "cited_by_count": 70063,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5100447410",
+      "display_name": "Soo‐Jin Park",
+      "orcid": "https://orcid.org/0000-0002-6350-6135",
+      "h_index": 121,
+      "i10_index": 885,
+      "works_count": 1480,
+      "cited_by_count": 68360,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5012295897",
+      "display_name": "Josè Maria Kenny",
+      "orcid": "https://orcid.org/0000-0001-6329-3048",
+      "h_index": 121,
+      "i10_index": 550,
+      "works_count": 782,
+      "cited_by_count": 49219,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5108238128",
+      "display_name": "Alan Graham MacDiarmid",
+      "orcid": null,
+      "h_index": 121,
+      "i10_index": 439,
+      "works_count": 611,
+      "cited_by_count": 71514,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5050380414",
+      "display_name": "S.M. Sapuan",
+      "orcid": "https://orcid.org/0000-0002-0352-450X",
+      "h_index": 120,
+      "i10_index": 633,
+      "works_count": 1093,
+      "cited_by_count": 53525,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5036129345",
+      "display_name": "Vijay Kumar Thakur",
+      "orcid": "https://orcid.org/0000-0002-0790-2264",
+      "h_index": 120,
+      "i10_index": 485,
+      "works_count": 621,
+      "cited_by_count": 55389,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Polymers and Plastics -- 9.8",
+      "id": "https://openalex.org/A5006383854",
+      "display_name": "Hao Wang",
+      "orcid": "https://orcid.org/0000-0001-8869-9669",
+      "h_index": 117,
+      "i10_index": 357,
+      "works_count": 538,
+      "cited_by_count": 49682,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5101644939",
+      "display_name": "Gaoquan Shi",
+      "orcid": "https://orcid.org/0000-0003-1850-359X",
+      "h_index": 116,
+      "i10_index": 298,
+      "works_count": 334,
+      "cited_by_count": 66706,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5048947860",
+      "display_name": "Lei Song",
+      "orcid": "https://orcid.org/0000-0002-0435-2287",
+      "h_index": 115,
+      "i10_index": 639,
+      "works_count": 811,
+      "cited_by_count": 46420,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5083589781",
+      "display_name": "Amar Kumar Mohanty",
+      "orcid": "https://orcid.org/0000-0002-1079-2481",
+      "h_index": 115,
+      "i10_index": 483,
+      "works_count": 635,
+      "cited_by_count": 60447,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5100612034",
+      "display_name": "Qiang Fu",
+      "orcid": "https://orcid.org/0000-0002-5191-3315",
+      "h_index": 114,
+      "i10_index": 775,
+      "works_count": 1085,
+      "cited_by_count": 48705,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5044707487",
+      "display_name": "Pingan Song",
+      "orcid": "https://orcid.org/0000-0003-1082-652X",
+      "h_index": 112,
+      "i10_index": 374,
+      "works_count": 463,
+      "cited_by_count": 36423,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5067290125",
+      "display_name": "K. G. Neoh",
+      "orcid": "https://orcid.org/0000-0002-2700-1914",
+      "h_index": 111,
+      "i10_index": 581,
+      "works_count": 718,
+      "cited_by_count": 44587,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5045504233",
+      "display_name": "Richard M. Crooks",
+      "orcid": "https://orcid.org/0000-0001-5186-4878",
+      "h_index": 111,
+      "i10_index": 332,
+      "works_count": 462,
+      "cited_by_count": 42036,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5049150802",
+      "display_name": "Manjusri Misra",
+      "orcid": "https://orcid.org/0000-0003-2179-7699",
+      "h_index": 109,
+      "i10_index": 463,
+      "works_count": 618,
+      "cited_by_count": 53916,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5100621669",
+      "display_name": "Chul B. Park",
+      "orcid": "https://orcid.org/0000-0002-1702-1268",
+      "h_index": 106,
+      "i10_index": 584,
+      "works_count": 834,
+      "cited_by_count": 45567,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5100781368",
+      "display_name": "Wei Min Yang",
+      "orcid": "https://orcid.org/0000-0003-0198-1632",
+      "h_index": 105,
+      "i10_index": 616,
+      "works_count": 917,
+      "cited_by_count": 40971,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Polymers and Plastics -- 9.7",
+      "id": "https://openalex.org/A5069510331",
+      "display_name": "Sanjay Mavinkere Rangappa",
+      "orcid": "https://orcid.org/0000-0002-3279-5931",
+      "h_index": 105,
+      "i10_index": 493,
+      "works_count": 762,
+      "cited_by_count": 41243,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5019216041",
+      "display_name": "Dimitrios Ν. Bikiaris",
+      "orcid": "https://orcid.org/0000-0001-8458-4952",
+      "h_index": 104,
+      "i10_index": 563,
+      "works_count": 717,
+      "cited_by_count": 40781,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5090516500",
+      "display_name": "Jyongsik Jang",
+      "orcid": "https://orcid.org/0000-0002-0415-802X",
+      "h_index": 104,
+      "i10_index": 444,
+      "works_count": 518,
+      "cited_by_count": 34548,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5082914999",
+      "display_name": "Hatsuo Ishida",
+      "orcid": "https://orcid.org/0000-0002-2590-2700",
+      "h_index": 103,
+      "i10_index": 399,
+      "works_count": 512,
+      "cited_by_count": 34061,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5063728463",
+      "display_name": "Suchart Siengchin",
+      "orcid": "https://orcid.org/0000-0002-6635-5686",
+      "h_index": 102,
+      "i10_index": 663,
+      "works_count": 1097,
+      "cited_by_count": 43294,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5051012048",
+      "display_name": "Mohammad Reza Saeb",
+      "orcid": "https://orcid.org/0000-0001-9907-9414",
+      "h_index": 101,
+      "i10_index": 532,
+      "works_count": 696,
+      "cited_by_count": 65459,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5028902587",
+      "display_name": "Rainer Haag",
+      "orcid": "https://orcid.org/0000-0003-3840-162X",
+      "h_index": 100,
+      "i10_index": 633,
+      "works_count": 1075,
+      "cited_by_count": 45632,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5100728380",
+      "display_name": "Zhong‐Ming Li",
+      "orcid": "https://orcid.org/0000-0001-7203-1453",
+      "h_index": 100,
+      "i10_index": 546,
+      "works_count": 713,
+      "cited_by_count": 37079,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5101938357",
+      "display_name": "Changyu Shen",
+      "orcid": "https://orcid.org/0000-0001-8952-1344",
+      "h_index": 100,
+      "i10_index": 513,
+      "works_count": 757,
+      "cited_by_count": 37502,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5005620680",
+      "display_name": "Scott R. White",
+      "orcid": "https://orcid.org/0000-0002-0831-9097",
+      "h_index": 100,
+      "i10_index": 212,
+      "works_count": 390,
+      "cited_by_count": 46520,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5030499659",
+      "display_name": "Suprakas Sinha Ray",
+      "orcid": "https://orcid.org/0000-0002-0007-2595",
+      "h_index": 98,
+      "i10_index": 454,
+      "works_count": 934,
+      "cited_by_count": 41749,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Polymers and Plastics -- 9.6",
+      "id": "https://openalex.org/A5058224442",
+      "display_name": "Emmanuel P. Giannelis",
+      "orcid": "https://orcid.org/0000-0001-6158-3738",
+      "h_index": 98,
+      "i10_index": 272,
+      "works_count": 394,
+      "cited_by_count": 47382,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5077167301",
+      "display_name": "Xungai Wang",
+      "orcid": "https://orcid.org/0000-0002-3549-6769",
+      "h_index": 96,
+      "i10_index": 520,
+      "works_count": 844,
+      "cited_by_count": 37239,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5048802994",
+      "display_name": "Nancy R. Sottos",
+      "orcid": "https://orcid.org/0000-0002-5818-520X",
+      "h_index": 96,
+      "i10_index": 285,
+      "works_count": 512,
+      "cited_by_count": 46876,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5044196894",
+      "display_name": "Lawrence T. Drzal",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 267,
+      "works_count": 404,
+      "cited_by_count": 37496,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5029776614",
+      "display_name": "Jianyong Ouyang",
+      "orcid": "https://orcid.org/0000-0001-9901-0177",
+      "h_index": 95,
+      "i10_index": 233,
+      "works_count": 322,
+      "cited_by_count": 33218,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5109997969",
+      "display_name": "Michael F. Rubner",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 224,
+      "works_count": 325,
+      "cited_by_count": 35697,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5012146937",
+      "display_name": "Christopher W. Macosko",
+      "orcid": "https://orcid.org/0000-0002-2892-3267",
+      "h_index": 94,
+      "i10_index": 353,
+      "works_count": 506,
+      "cited_by_count": 43435,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5100421454",
+      "display_name": "Yi Li",
+      "orcid": "https://orcid.org/0000-0002-2092-4505",
+      "h_index": 93,
+      "i10_index": 694,
+      "works_count": 1574,
+      "cited_by_count": 38397,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5060413144",
+      "display_name": "Gerhard Wegner",
+      "orcid": "https://orcid.org/0000-0001-8181-2198",
+      "h_index": 93,
+      "i10_index": 506,
+      "works_count": 853,
+      "cited_by_count": 36876,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5100327788",
+      "display_name": "Xin Wang",
+      "orcid": "https://orcid.org/0000-0001-5881-4400",
+      "h_index": 93,
+      "i10_index": 494,
+      "works_count": 762,
+      "cited_by_count": 32146,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5110368953",
+      "display_name": "Jin Zhu",
+      "orcid": "https://orcid.org/0000-0002-6116-7774",
+      "h_index": 93,
+      "i10_index": 401,
+      "works_count": 730,
+      "cited_by_count": 29526,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5074784653",
+      "display_name": "Serge Bourbigot",
+      "orcid": "https://orcid.org/0000-0003-1536-2015",
+      "h_index": 93,
+      "i10_index": 365,
+      "works_count": 823,
+      "cited_by_count": 28938,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Polymers and Plastics -- 9.5",
+      "id": "https://openalex.org/A5068278242",
+      "display_name": "Deyue Yan",
+      "orcid": "https://orcid.org/0000-0002-8681-0332",
+      "h_index": 92,
+      "i10_index": 482,
+      "works_count": 669,
+      "cited_by_count": 32701,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5085487864",
+      "display_name": "De‐Yi Wang",
+      "orcid": "https://orcid.org/0000-0002-0499-6138",
+      "h_index": 91,
+      "i10_index": 389,
+      "works_count": 534,
+      "cited_by_count": 25234,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5112126689",
+      "display_name": "Pingkai Jiang",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 216,
+      "works_count": 296,
+      "cited_by_count": 27928,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5065189669",
+      "display_name": "Ian Macmillan Ward",
+      "orcid": "https://orcid.org/0000-0001-8398-4911",
+      "h_index": 90,
+      "i10_index": 558,
+      "works_count": 774,
+      "cited_by_count": 32182,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5080730961",
+      "display_name": "Stephen Z. D. Cheng",
+      "orcid": "https://orcid.org/0000-0003-1448-0546",
+      "h_index": 90,
+      "i10_index": 463,
+      "works_count": 750,
+      "cited_by_count": 30540,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5087298250",
+      "display_name": "Xiaoming Tao",
+      "orcid": "https://orcid.org/0000-0002-2406-0695",
+      "h_index": 90,
+      "i10_index": 322,
+      "works_count": 678,
+      "cited_by_count": 30672,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5002684335",
+      "display_name": "Richard A. Vaia",
+      "orcid": "https://orcid.org/0000-0003-4589-3423",
+      "h_index": 90,
+      "i10_index": 263,
+      "works_count": 512,
+      "cited_by_count": 36724,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5023490205",
+      "display_name": "Atsushi Takahara",
+      "orcid": "https://orcid.org/0000-0002-0584-1525",
+      "h_index": 89,
+      "i10_index": 500,
+      "works_count": 1063,
+      "cited_by_count": 31431,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5011936309",
+      "display_name": "Jean‐Pierre Majoral",
+      "orcid": "https://orcid.org/0000-0002-0971-817X",
+      "h_index": 88,
+      "i10_index": 536,
+      "works_count": 866,
+      "cited_by_count": 28937,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5100692334",
+      "display_name": "Mingbo Yang",
+      "orcid": "https://orcid.org/0000-0001-7950-7645",
+      "h_index": 87,
+      "i10_index": 458,
+      "works_count": 671,
+      "cited_by_count": 29364,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5054773545",
+      "display_name": "Jaroslav Stejskal",
+      "orcid": "https://orcid.org/0000-0001-9350-9647",
+      "h_index": 87,
+      "i10_index": 392,
+      "works_count": 602,
+      "cited_by_count": 29962,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Polymers and Plastics -- 9.4",
+      "id": "https://openalex.org/A5100618246",
+      "display_name": "Chaobin He",
+      "orcid": "https://orcid.org/0000-0001-8200-8337",
+      "h_index": 87,
+      "i10_index": 365,
+      "works_count": 487,
+      "cited_by_count": 24945,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5034045203",
+      "display_name": "James R. Jr. Baker",
+      "orcid": "https://orcid.org/0000-0002-4478-1932",
+      "h_index": 87,
+      "i10_index": 322,
+      "works_count": 532,
+      "cited_by_count": 31630,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5033735762",
+      "display_name": "Sanat K. Kumar",
+      "orcid": "https://orcid.org/0000-0002-6690-2221",
+      "h_index": 87,
+      "i10_index": 308,
+      "works_count": 616,
+      "cited_by_count": 27916,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5066036682",
+      "display_name": "Jonathan Rivnay",
+      "orcid": "https://orcid.org/0000-0002-0602-6485",
+      "h_index": 87,
+      "i10_index": 163,
+      "works_count": 262,
+      "cited_by_count": 36419,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5111585300",
+      "display_name": "Eric Baer",
+      "orcid": "https://orcid.org/0000-0001-5656-2668",
+      "h_index": 86,
+      "i10_index": 430,
+      "works_count": 579,
+      "cited_by_count": 27277,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5102876006",
+      "display_name": "A. Keller",
+      "orcid": "https://orcid.org/0009-0002-0361-4596",
+      "h_index": 86,
+      "i10_index": 338,
+      "works_count": 430,
+      "cited_by_count": 27430,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5000171627",
+      "display_name": "Suying Wei",
+      "orcid": "https://orcid.org/0000-0002-0456-5389",
+      "h_index": 86,
+      "i10_index": 172,
+      "works_count": 229,
+      "cited_by_count": 18836,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5025978464",
+      "display_name": "George Philip Simon",
+      "orcid": "https://orcid.org/0000-0001-8832-1164",
+      "h_index": 85,
+      "i10_index": 340,
+      "works_count": 481,
+      "cited_by_count": 26362,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5071819303",
+      "display_name": "Ton Peijs",
+      "orcid": "https://orcid.org/0000-0002-6686-6005",
+      "h_index": 85,
+      "i10_index": 263,
+      "works_count": 365,
+      "cited_by_count": 24847,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5080161180",
+      "display_name": "Rigoberto C. Advíncula",
+      "orcid": "https://orcid.org/0000-0002-2899-4778",
+      "h_index": 84,
+      "i10_index": 364,
+      "works_count": 706,
+      "cited_by_count": 26860,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5019544154",
+      "display_name": "Ludwik Leibler",
+      "orcid": "https://orcid.org/0000-0002-3213-3110",
+      "h_index": 84,
+      "i10_index": 177,
+      "works_count": 295,
+      "cited_by_count": 39950,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Polymers and Plastics -- 9.3",
+      "id": "https://openalex.org/A5000955015",
+      "display_name": "Jack L. Koenig",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 410,
+      "works_count": 582,
+      "cited_by_count": 38527,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5079872774",
+      "display_name": "Anne‐Marie Caminade",
+      "orcid": "https://orcid.org/0000-0001-8487-3578",
+      "h_index": 83,
+      "i10_index": 393,
+      "works_count": 749,
+      "cited_by_count": 23141,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5057457548",
+      "display_name": "Gang Zheng Sun",
+      "orcid": "https://orcid.org/0000-0002-6608-9971",
+      "h_index": 83,
+      "i10_index": 337,
+      "works_count": 470,
+      "cited_by_count": 68092,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5112288262",
+      "display_name": "James E. E. McGrath",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 327,
+      "works_count": 538,
+      "cited_by_count": 33725,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5018784794",
+      "display_name": "Linda S. Schadler",
+      "orcid": "https://orcid.org/0000-0002-6406-5247",
+      "h_index": 83,
+      "i10_index": 209,
+      "works_count": 313,
+      "cited_by_count": 27388,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5059386507",
+      "display_name": "Qiang Zheng",
+      "orcid": "https://orcid.org/0000-0001-9422-7430",
+      "h_index": 82,
+      "i10_index": 518,
+      "works_count": 838,
+      "cited_by_count": 26952,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5045336140",
+      "display_name": "Mohini M. Sain",
+      "orcid": "https://orcid.org/0000-0003-0808-271X",
+      "h_index": 82,
+      "i10_index": 341,
+      "works_count": 528,
+      "cited_by_count": 36545,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5016273359",
+      "display_name": "Ahmed Hashim",
+      "orcid": "https://orcid.org/0000-0002-0778-1159",
+      "h_index": 82,
+      "i10_index": 184,
+      "works_count": 296,
+      "cited_by_count": 12272,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5031675155",
+      "display_name": "Alejandro Jesus Müller",
+      "orcid": "https://orcid.org/0000-0001-7009-7715",
+      "h_index": 81,
+      "i10_index": 448,
+      "works_count": 686,
+      "cited_by_count": 24847,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5086247846",
+      "display_name": "Gert Heinrich",
+      "orcid": "https://orcid.org/0000-0001-9456-0751",
+      "h_index": 81,
+      "i10_index": 443,
+      "works_count": 711,
+      "cited_by_count": 26407,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5109248168",
+      "display_name": "Garth L. Wilkes",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 299,
+      "works_count": 409,
+      "cited_by_count": 23642,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Polymers and Plastics -- 9.2",
+      "id": "https://openalex.org/A5031593098",
+      "display_name": "Luyi Sun",
+      "orcid": "https://orcid.org/0000-0002-5419-1063",
+      "h_index": 81,
+      "i10_index": 280,
+      "works_count": 371,
+      "cited_by_count": 24551,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5080546612",
+      "display_name": "David Charles Martin",
+      "orcid": "https://orcid.org/0000-0003-1195-3838",
+      "h_index": 81,
+      "i10_index": 216,
+      "works_count": 375,
+      "cited_by_count": 24103,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5032110300",
+      "display_name": "Canhui Lu",
+      "orcid": "https://orcid.org/0000-0003-0837-1052",
+      "h_index": 81,
+      "i10_index": 201,
+      "works_count": 255,
+      "cited_by_count": 18858,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5085610544",
+      "display_name": "Miriam H Rafailovich",
+      "orcid": "https://orcid.org/0000-0002-9483-5812",
+      "h_index": 80,
+      "i10_index": 327,
+      "works_count": 857,
+      "cited_by_count": 22344,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5003064040",
+      "display_name": "Athene M. Donald",
+      "orcid": "https://orcid.org/0000-0003-4423-9673",
+      "h_index": 80,
+      "i10_index": 249,
+      "works_count": 447,
+      "cited_by_count": 20891,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5069277270",
+      "display_name": "Charles A. Wilkie",
+      "orcid": "https://orcid.org/0000-0001-7229-0236",
+      "h_index": 80,
+      "i10_index": 237,
+      "works_count": 355,
+      "cited_by_count": 19538,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5061800686",
+      "display_name": "Hesheng Xia",
+      "orcid": "https://orcid.org/0000-0001-8087-7272",
+      "h_index": 80,
+      "i10_index": 229,
+      "works_count": 298,
+      "cited_by_count": 19312,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5070913708",
+      "display_name": "Bernard Lotz",
+      "orcid": "https://orcid.org/0000-0001-8091-9014",
+      "h_index": 80,
+      "i10_index": 217,
+      "works_count": 318,
+      "cited_by_count": 20688,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5063259943",
+      "display_name": "Gregory C. Rutledge",
+      "orcid": "https://orcid.org/0000-0001-8137-1732",
+      "h_index": 80,
+      "i10_index": 216,
+      "works_count": 353,
+      "cited_by_count": 28532,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5021342714",
+      "display_name": "Andrew J. Lovinger",
+      "orcid": "https://orcid.org/0000-0001-7846-8840",
+      "h_index": 80,
+      "i10_index": 141,
+      "works_count": 200,
+      "cited_by_count": 25239,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5112771607",
+      "display_name": "James E. Mark",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 438,
+      "works_count": 797,
+      "cited_by_count": 26177,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Polymers and Plastics -- 9.1",
+      "id": "https://openalex.org/A5068872921",
+      "display_name": "József Karger-Kocsis",
+      "orcid": "https://orcid.org/0000-0001-9699-7471",
+      "h_index": 79,
+      "i10_index": 366,
+      "works_count": 495,
+      "cited_by_count": 23495,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Polymers and Plastics -- 9.0",
+      "id": "https://openalex.org/A5021795254",
+      "display_name": "S. C. Tjong",
+      "orcid": "https://orcid.org/0000-0002-8377-3273",
+      "h_index": 79,
+      "i10_index": 313,
+      "works_count": 475,
+      "cited_by_count": 26941,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Polymers and Plastics -- 9.0",
+      "id": "https://openalex.org/A5034710991",
+      "display_name": "Shujahadeen Bakr Aziz",
+      "orcid": "https://orcid.org/0000-0003-4916-5394",
+      "h_index": 79,
+      "i10_index": 245,
+      "works_count": 350,
+      "cited_by_count": 18292,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Polymers and Plastics -- 9.0",
+      "id": "https://openalex.org/A5041279353",
+      "display_name": "Haoqing Hou",
+      "orcid": "https://orcid.org/0000-0002-8583-8384",
+      "h_index": 79,
+      "i10_index": 244,
+      "works_count": 327,
+      "cited_by_count": 22899,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Energy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Polymers and Plastics -- 9.0",
+      "id": "https://openalex.org/A5042106492",
+      "display_name": "Sylvain Caillol",
+      "orcid": "https://orcid.org/0000-0003-3106-5547",
+      "h_index": 79,
+      "i10_index": 223,
+      "works_count": 397,
+      "cited_by_count": 22609,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Polymers and Plastics -- 9.0",
+      "id": "https://openalex.org/A5050871165",
+      "display_name": "Xavier Crispin",
+      "orcid": "https://orcid.org/0000-0001-8845-6296",
+      "h_index": 79,
+      "i10_index": 205,
+      "works_count": 313,
+      "cited_by_count": 26856,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5032519717",
+      "display_name": "Mohamad Ridzwan Ishak",
+      "orcid": "https://orcid.org/0000-0001-6923-2481",
+      "h_index": 78,
+      "i10_index": 206,
+      "works_count": 304,
+      "cited_by_count": 19594,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5109375122",
+      "display_name": "Giovanni Camino",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 193,
+      "works_count": 307,
+      "cited_by_count": 21410,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5076733597",
+      "display_name": "Donald A. Tomalia",
+      "orcid": "https://orcid.org/0000-0001-5182-3304",
+      "h_index": 78,
+      "i10_index": 156,
+      "works_count": 312,
+      "cited_by_count": 33824,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5067675748",
+      "display_name": "Brigitte I. Voit",
+      "orcid": "https://orcid.org/0000-0002-4531-691X",
+      "h_index": 77,
+      "i10_index": 513,
+      "works_count": 765,
+      "cited_by_count": 29853,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5100439032",
+      "display_name": "Xiu‐Li Wang",
+      "orcid": "https://orcid.org/0000-0002-2732-9477",
+      "h_index": 77,
+      "i10_index": 338,
+      "works_count": 490,
+      "cited_by_count": 21465,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5067409079",
+      "display_name": "Lih‐Sheng Turng",
+      "orcid": "https://orcid.org/0000-0001-8022-9224",
+      "h_index": 77,
+      "i10_index": 274,
+      "works_count": 378,
+      "cited_by_count": 18833,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5067826054",
+      "display_name": "Min Zhi Rong",
+      "orcid": "https://orcid.org/0000-0003-0167-2784",
+      "h_index": 77,
+      "i10_index": 252,
+      "works_count": 371,
+      "cited_by_count": 22514,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5056576760",
+      "display_name": "Ming Qiu Zhang",
+      "orcid": "https://orcid.org/0000-0001-6521-5246",
+      "h_index": 77,
+      "i10_index": 247,
+      "works_count": 366,
+      "cited_by_count": 22022,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5077623513",
+      "display_name": "Christophe Baley",
+      "orcid": "https://orcid.org/0000-0003-1139-7130",
+      "h_index": 77,
+      "i10_index": 168,
+      "works_count": 368,
+      "cited_by_count": 17666,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5004502073",
+      "display_name": "Sérgio Neves Monteiro",
+      "orcid": "https://orcid.org/0000-0003-1208-1234",
+      "h_index": 76,
+      "i10_index": 469,
+      "works_count": 1914,
+      "cited_by_count": 24168,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5100769565",
+      "display_name": "Qufu Weı",
+      "orcid": "https://orcid.org/0000-0003-2143-9939",
+      "h_index": 76,
+      "i10_index": 427,
+      "works_count": 674,
+      "cited_by_count": 22422,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Polymers and Plastics -- 8.9",
+      "id": "https://openalex.org/A5100783200",
+      "display_name": "John Haozhong Xin",
+      "orcid": "https://orcid.org/0000-0001-9965-7421",
+      "h_index": 76,
+      "i10_index": 231,
+      "works_count": 430,
+      "cited_by_count": 18037,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5113670609",
+      "display_name": "Albert J. Pennings",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 203,
+      "works_count": 242,
+      "cited_by_count": 18979,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5111871638",
+      "display_name": "Paul Smith",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 193,
+      "works_count": 280,
+      "cited_by_count": 24470,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5032829548",
+      "display_name": "Junqi Sun",
+      "orcid": "https://orcid.org/0000-0002-7284-9826",
+      "h_index": 76,
+      "i10_index": 179,
+      "works_count": 225,
+      "cited_by_count": 17987,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5080689580",
+      "display_name": "Long‐Cheng Tang",
+      "orcid": "https://orcid.org/0000-0002-2382-8850",
+      "h_index": 76,
+      "i10_index": 176,
+      "works_count": 213,
+      "cited_by_count": 18715,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5049093097",
+      "display_name": "Chang‐Sik Ha",
+      "orcid": "https://orcid.org/0000-0003-4597-918X",
+      "h_index": 75,
+      "i10_index": 465,
+      "works_count": 804,
+      "cited_by_count": 31976,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5006630382",
+      "display_name": "Pierre J. Carreau",
+      "orcid": "https://orcid.org/0000-0003-2128-4009",
+      "h_index": 75,
+      "i10_index": 246,
+      "works_count": 375,
+      "cited_by_count": 18834,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5024026684",
+      "display_name": "Xuehong Lu",
+      "orcid": "https://orcid.org/0000-0001-7773-3198",
+      "h_index": 75,
+      "i10_index": 197,
+      "works_count": 232,
+      "cited_by_count": 17478,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5064001573",
+      "display_name": "Feng‐Chih Chang",
+      "orcid": "https://orcid.org/0000-0001-5020-275X",
+      "h_index": 74,
+      "i10_index": 336,
+      "works_count": 420,
+      "cited_by_count": 18914,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5037359873",
+      "display_name": "Maria Strømme",
+      "orcid": "https://orcid.org/0000-0002-5496-9664",
+      "h_index": 74,
+      "i10_index": 299,
+      "works_count": 874,
+      "cited_by_count": 19697,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5037515437",
+      "display_name": "Costantino Creton",
+      "orcid": "https://orcid.org/0000-0002-0177-9680",
+      "h_index": 74,
+      "i10_index": 216,
+      "works_count": 336,
+      "cited_by_count": 20681,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5027211999",
+      "display_name": "Weilin Xu",
+      "orcid": "https://orcid.org/0000-0002-7619-0707",
+      "h_index": 73,
+      "i10_index": 502,
+      "works_count": 786,
+      "cited_by_count": 24499,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5072564461",
+      "display_name": "Takashi Inoue",
+      "orcid": "https://orcid.org/0000-0003-0582-0908",
+      "h_index": 73,
+      "i10_index": 357,
+      "works_count": 749,
+      "cited_by_count": 21756,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5108527875",
+      "display_name": "Richard S. Stein",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 353,
+      "works_count": 533,
+      "cited_by_count": 20009,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5021089699",
+      "display_name": "Hung‐Jue Sue",
+      "orcid": "https://orcid.org/0000-0002-3898-4469",
+      "h_index": 73,
+      "i10_index": 279,
+      "works_count": 388,
+      "cited_by_count": 17937,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5043027428",
+      "display_name": "Yanzhi Xia",
+      "orcid": "https://orcid.org/0000-0002-1791-7013",
+      "h_index": 73,
+      "i10_index": 274,
+      "works_count": 384,
+      "cited_by_count": 21066,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5040874576",
+      "display_name": "Leo Mandelkern",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 244,
+      "works_count": 365,
+      "cited_by_count": 17458,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5054610562",
+      "display_name": "Chen-Chi M. Ma",
+      "orcid": "https://orcid.org/0000-0002-2376-6303",
+      "h_index": 73,
+      "i10_index": 242,
+      "works_count": 304,
+      "cited_by_count": 17842,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5014916492",
+      "display_name": "Haibo Zhao",
+      "orcid": "https://orcid.org/0000-0002-5455-2965",
+      "h_index": 73,
+      "i10_index": 218,
+      "works_count": 322,
+      "cited_by_count": 18208,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5071839057",
+      "display_name": "Artur Manuel Cavaco-Paulo",
+      "orcid": "https://orcid.org/0000-0001-7204-2064",
+      "h_index": 72,
+      "i10_index": 343,
+      "works_count": 535,
+      "cited_by_count": 22272,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Immunology and Microbiology",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5078397883",
+      "display_name": "Tao Tang",
+      "orcid": "https://orcid.org/0000-0002-1887-0579",
+      "h_index": 72,
+      "i10_index": 329,
+      "works_count": 455,
+      "cited_by_count": 17365,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5082456059",
+      "display_name": "L. Nicolais",
+      "orcid": "https://orcid.org/0000-0001-6517-6611",
+      "h_index": 72,
+      "i10_index": 319,
+      "works_count": 542,
+      "cited_by_count": 18168,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Polymers and Plastics -- 8.8",
+      "id": "https://openalex.org/A5034652421",
+      "display_name": "Gaetano Guerra",
+      "orcid": "https://orcid.org/0000-0003-1576-9384",
+      "h_index": 72,
+      "i10_index": 308,
+      "works_count": 492,
+      "cited_by_count": 16752,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5100678247",
+      "display_name": "Xinxing Zhang",
+      "orcid": "https://orcid.org/0000-0002-7468-3006",
+      "h_index": 72,
+      "i10_index": 169,
+      "works_count": 215,
+      "cited_by_count": 15656,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5050507996",
+      "display_name": "Anil Kumar Bhowmick",
+      "orcid": "https://orcid.org/0000-0002-8229-5353",
+      "h_index": 71,
+      "i10_index": 467,
+      "works_count": 658,
+      "cited_by_count": 22558,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5102282327",
+      "display_name": "Mitsuru Ueda",
+      "orcid": "https://orcid.org/0000-0003-3095-3307",
+      "h_index": 71,
+      "i10_index": 463,
+      "works_count": 829,
+      "cited_by_count": 21275,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5051329880",
+      "display_name": "Frank E. Karasz",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 358,
+      "works_count": 543,
+      "cited_by_count": 20107,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5069227151",
+      "display_name": "Smita Mohanty",
+      "orcid": "https://orcid.org/0000-0002-3697-3272",
+      "h_index": 71,
+      "i10_index": 352,
+      "works_count": 562,
+      "cited_by_count": 21842,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5101457864",
+      "display_name": "Sanjay Kumar Nayak",
+      "orcid": "https://orcid.org/0000-0003-4067-0327",
+      "h_index": 71,
+      "i10_index": 314,
+      "works_count": 459,
+      "cited_by_count": 21356,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5052582289",
+      "display_name": "Robert K.Y. Li",
+      "orcid": "https://orcid.org/0000-0002-9415-7855",
+      "h_index": 71,
+      "i10_index": 257,
+      "works_count": 354,
+      "cited_by_count": 17266,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5100628940",
+      "display_name": "Guo‐Hua Hu",
+      "orcid": "https://orcid.org/0000-0002-1001-6386",
+      "h_index": 71,
+      "i10_index": 248,
+      "works_count": 395,
+      "cited_by_count": 17730,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5072721927",
+      "display_name": "Giulio Malucelli",
+      "orcid": "https://orcid.org/0000-0002-0459-7698",
+      "h_index": 71,
+      "i10_index": 245,
+      "works_count": 690,
+      "cited_by_count": 16136,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5091638373",
+      "display_name": "Béla Pukánszky",
+      "orcid": "https://orcid.org/0000-0002-3920-5068",
+      "h_index": 71,
+      "i10_index": 232,
+      "works_count": 324,
+      "cited_by_count": 16554,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5101918942",
+      "display_name": "Zhengping Fang",
+      "orcid": "https://orcid.org/0000-0002-1775-8358",
+      "h_index": 71,
+      "i10_index": 228,
+      "works_count": 366,
+      "cited_by_count": 17030,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5087615704",
+      "display_name": "Baochun Guo",
+      "orcid": "https://orcid.org/0000-0002-4734-1895",
+      "h_index": 71,
+      "i10_index": 223,
+      "works_count": 304,
+      "cited_by_count": 17566,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5028643198",
+      "display_name": "Bernhard Schartel",
+      "orcid": "https://orcid.org/0000-0001-5726-9754",
+      "h_index": 71,
+      "i10_index": 209,
+      "works_count": 307,
+      "cited_by_count": 19453,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5058825945",
+      "display_name": "Bin Yu",
+      "orcid": "https://orcid.org/0000-0002-3025-7734",
+      "h_index": 71,
+      "i10_index": 206,
+      "works_count": 269,
+      "cited_by_count": 18919,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5004295780",
+      "display_name": "Alireza Ashori",
+      "orcid": "https://orcid.org/0000-0003-0946-1965",
+      "h_index": 71,
+      "i10_index": 183,
+      "works_count": 228,
+      "cited_by_count": 14146,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5022047822",
+      "display_name": "Hans Rytger Kricheldorf",
+      "orcid": "https://orcid.org/0000-0002-8634-6648",
+      "h_index": 70,
+      "i10_index": 567,
+      "works_count": 884,
+      "cited_by_count": 26138,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5034243405",
+      "display_name": "Hiroyuki Nishide",
+      "orcid": "https://orcid.org/0000-0002-4036-4840",
+      "h_index": 70,
+      "i10_index": 423,
+      "works_count": 834,
+      "cited_by_count": 21980,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5018304054",
+      "display_name": "Changlei Xia",
+      "orcid": "https://orcid.org/0000-0002-7063-774X",
+      "h_index": 70,
+      "i10_index": 280,
+      "works_count": 370,
+      "cited_by_count": 16129,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5056485744",
+      "display_name": "Hans‐Werner Schmidt",
+      "orcid": "https://orcid.org/0000-0002-1761-1153",
+      "h_index": 70,
+      "i10_index": 269,
+      "works_count": 587,
+      "cited_by_count": 16021,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5100621226",
+      "display_name": "Hongqiang Li",
+      "orcid": "https://orcid.org/0000-0002-1191-2203",
+      "h_index": 70,
+      "i10_index": 262,
+      "works_count": 355,
+      "cited_by_count": 14689,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5024790419",
+      "display_name": "Jiahua Zhu",
+      "orcid": "https://orcid.org/0000-0002-2238-9147",
+      "h_index": 70,
+      "i10_index": 228,
+      "works_count": 334,
+      "cited_by_count": 16782,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Polymers and Plastics -- 8.7",
+      "id": "https://openalex.org/A5008674676",
+      "display_name": "Jean‐Luc Gardette",
+      "orcid": "https://orcid.org/0000-0002-6031-3362",
+      "h_index": 70,
+      "i10_index": 226,
+      "works_count": 316,
+      "cited_by_count": 14714,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5077632077",
+      "display_name": "Jinwen Zhang",
+      "orcid": "https://orcid.org/0000-0001-8828-114X",
+      "h_index": 70,
+      "i10_index": 222,
+      "works_count": 432,
+      "cited_by_count": 18103,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5044471927",
+      "display_name": "Guoqiang Zheng",
+      "orcid": "https://orcid.org/0000-0001-7595-8270",
+      "h_index": 70,
+      "i10_index": 195,
+      "works_count": 253,
+      "cited_by_count": 17532,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5040014905",
+      "display_name": "Sahika Inal",
+      "orcid": "https://orcid.org/0000-0002-1166-1512",
+      "h_index": 70,
+      "i10_index": 138,
+      "works_count": 210,
+      "cited_by_count": 19680,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5007109188",
+      "display_name": "Petr Sáha",
+      "orcid": "https://orcid.org/0000-0002-1873-4163",
+      "h_index": 69,
+      "i10_index": 300,
+      "works_count": 517,
+      "cited_by_count": 15661,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5044230901",
+      "display_name": "Jintu Fan",
+      "orcid": "https://orcid.org/0000-0002-7130-0081",
+      "h_index": 69,
+      "i10_index": 293,
+      "works_count": 537,
+      "cited_by_count": 16587,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Arts and Humanities",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5085622582",
+      "display_name": "Emmanuel Rotimi Sadiku",
+      "orcid": "https://orcid.org/0000-0002-8504-1041",
+      "h_index": 69,
+      "i10_index": 290,
+      "works_count": 606,
+      "cited_by_count": 18538,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5054186378",
+      "display_name": "Miroslava Trchová",
+      "orcid": "https://orcid.org/0000-0001-6105-7578",
+      "h_index": 69,
+      "i10_index": 268,
+      "works_count": 353,
+      "cited_by_count": 19232,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5007788520",
+      "display_name": "Yiqi Yang",
+      "orcid": "https://orcid.org/0000-0001-8153-4159",
+      "h_index": 69,
+      "i10_index": 256,
+      "works_count": 420,
+      "cited_by_count": 17349,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5048103286",
+      "display_name": "Debes Bhattacharyya",
+      "orcid": "https://orcid.org/0000-0001-5829-1187",
+      "h_index": 69,
+      "i10_index": 243,
+      "works_count": 403,
+      "cited_by_count": 15819,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5034768201",
+      "display_name": "Ying‐Ling Liu",
+      "orcid": "https://orcid.org/0000-0002-6535-6169",
+      "h_index": 69,
+      "i10_index": 232,
+      "works_count": 277,
+      "cited_by_count": 16205,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5014309197",
+      "display_name": "Mark M. Banaszak Holl",
+      "orcid": "https://orcid.org/0000-0001-7759-7456",
+      "h_index": 69,
+      "i10_index": 221,
+      "works_count": 369,
+      "cited_by_count": 15872,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5004827585",
+      "display_name": "Ralf Thomann",
+      "orcid": "https://orcid.org/0000-0002-3597-6965",
+      "h_index": 69,
+      "i10_index": 190,
+      "works_count": 238,
+      "cited_by_count": 14730,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5100412922",
+      "display_name": "Lin Li",
+      "orcid": "https://orcid.org/0000-0002-9840-8367",
+      "h_index": 69,
+      "i10_index": 167,
+      "works_count": 219,
+      "cited_by_count": 18141,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5100664479",
+      "display_name": "Xiaobo Liu",
+      "orcid": "https://orcid.org/0000-0001-5921-8491",
+      "h_index": 68,
+      "i10_index": 476,
+      "works_count": 796,
+      "cited_by_count": 20659,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5071380559",
+      "display_name": "Denis Rodrigue",
+      "orcid": "https://orcid.org/0000-0002-3969-2847",
+      "h_index": 68,
+      "i10_index": 404,
+      "works_count": 603,
+      "cited_by_count": 20651,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5103499975",
+      "display_name": "James L. White",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 361,
+      "works_count": 547,
+      "cited_by_count": 17772,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5109989680",
+      "display_name": "Charles C.-C. Han",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 320,
+      "works_count": 501,
+      "cited_by_count": 18157,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5010969658",
+      "display_name": "Kohji Tashiro",
+      "orcid": "https://orcid.org/0000-0002-7543-2778",
+      "h_index": 68,
+      "i10_index": 307,
+      "works_count": 527,
+      "cited_by_count": 18932,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5087970082",
+      "display_name": "Shinji Ando",
+      "orcid": "https://orcid.org/0000-0002-3508-035X",
+      "h_index": 68,
+      "i10_index": 298,
+      "works_count": 695,
+      "cited_by_count": 16226,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5063164384",
+      "display_name": "Majid Montazer",
+      "orcid": "https://orcid.org/0000-0002-1983-6735",
+      "h_index": 68,
+      "i10_index": 293,
+      "works_count": 454,
+      "cited_by_count": 16124,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5100424516",
+      "display_name": "Yong Wang",
+      "orcid": "https://orcid.org/0000-0003-0655-7507",
+      "h_index": 68,
+      "i10_index": 290,
+      "works_count": 379,
+      "cited_by_count": 16097,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Polymers and Plastics -- 8.6",
+      "id": "https://openalex.org/A5028855611",
+      "display_name": "Dezhen Wu",
+      "orcid": "https://orcid.org/0000-0002-1655-5217",
+      "h_index": 68,
+      "i10_index": 289,
+      "works_count": 410,
+      "cited_by_count": 16057,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5001811543",
+      "display_name": "Jinlian Hu",
+      "orcid": "https://orcid.org/0000-0001-8914-5473",
+      "h_index": 68,
+      "i10_index": 259,
+      "works_count": 441,
+      "cited_by_count": 17495,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5080600906",
+      "display_name": "A. Peterlin",
+      "orcid": "https://orcid.org/0000-0002-8071-8455",
+      "h_index": 68,
+      "i10_index": 240,
+      "works_count": 351,
+      "cited_by_count": 15304,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5112081825",
+      "display_name": "Paul C. Painter",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 225,
+      "works_count": 331,
+      "cited_by_count": 17781,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Energy",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5007153455",
+      "display_name": "Jaime C. Grunlan",
+      "orcid": "https://orcid.org/0000-0001-5241-9741",
+      "h_index": 68,
+      "i10_index": 222,
+      "works_count": 349,
+      "cited_by_count": 28333,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5042185324",
+      "display_name": "Shaik Jeelani",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 222,
+      "works_count": 511,
+      "cited_by_count": 15510,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5003536932",
+      "display_name": "Jean‐Marie Raquez",
+      "orcid": "https://orcid.org/0000-0003-1940-7129",
+      "h_index": 68,
+      "i10_index": 217,
+      "works_count": 694,
+      "cited_by_count": 16889,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5091023298",
+      "display_name": "Do Y. Yoon",
+      "orcid": "https://orcid.org/0000-0003-4390-4934",
+      "h_index": 68,
+      "i10_index": 203,
+      "works_count": 308,
+      "cited_by_count": 16032,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5023671985",
+      "display_name": "Ehsan Nazarzadeh Zare‬",
+      "orcid": "https://orcid.org/0000-0002-0446-4385",
+      "h_index": 68,
+      "i10_index": 189,
+      "works_count": 272,
+      "cited_by_count": 15427,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5103233128",
+      "display_name": "Weiyi Xing",
+      "orcid": "https://orcid.org/0000-0002-0673-6006",
+      "h_index": 68,
+      "i10_index": 167,
+      "works_count": 195,
+      "cited_by_count": 14981,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5089048835",
+      "display_name": "Alain Bourmaud",
+      "orcid": "https://orcid.org/0000-0003-4584-4242",
+      "h_index": 68,
+      "i10_index": 157,
+      "works_count": 312,
+      "cited_by_count": 12643,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5101918579",
+      "display_name": "Shaoyun Guo",
+      "orcid": "https://orcid.org/0000-0002-6636-710X",
+      "h_index": 67,
+      "i10_index": 343,
+      "works_count": 594,
+      "cited_by_count": 16791,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5083190086",
+      "display_name": "Manzoore Elahi M. Soudagar",
+      "orcid": "https://orcid.org/0000-0002-0935-2040",
+      "h_index": 67,
+      "i10_index": 311,
+      "works_count": 548,
+      "cited_by_count": 16688,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Energy",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5045786642",
+      "display_name": "K. L. Tan",
+      "orcid": "https://orcid.org/0000-0003-4191-0249",
+      "h_index": 67,
+      "i10_index": 289,
+      "works_count": 406,
+      "cited_by_count": 17227,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5109638239",
+      "display_name": "Robert W. Lenz",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 288,
+      "works_count": 456,
+      "cited_by_count": 17798,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5048821191",
+      "display_name": "H. L. Frisch",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 277,
+      "works_count": 482,
+      "cited_by_count": 20267,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5064108511",
+      "display_name": "Yves Grohens",
+      "orcid": "https://orcid.org/0000-0002-0135-7664",
+      "h_index": 67,
+      "i10_index": 249,
+      "works_count": 517,
+      "cited_by_count": 15402,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5110162087",
+      "display_name": "Ann Hiltner",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 249,
+      "works_count": 331,
+      "cited_by_count": 15327,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5056378144",
+      "display_name": "Jingkun Xu",
+      "orcid": "https://orcid.org/0000-0003-3492-5450",
+      "h_index": 67,
+      "i10_index": 238,
+      "works_count": 321,
+      "cited_by_count": 17604,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5019905095",
+      "display_name": "Gwm Gerrit Peters",
+      "orcid": "https://orcid.org/0000-0001-7208-5128",
+      "h_index": 67,
+      "i10_index": 211,
+      "works_count": 464,
+      "cited_by_count": 15373,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5019446819",
+      "display_name": "Bin Fei",
+      "orcid": "https://orcid.org/0000-0002-4274-1873",
+      "h_index": 67,
+      "i10_index": 206,
+      "works_count": 340,
+      "cited_by_count": 14255,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5043842990",
+      "display_name": "Jinglei Yang",
+      "orcid": "https://orcid.org/0000-0002-9413-9016",
+      "h_index": 67,
+      "i10_index": 196,
+      "works_count": 320,
+      "cited_by_count": 15162,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5103185154",
+      "display_name": "Cor E. Koning",
+      "orcid": "https://orcid.org/0000-0002-6258-9741",
+      "h_index": 67,
+      "i10_index": 189,
+      "works_count": 228,
+      "cited_by_count": 15968,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Polymers and Plastics -- 8.5",
+      "id": "https://openalex.org/A5064600289",
+      "display_name": "Hossam E. Emam",
+      "orcid": "https://orcid.org/0000-0002-5512-935X",
+      "h_index": 67,
+      "i10_index": 108,
+      "works_count": 133,
+      "cited_by_count": 9441,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5013430481",
+      "display_name": "Shadpour E Mallakpour",
+      "orcid": "https://orcid.org/0000-0003-0304-6613",
+      "h_index": 66,
+      "i10_index": 602,
+      "works_count": 904,
+      "cited_by_count": 23837,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5111679568",
+      "display_name": "Iñaki Mondragòn",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 260,
+      "works_count": 325,
+      "cited_by_count": 19115,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5105885078",
+      "display_name": "Jean‐Pierre Pascault",
+      "orcid": "https://orcid.org/0000-0001-6209-9040",
+      "h_index": 66,
+      "i10_index": 236,
+      "works_count": 397,
+      "cited_by_count": 19692,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5087450287",
+      "display_name": "Piming Ma",
+      "orcid": "https://orcid.org/0000-0002-4597-0639",
+      "h_index": 66,
+      "i10_index": 229,
+      "works_count": 291,
+      "cited_by_count": 14392,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5070840076",
+      "display_name": "Arthur V. Tobolsky",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 226,
+      "works_count": 371,
+      "cited_by_count": 16960,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5101515676",
+      "display_name": "Jean‐François Gérard",
+      "orcid": "https://orcid.org/0000-0002-3096-2767",
+      "h_index": 66,
+      "i10_index": 224,
+      "works_count": 607,
+      "cited_by_count": 11953,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5052869781",
+      "display_name": "Uttandaraman Sundararaj",
+      "orcid": "https://orcid.org/0000-0003-4124-3917",
+      "h_index": 66,
+      "i10_index": 222,
+      "works_count": 306,
+      "cited_by_count": 21523,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5083281483",
+      "display_name": "Yongqian Shi",
+      "orcid": "https://orcid.org/0000-0002-5646-4627",
+      "h_index": 66,
+      "i10_index": 183,
+      "works_count": 218,
+      "cited_by_count": 13953,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5024625727",
+      "display_name": "Siqi Huo",
+      "orcid": "https://orcid.org/0000-0002-6454-5208",
+      "h_index": 66,
+      "i10_index": 163,
+      "works_count": 212,
+      "cited_by_count": 13171,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5050601538",
+      "display_name": "Xigao Jian",
+      "orcid": "https://orcid.org/0000-0002-2061-2907",
+      "h_index": 65,
+      "i10_index": 400,
+      "works_count": 743,
+      "cited_by_count": 16741,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5101605229",
+      "display_name": "Jianzhong Ma",
+      "orcid": "https://orcid.org/0000-0003-0512-702X",
+      "h_index": 65,
+      "i10_index": 329,
+      "works_count": 429,
+      "cited_by_count": 18662,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5070179898",
+      "display_name": "Moonhor Ree",
+      "orcid": "https://orcid.org/0000-0001-5562-2913",
+      "h_index": 65,
+      "i10_index": 298,
+      "works_count": 394,
+      "cited_by_count": 17588,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5018216287",
+      "display_name": "Claudio De Rosa",
+      "orcid": "https://orcid.org/0000-0002-5375-7475",
+      "h_index": 65,
+      "i10_index": 288,
+      "works_count": 424,
+      "cited_by_count": 15594,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5100771664",
+      "display_name": "Qingwen Wang",
+      "orcid": "https://orcid.org/0000-0001-5988-9922",
+      "h_index": 65,
+      "i10_index": 258,
+      "works_count": 407,
+      "cited_by_count": 15920,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5025190496",
+      "display_name": "Niranjan Karak",
+      "orcid": "https://orcid.org/0000-0002-3402-9536",
+      "h_index": 65,
+      "i10_index": 244,
+      "works_count": 341,
+      "cited_by_count": 14956,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5050095229",
+      "display_name": "Z. A. Mohd Ishak",
+      "orcid": "https://orcid.org/0000-0003-3294-9301",
+      "h_index": 65,
+      "i10_index": 230,
+      "works_count": 305,
+      "cited_by_count": 15027,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5100391671",
+      "display_name": "Wei Wang",
+      "orcid": "https://orcid.org/0000-0001-5788-6314",
+      "h_index": 65,
+      "i10_index": 209,
+      "works_count": 298,
+      "cited_by_count": 11998,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5086127107",
+      "display_name": "Kuruvilla Joseph",
+      "orcid": "https://orcid.org/0000-0002-2866-9713",
+      "h_index": 65,
+      "i10_index": 203,
+      "works_count": 359,
+      "cited_by_count": 15860,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5056133474",
+      "display_name": "Michael R. Kessler",
+      "orcid": "https://orcid.org/0000-0001-8436-3447",
+      "h_index": 65,
+      "i10_index": 198,
+      "works_count": 303,
+      "cited_by_count": 22815,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5048183897",
+      "display_name": "Michael M. Coleman",
+      "orcid": "https://orcid.org/0000-0003-4186-3526",
+      "h_index": 65,
+      "i10_index": 186,
+      "works_count": 312,
+      "cited_by_count": 16185,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5044431266",
+      "display_name": "Nor Azowa Ibrahim",
+      "orcid": "https://orcid.org/0000-0001-5400-2819",
+      "h_index": 65,
+      "i10_index": 183,
+      "works_count": 242,
+      "cited_by_count": 14283,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Polymers and Plastics -- 8.4",
+      "id": "https://openalex.org/A5060867110",
+      "display_name": "Dimitris S. Achilias",
+      "orcid": "https://orcid.org/0000-0003-2872-8426",
+      "h_index": 65,
+      "i10_index": 180,
+      "works_count": 238,
+      "cited_by_count": 13618,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5017378055",
+      "display_name": "Basil D. Favis",
+      "orcid": "https://orcid.org/0000-0002-7980-3740",
+      "h_index": 65,
+      "i10_index": 174,
+      "works_count": 308,
+      "cited_by_count": 13113,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5048181097",
+      "display_name": "Ramanan Krishnamoorti",
+      "orcid": "https://orcid.org/0000-0001-5831-502X",
+      "h_index": 65,
+      "i10_index": 169,
+      "works_count": 280,
+      "cited_by_count": 17441,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5100854984",
+      "display_name": "Meixiang Wan",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 148,
+      "works_count": 185,
+      "cited_by_count": 12993,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5065243271",
+      "display_name": "Liangbin Li",
+      "orcid": "https://orcid.org/0000-0002-1887-9856",
+      "h_index": 64,
+      "i10_index": 284,
+      "works_count": 427,
+      "cited_by_count": 15295,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5081796364",
+      "display_name": "Lakshmaiya Natrayan",
+      "orcid": "https://orcid.org/0000-0003-1001-3422",
+      "h_index": 64,
+      "i10_index": 277,
+      "works_count": 533,
+      "cited_by_count": 13096,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5100326716",
+      "display_name": "Xudong Chen",
+      "orcid": "https://orcid.org/0000-0001-9499-5421",
+      "h_index": 64,
+      "i10_index": 260,
+      "works_count": 420,
+      "cited_by_count": 15385,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5108077594",
+      "display_name": "Jacques Verdu",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 255,
+      "works_count": 470,
+      "cited_by_count": 14074,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5028553535",
+      "display_name": "Weifu Dong",
+      "orcid": "https://orcid.org/0000-0002-7432-8362",
+      "h_index": 64,
+      "i10_index": 249,
+      "works_count": 386,
+      "cited_by_count": 14131,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5023825214",
+      "display_name": "Minna Hakkarainen",
+      "orcid": "https://orcid.org/0000-0002-7790-8987",
+      "h_index": 64,
+      "i10_index": 239,
+      "works_count": 358,
+      "cited_by_count": 16013,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5020347994",
+      "display_name": "Jadranka Travaš‐Sejdić",
+      "orcid": "https://orcid.org/0000-0002-1205-3770",
+      "h_index": 64,
+      "i10_index": 235,
+      "works_count": 379,
+      "cited_by_count": 14755,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5052170316",
+      "display_name": "Hazizan Md Akil",
+      "orcid": "https://orcid.org/0000-0002-7422-4627",
+      "h_index": 64,
+      "i10_index": 212,
+      "works_count": 354,
+      "cited_by_count": 16541,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5083729408",
+      "display_name": "Alfonso Maffezzoli",
+      "orcid": "https://orcid.org/0000-0002-6371-4030",
+      "h_index": 64,
+      "i10_index": 204,
+      "works_count": 302,
+      "cited_by_count": 13093,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5036199278",
+      "display_name": "Xiuzhi Susan Sun",
+      "orcid": "https://orcid.org/0000-0002-1207-9380",
+      "h_index": 64,
+      "i10_index": 198,
+      "works_count": 253,
+      "cited_by_count": 12676,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5068898222",
+      "display_name": "Miguel Ángel López-Manchado",
+      "orcid": "https://orcid.org/0000-0002-2425-4000",
+      "h_index": 64,
+      "i10_index": 184,
+      "works_count": 279,
+      "cited_by_count": 15685,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5000610139",
+      "display_name": "E.S. Zainudin",
+      "orcid": "https://orcid.org/0000-0001-7425-4183",
+      "h_index": 64,
+      "i10_index": 173,
+      "works_count": 281,
+      "cited_by_count": 13099,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5100379302",
+      "display_name": "Li Chen",
+      "orcid": "https://orcid.org/0000-0002-9650-497X",
+      "h_index": 64,
+      "i10_index": 170,
+      "works_count": 209,
+      "cited_by_count": 11929,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5037024641",
+      "display_name": "Rui‐Ying Bao",
+      "orcid": "https://orcid.org/0000-0002-1373-7154",
+      "h_index": 64,
+      "i10_index": 168,
+      "works_count": 191,
+      "cited_by_count": 14768,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5090873096",
+      "display_name": "Rafael Balart",
+      "orcid": "https://orcid.org/0000-0001-5670-7126",
+      "h_index": 64,
+      "i10_index": 166,
+      "works_count": 253,
+      "cited_by_count": 10237,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5015272647",
+      "display_name": "Rangaramanujam M. Kannan",
+      "orcid": "https://orcid.org/0000-0002-3712-7836",
+      "h_index": 64,
+      "i10_index": 144,
+      "works_count": 247,
+      "cited_by_count": 11669,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5109029881",
+      "display_name": "Richard P. Wool",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 137,
+      "works_count": 222,
+      "cited_by_count": 15739,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5101925655",
+      "display_name": "Jiajun Fu",
+      "orcid": "https://orcid.org/0000-0002-8542-9556",
+      "h_index": 64,
+      "i10_index": 134,
+      "works_count": 190,
+      "cited_by_count": 10454,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Polymers and Plastics -- 8.3",
+      "id": "https://openalex.org/A5080067279",
+      "display_name": "R. R. Chance",
+      "orcid": "https://orcid.org/0000-0002-5792-893X",
+      "h_index": 64,
+      "i10_index": 125,
+      "works_count": 163,
+      "cited_by_count": 17650,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5030931084",
+      "display_name": "Hongbo Gu",
+      "orcid": "https://orcid.org/0000-0003-3038-2348",
+      "h_index": 64,
+      "i10_index": 116,
+      "works_count": 147,
+      "cited_by_count": 11759,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5033713946",
+      "display_name": "Carlos Alemán",
+      "orcid": "https://orcid.org/0000-0003-4462-6075",
+      "h_index": 63,
+      "i10_index": 532,
+      "works_count": 828,
+      "cited_by_count": 19383,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5112292034",
+      "display_name": "Volker Altstädt",
+      "orcid": "https://orcid.org/0000-0003-0312-6226",
+      "h_index": 63,
+      "i10_index": 271,
+      "works_count": 721,
+      "cited_by_count": 14884,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5079748827",
+      "display_name": "Ari U. Ivaska",
+      "orcid": "https://orcid.org/0000-0002-9534-4871",
+      "h_index": 63,
+      "i10_index": 240,
+      "works_count": 336,
+      "cited_by_count": 19362,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5031579730",
+      "display_name": "A. Gopalan",
+      "orcid": "https://orcid.org/0000-0002-4354-1857",
+      "h_index": 63,
+      "i10_index": 227,
+      "works_count": 408,
+      "cited_by_count": 12620,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5051433789",
+      "display_name": "Bingang Xu",
+      "orcid": "https://orcid.org/0000-0002-1277-8747",
+      "h_index": 63,
+      "i10_index": 223,
+      "works_count": 378,
+      "cited_by_count": 11822,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5012923153",
+      "display_name": "Azman Hassan",
+      "orcid": "https://orcid.org/0000-0002-4247-9158",
+      "h_index": 63,
+      "i10_index": 220,
+      "works_count": 371,
+      "cited_by_count": 15369,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5100320544",
+      "display_name": "Xiaoqing Liu",
+      "orcid": "https://orcid.org/0000-0002-7417-1326",
+      "h_index": 63,
+      "i10_index": 208,
+      "works_count": 289,
+      "cited_by_count": 13004,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5055827952",
+      "display_name": "Ning Pan",
+      "orcid": "https://orcid.org/0000-0002-8772-2596",
+      "h_index": 63,
+      "i10_index": 193,
+      "works_count": 310,
+      "cited_by_count": 15553,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5100660380",
+      "display_name": "Jin Zhang",
+      "orcid": "https://orcid.org/0000-0002-4257-8148",
+      "h_index": 63,
+      "i10_index": 188,
+      "works_count": 346,
+      "cited_by_count": 14160,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5019917692",
+      "display_name": "Jonathan C. Sokolov",
+      "orcid": "https://orcid.org/0000-0002-1069-7150",
+      "h_index": 63,
+      "i10_index": 172,
+      "works_count": 381,
+      "cited_by_count": 12786,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 257,
+      "score": 8.2,
+      "label": "Polymers and Plastics -- 8.2",
+      "id": "https://openalex.org/A5049362442",
+      "display_name": "Peggy Cebe",
+      "orcid": "https://orcid.org/0000-0002-8721-644X",
+      "h_index": 63,
+      "i10_index": 153,
+      "works_count": 327,
+      "cited_by_count": 16047,
+      "discipline": "Polymers and Plastics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Polymers and Plastics",
+      "fields": [
+        "Materials Science"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,433 @@
+{
+  "kind": "subfield",
+  "id": 2922,
+  "name": "Research and Theory",
+  "total_in_scrape": 21,
+  "count": 21,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Research and Theory -- 9.9",
+      "id": "https://openalex.org/A5080888037",
+      "display_name": "Linda H. Aiken",
+      "orcid": "https://orcid.org/0000-0001-8004-3630",
+      "h_index": 119,
+      "i10_index": 302,
+      "works_count": 457,
+      "cited_by_count": 68514,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Research and Theory -- 9.9",
+      "id": "https://openalex.org/A5070930884",
+      "display_name": "Richard Schulz",
+      "orcid": "https://orcid.org/0000-0002-3365-8154",
+      "h_index": 117,
+      "i10_index": 352,
+      "works_count": 509,
+      "cited_by_count": 54951,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Research and Theory -- 9.9",
+      "id": "https://openalex.org/A5074017603",
+      "display_name": "Heather K. Spence Laschinger",
+      "orcid": null,
+      "h_index": 109,
+      "i10_index": 194,
+      "works_count": 244,
+      "cited_by_count": 38121,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Research and Theory -- 9.9",
+      "id": "https://openalex.org/A5028003318",
+      "display_name": "Debra W. Jackson",
+      "orcid": "https://orcid.org/0000-0001-5252-5325",
+      "h_index": 93,
+      "i10_index": 486,
+      "works_count": 913,
+      "cited_by_count": 35821,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Research and Theory -- 9.9",
+      "id": "https://openalex.org/A5050937012",
+      "display_name": "Ali Montazeri",
+      "orcid": "https://orcid.org/0000-0002-5198-9539",
+      "h_index": 88,
+      "i10_index": 450,
+      "works_count": 912,
+      "cited_by_count": 32288,
+      "discipline": "Research and Theory",
+      "primary_field": "Medicine",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Research and Theory -- 9.9",
+      "id": "https://openalex.org/A5054646892",
+      "display_name": "Steven H. Zarit",
+      "orcid": "https://orcid.org/0000-0002-0351-2090",
+      "h_index": 87,
+      "i10_index": 290,
+      "works_count": 487,
+      "cited_by_count": 32144,
+      "discipline": "Research and Theory",
+      "primary_field": "Medicine",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5070748857",
+      "display_name": "Anne F. Klassen",
+      "orcid": "https://orcid.org/0000-0003-4720-0096",
+      "h_index": 85,
+      "i10_index": 269,
+      "works_count": 467,
+      "cited_by_count": 24217,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Decision Sciences",
+        "Medicine",
+        "Psychology",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5073103603",
+      "display_name": "William E. Haley",
+      "orcid": "https://orcid.org/0000-0003-0780-3482",
+      "h_index": 81,
+      "i10_index": 178,
+      "works_count": 330,
+      "cited_by_count": 21724,
+      "discipline": "Research and Theory",
+      "primary_field": "Medicine",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5077345115",
+      "display_name": "Greta G. Cummings",
+      "orcid": "https://orcid.org/0000-0002-0668-6176",
+      "h_index": 79,
+      "i10_index": 211,
+      "works_count": 351,
+      "cited_by_count": 25964,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5072579717",
+      "display_name": "Peter Griffiths",
+      "orcid": "https://orcid.org/0000-0003-2439-2857",
+      "h_index": 76,
+      "i10_index": 297,
+      "works_count": 661,
+      "cited_by_count": 33240,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5039661948",
+      "display_name": "Douglas M. Sloane",
+      "orcid": "https://orcid.org/0000-0003-2541-9783",
+      "h_index": 74,
+      "i10_index": 119,
+      "works_count": 144,
+      "cited_by_count": 41988,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5061427752",
+      "display_name": "Theo van Achterberg",
+      "orcid": "https://orcid.org/0000-0003-0111-6622",
+      "h_index": 72,
+      "i10_index": 225,
+      "works_count": 353,
+      "cited_by_count": 20220,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5085846966",
+      "display_name": "Sally Wai‐Chi Chan",
+      "orcid": "https://orcid.org/0000-0001-5484-4645",
+      "h_index": 72,
+      "i10_index": 210,
+      "works_count": 355,
+      "cited_by_count": 14265,
+      "discipline": "Research and Theory",
+      "primary_field": "Medicine",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5083929296",
+      "display_name": "Michelle L. Cleary",
+      "orcid": "https://orcid.org/0000-0002-1453-4850",
+      "h_index": 68,
+      "i10_index": 351,
+      "works_count": 669,
+      "cited_by_count": 21635,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5086640342",
+      "display_name": "Roger A. Watson",
+      "orcid": "https://orcid.org/0000-0001-8040-7625",
+      "h_index": 68,
+      "i10_index": 303,
+      "works_count": 931,
+      "cited_by_count": 20016,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5025877876",
+      "display_name": "Ercole Vellone",
+      "orcid": "https://orcid.org/0000-0003-4673-7473",
+      "h_index": 68,
+      "i10_index": 280,
+      "works_count": 650,
+      "cited_by_count": 14619,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Research and Theory -- 9.8",
+      "id": "https://openalex.org/A5036759930",
+      "display_name": "Jennifer L. Wolff",
+      "orcid": "https://orcid.org/0000-0002-7898-3903",
+      "h_index": 68,
+      "i10_index": 211,
+      "works_count": 391,
+      "cited_by_count": 18919,
+      "discipline": "Research and Theory",
+      "primary_field": "Medicine",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Research and Theory -- 9.7",
+      "id": "https://openalex.org/A5063666042",
+      "display_name": "Leodoro Jabien Labrague",
+      "orcid": "https://orcid.org/0000-0003-0315-4438",
+      "h_index": 67,
+      "i10_index": 133,
+      "works_count": 184,
+      "cited_by_count": 16672,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Research and Theory -- 9.7",
+      "id": "https://openalex.org/A5079119299",
+      "display_name": "Christine Margaret Duffield",
+      "orcid": "https://orcid.org/0000-0001-6534-8743",
+      "h_index": 65,
+      "i10_index": 187,
+      "works_count": 278,
+      "cited_by_count": 16596,
+      "discipline": "Research and Theory",
+      "primary_field": "Nursing",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Nursing",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Research and Theory -- 9.7",
+      "id": "https://openalex.org/A5039500793",
+      "display_name": "Katri M. Vehviläinen-Julkunen",
+      "orcid": "https://orcid.org/0000-0002-6828-8261",
+      "h_index": 64,
+      "i10_index": 230,
+      "works_count": 396,
+      "cited_by_count": 13597,
+      "discipline": "Research and Theory",
+      "primary_field": "Medicine",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Research and Theory -- 9.7",
+      "id": "https://openalex.org/A5030270951",
+      "display_name": "Timothy Ross Elliott",
+      "orcid": "https://orcid.org/0000-0002-6608-7714",
+      "h_index": 63,
+      "i10_index": 208,
+      "works_count": 345,
+      "cited_by_count": 12447,
+      "discipline": "Research and Theory",
+      "primary_field": "Psychology",
+      "primary_subfield": "Research and Theory",
+      "fields": [
+        "Psychology",
+        "Nursing",
+        "Medicine",
+        "Health Professions"
+      ]
+    }
+  ]
+}

@@ -48,7 +48,7 @@ const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = 
 
 /** One href per section, to assert that section's links are mounted. */
 const SAMPLE_HREF_BY_SECTION: Record<string, string> = {
-  coaching: "/news",
+  coaching: "/tournament",
   research: "/research/cards",
   insights: "/practice/statistics",
 };
@@ -87,7 +87,9 @@ describe("ToolNavTree expansion", () => {
     );
 
     expect(html).toContain('href="/research/cards"');
-    expect(html).not.toContain('href="/news"');
+    expect(html).toContain('href="/news"');
+    expect(html).toContain('href="/coaching"');
+    expect(html).not.toContain('href="/tournament"');
     expect(html).not.toContain('href="/practice/judge-decision"');
   });
 });
@@ -105,7 +107,6 @@ describe("sidebar section expansion set", () => {
 
     expect(next).not.toContain("coaching");
     expect(next).toContain("research");
-    expect(next).toContain("insights");
     expect(next).toContain(VIDEOS_SECTION_ID);
   });
 

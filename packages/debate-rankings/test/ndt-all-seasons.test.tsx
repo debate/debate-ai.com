@@ -240,7 +240,7 @@ describe("buildNdtAllSeasons", () => {
     expect(row.total).toBe(70 + 7);
   });
 
-  it("ranks high school-only debaters on their TOC and NDCA record alone, in the debater table only", () => {
+  it("leaves high school-only debaters out of the debater table, keeping college debaters with points", () => {
     const toc = [
       { year: 2016, event: "Policy", place: "Champion", school: "Prep A (CA)", competitors: "Hemanth Sanjeev & Someone Else" },
       { year: 2017, event: "Policy", place: "Top speaker", school: "Prep A (CA)", competitors: "Someone Else" },
@@ -251,35 +251,31 @@ describe("buildNdtAllSeasons", () => {
       { year: 2015, place: "Speaker", rank: 3, school: "Prep B (TX)", competitors: "Margaret Strong" },
     ] as const;
     const built = buildNdtAllSeasons(sample, toc as never, ndca as never);
-    const hsOnly = built.debaters.filter((row) => row.highSchoolOnly);
-    // Sanjeev debated at the NDT, so he isn't repeated; LD results don't count; the alias spelling is used.
-    expect(hsOnly.map((row) => [row.team, row.school, row.total, row.firstYear, row.lastYear])).toEqual([
-      // TOC champion 10 + NDCA champion 10 + TOC top speaker 4, halved.
-      ["Someone Else", "Prep A (CA)", 12, 2016, 2017],
-      // NDCA 3rd speaker 2, halved.
-      ["Marge Strong", "Prep B (TX)", 1, 2015, 2015],
-    ]);
-    expect(hsOnly[0].parts.highSchool).toBe(12);
-    expect(hsOnly[0].highSchool?.map((r) => [r.tournament, r.year, r.place, r.partners])).toEqual([
-      ["NDCA", 2016, "Champion", ["Hemanth Sanjeev"]],
-      ["TOC", 2016, "Champion", ["Hemanth Sanjeev"]],
-      ["TOC", 2017, "Top speaker", []],
-    ]);
-    expect(built.debaters.find((row) => row.team === "Hemanth Sanjeev")?.highSchoolOnly).toBeUndefined();
-    for (const rows of [built.teams, built.strictTeams, built.schools]) {
-      expect(rows.some((row) => row.highSchoolOnly || row.team === "Someone Else")).toBe(false);
+    const names = built.debaters.map((row) => row.team);
+    // Someone Else and Marge Strong have only a high school record: no row, though their TOC/NDCA results score.
+    expect(highSchoolDebaterNames(toc as never, ndca as never)).toEqual(expect.arrayContaining(["Someone Else", "Marge Strong"]));
+    expect(names).not.toContain("Someone Else");
+    expect(names).not.toContain("Marge Strong");
+    expect(names).not.toContain("Only LD");
+    // Sanjeev debated at the NDT and has points, so he stays, with his high school results.
+    const sanjeev = built.debaters.find((row) => row.team === "Hemanth Sanjeev")!;
+    expect(sanjeev.total).toBeGreaterThan(0);
+    expect(sanjeev.highSchool?.length).toBeGreaterThan(0);
+    for (const row of built.debaters) {
+      expect(row.total - row.parts.highSchool).toBeGreaterThan(0);
+      expect(row.sidePartnerships?.length).toBeGreaterThan(0);
     }
+    for (const rows of [built.teams, built.strictTeams, built.schools]) {
+      expect(rows.some((row) => row.team === "Someone Else")).toBe(false);
+    }
+    // The team and school rankings and scores don't depend on the debater list.
+    expect(built.teams.find((row) => row.team.includes("Sanjeev"))?.parts.highSchool).toBe(sanjeev.parts.highSchool);
   });
 
-  it("adds high school-only debaters from the bundled TOC and NDCA lists to the real debater ranking", () => {
+  it("lists only college NDT debaters with points in the real debater ranking", () => {
     const real = buildNdtAllSeasons(history as NdtSchoolHistory[]);
-    const hsOnly = real.debaters.filter((row) => row.highSchoolOnly);
-    expect(hsOnly.length).toBeGreaterThan(100);
-    expect(hsOnly.every((row) => row.total > 0 && row.highSchool?.length && row.parts.highSchool === row.total)).toBe(true);
-    // Spelling variants reach the college debater rather than a second, high school-only row.
-    expect(hsOnly.map((row) => row.team)).not.toContain("Les Asimow");
-    expect(hsOnly.map((row) => row.team)).not.toContain("Lev Asimow");
-    // Keys never collide with a college debater's.
+    expect(real.debaters.length).toBeGreaterThan(1000);
+    expect(real.debaters.every((row) => row.total - row.parts.highSchool > 0 && row.sidePartnerships?.length)).toBe(true);
     expect(new Set(real.debaters.map((row) => row.key)).size).toBe(real.debaters.length);
   });
 

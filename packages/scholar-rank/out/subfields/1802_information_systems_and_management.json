@@ -1,0 +1,595 @@
+{
+  "kind": "subfield",
+  "id": 1802,
+  "name": "Information Systems and Management",
+  "total_in_scrape": 29,
+  "count": 29,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Information Systems and Management -- 9.9",
+      "id": "https://openalex.org/A5048622877",
+      "display_name": "Yogesh Kumar Dwivedi",
+      "orcid": "https://orcid.org/0000-0002-5547-9990",
+      "h_index": 176,
+      "i10_index": 653,
+      "works_count": 962,
+      "cited_by_count": 144873,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Information Systems and Management -- 9.9",
+      "id": "https://openalex.org/A5034248834",
+      "display_name": "Nripendra Pratap Rana",
+      "orcid": "https://orcid.org/0000-0003-1105-8729",
+      "h_index": 113,
+      "i10_index": 322,
+      "works_count": 427,
+      "cited_by_count": 75557,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Information Systems and Management -- 9.9",
+      "id": "https://openalex.org/A5046424539",
+      "display_name": "Thurasamy Ramayah",
+      "orcid": "https://orcid.org/0000-0003-3361-0465",
+      "h_index": 103,
+      "i10_index": 410,
+      "works_count": 750,
+      "cited_by_count": 44795,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Information Systems and Management -- 9.9",
+      "id": "https://openalex.org/A5001362889",
+      "display_name": "Keng‐Boon Ooi",
+      "orcid": "https://orcid.org/0000-0002-3384-1207",
+      "h_index": 99,
+      "i10_index": 207,
+      "works_count": 263,
+      "cited_by_count": 36052,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Engineering",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Information Systems and Management -- 9.9",
+      "id": "https://openalex.org/A5006565311",
+      "display_name": "Izak Benbasat",
+      "orcid": "https://orcid.org/0000-0002-9731-3403",
+      "h_index": 98,
+      "i10_index": 224,
+      "works_count": 393,
+      "cited_by_count": 70124,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Information Systems and Management -- 9.9",
+      "id": "https://openalex.org/A5010981460",
+      "display_name": "Viswanath Venkatesh",
+      "orcid": "https://orcid.org/0000-0001-8473-376X",
+      "h_index": 94,
+      "i10_index": 161,
+      "works_count": 223,
+      "cited_by_count": 205743,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5080121059",
+      "display_name": "Eric W.T. Ngai",
+      "orcid": "https://orcid.org/0000-0002-7278-7434",
+      "h_index": 87,
+      "i10_index": 217,
+      "works_count": 347,
+      "cited_by_count": 37633,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5035852542",
+      "display_name": "Said Abdelrahim Salloum",
+      "orcid": "https://orcid.org/0000-0002-6073-3981",
+      "h_index": 85,
+      "i10_index": 213,
+      "works_count": 325,
+      "cited_by_count": 19609,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5025286277",
+      "display_name": "Tiago Oliveira",
+      "orcid": "https://orcid.org/0000-0001-6523-0809",
+      "h_index": 84,
+      "i10_index": 183,
+      "works_count": 324,
+      "cited_by_count": 36914,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5027899893",
+      "display_name": "Carole Goble",
+      "orcid": "https://orcid.org/0000-0003-1219-2137",
+      "h_index": 83,
+      "i10_index": 315,
+      "works_count": 1023,
+      "cited_by_count": 52896,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5026665183",
+      "display_name": "Mehrbakhsh Nilashi",
+      "orcid": "https://orcid.org/0000-0003-0099-8299",
+      "h_index": 81,
+      "i10_index": 196,
+      "works_count": 276,
+      "cited_by_count": 19712,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Computer Science",
+        "Business, Management and Accounting",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5029829904",
+      "display_name": "Timothy P. Teo",
+      "orcid": "https://orcid.org/0000-0002-7552-8497",
+      "h_index": 79,
+      "i10_index": 197,
+      "works_count": 304,
+      "cited_by_count": 23204,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5033766968",
+      "display_name": "Donghee Shin",
+      "orcid": "https://orcid.org/0000-0002-5439-4493",
+      "h_index": 78,
+      "i10_index": 240,
+      "works_count": 591,
+      "cited_by_count": 26150,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Computer Science",
+        "Decision Sciences",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5045377486",
+      "display_name": "Thompson S.H. Teo",
+      "orcid": "https://orcid.org/0000-0002-4301-7430",
+      "h_index": 77,
+      "i10_index": 164,
+      "works_count": 274,
+      "cited_by_count": 24807,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Computer Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5103264799",
+      "display_name": "Christy M.K. Cheung",
+      "orcid": "https://orcid.org/0000-0003-4411-0570",
+      "h_index": 77,
+      "i10_index": 142,
+      "works_count": 277,
+      "cited_by_count": 36332,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5083464792",
+      "display_name": "Binshan Lin",
+      "orcid": "https://orcid.org/0000-0002-8481-302X",
+      "h_index": 76,
+      "i10_index": 256,
+      "works_count": 502,
+      "cited_by_count": 21436,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Engineering",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Engineering",
+        "Decision Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Information Systems and Management -- 9.8",
+      "id": "https://openalex.org/A5022255714",
+      "display_name": "Kum Fai Yuen",
+      "orcid": "https://orcid.org/0000-0002-9199-6661",
+      "h_index": 76,
+      "i10_index": 243,
+      "works_count": 337,
+      "cited_by_count": 17282,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5034363461",
+      "display_name": "Sheshadri Chatterjee",
+      "orcid": "https://orcid.org/0000-0003-1075-5549",
+      "h_index": 76,
+      "i10_index": 195,
+      "works_count": 282,
+      "cited_by_count": 19576,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5100376654",
+      "display_name": "Matthew Lee",
+      "orcid": "https://orcid.org/0000-0001-8190-608X",
+      "h_index": 73,
+      "i10_index": 142,
+      "works_count": 292,
+      "cited_by_count": 28294,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5061235109",
+      "display_name": "Arpan Kumar Kar",
+      "orcid": "https://orcid.org/0000-0003-4186-4887",
+      "h_index": 72,
+      "i10_index": 191,
+      "works_count": 321,
+      "cited_by_count": 38364,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5006979108",
+      "display_name": "Mostafa Al‐Emran",
+      "orcid": "https://orcid.org/0000-0002-5269-5380",
+      "h_index": 72,
+      "i10_index": 146,
+      "works_count": 180,
+      "cited_by_count": 19712,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5025100017",
+      "display_name": "Alain Yee‐Loong Chong",
+      "orcid": "https://orcid.org/0000-0002-0881-1612",
+      "h_index": 70,
+      "i10_index": 123,
+      "works_count": 195,
+      "cited_by_count": 23379,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Engineering",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5078523327",
+      "display_name": "Ahmad Samed Al‐Adwan",
+      "orcid": "https://orcid.org/0000-0001-5688-1503",
+      "h_index": 67,
+      "i10_index": 121,
+      "works_count": 177,
+      "cited_by_count": 14317,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5058751305",
+      "display_name": "Ra’ed Moh’d Taisir Masa’deh",
+      "orcid": "https://orcid.org/0000-0002-9070-3732",
+      "h_index": 66,
+      "i10_index": 190,
+      "works_count": 332,
+      "cited_by_count": 18549,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5006120288",
+      "display_name": "Robert M. Davison",
+      "orcid": "https://orcid.org/0000-0002-7243-3521",
+      "h_index": 66,
+      "i10_index": 184,
+      "works_count": 520,
+      "cited_by_count": 25981,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5019147868",
+      "display_name": "Abdalwali Lutfi",
+      "orcid": "https://orcid.org/0000-0002-3928-7497",
+      "h_index": 66,
+      "i10_index": 110,
+      "works_count": 135,
+      "cited_by_count": 10993,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5009706429",
+      "display_name": "Kevin C. Desouza",
+      "orcid": "https://orcid.org/0000-0002-4734-3081",
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 349,
+      "cited_by_count": 15394,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Information Systems and Management -- 9.7",
+      "id": "https://openalex.org/A5074581074",
+      "display_name": "Manaf Al‐Okaily",
+      "orcid": "https://orcid.org/0000-0002-1610-7385",
+      "h_index": 65,
+      "i10_index": 128,
+      "works_count": 185,
+      "cited_by_count": 11052,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Information Systems and Management -- 9.6",
+      "id": "https://openalex.org/A5082912598",
+      "display_name": "Alexander Benlian",
+      "orcid": "https://orcid.org/0000-0002-7294-3097",
+      "h_index": 64,
+      "i10_index": 172,
+      "works_count": 443,
+      "cited_by_count": 23243,
+      "discipline": "Information Systems and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Information Systems and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Computer Science"
+      ]
+    }
+  ]
+}

@@ -1,12 +1,14 @@
 /**
- * @fileoverview The Research / Practice Debates / Inference tool sections
- * rendered in the videos sidebar underneath the "Videos" node. Practice vs AI
- * and the Prep Workspace sit under Research; Practice Debates (formerly
- * Coaching) opens with the Practice Debates page, which merged Online
- * Challenges, Practice Drills and Practice Partners into one tabbed page at
- * `/practice/debates`. Mirrors the entries of
+ * @fileoverview The Research / Debates tool sections rendered
+ * in the videos sidebar underneath the "Videos" node. The Prep Workspace sits
+ * under Research; Debates (formerly Coaching, and the former Inference
+ * section's rankings, statistics and prediction markets) has one "Practice
+ * debates" row for the Practice debates page, which merged Online Challenges,
+ * Practice Drills and Practice Partners into one tabbed page at
+ * `/practice/debates`; Practice vs AI (`/practice/versus-ai`) is an alias of
+ * that row and is linked from the page's header. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
- * three headings the sidebar shows and trimmed to the label, href and icon
+ * two headings the sidebar shows and trimmed to the label, href and icon
  * the tree needs — the sidebar lives in this package, which cannot import
  * app-local modules, so the links are restated here rather than derived.
  *
@@ -16,7 +18,6 @@
 import {
   Award,
   BarChart3,
-  ChartColumn,
   Clapperboard,
   ClipboardList,
   FileText,
@@ -95,7 +96,7 @@ export const APP_DOCK_LINKS: SidebarToolLink[] = [
   { href: "/videos", title: "Videos", icon: Clapperboard },
   { href: "/research/cards", title: "Shared", icon: Share2 },
   { href: "/debate", title: "Debate", icon: MessageSquare },
-  { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
+  { href: "/practice/debates", title: "Practice debates", icon: Swords },
   { href: "/research/docs", title: "Research", icon: FileText },
 ];
 
@@ -109,13 +110,10 @@ export const RESEARCH_SECTION_ID = "research";
 
 /**
  * Id of the Practice Debates section (formerly Coaching): the Practice Debates
- * page (Online Challenges, Practice Drills and Practice Partners), Tournaments,
- * the Coach Workspace and News & Forums.
+ * page (Online Challenges, Practice Drills and Practice Partners) and
+ * Tournaments.
  */
 export const PRACTICE_DEBATES_SECTION_ID = "coaching";
-
-/** Id of the Inference section, whose links split into labelled subgroups. */
-export const INSIGHTS_SECTION_ID = "insights";
 
 export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
   {
@@ -131,10 +129,16 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // page; `/research/team` and `/practice/level` redirect to its tabs.
       { href: "/research", title: "Research Workspace", icon: Search, aliases: ["/research/team", "/practice/level"] },
       { href: "/research/cards", title: "Card Search", icon: Search },
-      { href: "/practice/versus-ai", title: "Practice vs AI", icon: Swords },
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
       // Profiles, Prep Notes and Debater Stats, one tab each.
       { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
+      // Coach Workspace, AI Coach Mode, Coaching Programs, Team Calendar, Coach
+      // Materials and the Laptop-less Debating guide, one tab each.
+      { href: "/coaching", title: "Coach Workspace", icon: Presentation },
+      // The community's news feed and forums, one tabbed page. Forum threads
+      // keep their `/practice/forums/<id>` addresses, so that prefix is this
+      // row's too.
+      { href: "/news", title: "News & Forums", icon: Rss, aliases: ["/practice/forums"] },
     ],
   },
   {
@@ -152,13 +156,15 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // (`/practice/tabroom`) is still routed but deliberately has no sidebar row.
       { href: "/tournament", title: "Tournaments", icon: Trophy },
       // Online Challenges, Practice Drills and Practice Partners, one tabbed
-      // page. Their old addresses redirect to its tabs, so those prefixes are
-      // this row's too.
+      // page, merged with Practice vs AI into this one row. Their old
+      // addresses redirect to its tabs, so those prefixes are this row's too.
+      // `/practice/versus-ai` keeps its own page, reached from the Practice
+      // debates page's header link, and lights this row up.
       {
         href: "/practice/debates",
-        title: "Practice Debates",
+        title: "Practice debates",
         icon: Award,
-        aliases: ["/practice/challenges", "/practice/drills", "/practice/partners"],
+        aliases: ["/practice/challenges", "/practice/drills", "/practice/partners", "/practice/versus-ai"],
       },
       // Coach Workspace, AI Coach Mode, Coaching Programs, Team Calendar, Coach
       // Materials and the Laptop-less Debating guide, one tab each.
@@ -167,16 +173,8 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // keep their `/practice/forums/<id>` addresses, so that prefix is this
       // row's too.
       { href: "/news", title: "News & Forums", icon: Rss, aliases: ["/practice/forums"] },
-    ],
-  },
-  {
-    // Team and school standings, then debate-wide data and prediction markets.
-    // `/rank` is this section's flagship, so it is also the first link.
-    id: INSIGHTS_SECTION_ID,
-    title: "Inference",
-    href: "/rank",
-    icon: ChartColumn,
-    tools: [
+      // Team and school standings, then debate-wide data and prediction
+      // markets (the former Inference section).
       { href: "/rank", title: "Team & School Rank", icon: Medal },
       { href: "/practice/statistics", title: "Topics & Statistics", icon: BarChart3 },
       { href: "/practice/predictions", title: "Prediction Markets", icon: Coins },
