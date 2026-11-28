@@ -1,0 +1,1601 @@
+{
+  "kind": "subfield",
+  "id": 1904,
+  "name": "Earth-Surface Processes",
+  "total_in_scrape": 83,
+  "count": 83,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Earth-Surface Processes -- 9.9",
+      "id": "https://openalex.org/A5111599024",
+      "display_name": "William Eric Dietrich",
+      "orcid": "https://orcid.org/0009-0008-3371-6650",
+      "h_index": 132,
+      "i10_index": 274,
+      "works_count": 684,
+      "cited_by_count": 56434,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Earth-Surface Processes -- 9.9",
+      "id": "https://openalex.org/A5061579265",
+      "display_name": "Robert James Nicholls",
+      "orcid": "https://orcid.org/0000-0002-9715-1109",
+      "h_index": 113,
+      "i10_index": 387,
+      "works_count": 833,
+      "cited_by_count": 60893,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Earth-Surface Processes -- 9.9",
+      "id": "https://openalex.org/A5088484144",
+      "display_name": "Gary Parker",
+      "orcid": "https://orcid.org/0000-0001-5973-5296",
+      "h_index": 102,
+      "i10_index": 274,
+      "works_count": 541,
+      "cited_by_count": 32465,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Earth-Surface Processes -- 9.9",
+      "id": "https://openalex.org/A5073901652",
+      "display_name": "Andrew Sean Murray",
+      "orcid": "https://orcid.org/0000-0001-5559-1862",
+      "h_index": 100,
+      "i10_index": 427,
+      "works_count": 703,
+      "cited_by_count": 48973,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Earth-Surface Processes -- 9.9",
+      "id": "https://openalex.org/A5048398531",
+      "display_name": "Tjeerd Joris Bouma",
+      "orcid": "https://orcid.org/0000-0001-7824-7546",
+      "h_index": 99,
+      "i10_index": 407,
+      "works_count": 844,
+      "cited_by_count": 37904,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Earth-Surface Processes -- 9.9",
+      "id": "https://openalex.org/A5045425394",
+      "display_name": "Ellen Wohl",
+      "orcid": "https://orcid.org/0000-0001-7435-5013",
+      "h_index": 98,
+      "i10_index": 334,
+      "works_count": 741,
+      "cited_by_count": 29131,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5019469548",
+      "display_name": "James P. M. Syvitski",
+      "orcid": "https://orcid.org/0000-0003-3116-6997",
+      "h_index": 95,
+      "i10_index": 232,
+      "works_count": 418,
+      "cited_by_count": 45120,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5002730240",
+      "display_name": "Stuart Nicholas Lane",
+      "orcid": "https://orcid.org/0000-0002-6077-6076",
+      "h_index": 93,
+      "i10_index": 260,
+      "works_count": 734,
+      "cited_by_count": 27511,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5021218088",
+      "display_name": "Xavier Le Pichon",
+      "orcid": "https://orcid.org/0000-0002-6680-7996",
+      "h_index": 89,
+      "i10_index": 191,
+      "works_count": 999,
+      "cited_by_count": 27994,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5007130769",
+      "display_name": "Ian Turner",
+      "orcid": "https://orcid.org/0000-0001-9884-6917",
+      "h_index": 88,
+      "i10_index": 342,
+      "works_count": 540,
+      "cited_by_count": 28951,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Mathematics",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5005344720",
+      "display_name": "Andy Baker",
+      "orcid": "https://orcid.org/0000-0002-1552-6166",
+      "h_index": 88,
+      "i10_index": 260,
+      "works_count": 479,
+      "cited_by_count": 30362,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5051315067",
+      "display_name": "Angela M. Gurnell",
+      "orcid": "https://orcid.org/0000-0002-7249-8202",
+      "h_index": 86,
+      "i10_index": 215,
+      "works_count": 314,
+      "cited_by_count": 24268,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5084053928",
+      "display_name": "Benjamin P. Horton",
+      "orcid": "https://orcid.org/0000-0001-9245-3768",
+      "h_index": 85,
+      "i10_index": 248,
+      "works_count": 612,
+      "cited_by_count": 22736,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5061718318",
+      "display_name": "Robert E. Kopp",
+      "orcid": "https://orcid.org/0000-0003-4016-9428",
+      "h_index": 84,
+      "i10_index": 196,
+      "works_count": 562,
+      "cited_by_count": 38596,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5058182500",
+      "display_name": "Michael A. Church",
+      "orcid": "https://orcid.org/0000-0002-4427-5749",
+      "h_index": 83,
+      "i10_index": 179,
+      "works_count": 333,
+      "cited_by_count": 21447,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5063274653",
+      "display_name": "Jim Best",
+      "orcid": "https://orcid.org/0000-0001-5314-6140",
+      "h_index": 82,
+      "i10_index": 223,
+      "works_count": 568,
+      "cited_by_count": 23860,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Earth-Surface Processes -- 9.8",
+      "id": "https://openalex.org/A5070975115",
+      "display_name": "Íñigo J. Losada",
+      "orcid": "https://orcid.org/0000-0002-9651-9709",
+      "h_index": 82,
+      "i10_index": 212,
+      "works_count": 427,
+      "cited_by_count": 24947,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5016210863",
+      "display_name": "Eric J. Wolanski",
+      "orcid": "https://orcid.org/0000-0002-2947-1688",
+      "h_index": 81,
+      "i10_index": 267,
+      "works_count": 469,
+      "cited_by_count": 22833,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5065599600",
+      "display_name": "Mark G. Macklin",
+      "orcid": "https://orcid.org/0000-0003-4167-2033",
+      "h_index": 81,
+      "i10_index": 207,
+      "works_count": 312,
+      "cited_by_count": 19166,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5009378840",
+      "display_name": "K. X. Whipple",
+      "orcid": "https://orcid.org/0000-0002-8430-6925",
+      "h_index": 81,
+      "i10_index": 130,
+      "works_count": 345,
+      "cited_by_count": 32069,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5101500243",
+      "display_name": "John W. Day",
+      "orcid": "https://orcid.org/0000-0003-0915-1457",
+      "h_index": 80,
+      "i10_index": 252,
+      "works_count": 390,
+      "cited_by_count": 26093,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5039915214",
+      "display_name": "Yoshiki Saito",
+      "orcid": "https://orcid.org/0000-0003-3212-6356",
+      "h_index": 79,
+      "i10_index": 196,
+      "works_count": 364,
+      "cited_by_count": 23788,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5012781982",
+      "display_name": "Robert T. Guza",
+      "orcid": "https://orcid.org/0000-0001-8834-5465",
+      "h_index": 79,
+      "i10_index": 190,
+      "works_count": 335,
+      "cited_by_count": 18648,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5032337319",
+      "display_name": "Philip L.‐F. Liu",
+      "orcid": "https://orcid.org/0000-0002-2170-5507",
+      "h_index": 77,
+      "i10_index": 289,
+      "works_count": 534,
+      "cited_by_count": 19790,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5020417939",
+      "display_name": "Hervé Piégay",
+      "orcid": "https://orcid.org/0000-0002-3864-2119",
+      "h_index": 77,
+      "i10_index": 274,
+      "works_count": 1280,
+      "cited_by_count": 20579,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5086502847",
+      "display_name": "David S.G. Thomas",
+      "orcid": "https://orcid.org/0000-0001-6867-5504",
+      "h_index": 76,
+      "i10_index": 197,
+      "works_count": 376,
+      "cited_by_count": 19396,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5042513439",
+      "display_name": "Cesáreo Sáiz‐Jiménez",
+      "orcid": "https://orcid.org/0000-0003-0036-670X",
+      "h_index": 75,
+      "i10_index": 267,
+      "works_count": 500,
+      "cited_by_count": 18024,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Arts and Humanities",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Earth-Surface Processes -- 9.7",
+      "id": "https://openalex.org/A5043528740",
+      "display_name": "Gerd Masselink",
+      "orcid": "https://orcid.org/0000-0001-6079-7611",
+      "h_index": 74,
+      "i10_index": 200,
+      "works_count": 433,
+      "cited_by_count": 16557,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5011847078",
+      "display_name": "Chris Paola",
+      "orcid": "https://orcid.org/0000-0001-7398-6163",
+      "h_index": 74,
+      "i10_index": 168,
+      "works_count": 341,
+      "cited_by_count": 19122,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5044001202",
+      "display_name": "Gerald C. Nanson",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 123,
+      "works_count": 167,
+      "cited_by_count": 15350,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5065844287",
+      "display_name": "Patrick M. Meire",
+      "orcid": "https://orcid.org/0000-0003-2599-5350",
+      "h_index": 72,
+      "i10_index": 265,
+      "works_count": 705,
+      "cited_by_count": 20205,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5064025558",
+      "display_name": "Charles Albert Nittrouer",
+      "orcid": "https://orcid.org/0000-0002-9653-3623",
+      "h_index": 72,
+      "i10_index": 167,
+      "works_count": 330,
+      "cited_by_count": 15301,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5004444789",
+      "display_name": "Jørgen Fredsøe",
+      "orcid": "https://orcid.org/0000-0003-4727-348X",
+      "h_index": 72,
+      "i10_index": 156,
+      "works_count": 255,
+      "cited_by_count": 20414,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5050732193",
+      "display_name": "Thomas Dunne",
+      "orcid": "https://orcid.org/0000-0002-5281-6517",
+      "h_index": 72,
+      "i10_index": 119,
+      "works_count": 222,
+      "cited_by_count": 19903,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5104039934",
+      "display_name": "William Blaine White",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 251,
+      "works_count": 441,
+      "cited_by_count": 21698,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5087172802",
+      "display_name": "Colin D. Woodroffe",
+      "orcid": "https://orcid.org/0000-0003-4476-6158",
+      "h_index": 71,
+      "i10_index": 224,
+      "works_count": 390,
+      "cited_by_count": 20431,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5086983536",
+      "display_name": "José María García-Ruiz",
+      "orcid": "https://orcid.org/0000-0002-8535-817X",
+      "h_index": 71,
+      "i10_index": 190,
+      "works_count": 474,
+      "cited_by_count": 19664,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5061800499",
+      "display_name": "A. Veldkamp",
+      "orcid": "https://orcid.org/0000-0002-9970-5902",
+      "h_index": 71,
+      "i10_index": 185,
+      "works_count": 391,
+      "cited_by_count": 26307,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Earth-Surface Processes -- 9.6",
+      "id": "https://openalex.org/A5033516261",
+      "display_name": "Efi Foufoula‐Georgiou",
+      "orcid": "https://orcid.org/0000-0003-1078-231X",
+      "h_index": 70,
+      "i10_index": 218,
+      "works_count": 550,
+      "cited_by_count": 17377,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5046101937",
+      "display_name": "Flavio S. Anselmetti",
+      "orcid": "https://orcid.org/0000-0002-8785-3641",
+      "h_index": 70,
+      "i10_index": 217,
+      "works_count": 1110,
+      "cited_by_count": 15832,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5081418757",
+      "display_name": "Noël P. James",
+      "orcid": "https://orcid.org/0000-0002-9092-3516",
+      "h_index": 70,
+      "i10_index": 217,
+      "works_count": 362,
+      "cited_by_count": 15096,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5044731736",
+      "display_name": "Andrew S Goudie",
+      "orcid": "https://orcid.org/0000-0002-5496-8207",
+      "h_index": 70,
+      "i10_index": 200,
+      "works_count": 770,
+      "cited_by_count": 19507,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5045322252",
+      "display_name": "Roshanka Ranasinghe",
+      "orcid": "https://orcid.org/0000-0001-6234-2063",
+      "h_index": 70,
+      "i10_index": 158,
+      "works_count": 342,
+      "cited_by_count": 17470,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5029384789",
+      "display_name": "Ian J. Fairchild",
+      "orcid": "https://orcid.org/0000-0003-4822-2895",
+      "h_index": 70,
+      "i10_index": 150,
+      "works_count": 295,
+      "cited_by_count": 19212,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5048997503",
+      "display_name": "Niels Hovius",
+      "orcid": "https://orcid.org/0000-0002-9158-9871",
+      "h_index": 70,
+      "i10_index": 128,
+      "works_count": 481,
+      "cited_by_count": 19071,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5087334667",
+      "display_name": "Gary Brierley",
+      "orcid": "https://orcid.org/0000-0002-1310-1105",
+      "h_index": 69,
+      "i10_index": 185,
+      "works_count": 362,
+      "cited_by_count": 15731,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5077412034",
+      "display_name": "Michael P. Lamb",
+      "orcid": "https://orcid.org/0000-0002-5701-0504",
+      "h_index": 69,
+      "i10_index": 174,
+      "works_count": 463,
+      "cited_by_count": 13772,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5053441643",
+      "display_name": "Gregory E. Tucker",
+      "orcid": "https://orcid.org/0000-0003-0364-5800",
+      "h_index": 69,
+      "i10_index": 138,
+      "works_count": 503,
+      "cited_by_count": 20142,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5053547865",
+      "display_name": "Bruce L. Rhoads",
+      "orcid": "https://orcid.org/0000-0003-2112-745X",
+      "h_index": 69,
+      "i10_index": 124,
+      "works_count": 286,
+      "cited_by_count": 11898,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5111641536",
+      "display_name": "John Chappell",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 117,
+      "works_count": 173,
+      "cited_by_count": 22022,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Earth-Surface Processes -- 9.5",
+      "id": "https://openalex.org/A5086691860",
+      "display_name": "Keith Richards",
+      "orcid": "https://orcid.org/0000-0001-8170-6512",
+      "h_index": 68,
+      "i10_index": 173,
+      "works_count": 303,
+      "cited_by_count": 16125,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5015409863",
+      "display_name": "Heidi Nepf",
+      "orcid": "https://orcid.org/0000-0002-3663-9071",
+      "h_index": 68,
+      "i10_index": 153,
+      "works_count": 305,
+      "cited_by_count": 20243,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5070678336",
+      "display_name": "Heather A. Viles",
+      "orcid": "https://orcid.org/0000-0002-2444-1295",
+      "h_index": 67,
+      "i10_index": 212,
+      "works_count": 458,
+      "cited_by_count": 12935,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Arts and Humanities",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5025777199",
+      "display_name": "Jonathan D. Phillips",
+      "orcid": "https://orcid.org/0000-0003-0283-6023",
+      "h_index": 67,
+      "i10_index": 204,
+      "works_count": 321,
+      "cited_by_count": 12898,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5043958212",
+      "display_name": "Maarten G. Kleinhans",
+      "orcid": "https://orcid.org/0000-0002-9484-1673",
+      "h_index": 67,
+      "i10_index": 188,
+      "works_count": 570,
+      "cited_by_count": 13408,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5014681028",
+      "display_name": "Daniel R. Parsons",
+      "orcid": "https://orcid.org/0000-0002-5142-4466",
+      "h_index": 67,
+      "i10_index": 180,
+      "works_count": 635,
+      "cited_by_count": 13754,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5072894779",
+      "display_name": "Sergio Fagherazzi",
+      "orcid": "https://orcid.org/0000-0002-4048-5968",
+      "h_index": 67,
+      "i10_index": 169,
+      "works_count": 387,
+      "cited_by_count": 15672,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5074457565",
+      "display_name": "Gregory Stewart Okin",
+      "orcid": "https://orcid.org/0000-0002-0484-3537",
+      "h_index": 67,
+      "i10_index": 156,
+      "works_count": 371,
+      "cited_by_count": 15560,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5025387778",
+      "display_name": "Peter J. Talling",
+      "orcid": "https://orcid.org/0000-0001-5234-0398",
+      "h_index": 67,
+      "i10_index": 152,
+      "works_count": 315,
+      "cited_by_count": 13574,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5077951492",
+      "display_name": "Dorrik A. V. Stow",
+      "orcid": "https://orcid.org/0000-0001-5082-7848",
+      "h_index": 67,
+      "i10_index": 149,
+      "works_count": 326,
+      "cited_by_count": 15499,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5055336005",
+      "display_name": "Daniel R. Muhs",
+      "orcid": "https://orcid.org/0000-0001-7449-251X",
+      "h_index": 67,
+      "i10_index": 145,
+      "works_count": 255,
+      "cited_by_count": 13198,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Earth-Surface Processes -- 9.4",
+      "id": "https://openalex.org/A5015519647",
+      "display_name": "Marcelo Horacio Garcia",
+      "orcid": "https://orcid.org/0000-0003-0643-489X",
+      "h_index": 66,
+      "i10_index": 184,
+      "works_count": 560,
+      "cited_by_count": 15213,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5028340428",
+      "display_name": "Gerardo Benito",
+      "orcid": "https://orcid.org/0000-0003-0724-1790",
+      "h_index": 66,
+      "i10_index": 149,
+      "works_count": 360,
+      "cited_by_count": 18663,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5072600079",
+      "display_name": "W. Rockwell Geyer",
+      "orcid": "https://orcid.org/0000-0001-9030-1744",
+      "h_index": 66,
+      "i10_index": 123,
+      "works_count": 201,
+      "cited_by_count": 15040,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5107365926",
+      "display_name": "David R. Montgomery",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 109,
+      "works_count": 154,
+      "cited_by_count": 25937,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5069287124",
+      "display_name": "Stanley A. Schumm",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 104,
+      "works_count": 240,
+      "cited_by_count": 25632,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5065477591",
+      "display_name": "M.J.F. Stive",
+      "orcid": "https://orcid.org/0000-0002-9820-6351",
+      "h_index": 65,
+      "i10_index": 189,
+      "works_count": 454,
+      "cited_by_count": 14887,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5068160460",
+      "display_name": "James T. Kirby",
+      "orcid": "https://orcid.org/0000-0001-6978-899X",
+      "h_index": 65,
+      "i10_index": 176,
+      "works_count": 447,
+      "cited_by_count": 18545,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5010653213",
+      "display_name": "V. Paul Wright",
+      "orcid": "https://orcid.org/0000-0003-1251-8432",
+      "h_index": 65,
+      "i10_index": 150,
+      "works_count": 210,
+      "cited_by_count": 16251,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5057913138",
+      "display_name": "Stijn Temmerman",
+      "orcid": "https://orcid.org/0000-0003-3346-9115",
+      "h_index": 65,
+      "i10_index": 145,
+      "works_count": 364,
+      "cited_by_count": 18003,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5055360910",
+      "display_name": "Brian Jones",
+      "orcid": "https://orcid.org/0000-0003-3088-5543",
+      "h_index": 64,
+      "i10_index": 255,
+      "works_count": 401,
+      "cited_by_count": 13237,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5082469579",
+      "display_name": "Siegfried Siegesmund",
+      "orcid": "https://orcid.org/0000-0002-5382-0622",
+      "h_index": 64,
+      "i10_index": 219,
+      "works_count": 388,
+      "cited_by_count": 12534,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Earth-Surface Processes -- 9.3",
+      "id": "https://openalex.org/A5074277915",
+      "display_name": "Veerle Cnudde",
+      "orcid": "https://orcid.org/0000-0002-3269-5914",
+      "h_index": 64,
+      "i10_index": 210,
+      "works_count": 738,
+      "cited_by_count": 17383,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Energy",
+        "Engineering",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Earth-Surface Processes -- 9.2",
+      "id": "https://openalex.org/A5090156945",
+      "display_name": "Christopher R. Fielding",
+      "orcid": "https://orcid.org/0000-0002-2397-6116",
+      "h_index": 64,
+      "i10_index": 184,
+      "works_count": 430,
+      "cited_by_count": 14781,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Earth-Surface Processes -- 9.2",
+      "id": "https://openalex.org/A5113622259",
+      "display_name": "J. R. L. Allen",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 171,
+      "works_count": 253,
+      "cited_by_count": 16971,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Earth-Surface Processes -- 9.2",
+      "id": "https://openalex.org/A5044847857",
+      "display_name": "Yehouda Enzel",
+      "orcid": "https://orcid.org/0000-0001-8367-9255",
+      "h_index": 64,
+      "i10_index": 169,
+      "works_count": 298,
+      "cited_by_count": 13768,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Earth-Surface Processes -- 9.2",
+      "id": "https://openalex.org/A5018166517",
+      "display_name": "Albert Palanqués",
+      "orcid": "https://orcid.org/0000-0003-2544-2342",
+      "h_index": 64,
+      "i10_index": 146,
+      "works_count": 339,
+      "cited_by_count": 12458,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Earth-Surface Processes -- 9.2",
+      "id": "https://openalex.org/A5088420023",
+      "display_name": "Geoffrey E. Petts",
+      "orcid": "https://orcid.org/0000-0001-9075-1550",
+      "h_index": 64,
+      "i10_index": 143,
+      "works_count": 252,
+      "cited_by_count": 14464,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Earth-Surface Processes -- 9.2",
+      "id": "https://openalex.org/A5057958159",
+      "display_name": "Frederick J. Swanson",
+      "orcid": "https://orcid.org/0000-0001-9690-2428",
+      "h_index": 64,
+      "i10_index": 97,
+      "works_count": 170,
+      "cited_by_count": 30060,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Earth-Surface Processes -- 9.2",
+      "id": "https://openalex.org/A5062131005",
+      "display_name": "Patrick Alan Hesp",
+      "orcid": "https://orcid.org/0000-0003-4573-2945",
+      "h_index": 63,
+      "i10_index": 179,
+      "works_count": 338,
+      "cited_by_count": 13652,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Earth-Surface Processes -- 9.2",
+      "id": "https://openalex.org/A5058801898",
+      "display_name": "C. K. Paull",
+      "orcid": "https://orcid.org/0000-0001-5940-3443",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 464,
+      "cited_by_count": 16008,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Earth-Surface Processes -- 9.2",
+      "id": "https://openalex.org/A5016149939",
+      "display_name": "Dano Roelvink",
+      "orcid": "https://orcid.org/0000-0002-5367-0003",
+      "h_index": 63,
+      "i10_index": 161,
+      "works_count": 389,
+      "cited_by_count": 17312,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Earth-Surface Processes -- 9.2",
+      "id": "https://openalex.org/A5091441679",
+      "display_name": "Andrew D. Miall",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 130,
+      "works_count": 350,
+      "cited_by_count": 24003,
+      "discipline": "Earth-Surface Processes",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Earth-Surface Processes",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    }
+  ]
+}

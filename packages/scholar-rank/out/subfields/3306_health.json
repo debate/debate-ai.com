@@ -1,0 +1,2344 @@
+{
+  "kind": "subfield",
+  "id": 3306,
+  "name": "Health",
+  "total_in_scrape": 119,
+  "count": 119,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Health -- 9.9",
+      "id": "https://openalex.org/A5074409311",
+      "display_name": "Michael Gideon Marmot",
+      "orcid": "https://orcid.org/0000-0002-2431-6419",
+      "h_index": 213,
+      "i10_index": 919,
+      "works_count": 1603,
+      "cited_by_count": 197892,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Health -- 9.9",
+      "id": "https://openalex.org/A5056849976",
+      "display_name": "Ichiro I. Kawachi",
+      "orcid": "https://orcid.org/0000-0001-9339-2821",
+      "h_index": 184,
+      "i10_index": 1115,
+      "works_count": 1721,
+      "cited_by_count": 141342,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Health -- 9.9",
+      "id": "https://openalex.org/A5109172678",
+      "display_name": "David R. Williams",
+      "orcid": "https://orcid.org/0000-0002-8654-6228",
+      "h_index": 152,
+      "i10_index": 486,
+      "works_count": 710,
+      "cited_by_count": 123317,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Health -- 9.9",
+      "id": "https://openalex.org/A5113584004",
+      "display_name": "Martin J. Shipley",
+      "orcid": null,
+      "h_index": 142,
+      "i10_index": 424,
+      "works_count": 654,
+      "cited_by_count": 72573,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Health -- 9.9",
+      "id": "https://openalex.org/A5091406579",
+      "display_name": "Teresa E. Seeman",
+      "orcid": "https://orcid.org/0000-0001-8583-4239",
+      "h_index": 140,
+      "i10_index": 422,
+      "works_count": 582,
+      "cited_by_count": 103161,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Health -- 9.9",
+      "id": "https://openalex.org/A5023697713",
+      "display_name": "Diana J. Kuh",
+      "orcid": "https://orcid.org/0000-0001-7386-2857",
+      "h_index": 136,
+      "i10_index": 476,
+      "works_count": 882,
+      "cited_by_count": 91973,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5069987621",
+      "display_name": "Ana Victoria Diez Roux",
+      "orcid": "https://orcid.org/0000-0001-9658-7050",
+      "h_index": 131,
+      "i10_index": 501,
+      "works_count": 697,
+      "cited_by_count": 79115,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5083923676",
+      "display_name": "S. V. Subramanian",
+      "orcid": "https://orcid.org/0000-0003-2365-4165",
+      "h_index": 129,
+      "i10_index": 704,
+      "works_count": 1187,
+      "cited_by_count": 70180,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5078037817",
+      "display_name": "Harold George Koenig",
+      "orcid": "https://orcid.org/0000-0003-2573-6121",
+      "h_index": 129,
+      "i10_index": 545,
+      "works_count": 998,
+      "cited_by_count": 77742,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5078672217",
+      "display_name": "George David Batty",
+      "orcid": "https://orcid.org/0000-0003-1822-5753",
+      "h_index": 128,
+      "i10_index": 493,
+      "works_count": 961,
+      "cited_by_count": 56086,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5042474249",
+      "display_name": "Johan Pieter Mackenbach",
+      "orcid": "https://orcid.org/0000-0002-8954-6557",
+      "h_index": 125,
+      "i10_index": 495,
+      "works_count": 670,
+      "cited_by_count": 60101,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5037452603",
+      "display_name": "Eric John Brunner",
+      "orcid": "https://orcid.org/0000-0002-0595-4474",
+      "h_index": 122,
+      "i10_index": 343,
+      "works_count": 603,
+      "cited_by_count": 70734,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5074440071",
+      "display_name": "Kenneth I. Pargäment",
+      "orcid": "https://orcid.org/0000-0001-8488-7291",
+      "h_index": 114,
+      "i10_index": 356,
+      "works_count": 525,
+      "cited_by_count": 58484,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5091151828",
+      "display_name": "Nancy E. Adler",
+      "orcid": "https://orcid.org/0000-0001-6962-0724",
+      "h_index": 113,
+      "i10_index": 302,
+      "works_count": 426,
+      "cited_by_count": 61569,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5078276438",
+      "display_name": "Nancy Krieger",
+      "orcid": "https://orcid.org/0000-0002-4815-5947",
+      "h_index": 110,
+      "i10_index": 296,
+      "works_count": 506,
+      "cited_by_count": 61587,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5082008211",
+      "display_name": "Anton Eduard Kunst",
+      "orcid": "https://orcid.org/0000-0002-3313-5273",
+      "h_index": 108,
+      "i10_index": 459,
+      "works_count": 861,
+      "cited_by_count": 48876,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Health -- 9.8",
+      "id": "https://openalex.org/A5074688575",
+      "display_name": "Seppo V. P. Koskinen",
+      "orcid": "https://orcid.org/0000-0003-1572-1735",
+      "h_index": 107,
+      "i10_index": 361,
+      "works_count": 747,
+      "cited_by_count": 92187,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5086548439",
+      "display_name": "Jagdish Khubchandani",
+      "orcid": "https://orcid.org/0000-0002-9058-4278",
+      "h_index": 106,
+      "i10_index": 235,
+      "works_count": 382,
+      "cited_by_count": 174102,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5037260973",
+      "display_name": "Jacquelyn C. Campbell",
+      "orcid": "https://orcid.org/0000-0002-3821-5037",
+      "h_index": 103,
+      "i10_index": 366,
+      "works_count": 546,
+      "cited_by_count": 44359,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5073422847",
+      "display_name": "Laura Diane Kubzansky",
+      "orcid": "https://orcid.org/0000-0002-4039-2235",
+      "h_index": 103,
+      "i10_index": 352,
+      "works_count": 585,
+      "cited_by_count": 43133,
+      "discipline": "Health",
+      "primary_field": "Psychology",
+      "primary_subfield": "Health",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5088103101",
+      "display_name": "Young‐Ho Khang",
+      "orcid": "https://orcid.org/0000-0002-9585-8266",
+      "h_index": 103,
+      "i10_index": 209,
+      "works_count": 289,
+      "cited_by_count": 252731,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5040800904",
+      "display_name": "Saad B. Omer",
+      "orcid": "https://orcid.org/0000-0002-5383-3474",
+      "h_index": 100,
+      "i10_index": 413,
+      "works_count": 760,
+      "cited_by_count": 112374,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5049634960",
+      "display_name": "Neal M. Krause",
+      "orcid": "https://orcid.org/0000-0002-9979-2997",
+      "h_index": 100,
+      "i10_index": 341,
+      "works_count": 465,
+      "cited_by_count": 31387,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5008485060",
+      "display_name": "Pekka Martikainen",
+      "orcid": "https://orcid.org/0000-0001-9374-1438",
+      "h_index": 98,
+      "i10_index": 424,
+      "works_count": 826,
+      "cited_by_count": 34161,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5077072695",
+      "display_name": "Christopher G. Ellison",
+      "orcid": "https://orcid.org/0000-0002-6585-5160",
+      "h_index": 98,
+      "i10_index": 189,
+      "works_count": 246,
+      "cited_by_count": 32958,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5021078537",
+      "display_name": "John William Lynch",
+      "orcid": "https://orcid.org/0000-0003-2781-7902",
+      "h_index": 97,
+      "i10_index": 315,
+      "works_count": 586,
+      "cited_by_count": 41402,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5014359763",
+      "display_name": "Eileen M. Crimmins",
+      "orcid": "https://orcid.org/0000-0001-5459-5239",
+      "h_index": 97,
+      "i10_index": 282,
+      "works_count": 529,
+      "cited_by_count": 35235,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Health -- 9.7",
+      "id": "https://openalex.org/A5020665800",
+      "display_name": "Crystal L. Park",
+      "orcid": "https://orcid.org/0000-0001-6572-7321",
+      "h_index": 96,
+      "i10_index": 352,
+      "works_count": 862,
+      "cited_by_count": 44470,
+      "discipline": "Health",
+      "primary_field": "Psychology",
+      "primary_subfield": "Health",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5019047474",
+      "display_name": "Charles Shey Wiysonge",
+      "orcid": "https://orcid.org/0000-0002-1273-4779",
+      "h_index": 96,
+      "i10_index": 318,
+      "works_count": 631,
+      "cited_by_count": 156243,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Health Professions",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5067150247",
+      "display_name": "Rachel K. Jewkes",
+      "orcid": "https://orcid.org/0000-0002-4330-6267",
+      "h_index": 96,
+      "i10_index": 317,
+      "works_count": 493,
+      "cited_by_count": 49358,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5084796734",
+      "display_name": "Lisa A. Cooper",
+      "orcid": "https://orcid.org/0000-0001-6707-6390",
+      "h_index": 95,
+      "i10_index": 294,
+      "works_count": 451,
+      "cited_by_count": 38727,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5022662591",
+      "display_name": "Heidi Jane Larson",
+      "orcid": "https://orcid.org/0000-0002-8477-7583",
+      "h_index": 94,
+      "i10_index": 255,
+      "works_count": 400,
+      "cited_by_count": 92781,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5080283860",
+      "display_name": "Patricia J O'Campo",
+      "orcid": "https://orcid.org/0000-0003-4549-7324",
+      "h_index": 93,
+      "i10_index": 338,
+      "works_count": 480,
+      "cited_by_count": 29044,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5060179842",
+      "display_name": "Clare L Bambra",
+      "orcid": "https://orcid.org/0000-0002-1294-6851",
+      "h_index": 93,
+      "i10_index": 280,
+      "works_count": 625,
+      "cited_by_count": 31367,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5103004619",
+      "display_name": "Murray A. Straus",
+      "orcid": "https://orcid.org/0000-0003-4200-589X",
+      "h_index": 93,
+      "i10_index": 219,
+      "works_count": 454,
+      "cited_by_count": 47479,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5028143749",
+      "display_name": "Carme Borrell",
+      "orcid": "https://orcid.org/0000-0002-1170-2505",
+      "h_index": 91,
+      "i10_index": 390,
+      "works_count": 582,
+      "cited_by_count": 31095,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5059023087",
+      "display_name": "Bruce H. Fireman",
+      "orcid": "https://orcid.org/0000-0003-1652-985X",
+      "h_index": 91,
+      "i10_index": 264,
+      "works_count": 385,
+      "cited_by_count": 32514,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5071000982",
+      "display_name": "Karien Stronks",
+      "orcid": "https://orcid.org/0000-0002-0921-2232",
+      "h_index": 89,
+      "i10_index": 421,
+      "works_count": 916,
+      "cited_by_count": 56099,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Health -- 9.6",
+      "id": "https://openalex.org/A5058081089",
+      "display_name": "Maria Cecília de Souza Minayo",
+      "orcid": "https://orcid.org/0000-0001-6187-9301",
+      "h_index": 89,
+      "i10_index": 233,
+      "works_count": 523,
+      "cited_by_count": 36334,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5005937824",
+      "display_name": "Linda K. George",
+      "orcid": "https://orcid.org/0000-0002-6325-2040",
+      "h_index": 89,
+      "i10_index": 200,
+      "works_count": 300,
+      "cited_by_count": 31845,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5072469346",
+      "display_name": "Martin J. Bobak",
+      "orcid": "https://orcid.org/0000-0002-2633-6851",
+      "h_index": 87,
+      "i10_index": 290,
+      "works_count": 769,
+      "cited_by_count": 52644,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5086222012",
+      "display_name": "Gene Solomon Feder",
+      "orcid": "https://orcid.org/0000-0002-7890-3926",
+      "h_index": 85,
+      "i10_index": 307,
+      "works_count": 795,
+      "cited_by_count": 34698,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5072458100",
+      "display_name": "James Yzet Nazroo",
+      "orcid": "https://orcid.org/0000-0001-6744-2207",
+      "h_index": 84,
+      "i10_index": 257,
+      "works_count": 563,
+      "cited_by_count": 29552,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5110904331",
+      "display_name": "Stanislav V. Kasl",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 181,
+      "works_count": 247,
+      "cited_by_count": 24270,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5104091882",
+      "display_name": "George A. Kaplan",
+      "orcid": "https://orcid.org/0000-0001-9559-4451",
+      "h_index": 84,
+      "i10_index": 136,
+      "works_count": 207,
+      "cited_by_count": 33061,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5083542069",
+      "display_name": "Giancarlo Lucchetti",
+      "orcid": "https://orcid.org/0000-0002-5384-9476",
+      "h_index": 83,
+      "i10_index": 259,
+      "works_count": 420,
+      "cited_by_count": 78221,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Health Professions",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5088069640",
+      "display_name": "Carlos F. Mendes de Leon",
+      "orcid": "https://orcid.org/0000-0003-3020-826X",
+      "h_index": 83,
+      "i10_index": 189,
+      "works_count": 269,
+      "cited_by_count": 26514,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5079341628",
+      "display_name": "Eero T. Lahelma",
+      "orcid": "https://orcid.org/0000-0002-1064-1333",
+      "h_index": 82,
+      "i10_index": 270,
+      "works_count": 499,
+      "cited_by_count": 23040,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5018038711",
+      "display_name": "Frank J. van Lenthe",
+      "orcid": "https://orcid.org/0000-0001-6402-7075",
+      "h_index": 82,
+      "i10_index": 268,
+      "works_count": 607,
+      "cited_by_count": 26834,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5023640862",
+      "display_name": "Walter Albert Orenstein",
+      "orcid": "https://orcid.org/0000-0003-3932-8209",
+      "h_index": 81,
+      "i10_index": 280,
+      "works_count": 543,
+      "cited_by_count": 23902,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Health -- 9.5",
+      "id": "https://openalex.org/A5054634855",
+      "display_name": "Jay G. Silverman",
+      "orcid": "https://orcid.org/0000-0001-9520-672X",
+      "h_index": 81,
+      "i10_index": 260,
+      "works_count": 389,
+      "cited_by_count": 23482,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5075098528",
+      "display_name": "Shervin Assari",
+      "orcid": "https://orcid.org/0000-0002-5054-6250",
+      "h_index": 79,
+      "i10_index": 447,
+      "works_count": 811,
+      "cited_by_count": 23725,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5034478332",
+      "display_name": "Nicola P. Klein",
+      "orcid": "https://orcid.org/0000-0003-1777-4814",
+      "h_index": 79,
+      "i10_index": 281,
+      "works_count": 462,
+      "cited_by_count": 22241,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5013710256",
+      "display_name": "Allison E. Aiello",
+      "orcid": "https://orcid.org/0000-0001-7029-2537",
+      "h_index": 79,
+      "i10_index": 273,
+      "works_count": 486,
+      "cited_by_count": 23937,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5027597426",
+      "display_name": "Robert Joseph Taylor",
+      "orcid": "https://orcid.org/0000-0001-8173-9074",
+      "h_index": 79,
+      "i10_index": 207,
+      "works_count": 283,
+      "cited_by_count": 21484,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5075730026",
+      "display_name": "Chandini Raina MacIntyre",
+      "orcid": "https://orcid.org/0000-0002-3060-0555",
+      "h_index": 78,
+      "i10_index": 443,
+      "works_count": 898,
+      "cited_by_count": 31897,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5037541907",
+      "display_name": "Kathleen Mullan Harris",
+      "orcid": "https://orcid.org/0000-0001-9757-1026",
+      "h_index": 78,
+      "i10_index": 192,
+      "works_count": 351,
+      "cited_by_count": 29198,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5001923088",
+      "display_name": "Dyt Fong",
+      "orcid": "https://orcid.org/0000-0001-7365-9146",
+      "h_index": 77,
+      "i10_index": 369,
+      "works_count": 837,
+      "cited_by_count": 24670,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5052167788",
+      "display_name": "Gregory D. Zimet",
+      "orcid": "https://orcid.org/0000-0003-3835-937X",
+      "h_index": 77,
+      "i10_index": 294,
+      "works_count": 592,
+      "cited_by_count": 46499,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5026450547",
+      "display_name": "Gopal K. Singh",
+      "orcid": "https://orcid.org/0000-0002-7820-0323",
+      "h_index": 77,
+      "i10_index": 142,
+      "works_count": 198,
+      "cited_by_count": 25835,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5100372590",
+      "display_name": "Daniel J Kim",
+      "orcid": "https://orcid.org/0000-0001-8907-6420",
+      "h_index": 77,
+      "i10_index": 108,
+      "works_count": 176,
+      "cited_by_count": 191788,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Health -- 9.4",
+      "id": "https://openalex.org/A5050111318",
+      "display_name": "Margaret M. Whitehead",
+      "orcid": "https://orcid.org/0000-0001-5614-6576",
+      "h_index": 76,
+      "i10_index": 184,
+      "works_count": 287,
+      "cited_by_count": 29082,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5027153650",
+      "display_name": "Daniel Wayne Russell",
+      "orcid": "https://orcid.org/0000-0003-2264-861X",
+      "h_index": 76,
+      "i10_index": 139,
+      "works_count": 225,
+      "cited_by_count": 44533,
+      "discipline": "Health",
+      "primary_field": "Psychology",
+      "primary_subfield": "Health",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5026211864",
+      "display_name": "Michele R. Decker",
+      "orcid": "https://orcid.org/0000-0002-7085-7080",
+      "h_index": 75,
+      "i10_index": 211,
+      "works_count": 330,
+      "cited_by_count": 19383,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5033447682",
+      "display_name": "Gavin Turrell",
+      "orcid": "https://orcid.org/0000-0002-3576-8744",
+      "h_index": 75,
+      "i10_index": 196,
+      "works_count": 365,
+      "cited_by_count": 17628,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5019096303",
+      "display_name": "T.G. van Tilburg",
+      "orcid": "https://orcid.org/0000-0002-1005-6732",
+      "h_index": 75,
+      "i10_index": 167,
+      "works_count": 348,
+      "cited_by_count": 21905,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5083198011",
+      "display_name": "Merete Osler",
+      "orcid": "https://orcid.org/0000-0002-6921-220X",
+      "h_index": 74,
+      "i10_index": 296,
+      "works_count": 603,
+      "cited_by_count": 33309,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5041262000",
+      "display_name": "Linda M. Chatters",
+      "orcid": "https://orcid.org/0000-0002-4678-2541",
+      "h_index": 74,
+      "i10_index": 177,
+      "works_count": 224,
+      "cited_by_count": 19069,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5072202233",
+      "display_name": "Linda C. Gallo",
+      "orcid": "https://orcid.org/0000-0002-3678-5888",
+      "h_index": 73,
+      "i10_index": 296,
+      "works_count": 719,
+      "cited_by_count": 22667,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5049252472",
+      "display_name": "Sam B. Harper",
+      "orcid": "https://orcid.org/0000-0002-2767-1053",
+      "h_index": 73,
+      "i10_index": 213,
+      "works_count": 448,
+      "cited_by_count": 19999,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5090649411",
+      "display_name": "Thomas A. LaVeist",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 158,
+      "works_count": 217,
+      "cited_by_count": 21530,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5013246846",
+      "display_name": "John Mirowsky",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 95,
+      "works_count": 141,
+      "cited_by_count": 24558,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Health -- 9.3",
+      "id": "https://openalex.org/A5077381724",
+      "display_name": "Thomas W. McDade",
+      "orcid": "https://orcid.org/0000-0001-5829-648X",
+      "h_index": 72,
+      "i10_index": 218,
+      "works_count": 349,
+      "cited_by_count": 19221,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5105789074",
+      "display_name": "James S. House",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 102,
+      "works_count": 155,
+      "cited_by_count": 36732,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5016261626",
+      "display_name": "Elizabeth Penland Miller",
+      "orcid": "https://orcid.org/0000-0002-7266-7766",
+      "h_index": 71,
+      "i10_index": 316,
+      "works_count": 581,
+      "cited_by_count": 23419,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5053268651",
+      "display_name": "Amanda Sacker",
+      "orcid": "https://orcid.org/0000-0001-8796-5398",
+      "h_index": 71,
+      "i10_index": 166,
+      "works_count": 352,
+      "cited_by_count": 16766,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5105405770",
+      "display_name": "Charlotte H. Watts",
+      "orcid": "https://orcid.org/0000-0003-0517-6550",
+      "h_index": 71,
+      "i10_index": 145,
+      "works_count": 193,
+      "cited_by_count": 35464,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5032701879",
+      "display_name": "Thomas A. Glass",
+      "orcid": "https://orcid.org/0000-0003-4399-612X",
+      "h_index": 71,
+      "i10_index": 115,
+      "works_count": 149,
+      "cited_by_count": 29315,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5034743265",
+      "display_name": "Spero M. Manson",
+      "orcid": "https://orcid.org/0000-0001-6194-1961",
+      "h_index": 70,
+      "i10_index": 247,
+      "works_count": 431,
+      "cited_by_count": 14974,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5090383042",
+      "display_name": "Noni E. MacDonald",
+      "orcid": "https://orcid.org/0000-0002-2127-2254",
+      "h_index": 70,
+      "i10_index": 242,
+      "works_count": 502,
+      "cited_by_count": 27727,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5026517970",
+      "display_name": "Juan Merlo",
+      "orcid": "https://orcid.org/0000-0001-8379-9708",
+      "h_index": 70,
+      "i10_index": 193,
+      "works_count": 353,
+      "cited_by_count": 18765,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5050265600",
+      "display_name": "Finn Diderichsen",
+      "orcid": "https://orcid.org/0000-0002-9998-4972",
+      "h_index": 70,
+      "i10_index": 192,
+      "works_count": 400,
+      "cited_by_count": 15884,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5024025137",
+      "display_name": "Sherman A. James",
+      "orcid": "https://orcid.org/0000-0001-6287-8247",
+      "h_index": 70,
+      "i10_index": 130,
+      "works_count": 184,
+      "cited_by_count": 16688,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Health -- 9.2",
+      "id": "https://openalex.org/A5052636076",
+      "display_name": "Roland J. Thorpe",
+      "orcid": "https://orcid.org/0000-0002-4448-4997",
+      "h_index": 69,
+      "i10_index": 290,
+      "works_count": 736,
+      "cited_by_count": 19385,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5075828431",
+      "display_name": "Paula Braveman",
+      "orcid": "https://orcid.org/0000-0001-9917-2360",
+      "h_index": 69,
+      "i10_index": 127,
+      "works_count": 208,
+      "cited_by_count": 35828,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5026166440",
+      "display_name": "Kate E. Pickett",
+      "orcid": "https://orcid.org/0000-0002-8066-8507",
+      "h_index": 68,
+      "i10_index": 202,
+      "works_count": 387,
+      "cited_by_count": 30279,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5045829260",
+      "display_name": "Hynek Pikhart",
+      "orcid": "https://orcid.org/0000-0001-5277-4049",
+      "h_index": 68,
+      "i10_index": 187,
+      "works_count": 496,
+      "cited_by_count": 41311,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5110134251",
+      "display_name": "Clyde Hertzman",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 177,
+      "works_count": 247,
+      "cited_by_count": 17589,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5081672166",
+      "display_name": "Robert A. Hummer",
+      "orcid": "https://orcid.org/0000-0003-3058-6383",
+      "h_index": 68,
+      "i10_index": 146,
+      "works_count": 285,
+      "cited_by_count": 14619,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5047361725",
+      "display_name": "Lisa A. Goodman",
+      "orcid": "https://orcid.org/0000-0002-1195-952X",
+      "h_index": 68,
+      "i10_index": 120,
+      "works_count": 189,
+      "cited_by_count": 17680,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5071966273",
+      "display_name": "Louise C. Hawkley",
+      "orcid": "https://orcid.org/0000-0001-7876-8560",
+      "h_index": 68,
+      "i10_index": 113,
+      "works_count": 235,
+      "cited_by_count": 48755,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5089019668",
+      "display_name": "Nancy Perrin",
+      "orcid": "https://orcid.org/0000-0002-2025-6543",
+      "h_index": 67,
+      "i10_index": 217,
+      "works_count": 386,
+      "cited_by_count": 15230,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5038590662",
+      "display_name": "Noreen Goldman",
+      "orcid": "https://orcid.org/0000-0003-2865-9491",
+      "h_index": 67,
+      "i10_index": 185,
+      "works_count": 317,
+      "cited_by_count": 16916,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5074274642",
+      "display_name": "James A. Macinko",
+      "orcid": "https://orcid.org/0000-0001-8055-5441",
+      "h_index": 67,
+      "i10_index": 163,
+      "works_count": 297,
+      "cited_by_count": 29428,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Health -- 9.1",
+      "id": "https://openalex.org/A5074060860",
+      "display_name": "Lori Heise",
+      "orcid": "https://orcid.org/0000-0003-2956-2819",
+      "h_index": 67,
+      "i10_index": 139,
+      "works_count": 216,
+      "cited_by_count": 33204,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Health -- 9.0",
+      "id": "https://openalex.org/A5024911623",
+      "display_name": "Kumanan R Wilson",
+      "orcid": "https://orcid.org/0000-0002-1741-7705",
+      "h_index": 66,
+      "i10_index": 258,
+      "works_count": 423,
+      "cited_by_count": 18689,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Health -- 9.0",
+      "id": "https://openalex.org/A5006755486",
+      "display_name": "Allison L. Naleway",
+      "orcid": "https://orcid.org/0000-0001-5747-4643",
+      "h_index": 66,
+      "i10_index": 231,
+      "works_count": 374,
+      "cited_by_count": 16880,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Health -- 9.0",
+      "id": "https://openalex.org/A5073270279",
+      "display_name": "Thomas Lampert",
+      "orcid": "https://orcid.org/0000-0002-2981-3828",
+      "h_index": 66,
+      "i10_index": 214,
+      "works_count": 476,
+      "cited_by_count": 15587,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Health -- 9.0",
+      "id": "https://openalex.org/A5027864179",
+      "display_name": "David R. Hodge",
+      "orcid": "https://orcid.org/0000-0001-6672-9070",
+      "h_index": 66,
+      "i10_index": 203,
+      "works_count": 357,
+      "cited_by_count": 13484,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Health -- 9.0",
+      "id": "https://openalex.org/A5033687321",
+      "display_name": "Andrew B. Newberg",
+      "orcid": "https://orcid.org/0000-0001-8230-1752",
+      "h_index": 66,
+      "i10_index": 199,
+      "works_count": 471,
+      "cited_by_count": 18679,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5004036239",
+      "display_name": "Orly Manor",
+      "orcid": "https://orcid.org/0000-0002-0755-6314",
+      "h_index": 66,
+      "i10_index": 170,
+      "works_count": 286,
+      "cited_by_count": 15021,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5074913453",
+      "display_name": "Mel Bartley",
+      "orcid": "https://orcid.org/0000-0002-5981-0046",
+      "h_index": 66,
+      "i10_index": 141,
+      "works_count": 300,
+      "cited_by_count": 15534,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5035812618",
+      "display_name": "Enrique Gracia",
+      "orcid": "https://orcid.org/0000-0003-0514-2983",
+      "h_index": 66,
+      "i10_index": 127,
+      "works_count": 271,
+      "cited_by_count": 11052,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5111674549",
+      "display_name": "Donald G. Dutton",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 115,
+      "works_count": 207,
+      "cited_by_count": 14650,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5084953297",
+      "display_name": "Leslie J. Francis",
+      "orcid": "https://orcid.org/0000-0003-2946-9980",
+      "h_index": 65,
+      "i10_index": 606,
+      "works_count": 1328,
+      "cited_by_count": 23682,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5017457298",
+      "display_name": "Hester E. de Melker",
+      "orcid": "https://orcid.org/0000-0001-9100-1639",
+      "h_index": 65,
+      "i10_index": 250,
+      "works_count": 410,
+      "cited_by_count": 13604,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5085608624",
+      "display_name": "Gregory L. Stuart",
+      "orcid": "https://orcid.org/0000-0002-5193-1804",
+      "h_index": 65,
+      "i10_index": 221,
+      "works_count": 388,
+      "cited_by_count": 18666,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5034244343",
+      "display_name": "Enrique Regidor",
+      "orcid": "https://orcid.org/0000-0002-2374-9861",
+      "h_index": 65,
+      "i10_index": 215,
+      "works_count": 321,
+      "cited_by_count": 17202,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5031856879",
+      "display_name": "Deborah I. Bybee",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 154,
+      "works_count": 204,
+      "cited_by_count": 16783,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5091305344",
+      "display_name": "James A. Singleton",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 139,
+      "works_count": 186,
+      "cited_by_count": 13159,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5009560672",
+      "display_name": "Tarani Chandola",
+      "orcid": "https://orcid.org/0000-0002-1864-3413",
+      "h_index": 65,
+      "i10_index": 132,
+      "works_count": 315,
+      "cited_by_count": 18470,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Health -- 8.9",
+      "id": "https://openalex.org/A5101727914",
+      "display_name": "Catherine E. Ross",
+      "orcid": "https://orcid.org/0000-0002-0644-5268",
+      "h_index": 65,
+      "i10_index": 75,
+      "works_count": 97,
+      "cited_by_count": 23009,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Health -- 8.8",
+      "id": "https://openalex.org/A5011283595",
+      "display_name": "Kim J. Usher",
+      "orcid": "https://orcid.org/0000-0002-9686-5003",
+      "h_index": 64,
+      "i10_index": 234,
+      "works_count": 475,
+      "cited_by_count": 16589,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Nursing",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Health -- 8.8",
+      "id": "https://openalex.org/A5010759766",
+      "display_name": "Kelsey Lee Hegarty",
+      "orcid": "https://orcid.org/0000-0002-7532-5147",
+      "h_index": 64,
+      "i10_index": 204,
+      "works_count": 440,
+      "cited_by_count": 14417,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Health -- 8.8",
+      "id": "https://openalex.org/A5082055503",
+      "display_name": "Luisa N. Borrell",
+      "orcid": "https://orcid.org/0000-0002-0560-4853",
+      "h_index": 64,
+      "i10_index": 180,
+      "works_count": 315,
+      "cited_by_count": 16694,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Health -- 8.8",
+      "id": "https://openalex.org/A5055148878",
+      "display_name": "Matthias Bopp",
+      "orcid": "https://orcid.org/0000-0003-0766-3723",
+      "h_index": 64,
+      "i10_index": 144,
+      "works_count": 246,
+      "cited_by_count": 24482,
+      "discipline": "Health",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Health -- 8.8",
+      "id": "https://openalex.org/A5114252719",
+      "display_name": "Richard G. Wilkinson",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 126,
+      "works_count": 297,
+      "cited_by_count": 36193,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Health -- 8.8",
+      "id": "https://openalex.org/A5072885425",
+      "display_name": "Giuseppe Costa",
+      "orcid": "https://orcid.org/0000-0003-3187-4889",
+      "h_index": 63,
+      "i10_index": 189,
+      "works_count": 417,
+      "cited_by_count": 16407,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Health -- 8.8",
+      "id": "https://openalex.org/A5011703881",
+      "display_name": "Pamela Qualter",
+      "orcid": "https://orcid.org/0000-0001-6114-3820",
+      "h_index": 63,
+      "i10_index": 165,
+      "works_count": 400,
+      "cited_by_count": 15668,
+      "discipline": "Health",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Health",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    }
+  ]
+}

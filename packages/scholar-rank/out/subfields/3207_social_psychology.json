@@ -1,0 +1,3611 @@
+{
+  "kind": "subfield",
+  "id": 3207,
+  "name": "Social Psychology",
+  "total_in_scrape": 183,
+  "count": 183,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Social Psychology -- 9.9",
+      "id": "https://openalex.org/A5001390698",
+      "display_name": "Richard M. Ryan",
+      "orcid": "https://orcid.org/0000-0002-2355-6154",
+      "h_index": 215,
+      "i10_index": 447,
+      "works_count": 706,
+      "cited_by_count": 534571,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Social Psychology -- 9.9",
+      "id": "https://openalex.org/A5006499627",
+      "display_name": "Wilmar Bernardus Schaufeli",
+      "orcid": "https://orcid.org/0000-0002-6070-7150",
+      "h_index": 190,
+      "i10_index": 479,
+      "works_count": 827,
+      "cited_by_count": 242969,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Social Psychology -- 9.9",
+      "id": "https://openalex.org/A5004154542",
+      "display_name": "Edward L. Deci",
+      "orcid": "https://orcid.org/0000-0001-8246-8536",
+      "h_index": 164,
+      "i10_index": 270,
+      "works_count": 394,
+      "cited_by_count": 465659,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Social Psychology -- 9.9",
+      "id": "https://openalex.org/A5083649982",
+      "display_name": "Eduardo Salas",
+      "orcid": "https://orcid.org/0000-0002-5448-4958",
+      "h_index": 154,
+      "i10_index": 569,
+      "works_count": 1296,
+      "cited_by_count": 97042,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Social Psychology -- 9.9",
+      "id": "https://openalex.org/A5054358759",
+      "display_name": "Jean Decety",
+      "orcid": "https://orcid.org/0000-0002-6165-9891",
+      "h_index": 136,
+      "i10_index": 324,
+      "works_count": 511,
+      "cited_by_count": 80105,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Social Psychology -- 9.9",
+      "id": "https://openalex.org/A5072031072",
+      "display_name": "Maarten Vansteenkiste",
+      "orcid": "https://orcid.org/0000-0001-6983-3607",
+      "h_index": 133,
+      "i10_index": 357,
+      "works_count": 612,
+      "cited_by_count": 77850,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5050551777",
+      "display_name": "Robert J. Vallerand",
+      "orcid": "https://orcid.org/0000-0001-5852-8877",
+      "h_index": 129,
+      "i10_index": 308,
+      "works_count": 509,
+      "cited_by_count": 89091,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5015026655",
+      "display_name": "Phillip R. Shaver",
+      "orcid": "https://orcid.org/0000-0003-2578-2777",
+      "h_index": 128,
+      "i10_index": 305,
+      "works_count": 441,
+      "cited_by_count": 89274,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5078862452",
+      "display_name": "Peter Salovey",
+      "orcid": "https://orcid.org/0000-0002-8822-9488",
+      "h_index": 127,
+      "i10_index": 263,
+      "works_count": 387,
+      "cited_by_count": 107554,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5037853738",
+      "display_name": "Dacher J. Keltner",
+      "orcid": "https://orcid.org/0000-0001-9061-5292",
+      "h_index": 126,
+      "i10_index": 253,
+      "works_count": 462,
+      "cited_by_count": 82142,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5000916584",
+      "display_name": "Mario Mikulincer",
+      "orcid": "https://orcid.org/0000-0003-3639-0146",
+      "h_index": 123,
+      "i10_index": 379,
+      "works_count": 645,
+      "cited_by_count": 63605,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5102975515",
+      "display_name": "Ed Diener",
+      "orcid": "https://orcid.org/0000-0002-7418-4282",
+      "h_index": 123,
+      "i10_index": 196,
+      "works_count": 249,
+      "cited_by_count": 181936,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5010222716",
+      "display_name": "Shalom H. Schwartz",
+      "orcid": "https://orcid.org/0000-0003-2673-9332",
+      "h_index": 121,
+      "i10_index": 209,
+      "works_count": 277,
+      "cited_by_count": 125172,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5024767562",
+      "display_name": "Frank D. Fincham",
+      "orcid": "https://orcid.org/0000-0001-5081-2283",
+      "h_index": 119,
+      "i10_index": 399,
+      "works_count": 597,
+      "cited_by_count": 52035,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5062276512",
+      "display_name": "James W. Pennebaker",
+      "orcid": "https://orcid.org/0000-0001-9091-214X",
+      "h_index": 116,
+      "i10_index": 288,
+      "works_count": 464,
+      "cited_by_count": 85100,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5080446268",
+      "display_name": "Bart Soenens",
+      "orcid": "https://orcid.org/0000-0003-1581-3656",
+      "h_index": 115,
+      "i10_index": 316,
+      "works_count": 597,
+      "cited_by_count": 54560,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Social Psychology -- 9.8",
+      "id": "https://openalex.org/A5042792738",
+      "display_name": "Ed Diener",
+      "orcid": "https://orcid.org/0000-0002-3415-0432",
+      "h_index": 114,
+      "i10_index": 194,
+      "works_count": 277,
+      "cited_by_count": 86524,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5076445016",
+      "display_name": "Carol Diane Ryff",
+      "orcid": "https://orcid.org/0000-0002-4693-9190",
+      "h_index": 108,
+      "i10_index": 255,
+      "works_count": 377,
+      "cited_by_count": 99432,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5083047406",
+      "display_name": "Dorothy L. Espelage",
+      "orcid": "https://orcid.org/0000-0003-0658-2067",
+      "h_index": 107,
+      "i10_index": 336,
+      "works_count": 614,
+      "cited_by_count": 42253,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5045472350",
+      "display_name": "Nikos Ntoumanis",
+      "orcid": "https://orcid.org/0000-0001-7122-3795",
+      "h_index": 107,
+      "i10_index": 293,
+      "works_count": 666,
+      "cited_by_count": 51532,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5059407618",
+      "display_name": "Brad J. Bushman",
+      "orcid": "https://orcid.org/0000-0002-1266-5101",
+      "h_index": 105,
+      "i10_index": 260,
+      "works_count": 521,
+      "cited_by_count": 53374,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5007852099",
+      "display_name": "Paul Ekman",
+      "orcid": null,
+      "h_index": 104,
+      "i10_index": 185,
+      "works_count": 323,
+      "cited_by_count": 119083,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5063055453",
+      "display_name": "Peter K. Smith",
+      "orcid": "https://orcid.org/0000-0002-5010-5359",
+      "h_index": 103,
+      "i10_index": 299,
+      "works_count": 674,
+      "cited_by_count": 51456,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5071679701",
+      "display_name": "Mark R. Leary",
+      "orcid": "https://orcid.org/0000-0001-9373-6081",
+      "h_index": 103,
+      "i10_index": 240,
+      "works_count": 425,
+      "cited_by_count": 94400,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5074833926",
+      "display_name": "John Mordechai Gottman",
+      "orcid": null,
+      "h_index": 102,
+      "i10_index": 200,
+      "works_count": 424,
+      "cited_by_count": 45246,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5078294428",
+      "display_name": "Kennon M. Sheldon",
+      "orcid": "https://orcid.org/0000-0002-9219-832X",
+      "h_index": 101,
+      "i10_index": 212,
+      "works_count": 365,
+      "cited_by_count": 63460,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5020076556",
+      "display_name": "Hazel Rose Markus",
+      "orcid": "https://orcid.org/0000-0002-1390-4389",
+      "h_index": 101,
+      "i10_index": 197,
+      "works_count": 330,
+      "cited_by_count": 91309,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Social Psychology -- 9.7",
+      "id": "https://openalex.org/A5068955281",
+      "display_name": "Eugene Scott Huebner",
+      "orcid": "https://orcid.org/0000-0002-2258-7573",
+      "h_index": 100,
+      "i10_index": 298,
+      "works_count": 416,
+      "cited_by_count": 37287,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5041774458",
+      "display_name": "Barbara L. Fredrickson",
+      "orcid": "https://orcid.org/0000-0002-3890-2646",
+      "h_index": 100,
+      "i10_index": 196,
+      "works_count": 333,
+      "cited_by_count": 119118,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5031330031",
+      "display_name": "Harald L. G. J. Merckelbach",
+      "orcid": "https://orcid.org/0000-0002-5116-7826",
+      "h_index": 99,
+      "i10_index": 464,
+      "works_count": 937,
+      "cited_by_count": 34437,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5113868273",
+      "display_name": "Sydney Bryn Austin",
+      "orcid": "https://orcid.org/0000-0002-0830-5293",
+      "h_index": 99,
+      "i10_index": 322,
+      "works_count": 541,
+      "cited_by_count": 30615,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5004076703",
+      "display_name": "Peggy T. Cohen‐Kettenis",
+      "orcid": "https://orcid.org/0000-0003-0921-0859",
+      "h_index": 99,
+      "i10_index": 226,
+      "works_count": 353,
+      "cited_by_count": 37521,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5057226453",
+      "display_name": "Jeff Greenberg",
+      "orcid": "https://orcid.org/0000-0002-2206-0771",
+      "h_index": 99,
+      "i10_index": 209,
+      "works_count": 336,
+      "cited_by_count": 48347,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5084614579",
+      "display_name": "Craig A. Anderson",
+      "orcid": "https://orcid.org/0000-0001-6353-0023",
+      "h_index": 99,
+      "i10_index": 197,
+      "works_count": 356,
+      "cited_by_count": 49016,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5011137701",
+      "display_name": "Jeffry A. Simpson",
+      "orcid": "https://orcid.org/0000-0003-1899-2493",
+      "h_index": 98,
+      "i10_index": 233,
+      "works_count": 465,
+      "cited_by_count": 39215,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5086560812",
+      "display_name": "Sabine Sonnentag",
+      "orcid": "https://orcid.org/0000-0002-9464-4653",
+      "h_index": 98,
+      "i10_index": 199,
+      "works_count": 361,
+      "cited_by_count": 46711,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5070617032",
+      "display_name": "Sari L. Reisner",
+      "orcid": "https://orcid.org/0000-0001-7868-4746",
+      "h_index": 97,
+      "i10_index": 322,
+      "works_count": 539,
+      "cited_by_count": 37168,
+      "discipline": "Social Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5018180640",
+      "display_name": "Michael Harris Bond",
+      "orcid": "https://orcid.org/0000-0001-5409-9614",
+      "h_index": 96,
+      "i10_index": 260,
+      "works_count": 449,
+      "cited_by_count": 42444,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Social Psychology -- 9.6",
+      "id": "https://openalex.org/A5108541589",
+      "display_name": "Cynthia Breazeal",
+      "orcid": "https://orcid.org/0000-0002-0587-2065",
+      "h_index": 95,
+      "i10_index": 289,
+      "works_count": 547,
+      "cited_by_count": 37773,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5023349194",
+      "display_name": "Marla E. Eisenberg",
+      "orcid": "https://orcid.org/0000-0002-7730-4913",
+      "h_index": 95,
+      "i10_index": 270,
+      "works_count": 403,
+      "cited_by_count": 31257,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Nursing",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5011286698",
+      "display_name": "Shigehiro Oishi",
+      "orcid": "https://orcid.org/0000-0002-4185-960X",
+      "h_index": 95,
+      "i10_index": 213,
+      "works_count": 365,
+      "cited_by_count": 63926,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5089771149",
+      "display_name": "Shane Douglas Morrison",
+      "orcid": "https://orcid.org/0000-0003-3868-3532",
+      "h_index": 93,
+      "i10_index": 214,
+      "works_count": 412,
+      "cited_by_count": 181649,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5111980175",
+      "display_name": "Sara B. Kiesler",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 206,
+      "works_count": 378,
+      "cited_by_count": 52552,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5025375729",
+      "display_name": "Shinobu Kitayama",
+      "orcid": "https://orcid.org/0000-0001-9147-7936",
+      "h_index": 92,
+      "i10_index": 202,
+      "works_count": 320,
+      "cited_by_count": 75034,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5087064632",
+      "display_name": "M. Joseph Sirgy",
+      "orcid": "https://orcid.org/0000-0002-6379-0199",
+      "h_index": 91,
+      "i10_index": 230,
+      "works_count": 533,
+      "cited_by_count": 41920,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5105352960",
+      "display_name": "K. Daniel O’Leary",
+      "orcid": "https://orcid.org/0000-0003-3489-9993",
+      "h_index": 91,
+      "i10_index": 206,
+      "works_count": 396,
+      "cited_by_count": 25579,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5082097672",
+      "display_name": "Michael Alun West",
+      "orcid": "https://orcid.org/0000-0003-2698-0847",
+      "h_index": 90,
+      "i10_index": 267,
+      "works_count": 777,
+      "cited_by_count": 42136,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Arts and Humanities",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5059552396",
+      "display_name": "Ulla M. Kinnunen",
+      "orcid": "https://orcid.org/0000-0002-2578-7271",
+      "h_index": 90,
+      "i10_index": 205,
+      "works_count": 273,
+      "cited_by_count": 24806,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5056249088",
+      "display_name": "Harry C. Triandis",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 185,
+      "works_count": 396,
+      "cited_by_count": 70268,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5005809770",
+      "display_name": "Tania Singer",
+      "orcid": "https://orcid.org/0000-0002-4438-5374",
+      "h_index": 90,
+      "i10_index": 177,
+      "works_count": 485,
+      "cited_by_count": 44555,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Social Psychology -- 9.5",
+      "id": "https://openalex.org/A5106083333",
+      "display_name": "Richard S. Lazarus",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 158,
+      "works_count": 295,
+      "cited_by_count": 131287,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5059371010",
+      "display_name": "Kerstin Dautenhahn",
+      "orcid": "https://orcid.org/0000-0002-9263-3897",
+      "h_index": 89,
+      "i10_index": 359,
+      "works_count": 634,
+      "cited_by_count": 32526,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Engineering",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5010248533",
+      "display_name": "Maja J. Matarić",
+      "orcid": "https://orcid.org/0000-0001-8958-6666",
+      "h_index": 89,
+      "i10_index": 356,
+      "works_count": 788,
+      "cited_by_count": 37370,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5006169428",
+      "display_name": "Steven R. H. Beach",
+      "orcid": "https://orcid.org/0000-0001-8053-7761",
+      "h_index": 89,
+      "i10_index": 307,
+      "works_count": 487,
+      "cited_by_count": 27217,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5025359531",
+      "display_name": "Alexandre J. S. Morin",
+      "orcid": "https://orcid.org/0000-0001-6898-4788",
+      "h_index": 89,
+      "i10_index": 295,
+      "works_count": 526,
+      "cited_by_count": 34734,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5021458756",
+      "display_name": "Harry T. Reis",
+      "orcid": "https://orcid.org/0000-0002-3542-6074",
+      "h_index": 89,
+      "i10_index": 204,
+      "works_count": 616,
+      "cited_by_count": 34447,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5046055345",
+      "display_name": "Tom Pyszczynski",
+      "orcid": "https://orcid.org/0000-0003-4008-3384",
+      "h_index": 89,
+      "i10_index": 190,
+      "works_count": 290,
+      "cited_by_count": 42050,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5004908738",
+      "display_name": "Christina Salmivalli",
+      "orcid": "https://orcid.org/0000-0002-6253-146X",
+      "h_index": 89,
+      "i10_index": 179,
+      "works_count": 324,
+      "cited_by_count": 33278,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5035955849",
+      "display_name": "John E. Mathieu",
+      "orcid": "https://orcid.org/0000-0002-6881-4022",
+      "h_index": 89,
+      "i10_index": 137,
+      "works_count": 240,
+      "cited_by_count": 53394,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5069221076",
+      "display_name": "Robert B. Cialdini",
+      "orcid": "https://orcid.org/0000-0003-0588-0951",
+      "h_index": 88,
+      "i10_index": 161,
+      "works_count": 271,
+      "cited_by_count": 71724,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5051404063",
+      "display_name": "Richard E. Lucas",
+      "orcid": "https://orcid.org/0000-0002-7995-3319",
+      "h_index": 88,
+      "i10_index": 157,
+      "works_count": 334,
+      "cited_by_count": 71919,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Social Psychology -- 9.4",
+      "id": "https://openalex.org/A5101425832",
+      "display_name": "Hiroshi Ishiguro",
+      "orcid": "https://orcid.org/0000-0002-0805-7648",
+      "h_index": 87,
+      "i10_index": 568,
+      "works_count": 1413,
+      "cited_by_count": 33622,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5079283736",
+      "display_name": "Marisa Salanova",
+      "orcid": "https://orcid.org/0000-0001-7873-7078",
+      "h_index": 87,
+      "i10_index": 214,
+      "works_count": 362,
+      "cited_by_count": 67683,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5030498541",
+      "display_name": "James A. Russell",
+      "orcid": "https://orcid.org/0000-0003-1041-3717",
+      "h_index": 87,
+      "i10_index": 168,
+      "works_count": 253,
+      "cited_by_count": 86712,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5002835195",
+      "display_name": "Mark L. Hatzenbuehler",
+      "orcid": "https://orcid.org/0000-0002-7430-0853",
+      "h_index": 87,
+      "i10_index": 158,
+      "works_count": 226,
+      "cited_by_count": 34142,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5024757773",
+      "display_name": "Everett L. Worthington",
+      "orcid": "https://orcid.org/0000-0002-5095-4588",
+      "h_index": 86,
+      "i10_index": 308,
+      "works_count": 652,
+      "cited_by_count": 31529,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5023845889",
+      "display_name": "Richard Koestner",
+      "orcid": "https://orcid.org/0000-0002-8416-0057",
+      "h_index": 86,
+      "i10_index": 210,
+      "works_count": 302,
+      "cited_by_count": 46861,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5060868512",
+      "display_name": "Michael E. McCullough",
+      "orcid": "https://orcid.org/0000-0001-9833-2713",
+      "h_index": 86,
+      "i10_index": 164,
+      "works_count": 290,
+      "cited_by_count": 54869,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5065080833",
+      "display_name": "Willibald Ruch",
+      "orcid": "https://orcid.org/0000-0001-5368-3616",
+      "h_index": 85,
+      "i10_index": 288,
+      "works_count": 490,
+      "cited_by_count": 25353,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5084506996",
+      "display_name": "Judee K. Burgoon",
+      "orcid": "https://orcid.org/0000-0002-5524-3734",
+      "h_index": 85,
+      "i10_index": 241,
+      "works_count": 437,
+      "cited_by_count": 32439,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Arts and Humanities",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5056418657",
+      "display_name": "Sonja Lyubomirsky",
+      "orcid": "https://orcid.org/0000-0003-0727-5595",
+      "h_index": 85,
+      "i10_index": 164,
+      "works_count": 328,
+      "cited_by_count": 63812,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5035580414",
+      "display_name": "Sarah L. Stewart-Brown",
+      "orcid": "https://orcid.org/0000-0002-0677-394X",
+      "h_index": 84,
+      "i10_index": 180,
+      "works_count": 336,
+      "cited_by_count": 32579,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Social Psychology -- 9.3",
+      "id": "https://openalex.org/A5037556680",
+      "display_name": "Kipling D. Williams",
+      "orcid": "https://orcid.org/0000-0001-7159-1854",
+      "h_index": 84,
+      "i10_index": 176,
+      "works_count": 414,
+      "cited_by_count": 42337,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5089645919",
+      "display_name": "Antonius H. N. Cillessen",
+      "orcid": "https://orcid.org/0000-0002-5884-907X",
+      "h_index": 83,
+      "i10_index": 222,
+      "works_count": 391,
+      "cited_by_count": 22446,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5088159746",
+      "display_name": "Ronald D. Fischer",
+      "orcid": "https://orcid.org/0000-0002-3055-3955",
+      "h_index": 83,
+      "i10_index": 213,
+      "works_count": 409,
+      "cited_by_count": 32228,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5113506537",
+      "display_name": "Bram P. Buunk",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 173,
+      "works_count": 250,
+      "cited_by_count": 23340,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5034664324",
+      "display_name": "Angela Lee Duckworth",
+      "orcid": "https://orcid.org/0000-0002-2644-3729",
+      "h_index": 83,
+      "i10_index": 148,
+      "works_count": 324,
+      "cited_by_count": 57393,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5076728040",
+      "display_name": "Aldert Vrij",
+      "orcid": "https://orcid.org/0000-0001-8647-7763",
+      "h_index": 82,
+      "i10_index": 316,
+      "works_count": 537,
+      "cited_by_count": 27141,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5048227238",
+      "display_name": "Stephen T. Russell",
+      "orcid": "https://orcid.org/0000-0002-6238-0606",
+      "h_index": 82,
+      "i10_index": 216,
+      "works_count": 348,
+      "cited_by_count": 29245,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5033733184",
+      "display_name": "Eli J. Finkel",
+      "orcid": "https://orcid.org/0000-0002-0213-5318",
+      "h_index": 82,
+      "i10_index": 148,
+      "works_count": 320,
+      "cited_by_count": 31301,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5084847706",
+      "display_name": "Gisli Hannes Gudjonsson",
+      "orcid": "https://orcid.org/0000-0002-8817-0797",
+      "h_index": 81,
+      "i10_index": 313,
+      "works_count": 569,
+      "cited_by_count": 22623,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5024370331",
+      "display_name": "Rosario Ortega Ruiz",
+      "orcid": "https://orcid.org/0000-0003-2110-6931",
+      "h_index": 81,
+      "i10_index": 271,
+      "works_count": 510,
+      "cited_by_count": 22161,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5047198416",
+      "display_name": "Pablo Fernández‐Berrocal",
+      "orcid": "https://orcid.org/0000-0002-0844-2976",
+      "h_index": 81,
+      "i10_index": 209,
+      "works_count": 421,
+      "cited_by_count": 24679,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Social Psychology -- 9.2",
+      "id": "https://openalex.org/A5089313290",
+      "display_name": "Konstantinos Vassilis Petrides",
+      "orcid": "https://orcid.org/0000-0002-7130-8673",
+      "h_index": 81,
+      "i10_index": 160,
+      "works_count": 269,
+      "cited_by_count": 36155,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5056276177",
+      "display_name": "Geert H. Hofstede",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 126,
+      "works_count": 240,
+      "cited_by_count": 114180,
+      "discipline": "Social Psychology",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5032041950",
+      "display_name": "René Veenstra",
+      "orcid": "https://orcid.org/0000-0001-6686-6307",
+      "h_index": 80,
+      "i10_index": 214,
+      "works_count": 510,
+      "cited_by_count": 20149,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5023554653",
+      "display_name": "Thomas N. Bradbury",
+      "orcid": "https://orcid.org/0000-0003-4079-7627",
+      "h_index": 80,
+      "i10_index": 170,
+      "works_count": 265,
+      "cited_by_count": 27439,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5025628042",
+      "display_name": "Jennifer Crocker",
+      "orcid": "https://orcid.org/0000-0002-6590-4647",
+      "h_index": 80,
+      "i10_index": 160,
+      "works_count": 305,
+      "cited_by_count": 37184,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5027145616",
+      "display_name": "Robert A. Emmons",
+      "orcid": "https://orcid.org/0000-0002-3683-3413",
+      "h_index": 80,
+      "i10_index": 111,
+      "works_count": 189,
+      "cited_by_count": 86007,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5033465005",
+      "display_name": "Ilan H. Meyer",
+      "orcid": "https://orcid.org/0000-0003-2667-4583",
+      "h_index": 79,
+      "i10_index": 147,
+      "works_count": 215,
+      "cited_by_count": 50920,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5073216478",
+      "display_name": "Alan R. Dennis",
+      "orcid": "https://orcid.org/0000-0002-6439-6134",
+      "h_index": 78,
+      "i10_index": 211,
+      "works_count": 417,
+      "cited_by_count": 27270,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5023471380",
+      "display_name": "Andrew J. Oswald",
+      "orcid": "https://orcid.org/0000-0003-0628-3294",
+      "h_index": 78,
+      "i10_index": 203,
+      "works_count": 446,
+      "cited_by_count": 47832,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5086198512",
+      "display_name": "Natalio Extremera",
+      "orcid": "https://orcid.org/0000-0002-8874-7912",
+      "h_index": 78,
+      "i10_index": 192,
+      "works_count": 299,
+      "cited_by_count": 25207,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5038009996",
+      "display_name": "Nikos L. D. Chatzisarantis",
+      "orcid": "https://orcid.org/0000-0001-7059-6805",
+      "h_index": 78,
+      "i10_index": 136,
+      "works_count": 226,
+      "cited_by_count": 26201,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Social Psychology -- 9.1",
+      "id": "https://openalex.org/A5028939608",
+      "display_name": "Takayuki Kanda",
+      "orcid": "https://orcid.org/0000-0002-9546-5825",
+      "h_index": 77,
+      "i10_index": 305,
+      "works_count": 535,
+      "cited_by_count": 24416,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Engineering",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Social Psychology -- 9.0",
+      "id": "https://openalex.org/A5069367155",
+      "display_name": "Ernst Thomas Bohlmeijer",
+      "orcid": "https://orcid.org/0000-0002-7861-1245",
+      "h_index": 77,
+      "i10_index": 195,
+      "works_count": 408,
+      "cited_by_count": 29291,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Social Psychology -- 9.0",
+      "id": "https://openalex.org/A5042046671",
+      "display_name": "John E. Archer",
+      "orcid": "https://orcid.org/0000-0003-0483-1576",
+      "h_index": 77,
+      "i10_index": 163,
+      "works_count": 303,
+      "cited_by_count": 27235,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Social Psychology -- 9.0",
+      "id": "https://openalex.org/A5019666758",
+      "display_name": "C. Nathan DeWall",
+      "orcid": "https://orcid.org/0000-0001-5469-6849",
+      "h_index": 77,
+      "i10_index": 160,
+      "works_count": 326,
+      "cited_by_count": 29842,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Social Psychology -- 9.0",
+      "id": "https://openalex.org/A5057942643",
+      "display_name": "Luciano Fadiga",
+      "orcid": "https://orcid.org/0000-0001-5691-5080",
+      "h_index": 76,
+      "i10_index": 209,
+      "works_count": 389,
+      "cited_by_count": 47953,
+      "discipline": "Social Psychology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Social Psychology -- 9.0",
+      "id": "https://openalex.org/A5028559796",
+      "display_name": "Dewey G. Cornell",
+      "orcid": "https://orcid.org/0000-0002-3631-1527",
+      "h_index": 75,
+      "i10_index": 189,
+      "works_count": 342,
+      "cited_by_count": 18191,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5042539472",
+      "display_name": "Howard J. Markman",
+      "orcid": "https://orcid.org/0000-0003-0050-6426",
+      "h_index": 75,
+      "i10_index": 154,
+      "works_count": 233,
+      "cited_by_count": 20979,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5018892527",
+      "display_name": "Luc G. Pelletier",
+      "orcid": "https://orcid.org/0000-0002-9388-5981",
+      "h_index": 75,
+      "i10_index": 134,
+      "works_count": 217,
+      "cited_by_count": 40371,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5079876687",
+      "display_name": "Christina Maslach",
+      "orcid": "https://orcid.org/0000-0002-4820-1317",
+      "h_index": 75,
+      "i10_index": 123,
+      "works_count": 198,
+      "cited_by_count": 110291,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Business, Management and Accounting",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5038352779",
+      "display_name": "A.J.J.M. Vingerhoets",
+      "orcid": "https://orcid.org/0000-0001-8840-6379",
+      "h_index": 74,
+      "i10_index": 229,
+      "works_count": 610,
+      "cited_by_count": 18633,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5102962995",
+      "display_name": "Munmun De Choudhury",
+      "orcid": "https://orcid.org/0000-0002-8939-264X",
+      "h_index": 74,
+      "i10_index": 195,
+      "works_count": 274,
+      "cited_by_count": 21189,
+      "discipline": "Social Psychology",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5063999537",
+      "display_name": "Kenneth J. Zucker",
+      "orcid": "https://orcid.org/0000-0001-5313-6401",
+      "h_index": 74,
+      "i10_index": 169,
+      "works_count": 293,
+      "cited_by_count": 21110,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5104049661",
+      "display_name": "Jamie Arndt",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 137,
+      "works_count": 215,
+      "cited_by_count": 22736,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5081123573",
+      "display_name": "Sebastiaan Rothmann",
+      "orcid": "https://orcid.org/0000-0001-6065-4338",
+      "h_index": 73,
+      "i10_index": 227,
+      "works_count": 332,
+      "cited_by_count": 17243,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5067055967",
+      "display_name": "Chi‐yue Chiu",
+      "orcid": "https://orcid.org/0000-0002-3810-6666",
+      "h_index": 73,
+      "i10_index": 204,
+      "works_count": 364,
+      "cited_by_count": 28895,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5026358944",
+      "display_name": "Wendy Craig",
+      "orcid": "https://orcid.org/0000-0001-8374-5152",
+      "h_index": 73,
+      "i10_index": 151,
+      "works_count": 219,
+      "cited_by_count": 25706,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5018710944",
+      "display_name": "Joseph S. Valacich",
+      "orcid": "https://orcid.org/0000-0002-3209-3307",
+      "h_index": 73,
+      "i10_index": 139,
+      "works_count": 305,
+      "cited_by_count": 24779,
+      "discipline": "Social Psychology",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Social Psychology -- 8.9",
+      "id": "https://openalex.org/A5042332638",
+      "display_name": "Joshua N. Hook",
+      "orcid": "https://orcid.org/0000-0003-2645-7060",
+      "h_index": 72,
+      "i10_index": 232,
+      "works_count": 471,
+      "cited_by_count": 19401,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5089839453",
+      "display_name": "Ruut Veenhoven",
+      "orcid": "https://orcid.org/0000-0002-5159-393X",
+      "h_index": 72,
+      "i10_index": 197,
+      "works_count": 937,
+      "cited_by_count": 26714,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5025669882",
+      "display_name": "John E. Pachankis",
+      "orcid": "https://orcid.org/0000-0002-2015-9225",
+      "h_index": 72,
+      "i10_index": 195,
+      "works_count": 371,
+      "cited_by_count": 21296,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5025280528",
+      "display_name": "Tim Wildschut",
+      "orcid": "https://orcid.org/0000-0002-6499-5487",
+      "h_index": 72,
+      "i10_index": 166,
+      "works_count": 269,
+      "cited_by_count": 20034,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5058668361",
+      "display_name": "Christopher Peterson",
+      "orcid": "https://orcid.org/0000-0002-2176-1998",
+      "h_index": 72,
+      "i10_index": 149,
+      "works_count": 292,
+      "cited_by_count": 34676,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5057017855",
+      "display_name": "Albert V. Carron",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 148,
+      "works_count": 247,
+      "cited_by_count": 18652,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5103836157",
+      "display_name": "Clifford Nass",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 144,
+      "works_count": 265,
+      "cited_by_count": 31037,
+      "discipline": "Social Psychology",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5065090998",
+      "display_name": "David Matsumoto",
+      "orcid": "https://orcid.org/0000-0002-3186-1503",
+      "h_index": 71,
+      "i10_index": 197,
+      "works_count": 315,
+      "cited_by_count": 24029,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5050636888",
+      "display_name": "Louis Tay",
+      "orcid": "https://orcid.org/0000-0002-5522-4728",
+      "h_index": 71,
+      "i10_index": 155,
+      "works_count": 260,
+      "cited_by_count": 29785,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5070659987",
+      "display_name": "Agneta H. Fischer",
+      "orcid": "https://orcid.org/0000-0001-6939-8174",
+      "h_index": 71,
+      "i10_index": 140,
+      "works_count": 399,
+      "cited_by_count": 21529,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5051039293",
+      "display_name": "Sheldon Solomon",
+      "orcid": "https://orcid.org/0000-0002-7035-2082",
+      "h_index": 71,
+      "i10_index": 139,
+      "works_count": 208,
+      "cited_by_count": 34248,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5076090008",
+      "display_name": "Arthur P. Aron",
+      "orcid": "https://orcid.org/0000-0003-2887-9400",
+      "h_index": 71,
+      "i10_index": 136,
+      "works_count": 274,
+      "cited_by_count": 35798,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5049745456",
+      "display_name": "Christian Keysers",
+      "orcid": "https://orcid.org/0000-0002-2845-5467",
+      "h_index": 71,
+      "i10_index": 128,
+      "works_count": 262,
+      "cited_by_count": 34848,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5050313632",
+      "display_name": "Gregory M. Herek",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 98,
+      "works_count": 164,
+      "cited_by_count": 33629,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5054758743",
+      "display_name": "Roberto Baiocco",
+      "orcid": "https://orcid.org/0000-0002-6372-3762",
+      "h_index": 70,
+      "i10_index": 244,
+      "works_count": 666,
+      "cited_by_count": 14032,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5031547395",
+      "display_name": "Tonda L. Hughes",
+      "orcid": "https://orcid.org/0000-0003-1326-7655",
+      "h_index": 70,
+      "i10_index": 211,
+      "works_count": 356,
+      "cited_by_count": 17260,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5064765756",
+      "display_name": "Guy Bodenmann",
+      "orcid": "https://orcid.org/0000-0003-0964-6409",
+      "h_index": 70,
+      "i10_index": 209,
+      "works_count": 449,
+      "cited_by_count": 20340,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5071203255",
+      "display_name": "Yoshihisa Kashima",
+      "orcid": "https://orcid.org/0000-0003-3627-3273",
+      "h_index": 70,
+      "i10_index": 197,
+      "works_count": 463,
+      "cited_by_count": 21108,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5085696255",
+      "display_name": "Elizabeth Broadbent",
+      "orcid": "https://orcid.org/0000-0003-3626-9100",
+      "h_index": 70,
+      "i10_index": 194,
+      "works_count": 294,
+      "cited_by_count": 22401,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Business, Management and Accounting",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5006287203",
+      "display_name": "Robert A. Cummins",
+      "orcid": "https://orcid.org/0000-0001-9014-7193",
+      "h_index": 70,
+      "i10_index": 190,
+      "works_count": 409,
+      "cited_by_count": 26071,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5009823666",
+      "display_name": "Michael F. Steger",
+      "orcid": "https://orcid.org/0000-0003-4888-1153",
+      "h_index": 70,
+      "i10_index": 117,
+      "works_count": 191,
+      "cited_by_count": 33864,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5005469838",
+      "display_name": "Timothy Bickmore",
+      "orcid": "https://orcid.org/0000-0002-2676-9788",
+      "h_index": 69,
+      "i10_index": 214,
+      "works_count": 402,
+      "cited_by_count": 19307,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Social Psychology -- 8.8",
+      "id": "https://openalex.org/A5000134072",
+      "display_name": "Robert Thornberg",
+      "orcid": "https://orcid.org/0000-0001-9233-3862",
+      "h_index": 69,
+      "i10_index": 174,
+      "works_count": 370,
+      "cited_by_count": 20248,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5019866959",
+      "display_name": "Andrew Eric Clark",
+      "orcid": "https://orcid.org/0000-0001-7004-7654",
+      "h_index": 69,
+      "i10_index": 169,
+      "works_count": 462,
+      "cited_by_count": 40154,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5032695131",
+      "display_name": "Leen Liesbeth Haerens",
+      "orcid": "https://orcid.org/0000-0001-5715-9520",
+      "h_index": 69,
+      "i10_index": 158,
+      "works_count": 393,
+      "cited_by_count": 19124,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5017514024",
+      "display_name": "Moïra Mikolajczak",
+      "orcid": "https://orcid.org/0000-0002-7333-1578",
+      "h_index": 69,
+      "i10_index": 141,
+      "works_count": 509,
+      "cited_by_count": 22427,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5088807247",
+      "display_name": "Robert Chris Fraley",
+      "orcid": "https://orcid.org/0000-0003-3437-0336",
+      "h_index": 69,
+      "i10_index": 132,
+      "works_count": 264,
+      "cited_by_count": 30711,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5029419885",
+      "display_name": "Benjamin R. Karney",
+      "orcid": "https://orcid.org/0000-0002-9063-6162",
+      "h_index": 69,
+      "i10_index": 131,
+      "works_count": 237,
+      "cited_by_count": 19591,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5017084936",
+      "display_name": "Alex M. Wood",
+      "orcid": "https://orcid.org/0000-0002-8010-1455",
+      "h_index": 69,
+      "i10_index": 124,
+      "works_count": 196,
+      "cited_by_count": 28410,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5047315859",
+      "display_name": "Jamil Zaki",
+      "orcid": "https://orcid.org/0000-0002-0664-2982",
+      "h_index": 69,
+      "i10_index": 114,
+      "works_count": 276,
+      "cited_by_count": 27767,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5050824507",
+      "display_name": "Caryl E. Rusbult",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 99,
+      "works_count": 204,
+      "cited_by_count": 31963,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5072570846",
+      "display_name": "Don E. Davis",
+      "orcid": "https://orcid.org/0000-0003-3169-6576",
+      "h_index": 68,
+      "i10_index": 234,
+      "works_count": 520,
+      "cited_by_count": 17957,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5055520116",
+      "display_name": "Gary L. Wells",
+      "orcid": "https://orcid.org/0000-0002-5723-8998",
+      "h_index": 68,
+      "i10_index": 161,
+      "works_count": 280,
+      "cited_by_count": 21038,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5037074489",
+      "display_name": "Gayla Margolin",
+      "orcid": "https://orcid.org/0000-0002-1713-0640",
+      "h_index": 68,
+      "i10_index": 156,
+      "works_count": 252,
+      "cited_by_count": 16997,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5015215355",
+      "display_name": "Günther Knoblich",
+      "orcid": "https://orcid.org/0000-0003-4463-5318",
+      "h_index": 68,
+      "i10_index": 150,
+      "works_count": 287,
+      "cited_by_count": 20952,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5000783001",
+      "display_name": "Mark A. Whisman",
+      "orcid": "https://orcid.org/0000-0003-1821-7569",
+      "h_index": 68,
+      "i10_index": 149,
+      "works_count": 221,
+      "cited_by_count": 16261,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5015524050",
+      "display_name": "Paula M. Niedenthal",
+      "orcid": "https://orcid.org/0000-0003-0471-5508",
+      "h_index": 68,
+      "i10_index": 134,
+      "works_count": 299,
+      "cited_by_count": 21048,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5005072092",
+      "display_name": "Robert L. Helmreich",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 118,
+      "works_count": 230,
+      "cited_by_count": 25919,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5109950198",
+      "display_name": "Lawrence A. Kurdek",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 129,
+      "works_count": 175,
+      "cited_by_count": 13585,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5045921227",
+      "display_name": "Victoria Clarke",
+      "orcid": "https://orcid.org/0000-0001-9405-7363",
+      "h_index": 67,
+      "i10_index": 128,
+      "works_count": 224,
+      "cited_by_count": 446309,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5014790206",
+      "display_name": "L. Rowell Huesmann",
+      "orcid": "https://orcid.org/0000-0002-3653-5272",
+      "h_index": 67,
+      "i10_index": 127,
+      "works_count": 245,
+      "cited_by_count": 23261,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5067233694",
+      "display_name": "Charlotte J. Patterson",
+      "orcid": "https://orcid.org/0000-0002-0545-9908",
+      "h_index": 67,
+      "i10_index": 123,
+      "works_count": 195,
+      "cited_by_count": 14981,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5001462602",
+      "display_name": "Joanne Davila",
+      "orcid": "https://orcid.org/0000-0003-1250-5068",
+      "h_index": 67,
+      "i10_index": 121,
+      "works_count": 228,
+      "cited_by_count": 15163,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5053182759",
+      "display_name": "Robert A. Levine",
+      "orcid": "https://orcid.org/0000-0002-0270-1877",
+      "h_index": 66,
+      "i10_index": 250,
+      "works_count": 588,
+      "cited_by_count": 22677,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Dentistry",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Social Psychology -- 8.7",
+      "id": "https://openalex.org/A5081823682",
+      "display_name": "Nicole C. Krämer",
+      "orcid": "https://orcid.org/0000-0001-7535-870X",
+      "h_index": 66,
+      "i10_index": 214,
+      "works_count": 459,
+      "cited_by_count": 17514,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5020093170",
+      "display_name": "Simone Shamay‐Tsoory",
+      "orcid": "https://orcid.org/0000-0003-1088-5212",
+      "h_index": 66,
+      "i10_index": 171,
+      "works_count": 300,
+      "cited_by_count": 21401,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5059306142",
+      "display_name": "Ursula Heß",
+      "orcid": "https://orcid.org/0000-0002-6793-7282",
+      "h_index": 66,
+      "i10_index": 171,
+      "works_count": 398,
+      "cited_by_count": 17614,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5000572667",
+      "display_name": "Philippe G. Sarrazin",
+      "orcid": "https://orcid.org/0000-0003-0598-7564",
+      "h_index": 66,
+      "i10_index": 153,
+      "works_count": 358,
+      "cited_by_count": 14258,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5007973771",
+      "display_name": "Scott M. Stanley",
+      "orcid": "https://orcid.org/0000-0001-8323-3501",
+      "h_index": 66,
+      "i10_index": 132,
+      "works_count": 187,
+      "cited_by_count": 16441,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5041710385",
+      "display_name": "Margaret L. Kern",
+      "orcid": "https://orcid.org/0000-0003-4300-598X",
+      "h_index": 66,
+      "i10_index": 129,
+      "works_count": 225,
+      "cited_by_count": 28590,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5087551550",
+      "display_name": "John R. Hollenbeck",
+      "orcid": "https://orcid.org/0000-0003-4558-9472",
+      "h_index": 66,
+      "i10_index": 116,
+      "works_count": 231,
+      "cited_by_count": 22427,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5088948486",
+      "display_name": "Xiaoyi Fang",
+      "orcid": "https://orcid.org/0000-0002-9494-0997",
+      "h_index": 65,
+      "i10_index": 213,
+      "works_count": 367,
+      "cited_by_count": 12824,
+      "discipline": "Social Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5051998991",
+      "display_name": "Pär Anders Granhag",
+      "orcid": "https://orcid.org/0000-0002-1856-925X",
+      "h_index": 65,
+      "i10_index": 184,
+      "works_count": 288,
+      "cited_by_count": 13308,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5045740776",
+      "display_name": "Brett Paul Laursen",
+      "orcid": "https://orcid.org/0000-0002-1642-1980",
+      "h_index": 65,
+      "i10_index": 158,
+      "works_count": 252,
+      "cited_by_count": 18536,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5032815524",
+      "display_name": "Lori E. Ross",
+      "orcid": "https://orcid.org/0000-0002-6105-1448",
+      "h_index": 65,
+      "i10_index": 155,
+      "works_count": 234,
+      "cited_by_count": 15823,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5112364166",
+      "display_name": "Bert N. Uchino",
+      "orcid": "https://orcid.org/0000-0002-3036-6164",
+      "h_index": 65,
+      "i10_index": 154,
+      "works_count": 233,
+      "cited_by_count": 26126,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5081362935",
+      "display_name": "Nicola S. Schutte",
+      "orcid": "https://orcid.org/0000-0002-3294-7659",
+      "h_index": 65,
+      "i10_index": 154,
+      "works_count": 292,
+      "cited_by_count": 24637,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5016556371",
+      "display_name": "Antonia F. de C. Hamilton",
+      "orcid": "https://orcid.org/0000-0001-8000-0219",
+      "h_index": 65,
+      "i10_index": 140,
+      "works_count": 310,
+      "cited_by_count": 20131,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5034151726",
+      "display_name": "Geoffrey Colin Williams",
+      "orcid": "https://orcid.org/0000-0003-2050-5658",
+      "h_index": 65,
+      "i10_index": 138,
+      "works_count": 227,
+      "cited_by_count": 30706,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5001142310",
+      "display_name": "Richard Eleftherios Boyatzis",
+      "orcid": "https://orcid.org/0000-0002-3834-8171",
+      "h_index": 65,
+      "i10_index": 125,
+      "works_count": 239,
+      "cited_by_count": 46198,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5017344436",
+      "display_name": "Bilge Mutlu",
+      "orcid": "https://orcid.org/0000-0002-9456-1495",
+      "h_index": 64,
+      "i10_index": 182,
+      "works_count": 320,
+      "cited_by_count": 14971,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Engineering",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5005809079",
+      "display_name": "Ray Bull",
+      "orcid": "https://orcid.org/0000-0001-6065-467X",
+      "h_index": 64,
+      "i10_index": 173,
+      "works_count": 303,
+      "cited_by_count": 13420,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5027635705",
+      "display_name": "Brian Michael Scassellati",
+      "orcid": "https://orcid.org/0000-0002-7671-7759",
+      "h_index": 64,
+      "i10_index": 168,
+      "works_count": 324,
+      "cited_by_count": 21033,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5079264216",
+      "display_name": "Richard D. Roberts",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 141,
+      "works_count": 237,
+      "cited_by_count": 22013,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5004685608",
+      "display_name": "Walter O. Bockting",
+      "orcid": "https://orcid.org/0000-0003-2650-7726",
+      "h_index": 64,
+      "i10_index": 131,
+      "works_count": 233,
+      "cited_by_count": 19246,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5007676537",
+      "display_name": "Wendy Berry Mendes",
+      "orcid": "https://orcid.org/0000-0003-4453-1201",
+      "h_index": 64,
+      "i10_index": 117,
+      "works_count": 262,
+      "cited_by_count": 16815,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Social Psychology -- 8.6",
+      "id": "https://openalex.org/A5102984004",
+      "display_name": "Jessica L. Tracy",
+      "orcid": "https://orcid.org/0000-0003-0175-5838",
+      "h_index": 64,
+      "i10_index": 104,
+      "works_count": 205,
+      "cited_by_count": 22388,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Social Psychology -- 8.5",
+      "id": "https://openalex.org/A5027285796",
+      "display_name": "Margaret Rosario",
+      "orcid": "https://orcid.org/0000-0002-2316-912X",
+      "h_index": 64,
+      "i10_index": 98,
+      "works_count": 130,
+      "cited_by_count": 13855,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Social Psychology -- 8.5",
+      "id": "https://openalex.org/A5057812144",
+      "display_name": "Shelley Claire Hymel",
+      "orcid": "https://orcid.org/0000-0001-7790-660X",
+      "h_index": 64,
+      "i10_index": 89,
+      "works_count": 120,
+      "cited_by_count": 19318,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Social Psychology -- 8.5",
+      "id": "https://openalex.org/A5056856178",
+      "display_name": "Darío Páez",
+      "orcid": "https://orcid.org/0000-0002-8459-6037",
+      "h_index": 63,
+      "i10_index": 274,
+      "works_count": 543,
+      "cited_by_count": 16594,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Social Psychology -- 8.5",
+      "id": "https://openalex.org/A5028486144",
+      "display_name": "Jaan Valsiner",
+      "orcid": "https://orcid.org/0000-0001-8360-8860",
+      "h_index": 63,
+      "i10_index": 217,
+      "works_count": 770,
+      "cited_by_count": 16418,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Social Psychology -- 8.5",
+      "id": "https://openalex.org/A5029000057",
+      "display_name": "Heidi Keller",
+      "orcid": "https://orcid.org/0009-0003-6216-1467",
+      "h_index": 63,
+      "i10_index": 183,
+      "works_count": 404,
+      "cited_by_count": 14132,
+      "discipline": "Social Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Social Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

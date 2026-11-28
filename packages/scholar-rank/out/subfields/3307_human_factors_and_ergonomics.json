@@ -1,0 +1,337 @@
+{
+  "kind": "subfield",
+  "id": 3307,
+  "name": "Human Factors and Ergonomics",
+  "total_in_scrape": 16,
+  "count": 16,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Human Factors and Ergonomics -- 9.9",
+      "id": "https://openalex.org/A5045650405",
+      "display_name": "Christopher D. Wickens",
+      "orcid": "https://orcid.org/0000-0002-6789-4446",
+      "h_index": 100,
+      "i10_index": 365,
+      "works_count": 794,
+      "cited_by_count": 51218,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Neuroscience",
+        "Decision Sciences",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Human Factors and Ergonomics -- 9.9",
+      "id": "https://openalex.org/A5104071588",
+      "display_name": "Gerald Matthews",
+      "orcid": "https://orcid.org/0000-0001-8373-6918",
+      "h_index": 100,
+      "i10_index": 350,
+      "works_count": 664,
+      "cited_by_count": 40718,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Psychology",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Human Factors and Ergonomics -- 9.9",
+      "id": "https://openalex.org/A5034080328",
+      "display_name": "Raja Parasuraman",
+      "orcid": null,
+      "h_index": 99,
+      "i10_index": 265,
+      "works_count": 508,
+      "cited_by_count": 52023,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Human Factors and Ergonomics -- 9.9",
+      "id": "https://openalex.org/A5004792776",
+      "display_name": "Neville A. Stanton",
+      "orcid": "https://orcid.org/0000-0002-8562-3279",
+      "h_index": 93,
+      "i10_index": 474,
+      "works_count": 1108,
+      "cited_by_count": 35191,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Human Factors and Ergonomics -- 9.9",
+      "id": "https://openalex.org/A5007652754",
+      "display_name": "Peter A. Hancock",
+      "orcid": "https://orcid.org/0000-0002-4936-066X",
+      "h_index": 91,
+      "i10_index": 331,
+      "works_count": 856,
+      "cited_by_count": 33322,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Human Factors and Ergonomics -- 9.9",
+      "id": "https://openalex.org/A5090048784",
+      "display_name": "Paul M. Salmon",
+      "orcid": "https://orcid.org/0000-0001-7403-0286",
+      "h_index": 83,
+      "i10_index": 324,
+      "works_count": 862,
+      "cited_by_count": 24548,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Human Factors and Ergonomics -- 9.8",
+      "id": "https://openalex.org/A5039866013",
+      "display_name": "David D. Woods",
+      "orcid": "https://orcid.org/0000-0003-3131-2894",
+      "h_index": 78,
+      "i10_index": 213,
+      "works_count": 408,
+      "cited_by_count": 23807,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Human Factors and Ergonomics -- 9.8",
+      "id": "https://openalex.org/A5053686308",
+      "display_name": "David L. Strayer",
+      "orcid": "https://orcid.org/0000-0002-1653-730X",
+      "h_index": 75,
+      "i10_index": 187,
+      "works_count": 359,
+      "cited_by_count": 24124,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Neuroscience",
+        "Psychology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Human Factors and Ergonomics -- 9.8",
+      "id": "https://openalex.org/A5014950584",
+      "display_name": "Erik Hollnagel",
+      "orcid": "https://orcid.org/0000-0003-1666-7507",
+      "h_index": 72,
+      "i10_index": 191,
+      "works_count": 483,
+      "cited_by_count": 27238,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Human Factors and Ergonomics -- 9.8",
+      "id": "https://openalex.org/A5100400043",
+      "display_name": "Fang Chen",
+      "orcid": "https://orcid.org/0000-0003-4971-8729",
+      "h_index": 71,
+      "i10_index": 318,
+      "works_count": 948,
+      "cited_by_count": 23563,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Computer Science",
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Human Factors and Ergonomics -- 9.8",
+      "id": "https://openalex.org/A5082603621",
+      "display_name": "Jeffrey P. Bigham",
+      "orcid": "https://orcid.org/0000-0002-2072-0625",
+      "h_index": 70,
+      "i10_index": 207,
+      "works_count": 361,
+      "cited_by_count": 17322,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Computer Science",
+        "Social Sciences",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Human Factors and Ergonomics -- 9.8",
+      "id": "https://openalex.org/A5000048328",
+      "display_name": "John D. Lee",
+      "orcid": "https://orcid.org/0000-0001-9808-2160",
+      "h_index": 69,
+      "i10_index": 211,
+      "works_count": 459,
+      "cited_by_count": 29123,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Human Factors and Ergonomics -- 9.8",
+      "id": "https://openalex.org/A5037003206",
+      "display_name": "Joost de Winter",
+      "orcid": "https://orcid.org/0000-0002-1281-8200",
+      "h_index": 68,
+      "i10_index": 210,
+      "works_count": 561,
+      "cited_by_count": 25843,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Human Factors and Ergonomics -- 9.8",
+      "id": "https://openalex.org/A5068382657",
+      "display_name": "Mica Robertson Endsley",
+      "orcid": "https://orcid.org/0000-0002-2359-947X",
+      "h_index": 66,
+      "i10_index": 155,
+      "works_count": 309,
+      "cited_by_count": 41388,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Human Factors and Ergonomics -- 9.8",
+      "id": "https://openalex.org/A5111651197",
+      "display_name": "Don B. Chaffin",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 145,
+      "works_count": 276,
+      "cited_by_count": 13099,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Engineering",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Human Factors and Ergonomics -- 9.8",
+      "id": "https://openalex.org/A5059540023",
+      "display_name": "Natasha Merat",
+      "orcid": "https://orcid.org/0000-0003-4140-9948",
+      "h_index": 63,
+      "i10_index": 150,
+      "works_count": 350,
+      "cited_by_count": 14265,
+      "discipline": "Human Factors and Ergonomics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Human Factors and Ergonomics",
+      "fields": [
+        "Engineering",
+        "Social Sciences",
+        "Psychology"
+      ]
+    }
+  ]
+}

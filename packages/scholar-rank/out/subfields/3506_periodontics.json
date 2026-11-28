@@ -1,0 +1,2146 @@
+{
+  "kind": "subfield",
+  "id": 3506,
+  "name": "Periodontics",
+  "total_in_scrape": 112,
+  "count": 112,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Periodontics -- 9.9",
+      "id": "https://openalex.org/A5103172110",
+      "display_name": "Niklaus Peter Lang",
+      "orcid": "https://orcid.org/0000-0002-6496-6846",
+      "h_index": 154,
+      "i10_index": 568,
+      "works_count": 929,
+      "cited_by_count": 83660,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Periodontics -- 9.9",
+      "id": "https://openalex.org/A5023369662",
+      "display_name": "Jan Lindhe",
+      "orcid": null,
+      "h_index": 147,
+      "i10_index": 393,
+      "works_count": 467,
+      "cited_by_count": 74233,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Periodontics -- 9.9",
+      "id": "https://openalex.org/A5019676251",
+      "display_name": "Robert J. Genco",
+      "orcid": "https://orcid.org/0000-0001-7604-506X",
+      "h_index": 133,
+      "i10_index": 396,
+      "works_count": 494,
+      "cited_by_count": 67405,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Periodontics -- 9.9",
+      "id": "https://openalex.org/A5109945575",
+      "display_name": "S. S. Socransky",
+      "orcid": null,
+      "h_index": 127,
+      "i10_index": 323,
+      "works_count": 361,
+      "cited_by_count": 59920,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Periodontics -- 9.9",
+      "id": "https://openalex.org/A5056561320",
+      "display_name": "Marc Quirynen",
+      "orcid": "https://orcid.org/0000-0001-8253-3908",
+      "h_index": 118,
+      "i10_index": 374,
+      "works_count": 584,
+      "cited_by_count": 48532,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Periodontics -- 9.9",
+      "id": "https://openalex.org/A5029550343",
+      "display_name": "Maurizio S. Tonetti",
+      "orcid": "https://orcid.org/0000-0002-2743-0137",
+      "h_index": 114,
+      "i10_index": 305,
+      "works_count": 486,
+      "cited_by_count": 62820,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5014230085",
+      "display_name": "Thomas E. Van Dyke",
+      "orcid": "https://orcid.org/0000-0003-0568-124X",
+      "h_index": 109,
+      "i10_index": 383,
+      "works_count": 534,
+      "cited_by_count": 47997,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Nursing",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5063251928",
+      "display_name": "Steven Offenbacher",
+      "orcid": "https://orcid.org/0000-0002-0727-9441",
+      "h_index": 107,
+      "i10_index": 293,
+      "works_count": 365,
+      "cited_by_count": 45491,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5065156977",
+      "display_name": "Timo A. Sorsa",
+      "orcid": "https://orcid.org/0000-0001-7914-3052",
+      "h_index": 105,
+      "i10_index": 580,
+      "works_count": 815,
+      "cited_by_count": 41560,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5052969550",
+      "display_name": "Mariano Sanz",
+      "orcid": "https://orcid.org/0000-0002-6293-5755",
+      "h_index": 105,
+      "i10_index": 401,
+      "works_count": 627,
+      "cited_by_count": 52306,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5009509854",
+      "display_name": "Bruce J. Paster",
+      "orcid": "https://orcid.org/0000-0002-5872-1906",
+      "h_index": 105,
+      "i10_index": 256,
+      "works_count": 376,
+      "cited_by_count": 44278,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5051452604",
+      "display_name": "Anton Sculean",
+      "orcid": "https://orcid.org/0000-0003-2836-5477",
+      "h_index": 104,
+      "i10_index": 512,
+      "works_count": 861,
+      "cited_by_count": 43830,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5077903031",
+      "display_name": "Tord Berglundh",
+      "orcid": "https://orcid.org/0000-0001-5864-6398",
+      "h_index": 104,
+      "i10_index": 211,
+      "works_count": 248,
+      "cited_by_count": 46417,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5062765034",
+      "display_name": "Xuedong Zhou",
+      "orcid": "https://orcid.org/0000-0002-9319-7302",
+      "h_index": 102,
+      "i10_index": 631,
+      "works_count": 1108,
+      "cited_by_count": 46535,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5087231208",
+      "display_name": "Jan Potempa",
+      "orcid": "https://orcid.org/0000-0002-3600-7461",
+      "h_index": 100,
+      "i10_index": 437,
+      "works_count": 702,
+      "cited_by_count": 36276,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5044774272",
+      "display_name": "William V. Giannobile",
+      "orcid": "https://orcid.org/0000-0002-7102-9746",
+      "h_index": 100,
+      "i10_index": 256,
+      "works_count": 373,
+      "cited_by_count": 35415,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Periodontics -- 9.8",
+      "id": "https://openalex.org/A5031947830",
+      "display_name": "Eric Charles Reynolds",
+      "orcid": "https://orcid.org/0000-0002-6618-4856",
+      "h_index": 98,
+      "i10_index": 351,
+      "works_count": 519,
+      "cited_by_count": 34485,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5084031628",
+      "display_name": "George Hajishengallis",
+      "orcid": "https://orcid.org/0000-0001-7392-8852",
+      "h_index": 98,
+      "i10_index": 237,
+      "works_count": 326,
+      "cited_by_count": 49214,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5056774287",
+      "display_name": "Dana T. Graves",
+      "orcid": "https://orcid.org/0000-0002-4664-8529",
+      "h_index": 96,
+      "i10_index": 228,
+      "works_count": 314,
+      "cited_by_count": 31501,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5056347411",
+      "display_name": "Frank Schwarz",
+      "orcid": "https://orcid.org/0000-0001-5515-227X",
+      "h_index": 95,
+      "i10_index": 288,
+      "works_count": 436,
+      "cited_by_count": 32288,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5016751033",
+      "display_name": "Giovanni E. Salvi",
+      "orcid": "https://orcid.org/0000-0001-5523-3192",
+      "h_index": 95,
+      "i10_index": 212,
+      "works_count": 303,
+      "cited_by_count": 30804,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5111963393",
+      "display_name": "Anne D. Haffajee",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 179,
+      "works_count": 204,
+      "cited_by_count": 42028,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5031536814",
+      "display_name": "Gorka Orive",
+      "orcid": "https://orcid.org/0000-0002-0773-300X",
+      "h_index": 92,
+      "i10_index": 341,
+      "works_count": 517,
+      "cited_by_count": 30126,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Materials Science",
+        "Environmental Science",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5049350077",
+      "display_name": "Hyun Koo",
+      "orcid": "https://orcid.org/0000-0001-9143-2076",
+      "h_index": 92,
+      "i10_index": 181,
+      "works_count": 213,
+      "cited_by_count": 32582,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5065211401",
+      "display_name": "James D. Beck",
+      "orcid": "https://orcid.org/0000-0001-5415-8311",
+      "h_index": 91,
+      "i10_index": 243,
+      "works_count": 349,
+      "cited_by_count": 31983,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5051002562",
+      "display_name": "Christopher Allan McCulloch",
+      "orcid": "https://orcid.org/0000-0002-3535-8593",
+      "h_index": 90,
+      "i10_index": 274,
+      "works_count": 348,
+      "cited_by_count": 25762,
+      "discipline": "Periodontics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5063557940",
+      "display_name": "Søren Vad Jepsen",
+      "orcid": "https://orcid.org/0000-0002-4160-5837",
+      "h_index": 88,
+      "i10_index": 308,
+      "works_count": 441,
+      "cited_by_count": 40125,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Periodontics -- 9.7",
+      "id": "https://openalex.org/A5011924224",
+      "display_name": "P. Mark Bartold",
+      "orcid": "https://orcid.org/0000-0002-5695-3877",
+      "h_index": 87,
+      "i10_index": 267,
+      "works_count": 506,
+      "cited_by_count": 30911,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5016216017",
+      "display_name": "Panos N. Papapanou",
+      "orcid": "https://orcid.org/0000-0002-6538-3618",
+      "h_index": 86,
+      "i10_index": 193,
+      "works_count": 268,
+      "cited_by_count": 38569,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5059371186",
+      "display_name": "Thomas Kocher",
+      "orcid": "https://orcid.org/0000-0001-9605-2822",
+      "h_index": 85,
+      "i10_index": 341,
+      "works_count": 517,
+      "cited_by_count": 30895,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5008946134",
+      "display_name": "Richard John Lamont",
+      "orcid": "https://orcid.org/0000-0002-3147-5039",
+      "h_index": 85,
+      "i10_index": 252,
+      "works_count": 343,
+      "cited_by_count": 28985,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5056199248",
+      "display_name": "Richard M. J. Palmer",
+      "orcid": "https://orcid.org/0000-0002-3177-1313",
+      "h_index": 85,
+      "i10_index": 175,
+      "works_count": 252,
+      "cited_by_count": 76067,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5078853919",
+      "display_name": "Nikolaos Donos",
+      "orcid": "https://orcid.org/0000-0002-4117-9073",
+      "h_index": 84,
+      "i10_index": 261,
+      "works_count": 435,
+      "cited_by_count": 24111,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5033412861",
+      "display_name": "Gunnar Dahlén",
+      "orcid": "https://orcid.org/0000-0001-6803-8118",
+      "h_index": 83,
+      "i10_index": 228,
+      "works_count": 299,
+      "cited_by_count": 21820,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5069086962",
+      "display_name": "Isao Ishikawa",
+      "orcid": "https://orcid.org/0000-0002-3100-6187",
+      "h_index": 82,
+      "i10_index": 314,
+      "works_count": 627,
+      "cited_by_count": 23037,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5034789202",
+      "display_name": "G.A. van der Weijden",
+      "orcid": "https://orcid.org/0000-0002-5075-8384",
+      "h_index": 82,
+      "i10_index": 250,
+      "works_count": 539,
+      "cited_by_count": 21563,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5088299148",
+      "display_name": "Paul R. Cooper",
+      "orcid": "https://orcid.org/0000-0003-1305-7287",
+      "h_index": 81,
+      "i10_index": 265,
+      "works_count": 501,
+      "cited_by_count": 23684,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5012697008",
+      "display_name": "Iain Chapple",
+      "orcid": "https://orcid.org/0000-0003-2697-7082",
+      "h_index": 81,
+      "i10_index": 222,
+      "works_count": 394,
+      "cited_by_count": 38587,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Periodontics -- 9.6",
+      "id": "https://openalex.org/A5008991791",
+      "display_name": "Arie Jan Van Winkelhoff",
+      "orcid": "https://orcid.org/0000-0002-2139-012X",
+      "h_index": 80,
+      "i10_index": 214,
+      "works_count": 343,
+      "cited_by_count": 19501,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5060726776",
+      "display_name": "Denis F. Kinane",
+      "orcid": "https://orcid.org/0000-0002-3182-2934",
+      "h_index": 80,
+      "i10_index": 188,
+      "works_count": 229,
+      "cited_by_count": 26846,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5111528369",
+      "display_name": "Sture R. Nyman",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 120,
+      "works_count": 135,
+      "cited_by_count": 25180,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5013395521",
+      "display_name": "Wenyuan Shi",
+      "orcid": "https://orcid.org/0000-0003-2435-9256",
+      "h_index": 79,
+      "i10_index": 217,
+      "works_count": 299,
+      "cited_by_count": 24806,
+      "discipline": "Periodontics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5080732833",
+      "display_name": "Pierpaolo Cortellini",
+      "orcid": "https://orcid.org/0000-0003-0937-2807",
+      "h_index": 79,
+      "i10_index": 138,
+      "works_count": 248,
+      "cited_by_count": 18774,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5013096129",
+      "display_name": "Jeffrey L. Ebersole",
+      "orcid": "https://orcid.org/0000-0002-9743-6585",
+      "h_index": 78,
+      "i10_index": 300,
+      "works_count": 419,
+      "cited_by_count": 22147,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5041758560",
+      "display_name": "Daniel Grenier",
+      "orcid": "https://orcid.org/0000-0003-0878-4674",
+      "h_index": 78,
+      "i10_index": 300,
+      "works_count": 399,
+      "cited_by_count": 19251,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5080678859",
+      "display_name": "Stefan Renvert",
+      "orcid": "https://orcid.org/0000-0003-0992-2362",
+      "h_index": 78,
+      "i10_index": 174,
+      "works_count": 240,
+      "cited_by_count": 23043,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5005911804",
+      "display_name": "Jan L. Wennström",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 153,
+      "works_count": 184,
+      "cited_by_count": 21900,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5023900545",
+      "display_name": "Sašo Ivanovski",
+      "orcid": "https://orcid.org/0000-0001-5339-0936",
+      "h_index": 77,
+      "i10_index": 268,
+      "works_count": 425,
+      "cited_by_count": 19790,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5083193969",
+      "display_name": "Gaetano Isola",
+      "orcid": "https://orcid.org/0000-0003-4267-6992",
+      "h_index": 77,
+      "i10_index": 234,
+      "works_count": 456,
+      "cited_by_count": 67305,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5101487726",
+      "display_name": "Michael Wilson",
+      "orcid": "https://orcid.org/0000-0002-8705-5084",
+      "h_index": 77,
+      "i10_index": 222,
+      "works_count": 367,
+      "cited_by_count": 18604,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Periodontics -- 9.5",
+      "id": "https://openalex.org/A5022248956",
+      "display_name": "Robert A. Burne",
+      "orcid": "https://orcid.org/0000-0002-4234-0316",
+      "h_index": 77,
+      "i10_index": 199,
+      "works_count": 246,
+      "cited_by_count": 18209,
+      "discipline": "Periodontics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5054538840",
+      "display_name": "David Herrera",
+      "orcid": "https://orcid.org/0000-0002-5554-2777",
+      "h_index": 77,
+      "i10_index": 188,
+      "works_count": 289,
+      "cited_by_count": 33390,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5074333328",
+      "display_name": "Francesco Inchingolo",
+      "orcid": "https://orcid.org/0000-0003-3797-5883",
+      "h_index": 76,
+      "i10_index": 363,
+      "works_count": 547,
+      "cited_by_count": 19841,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5063541662",
+      "display_name": "Ingar Olsen",
+      "orcid": "https://orcid.org/0000-0002-1416-7229",
+      "h_index": 76,
+      "i10_index": 232,
+      "works_count": 390,
+      "cited_by_count": 23352,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5016270156",
+      "display_name": "Ulf M. E. Wikesjö",
+      "orcid": "https://orcid.org/0000-0003-1607-0583",
+      "h_index": 76,
+      "i10_index": 222,
+      "works_count": 264,
+      "cited_by_count": 17068,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5073188851",
+      "display_name": "Shigeyuki Hamada",
+      "orcid": "https://orcid.org/0000-0003-3244-8486",
+      "h_index": 75,
+      "i10_index": 280,
+      "works_count": 381,
+      "cited_by_count": 19676,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5042285723",
+      "display_name": "Michael Glogauer",
+      "orcid": "https://orcid.org/0000-0002-6248-5977",
+      "h_index": 75,
+      "i10_index": 212,
+      "works_count": 375,
+      "cited_by_count": 23519,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5064144222",
+      "display_name": "Andrea Mombelli",
+      "orcid": "https://orcid.org/0000-0003-3386-8503",
+      "h_index": 75,
+      "i10_index": 154,
+      "works_count": 205,
+      "cited_by_count": 26746,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5042622898",
+      "display_name": "Yu‐Kang Tu",
+      "orcid": "https://orcid.org/0000-0002-2461-474X",
+      "h_index": 74,
+      "i10_index": 368,
+      "works_count": 578,
+      "cited_by_count": 22532,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5003483976",
+      "display_name": "Eduardo Anitua",
+      "orcid": "https://orcid.org/0000-0002-8386-5303",
+      "h_index": 74,
+      "i10_index": 273,
+      "works_count": 502,
+      "cited_by_count": 22693,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5002960706",
+      "display_name": "Ubele van der Velden",
+      "orcid": "https://orcid.org/0000-0003-4647-1433",
+      "h_index": 74,
+      "i10_index": 216,
+      "works_count": 350,
+      "cited_by_count": 16536,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Periodontics -- 9.4",
+      "id": "https://openalex.org/A5001476429",
+      "display_name": "Bruno G. Loos",
+      "orcid": "https://orcid.org/0000-0002-8794-552X",
+      "h_index": 74,
+      "i10_index": 202,
+      "works_count": 337,
+      "cited_by_count": 27112,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5031517214",
+      "display_name": "Magda Feres",
+      "orcid": "https://orcid.org/0000-0002-2293-3392",
+      "h_index": 74,
+      "i10_index": 201,
+      "works_count": 305,
+      "cited_by_count": 20683,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5109876727",
+      "display_name": "Walter J. Loesche",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 175,
+      "works_count": 212,
+      "cited_by_count": 24767,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5090240965",
+      "display_name": "Gregory John Seymour",
+      "orcid": "https://orcid.org/0000-0001-7595-5651",
+      "h_index": 73,
+      "i10_index": 302,
+      "works_count": 503,
+      "cited_by_count": 27250,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5030849732",
+      "display_name": "Kenneth S. Kornman",
+      "orcid": "https://orcid.org/0000-0003-2252-7324",
+      "h_index": 73,
+      "i10_index": 144,
+      "works_count": 208,
+      "cited_by_count": 34819,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5049460096",
+      "display_name": "Jørgen Slots",
+      "orcid": "https://orcid.org/0000-0002-1423-0363",
+      "h_index": 73,
+      "i10_index": 122,
+      "works_count": 146,
+      "cited_by_count": 15329,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5071586067",
+      "display_name": "Pedro Luiz Rosalen",
+      "orcid": "https://orcid.org/0000-0003-0812-4027",
+      "h_index": 72,
+      "i10_index": 212,
+      "works_count": 308,
+      "cited_by_count": 16996,
+      "discipline": "Periodontics",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5071050853",
+      "display_name": "Wim Teughels",
+      "orcid": "https://orcid.org/0000-0001-7675-5643",
+      "h_index": 72,
+      "i10_index": 190,
+      "works_count": 353,
+      "cited_by_count": 20748,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5036602050",
+      "display_name": "Howard F. Jenkinson",
+      "orcid": "https://orcid.org/0000-0002-9195-7945",
+      "h_index": 72,
+      "i10_index": 161,
+      "works_count": 237,
+      "cited_by_count": 16302,
+      "discipline": "Periodontics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5110101452",
+      "display_name": "Harald A. Löe",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 109,
+      "works_count": 146,
+      "cited_by_count": 47106,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5051037094",
+      "display_name": "Richard J. Miron",
+      "orcid": "https://orcid.org/0000-0003-3290-3418",
+      "h_index": 71,
+      "i10_index": 255,
+      "works_count": 425,
+      "cited_by_count": 19530,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Periodontics -- 9.3",
+      "id": "https://openalex.org/A5056015870",
+      "display_name": "Atsuo Amano",
+      "orcid": "https://orcid.org/0000-0002-5158-147X",
+      "h_index": 71,
+      "i10_index": 185,
+      "works_count": 253,
+      "cited_by_count": 26692,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5085587195",
+      "display_name": "Palle Holmstrup",
+      "orcid": "https://orcid.org/0000-0002-1563-1089",
+      "h_index": 71,
+      "i10_index": 168,
+      "works_count": 335,
+      "cited_by_count": 18083,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5111583019",
+      "display_name": "Thorkild Karring",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 146,
+      "works_count": 205,
+      "cited_by_count": 18770,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5109165925",
+      "display_name": "Roy C. Page",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 194,
+      "works_count": 241,
+      "cited_by_count": 24323,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5018515481",
+      "display_name": "Alpdoğan Kantarcı",
+      "orcid": "https://orcid.org/0000-0002-2679-9100",
+      "h_index": 70,
+      "i10_index": 186,
+      "works_count": 324,
+      "cited_by_count": 17939,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5091815057",
+      "display_name": "Lorne M. Golub",
+      "orcid": "https://orcid.org/0000-0003-2606-120X",
+      "h_index": 70,
+      "i10_index": 186,
+      "works_count": 228,
+      "cited_by_count": 15394,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5056980040",
+      "display_name": "D. Beighton",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 186,
+      "works_count": 275,
+      "cited_by_count": 14566,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5103371419",
+      "display_name": "Ronald J. Gibbons",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 134,
+      "works_count": 161,
+      "cited_by_count": 15991,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5049781553",
+      "display_name": "Xin Xu",
+      "orcid": "https://orcid.org/0000-0003-4608-4556",
+      "h_index": 69,
+      "i10_index": 260,
+      "works_count": 500,
+      "cited_by_count": 19927,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5084294397",
+      "display_name": "Gösta Rutger Persson",
+      "orcid": "https://orcid.org/0000-0002-3620-5978",
+      "h_index": 69,
+      "i10_index": 149,
+      "works_count": 171,
+      "cited_by_count": 13582,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5067144709",
+      "display_name": "Thomas C. Hart",
+      "orcid": "https://orcid.org/0000-0003-4369-3962",
+      "h_index": 69,
+      "i10_index": 145,
+      "works_count": 222,
+      "cited_by_count": 24159,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Periodontics -- 9.2",
+      "id": "https://openalex.org/A5060915194",
+      "display_name": "Francisco Humberto Nociti",
+      "orcid": "https://orcid.org/0000-0001-6809-8866",
+      "h_index": 68,
+      "i10_index": 261,
+      "works_count": 365,
+      "cited_by_count": 14767,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5058684324",
+      "display_name": "Pirkko J. Pussinen",
+      "orcid": "https://orcid.org/0000-0003-3563-1876",
+      "h_index": 68,
+      "i10_index": 208,
+      "works_count": 319,
+      "cited_by_count": 22219,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5068961445",
+      "display_name": "Max A. Listgarten",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 142,
+      "works_count": 179,
+      "cited_by_count": 16511,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5009466623",
+      "display_name": "Richard P. Darveau",
+      "orcid": "https://orcid.org/0000-0002-3559-7383",
+      "h_index": 67,
+      "i10_index": 144,
+      "works_count": 168,
+      "cited_by_count": 20616,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5111626851",
+      "display_name": "Joseph J. Zambon",
+      "orcid": "https://orcid.org/0009-0002-8466-6792",
+      "h_index": 67,
+      "i10_index": 125,
+      "works_count": 158,
+      "cited_by_count": 17273,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5045117023",
+      "display_name": "J. Max Goodson",
+      "orcid": "https://orcid.org/0000-0003-4225-9160",
+      "h_index": 67,
+      "i10_index": 123,
+      "works_count": 156,
+      "cited_by_count": 14791,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5081288252",
+      "display_name": "Gianna Dipalma",
+      "orcid": "https://orcid.org/0000-0002-5947-8987",
+      "h_index": 66,
+      "i10_index": 263,
+      "works_count": 421,
+      "cited_by_count": 13670,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5001978286",
+      "display_name": "Fawad Javed",
+      "orcid": "https://orcid.org/0000-0002-9253-1989",
+      "h_index": 66,
+      "i10_index": 227,
+      "works_count": 357,
+      "cited_by_count": 13778,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5079760360",
+      "display_name": "Shigeyuki Ebisu",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 184,
+      "works_count": 266,
+      "cited_by_count": 13367,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5056339837",
+      "display_name": "Ira B. Lamster",
+      "orcid": "https://orcid.org/0000-0002-7969-7263",
+      "h_index": 66,
+      "i10_index": 165,
+      "works_count": 253,
+      "cited_by_count": 17958,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5082032451",
+      "display_name": "Michael A. Curtis",
+      "orcid": "https://orcid.org/0000-0002-1563-9953",
+      "h_index": 66,
+      "i10_index": 151,
+      "works_count": 188,
+      "cited_by_count": 17156,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Periodontics -- 9.1",
+      "id": "https://openalex.org/A5032188300",
+      "display_name": "Thomas Dietrich",
+      "orcid": "https://orcid.org/0000-0002-2557-7645",
+      "h_index": 66,
+      "i10_index": 149,
+      "works_count": 224,
+      "cited_by_count": 29748,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Periodontics -- 9.0",
+      "id": "https://openalex.org/A5020594534",
+      "display_name": "Francesco D’Aiuto",
+      "orcid": "https://orcid.org/0000-0001-8654-935X",
+      "h_index": 66,
+      "i10_index": 144,
+      "works_count": 260,
+      "cited_by_count": 18744,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Periodontics -- 9.0",
+      "id": "https://openalex.org/A5085740645",
+      "display_name": "Philippe Pierre Hujoel",
+      "orcid": "https://orcid.org/0000-0002-4040-104X",
+      "h_index": 66,
+      "i10_index": 142,
+      "works_count": 234,
+      "cited_by_count": 15370,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Periodontics -- 9.0",
+      "id": "https://openalex.org/A5075008449",
+      "display_name": "Frank Andrew Scannapieco",
+      "orcid": "https://orcid.org/0000-0002-8804-6593",
+      "h_index": 66,
+      "i10_index": 136,
+      "works_count": 202,
+      "cited_by_count": 16807,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Periodontics -- 9.0",
+      "id": "https://openalex.org/A5075749308",
+      "display_name": "James T. Mellonig",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 108,
+      "works_count": 137,
+      "cited_by_count": 12297,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Periodontics -- 9.0",
+      "id": "https://openalex.org/A5060471511",
+      "display_name": "Howard K. Kuramitsu",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 227,
+      "cited_by_count": 13983,
+      "discipline": "Periodontics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5057419396",
+      "display_name": "Hannu Larjava",
+      "orcid": "https://orcid.org/0000-0002-9404-8755",
+      "h_index": 65,
+      "i10_index": 165,
+      "works_count": 220,
+      "cited_by_count": 14604,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5023639301",
+      "display_name": "Philip M. Preshaw",
+      "orcid": "https://orcid.org/0000-0002-7153-4865",
+      "h_index": 65,
+      "i10_index": 147,
+      "works_count": 248,
+      "cited_by_count": 14874,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5072809474",
+      "display_name": "Philippe Bouchard",
+      "orcid": "https://orcid.org/0000-0003-2500-3219",
+      "h_index": 65,
+      "i10_index": 145,
+      "works_count": 226,
+      "cited_by_count": 17979,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5039050159",
+      "display_name": "Kaumudi J. Joshipura",
+      "orcid": "https://orcid.org/0000-0003-1964-7579",
+      "h_index": 65,
+      "i10_index": 132,
+      "works_count": 213,
+      "cited_by_count": 20463,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5111539668",
+      "display_name": "Philip Stashenko",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 117,
+      "works_count": 146,
+      "cited_by_count": 14623,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5002397886",
+      "display_name": "Deepak B. Saxena",
+      "orcid": "https://orcid.org/0000-0003-0563-4259",
+      "h_index": 64,
+      "i10_index": 211,
+      "works_count": 477,
+      "cited_by_count": 18833,
+      "discipline": "Periodontics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5005447574",
+      "display_name": "Hiromasa Yoshie",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 186,
+      "works_count": 312,
+      "cited_by_count": 13065,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5110563265",
+      "display_name": "Wim Crielaard",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 184,
+      "works_count": 283,
+      "cited_by_count": 16636,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5051337016",
+      "display_name": "Raúl Guillermo Caffesse",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 167,
+      "works_count": 220,
+      "cited_by_count": 12942,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5089520411",
+      "display_name": "Ian G. Needleman",
+      "orcid": "https://orcid.org/0000-0003-4696-1651",
+      "h_index": 64,
+      "i10_index": 121,
+      "works_count": 273,
+      "cited_by_count": 20958,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5064558468",
+      "display_name": "Jan H. Egelberg",
+      "orcid": "https://orcid.org/0000-0003-2870-5937",
+      "h_index": 64,
+      "i10_index": 120,
+      "works_count": 180,
+      "cited_by_count": 12435,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Periodontics -- 8.9",
+      "id": "https://openalex.org/A5015205949",
+      "display_name": "Anne C. R. Tanner",
+      "orcid": "https://orcid.org/0000-0002-1331-9163",
+      "h_index": 64,
+      "i10_index": 98,
+      "works_count": 121,
+      "cited_by_count": 18465,
+      "discipline": "Periodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Periodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    }
+  ]
+}

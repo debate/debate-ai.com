@@ -1,0 +1,2353 @@
+{
+  "kind": "subfield",
+  "id": 2711,
+  "name": "Emergency Medicine",
+  "total_in_scrape": 128,
+  "count": 128,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Emergency Medicine -- 9.9",
+      "id": "https://openalex.org/A5082936913",
+      "display_name": "Naohiro Yonemoto",
+      "orcid": "https://orcid.org/0000-0003-3637-2095",
+      "h_index": 144,
+      "i10_index": 295,
+      "works_count": 520,
+      "cited_by_count": 346514,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Emergency Medicine -- 9.9",
+      "id": "https://openalex.org/A5089417272",
+      "display_name": "Frederick P. Rivara",
+      "orcid": "https://orcid.org/0000-0003-1427-0637",
+      "h_index": 125,
+      "i10_index": 672,
+      "works_count": 1124,
+      "cited_by_count": 110920,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Emergency Medicine -- 9.9",
+      "id": "https://openalex.org/A5086950255",
+      "display_name": "Jerry P. Nolan",
+      "orcid": "https://orcid.org/0000-0003-3141-3812",
+      "h_index": 123,
+      "i10_index": 404,
+      "works_count": 853,
+      "cited_by_count": 67501,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Emergency Medicine -- 9.9",
+      "id": "https://openalex.org/A5023592446",
+      "display_name": "Vinay Nadkarni",
+      "orcid": "https://orcid.org/0000-0002-3794-5599",
+      "h_index": 122,
+      "i10_index": 545,
+      "works_count": 1241,
+      "cited_by_count": 62046,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Emergency Medicine -- 9.9",
+      "id": "https://openalex.org/A5079381636",
+      "display_name": "Gavin D. Perkins",
+      "orcid": "https://orcid.org/0000-0003-3027-7548",
+      "h_index": 117,
+      "i10_index": 468,
+      "works_count": 995,
+      "cited_by_count": 60102,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Emergency Medicine -- 9.9",
+      "id": "https://openalex.org/A5058693463",
+      "display_name": "Robert Allen Berg",
+      "orcid": "https://orcid.org/0000-0001-5529-9431",
+      "h_index": 116,
+      "i10_index": 456,
+      "works_count": 859,
+      "cited_by_count": 61534,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5069563986",
+      "display_name": "Ian Gilmour Stiell",
+      "orcid": "https://orcid.org/0000-0002-2583-6408",
+      "h_index": 114,
+      "i10_index": 368,
+      "works_count": 703,
+      "cited_by_count": 49425,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5019706236",
+      "display_name": "Thomas Michael Scalea",
+      "orcid": "https://orcid.org/0000-0001-8794-4108",
+      "h_index": 110,
+      "i10_index": 578,
+      "works_count": 1009,
+      "cited_by_count": 50884,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5028491207",
+      "display_name": "Clifton W. Callaway",
+      "orcid": "https://orcid.org/0000-0002-3309-1573",
+      "h_index": 110,
+      "i10_index": 420,
+      "works_count": 786,
+      "cited_by_count": 85015,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5111963989",
+      "display_name": "George C. Velmahos",
+      "orcid": "https://orcid.org/0000-0001-5459-0374",
+      "h_index": 109,
+      "i10_index": 535,
+      "works_count": 954,
+      "cited_by_count": 49429,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5023300205",
+      "display_name": "Avery B. Nathens",
+      "orcid": "https://orcid.org/0000-0003-3785-3800",
+      "h_index": 109,
+      "i10_index": 434,
+      "works_count": 717,
+      "cited_by_count": 47446,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5047900529",
+      "display_name": "Kenji Inaba",
+      "orcid": "https://orcid.org/0000-0002-5191-596X",
+      "h_index": 104,
+      "i10_index": 623,
+      "works_count": 1109,
+      "cited_by_count": 46912,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5038044357",
+      "display_name": "Graham Nichol",
+      "orcid": "https://orcid.org/0000-0002-2670-0000",
+      "h_index": 104,
+      "i10_index": 257,
+      "works_count": 461,
+      "cited_by_count": 122105,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5068355344",
+      "display_name": "Gregory J. Jurkovich",
+      "orcid": "https://orcid.org/0000-0003-0870-8583",
+      "h_index": 103,
+      "i10_index": 297,
+      "works_count": 431,
+      "cited_by_count": 37431,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5012880143",
+      "display_name": "Peter Alistair Cameron",
+      "orcid": "https://orcid.org/0000-0002-1443-557X",
+      "h_index": 102,
+      "i10_index": 637,
+      "works_count": 1109,
+      "cited_by_count": 47537,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5029704997",
+      "display_name": "Salomone Di Saverio",
+      "orcid": "https://orcid.org/0000-0001-5685-5022",
+      "h_index": 100,
+      "i10_index": 380,
+      "works_count": 863,
+      "cited_by_count": 43096,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Emergency Medicine -- 9.8",
+      "id": "https://openalex.org/A5111630225",
+      "display_name": "David B. Hoyt",
+      "orcid": null,
+      "h_index": 99,
+      "i10_index": 317,
+      "works_count": 636,
+      "cited_by_count": 37227,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5060297778",
+      "display_name": "Ellen J. MacKenzie",
+      "orcid": "https://orcid.org/0000-0002-5480-8502",
+      "h_index": 99,
+      "i10_index": 238,
+      "works_count": 314,
+      "cited_by_count": 35663,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5025322559",
+      "display_name": "Frances Susan Shofer",
+      "orcid": "https://orcid.org/0000-0001-6813-4791",
+      "h_index": 98,
+      "i10_index": 356,
+      "works_count": 545,
+      "cited_by_count": 28884,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5065355429",
+      "display_name": "Raul Sérgio Martins Coimbra",
+      "orcid": "https://orcid.org/0000-0002-3759-6851",
+      "h_index": 96,
+      "i10_index": 423,
+      "works_count": 848,
+      "cited_by_count": 38415,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5065027400",
+      "display_name": "Alain Cariou",
+      "orcid": "https://orcid.org/0000-0003-3258-4672",
+      "h_index": 95,
+      "i10_index": 336,
+      "works_count": 835,
+      "cited_by_count": 40454,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5077878204",
+      "display_name": "Laurie J. Morrison",
+      "orcid": "https://orcid.org/0000-0001-8369-9774",
+      "h_index": 95,
+      "i10_index": 309,
+      "works_count": 582,
+      "cited_by_count": 39609,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5033462590",
+      "display_name": "Linda S. Chan",
+      "orcid": "https://orcid.org/0000-0002-9802-5059",
+      "h_index": 93,
+      "i10_index": 260,
+      "works_count": 381,
+      "cited_by_count": 26838,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5025095503",
+      "display_name": "Jasmeet Soar",
+      "orcid": "https://orcid.org/0000-0001-5970-6073",
+      "h_index": 93,
+      "i10_index": 250,
+      "works_count": 467,
+      "cited_by_count": 47168,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5080900762",
+      "display_name": "Ari Kalevi Leppäniemi",
+      "orcid": "https://orcid.org/0000-0002-6228-2619",
+      "h_index": 92,
+      "i10_index": 291,
+      "works_count": 599,
+      "cited_by_count": 38917,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5102886201",
+      "display_name": "Ronald V. Maier",
+      "orcid": "https://orcid.org/0000-0002-9687-206X",
+      "h_index": 91,
+      "i10_index": 312,
+      "works_count": 461,
+      "cited_by_count": 35110,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5046638139",
+      "display_name": "Joseph P. Ornato",
+      "orcid": "https://orcid.org/0000-0002-0333-4853",
+      "h_index": 90,
+      "i10_index": 225,
+      "works_count": 479,
+      "cited_by_count": 47287,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Emergency Medicine -- 9.7",
+      "id": "https://openalex.org/A5083278720",
+      "display_name": "Lance B. Becker",
+      "orcid": "https://orcid.org/0000-0001-7051-8778",
+      "h_index": 89,
+      "i10_index": 257,
+      "works_count": 563,
+      "cited_by_count": 41967,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5070951610",
+      "display_name": "Rolf L. Lefering",
+      "orcid": "https://orcid.org/0000-0002-0141-1747",
+      "h_index": 88,
+      "i10_index": 507,
+      "works_count": 888,
+      "cited_by_count": 38263,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5065284154",
+      "display_name": "Thomas D. Rea",
+      "orcid": "https://orcid.org/0000-0002-5143-9342",
+      "h_index": 88,
+      "i10_index": 264,
+      "works_count": 524,
+      "cited_by_count": 36206,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5080408573",
+      "display_name": "Peter Rhee",
+      "orcid": "https://orcid.org/0000-0003-3587-6240",
+      "h_index": 87,
+      "i10_index": 312,
+      "works_count": 543,
+      "cited_by_count": 28057,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5053916099",
+      "display_name": "Bruno Mégarbane",
+      "orcid": "https://orcid.org/0000-0002-2522-2764",
+      "h_index": 86,
+      "i10_index": 411,
+      "works_count": 1067,
+      "cited_by_count": 33858,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5077280166",
+      "display_name": "Bernd W. Böttiger",
+      "orcid": "https://orcid.org/0000-0001-8000-8931",
+      "h_index": 86,
+      "i10_index": 321,
+      "works_count": 737,
+      "cited_by_count": 42699,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5019447625",
+      "display_name": "Paul Ivor Dargan",
+      "orcid": "https://orcid.org/0000-0002-3433-9622",
+      "h_index": 86,
+      "i10_index": 309,
+      "works_count": 540,
+      "cited_by_count": 128387,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5063900162",
+      "display_name": "Andrew B. Peitzman",
+      "orcid": "https://orcid.org/0000-0001-7118-6576",
+      "h_index": 86,
+      "i10_index": 252,
+      "works_count": 394,
+      "cited_by_count": 29803,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5075209314",
+      "display_name": "Michael Carl Monuteaux",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 291,
+      "works_count": 475,
+      "cited_by_count": 26063,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5042670765",
+      "display_name": "Peter J. Kudenchuk",
+      "orcid": "https://orcid.org/0000-0003-1855-1102",
+      "h_index": 84,
+      "i10_index": 231,
+      "works_count": 421,
+      "cited_by_count": 28458,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5112800612",
+      "display_name": "Max Harry Weil",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 331,
+      "works_count": 745,
+      "cited_by_count": 25381,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Emergency Medicine -- 9.6",
+      "id": "https://openalex.org/A5041380580",
+      "display_name": "Alí Salim",
+      "orcid": "https://orcid.org/0000-0002-4719-0505",
+      "h_index": 83,
+      "i10_index": 325,
+      "works_count": 611,
+      "cited_by_count": 25218,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5086243822",
+      "display_name": "Paul S. Chan",
+      "orcid": "https://orcid.org/0000-0002-5185-3367",
+      "h_index": 83,
+      "i10_index": 256,
+      "works_count": 523,
+      "cited_by_count": 25083,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5111840739",
+      "display_name": "Karen J. Brasel",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 299,
+      "works_count": 508,
+      "cited_by_count": 24781,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5034102442",
+      "display_name": "Karl B. Kern",
+      "orcid": "https://orcid.org/0000-0002-8334-8189",
+      "h_index": 82,
+      "i10_index": 219,
+      "works_count": 398,
+      "cited_by_count": 28346,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5082870274",
+      "display_name": "Tom P. Aufderheide",
+      "orcid": "https://orcid.org/0000-0001-6086-0932",
+      "h_index": 82,
+      "i10_index": 209,
+      "works_count": 404,
+      "cited_by_count": 30757,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5032965096",
+      "display_name": "Adil Hussain Haider",
+      "orcid": "https://orcid.org/0000-0003-0101-5573",
+      "h_index": 81,
+      "i10_index": 332,
+      "works_count": 567,
+      "cited_by_count": 23644,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5007413782",
+      "display_name": "Belinda J. Gabbe",
+      "orcid": "https://orcid.org/0000-0001-7096-7688",
+      "h_index": 80,
+      "i10_index": 341,
+      "works_count": 668,
+      "cited_by_count": 68660,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5089504452",
+      "display_name": "Eileen M. Bulger",
+      "orcid": "https://orcid.org/0000-0002-7938-155X",
+      "h_index": 80,
+      "i10_index": 322,
+      "works_count": 506,
+      "cited_by_count": 28129,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5028430735",
+      "display_name": "Hans Friberg",
+      "orcid": "https://orcid.org/0000-0002-5588-0098",
+      "h_index": 80,
+      "i10_index": 224,
+      "works_count": 476,
+      "cited_by_count": 27858,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5081263490",
+      "display_name": "Michael William Donnino",
+      "orcid": "https://orcid.org/0000-0002-8541-8099",
+      "h_index": 79,
+      "i10_index": 210,
+      "works_count": 415,
+      "cited_by_count": 29968,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5056490381",
+      "display_name": "David C. Chang",
+      "orcid": "https://orcid.org/0000-0002-1414-1280",
+      "h_index": 78,
+      "i10_index": 346,
+      "works_count": 684,
+      "cited_by_count": 22272,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5070489762",
+      "display_name": "Elliott Richard Haut",
+      "orcid": "https://orcid.org/0000-0001-7075-771X",
+      "h_index": 78,
+      "i10_index": 297,
+      "works_count": 606,
+      "cited_by_count": 19785,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Emergency Medicine -- 9.5",
+      "id": "https://openalex.org/A5030995035",
+      "display_name": "Fiona Elizabeth Lecky",
+      "orcid": "https://orcid.org/0000-0001-6806-0921",
+      "h_index": 78,
+      "i10_index": 265,
+      "works_count": 535,
+      "cited_by_count": 27350,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5078893575",
+      "display_name": "Benjamin S. Abella",
+      "orcid": "https://orcid.org/0000-0003-2521-0891",
+      "h_index": 78,
+      "i10_index": 209,
+      "works_count": 595,
+      "cited_by_count": 24520,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5081909012",
+      "display_name": "Ahamed H. Idris",
+      "orcid": "https://orcid.org/0000-0001-7113-6499",
+      "h_index": 78,
+      "i10_index": 195,
+      "works_count": 384,
+      "cited_by_count": 24220,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5111925102",
+      "display_name": "Petter Andreas Steen",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 194,
+      "works_count": 328,
+      "cited_by_count": 22855,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5066817807",
+      "display_name": "Robert W. Neumar",
+      "orcid": "https://orcid.org/0000-0001-7942-8496",
+      "h_index": 78,
+      "i10_index": 171,
+      "works_count": 366,
+      "cited_by_count": 64582,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5067287880",
+      "display_name": "Peter Thomas Morley",
+      "orcid": "https://orcid.org/0000-0003-2653-090X",
+      "h_index": 78,
+      "i10_index": 151,
+      "works_count": 229,
+      "cited_by_count": 27863,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5040371388",
+      "display_name": "Nicholas Allan Buckley",
+      "orcid": "https://orcid.org/0000-0002-6326-4711",
+      "h_index": 77,
+      "i10_index": 318,
+      "works_count": 544,
+      "cited_by_count": 23195,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5078876786",
+      "display_name": "Claudio Sandroni",
+      "orcid": "https://orcid.org/0000-0002-8878-2611",
+      "h_index": 77,
+      "i10_index": 193,
+      "works_count": 374,
+      "cited_by_count": 32193,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5083808629",
+      "display_name": "Mickey S. Eisenberg",
+      "orcid": "https://orcid.org/0000-0002-7780-2090",
+      "h_index": 77,
+      "i10_index": 172,
+      "works_count": 277,
+      "cited_by_count": 24410,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5060632642",
+      "display_name": "Nathan Kuppermann",
+      "orcid": "https://orcid.org/0000-0002-7854-4943",
+      "h_index": 76,
+      "i10_index": 279,
+      "works_count": 536,
+      "cited_by_count": 22155,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5010409421",
+      "display_name": "Judith Finn",
+      "orcid": "https://orcid.org/0000-0002-7307-7944",
+      "h_index": 76,
+      "i10_index": 226,
+      "works_count": 490,
+      "cited_by_count": 22398,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Emergency Medicine -- 9.4",
+      "id": "https://openalex.org/A5046497176",
+      "display_name": "Rudolph Willem Koster",
+      "orcid": "https://orcid.org/0000-0002-7819-4330",
+      "h_index": 76,
+      "i10_index": 180,
+      "works_count": 372,
+      "cited_by_count": 33750,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5063675466",
+      "display_name": "Charles Mock",
+      "orcid": "https://orcid.org/0000-0001-7458-4748",
+      "h_index": 75,
+      "i10_index": 299,
+      "works_count": 523,
+      "cited_by_count": 78490,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5051760233",
+      "display_name": "James W. Davis",
+      "orcid": "https://orcid.org/0000-0002-2518-5844",
+      "h_index": 75,
+      "i10_index": 272,
+      "works_count": 481,
+      "cited_by_count": 21699,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5090011318",
+      "display_name": "Damon C. Scales",
+      "orcid": "https://orcid.org/0000-0001-7101-3958",
+      "h_index": 75,
+      "i10_index": 239,
+      "works_count": 425,
+      "cited_by_count": 20927,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5025345646",
+      "display_name": "Zsolt Janos Balogh",
+      "orcid": "https://orcid.org/0000-0002-0277-4822",
+      "h_index": 75,
+      "i10_index": 235,
+      "works_count": 519,
+      "cited_by_count": 28626,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5109354723",
+      "display_name": "Mary Fran Hazinski",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 150,
+      "works_count": 221,
+      "cited_by_count": 21891,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5051987955",
+      "display_name": "Jesse M. Pines",
+      "orcid": "https://orcid.org/0000-0003-2292-3052",
+      "h_index": 74,
+      "i10_index": 277,
+      "works_count": 759,
+      "cited_by_count": 23140,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5109191035",
+      "display_name": "Jason L. Sperry",
+      "orcid": "https://orcid.org/0000-0003-3917-6479",
+      "h_index": 74,
+      "i10_index": 228,
+      "works_count": 307,
+      "cited_by_count": 18239,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5089854058",
+      "display_name": "Charles D. Deakin",
+      "orcid": "https://orcid.org/0000-0002-2565-9771",
+      "h_index": 74,
+      "i10_index": 207,
+      "works_count": 396,
+      "cited_by_count": 34467,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5087685316",
+      "display_name": "Marcus Eng Hock Ong",
+      "orcid": "https://orcid.org/0000-0001-7874-7612",
+      "h_index": 73,
+      "i10_index": 363,
+      "works_count": 714,
+      "cited_by_count": 21498,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5038281562",
+      "display_name": "Robert S. Hoffman",
+      "orcid": "https://orcid.org/0000-0002-0091-9573",
+      "h_index": 73,
+      "i10_index": 297,
+      "works_count": 623,
+      "cited_by_count": 17812,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Emergency Medicine -- 9.3",
+      "id": "https://openalex.org/A5012751492",
+      "display_name": "Robert Greif",
+      "orcid": "https://orcid.org/0000-0003-0160-2073",
+      "h_index": 73,
+      "i10_index": 280,
+      "works_count": 790,
+      "cited_by_count": 23998,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5039598068",
+      "display_name": "Fikri M. Abu‐Zidan",
+      "orcid": "https://orcid.org/0000-0003-0143-8568",
+      "h_index": 73,
+      "i10_index": 264,
+      "works_count": 482,
+      "cited_by_count": 22128,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5035107407",
+      "display_name": "Gordon A. Ewy",
+      "orcid": "https://orcid.org/0000-0003-1885-6897",
+      "h_index": 73,
+      "i10_index": 199,
+      "works_count": 346,
+      "cited_by_count": 20505,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5026192603",
+      "display_name": "Henry E. Wang",
+      "orcid": "https://orcid.org/0000-0002-4738-0093",
+      "h_index": 72,
+      "i10_index": 310,
+      "works_count": 622,
+      "cited_by_count": 21844,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5110110163",
+      "display_name": "Edward E. Cornwell",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 192,
+      "works_count": 361,
+      "cited_by_count": 14913,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5008449628",
+      "display_name": "Tobias Cronberg",
+      "orcid": "https://orcid.org/0000-0002-3442-3058",
+      "h_index": 72,
+      "i10_index": 176,
+      "works_count": 358,
+      "cited_by_count": 25185,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5109972940",
+      "display_name": "Donald M. Yealy",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 230,
+      "works_count": 390,
+      "cited_by_count": 25585,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5087546110",
+      "display_name": "Theresa Mariero Olasveengen",
+      "orcid": "https://orcid.org/0000-0003-4924-3129",
+      "h_index": 71,
+      "i10_index": 152,
+      "works_count": 287,
+      "cited_by_count": 21683,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5044653498",
+      "display_name": "Peter J. Safar",
+      "orcid": "https://orcid.org/0000-0002-9502-3365",
+      "h_index": 70,
+      "i10_index": 230,
+      "works_count": 530,
+      "cited_by_count": 16816,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5083007909",
+      "display_name": "Raina M. Merchant",
+      "orcid": "https://orcid.org/0000-0002-9801-6881",
+      "h_index": 70,
+      "i10_index": 168,
+      "works_count": 279,
+      "cited_by_count": 25194,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5075243995",
+      "display_name": "Leo L Bossaert",
+      "orcid": "https://orcid.org/0000-0002-6092-3910",
+      "h_index": 70,
+      "i10_index": 165,
+      "works_count": 327,
+      "cited_by_count": 31242,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Emergency Medicine -- 9.2",
+      "id": "https://openalex.org/A5040924088",
+      "display_name": "Karen L. Smith",
+      "orcid": "https://orcid.org/0000-0002-9057-0685",
+      "h_index": 69,
+      "i10_index": 335,
+      "works_count": 668,
+      "cited_by_count": 25894,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5061283393",
+      "display_name": "Volker Wenzel",
+      "orcid": "https://orcid.org/0000-0002-2906-9509",
+      "h_index": 69,
+      "i10_index": 273,
+      "works_count": 540,
+      "cited_by_count": 20466,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5020206810",
+      "display_name": "Alexis Topjian",
+      "orcid": "https://orcid.org/0000-0001-7855-8627",
+      "h_index": 69,
+      "i10_index": 203,
+      "works_count": 433,
+      "cited_by_count": 17643,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5021323660",
+      "display_name": "Ian K. Maconochie",
+      "orcid": "https://orcid.org/0000-0001-6319-8550",
+      "h_index": 69,
+      "i10_index": 202,
+      "works_count": 442,
+      "cited_by_count": 20829,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5062214609",
+      "display_name": "Steven R. Shackford",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 185,
+      "works_count": 275,
+      "cited_by_count": 18783,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5052145396",
+      "display_name": "Michael J. Parr",
+      "orcid": "https://orcid.org/0000-0003-3507-474X",
+      "h_index": 69,
+      "i10_index": 168,
+      "works_count": 449,
+      "cited_by_count": 21945,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5110055655",
+      "display_name": "Lorne H. Blackbourne",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 161,
+      "works_count": 238,
+      "cited_by_count": 15476,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5025936190",
+      "display_name": "Maaret Kaarina Castrén",
+      "orcid": "https://orcid.org/0000-0001-7164-4733",
+      "h_index": 68,
+      "i10_index": 225,
+      "works_count": 358,
+      "cited_by_count": 21718,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5058743601",
+      "display_name": "Keith G. Lurie",
+      "orcid": "https://orcid.org/0000-0002-2689-3973",
+      "h_index": 68,
+      "i10_index": 211,
+      "works_count": 457,
+      "cited_by_count": 20061,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5078618702",
+      "display_name": "Fredrik Folke",
+      "orcid": "https://orcid.org/0000-0002-2284-7857",
+      "h_index": 68,
+      "i10_index": 210,
+      "works_count": 488,
+      "cited_by_count": 17412,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5069302582",
+      "display_name": "Dianne L. Atkins",
+      "orcid": "https://orcid.org/0000-0001-6123-3105",
+      "h_index": 68,
+      "i10_index": 151,
+      "works_count": 235,
+      "cited_by_count": 19736,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Emergency Medicine -- 9.1",
+      "id": "https://openalex.org/A5054011994",
+      "display_name": "Luke P. H. Leenen",
+      "orcid": "https://orcid.org/0000-0001-8385-1801",
+      "h_index": 67,
+      "i10_index": 316,
+      "works_count": 543,
+      "cited_by_count": 19416,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Emergency Medicine -- 9.0",
+      "id": "https://openalex.org/A5014950400",
+      "display_name": "Eddy Lang",
+      "orcid": "https://orcid.org/0000-0003-0850-4337",
+      "h_index": 67,
+      "i10_index": 248,
+      "works_count": 716,
+      "cited_by_count": 20665,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Emergency Medicine -- 9.0",
+      "id": "https://openalex.org/A5062437739",
+      "display_name": "Roland M Bingisser",
+      "orcid": "https://orcid.org/0000-0001-8223-9792",
+      "h_index": 67,
+      "i10_index": 198,
+      "works_count": 368,
+      "cited_by_count": 19180,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Emergency Medicine -- 9.0",
+      "id": "https://openalex.org/A5084328287",
+      "display_name": "Pierre A. Carli",
+      "orcid": "https://orcid.org/0000-0002-9188-6411",
+      "h_index": 67,
+      "i10_index": 196,
+      "works_count": 549,
+      "cited_by_count": 25222,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Emergency Medicine -- 9.0",
+      "id": "https://openalex.org/A5056116775",
+      "display_name": "Freddy Knudsen Lippert",
+      "orcid": "https://orcid.org/0000-0002-2356-8809",
+      "h_index": 67,
+      "i10_index": 183,
+      "works_count": 423,
+      "cited_by_count": 17223,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Emergency Medicine -- 9.0",
+      "id": "https://openalex.org/A5109216444",
+      "display_name": "Leif Anders Svensson",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 172,
+      "works_count": 298,
+      "cited_by_count": 15729,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5021405108",
+      "display_name": "Mary Ann Peberdy",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 166,
+      "works_count": 347,
+      "cited_by_count": 27125,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5031091805",
+      "display_name": "Michael K. Copass",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 107,
+      "works_count": 146,
+      "cited_by_count": 15920,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5089181636",
+      "display_name": "Lewis S. Nelson",
+      "orcid": "https://orcid.org/0000-0001-9551-3922",
+      "h_index": 66,
+      "i10_index": 268,
+      "works_count": 567,
+      "cited_by_count": 16384,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5008691276",
+      "display_name": "Jesper Kjærgaard",
+      "orcid": "https://orcid.org/0000-0001-5244-0399",
+      "h_index": 66,
+      "i10_index": 258,
+      "works_count": 482,
+      "cited_by_count": 19939,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5105465829",
+      "display_name": "Bertil Bouillon",
+      "orcid": "https://orcid.org/0000-0002-5048-1311",
+      "h_index": 66,
+      "i10_index": 206,
+      "works_count": 386,
+      "cited_by_count": 21600,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5066504880",
+      "display_name": "Matt P. Wise",
+      "orcid": "https://orcid.org/0000-0002-2763-4316",
+      "h_index": 66,
+      "i10_index": 176,
+      "works_count": 454,
+      "cited_by_count": 19882,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5074537027",
+      "display_name": "Lars W. Andersen",
+      "orcid": "https://orcid.org/0000-0001-5752-8082",
+      "h_index": 66,
+      "i10_index": 168,
+      "works_count": 299,
+      "cited_by_count": 16509,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5088508486",
+      "display_name": "Koenraad G. Monsieurs",
+      "orcid": "https://orcid.org/0000-0002-5068-4848",
+      "h_index": 66,
+      "i10_index": 156,
+      "works_count": 376,
+      "cited_by_count": 27474,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5066083330",
+      "display_name": "Michael A. Kuiper",
+      "orcid": "https://orcid.org/0000-0001-6201-7332",
+      "h_index": 66,
+      "i10_index": 140,
+      "works_count": 269,
+      "cited_by_count": 20712,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5067747941",
+      "display_name": "Bellal A Joseph",
+      "orcid": "https://orcid.org/0000-0002-2205-3061",
+      "h_index": 65,
+      "i10_index": 341,
+      "works_count": 705,
+      "cited_by_count": 17982,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5057826545",
+      "display_name": "Richard C. Dart",
+      "orcid": "https://orcid.org/0000-0001-5989-9354",
+      "h_index": 65,
+      "i10_index": 225,
+      "works_count": 408,
+      "cited_by_count": 15786,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Emergency Medicine -- 8.9",
+      "id": "https://openalex.org/A5089236278",
+      "display_name": "Christopher R. Carpenter",
+      "orcid": "https://orcid.org/0000-0002-2603-7157",
+      "h_index": 65,
+      "i10_index": 224,
+      "works_count": 583,
+      "cited_by_count": 16722,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5046564499",
+      "display_name": "Lynne Moore",
+      "orcid": "https://orcid.org/0000-0002-6143-8888",
+      "h_index": 65,
+      "i10_index": 186,
+      "works_count": 341,
+      "cited_by_count": 15785,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5021828664",
+      "display_name": "David Anthony Zideman",
+      "orcid": "https://orcid.org/0000-0002-7111-6161",
+      "h_index": 65,
+      "i10_index": 133,
+      "works_count": 239,
+      "cited_by_count": 25408,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5115599898",
+      "display_name": "Takashi Kawamura",
+      "orcid": "https://orcid.org/0000-0002-4539-1338",
+      "h_index": 64,
+      "i10_index": 277,
+      "works_count": 645,
+      "cited_by_count": 18285,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5055706380",
+      "display_name": "Timothy E. Albertson",
+      "orcid": "https://orcid.org/0000-0001-5724-3300",
+      "h_index": 64,
+      "i10_index": 224,
+      "works_count": 409,
+      "cited_by_count": 17291,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5044310926",
+      "display_name": "Todd E. Rasmussen",
+      "orcid": "https://orcid.org/0000-0003-1120-4116",
+      "h_index": 64,
+      "i10_index": 211,
+      "works_count": 413,
+      "cited_by_count": 19194,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5028938519",
+      "display_name": "Taku Iwami",
+      "orcid": "https://orcid.org/0000-0002-4150-7065",
+      "h_index": 64,
+      "i10_index": 207,
+      "works_count": 440,
+      "cited_by_count": 17416,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5077555252",
+      "display_name": "Markus B. Skrifvars",
+      "orcid": "https://orcid.org/0000-0002-0341-0262",
+      "h_index": 64,
+      "i10_index": 205,
+      "works_count": 385,
+      "cited_by_count": 20725,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5073355726",
+      "display_name": "Niklas Nielsen",
+      "orcid": "https://orcid.org/0000-0002-6013-126X",
+      "h_index": 64,
+      "i10_index": 195,
+      "works_count": 367,
+      "cited_by_count": 17624,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5023972779",
+      "display_name": "Craig D. Newgard",
+      "orcid": "https://orcid.org/0000-0003-1083-3455",
+      "h_index": 64,
+      "i10_index": 192,
+      "works_count": 295,
+      "cited_by_count": 12757,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5080702949",
+      "display_name": "Michael J. Schull",
+      "orcid": "https://orcid.org/0000-0002-1318-6364",
+      "h_index": 64,
+      "i10_index": 177,
+      "works_count": 335,
+      "cited_by_count": 17088,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5017007488",
+      "display_name": "Turner M. Osler",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 167,
+      "works_count": 257,
+      "cited_by_count": 15446,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5041288553",
+      "display_name": "Ken Hillman",
+      "orcid": "https://orcid.org/0000-0001-8241-0166",
+      "h_index": 64,
+      "i10_index": 166,
+      "works_count": 401,
+      "cited_by_count": 18413,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5006569138",
+      "display_name": "David T. Efron",
+      "orcid": "https://orcid.org/0009-0003-1136-7238",
+      "h_index": 64,
+      "i10_index": 147,
+      "works_count": 268,
+      "cited_by_count": 11770,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5073249579",
+      "display_name": "Christian Vaillancourt",
+      "orcid": "https://orcid.org/0000-0002-8563-4656",
+      "h_index": 64,
+      "i10_index": 145,
+      "works_count": 297,
+      "cited_by_count": 15234,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5102953440",
+      "display_name": "Simon Gates",
+      "orcid": "https://orcid.org/0000-0003-3193-0975",
+      "h_index": 64,
+      "i10_index": 121,
+      "works_count": 200,
+      "cited_by_count": 23631,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Emergency Medicine -- 8.8",
+      "id": "https://openalex.org/A5065646501",
+      "display_name": "Fritz R. Sterz",
+      "orcid": "https://orcid.org/0000-0001-5038-9083",
+      "h_index": 63,
+      "i10_index": 230,
+      "works_count": 484,
+      "cited_by_count": 17863,
+      "discipline": "Emergency Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Emergency Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    }
+  ]
+}

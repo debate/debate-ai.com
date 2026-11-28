@@ -1,0 +1,162 @@
+{
+  "kind": "subfield",
+  "id": 1402,
+  "name": "Accounting",
+  "total_in_scrape": 8,
+  "count": 8,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Accounting -- 9.9",
+      "id": "https://openalex.org/A5038646785",
+      "display_name": "Robert S. Kaplan",
+      "orcid": "https://orcid.org/0000-0001-7429-5583",
+      "h_index": 92,
+      "i10_index": 218,
+      "works_count": 470,
+      "cited_by_count": 89540,
+      "discipline": "Accounting",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Accounting",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Accounting -- 9.9",
+      "id": "https://openalex.org/A5046472405",
+      "display_name": "Rajiv D. Banker",
+      "orcid": "https://orcid.org/0000-0001-8082-7312",
+      "h_index": 88,
+      "i10_index": 196,
+      "works_count": 380,
+      "cited_by_count": 53385,
+      "discipline": "Accounting",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Accounting",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Accounting -- 9.9",
+      "id": "https://openalex.org/A5109069624",
+      "display_name": "Rob Gray",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 170,
+      "works_count": 349,
+      "cited_by_count": 38041,
+      "discipline": "Accounting",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Accounting",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Accounting -- 9.9",
+      "id": "https://openalex.org/A5031095812",
+      "display_name": "Andy D. Neely",
+      "orcid": "https://orcid.org/0000-0001-8220-5242",
+      "h_index": 75,
+      "i10_index": 164,
+      "works_count": 356,
+      "cited_by_count": 42739,
+      "discipline": "Accounting",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Accounting",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Accounting -- 9.9",
+      "id": "https://openalex.org/A5085423497",
+      "display_name": "Lee David Parker",
+      "orcid": "https://orcid.org/0000-0002-2335-6857",
+      "h_index": 73,
+      "i10_index": 167,
+      "works_count": 328,
+      "cited_by_count": 20442,
+      "discipline": "Accounting",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Accounting",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Accounting -- 9.9",
+      "id": "https://openalex.org/A5081428716",
+      "display_name": "Baruch Itamar Lev",
+      "orcid": "https://orcid.org/0000-0002-4402-2952",
+      "h_index": 73,
+      "i10_index": 132,
+      "works_count": 223,
+      "cited_by_count": 41351,
+      "discipline": "Accounting",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Accounting",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Accounting -- 9.8",
+      "id": "https://openalex.org/A5015932441",
+      "display_name": "Hartmut Schmidt",
+      "orcid": "https://orcid.org/0000-0002-2402-7764",
+      "h_index": 66,
+      "i10_index": 258,
+      "works_count": 823,
+      "cited_by_count": 24231,
+      "discipline": "Accounting",
+      "primary_field": "Medicine",
+      "primary_subfield": "Accounting",
+      "fields": [
+        "Medicine",
+        "Business, Management and Accounting",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Accounting -- 9.8",
+      "id": "https://openalex.org/A5069732179",
+      "display_name": "Charl de Villiers",
+      "orcid": "https://orcid.org/0000-0002-0715-8957",
+      "h_index": 64,
+      "i10_index": 117,
+      "works_count": 164,
+      "cited_by_count": 17367,
+      "discipline": "Accounting",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Accounting",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    }
+  ]
+}
