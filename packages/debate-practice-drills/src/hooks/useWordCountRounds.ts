@@ -19,7 +19,8 @@
  * A delete is the one write whose failure the user has to hear about: the
  * account would still hold the round, so the next merge (here or on another
  * device) brings it back. Every deleted `roundId` waits in
- * `pendingAccountDeletes` until the account confirms it. The merge leaves
+ * `pendingAccountDeletes` (persisted in `localStorage`, so it survives a tab
+ * close) until the account confirms it. The merge leaves
  * those ids out of the account's list before planning (so a delete made
  * while the first merge is still in flight isn't undone by it) and deletes
  * them from the account; whatever still fails comes back as
@@ -59,6 +60,7 @@ import {
   saveWordCountRoundToAccount,
 } from "../round/word-count-rounds-client";
 import { isWordCountRoundsLiveUpdateStorageEvent } from "../state/live-update";
+import { createPendingWordCountDeletes } from "../state/pendingWordCountDeletes";
 import { buildWordCountDeleteFailureMessage } from "../state/savedWordCountRounds";
 
 /** `attemptedDeleteIds`: the pending deletes this merge sent; `failedDeleteIds`: the ones the account refused. */
@@ -75,8 +77,13 @@ let remoteAvailable = false;
 let remoteMergePromise: Promise<MergeResult> | null = null;
 let mergeOutcome: MergeOutcome = "pending";
 let mergeSettledAt = 0;
-/** Rounds deleted in this browser that the account hasn't confirmed removing yet. */
-const pendingAccountDeletes = new Set<string>();
+/**
+ * Rounds deleted in this browser that the account hasn't confirmed removing
+ * yet. Kept in `localStorage` (`state/pendingWordCountDeletes.ts`), so a
+ * delete that failed before the tab closed is still sent by the next page
+ * load's merge instead of the round being adopted back.
+ */
+const pendingAccountDeletes = createPendingWordCountDeletes();
 
 /**
  * Deletes `roundIds` from the account and resolves with the ones that failed.
@@ -114,8 +121,8 @@ function ensureRemoteMerged(): Promise<MergeResult> {
         remoteAvailable = true;
 
         // A round deleted here is never adopted back; it is deleted from the account instead.
-        const deleting = [...pendingAccountDeletes];
-        const kept = remoteRecords.filter((record) => !pendingAccountDeletes.has(record.roundId));
+        const deleting = pendingAccountDeletes.values();
+        const kept = remoteRecords.filter((record) => !deleting.includes(record.roundId));
         const { adopt, pushLocal } = planWordCountRoundMerge(listWordCountRounds(), kept);
         for (const remote of adopt) adoptWordCountRound(remote);
         for (const local of pushLocal) {

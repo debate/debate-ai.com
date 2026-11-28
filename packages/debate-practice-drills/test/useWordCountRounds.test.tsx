@@ -445,6 +445,66 @@ describe("useWordCountRounds failed account deletes", () => {
     expect(result.current.accountDeleteError).toBe("");
   });
 
+  /** Closes the tab: unmounts and reloads the hook's module (its in-memory state goes), keeping `localStorage`. */
+  async function reloadPage() {
+    await rendered?.unmount();
+    rendered = null;
+    vi.resetModules();
+    hookModule = await import("../src/hooks/useWordCountRounds");
+    state = await import("@debate-ai/round/src/state/wordCountRounds");
+  }
+
+  it("sends a delete that failed before the tab closed on the next page load, instead of adopting the round back", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([round({ roundId: "a", createdAt: 1, updatedAt: 2 })]);
+    client.deleteSavedWordCountRoundFromAccount.mockImplementation(offline);
+    let result = await render();
+    await flush(() => result.current.deleteRound("a"));
+    expect(result.current.accountDeleteError).not.toBe("");
+
+    await reloadPage();
+    client.deleteSavedWordCountRoundFromAccount.mockReset();
+    client.deleteSavedWordCountRoundFromAccount.mockResolvedValue(undefined);
+    result = await render();
+
+    expect(state.getWordCountRound("a")).toBeUndefined();
+    expect(result.current.rounds).toEqual([]);
+    expect(result.current.syncNotice).toBe("");
+    expect(client.deleteSavedWordCountRoundFromAccount).toHaveBeenCalledWith("a");
+    expect(result.current.accountDeleteError).toBe("");
+
+    // Confirmed, so a third page load sends nothing more.
+    await reloadPage();
+    client.deleteSavedWordCountRoundFromAccount.mockClear();
+    client.listSavedWordCountRounds.mockResolvedValue([]);
+    await render();
+    expect(client.deleteSavedWordCountRoundFromAccount).not.toHaveBeenCalled();
+  });
+
+  it("names a delete still failing on the next page load", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([round({ roundId: "a", createdAt: 1, updatedAt: 2 })]);
+    client.deleteSavedWordCountRoundFromAccount.mockImplementation(offline);
+    let result = await render();
+    await flush(() => result.current.deleteRound("a"));
+
+    await reloadPage();
+    result = await render();
+    expect(state.getWordCountRound("a")).toBeUndefined();
+    expect(result.current.accountDeleteError).toContain('round "a"');
+  });
+
+  it("forgets pending deletes once the next page load finds the browser signed out", async () => {
+    client.listSavedWordCountRounds.mockResolvedValue([round({ roundId: "a", createdAt: 1, updatedAt: 2 })]);
+    client.deleteSavedWordCountRoundFromAccount.mockImplementation(offline);
+    const result = await render();
+    await flush(() => result.current.deleteRound("a"));
+
+    await reloadPage();
+    client.listSavedWordCountRounds.mockResolvedValue(null);
+    await render();
+    const pending = await import("../src/state/pendingWordCountDeletes");
+    expect(localStorage.getItem(pending.PENDING_WORD_COUNT_DELETES_KEY)).toBeNull();
+  });
+
   it("sends nothing signed out", async () => {
     client.listSavedWordCountRounds.mockResolvedValue(null);
     const result = await render();
