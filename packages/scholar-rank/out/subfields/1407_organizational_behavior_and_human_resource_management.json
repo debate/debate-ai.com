@@ -1,0 +1,2400 @@
+{
+  "kind": "subfield",
+  "id": 1407,
+  "name": "Organizational Behavior and Human Resource Management",
+  "total_in_scrape": 123,
+  "count": 123,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.9",
+      "id": "https://openalex.org/A5137713346",
+      "display_name": "Arnold B. Bakker",
+      "orcid": "https://orcid.org/0000-0003-1489-1847",
+      "h_index": 204,
+      "i10_index": 518,
+      "works_count": 898,
+      "cited_by_count": 292531,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.9",
+      "id": "https://openalex.org/A5014047987",
+      "display_name": "Timothy A. Judge",
+      "orcid": "https://orcid.org/0000-0002-5636-1521",
+      "h_index": 139,
+      "i10_index": 218,
+      "works_count": 338,
+      "cited_by_count": 123630,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.9",
+      "id": "https://openalex.org/A5027950123",
+      "display_name": "Evangelia Demerouti",
+      "orcid": "https://orcid.org/0000-0002-4615-6532",
+      "h_index": 123,
+      "i10_index": 251,
+      "works_count": 435,
+      "cited_by_count": 148414,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.9",
+      "id": "https://openalex.org/A5062311113",
+      "display_name": "Paul E. Spector",
+      "orcid": "https://orcid.org/0000-0002-6881-8496",
+      "h_index": 122,
+      "i10_index": 269,
+      "works_count": 503,
+      "cited_by_count": 86060,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine",
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.9",
+      "id": "https://openalex.org/A5102770532",
+      "display_name": "Gerald R. Ferris",
+      "orcid": "https://orcid.org/0000-0002-9732-4524",
+      "h_index": 118,
+      "i10_index": 292,
+      "works_count": 450,
+      "cited_by_count": 47572,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.9",
+      "id": "https://openalex.org/A5016949551",
+      "display_name": "Bruce J. Avolio",
+      "orcid": "https://orcid.org/0000-0001-7334-5630",
+      "h_index": 117,
+      "i10_index": 188,
+      "works_count": 353,
+      "cited_by_count": 122412,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5030029379",
+      "display_name": "Mats G Alvesson",
+      "orcid": "https://orcid.org/0000-0001-8709-4684",
+      "h_index": 112,
+      "i10_index": 239,
+      "works_count": 599,
+      "cited_by_count": 75922,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5080734771",
+      "display_name": "Danny Miller",
+      "orcid": "https://orcid.org/0000-0001-8428-7640",
+      "h_index": 111,
+      "i10_index": 210,
+      "works_count": 306,
+      "cited_by_count": 78642,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5085377184",
+      "display_name": "Jeffrey Pfeffer",
+      "orcid": "https://orcid.org/0000-0002-6278-9735",
+      "h_index": 107,
+      "i10_index": 203,
+      "works_count": 340,
+      "cited_by_count": 74540,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5063768682",
+      "display_name": "Donald C. Hambrick",
+      "orcid": "https://orcid.org/0000-0003-4154-2538",
+      "h_index": 103,
+      "i10_index": 133,
+      "works_count": 212,
+      "cited_by_count": 89683,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5039308222",
+      "display_name": "Fred Luthans",
+      "orcid": null,
+      "h_index": 102,
+      "i10_index": 197,
+      "works_count": 333,
+      "cited_by_count": 92705,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5067660877",
+      "display_name": "Herman Aguinis",
+      "orcid": "https://orcid.org/0000-0002-3485-9484",
+      "h_index": 100,
+      "i10_index": 235,
+      "works_count": 375,
+      "cited_by_count": 56636,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5065760127",
+      "display_name": "Denise M. Rousseau",
+      "orcid": "https://orcid.org/0000-0001-6067-4363",
+      "h_index": 100,
+      "i10_index": 194,
+      "works_count": 344,
+      "cited_by_count": 77456,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5103510245",
+      "display_name": "Daniel Charles Feldman",
+      "orcid": null,
+      "h_index": 98,
+      "i10_index": 163,
+      "works_count": 207,
+      "cited_by_count": 44283,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5112293088",
+      "display_name": "Ronald John Burke",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 422,
+      "works_count": 779,
+      "cited_by_count": 30969,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5100660769",
+      "display_name": "Mo Wang",
+      "orcid": "https://orcid.org/0000-0001-7004-3549",
+      "h_index": 92,
+      "i10_index": 261,
+      "works_count": 543,
+      "cited_by_count": 33291,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Organizational Behavior and Human Resource Management -- 9.8",
+      "id": "https://openalex.org/A5059628895",
+      "display_name": "Hugh Christopher Willmott",
+      "orcid": "https://orcid.org/0000-0003-1321-7041",
+      "h_index": 92,
+      "i10_index": 230,
+      "works_count": 479,
+      "cited_by_count": 33169,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5062601008",
+      "display_name": "Gary P. Latham",
+      "orcid": "https://orcid.org/0000-0001-5922-0321",
+      "h_index": 92,
+      "i10_index": 207,
+      "works_count": 347,
+      "cited_by_count": 63157,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5040861924",
+      "display_name": "Osman M. Karatepe",
+      "orcid": "https://orcid.org/0000-0003-3120-8755",
+      "h_index": 92,
+      "i10_index": 203,
+      "works_count": 275,
+      "cited_by_count": 24823,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5031239757",
+      "display_name": "Richard Whittington",
+      "orcid": "https://orcid.org/0000-0002-5185-4626",
+      "h_index": 91,
+      "i10_index": 329,
+      "works_count": 563,
+      "cited_by_count": 38309,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Medicine",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5055735242",
+      "display_name": "Dirk De Clercq",
+      "orcid": "https://orcid.org/0000-0003-1476-2965",
+      "h_index": 91,
+      "i10_index": 277,
+      "works_count": 399,
+      "cited_by_count": 27577,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5061427447",
+      "display_name": "Filip Lievens",
+      "orcid": "https://orcid.org/0000-0002-9487-5187",
+      "h_index": 91,
+      "i10_index": 227,
+      "works_count": 452,
+      "cited_by_count": 27586,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5016251055",
+      "display_name": "Sharon Kaye Parker",
+      "orcid": "https://orcid.org/0000-0002-0978-1873",
+      "h_index": 91,
+      "i10_index": 209,
+      "works_count": 476,
+      "cited_by_count": 49560,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5038755271",
+      "display_name": "Max H. Bazerman",
+      "orcid": "https://orcid.org/0000-0002-7009-3340",
+      "h_index": 91,
+      "i10_index": 202,
+      "works_count": 485,
+      "cited_by_count": 31777,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5023248014",
+      "display_name": "Michael P. Leiter",
+      "orcid": "https://orcid.org/0000-0001-5680-0363",
+      "h_index": 91,
+      "i10_index": 166,
+      "works_count": 298,
+      "cited_by_count": 91555,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5028885320",
+      "display_name": "Hannes Zacher",
+      "orcid": "https://orcid.org/0000-0001-6336-2947",
+      "h_index": 90,
+      "i10_index": 256,
+      "works_count": 640,
+      "cited_by_count": 30975,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5013913578",
+      "display_name": "Julian I. Barling",
+      "orcid": "https://orcid.org/0000-0002-4334-5901",
+      "h_index": 90,
+      "i10_index": 208,
+      "works_count": 462,
+      "cited_by_count": 35449,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Organizational Behavior and Human Resource Management -- 9.7",
+      "id": "https://openalex.org/A5032957150",
+      "display_name": "James J. Chrisman",
+      "orcid": "https://orcid.org/0000-0003-0873-8280",
+      "h_index": 90,
+      "i10_index": 154,
+      "works_count": 263,
+      "cited_by_count": 45705,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5080767366",
+      "display_name": "Stewart Roger Clegg",
+      "orcid": "https://orcid.org/0000-0001-6083-4283",
+      "h_index": 89,
+      "i10_index": 391,
+      "works_count": 925,
+      "cited_by_count": 32624,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5062289104",
+      "display_name": "Alfredo De Massis",
+      "orcid": "https://orcid.org/0000-0001-5552-6497",
+      "h_index": 87,
+      "i10_index": 192,
+      "works_count": 518,
+      "cited_by_count": 28991,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5059018142",
+      "display_name": "Rolf van Dick",
+      "orcid": "https://orcid.org/0000-0002-6308-9466",
+      "h_index": 86,
+      "i10_index": 215,
+      "works_count": 493,
+      "cited_by_count": 28538,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5071912321",
+      "display_name": "Yehuda Baruch",
+      "orcid": "https://orcid.org/0000-0002-0678-6273",
+      "h_index": 86,
+      "i10_index": 213,
+      "works_count": 368,
+      "cited_by_count": 32466,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5068372974",
+      "display_name": "Ståle Valvatne Einarsen",
+      "orcid": "https://orcid.org/0000-0002-2999-1579",
+      "h_index": 86,
+      "i10_index": 174,
+      "works_count": 214,
+      "cited_by_count": 34028,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5078272344",
+      "display_name": "Karl E. Weick",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 170,
+      "works_count": 329,
+      "cited_by_count": 93889,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5073551311",
+      "display_name": "Linda Klebe Treviño",
+      "orcid": "https://orcid.org/0009-0002-2920-371X",
+      "h_index": 86,
+      "i10_index": 134,
+      "works_count": 209,
+      "cited_by_count": 71681,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5055856506",
+      "display_name": "Pawan S Budhwar",
+      "orcid": "https://orcid.org/0000-0001-8915-6172",
+      "h_index": 84,
+      "i10_index": 245,
+      "works_count": 447,
+      "cited_by_count": 30328,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5112294555",
+      "display_name": "Edward E. Lawler",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 185,
+      "works_count": 333,
+      "cited_by_count": 32943,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5081433107",
+      "display_name": "Luis R. Gómez‐Mejía",
+      "orcid": "https://orcid.org/0000-0001-6049-7950",
+      "h_index": 84,
+      "i10_index": 151,
+      "works_count": 278,
+      "cited_by_count": 49158,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Organizational Behavior and Human Resource Management -- 9.6",
+      "id": "https://openalex.org/A5007612263",
+      "display_name": "K. Michele Kacmar",
+      "orcid": "https://orcid.org/0000-0002-0244-0718",
+      "h_index": 83,
+      "i10_index": 155,
+      "works_count": 272,
+      "cited_by_count": 33884,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5026435063",
+      "display_name": "Blake E. Ashforth",
+      "orcid": "https://orcid.org/0000-0003-2244-529X",
+      "h_index": 83,
+      "i10_index": 131,
+      "works_count": 204,
+      "cited_by_count": 85629,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5074899931",
+      "display_name": "Masduki Asbari",
+      "orcid": "https://orcid.org/0000-0003-2460-9171",
+      "h_index": 82,
+      "i10_index": 368,
+      "works_count": 589,
+      "cited_by_count": 22094,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5112003975",
+      "display_name": "Terence R. Mitchell",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 158,
+      "works_count": 246,
+      "cited_by_count": 48190,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5064596683",
+      "display_name": "Abraham Carmeli",
+      "orcid": "https://orcid.org/0000-0002-1968-8998",
+      "h_index": 82,
+      "i10_index": 127,
+      "works_count": 212,
+      "cited_by_count": 28167,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5091878227",
+      "display_name": "Terry A. Beehr",
+      "orcid": "https://orcid.org/0000-0001-8537-1553",
+      "h_index": 81,
+      "i10_index": 165,
+      "works_count": 314,
+      "cited_by_count": 28692,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5022897128",
+      "display_name": "Russell Cropanzano",
+      "orcid": "https://orcid.org/0000-0002-2557-8402",
+      "h_index": 81,
+      "i10_index": 155,
+      "works_count": 243,
+      "cited_by_count": 62736,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5038384868",
+      "display_name": "Beatrice I. J. M. Van der Heijden",
+      "orcid": "https://orcid.org/0000-0001-8672-5368",
+      "h_index": 80,
+      "i10_index": 257,
+      "works_count": 973,
+      "cited_by_count": 25892,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5084293786",
+      "display_name": "Neal Mark Ashkanasy",
+      "orcid": "https://orcid.org/0000-0001-6422-1425",
+      "h_index": 80,
+      "i10_index": 205,
+      "works_count": 697,
+      "cited_by_count": 29769,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5108337915",
+      "display_name": "James G. March",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 156,
+      "works_count": 358,
+      "cited_by_count": 121048,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5075195905",
+      "display_name": "David A. Waldman",
+      "orcid": "https://orcid.org/0000-0002-7140-8762",
+      "h_index": 80,
+      "i10_index": 145,
+      "works_count": 256,
+      "cited_by_count": 31457,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5017005488",
+      "display_name": "Deanne N. Den Hartog",
+      "orcid": "https://orcid.org/0000-0003-0179-4052",
+      "h_index": 80,
+      "i10_index": 125,
+      "works_count": 291,
+      "cited_by_count": 35242,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Organizational Behavior and Human Resource Management -- 9.5",
+      "id": "https://openalex.org/A5027908155",
+      "display_name": "Agus Joko Purwanto",
+      "orcid": "https://orcid.org/0000-0002-5807-0736",
+      "h_index": 79,
+      "i10_index": 260,
+      "works_count": 615,
+      "cited_by_count": 20772,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5013307814",
+      "display_name": "Chris J. Brewster",
+      "orcid": "https://orcid.org/0000-0001-5314-1518",
+      "h_index": 79,
+      "i10_index": 233,
+      "works_count": 516,
+      "cited_by_count": 22591,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5063072527",
+      "display_name": "Ryan D. Duffy",
+      "orcid": "https://orcid.org/0000-0001-7418-3274",
+      "h_index": 79,
+      "i10_index": 146,
+      "works_count": 257,
+      "cited_by_count": 25085,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Psychology",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5002590515",
+      "display_name": "Douglas Tim Hall",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 145,
+      "works_count": 288,
+      "cited_by_count": 33532,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5032739474",
+      "display_name": "Alexander Newman",
+      "orcid": "https://orcid.org/0000-0003-1170-8947",
+      "h_index": 79,
+      "i10_index": 133,
+      "works_count": 213,
+      "cited_by_count": 27507,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5111464933",
+      "display_name": "Charles A. O’Reilly",
+      "orcid": "https://orcid.org/0000-0002-3264-4199",
+      "h_index": 78,
+      "i10_index": 129,
+      "works_count": 241,
+      "cited_by_count": 61596,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5057116410",
+      "display_name": "Robert C. Liden",
+      "orcid": "https://orcid.org/0000-0001-6228-1328",
+      "h_index": 78,
+      "i10_index": 126,
+      "works_count": 199,
+      "cited_by_count": 59696,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5089316631",
+      "display_name": "Nelson Phillips",
+      "orcid": "https://orcid.org/0000-0001-6863-2758",
+      "h_index": 77,
+      "i10_index": 119,
+      "works_count": 265,
+      "cited_by_count": 29623,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5037964907",
+      "display_name": "José María Peiró Silla",
+      "orcid": "https://orcid.org/0000-0001-5293-0355",
+      "h_index": 75,
+      "i10_index": 289,
+      "works_count": 572,
+      "cited_by_count": 25936,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5114257104",
+      "display_name": "Dean Tjosvold",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 229,
+      "works_count": 424,
+      "cited_by_count": 18629,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5042136985",
+      "display_name": "Franz Willi Kellermanns",
+      "orcid": "https://orcid.org/0000-0002-1441-5026",
+      "h_index": 75,
+      "i10_index": 151,
+      "works_count": 282,
+      "cited_by_count": 25749,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Organizational Behavior and Human Resource Management -- 9.4",
+      "id": "https://openalex.org/A5078066738",
+      "display_name": "Bernard M. Bass",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 170,
+      "works_count": 371,
+      "cited_by_count": 101857,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5026449099",
+      "display_name": "E. Kevin Kelloway",
+      "orcid": "https://orcid.org/0000-0001-9979-7344",
+      "h_index": 74,
+      "i10_index": 169,
+      "works_count": 328,
+      "cited_by_count": 32785,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5070426707",
+      "display_name": "R. Edward Freeman",
+      "orcid": "https://orcid.org/0000-0002-0721-5878",
+      "h_index": 74,
+      "i10_index": 151,
+      "works_count": 493,
+      "cited_by_count": 71677,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5087106540",
+      "display_name": "Francis J. Yammarino",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 147,
+      "works_count": 236,
+      "cited_by_count": 23051,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5053226584",
+      "display_name": "Patrick M. Wright",
+      "orcid": "https://orcid.org/0000-0002-3393-9589",
+      "h_index": 74,
+      "i10_index": 141,
+      "works_count": 238,
+      "cited_by_count": 44789,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5088792789",
+      "display_name": "Eero Vaara",
+      "orcid": "https://orcid.org/0000-0001-7609-0135",
+      "h_index": 74,
+      "i10_index": 139,
+      "works_count": 341,
+      "cited_by_count": 24307,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5085837820",
+      "display_name": "Andrew H. Van de Ven",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 126,
+      "works_count": 220,
+      "cited_by_count": 64922,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5113954620",
+      "display_name": "Jerald Greenberg",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 113,
+      "works_count": 166,
+      "cited_by_count": 30841,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5068789165",
+      "display_name": "Miguel Piña e Cunha",
+      "orcid": "https://orcid.org/0000-0001-6724-2440",
+      "h_index": 73,
+      "i10_index": 252,
+      "works_count": 611,
+      "cited_by_count": 21483,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5049565348",
+      "display_name": "Pamela L. Perrewé",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 163,
+      "works_count": 277,
+      "cited_by_count": 19803,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5081884995",
+      "display_name": "Scott John Vitell",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 113,
+      "works_count": 150,
+      "cited_by_count": 20947,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Organizational Behavior and Human Resource Management -- 9.3",
+      "id": "https://openalex.org/A5059374621",
+      "display_name": "David Grayson Allen",
+      "orcid": "https://orcid.org/0000-0003-0067-2117",
+      "h_index": 72,
+      "i10_index": 182,
+      "works_count": 374,
+      "cited_by_count": 26599,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5066363875",
+      "display_name": "Robert E. Ployhart",
+      "orcid": "https://orcid.org/0000-0003-1815-9215",
+      "h_index": 72,
+      "i10_index": 122,
+      "works_count": 241,
+      "cited_by_count": 24766,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5026578469",
+      "display_name": "Anne S. Tsui",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 110,
+      "works_count": 233,
+      "cited_by_count": 34801,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5059129402",
+      "display_name": "Ann Langley",
+      "orcid": "https://orcid.org/0000-0003-3666-328X",
+      "h_index": 71,
+      "i10_index": 152,
+      "works_count": 338,
+      "cited_by_count": 36763,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5109978106",
+      "display_name": "Michael T. Hannan",
+      "orcid": "https://orcid.org/0000-0002-7664-9565",
+      "h_index": 71,
+      "i10_index": 111,
+      "works_count": 280,
+      "cited_by_count": 46673,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5083399745",
+      "display_name": "Remus Ilieș",
+      "orcid": "https://orcid.org/0000-0001-9453-895X",
+      "h_index": 71,
+      "i10_index": 102,
+      "works_count": 192,
+      "cited_by_count": 32179,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5003201440",
+      "display_name": "Jane E. Dutton",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 99,
+      "works_count": 169,
+      "cited_by_count": 62605,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5025486785",
+      "display_name": "Fang Lee Cooke",
+      "orcid": "https://orcid.org/0000-0003-0337-6591",
+      "h_index": 70,
+      "i10_index": 192,
+      "works_count": 452,
+      "cited_by_count": 16361,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5111617712",
+      "display_name": "Chris Argyris",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 134,
+      "works_count": 313,
+      "cited_by_count": 34971,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5059061506",
+      "display_name": "Russell Eric Johnson",
+      "orcid": "https://orcid.org/0000-0002-1123-9207",
+      "h_index": 70,
+      "i10_index": 127,
+      "works_count": 250,
+      "cited_by_count": 20289,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5050328891",
+      "display_name": "Michael A. Campion",
+      "orcid": "https://orcid.org/0000-0001-7066-2788",
+      "h_index": 70,
+      "i10_index": 124,
+      "works_count": 231,
+      "cited_by_count": 27869,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Organizational Behavior and Human Resource Management -- 9.2",
+      "id": "https://openalex.org/A5034284700",
+      "display_name": "John M. Schaubroeck",
+      "orcid": "https://orcid.org/0000-0001-9204-3603",
+      "h_index": 70,
+      "i10_index": 107,
+      "works_count": 174,
+      "cited_by_count": 21532,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5022520351",
+      "display_name": "David Knights",
+      "orcid": "https://orcid.org/0000-0003-0072-0393",
+      "h_index": 69,
+      "i10_index": 167,
+      "works_count": 367,
+      "cited_by_count": 18227,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5021909605",
+      "display_name": "Ann Marie Ryan",
+      "orcid": "https://orcid.org/0000-0001-9668-4125",
+      "h_index": 69,
+      "i10_index": 163,
+      "works_count": 312,
+      "cited_by_count": 17210,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5091214938",
+      "display_name": "David E. Guest",
+      "orcid": "https://orcid.org/0000-0003-0457-6077",
+      "h_index": 69,
+      "i10_index": 126,
+      "works_count": 261,
+      "cited_by_count": 31495,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5081935227",
+      "display_name": "Joep Cornelissen",
+      "orcid": "https://orcid.org/0000-0003-2500-3876",
+      "h_index": 69,
+      "i10_index": 124,
+      "works_count": 226,
+      "cited_by_count": 18295,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5003931866",
+      "display_name": "Amy C. Edmondson",
+      "orcid": "https://orcid.org/0000-0003-4409-913X",
+      "h_index": 69,
+      "i10_index": 122,
+      "works_count": 343,
+      "cited_by_count": 69167,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5046587712",
+      "display_name": "Philip M. Podsakoff",
+      "orcid": "https://orcid.org/0000-0002-8997-8974",
+      "h_index": 69,
+      "i10_index": 95,
+      "works_count": 132,
+      "cited_by_count": 208676,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5054052202",
+      "display_name": "Wayne A. Hochwarter",
+      "orcid": "https://orcid.org/0000-0002-1332-558X",
+      "h_index": 68,
+      "i10_index": 131,
+      "works_count": 205,
+      "cited_by_count": 16976,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5055682780",
+      "display_name": "Karl F. Aquino",
+      "orcid": "https://orcid.org/0000-0003-0710-4120",
+      "h_index": 68,
+      "i10_index": 112,
+      "works_count": 213,
+      "cited_by_count": 27631,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5050282672",
+      "display_name": "Randall S. Schüler",
+      "orcid": "https://orcid.org/0009-0005-3690-8621",
+      "h_index": 67,
+      "i10_index": 127,
+      "works_count": 279,
+      "cited_by_count": 30006,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5015191396",
+      "display_name": "Cynthia Hardy",
+      "orcid": "https://orcid.org/0000-0002-2612-7304",
+      "h_index": 67,
+      "i10_index": 115,
+      "works_count": 207,
+      "cited_by_count": 32370,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Organizational Behavior and Human Resource Management -- 9.1",
+      "id": "https://openalex.org/A5029658176",
+      "display_name": "Dawn S. Carlson",
+      "orcid": "https://orcid.org/0000-0001-7236-2463",
+      "h_index": 67,
+      "i10_index": 98,
+      "works_count": 162,
+      "cited_by_count": 23530,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.0",
+      "id": "https://openalex.org/A5045611721",
+      "display_name": "Fred Ochieng Walumbwa",
+      "orcid": "https://orcid.org/0000-0002-8038-3608",
+      "h_index": 67,
+      "i10_index": 95,
+      "works_count": 153,
+      "cited_by_count": 40502,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.0",
+      "id": "https://openalex.org/A5047025459",
+      "display_name": "Edgar H. Schein",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 149,
+      "works_count": 330,
+      "cited_by_count": 52741,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.0",
+      "id": "https://openalex.org/A5050373978",
+      "display_name": "Talya N. Bauer",
+      "orcid": "https://orcid.org/0000-0002-6443-636X",
+      "h_index": 66,
+      "i10_index": 139,
+      "works_count": 266,
+      "cited_by_count": 22153,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.0",
+      "id": "https://openalex.org/A5046537196",
+      "display_name": "Taru Feldt",
+      "orcid": "https://orcid.org/0000-0001-7354-0487",
+      "h_index": 66,
+      "i10_index": 139,
+      "works_count": 184,
+      "cited_by_count": 13825,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Organizational Behavior and Human Resource Management -- 9.0",
+      "id": "https://openalex.org/A5015663807",
+      "display_name": "Simon Lloyd D. Restubog",
+      "orcid": "https://orcid.org/0000-0003-1602-2530",
+      "h_index": 66,
+      "i10_index": 127,
+      "works_count": 205,
+      "cited_by_count": 15502,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5004345090",
+      "display_name": "David A. Harrison",
+      "orcid": "https://orcid.org/0000-0001-5247-3633",
+      "h_index": 66,
+      "i10_index": 86,
+      "works_count": 140,
+      "cited_by_count": 45416,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5012436442",
+      "display_name": "Adam M. Grant",
+      "orcid": "https://orcid.org/0000-0001-8637-7447",
+      "h_index": 66,
+      "i10_index": 79,
+      "works_count": 135,
+      "cited_by_count": 36062,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5073051796",
+      "display_name": "Susan J. Ashford",
+      "orcid": "https://orcid.org/0000-0002-9838-7447",
+      "h_index": 66,
+      "i10_index": 79,
+      "works_count": 150,
+      "cited_by_count": 34833,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5081043517",
+      "display_name": "Eric G. Lambert",
+      "orcid": "https://orcid.org/0000-0002-8997-4754",
+      "h_index": 65,
+      "i10_index": 243,
+      "works_count": 375,
+      "cited_by_count": 16411,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5004491755",
+      "display_name": "Michael Ronald Buckley",
+      "orcid": "https://orcid.org/0000-0002-3713-3347",
+      "h_index": 65,
+      "i10_index": 144,
+      "works_count": 213,
+      "cited_by_count": 17206,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5043709424",
+      "display_name": "Christian Vandenberghe",
+      "orcid": "https://orcid.org/0000-0002-9707-3171",
+      "h_index": 65,
+      "i10_index": 137,
+      "works_count": 271,
+      "cited_by_count": 21885,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Nursing",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5101529477",
+      "display_name": "Neil R. Anderson",
+      "orcid": "https://orcid.org/0000-0002-1831-007X",
+      "h_index": 65,
+      "i10_index": 130,
+      "works_count": 254,
+      "cited_by_count": 27661,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5047024692",
+      "display_name": "W. Richard Scott",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 126,
+      "works_count": 325,
+      "cited_by_count": 43451,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5035107606",
+      "display_name": "Wayne F. Cascio",
+      "orcid": "https://orcid.org/0000-0002-7757-6046",
+      "h_index": 65,
+      "i10_index": 123,
+      "works_count": 262,
+      "cited_by_count": 19619,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5109230033",
+      "display_name": "John W. Slocum",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 117,
+      "works_count": 181,
+      "cited_by_count": 16937,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5091476524",
+      "display_name": "Henrich R. Greve",
+      "orcid": "https://orcid.org/0000-0002-7927-6573",
+      "h_index": 65,
+      "i10_index": 101,
+      "works_count": 263,
+      "cited_by_count": 27433,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Organizational Behavior and Human Resource Management -- 8.9",
+      "id": "https://openalex.org/A5069351565",
+      "display_name": "Gary A. Yukl",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 91,
+      "works_count": 125,
+      "cited_by_count": 32667,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5077491278",
+      "display_name": "Paula Ann Brough",
+      "orcid": "https://orcid.org/0000-0002-0374-0026",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 339,
+      "cited_by_count": 14887,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5040525254",
+      "display_name": "Mark Anthony Griffin",
+      "orcid": "https://orcid.org/0000-0003-4326-7752",
+      "h_index": 64,
+      "i10_index": 127,
+      "works_count": 283,
+      "cited_by_count": 28951,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5112904987",
+      "display_name": "Andrew Pettigrew",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 117,
+      "works_count": 183,
+      "cited_by_count": 34281,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5008152084",
+      "display_name": "Leigh Thompson",
+      "orcid": "https://orcid.org/0000-0001-6593-550X",
+      "h_index": 64,
+      "i10_index": 112,
+      "works_count": 176,
+      "cited_by_count": 19929,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5075324044",
+      "display_name": "Glenn R. Carroll",
+      "orcid": "https://orcid.org/0000-0001-7718-9348",
+      "h_index": 64,
+      "i10_index": 110,
+      "works_count": 286,
+      "cited_by_count": 23599,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5067730497",
+      "display_name": "Prashant Bordia",
+      "orcid": "https://orcid.org/0000-0002-4280-8724",
+      "h_index": 64,
+      "i10_index": 104,
+      "works_count": 173,
+      "cited_by_count": 15960,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5024693910",
+      "display_name": "Daniel R. Ilgen",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 102,
+      "works_count": 196,
+      "cited_by_count": 25408,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Psychology",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5065762339",
+      "display_name": "Jason D. Shaw",
+      "orcid": "https://orcid.org/0000-0002-4656-9222",
+      "h_index": 64,
+      "i10_index": 91,
+      "works_count": 165,
+      "cited_by_count": 27676,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5046137236",
+      "display_name": "Göran Svensson",
+      "orcid": "https://orcid.org/0000-0002-4857-9408",
+      "h_index": 63,
+      "i10_index": 243,
+      "works_count": 508,
+      "cited_by_count": 14323,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5070569057",
+      "display_name": "Antonio Ariza‐Montes",
+      "orcid": "https://orcid.org/0000-0002-5921-0753",
+      "h_index": 63,
+      "i10_index": 182,
+      "works_count": 332,
+      "cited_by_count": 13377,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Organizational Behavior and Human Resource Management -- 8.8",
+      "id": "https://openalex.org/A5004388635",
+      "display_name": "Sandra A. Waddock",
+      "orcid": "https://orcid.org/0000-0003-1089-7686",
+      "h_index": 63,
+      "i10_index": 142,
+      "works_count": 424,
+      "cited_by_count": 27904,
+      "discipline": "Organizational Behavior and Human Resource Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Organizational Behavior and Human Resource Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    }
+  ]
+}

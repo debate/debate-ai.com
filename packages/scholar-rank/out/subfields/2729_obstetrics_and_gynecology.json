@@ -1,0 +1,5840 @@
+{
+  "kind": "subfield",
+  "id": 2729,
+  "name": "Obstetrics and Gynecology",
+  "total_in_scrape": 314,
+  "count": 314,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Obstetrics and Gynecology -- 9.9",
+      "id": "https://openalex.org/A5067511554",
+      "display_name": "Roberto J. Romero",
+      "orcid": "https://orcid.org/0000-0002-4448-5121",
+      "h_index": 189,
+      "i10_index": 1350,
+      "works_count": 2117,
+      "cited_by_count": 163235,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Obstetrics and Gynecology -- 9.9",
+      "id": "https://openalex.org/A5090795384",
+      "display_name": "Ben W. Mol",
+      "orcid": "https://orcid.org/0000-0001-8337-550X",
+      "h_index": 146,
+      "i10_index": 1264,
+      "works_count": 2849,
+      "cited_by_count": 102780,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Obstetrics and Gynecology -- 9.9",
+      "id": "https://openalex.org/A5023534305",
+      "display_name": "Baha M. Sibai",
+      "orcid": "https://orcid.org/0000-0001-9982-7873",
+      "h_index": 127,
+      "i10_index": 558,
+      "works_count": 1163,
+      "cited_by_count": 69378,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Obstetrics and Gynecology -- 9.9",
+      "id": "https://openalex.org/A5002771958",
+      "display_name": "Janet Wilson Rich-Edwards",
+      "orcid": "https://orcid.org/0000-0001-5066-8808",
+      "h_index": 125,
+      "i10_index": 356,
+      "works_count": 568,
+      "cited_by_count": 51688,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Obstetrics and Gynecology -- 9.9",
+      "id": "https://openalex.org/A5109063330",
+      "display_name": "Aaron Brandon Caughey",
+      "orcid": "https://orcid.org/0000-0002-1752-0972",
+      "h_index": 123,
+      "i10_index": 535,
+      "works_count": 2083,
+      "cited_by_count": 59508,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Obstetrics and Gynecology -- 9.9",
+      "id": "https://openalex.org/A5050760305",
+      "display_name": "Stuart C. Campbell",
+      "orcid": "https://orcid.org/0000-0003-4943-155X",
+      "h_index": 119,
+      "i10_index": 463,
+      "works_count": 775,
+      "cited_by_count": 47238,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5059484239",
+      "display_name": "Russell R. Broaddus",
+      "orcid": "https://orcid.org/0000-0002-8692-273X",
+      "h_index": 118,
+      "i10_index": 344,
+      "works_count": 813,
+      "cited_by_count": 82722,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5063035887",
+      "display_name": "Ronald J. Wapner",
+      "orcid": "https://orcid.org/0000-0003-0727-1244",
+      "h_index": 117,
+      "i10_index": 541,
+      "works_count": 1015,
+      "cited_by_count": 60946,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5060192729",
+      "display_name": "James Michael Roberts",
+      "orcid": "https://orcid.org/0000-0002-2671-3207",
+      "h_index": 116,
+      "i10_index": 385,
+      "works_count": 552,
+      "cited_by_count": 55213,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5030159705",
+      "display_name": "S. Ananth Karumanchi",
+      "orcid": "https://orcid.org/0000-0002-2281-6831",
+      "h_index": 115,
+      "i10_index": 339,
+      "works_count": 618,
+      "cited_by_count": 64867,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5053542215",
+      "display_name": "Robert A. Soslow",
+      "orcid": "https://orcid.org/0000-0002-7269-5898",
+      "h_index": 114,
+      "i10_index": 387,
+      "works_count": 673,
+      "cited_by_count": 42094,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5037501835",
+      "display_name": "Neil James Sebire",
+      "orcid": "https://orcid.org/0000-0001-5348-9063",
+      "h_index": 111,
+      "i10_index": 666,
+      "works_count": 1667,
+      "cited_by_count": 53852,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5060166195",
+      "display_name": "George Robert Saade",
+      "orcid": "https://orcid.org/0000-0001-7925-5302",
+      "h_index": 111,
+      "i10_index": 583,
+      "works_count": 1583,
+      "cited_by_count": 50496,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5010282758",
+      "display_name": "Amy L. Weaver",
+      "orcid": "https://orcid.org/0000-0002-5240-3157",
+      "h_index": 111,
+      "i10_index": 497,
+      "works_count": 821,
+      "cited_by_count": 48738,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5081067500",
+      "display_name": "Michael Walter Varner",
+      "orcid": "https://orcid.org/0000-0001-9455-3973",
+      "h_index": 110,
+      "i10_index": 432,
+      "works_count": 829,
+      "cited_by_count": 45938,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5088930027",
+      "display_name": "Khalid Saeed Khan",
+      "orcid": "https://orcid.org/0000-0001-5084-7312",
+      "h_index": 109,
+      "i10_index": 498,
+      "works_count": 956,
+      "cited_by_count": 54618,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Obstetrics and Gynecology -- 9.8",
+      "id": "https://openalex.org/A5045203195",
+      "display_name": "Lucilla Poston",
+      "orcid": "https://orcid.org/0000-0003-1100-2821",
+      "h_index": 109,
+      "i10_index": 422,
+      "works_count": 854,
+      "cited_by_count": 47236,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5105367618",
+      "display_name": "Brian M. Mercer",
+      "orcid": null,
+      "h_index": 109,
+      "i10_index": 364,
+      "works_count": 641,
+      "cited_by_count": 45634,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5112505479",
+      "display_name": "Graham J. Burton",
+      "orcid": "https://orcid.org/0000-0001-8677-4143",
+      "h_index": 107,
+      "i10_index": 292,
+      "works_count": 487,
+      "cited_by_count": 45178,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5101803580",
+      "display_name": "Sonia S. Hassan",
+      "orcid": "https://orcid.org/0000-0001-7584-6252",
+      "h_index": 106,
+      "i10_index": 386,
+      "works_count": 595,
+      "cited_by_count": 38983,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5086662756",
+      "display_name": "Ross Stuart Berkowitz",
+      "orcid": "https://orcid.org/0000-0002-7569-898X",
+      "h_index": 104,
+      "i10_index": 437,
+      "works_count": 766,
+      "cited_by_count": 70607,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5065033288",
+      "display_name": "Vincenzo Berghella",
+      "orcid": "https://orcid.org/0000-0003-2854-0239",
+      "h_index": 104,
+      "i10_index": 435,
+      "works_count": 1165,
+      "cited_by_count": 40212,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5061152811",
+      "display_name": "Steve N. Caritis",
+      "orcid": "https://orcid.org/0000-0002-2169-0712",
+      "h_index": 104,
+      "i10_index": 367,
+      "works_count": 576,
+      "cited_by_count": 44877,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5014325812",
+      "display_name": "Paolo Vercellini",
+      "orcid": "https://orcid.org/0000-0003-4195-0996",
+      "h_index": 103,
+      "i10_index": 380,
+      "works_count": 577,
+      "cited_by_count": 36031,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5066443529",
+      "display_name": "Christopher W.G. Redman",
+      "orcid": "https://orcid.org/0000-0001-9738-5290",
+      "h_index": 103,
+      "i10_index": 283,
+      "works_count": 418,
+      "cited_by_count": 48077,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5009709588",
+      "display_name": "John M. Thorp",
+      "orcid": "https://orcid.org/0000-0002-4598-0271",
+      "h_index": 101,
+      "i10_index": 382,
+      "works_count": 768,
+      "cited_by_count": 42049,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5008725360",
+      "display_name": "Wilson Glenn McCluggage",
+      "orcid": "https://orcid.org/0000-0001-9178-4370",
+      "h_index": 100,
+      "i10_index": 533,
+      "works_count": 884,
+      "cited_by_count": 38334,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Obstetrics and Gynecology -- 9.7",
+      "id": "https://openalex.org/A5002011120",
+      "display_name": "Nadeem R. Abu‐Rustum",
+      "orcid": "https://orcid.org/0000-0001-9689-1298",
+      "h_index": 100,
+      "i10_index": 427,
+      "works_count": 978,
+      "cited_by_count": 40469,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5022181024",
+      "display_name": "Eric R. M. Jauniaux",
+      "orcid": "https://orcid.org/0000-0003-0925-7737",
+      "h_index": 100,
+      "i10_index": 394,
+      "works_count": 743,
+      "cited_by_count": 43110,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5032961249",
+      "display_name": "Tinnakorn Chaiworapongsa",
+      "orcid": "https://orcid.org/0000-0001-5108-3369",
+      "h_index": 100,
+      "i10_index": 332,
+      "works_count": 494,
+      "cited_by_count": 35169,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5048633172",
+      "display_name": "Cande V. Ananth",
+      "orcid": "https://orcid.org/0000-0002-0410-2595",
+      "h_index": 99,
+      "i10_index": 442,
+      "works_count": 898,
+      "cited_by_count": 35927,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5077559727",
+      "display_name": "Gerard H.A. Visser",
+      "orcid": "https://orcid.org/0000-0001-6708-6396",
+      "h_index": 99,
+      "i10_index": 406,
+      "works_count": 660,
+      "cited_by_count": 39555,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5032448943",
+      "display_name": "Paul Townsend Seed",
+      "orcid": "https://orcid.org/0000-0001-7904-7933",
+      "h_index": 99,
+      "i10_index": 363,
+      "works_count": 696,
+      "cited_by_count": 34627,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5020389365",
+      "display_name": "Tom H. Bourne",
+      "orcid": "https://orcid.org/0000-0003-1421-6059",
+      "h_index": 99,
+      "i10_index": 334,
+      "works_count": 981,
+      "cited_by_count": 37885,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5080796049",
+      "display_name": "Susan J. Fisher",
+      "orcid": "https://orcid.org/0000-0001-7745-4850",
+      "h_index": 99,
+      "i10_index": 236,
+      "works_count": 375,
+      "cited_by_count": 49229,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5113492670",
+      "display_name": "Menachem Miodovnik",
+      "orcid": null,
+      "h_index": 98,
+      "i10_index": 296,
+      "works_count": 405,
+      "cited_by_count": 37972,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5028099145",
+      "display_name": "Asma A. Khalil",
+      "orcid": "https://orcid.org/0000-0003-2802-7670",
+      "h_index": 97,
+      "i10_index": 521,
+      "works_count": 1334,
+      "cited_by_count": 44161,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5103079224",
+      "display_name": "Michelle Anne Williams",
+      "orcid": "https://orcid.org/0000-0001-5807-5281",
+      "h_index": 97,
+      "i10_index": 402,
+      "works_count": 566,
+      "cited_by_count": 31261,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Obstetrics and Gynecology -- 9.6",
+      "id": "https://openalex.org/A5077769927",
+      "display_name": "Peter von Dadelszen",
+      "orcid": "https://orcid.org/0000-0003-4136-3070",
+      "h_index": 96,
+      "i10_index": 380,
+      "works_count": 768,
+      "cited_by_count": 41224,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5084711970",
+      "display_name": "Caroline Anne Crowther",
+      "orcid": "https://orcid.org/0000-0002-9079-4451",
+      "h_index": 96,
+      "i10_index": 318,
+      "works_count": 561,
+      "cited_by_count": 34771,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5059326304",
+      "display_name": "Robert M. Silver",
+      "orcid": "https://orcid.org/0000-0002-5794-3152",
+      "h_index": 95,
+      "i10_index": 388,
+      "works_count": 888,
+      "cited_by_count": 36792,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5032930756",
+      "display_name": "John C. Kingdom",
+      "orcid": "https://orcid.org/0000-0002-7411-5535",
+      "h_index": 95,
+      "i10_index": 367,
+      "works_count": 713,
+      "cited_by_count": 36021,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5060277637",
+      "display_name": "Laura Ann Magee",
+      "orcid": "https://orcid.org/0000-0002-1355-610X",
+      "h_index": 95,
+      "i10_index": 336,
+      "works_count": 690,
+      "cited_by_count": 43581,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5016872796",
+      "display_name": "George Justus Hofmeyr",
+      "orcid": "https://orcid.org/0000-0002-3080-1007",
+      "h_index": 95,
+      "i10_index": 323,
+      "works_count": 561,
+      "cited_by_count": 33518,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5102075635",
+      "display_name": "Richard R. Barakat",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 294,
+      "works_count": 502,
+      "cited_by_count": 31136,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5100869034",
+      "display_name": "Kenneth J. Leveno",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 271,
+      "works_count": 474,
+      "cited_by_count": 37184,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5034822064",
+      "display_name": "B. Thilaganathan",
+      "orcid": "https://orcid.org/0000-0002-5531-4301",
+      "h_index": 92,
+      "i10_index": 387,
+      "works_count": 974,
+      "cited_by_count": 32776,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5025793594",
+      "display_name": "Émile Daraï",
+      "orcid": "https://orcid.org/0000-0003-2083-7097",
+      "h_index": 91,
+      "i10_index": 518,
+      "works_count": 1044,
+      "cited_by_count": 33818,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5054031200",
+      "display_name": "Philippe Morice",
+      "orcid": "https://orcid.org/0000-0003-0579-9993",
+      "h_index": 91,
+      "i10_index": 332,
+      "works_count": 789,
+      "cited_by_count": 33046,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5052359409",
+      "display_name": "Esther Oliva",
+      "orcid": "https://orcid.org/0000-0001-7355-4301",
+      "h_index": 91,
+      "i10_index": 280,
+      "works_count": 495,
+      "cited_by_count": 27285,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Obstetrics and Gynecology -- 9.5",
+      "id": "https://openalex.org/A5031968879",
+      "display_name": "Philip Newton Baker",
+      "orcid": "https://orcid.org/0000-0002-4592-6427",
+      "h_index": 90,
+      "i10_index": 438,
+      "works_count": 812,
+      "cited_by_count": 32853,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5069925431",
+      "display_name": "Xavier Matías‐Guiu",
+      "orcid": "https://orcid.org/0000-0002-7201-6605",
+      "h_index": 90,
+      "i10_index": 426,
+      "works_count": 887,
+      "cited_by_count": 36354,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5100433253",
+      "display_name": "Jun Zhang",
+      "orcid": "https://orcid.org/0000-0003-1706-1611",
+      "h_index": 90,
+      "i10_index": 403,
+      "works_count": 678,
+      "cited_by_count": 39697,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5080879162",
+      "display_name": "Gustaaf Dekker",
+      "orcid": "https://orcid.org/0000-0002-7362-6683",
+      "h_index": 90,
+      "i10_index": 316,
+      "works_count": 611,
+      "cited_by_count": 31365,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5034618905",
+      "display_name": "Patrick M. Catalano",
+      "orcid": "https://orcid.org/0000-0003-1276-7017",
+      "h_index": 90,
+      "i10_index": 211,
+      "works_count": 332,
+      "cited_by_count": 40177,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5103547459",
+      "display_name": "Catherine Y. Spong",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 290,
+      "works_count": 629,
+      "cited_by_count": 40371,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5016652536",
+      "display_name": "Liona C. Poon",
+      "orcid": "https://orcid.org/0000-0002-3944-4130",
+      "h_index": 89,
+      "i10_index": 265,
+      "works_count": 536,
+      "cited_by_count": 35743,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5021408553",
+      "display_name": "Žarko Alfirević",
+      "orcid": "https://orcid.org/0000-0001-9276-518X",
+      "h_index": 89,
+      "i10_index": 251,
+      "works_count": 549,
+      "cited_by_count": 29813,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5050844526",
+      "display_name": "John P. Newnham",
+      "orcid": "https://orcid.org/0000-0001-9983-7457",
+      "h_index": 88,
+      "i10_index": 379,
+      "works_count": 680,
+      "cited_by_count": 27000,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5087414064",
+      "display_name": "Luigi Fedele",
+      "orcid": "https://orcid.org/0000-0001-6297-7165",
+      "h_index": 88,
+      "i10_index": 315,
+      "works_count": 488,
+      "cited_by_count": 25733,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5000818078",
+      "display_name": "Gérard Bréart",
+      "orcid": "https://orcid.org/0000-0003-3142-9128",
+      "h_index": 88,
+      "i10_index": 264,
+      "works_count": 551,
+      "cited_by_count": 28479,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Obstetrics and Gynecology -- 9.4",
+      "id": "https://openalex.org/A5043001702",
+      "display_name": "Charles Chapron",
+      "orcid": "https://orcid.org/0000-0003-2578-3163",
+      "h_index": 87,
+      "i10_index": 352,
+      "works_count": 717,
+      "cited_by_count": 32362,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5077796440",
+      "display_name": "Perry W. Grigsby",
+      "orcid": "https://orcid.org/0000-0001-9734-5088",
+      "h_index": 87,
+      "i10_index": 292,
+      "works_count": 584,
+      "cited_by_count": 29939,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5081896524",
+      "display_name": "F. Figueras",
+      "orcid": "https://orcid.org/0000-0003-4403-1274",
+      "h_index": 87,
+      "i10_index": 262,
+      "works_count": 665,
+      "cited_by_count": 25776,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5045697150",
+      "display_name": "Robert N. Taylor",
+      "orcid": "https://orcid.org/0000-0002-1423-6351",
+      "h_index": 87,
+      "i10_index": 243,
+      "works_count": 354,
+      "cited_by_count": 30732,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5060812724",
+      "display_name": "Murray David Mitchell",
+      "orcid": "https://orcid.org/0000-0002-6167-7176",
+      "h_index": 86,
+      "i10_index": 456,
+      "works_count": 768,
+      "cited_by_count": 29054,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5032904180",
+      "display_name": "Stephen James Lye",
+      "orcid": "https://orcid.org/0000-0002-3305-4406",
+      "h_index": 86,
+      "i10_index": 333,
+      "works_count": 499,
+      "cited_by_count": 28153,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5062730712",
+      "display_name": "Cuilin Zhang",
+      "orcid": "https://orcid.org/0000-0002-8014-2708",
+      "h_index": 86,
+      "i10_index": 313,
+      "works_count": 564,
+      "cited_by_count": 30798,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5013562873",
+      "display_name": "Bo Hyun Yoon",
+      "orcid": "https://orcid.org/0000-0001-6838-9313",
+      "h_index": 86,
+      "i10_index": 227,
+      "works_count": 485,
+      "cited_by_count": 24529,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5010939419",
+      "display_name": "John C. Hauth",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 224,
+      "works_count": 356,
+      "cited_by_count": 32933,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5075073315",
+      "display_name": "Carien L. Creutzberg",
+      "orcid": "https://orcid.org/0000-0002-7008-4321",
+      "h_index": 86,
+      "i10_index": 200,
+      "works_count": 498,
+      "cited_by_count": 36150,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5057686070",
+      "display_name": "Jason Dennis Wright",
+      "orcid": "https://orcid.org/0000-0001-6390-825X",
+      "h_index": 85,
+      "i10_index": 506,
+      "works_count": 1267,
+      "cited_by_count": 30147,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Obstetrics and Gynecology -- 9.3",
+      "id": "https://openalex.org/A5069145317",
+      "display_name": "Peter W. Nathanielsz",
+      "orcid": "https://orcid.org/0000-0001-8410-6280",
+      "h_index": 85,
+      "i10_index": 505,
+      "works_count": 900,
+      "cited_by_count": 30200,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5049771854",
+      "display_name": "George A. Macones",
+      "orcid": "https://orcid.org/0000-0002-1164-3568",
+      "h_index": 85,
+      "i10_index": 385,
+      "works_count": 1080,
+      "cited_by_count": 30039,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5091876255",
+      "display_name": "Bo Jacobsson",
+      "orcid": "https://orcid.org/0000-0001-5079-2374",
+      "h_index": 85,
+      "i10_index": 326,
+      "works_count": 607,
+      "cited_by_count": 38153,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5015413833",
+      "display_name": "Uma M. Reddy",
+      "orcid": "https://orcid.org/0000-0002-8599-6040",
+      "h_index": 85,
+      "i10_index": 278,
+      "works_count": 615,
+      "cited_by_count": 29652,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5108518136",
+      "display_name": "Ian A. Greer",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 247,
+      "works_count": 470,
+      "cited_by_count": 34052,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5031467567",
+      "display_name": "Melania Pintilie",
+      "orcid": "https://orcid.org/0000-0002-8238-8365",
+      "h_index": 85,
+      "i10_index": 239,
+      "works_count": 563,
+      "cited_by_count": 25417,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5026803018",
+      "display_name": "William A. Grobman",
+      "orcid": "https://orcid.org/0000-0002-3979-0738",
+      "h_index": 84,
+      "i10_index": 392,
+      "works_count": 957,
+      "cited_by_count": 31240,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5010448524",
+      "display_name": "Jay D. Iams",
+      "orcid": "https://orcid.org/0000-0001-7116-9004",
+      "h_index": 84,
+      "i10_index": 257,
+      "works_count": 417,
+      "cited_by_count": 39488,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5014382444",
+      "display_name": "Pål Romundstad",
+      "orcid": "https://orcid.org/0000-0003-2061-4336",
+      "h_index": 84,
+      "i10_index": 257,
+      "works_count": 377,
+      "cited_by_count": 24944,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5080833691",
+      "display_name": "Louis J. Muglia",
+      "orcid": "https://orcid.org/0000-0002-0301-8770",
+      "h_index": 84,
+      "i10_index": 246,
+      "works_count": 363,
+      "cited_by_count": 23505,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5066603873",
+      "display_name": "François Goffinet",
+      "orcid": "https://orcid.org/0000-0001-9643-0299",
+      "h_index": 83,
+      "i10_index": 391,
+      "works_count": 972,
+      "cited_by_count": 26884,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Obstetrics and Gynecology -- 9.2",
+      "id": "https://openalex.org/A5080195409",
+      "display_name": "Peter Damm",
+      "orcid": "https://orcid.org/0000-0002-2067-5246",
+      "h_index": 83,
+      "i10_index": 306,
+      "works_count": 554,
+      "cited_by_count": 27571,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5005680652",
+      "display_name": "Charles Joseph Lockwood",
+      "orcid": "https://orcid.org/0000-0002-7765-4999",
+      "h_index": 83,
+      "i10_index": 302,
+      "works_count": 616,
+      "cited_by_count": 24477,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5113486135",
+      "display_name": "Philip John DiSaia",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 263,
+      "works_count": 509,
+      "cited_by_count": 64405,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5087928736",
+      "display_name": "Rebecca M. Reynolds",
+      "orcid": "https://orcid.org/0000-0001-6226-8270",
+      "h_index": 83,
+      "i10_index": 262,
+      "works_count": 516,
+      "cited_by_count": 26707,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5105357815",
+      "display_name": "Yoram Sorokin",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 238,
+      "works_count": 401,
+      "cited_by_count": 31325,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5023386562",
+      "display_name": "D. Stephen Charnock‐Jones",
+      "orcid": "https://orcid.org/0000-0002-2936-4890",
+      "h_index": 83,
+      "i10_index": 205,
+      "works_count": 311,
+      "cited_by_count": 25505,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5019844335",
+      "display_name": "Stephen Kennedy",
+      "orcid": "https://orcid.org/0000-0003-0135-9317",
+      "h_index": 83,
+      "i10_index": 199,
+      "works_count": 344,
+      "cited_by_count": 27952,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5056057196",
+      "display_name": "Ricardo Gómez",
+      "orcid": "https://orcid.org/0000-0001-9267-304X",
+      "h_index": 83,
+      "i10_index": 152,
+      "works_count": 236,
+      "cited_by_count": 22692,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5073429175",
+      "display_name": "Irene Cetin",
+      "orcid": "https://orcid.org/0000-0002-9217-3034",
+      "h_index": 82,
+      "i10_index": 275,
+      "works_count": 629,
+      "cited_by_count": 25830,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5011726013",
+      "display_name": "Juan Pedro Kusanovic",
+      "orcid": "https://orcid.org/0000-0003-0640-2070",
+      "h_index": 82,
+      "i10_index": 248,
+      "works_count": 400,
+      "cited_by_count": 27419,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5050509889",
+      "display_name": "Stephen Courtenay Robson",
+      "orcid": "https://orcid.org/0000-0001-7897-7987",
+      "h_index": 82,
+      "i10_index": 246,
+      "works_count": 671,
+      "cited_by_count": 25644,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Obstetrics and Gynecology -- 9.1",
+      "id": "https://openalex.org/A5070572496",
+      "display_name": "Pierluigi Benedetti Panici",
+      "orcid": "https://orcid.org/0000-0001-6752-2039",
+      "h_index": 81,
+      "i10_index": 461,
+      "works_count": 782,
+      "cited_by_count": 30819,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Obstetrics and Gynecology -- 9.0",
+      "id": "https://openalex.org/A5059475139",
+      "display_name": "Fabio Ghezzi",
+      "orcid": "https://orcid.org/0000-0003-3949-5410",
+      "h_index": 81,
+      "i10_index": 399,
+      "works_count": 799,
+      "cited_by_count": 25068,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Obstetrics and Gynecology -- 9.0",
+      "id": "https://openalex.org/A5043772515",
+      "display_name": "Fionnuala Mary McAuliffe",
+      "orcid": "https://orcid.org/0000-0002-3477-6494",
+      "h_index": 81,
+      "i10_index": 383,
+      "works_count": 932,
+      "cited_by_count": 26862,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Obstetrics and Gynecology -- 9.0",
+      "id": "https://openalex.org/A5036589972",
+      "display_name": "Ikuo Konishi",
+      "orcid": "https://orcid.org/0000-0002-4284-9569",
+      "h_index": 81,
+      "i10_index": 382,
+      "works_count": 784,
+      "cited_by_count": 29387,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Obstetrics and Gynecology -- 9.0",
+      "id": "https://openalex.org/A5109262333",
+      "display_name": "John R. G. Challis",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 368,
+      "works_count": 701,
+      "cited_by_count": 25355,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Obstetrics and Gynecology -- 9.0",
+      "id": "https://openalex.org/A5032065597",
+      "display_name": "D. Jurkovic",
+      "orcid": "https://orcid.org/0000-0001-6487-5736",
+      "h_index": 81,
+      "i10_index": 272,
+      "works_count": 636,
+      "cited_by_count": 23986,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5024848351",
+      "display_name": "Theresa L. Powell",
+      "orcid": "https://orcid.org/0000-0001-7410-1080",
+      "h_index": 81,
+      "i10_index": 224,
+      "works_count": 343,
+      "cited_by_count": 21064,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5089255303",
+      "display_name": "Olof Stephansson",
+      "orcid": "https://orcid.org/0000-0003-1528-4563",
+      "h_index": 81,
+      "i10_index": 222,
+      "works_count": 391,
+      "cited_by_count": 20676,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5052683398",
+      "display_name": "Karl C. Podratz",
+      "orcid": "https://orcid.org/0000-0001-8674-1405",
+      "h_index": 81,
+      "i10_index": 220,
+      "works_count": 343,
+      "cited_by_count": 19976,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5063409367",
+      "display_name": "Yoel Sadovsky",
+      "orcid": "https://orcid.org/0000-0003-2969-6737",
+      "h_index": 81,
+      "i10_index": 203,
+      "works_count": 338,
+      "cited_by_count": 20976,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5110708284",
+      "display_name": "Ian L. Sargent",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 155,
+      "works_count": 211,
+      "cited_by_count": 35434,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5090429618",
+      "display_name": "David E. Cohn",
+      "orcid": "https://orcid.org/0000-0002-3036-6172",
+      "h_index": 80,
+      "i10_index": 286,
+      "works_count": 708,
+      "cited_by_count": 23964,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5015809298",
+      "display_name": "Louise C. Kenny",
+      "orcid": "https://orcid.org/0000-0002-9011-759X",
+      "h_index": 80,
+      "i10_index": 264,
+      "works_count": 537,
+      "cited_by_count": 28290,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5031050958",
+      "display_name": "Michael J. Seckl",
+      "orcid": "https://orcid.org/0000-0003-4078-2599",
+      "h_index": 80,
+      "i10_index": 247,
+      "works_count": 503,
+      "cited_by_count": 20038,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5066146057",
+      "display_name": "Sean Christopher Dowdy",
+      "orcid": "https://orcid.org/0000-0003-2092-7551",
+      "h_index": 80,
+      "i10_index": 217,
+      "works_count": 446,
+      "cited_by_count": 21129,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5111445978",
+      "display_name": "Brigitte M. Ronnett",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 159,
+      "works_count": 248,
+      "cited_by_count": 20630,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5032740727",
+      "display_name": "Andrew H. Shennan",
+      "orcid": "https://orcid.org/0000-0001-5273-3132",
+      "h_index": 79,
+      "i10_index": 373,
+      "works_count": 1077,
+      "cited_by_count": 34604,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Obstetrics and Gynecology -- 8.9",
+      "id": "https://openalex.org/A5051477656",
+      "display_name": "Ramkumar Menon",
+      "orcid": "https://orcid.org/0000-0001-9213-6105",
+      "h_index": 79,
+      "i10_index": 299,
+      "works_count": 530,
+      "cited_by_count": 22550,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5101700303",
+      "display_name": "Mark C. Walker",
+      "orcid": "https://orcid.org/0000-0001-8974-4548",
+      "h_index": 79,
+      "i10_index": 259,
+      "works_count": 436,
+      "cited_by_count": 19159,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5048501969",
+      "display_name": "Abigail Fraser",
+      "orcid": "https://orcid.org/0000-0002-7741-9470",
+      "h_index": 79,
+      "i10_index": 250,
+      "works_count": 575,
+      "cited_by_count": 27266,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5083345783",
+      "display_name": "Gordon C. S. Smith",
+      "orcid": "https://orcid.org/0000-0003-2124-0997",
+      "h_index": 79,
+      "i10_index": 238,
+      "works_count": 523,
+      "cited_by_count": 27608,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5047388991",
+      "display_name": "Wei Bao",
+      "orcid": "https://orcid.org/0000-0002-7301-5786",
+      "h_index": 79,
+      "i10_index": 229,
+      "works_count": 336,
+      "cited_by_count": 21461,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5023475823",
+      "display_name": "Argyro Syngelaki",
+      "orcid": "https://orcid.org/0000-0001-5856-6072",
+      "h_index": 79,
+      "i10_index": 217,
+      "works_count": 382,
+      "cited_by_count": 25721,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5091322627",
+      "display_name": "Vincent T.H.B.M. Smit",
+      "orcid": "https://orcid.org/0000-0003-3730-5652",
+      "h_index": 79,
+      "i10_index": 196,
+      "works_count": 476,
+      "cited_by_count": 23810,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5023906981",
+      "display_name": "Remi A. Nout",
+      "orcid": "https://orcid.org/0000-0001-8011-2982",
+      "h_index": 79,
+      "i10_index": 189,
+      "works_count": 542,
+      "cited_by_count": 30840,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5087590627",
+      "display_name": "Boyd E. Metzger",
+      "orcid": "https://orcid.org/0000-0002-6503-1962",
+      "h_index": 79,
+      "i10_index": 188,
+      "works_count": 316,
+      "cited_by_count": 30274,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5049589636",
+      "display_name": "Mark F. Munsell",
+      "orcid": "https://orcid.org/0000-0001-9654-4958",
+      "h_index": 79,
+      "i10_index": 188,
+      "works_count": 441,
+      "cited_by_count": 20789,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5018222031",
+      "display_name": "Eyal Sheiner",
+      "orcid": "https://orcid.org/0000-0002-0454-6874",
+      "h_index": 78,
+      "i10_index": 462,
+      "works_count": 1177,
+      "cited_by_count": 25403,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5001067933",
+      "display_name": "Joel Geoffrey Ray",
+      "orcid": "https://orcid.org/0000-0003-1635-4658",
+      "h_index": 78,
+      "i10_index": 326,
+      "works_count": 597,
+      "cited_by_count": 30158,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5103216141",
+      "display_name": "Achim Schneider",
+      "orcid": "https://orcid.org/0000-0002-8602-8535",
+      "h_index": 78,
+      "i10_index": 292,
+      "works_count": 724,
+      "cited_by_count": 21451,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5075189613",
+      "display_name": "Jimmy Espinoza",
+      "orcid": "https://orcid.org/0000-0002-9830-2212",
+      "h_index": 78,
+      "i10_index": 280,
+      "works_count": 642,
+      "cited_by_count": 24005,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5085524384",
+      "display_name": "Offer Erez",
+      "orcid": "https://orcid.org/0000-0002-2213-8129",
+      "h_index": 78,
+      "i10_index": 278,
+      "works_count": 443,
+      "cited_by_count": 23536,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5046956876",
+      "display_name": "Mario M. Leitão",
+      "orcid": "https://orcid.org/0000-0003-0818-3836",
+      "h_index": 78,
+      "i10_index": 257,
+      "works_count": 658,
+      "cited_by_count": 20926,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5069434516",
+      "display_name": "Dwight J. Rouse",
+      "orcid": "https://orcid.org/0000-0002-9336-9688",
+      "h_index": 78,
+      "i10_index": 238,
+      "works_count": 468,
+      "cited_by_count": 29672,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5033919728",
+      "display_name": "Joey P. Granger",
+      "orcid": "https://orcid.org/0000-0002-4078-5629",
+      "h_index": 78,
+      "i10_index": 227,
+      "works_count": 437,
+      "cited_by_count": 23201,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5109338903",
+      "display_name": "Helga Birgitte Salvesen",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 209,
+      "works_count": 448,
+      "cited_by_count": 26577,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5110569802",
+      "display_name": "William Thomas Creasman",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 199,
+      "works_count": 327,
+      "cited_by_count": 24406,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5054869197",
+      "display_name": "Fulvio Zullo",
+      "orcid": "https://orcid.org/0000-0003-3726-7561",
+      "h_index": 77,
+      "i10_index": 314,
+      "works_count": 539,
+      "cited_by_count": 19494,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5062184522",
+      "display_name": "Pedro Tomas Ramirez",
+      "orcid": "https://orcid.org/0000-0002-6370-8052",
+      "h_index": 77,
+      "i10_index": 297,
+      "works_count": 793,
+      "cited_by_count": 23483,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Obstetrics and Gynecology -- 8.8",
+      "id": "https://openalex.org/A5059038625",
+      "display_name": "William Donald Fraser",
+      "orcid": "https://orcid.org/0000-0001-9042-2415",
+      "h_index": 77,
+      "i10_index": 294,
+      "works_count": 568,
+      "cited_by_count": 20462,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5055302960",
+      "display_name": "Hyagriv N. Simhan",
+      "orcid": "https://orcid.org/0000-0002-4267-2089",
+      "h_index": 77,
+      "i10_index": 286,
+      "works_count": 651,
+      "cited_by_count": 25504,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5110268346",
+      "display_name": "Paul C. MacDonald",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 262,
+      "works_count": 361,
+      "cited_by_count": 22756,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5044391206",
+      "display_name": "Lucy C. Chappell",
+      "orcid": "https://orcid.org/0000-0001-6219-3379",
+      "h_index": 77,
+      "i10_index": 253,
+      "works_count": 582,
+      "cited_by_count": 41292,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5009393702",
+      "display_name": "Phillip R. Bennett",
+      "orcid": "https://orcid.org/0000-0002-6253-4919",
+      "h_index": 77,
+      "i10_index": 252,
+      "works_count": 565,
+      "cited_by_count": 23874,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5078018907",
+      "display_name": "Ralf Dechend",
+      "orcid": "https://orcid.org/0000-0001-6636-3080",
+      "h_index": 77,
+      "i10_index": 231,
+      "works_count": 527,
+      "cited_by_count": 22504,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5089159861",
+      "display_name": "Teri A. Longacre",
+      "orcid": "https://orcid.org/0000-0002-0935-7300",
+      "h_index": 77,
+      "i10_index": 207,
+      "works_count": 400,
+      "cited_by_count": 22613,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5056589733",
+      "display_name": "Patricia J. Eifel",
+      "orcid": "https://orcid.org/0000-0002-9209-7457",
+      "h_index": 77,
+      "i10_index": 184,
+      "works_count": 441,
+      "cited_by_count": 22240,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5067179548",
+      "display_name": "Lelia Duley",
+      "orcid": "https://orcid.org/0000-0001-6721-5178",
+      "h_index": 77,
+      "i10_index": 173,
+      "works_count": 351,
+      "cited_by_count": 27953,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5068554505",
+      "display_name": "Antonio Simone Laganà",
+      "orcid": "https://orcid.org/0000-0003-1543-2802",
+      "h_index": 76,
+      "i10_index": 436,
+      "works_count": 745,
+      "cited_by_count": 25171,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5023682459",
+      "display_name": "Donald D. McIntire",
+      "orcid": "https://orcid.org/0000-0002-9799-7905",
+      "h_index": 76,
+      "i10_index": 263,
+      "works_count": 579,
+      "cited_by_count": 22768,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5064900626",
+      "display_name": "Michael Milosevic",
+      "orcid": "https://orcid.org/0000-0002-9620-6876",
+      "h_index": 76,
+      "i10_index": 224,
+      "works_count": 619,
+      "cited_by_count": 19147,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5082209959",
+      "display_name": "Ranjit Akolekar",
+      "orcid": "https://orcid.org/0000-0001-7265-5442",
+      "h_index": 76,
+      "i10_index": 213,
+      "works_count": 354,
+      "cited_by_count": 25138,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5009928901",
+      "display_name": "Harry Hollema",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 211,
+      "works_count": 371,
+      "cited_by_count": 19026,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5074609201",
+      "display_name": "Oded Langer",
+      "orcid": "https://orcid.org/0000-0002-8101-3908",
+      "h_index": 76,
+      "i10_index": 185,
+      "works_count": 372,
+      "cited_by_count": 24860,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5037712205",
+      "display_name": "Anthony O. Odibo",
+      "orcid": "https://orcid.org/0000-0003-4340-450X",
+      "h_index": 75,
+      "i10_index": 283,
+      "works_count": 842,
+      "cited_by_count": 20056,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5075505395",
+      "display_name": "Andrea Mariani",
+      "orcid": "https://orcid.org/0000-0001-8059-1602",
+      "h_index": 75,
+      "i10_index": 228,
+      "works_count": 475,
+      "cited_by_count": 20334,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5027520182",
+      "display_name": "Berthold Huppertz",
+      "orcid": "https://orcid.org/0000-0003-4814-2158",
+      "h_index": 75,
+      "i10_index": 222,
+      "works_count": 499,
+      "cited_by_count": 20717,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5111912308",
+      "display_name": "Susan M. Ramin",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 206,
+      "works_count": 366,
+      "cited_by_count": 27974,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5068691304",
+      "display_name": "Thomas Jansson",
+      "orcid": "https://orcid.org/0000-0002-8123-9480",
+      "h_index": 75,
+      "i10_index": 202,
+      "works_count": 352,
+      "cited_by_count": 17748,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5052297121",
+      "display_name": "Catherine Williamson",
+      "orcid": "https://orcid.org/0000-0002-6226-7611",
+      "h_index": 75,
+      "i10_index": 192,
+      "works_count": 466,
+      "cited_by_count": 21540,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5048189307",
+      "display_name": "Michal A. Elovitz",
+      "orcid": "https://orcid.org/0000-0001-7554-7180",
+      "h_index": 75,
+      "i10_index": 183,
+      "works_count": 465,
+      "cited_by_count": 16782,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Obstetrics and Gynecology -- 8.7",
+      "id": "https://openalex.org/A5004955803",
+      "display_name": "Nobuo Yaegashi",
+      "orcid": "https://orcid.org/0000-0003-2521-039X",
+      "h_index": 74,
+      "i10_index": 564,
+      "works_count": 1062,
+      "cited_by_count": 26427,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5008343091",
+      "display_name": "Euan Morrison Wallace",
+      "orcid": "https://orcid.org/0000-0002-4506-5233",
+      "h_index": 74,
+      "i10_index": 359,
+      "works_count": 636,
+      "cited_by_count": 20644,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5000568505",
+      "display_name": "Francesco Raspagliesi",
+      "orcid": "https://orcid.org/0000-0001-8953-1657",
+      "h_index": 74,
+      "i10_index": 357,
+      "works_count": 811,
+      "cited_by_count": 24907,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5113499018",
+      "display_name": "Gary D.V. Hankins",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 280,
+      "works_count": 563,
+      "cited_by_count": 21982,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5021186773",
+      "display_name": "Jane Elizabeth Norman",
+      "orcid": "https://orcid.org/0000-0001-6031-6953",
+      "h_index": 74,
+      "i10_index": 246,
+      "works_count": 557,
+      "cited_by_count": 24426,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5111536542",
+      "display_name": "John A. Blessing",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 231,
+      "works_count": 336,
+      "cited_by_count": 20595,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5054715739",
+      "display_name": "Fàtima Crispi",
+      "orcid": "https://orcid.org/0000-0002-7422-5240",
+      "h_index": 74,
+      "i10_index": 224,
+      "works_count": 699,
+      "cited_by_count": 15903,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5039259985",
+      "display_name": "Shakila Thangaratinam",
+      "orcid": "https://orcid.org/0000-0002-4254-460X",
+      "h_index": 74,
+      "i10_index": 213,
+      "works_count": 435,
+      "cited_by_count": 32413,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5019225467",
+      "display_name": "Ivo A Brosens",
+      "orcid": "https://orcid.org/0000-0002-9762-2820",
+      "h_index": 74,
+      "i10_index": 213,
+      "works_count": 408,
+      "cited_by_count": 22548,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5013944168",
+      "display_name": "Andrew R. Willan",
+      "orcid": "https://orcid.org/0000-0001-8337-2042",
+      "h_index": 74,
+      "i10_index": 203,
+      "works_count": 329,
+      "cited_by_count": 28412,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5012226876",
+      "display_name": "Timothy J. Lyons",
+      "orcid": "https://orcid.org/0000-0003-2106-1622",
+      "h_index": 74,
+      "i10_index": 182,
+      "works_count": 361,
+      "cited_by_count": 23109,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5025042206",
+      "display_name": "Tjalling Bosse",
+      "orcid": "https://orcid.org/0000-0002-6881-8437",
+      "h_index": 74,
+      "i10_index": 163,
+      "works_count": 465,
+      "cited_by_count": 26697,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5033583830",
+      "display_name": "Raymond W. Redline",
+      "orcid": "https://orcid.org/0000-0002-8038-0626",
+      "h_index": 74,
+      "i10_index": 158,
+      "works_count": 246,
+      "cited_by_count": 19642,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5025234993",
+      "display_name": "William C. Small",
+      "orcid": "https://orcid.org/0000-0002-1623-9863",
+      "h_index": 73,
+      "i10_index": 298,
+      "works_count": 682,
+      "cited_by_count": 23692,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5033337879",
+      "display_name": "Simone Ferrero",
+      "orcid": "https://orcid.org/0000-0003-2225-5568",
+      "h_index": 73,
+      "i10_index": 288,
+      "works_count": 713,
+      "cited_by_count": 23606,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5046890634",
+      "display_name": "Anthony Mark Vintzileos",
+      "orcid": "https://orcid.org/0000-0002-8036-719X",
+      "h_index": 73,
+      "i10_index": 271,
+      "works_count": 615,
+      "cited_by_count": 18702,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5053451605",
+      "display_name": "David M. Olson",
+      "orcid": "https://orcid.org/0000-0003-0080-997X",
+      "h_index": 73,
+      "i10_index": 261,
+      "works_count": 429,
+      "cited_by_count": 36134,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5064482913",
+      "display_name": "Sandra Thomas Davidge",
+      "orcid": "https://orcid.org/0000-0002-5559-4905",
+      "h_index": 73,
+      "i10_index": 258,
+      "works_count": 449,
+      "cited_by_count": 16809,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5059435570",
+      "display_name": "Emmanuel Bujold",
+      "orcid": "https://orcid.org/0000-0002-6936-4369",
+      "h_index": 73,
+      "i10_index": 233,
+      "works_count": 563,
+      "cited_by_count": 21410,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5018546041",
+      "display_name": "Gunnar Balle Kristensen",
+      "orcid": "https://orcid.org/0000-0001-6231-7247",
+      "h_index": 73,
+      "i10_index": 231,
+      "works_count": 450,
+      "cited_by_count": 28172,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5048209900",
+      "display_name": "Leslie Myatt",
+      "orcid": "https://orcid.org/0000-0002-2569-7807",
+      "h_index": 73,
+      "i10_index": 226,
+      "works_count": 373,
+      "cited_by_count": 18973,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5003908929",
+      "display_name": "Mark B. Landon",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 214,
+      "works_count": 454,
+      "cited_by_count": 25872,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Obstetrics and Gynecology -- 8.6",
+      "id": "https://openalex.org/A5078419468",
+      "display_name": "Camran R. Nezhat",
+      "orcid": "https://orcid.org/0000-0002-2360-5147",
+      "h_index": 73,
+      "i10_index": 209,
+      "works_count": 565,
+      "cited_by_count": 17199,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5080579032",
+      "display_name": "Lamberto Manzoli",
+      "orcid": "https://orcid.org/0000-0002-8129-9344",
+      "h_index": 73,
+      "i10_index": 198,
+      "works_count": 379,
+      "cited_by_count": 14809,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5074386778",
+      "display_name": "Ate G.J. van der Zee",
+      "orcid": "https://orcid.org/0000-0002-2903-9684",
+      "h_index": 73,
+      "i10_index": 186,
+      "works_count": 312,
+      "cited_by_count": 19608,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5056473120",
+      "display_name": "Declan Devane",
+      "orcid": "https://orcid.org/0000-0002-9393-7075",
+      "h_index": 72,
+      "i10_index": 229,
+      "works_count": 466,
+      "cited_by_count": 27149,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Decision Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5001666101",
+      "display_name": "Lesley M. E. McCowan",
+      "orcid": "https://orcid.org/0000-0001-9915-7873",
+      "h_index": 72,
+      "i10_index": 226,
+      "works_count": 392,
+      "cited_by_count": 17415,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5082234108",
+      "display_name": "Anthony Fyles",
+      "orcid": "https://orcid.org/0000-0002-3633-2483",
+      "h_index": 72,
+      "i10_index": 201,
+      "works_count": 497,
+      "cited_by_count": 22853,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5089158382",
+      "display_name": "Neil Stuart Horowitz",
+      "orcid": "https://orcid.org/0000-0002-4854-0642",
+      "h_index": 72,
+      "i10_index": 199,
+      "works_count": 418,
+      "cited_by_count": 39580,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5017433834",
+      "display_name": "Alan M. Peaceman",
+      "orcid": "https://orcid.org/0000-0002-4515-4850",
+      "h_index": 72,
+      "i10_index": 199,
+      "works_count": 325,
+      "cited_by_count": 28731,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5020727747",
+      "display_name": "Lami Yeo",
+      "orcid": "https://orcid.org/0000-0001-6389-0993",
+      "h_index": 72,
+      "i10_index": 193,
+      "works_count": 295,
+      "cited_by_count": 15520,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5042903400",
+      "display_name": "Peter Kaufmann",
+      "orcid": "https://orcid.org/0000-0003-0459-2464",
+      "h_index": 72,
+      "i10_index": 180,
+      "works_count": 466,
+      "cited_by_count": 20269,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5062117564",
+      "display_name": "Lisa M. Bodnar",
+      "orcid": "https://orcid.org/0000-0001-9427-5467",
+      "h_index": 72,
+      "i10_index": 175,
+      "works_count": 331,
+      "cited_by_count": 16488,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5110251768",
+      "display_name": "Michael G. Gravett",
+      "orcid": "https://orcid.org/0009-0001-0128-555X",
+      "h_index": 72,
+      "i10_index": 138,
+      "works_count": 211,
+      "cited_by_count": 23631,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5038206846",
+      "display_name": "Fabio Facchinetti",
+      "orcid": "https://orcid.org/0000-0003-4694-9564",
+      "h_index": 71,
+      "i10_index": 423,
+      "works_count": 873,
+      "cited_by_count": 21709,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5043212932",
+      "display_name": "Jane Sandall",
+      "orcid": "https://orcid.org/0000-0003-2000-743X",
+      "h_index": 71,
+      "i10_index": 258,
+      "works_count": 516,
+      "cited_by_count": 21373,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5020992072",
+      "display_name": "Shingo Fujii",
+      "orcid": "https://orcid.org/0000-0002-5800-7235",
+      "h_index": 71,
+      "i10_index": 242,
+      "works_count": 688,
+      "cited_by_count": 18218,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5035115573",
+      "display_name": "Moshe Hod",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 241,
+      "works_count": 420,
+      "cited_by_count": 27011,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5104475440",
+      "display_name": "Moshe Mazor",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 241,
+      "works_count": 376,
+      "cited_by_count": 19519,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5070017546",
+      "display_name": "David H. McIntyre",
+      "orcid": "https://orcid.org/0000-0001-8819-5794",
+      "h_index": 71,
+      "i10_index": 238,
+      "works_count": 451,
+      "cited_by_count": 24363,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5074270038",
+      "display_name": "Gabriele Saccone",
+      "orcid": "https://orcid.org/0000-0003-0078-2113",
+      "h_index": 71,
+      "i10_index": 229,
+      "works_count": 447,
+      "cited_by_count": 16839,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5045904002",
+      "display_name": "Denis Querleu",
+      "orcid": "https://orcid.org/0000-0002-3984-4812",
+      "h_index": 71,
+      "i10_index": 223,
+      "works_count": 563,
+      "cited_by_count": 24659,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5068282558",
+      "display_name": "Christine Haie-Méder",
+      "orcid": "https://orcid.org/0000-0002-8917-0297",
+      "h_index": 71,
+      "i10_index": 219,
+      "works_count": 434,
+      "cited_by_count": 24475,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5050465341",
+      "display_name": "Amanda N. Fader",
+      "orcid": "https://orcid.org/0000-0003-3036-0421",
+      "h_index": 71,
+      "i10_index": 180,
+      "works_count": 385,
+      "cited_by_count": 24855,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5075962296",
+      "display_name": "Marshall D. Lindheimer",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 165,
+      "works_count": 260,
+      "cited_by_count": 19358,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Obstetrics and Gynecology -- 8.5",
+      "id": "https://openalex.org/A5038657597",
+      "display_name": "Suneet P. Chauhan",
+      "orcid": "https://orcid.org/0000-0003-1093-4416",
+      "h_index": 70,
+      "i10_index": 314,
+      "works_count": 801,
+      "cited_by_count": 21340,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5029667401",
+      "display_name": "Hervé Fernandez",
+      "orcid": "https://orcid.org/0000-0002-6463-1018",
+      "h_index": 70,
+      "i10_index": 314,
+      "works_count": 904,
+      "cited_by_count": 17167,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5009127344",
+      "display_name": "Undine Emmi Lang",
+      "orcid": "https://orcid.org/0000-0002-3585-6533",
+      "h_index": 70,
+      "i10_index": 276,
+      "works_count": 676,
+      "cited_by_count": 18080,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5077236582",
+      "display_name": "Gernot Desoyé",
+      "orcid": "https://orcid.org/0000-0002-5715-3230",
+      "h_index": 70,
+      "i10_index": 242,
+      "works_count": 522,
+      "cited_by_count": 18575,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5000735679",
+      "display_name": "Andreas Obermair",
+      "orcid": "https://orcid.org/0000-0003-2199-1117",
+      "h_index": 70,
+      "i10_index": 227,
+      "works_count": 471,
+      "cited_by_count": 17695,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5057224046",
+      "display_name": "David K. Gaffney",
+      "orcid": "https://orcid.org/0000-0002-5752-1611",
+      "h_index": 70,
+      "i10_index": 221,
+      "works_count": 498,
+      "cited_by_count": 22083,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5079468194",
+      "display_name": "Errol R. Norwitz",
+      "orcid": "https://orcid.org/0000-0003-4643-1546",
+      "h_index": 70,
+      "i10_index": 214,
+      "works_count": 635,
+      "cited_by_count": 16601,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5054009812",
+      "display_name": "Thomas Frederick McElrath",
+      "orcid": "https://orcid.org/0000-0003-0857-0107",
+      "h_index": 70,
+      "i10_index": 213,
+      "works_count": 480,
+      "cited_by_count": 15284,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5042849826",
+      "display_name": "Deborah A. Wing",
+      "orcid": "https://orcid.org/0000-0001-9896-442X",
+      "h_index": 70,
+      "i10_index": 194,
+      "works_count": 372,
+      "cited_by_count": 15640,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5021405296",
+      "display_name": "Soo M. Downe",
+      "orcid": "https://orcid.org/0000-0003-2848-2550",
+      "h_index": 70,
+      "i10_index": 187,
+      "works_count": 416,
+      "cited_by_count": 22677,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5000733521",
+      "display_name": "Alison M. Stuebe",
+      "orcid": "https://orcid.org/0000-0002-1228-4587",
+      "h_index": 70,
+      "i10_index": 172,
+      "works_count": 395,
+      "cited_by_count": 16228,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5056992264",
+      "display_name": "Therese Dowswell",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 105,
+      "works_count": 171,
+      "cited_by_count": 16993,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5040464804",
+      "display_name": "Gregory Edward Rice",
+      "orcid": "https://orcid.org/0000-0001-7177-0246",
+      "h_index": 69,
+      "i10_index": 264,
+      "works_count": 498,
+      "cited_by_count": 17673,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5006397405",
+      "display_name": "Roger Smith",
+      "orcid": "https://orcid.org/0000-0003-4720-0280",
+      "h_index": 69,
+      "i10_index": 258,
+      "works_count": 468,
+      "cited_by_count": 18400,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5102924869",
+      "display_name": "Christoph C. Lees",
+      "orcid": "https://orcid.org/0000-0002-2104-5561",
+      "h_index": 69,
+      "i10_index": 257,
+      "works_count": 725,
+      "cited_by_count": 18558,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5091610751",
+      "display_name": "Kitty W.M. Bloemenkamp",
+      "orcid": "https://orcid.org/0000-0002-1377-4625",
+      "h_index": 69,
+      "i10_index": 243,
+      "works_count": 567,
+      "cited_by_count": 18487,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5052155693",
+      "display_name": "Anne Cathrine Staff",
+      "orcid": "https://orcid.org/0000-0001-9247-5721",
+      "h_index": 69,
+      "i10_index": 223,
+      "works_count": 413,
+      "cited_by_count": 20124,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5005521239",
+      "display_name": "Christine L. Roberts",
+      "orcid": "https://orcid.org/0000-0002-9808-7647",
+      "h_index": 69,
+      "i10_index": 217,
+      "works_count": 336,
+      "cited_by_count": 15818,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5085893777",
+      "display_name": "Samuel I. Parry",
+      "orcid": "https://orcid.org/0000-0002-5946-9247",
+      "h_index": 69,
+      "i10_index": 183,
+      "works_count": 443,
+      "cited_by_count": 16666,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5030601213",
+      "display_name": "Ellen W. Seely",
+      "orcid": "https://orcid.org/0000-0002-4425-1878",
+      "h_index": 69,
+      "i10_index": 179,
+      "works_count": 303,
+      "cited_by_count": 15762,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5043773569",
+      "display_name": "Calvin J. Hobel",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 172,
+      "works_count": 285,
+      "cited_by_count": 17922,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5052734983",
+      "display_name": "Ingegerd Hildingsson",
+      "orcid": "https://orcid.org/0000-0001-6985-6729",
+      "h_index": 69,
+      "i10_index": 163,
+      "works_count": 284,
+      "cited_by_count": 14046,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Obstetrics and Gynecology -- 8.4",
+      "id": "https://openalex.org/A5087803746",
+      "display_name": "William L. Lowe",
+      "orcid": "https://orcid.org/0000-0001-9467-3422",
+      "h_index": 69,
+      "i10_index": 162,
+      "works_count": 321,
+      "cited_by_count": 17156,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5044231230",
+      "display_name": "Kari Klungsøyr",
+      "orcid": "https://orcid.org/0000-0003-2482-1690",
+      "h_index": 69,
+      "i10_index": 162,
+      "works_count": 289,
+      "cited_by_count": 16717,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5108432659",
+      "display_name": "Philip B. Clement",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 159,
+      "works_count": 210,
+      "cited_by_count": 14652,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5059256161",
+      "display_name": "Loïc Sentilhes",
+      "orcid": "https://orcid.org/0000-0003-0009-3625",
+      "h_index": 68,
+      "i10_index": 280,
+      "works_count": 744,
+      "cited_by_count": 20443,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5086922990",
+      "display_name": "John Thompson",
+      "orcid": "https://orcid.org/0000-0001-6944-381X",
+      "h_index": 68,
+      "i10_index": 262,
+      "works_count": 474,
+      "cited_by_count": 24114,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5013511786",
+      "display_name": "Karel Maršál",
+      "orcid": "https://orcid.org/0000-0002-3837-6332",
+      "h_index": 68,
+      "i10_index": 245,
+      "works_count": 447,
+      "cited_by_count": 17509,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5068629966",
+      "display_name": "Debra Kay Creedy",
+      "orcid": "https://orcid.org/0000-0002-3046-4143",
+      "h_index": 68,
+      "i10_index": 241,
+      "works_count": 490,
+      "cited_by_count": 18358,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5081820902",
+      "display_name": "Alexander E. P. Heazell",
+      "orcid": "https://orcid.org/0000-0002-4303-7845",
+      "h_index": 68,
+      "i10_index": 238,
+      "works_count": 834,
+      "cited_by_count": 20775,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5000300560",
+      "display_name": "Mark Richard Johnson",
+      "orcid": "https://orcid.org/0000-0003-1096-9918",
+      "h_index": 68,
+      "i10_index": 232,
+      "works_count": 460,
+      "cited_by_count": 18913,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5091007177",
+      "display_name": "Daniel Stuart Kapp",
+      "orcid": "https://orcid.org/0000-0002-3659-3253",
+      "h_index": 68,
+      "i10_index": 226,
+      "works_count": 750,
+      "cited_by_count": 15284,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5024421022",
+      "display_name": "Elisabeth Reinhardt Mathiesen",
+      "orcid": "https://orcid.org/0000-0003-3279-0863",
+      "h_index": 68,
+      "i10_index": 223,
+      "works_count": 428,
+      "cited_by_count": 20068,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5035957107",
+      "display_name": "Hannele M. Laivuori",
+      "orcid": "https://orcid.org/0000-0003-3212-7826",
+      "h_index": 68,
+      "i10_index": 219,
+      "works_count": 397,
+      "cited_by_count": 23060,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5052230791",
+      "display_name": "Virginia A. Schmied",
+      "orcid": "https://orcid.org/0000-0002-4066-1781",
+      "h_index": 68,
+      "i10_index": 217,
+      "works_count": 366,
+      "cited_by_count": 15962,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5102714585",
+      "display_name": "Paul J. Goodfellow",
+      "orcid": "https://orcid.org/0000-0002-0260-4583",
+      "h_index": 68,
+      "i10_index": 205,
+      "works_count": 372,
+      "cited_by_count": 21202,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5013959206",
+      "display_name": "Joshua A. Copel",
+      "orcid": "https://orcid.org/0000-0002-8961-0758",
+      "h_index": 68,
+      "i10_index": 198,
+      "works_count": 435,
+      "cited_by_count": 20810,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5078278213",
+      "display_name": "Stephanie Brown",
+      "orcid": "https://orcid.org/0000-0001-9812-0067",
+      "h_index": 68,
+      "i10_index": 198,
+      "works_count": 305,
+      "cited_by_count": 15222,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5013321556",
+      "display_name": "Stanley J. Robboy",
+      "orcid": "https://orcid.org/0000-0002-8343-9275",
+      "h_index": 68,
+      "i10_index": 195,
+      "works_count": 349,
+      "cited_by_count": 14826,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5035632452",
+      "display_name": "Dorota A. Doherty",
+      "orcid": "https://orcid.org/0000-0002-5507-9065",
+      "h_index": 68,
+      "i10_index": 195,
+      "works_count": 322,
+      "cited_by_count": 14707,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5082358197",
+      "display_name": "Michael Frumovitz",
+      "orcid": "https://orcid.org/0000-0002-0810-2648",
+      "h_index": 68,
+      "i10_index": 182,
+      "works_count": 466,
+      "cited_by_count": 15896,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5056752982",
+      "display_name": "Richard J. Zaino",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 132,
+      "works_count": 183,
+      "cited_by_count": 20342,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5086871708",
+      "display_name": "John C. Morrison",
+      "orcid": "https://orcid.org/0000-0003-3048-6470",
+      "h_index": 67,
+      "i10_index": 330,
+      "works_count": 619,
+      "cited_by_count": 16457,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5032299143",
+      "display_name": "Jim Thornton",
+      "orcid": "https://orcid.org/0000-0001-9764-6876",
+      "h_index": 67,
+      "i10_index": 225,
+      "works_count": 580,
+      "cited_by_count": 20558,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Obstetrics and Gynecology -- 8.3",
+      "id": "https://openalex.org/A5082807098",
+      "display_name": "Satoru Kyo",
+      "orcid": "https://orcid.org/0000-0002-8986-6147",
+      "h_index": 67,
+      "i10_index": 218,
+      "works_count": 440,
+      "cited_by_count": 14990,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5047557865",
+      "display_name": "Assiamira M. Ferrara",
+      "orcid": "https://orcid.org/0000-0002-7505-4826",
+      "h_index": 67,
+      "i10_index": 208,
+      "works_count": 400,
+      "cited_by_count": 19941,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5071952761",
+      "display_name": "François Audibert",
+      "orcid": "https://orcid.org/0000-0002-2697-3826",
+      "h_index": 67,
+      "i10_index": 202,
+      "works_count": 473,
+      "cited_by_count": 17402,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5085346363",
+      "display_name": "Andrew W. Horne",
+      "orcid": "https://orcid.org/0000-0002-9656-493X",
+      "h_index": 67,
+      "i10_index": 190,
+      "works_count": 396,
+      "cited_by_count": 23605,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5033246059",
+      "display_name": "Vesna D. Garovic",
+      "orcid": "https://orcid.org/0000-0001-6891-0578",
+      "h_index": 67,
+      "i10_index": 182,
+      "works_count": 381,
+      "cited_by_count": 19513,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5044870790",
+      "display_name": "Loren K. Mell",
+      "orcid": "https://orcid.org/0000-0003-2277-6080",
+      "h_index": 67,
+      "i10_index": 174,
+      "works_count": 483,
+      "cited_by_count": 18210,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5016182502",
+      "display_name": "Chong Jai Kim",
+      "orcid": "https://orcid.org/0000-0002-2844-9446",
+      "h_index": 67,
+      "i10_index": 173,
+      "works_count": 275,
+      "cited_by_count": 18323,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5111768327",
+      "display_name": "Francesca Gotsch",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 153,
+      "works_count": 232,
+      "cited_by_count": 17320,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5023685848",
+      "display_name": "Kaled M. Alektiar",
+      "orcid": "https://orcid.org/0000-0003-3705-7978",
+      "h_index": 67,
+      "i10_index": 149,
+      "works_count": 350,
+      "cited_by_count": 12172,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5079499880",
+      "display_name": "Elizabeth A Thom",
+      "orcid": "https://orcid.org/0000-0002-1395-3527",
+      "h_index": 67,
+      "i10_index": 123,
+      "works_count": 189,
+      "cited_by_count": 31978,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5073135259",
+      "display_name": "Brian N. Bundy",
+      "orcid": "https://orcid.org/0000-0003-3478-714X",
+      "h_index": 67,
+      "i10_index": 107,
+      "works_count": 185,
+      "cited_by_count": 37414,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5025347398",
+      "display_name": "Francesco Fanfani",
+      "orcid": "https://orcid.org/0000-0003-1991-7284",
+      "h_index": 66,
+      "i10_index": 314,
+      "works_count": 768,
+      "cited_by_count": 16055,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 257,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5050782244",
+      "display_name": "Giuseppe Rizzo",
+      "orcid": "https://orcid.org/0000-0002-5525-4353",
+      "h_index": 66,
+      "i10_index": 297,
+      "works_count": 737,
+      "cited_by_count": 16690,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 258,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5056705988",
+      "display_name": "Ludovico Muzii",
+      "orcid": "https://orcid.org/0000-0001-7195-9583",
+      "h_index": 66,
+      "i10_index": 280,
+      "works_count": 584,
+      "cited_by_count": 14761,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 259,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5052434013",
+      "display_name": "Rainer Kimmig",
+      "orcid": "https://orcid.org/0000-0003-1118-2199",
+      "h_index": 66,
+      "i10_index": 275,
+      "works_count": 822,
+      "cited_by_count": 20094,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 260,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5067608108",
+      "display_name": "Any Cheung",
+      "orcid": "https://orcid.org/0000-0002-1584-7568",
+      "h_index": 66,
+      "i10_index": 259,
+      "works_count": 623,
+      "cited_by_count": 14177,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 261,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5082246170",
+      "display_name": "Alan Tita",
+      "orcid": "https://orcid.org/0000-0002-7244-9056",
+      "h_index": 66,
+      "i10_index": 254,
+      "works_count": 760,
+      "cited_by_count": 23627,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 262,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5003343672",
+      "display_name": "Ayman A. Al-Hendy",
+      "orcid": "https://orcid.org/0000-0002-8778-4447",
+      "h_index": 66,
+      "i10_index": 245,
+      "works_count": 519,
+      "cited_by_count": 14916,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 263,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5004332195",
+      "display_name": "Emma Jayne Crosbie",
+      "orcid": "https://orcid.org/0000-0003-0284-8630",
+      "h_index": 66,
+      "i10_index": 211,
+      "works_count": 615,
+      "cited_by_count": 18364,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 264,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5084158432",
+      "display_name": "Kent L. R. Thornburg",
+      "orcid": "https://orcid.org/0000-0002-5561-4785",
+      "h_index": 66,
+      "i10_index": 198,
+      "works_count": 353,
+      "cited_by_count": 20434,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 265,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5012191640",
+      "display_name": "Nardhy Gomez‐Lopez",
+      "orcid": "https://orcid.org/0000-0002-3406-5262",
+      "h_index": 66,
+      "i10_index": 187,
+      "works_count": 338,
+      "cited_by_count": 15849,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 266,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5043404288",
+      "display_name": "Adi Laurentiu Tarca",
+      "orcid": "https://orcid.org/0000-0003-1712-7588",
+      "h_index": 66,
+      "i10_index": 185,
+      "works_count": 342,
+      "cited_by_count": 17068,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 267,
+      "score": 8.2,
+      "label": "Obstetrics and Gynecology -- 8.2",
+      "id": "https://openalex.org/A5002053214",
+      "display_name": "Giacomo Meschia",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 181,
+      "works_count": 263,
+      "cited_by_count": 12964,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 268,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5109964882",
+      "display_name": "Charles F. Levenback",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 157,
+      "works_count": 261,
+      "cited_by_count": 16905,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 269,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5074579056",
+      "display_name": "Erica P. Gunderson",
+      "orcid": "https://orcid.org/0000-0002-2039-1964",
+      "h_index": 66,
+      "i10_index": 141,
+      "works_count": 258,
+      "cited_by_count": 17848,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 270,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5104670018",
+      "display_name": "Agustín Conde‐Agudelo",
+      "orcid": "https://orcid.org/0000-0003-4787-498X",
+      "h_index": 66,
+      "i10_index": 90,
+      "works_count": 137,
+      "cited_by_count": 18984,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 271,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5067068110",
+      "display_name": "Seppo T Heinonen",
+      "orcid": "https://orcid.org/0000-0001-5949-0874",
+      "h_index": 65,
+      "i10_index": 288,
+      "works_count": 441,
+      "cited_by_count": 15740,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 272,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5033347731",
+      "display_name": "Alison G. Cahill",
+      "orcid": "https://orcid.org/0000-0002-6012-3374",
+      "h_index": 65,
+      "i10_index": 262,
+      "works_count": 878,
+      "cited_by_count": 15954,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 273,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5016855766",
+      "display_name": "Everett F. Magann",
+      "orcid": "https://orcid.org/0000-0001-6823-7635",
+      "h_index": 65,
+      "i10_index": 261,
+      "works_count": 449,
+      "cited_by_count": 14431,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 274,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5032824722",
+      "display_name": "Arie Franx",
+      "orcid": "https://orcid.org/0000-0001-8801-5546",
+      "h_index": 65,
+      "i10_index": 247,
+      "works_count": 616,
+      "cited_by_count": 14773,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 275,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5074997845",
+      "display_name": "Ross A. D. Bathgate",
+      "orcid": "https://orcid.org/0000-0001-6301-861X",
+      "h_index": 65,
+      "i10_index": 235,
+      "works_count": 401,
+      "cited_by_count": 15778,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 276,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5110237532",
+      "display_name": "E. Albert Reece",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 230,
+      "works_count": 401,
+      "cited_by_count": 16565,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 277,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5009004025",
+      "display_name": "Federico Prefumo",
+      "orcid": "https://orcid.org/0000-0001-7793-714X",
+      "h_index": 65,
+      "i10_index": 226,
+      "works_count": 534,
+      "cited_by_count": 17752,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 278,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5035371538",
+      "display_name": "Graeme Neil Smith",
+      "orcid": "https://orcid.org/0000-0002-3128-4523",
+      "h_index": 65,
+      "i10_index": 225,
+      "works_count": 395,
+      "cited_by_count": 14908,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 279,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5111515138",
+      "display_name": "Enrico Maria Ferrazzi",
+      "orcid": "https://orcid.org/0000-0001-5243-0537",
+      "h_index": 65,
+      "i10_index": 214,
+      "works_count": 569,
+      "cited_by_count": 19233,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 280,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5065301996",
+      "display_name": "Hannah Grace Dahlen",
+      "orcid": "https://orcid.org/0000-0002-4450-3078",
+      "h_index": 65,
+      "i10_index": 214,
+      "works_count": 457,
+      "cited_by_count": 13308,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 281,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5030836937",
+      "display_name": "Fergal Desmond Malone",
+      "orcid": "https://orcid.org/0009-0003-4313-4594",
+      "h_index": 65,
+      "i10_index": 213,
+      "works_count": 650,
+      "cited_by_count": 19899,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 282,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5055039618",
+      "display_name": "Joris van der Post",
+      "orcid": "https://orcid.org/0000-0003-3311-2116",
+      "h_index": 65,
+      "i10_index": 210,
+      "works_count": 441,
+      "cited_by_count": 17545,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 283,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5064140140",
+      "display_name": "Fabio Landoni",
+      "orcid": "https://orcid.org/0000-0001-6734-739X",
+      "h_index": 65,
+      "i10_index": 191,
+      "works_count": 442,
+      "cited_by_count": 17032,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 284,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5087026831",
+      "display_name": "Farr Reza Nezhat",
+      "orcid": "https://orcid.org/0000-0001-9245-5165",
+      "h_index": 65,
+      "i10_index": 188,
+      "works_count": 540,
+      "cited_by_count": 12526,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 285,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5018824137",
+      "display_name": "Maurice L. Druzin",
+      "orcid": "https://orcid.org/0000-0001-7185-6664",
+      "h_index": 65,
+      "i10_index": 186,
+      "works_count": 454,
+      "cited_by_count": 15663,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 286,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5002787034",
+      "display_name": "Maurício Simões Abrão",
+      "orcid": "https://orcid.org/0000-0003-1320-3010",
+      "h_index": 65,
+      "i10_index": 176,
+      "works_count": 396,
+      "cited_by_count": 16122,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 287,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5031315170",
+      "display_name": "Tullia Todros",
+      "orcid": "https://orcid.org/0000-0003-3016-1510",
+      "h_index": 65,
+      "i10_index": 175,
+      "works_count": 516,
+      "cited_by_count": 14545,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 288,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5090056363",
+      "display_name": "Francis Gary Cunningham",
+      "orcid": "https://orcid.org/0000-0001-6218-1773",
+      "h_index": 65,
+      "i10_index": 166,
+      "works_count": 298,
+      "cited_by_count": 15865,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 289,
+      "score": 8.1,
+      "label": "Obstetrics and Gynecology -- 8.1",
+      "id": "https://openalex.org/A5027859165",
+      "display_name": "Drucilla Jane Roberts",
+      "orcid": "https://orcid.org/0000-0002-9104-6674",
+      "h_index": 65,
+      "i10_index": 161,
+      "works_count": 324,
+      "cited_by_count": 18283,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 290,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5109076246",
+      "display_name": "Paul J. Meis",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 124,
+      "works_count": 182,
+      "cited_by_count": 17297,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 291,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5021618100",
+      "display_name": "George L. Mutter",
+      "orcid": "https://orcid.org/0000-0002-9795-8156",
+      "h_index": 65,
+      "i10_index": 118,
+      "works_count": 189,
+      "cited_by_count": 13587,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 292,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5053588545",
+      "display_name": "Ulla Waldenström",
+      "orcid": "https://orcid.org/0000-0001-9358-855X",
+      "h_index": 65,
+      "i10_index": 116,
+      "works_count": 183,
+      "cited_by_count": 14130,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 293,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5029456681",
+      "display_name": "Diego H. Castrillón",
+      "orcid": "https://orcid.org/0000-0001-6690-4633",
+      "h_index": 65,
+      "i10_index": 106,
+      "works_count": 157,
+      "cited_by_count": 21086,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 294,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5055405608",
+      "display_name": "Tadashi Kimura",
+      "orcid": "https://orcid.org/0000-0003-1279-9078",
+      "h_index": 64,
+      "i10_index": 349,
+      "works_count": 879,
+      "cited_by_count": 17639,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 295,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5045426561",
+      "display_name": "Chiara Benedetto",
+      "orcid": "https://orcid.org/0000-0003-1514-4771",
+      "h_index": 64,
+      "i10_index": 307,
+      "works_count": 1008,
+      "cited_by_count": 16098,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 296,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5015473918",
+      "display_name": "Giorgio Bogani",
+      "orcid": "https://orcid.org/0000-0001-8373-8569",
+      "h_index": 64,
+      "i10_index": 291,
+      "works_count": 694,
+      "cited_by_count": 14598,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 297,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5057973652",
+      "display_name": "Chyong‐Huey Lai",
+      "orcid": "https://orcid.org/0000-0002-9977-9645",
+      "h_index": 64,
+      "i10_index": 238,
+      "works_count": 455,
+      "cited_by_count": 12543,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 298,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5040208075",
+      "display_name": "Claire Trelford Roberts",
+      "orcid": "https://orcid.org/0000-0002-9250-2192",
+      "h_index": 64,
+      "i10_index": 206,
+      "works_count": 425,
+      "cited_by_count": 15648,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 299,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5018279908",
+      "display_name": "Ronald S. Gibbs",
+      "orcid": "https://orcid.org/0000-0002-6130-2702",
+      "h_index": 64,
+      "i10_index": 201,
+      "works_count": 341,
+      "cited_by_count": 19804,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 300,
+      "score": 8,
+      "label": "Obstetrics and Gynecology -- 8.0",
+      "id": "https://openalex.org/A5056214143",
+      "display_name": "Elizabeth A. Stewart",
+      "orcid": "https://orcid.org/0000-0003-1110-2400",
+      "h_index": 64,
+      "i10_index": 193,
+      "works_count": 393,
+      "cited_by_count": 18785,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 301,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5103527715",
+      "display_name": "Steven G. Silverberg",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 185,
+      "works_count": 282,
+      "cited_by_count": 14431,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 302,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5050797896",
+      "display_name": "Marijke M. Faas",
+      "orcid": "https://orcid.org/0000-0002-5860-3993",
+      "h_index": 64,
+      "i10_index": 181,
+      "works_count": 346,
+      "cited_by_count": 16772,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 303,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5109364584",
+      "display_name": "Steven Leigh Clark",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 162,
+      "works_count": 338,
+      "cited_by_count": 14581,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 304,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5086647419",
+      "display_name": "Donald J. Dudley",
+      "orcid": "https://orcid.org/0000-0002-2126-5839",
+      "h_index": 64,
+      "i10_index": 159,
+      "works_count": 291,
+      "cited_by_count": 13932,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 305,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5082749921",
+      "display_name": "Kirk P. Conrad",
+      "orcid": "https://orcid.org/0000-0003-4748-5765",
+      "h_index": 64,
+      "i10_index": 120,
+      "works_count": 169,
+      "cited_by_count": 12145,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 306,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5011762682",
+      "display_name": "Massimo Piergiuseppe Franchi",
+      "orcid": "https://orcid.org/0000-0001-6156-158X",
+      "h_index": 63,
+      "i10_index": 209,
+      "works_count": 681,
+      "cited_by_count": 15153,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 307,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5046688742",
+      "display_name": "Julie J. Kim",
+      "orcid": "https://orcid.org/0000-0001-9834-8213",
+      "h_index": 63,
+      "i10_index": 207,
+      "works_count": 427,
+      "cited_by_count": 17579,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 308,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5035372594",
+      "display_name": "Tony K.H. Chung",
+      "orcid": "https://orcid.org/0000-0002-6362-8546",
+      "h_index": 63,
+      "i10_index": 200,
+      "works_count": 302,
+      "cited_by_count": 13069,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 309,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5069031287",
+      "display_name": "Martha Lappas",
+      "orcid": "https://orcid.org/0000-0002-4744-6929",
+      "h_index": 63,
+      "i10_index": 193,
+      "works_count": 297,
+      "cited_by_count": 12146,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 310,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5070644910",
+      "display_name": "Janet M. Catov",
+      "orcid": "https://orcid.org/0000-0002-9551-851X",
+      "h_index": 63,
+      "i10_index": 187,
+      "works_count": 450,
+      "cited_by_count": 12434,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 311,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5060831914",
+      "display_name": "Jeffrey A. Keelan",
+      "orcid": "https://orcid.org/0000-0002-5403-6266",
+      "h_index": 63,
+      "i10_index": 186,
+      "works_count": 359,
+      "cited_by_count": 12716,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 312,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5043654825",
+      "display_name": "Thomas W. Burke",
+      "orcid": "https://orcid.org/0000-0003-0592-5822",
+      "h_index": 63,
+      "i10_index": 183,
+      "works_count": 315,
+      "cited_by_count": 13144,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 313,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5083345435",
+      "display_name": "Yukio Sonoda",
+      "orcid": "https://orcid.org/0000-0002-5059-2118",
+      "h_index": 63,
+      "i10_index": 156,
+      "works_count": 406,
+      "cited_by_count": 12140,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 314,
+      "score": 7.9,
+      "label": "Obstetrics and Gynecology -- 7.9",
+      "id": "https://openalex.org/A5111732598",
+      "display_name": "Yvonne W. Cheng",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 111,
+      "works_count": 505,
+      "cited_by_count": 10325,
+      "discipline": "Obstetrics and Gynecology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Obstetrics and Gynecology",
+      "fields": [
+        "Medicine"
+      ]
+    }
+  ]
+}

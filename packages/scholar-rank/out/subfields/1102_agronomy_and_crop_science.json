@@ -1,0 +1,975 @@
+{
+  "kind": "subfield",
+  "id": 1102,
+  "name": "Agronomy and Crop Science",
+  "total_in_scrape": 51,
+  "count": 51,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Agronomy and Crop Science -- 9.9",
+      "id": "https://openalex.org/A5013702236",
+      "display_name": "Mario Herrero",
+      "orcid": "https://orcid.org/0000-0002-7741-5090",
+      "h_index": 127,
+      "i10_index": 309,
+      "works_count": 627,
+      "cited_by_count": 89347,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Agronomy and Crop Science -- 9.9",
+      "id": "https://openalex.org/A5026642372",
+      "display_name": "David B. Lobell",
+      "orcid": "https://orcid.org/0000-0002-5969-3476",
+      "h_index": 122,
+      "i10_index": 293,
+      "works_count": 509,
+      "cited_by_count": 85239,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Agronomy and Crop Science -- 9.9",
+      "id": "https://openalex.org/A5051973791",
+      "display_name": "Kenneth G. Cassman",
+      "orcid": "https://orcid.org/0000-0002-9775-3468",
+      "h_index": 105,
+      "i10_index": 204,
+      "works_count": 297,
+      "cited_by_count": 59078,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Agronomy and Crop Science -- 9.9",
+      "id": "https://openalex.org/A5044287766",
+      "display_name": "Philip K. Thornton",
+      "orcid": "https://orcid.org/0000-0002-1854-0182",
+      "h_index": 102,
+      "i10_index": 282,
+      "works_count": 612,
+      "cited_by_count": 53638,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Agronomy and Crop Science -- 9.9",
+      "id": "https://openalex.org/A5100762441",
+      "display_name": "Christoph Müller",
+      "orcid": "https://orcid.org/0000-0002-9491-3550",
+      "h_index": 101,
+      "i10_index": 259,
+      "works_count": 617,
+      "cited_by_count": 50610,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Agronomy and Crop Science -- 9.9",
+      "id": "https://openalex.org/A5047677277",
+      "display_name": "Gerrit Hoogenboom",
+      "orcid": "https://orcid.org/0000-0002-1555-0537",
+      "h_index": 98,
+      "i10_index": 508,
+      "works_count": 922,
+      "cited_by_count": 46528,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5023434438",
+      "display_name": "Kenneth Jay Boote",
+      "orcid": "https://orcid.org/0000-0002-1358-5496",
+      "h_index": 95,
+      "i10_index": 356,
+      "works_count": 532,
+      "cited_by_count": 46254,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5060800572",
+      "display_name": "Graeme Hammer",
+      "orcid": "https://orcid.org/0000-0002-1180-7374",
+      "h_index": 95,
+      "i10_index": 284,
+      "works_count": 498,
+      "cited_by_count": 37372,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5072022077",
+      "display_name": "Frank A. Ewert",
+      "orcid": "https://orcid.org/0000-0002-4392-8154",
+      "h_index": 95,
+      "i10_index": 281,
+      "works_count": 502,
+      "cited_by_count": 42559,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5020781518",
+      "display_name": "Senthold Asseng",
+      "orcid": "https://orcid.org/0000-0002-7583-3811",
+      "h_index": 91,
+      "i10_index": 251,
+      "works_count": 459,
+      "cited_by_count": 39669,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5043175742",
+      "display_name": "Víctor O. Sadras",
+      "orcid": "https://orcid.org/0000-0002-5874-6775",
+      "h_index": 88,
+      "i10_index": 289,
+      "works_count": 397,
+      "cited_by_count": 23518,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5030244109",
+      "display_name": "John Hodgson",
+      "orcid": "https://orcid.org/0000-0003-3021-802X",
+      "h_index": 88,
+      "i10_index": 284,
+      "works_count": 803,
+      "cited_by_count": 50494,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Business, Management and Accounting",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5031587397",
+      "display_name": "P.C. Struik",
+      "orcid": "https://orcid.org/0000-0003-2196-547X",
+      "h_index": 87,
+      "i10_index": 524,
+      "works_count": 1055,
+      "cited_by_count": 34541,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5031345619",
+      "display_name": "M.K. van Ittersum",
+      "orcid": "https://orcid.org/0000-0001-8611-6781",
+      "h_index": 86,
+      "i10_index": 262,
+      "works_count": 589,
+      "cited_by_count": 31773,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Economics, Econometrics and Finance",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5070552780",
+      "display_name": "I.J.M. de Boer",
+      "orcid": "https://orcid.org/0000-0002-0675-7528",
+      "h_index": 83,
+      "i10_index": 240,
+      "works_count": 527,
+      "cited_by_count": 26474,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5018063298",
+      "display_name": "David Makowski",
+      "orcid": "https://orcid.org/0000-0001-6385-3703",
+      "h_index": 82,
+      "i10_index": 243,
+      "works_count": 854,
+      "cited_by_count": 24394,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Agronomy and Crop Science -- 9.8",
+      "id": "https://openalex.org/A5039474046",
+      "display_name": "Jean‐François Soussana",
+      "orcid": "https://orcid.org/0000-0002-1932-6583",
+      "h_index": 82,
+      "i10_index": 184,
+      "works_count": 474,
+      "cited_by_count": 39681,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5046592236",
+      "display_name": "James W. Jones",
+      "orcid": "https://orcid.org/0000-0002-3239-8960",
+      "h_index": 80,
+      "i10_index": 262,
+      "works_count": 507,
+      "cited_by_count": 30550,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5080486844",
+      "display_name": "Leonardo Fernandes Fraceto",
+      "orcid": "https://orcid.org/0000-0002-2827-2038",
+      "h_index": 79,
+      "i10_index": 293,
+      "works_count": 440,
+      "cited_by_count": 31539,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Materials Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5074248754",
+      "display_name": "Bruno Basso",
+      "orcid": "https://orcid.org/0000-0003-2090-4616",
+      "h_index": 78,
+      "i10_index": 210,
+      "works_count": 424,
+      "cited_by_count": 26895,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5018044499",
+      "display_name": "Wenyu Yang",
+      "orcid": "https://orcid.org/0000-0001-5885-3450",
+      "h_index": 77,
+      "i10_index": 279,
+      "works_count": 540,
+      "cited_by_count": 18361,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5007172545",
+      "display_name": "Fulu Tao",
+      "orcid": "https://orcid.org/0000-0001-8574-0080",
+      "h_index": 73,
+      "i10_index": 225,
+      "works_count": 357,
+      "cited_by_count": 24949,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5033164981",
+      "display_name": "Mark B. Peoples",
+      "orcid": "https://orcid.org/0000-0001-6060-3290",
+      "h_index": 73,
+      "i10_index": 167,
+      "works_count": 229,
+      "cited_by_count": 23049,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5088020355",
+      "display_name": "Mikhail A. Semenov",
+      "orcid": "https://orcid.org/0000-0002-1561-7113",
+      "h_index": 73,
+      "i10_index": 152,
+      "works_count": 255,
+      "cited_by_count": 26641,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5006578923",
+      "display_name": "Paulo César de Faccio Carvalho",
+      "orcid": "https://orcid.org/0000-0002-7020-3001",
+      "h_index": 72,
+      "i10_index": 252,
+      "works_count": 508,
+      "cited_by_count": 16137,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5050787568",
+      "display_name": "Alex C. Ruane",
+      "orcid": "https://orcid.org/0000-0002-5582-9217",
+      "h_index": 72,
+      "i10_index": 139,
+      "works_count": 299,
+      "cited_by_count": 43130,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5088345408",
+      "display_name": "Andrew Juan Challinor",
+      "orcid": "https://orcid.org/0000-0002-8551-6617",
+      "h_index": 72,
+      "i10_index": 134,
+      "works_count": 263,
+      "cited_by_count": 27024,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Agronomy and Crop Science -- 9.7",
+      "id": "https://openalex.org/A5004466305",
+      "display_name": "Fernando H. Andrade",
+      "orcid": "https://orcid.org/0000-0001-7356-4673",
+      "h_index": 71,
+      "i10_index": 114,
+      "works_count": 151,
+      "cited_by_count": 13773,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5029517179",
+      "display_name": "Stefan Siebert",
+      "orcid": "https://orcid.org/0000-0002-9998-0672",
+      "h_index": 70,
+      "i10_index": 134,
+      "works_count": 284,
+      "cited_by_count": 40004,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5003196739",
+      "display_name": "W. R. Raun",
+      "orcid": "https://orcid.org/0000-0002-1206-1105",
+      "h_index": 69,
+      "i10_index": 195,
+      "works_count": 289,
+      "cited_by_count": 18333,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5032668433",
+      "display_name": "Enli Wang",
+      "orcid": "https://orcid.org/0000-0002-6653-5791",
+      "h_index": 69,
+      "i10_index": 193,
+      "works_count": 255,
+      "cited_by_count": 21776,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5027336971",
+      "display_name": "Gail Taylor",
+      "orcid": "https://orcid.org/0000-0001-8470-6390",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 387,
+      "cited_by_count": 16894,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5004607622",
+      "display_name": "Reimund Paul Rötter",
+      "orcid": "https://orcid.org/0000-0002-3804-9964",
+      "h_index": 69,
+      "i10_index": 169,
+      "works_count": 523,
+      "cited_by_count": 22930,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5032094288",
+      "display_name": "Erik Steen Jensen",
+      "orcid": "https://orcid.org/0000-0001-5243-6373",
+      "h_index": 69,
+      "i10_index": 154,
+      "works_count": 299,
+      "cited_by_count": 19712,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5018764127",
+      "display_name": "Claas Nendel",
+      "orcid": "https://orcid.org/0000-0001-7608-9097",
+      "h_index": 68,
+      "i10_index": 180,
+      "works_count": 391,
+      "cited_by_count": 21643,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5066634889",
+      "display_name": "Evan Fraser",
+      "orcid": "https://orcid.org/0000-0001-5124-488X",
+      "h_index": 68,
+      "i10_index": 137,
+      "works_count": 257,
+      "cited_by_count": 19312,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5078016930",
+      "display_name": "De Li Liu",
+      "orcid": "https://orcid.org/0000-0003-2574-1908",
+      "h_index": 67,
+      "i10_index": 214,
+      "works_count": 298,
+      "cited_by_count": 14363,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5004119832",
+      "display_name": "Marie‐Hélène Jeuffroy",
+      "orcid": "https://orcid.org/0000-0003-0520-9172",
+      "h_index": 66,
+      "i10_index": 178,
+      "works_count": 491,
+      "cited_by_count": 16226,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Agronomy and Crop Science -- 9.6",
+      "id": "https://openalex.org/A5047831489",
+      "display_name": "Kurt Christian Kersebaum",
+      "orcid": "https://orcid.org/0000-0002-3679-8427",
+      "h_index": 66,
+      "i10_index": 165,
+      "works_count": 392,
+      "cited_by_count": 23407,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5064124035",
+      "display_name": "Ignacio Antonio Ciampitti",
+      "orcid": "https://orcid.org/0000-0001-9619-5129",
+      "h_index": 65,
+      "i10_index": 269,
+      "works_count": 552,
+      "cited_by_count": 15893,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5062249054",
+      "display_name": "William L. Rooney",
+      "orcid": "https://orcid.org/0000-0001-7953-1856",
+      "h_index": 65,
+      "i10_index": 195,
+      "works_count": 397,
+      "cited_by_count": 14840,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5013332015",
+      "display_name": "Long Li",
+      "orcid": "https://orcid.org/0000-0003-0523-3308",
+      "h_index": 65,
+      "i10_index": 142,
+      "works_count": 240,
+      "cited_by_count": 17911,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5038971318",
+      "display_name": "Andy Jarvis",
+      "orcid": "https://orcid.org/0000-0001-6543-0798",
+      "h_index": 65,
+      "i10_index": 107,
+      "works_count": 256,
+      "cited_by_count": 44845,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5066743731",
+      "display_name": "Jean-Marc Meynard",
+      "orcid": "https://orcid.org/0000-0002-4280-1768",
+      "h_index": 64,
+      "i10_index": 158,
+      "works_count": 450,
+      "cited_by_count": 13848,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5008888320",
+      "display_name": "John Roy Porter",
+      "orcid": "https://orcid.org/0000-0002-0777-3028",
+      "h_index": 64,
+      "i10_index": 139,
+      "works_count": 287,
+      "cited_by_count": 19746,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5044124578",
+      "display_name": "Robert J. Hijmans",
+      "orcid": "https://orcid.org/0000-0001-5872-2872",
+      "h_index": 64,
+      "i10_index": 124,
+      "works_count": 185,
+      "cited_by_count": 76034,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5069966398",
+      "display_name": "Thomas Gaiser",
+      "orcid": "https://orcid.org/0000-0002-5820-2364",
+      "h_index": 63,
+      "i10_index": 204,
+      "works_count": 344,
+      "cited_by_count": 14434,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5034843631",
+      "display_name": "Marco Bindi",
+      "orcid": "https://orcid.org/0000-0002-8968-954X",
+      "h_index": 63,
+      "i10_index": 182,
+      "works_count": 415,
+      "cited_by_count": 21378,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5029166175",
+      "display_name": "Madhu Khanna",
+      "orcid": "https://orcid.org/0000-0003-4994-4451",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 387,
+      "cited_by_count": 14935,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Economics, Econometrics and Finance",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5008316023",
+      "display_name": "Jeffrey W. White",
+      "orcid": "https://orcid.org/0000-0002-2051-4645",
+      "h_index": 63,
+      "i10_index": 151,
+      "works_count": 290,
+      "cited_by_count": 18170,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Agronomy and Crop Science -- 9.5",
+      "id": "https://openalex.org/A5012126526",
+      "display_name": "Éric Justes",
+      "orcid": "https://orcid.org/0000-0001-7390-7058",
+      "h_index": 63,
+      "i10_index": 143,
+      "works_count": 441,
+      "cited_by_count": 18298,
+      "discipline": "Agronomy and Crop Science",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Agronomy and Crop Science",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    }
+  ]
+}

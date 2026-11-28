@@ -1,0 +1,427 @@
+{
+  "kind": "subfield",
+  "id": 3322,
+  "name": "Urban Studies",
+  "total_in_scrape": 22,
+  "count": 22,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Urban Studies -- 9.9",
+      "id": "https://openalex.org/A5003307854",
+      "display_name": "Michael Batty",
+      "orcid": "https://orcid.org/0000-0002-9931-1305",
+      "h_index": 110,
+      "i10_index": 377,
+      "works_count": 986,
+      "cited_by_count": 48429,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Urban Studies -- 9.9",
+      "id": "https://openalex.org/A5059261666",
+      "display_name": "Tan Yiğitcanlar",
+      "orcid": "https://orcid.org/0000-0001-7262-7118",
+      "h_index": 99,
+      "i10_index": 357,
+      "works_count": 913,
+      "cited_by_count": 34401,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Urban Studies -- 9.9",
+      "id": "https://openalex.org/A5052539913",
+      "display_name": "Fulong Wu",
+      "orcid": "https://orcid.org/0000-0003-4938-6066",
+      "h_index": 88,
+      "i10_index": 235,
+      "works_count": 425,
+      "cited_by_count": 25420,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Urban Studies -- 9.9",
+      "id": "https://openalex.org/A5034151025",
+      "display_name": "Terry Hartig",
+      "orcid": "https://orcid.org/0000-0001-9970-9164",
+      "h_index": 87,
+      "i10_index": 139,
+      "works_count": 243,
+      "cited_by_count": 44742,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Urban Studies -- 9.9",
+      "id": "https://openalex.org/A5008623539",
+      "display_name": "Mathew P. White",
+      "orcid": "https://orcid.org/0000-0002-4168-7289",
+      "h_index": 80,
+      "i10_index": 190,
+      "works_count": 334,
+      "cited_by_count": 34905,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Urban Studies -- 9.9",
+      "id": "https://openalex.org/A5034646251",
+      "display_name": "Rob Kitchin",
+      "orcid": "https://orcid.org/0000-0003-4458-7299",
+      "h_index": 78,
+      "i10_index": 237,
+      "works_count": 551,
+      "cited_by_count": 40376,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5049258946",
+      "display_name": "Erik A. Swyngedouw",
+      "orcid": "https://orcid.org/0000-0001-7494-2824",
+      "h_index": 77,
+      "i10_index": 180,
+      "works_count": 845,
+      "cited_by_count": 40227,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5056309382",
+      "display_name": "Saskia Sassen",
+      "orcid": "https://orcid.org/0000-0002-3468-6923",
+      "h_index": 76,
+      "i10_index": 200,
+      "works_count": 472,
+      "cited_by_count": 33174,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5054829569",
+      "display_name": "Allen J. Scott",
+      "orcid": "https://orcid.org/0000-0002-8742-5970",
+      "h_index": 75,
+      "i10_index": 170,
+      "works_count": 340,
+      "cited_by_count": 27456,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5078694518",
+      "display_name": "Thomas Astell‐Burt",
+      "orcid": "https://orcid.org/0000-0002-1498-4851",
+      "h_index": 72,
+      "i10_index": 195,
+      "works_count": 325,
+      "cited_by_count": 59514,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5051483979",
+      "display_name": "Robin A. Kearns",
+      "orcid": "https://orcid.org/0000-0002-7890-1218",
+      "h_index": 69,
+      "i10_index": 197,
+      "works_count": 355,
+      "cited_by_count": 14801,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5011421741",
+      "display_name": "Chris J. Webster",
+      "orcid": "https://orcid.org/0000-0002-2171-7495",
+      "h_index": 69,
+      "i10_index": 194,
+      "works_count": 447,
+      "cited_by_count": 15567,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5001327566",
+      "display_name": "Peter James",
+      "orcid": "https://orcid.org/0000-0002-2858-1973",
+      "h_index": 68,
+      "i10_index": 166,
+      "works_count": 344,
+      "cited_by_count": 29458,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5082142224",
+      "display_name": "Isabelle Anguelovski",
+      "orcid": "https://orcid.org/0000-0002-6409-5155",
+      "h_index": 68,
+      "i10_index": 120,
+      "works_count": 207,
+      "cited_by_count": 18790,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5088613803",
+      "display_name": "Ben Derudder",
+      "orcid": "https://orcid.org/0000-0001-6195-8544",
+      "h_index": 65,
+      "i10_index": 238,
+      "works_count": 617,
+      "cited_by_count": 15054,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5058686265",
+      "display_name": "Ash Amin",
+      "orcid": "https://orcid.org/0000-0003-1313-2777",
+      "h_index": 65,
+      "i10_index": 106,
+      "works_count": 262,
+      "cited_by_count": 26845,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Urban Studies -- 9.8",
+      "id": "https://openalex.org/A5100689180",
+      "display_name": "Yi Lü",
+      "orcid": "https://orcid.org/0000-0001-7614-6661",
+      "h_index": 64,
+      "i10_index": 175,
+      "works_count": 259,
+      "cited_by_count": 13447,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Urban Studies -- 9.7",
+      "id": "https://openalex.org/A5112204804",
+      "display_name": "Anthony G.O. Yeh",
+      "orcid": "https://orcid.org/0000-0002-0587-0588",
+      "h_index": 64,
+      "i10_index": 170,
+      "works_count": 279,
+      "cited_by_count": 16000,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Urban Studies -- 9.7",
+      "id": "https://openalex.org/A5010235735",
+      "display_name": "Filip Biljecki",
+      "orcid": "https://orcid.org/0000-0002-6229-7749",
+      "h_index": 64,
+      "i10_index": 160,
+      "works_count": 298,
+      "cited_by_count": 14182,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Urban Studies -- 9.7",
+      "id": "https://openalex.org/A5033358117",
+      "display_name": "Yoshifumi Miyazaki",
+      "orcid": "https://orcid.org/0000-0002-3170-6810",
+      "h_index": 64,
+      "i10_index": 146,
+      "works_count": 231,
+      "cited_by_count": 17178,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Physics and Astronomy",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Urban Studies -- 9.7",
+      "id": "https://openalex.org/A5025121693",
+      "display_name": "Peter J. Taylor",
+      "orcid": "https://orcid.org/0000-0003-4346-6364",
+      "h_index": 63,
+      "i10_index": 188,
+      "works_count": 473,
+      "cited_by_count": 16313,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Urban Studies -- 9.7",
+      "id": "https://openalex.org/A5011165369",
+      "display_name": "David Satterthwaite",
+      "orcid": "https://orcid.org/0000-0002-0077-1353",
+      "h_index": 63,
+      "i10_index": 147,
+      "works_count": 344,
+      "cited_by_count": 17430,
+      "discipline": "Urban Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Urban Studies",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    }
+  ]
+}

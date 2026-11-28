@@ -1,0 +1,1843 @@
+{
+  "kind": "subfield",
+  "id": 1107,
+  "name": "Forestry",
+  "total_in_scrape": 95,
+  "count": 95,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Forestry -- 9.9",
+      "id": "https://openalex.org/A5018160834",
+      "display_name": "Yadvinder Singh Malhi",
+      "orcid": "https://orcid.org/0000-0002-3503-4783",
+      "h_index": 165,
+      "i10_index": 546,
+      "works_count": 855,
+      "cited_by_count": 105812,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Forestry -- 9.9",
+      "id": "https://openalex.org/A5035372982",
+      "display_name": "Gregory P. Asner",
+      "orcid": "https://orcid.org/0000-0001-7893-6421",
+      "h_index": 160,
+      "i10_index": 595,
+      "works_count": 1151,
+      "cited_by_count": 112744,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Forestry -- 9.9",
+      "id": "https://openalex.org/A5032473063",
+      "display_name": "Oliver L. Phillips",
+      "orcid": "https://orcid.org/0000-0002-8993-6168",
+      "h_index": 135,
+      "i10_index": 361,
+      "works_count": 617,
+      "cited_by_count": 95629,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Forestry -- 9.9",
+      "id": "https://openalex.org/A5052324110",
+      "display_name": "Jérôme Chave",
+      "orcid": "https://orcid.org/0000-0002-7766-1347",
+      "h_index": 119,
+      "i10_index": 294,
+      "works_count": 661,
+      "cited_by_count": 74489,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Forestry -- 9.9",
+      "id": "https://openalex.org/A5068449664",
+      "display_name": "R. A. Houghton",
+      "orcid": "https://orcid.org/0000-0002-3298-7028",
+      "h_index": 117,
+      "i10_index": 227,
+      "works_count": 465,
+      "cited_by_count": 105219,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Forestry -- 9.9",
+      "id": "https://openalex.org/A5007676872",
+      "display_name": "Thomas A. Spies",
+      "orcid": "https://orcid.org/0000-0001-5151-3672",
+      "h_index": 114,
+      "i10_index": 275,
+      "works_count": 390,
+      "cited_by_count": 53947,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5055240678",
+      "display_name": "Yves Bergeron",
+      "orcid": "https://orcid.org/0000-0003-3707-3687",
+      "h_index": 112,
+      "i10_index": 618,
+      "works_count": 1009,
+      "cited_by_count": 46319,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5044312224",
+      "display_name": "Simon L. Lewis",
+      "orcid": "https://orcid.org/0000-0002-8066-6851",
+      "h_index": 111,
+      "i10_index": 214,
+      "works_count": 519,
+      "cited_by_count": 75491,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5051219165",
+      "display_name": "Michael A. Wulder",
+      "orcid": "https://orcid.org/0000-0002-6942-1896",
+      "h_index": 110,
+      "i10_index": 406,
+      "works_count": 611,
+      "cited_by_count": 57509,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5051124265",
+      "display_name": "Martin G. Herold",
+      "orcid": "https://orcid.org/0000-0003-0246-6886",
+      "h_index": 108,
+      "i10_index": 335,
+      "works_count": 686,
+      "cited_by_count": 53022,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5050842469",
+      "display_name": "Nicholas C. Coops",
+      "orcid": "https://orcid.org/0000-0002-0151-9037",
+      "h_index": 106,
+      "i10_index": 573,
+      "works_count": 812,
+      "cited_by_count": 48717,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5089619012",
+      "display_name": "David A. Coomes",
+      "orcid": "https://orcid.org/0000-0002-8261-2582",
+      "h_index": 104,
+      "i10_index": 288,
+      "works_count": 578,
+      "cited_by_count": 53414,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5051340444",
+      "display_name": "Christoph Leuschner",
+      "orcid": "https://orcid.org/0000-0002-5689-7932",
+      "h_index": 101,
+      "i10_index": 409,
+      "works_count": 636,
+      "cited_by_count": 33509,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5030872735",
+      "display_name": "Hans Pretzsch",
+      "orcid": "https://orcid.org/0000-0002-4958-1868",
+      "h_index": 101,
+      "i10_index": 399,
+      "works_count": 592,
+      "cited_by_count": 37023,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5005235973",
+      "display_name": "S. J. Goetz",
+      "orcid": "https://orcid.org/0000-0002-6326-4308",
+      "h_index": 101,
+      "i10_index": 250,
+      "works_count": 511,
+      "cited_by_count": 57368,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5042922619",
+      "display_name": "Sassan S Saatchi",
+      "orcid": "https://orcid.org/0000-0001-8524-4917",
+      "h_index": 100,
+      "i10_index": 262,
+      "works_count": 478,
+      "cited_by_count": 40897,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Forestry -- 9.8",
+      "id": "https://openalex.org/A5015040477",
+      "display_name": "Bart Muys",
+      "orcid": "https://orcid.org/0000-0001-9421-527X",
+      "h_index": 97,
+      "i10_index": 415,
+      "works_count": 1099,
+      "cited_by_count": 40769,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5022396189",
+      "display_name": "Jürgen Bauhus",
+      "orcid": "https://orcid.org/0000-0002-9673-4986",
+      "h_index": 97,
+      "i10_index": 292,
+      "works_count": 596,
+      "cited_by_count": 35731,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5055781237",
+      "display_name": "Jerry F. Franklin",
+      "orcid": "https://orcid.org/0000-0002-8211-6247",
+      "h_index": 93,
+      "i10_index": 209,
+      "works_count": 311,
+      "cited_by_count": 50620,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5078439160",
+      "display_name": "Michael G. Ryan",
+      "orcid": "https://orcid.org/0000-0002-2500-6738",
+      "h_index": 93,
+      "i10_index": 189,
+      "works_count": 338,
+      "cited_by_count": 39225,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5103060749",
+      "display_name": "Timothy R. Baker",
+      "orcid": "https://orcid.org/0000-0002-3251-1679",
+      "h_index": 92,
+      "i10_index": 192,
+      "works_count": 311,
+      "cited_by_count": 43011,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5033042071",
+      "display_name": "Juha M. Hyyppa",
+      "orcid": "https://orcid.org/0000-0001-5360-4017",
+      "h_index": 91,
+      "i10_index": 398,
+      "works_count": 795,
+      "cited_by_count": 32921,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5049980648",
+      "display_name": "Christian Messier",
+      "orcid": "https://orcid.org/0000-0002-8728-5533",
+      "h_index": 90,
+      "i10_index": 333,
+      "works_count": 495,
+      "cited_by_count": 31558,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5059420442",
+      "display_name": "Francis Edward Putz",
+      "orcid": "https://orcid.org/0000-0003-0051-6675",
+      "h_index": 90,
+      "i10_index": 207,
+      "works_count": 331,
+      "cited_by_count": 31254,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5087616136",
+      "display_name": "Dan Binkley",
+      "orcid": "https://orcid.org/0000-0002-0992-8425",
+      "h_index": 90,
+      "i10_index": 205,
+      "works_count": 328,
+      "cited_by_count": 25937,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5085506794",
+      "display_name": "Rupert Seidl",
+      "orcid": "https://orcid.org/0000-0002-3338-3402",
+      "h_index": 89,
+      "i10_index": 205,
+      "works_count": 469,
+      "cited_by_count": 35622,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5034250940",
+      "display_name": "Erik Næsset",
+      "orcid": "https://orcid.org/0000-0002-2460-5843",
+      "h_index": 88,
+      "i10_index": 267,
+      "works_count": 424,
+      "cited_by_count": 28507,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Forestry -- 9.7",
+      "id": "https://openalex.org/A5108219805",
+      "display_name": "Stith T. Gower",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 155,
+      "works_count": 254,
+      "cited_by_count": 30094,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5074160222",
+      "display_name": "Pedro H. S. Brancalion",
+      "orcid": "https://orcid.org/0000-0001-8245-4062",
+      "h_index": 87,
+      "i10_index": 253,
+      "works_count": 488,
+      "cited_by_count": 31282,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5063465103",
+      "display_name": "Harald K. M. Bugmann",
+      "orcid": "https://orcid.org/0000-0003-4233-0094",
+      "h_index": 85,
+      "i10_index": 304,
+      "works_count": 657,
+      "cited_by_count": 29959,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5024212908",
+      "display_name": "Michael Keller",
+      "orcid": "https://orcid.org/0000-0002-0253-3359",
+      "h_index": 83,
+      "i10_index": 163,
+      "works_count": 439,
+      "cited_by_count": 29274,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5001976802",
+      "display_name": "Charles D. Canham",
+      "orcid": "https://orcid.org/0000-0001-8361-9148",
+      "h_index": 83,
+      "i10_index": 140,
+      "works_count": 294,
+      "cited_by_count": 26961,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5065769287",
+      "display_name": "Karl Joseph Niklas",
+      "orcid": "https://orcid.org/0000-0003-3491-1286",
+      "h_index": 82,
+      "i10_index": 393,
+      "works_count": 582,
+      "cited_by_count": 30720,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5111592638",
+      "display_name": "Ariel E. Lugo",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 199,
+      "works_count": 361,
+      "cited_by_count": 36660,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5076595019",
+      "display_name": "María Uriarte",
+      "orcid": "https://orcid.org/0000-0002-0484-0758",
+      "h_index": 81,
+      "i10_index": 185,
+      "works_count": 431,
+      "cited_by_count": 30296,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5009824835",
+      "display_name": "Ted R. Feldpausch",
+      "orcid": "https://orcid.org/0000-0002-6631-7962",
+      "h_index": 81,
+      "i10_index": 164,
+      "works_count": 330,
+      "cited_by_count": 29792,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5006367879",
+      "display_name": "David L. Peterson",
+      "orcid": "https://orcid.org/0000-0002-4793-0075",
+      "h_index": 80,
+      "i10_index": 257,
+      "works_count": 605,
+      "cited_by_count": 27417,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5002332484",
+      "display_name": "Herman Henry Shugart",
+      "orcid": "https://orcid.org/0000-0002-1766-8379",
+      "h_index": 80,
+      "i10_index": 246,
+      "works_count": 479,
+      "cited_by_count": 26571,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Forestry -- 9.6",
+      "id": "https://openalex.org/A5077764827",
+      "display_name": "Joanne C. White",
+      "orcid": "https://orcid.org/0000-0003-4674-0373",
+      "h_index": 79,
+      "i10_index": 228,
+      "works_count": 344,
+      "cited_by_count": 29304,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5060917820",
+      "display_name": "Mark E. Harmon",
+      "orcid": "https://orcid.org/0000-0002-4195-8288",
+      "h_index": 79,
+      "i10_index": 159,
+      "works_count": 215,
+      "cited_by_count": 33758,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5109201257",
+      "display_name": "Sandra Brown",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 124,
+      "works_count": 191,
+      "cited_by_count": 43162,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5080674121",
+      "display_name": "Jian Ni",
+      "orcid": "https://orcid.org/0000-0001-5411-7050",
+      "h_index": 78,
+      "i10_index": 212,
+      "works_count": 359,
+      "cited_by_count": 35055,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5025490291",
+      "display_name": "Bruno Hérault",
+      "orcid": "https://orcid.org/0000-0002-6950-7286",
+      "h_index": 78,
+      "i10_index": 187,
+      "works_count": 541,
+      "cited_by_count": 26274,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5090626231",
+      "display_name": "Stuart James Davies",
+      "orcid": "https://orcid.org/0000-0002-8596-7522",
+      "h_index": 77,
+      "i10_index": 142,
+      "works_count": 223,
+      "cited_by_count": 21000,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5077118042",
+      "display_name": "Ralph Dubayah",
+      "orcid": "https://orcid.org/0000-0003-1440-6346",
+      "h_index": 76,
+      "i10_index": 190,
+      "works_count": 453,
+      "cited_by_count": 26958,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5001266193",
+      "display_name": "Helene C. Muller‐Landau",
+      "orcid": "https://orcid.org/0000-0002-3526-9021",
+      "h_index": 76,
+      "i10_index": 140,
+      "works_count": 271,
+      "cited_by_count": 30814,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5038870403",
+      "display_name": "Níro Higuchi",
+      "orcid": "https://orcid.org/0000-0002-1203-4502",
+      "h_index": 75,
+      "i10_index": 196,
+      "works_count": 397,
+      "cited_by_count": 31390,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5031326045",
+      "display_name": "David F. R. P. Burslem",
+      "orcid": "https://orcid.org/0000-0001-6033-0990",
+      "h_index": 75,
+      "i10_index": 189,
+      "works_count": 467,
+      "cited_by_count": 20278,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5000618157",
+      "display_name": "Sean C. Thomas",
+      "orcid": "https://orcid.org/0000-0002-0686-2483",
+      "h_index": 75,
+      "i10_index": 171,
+      "works_count": 245,
+      "cited_by_count": 30676,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5014968449",
+      "display_name": "Qinghua Guo",
+      "orcid": "https://orcid.org/0000-0002-1065-0838",
+      "h_index": 73,
+      "i10_index": 191,
+      "works_count": 299,
+      "cited_by_count": 17858,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Computer Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Forestry -- 9.5",
+      "id": "https://openalex.org/A5084516273",
+      "display_name": "Hans Verbeeck",
+      "orcid": "https://orcid.org/0000-0003-1490-0168",
+      "h_index": 73,
+      "i10_index": 184,
+      "works_count": 524,
+      "cited_by_count": 24680,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5101632251",
+      "display_name": "Sylvie Gauthier",
+      "orcid": "https://orcid.org/0000-0001-6720-0195",
+      "h_index": 73,
+      "i10_index": 179,
+      "works_count": 276,
+      "cited_by_count": 17625,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5014203612",
+      "display_name": "Javier Retana",
+      "orcid": "https://orcid.org/0000-0002-7505-9467",
+      "h_index": 73,
+      "i10_index": 178,
+      "works_count": 275,
+      "cited_by_count": 17177,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5087551063",
+      "display_name": "Andreas Rigling",
+      "orcid": "https://orcid.org/0000-0003-1944-4042",
+      "h_index": 73,
+      "i10_index": 163,
+      "works_count": 471,
+      "cited_by_count": 25182,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5036952492",
+      "display_name": "David J. Mladenoff",
+      "orcid": "https://orcid.org/0000-0002-0070-6623",
+      "h_index": 73,
+      "i10_index": 157,
+      "works_count": 278,
+      "cited_by_count": 16884,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5045448750",
+      "display_name": "Richard H. Waring",
+      "orcid": "https://orcid.org/0000-0003-2533-3664",
+      "h_index": 73,
+      "i10_index": 134,
+      "works_count": 223,
+      "cited_by_count": 22247,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5077699288",
+      "display_name": "Andrew Thomas Hudak",
+      "orcid": "https://orcid.org/0000-0001-7480-1458",
+      "h_index": 72,
+      "i10_index": 200,
+      "works_count": 519,
+      "cited_by_count": 18773,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5029847895",
+      "display_name": "David  Ian Forrester",
+      "orcid": "https://orcid.org/0000-0003-4546-3554",
+      "h_index": 72,
+      "i10_index": 147,
+      "works_count": 196,
+      "cited_by_count": 18350,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5088493254",
+      "display_name": "Roel Brienen",
+      "orcid": "https://orcid.org/0000-0002-5397-5755",
+      "h_index": 72,
+      "i10_index": 127,
+      "works_count": 273,
+      "cited_by_count": 22123,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5109462345",
+      "display_name": "Seppo Kellomäki",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 275,
+      "works_count": 444,
+      "cited_by_count": 18755,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5075081508",
+      "display_name": "Christian Ammer",
+      "orcid": "https://orcid.org/0000-0002-4235-0135",
+      "h_index": 71,
+      "i10_index": 234,
+      "works_count": 521,
+      "cited_by_count": 23909,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Forestry -- 9.4",
+      "id": "https://openalex.org/A5061147059",
+      "display_name": "Sebastiaan Luyssaert",
+      "orcid": "https://orcid.org/0000-0003-1121-1869",
+      "h_index": 71,
+      "i10_index": 124,
+      "works_count": 350,
+      "cited_by_count": 32500,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5100672359",
+      "display_name": "Shirong Liu",
+      "orcid": "https://orcid.org/0000-0002-1103-9803",
+      "h_index": 69,
+      "i10_index": 273,
+      "works_count": 475,
+      "cited_by_count": 20110,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5076283753",
+      "display_name": "Miroslav Svoboda",
+      "orcid": "https://orcid.org/0000-0003-4050-3422",
+      "h_index": 69,
+      "i10_index": 209,
+      "works_count": 399,
+      "cited_by_count": 24065,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5034291628",
+      "display_name": "Werner A. Kurz",
+      "orcid": "https://orcid.org/0000-0003-4576-7849",
+      "h_index": 69,
+      "i10_index": 182,
+      "works_count": 350,
+      "cited_by_count": 29237,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5091740573",
+      "display_name": "Frank J. Sterck",
+      "orcid": "https://orcid.org/0000-0001-7559-6572",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 363,
+      "cited_by_count": 19702,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5006810994",
+      "display_name": "Patrick Van Damme",
+      "orcid": "https://orcid.org/0000-0002-2548-633X",
+      "h_index": 68,
+      "i10_index": 251,
+      "works_count": 549,
+      "cited_by_count": 14667,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5073215366",
+      "display_name": "Terje Gobakken",
+      "orcid": "https://orcid.org/0000-0001-5534-049X",
+      "h_index": 68,
+      "i10_index": 206,
+      "works_count": 352,
+      "cited_by_count": 16797,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5042103043",
+      "display_name": "G.J. Nabuurs",
+      "orcid": "https://orcid.org/0000-0002-9761-074X",
+      "h_index": 68,
+      "i10_index": 174,
+      "works_count": 493,
+      "cited_by_count": 26737,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5044033108",
+      "display_name": "Mathias I. Disney",
+      "orcid": "https://orcid.org/0000-0002-2407-4026",
+      "h_index": 68,
+      "i10_index": 149,
+      "works_count": 436,
+      "cited_by_count": 18588,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5071120388",
+      "display_name": "Timo Pukkala",
+      "orcid": "https://orcid.org/0000-0003-2853-9510",
+      "h_index": 67,
+      "i10_index": 272,
+      "works_count": 422,
+      "cited_by_count": 14443,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5022119591",
+      "display_name": "Luis Gil",
+      "orcid": "https://orcid.org/0000-0002-5252-2607",
+      "h_index": 67,
+      "i10_index": 240,
+      "works_count": 323,
+      "cited_by_count": 15062,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Forestry -- 9.3",
+      "id": "https://openalex.org/A5007778155",
+      "display_name": "Gudeta Weldesemayat Sileshi",
+      "orcid": "https://orcid.org/0000-0001-7828-6238",
+      "h_index": 67,
+      "i10_index": 214,
+      "works_count": 330,
+      "cited_by_count": 16554,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5049390277",
+      "display_name": "Jean Pierre Ometto",
+      "orcid": "https://orcid.org/0000-0002-4221-1039",
+      "h_index": 67,
+      "i10_index": 185,
+      "works_count": 462,
+      "cited_by_count": 15602,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5035101727",
+      "display_name": "Gerardo Moreno",
+      "orcid": "https://orcid.org/0000-0001-8053-2696",
+      "h_index": 67,
+      "i10_index": 167,
+      "works_count": 295,
+      "cited_by_count": 15684,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5025230444",
+      "display_name": "Sune Linder",
+      "orcid": "https://orcid.org/0000-0001-9036-5422",
+      "h_index": 67,
+      "i10_index": 122,
+      "works_count": 170,
+      "cited_by_count": 17221,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5039337320",
+      "display_name": "David B. Clark",
+      "orcid": "https://orcid.org/0000-0003-1364-7447",
+      "h_index": 67,
+      "i10_index": 94,
+      "works_count": 142,
+      "cited_by_count": 19435,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5068468648",
+      "display_name": "Marco Anthony Marchetti",
+      "orcid": "https://orcid.org/0000-0002-5275-5769",
+      "h_index": 66,
+      "i10_index": 298,
+      "works_count": 728,
+      "cited_by_count": 18748,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5046924444",
+      "display_name": "Roberto Tognetti",
+      "orcid": "https://orcid.org/0000-0002-7771-6176",
+      "h_index": 66,
+      "i10_index": 239,
+      "works_count": 453,
+      "cited_by_count": 14661,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5018412035",
+      "display_name": "Ronald Edward McRoberts",
+      "orcid": "https://orcid.org/0000-0001-6591-9200",
+      "h_index": 66,
+      "i10_index": 188,
+      "works_count": 312,
+      "cited_by_count": 14118,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5060157029",
+      "display_name": "Alexia Stokes",
+      "orcid": "https://orcid.org/0000-0002-2276-0911",
+      "h_index": 66,
+      "i10_index": 139,
+      "works_count": 360,
+      "cited_by_count": 17299,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5007328590",
+      "display_name": "Marielos Peña‐Claros",
+      "orcid": "https://orcid.org/0000-0001-9134-6733",
+      "h_index": 66,
+      "i10_index": 130,
+      "works_count": 282,
+      "cited_by_count": 22726,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5060928935",
+      "display_name": "Marco Conedera",
+      "orcid": "https://orcid.org/0000-0003-3980-2142",
+      "h_index": 65,
+      "i10_index": 190,
+      "works_count": 426,
+      "cited_by_count": 13558,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Forestry -- 9.2",
+      "id": "https://openalex.org/A5075140025",
+      "display_name": "Gioṙgio Matteucci",
+      "orcid": "https://orcid.org/0000-0002-4790-9540",
+      "h_index": 65,
+      "i10_index": 184,
+      "works_count": 384,
+      "cited_by_count": 29431,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5038957659",
+      "display_name": "Mikko Mönkkönen",
+      "orcid": "https://orcid.org/0000-0001-8897-3314",
+      "h_index": 65,
+      "i10_index": 175,
+      "works_count": 327,
+      "cited_by_count": 12497,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5076791256",
+      "display_name": "Felix Kienast",
+      "orcid": "https://orcid.org/0000-0002-3812-3124",
+      "h_index": 65,
+      "i10_index": 141,
+      "works_count": 1083,
+      "cited_by_count": 13213,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5077234750",
+      "display_name": "Yann Nouvellon",
+      "orcid": "https://orcid.org/0000-0003-1920-3847",
+      "h_index": 65,
+      "i10_index": 112,
+      "works_count": 309,
+      "cited_by_count": 17252,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5001047113",
+      "display_name": "Robert Nasi",
+      "orcid": "https://orcid.org/0000-0001-9739-3135",
+      "h_index": 64,
+      "i10_index": 180,
+      "works_count": 429,
+      "cited_by_count": 15175,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5083220121",
+      "display_name": "David Paré",
+      "orcid": "https://orcid.org/0000-0003-0177-6428",
+      "h_index": 64,
+      "i10_index": 175,
+      "works_count": 286,
+      "cited_by_count": 15210,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5017097891",
+      "display_name": "Annikki Mäkelä",
+      "orcid": "https://orcid.org/0000-0001-9633-7350",
+      "h_index": 64,
+      "i10_index": 153,
+      "works_count": 314,
+      "cited_by_count": 14271,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5007853190",
+      "display_name": "Alain Paquette",
+      "orcid": "https://orcid.org/0000-0003-1048-9674",
+      "h_index": 64,
+      "i10_index": 135,
+      "works_count": 297,
+      "cited_by_count": 18443,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5087850892",
+      "display_name": "Dietrich Hertel",
+      "orcid": "https://orcid.org/0000-0001-6793-6602",
+      "h_index": 64,
+      "i10_index": 135,
+      "works_count": 179,
+      "cited_by_count": 14077,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5090763631",
+      "display_name": "Jeffrey Quintin Chambers",
+      "orcid": "https://orcid.org/0000-0003-3983-7847",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 282,
+      "cited_by_count": 25407,
+      "discipline": "Forestry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5030764078",
+      "display_name": "Heli M. Peltola",
+      "orcid": "https://orcid.org/0000-0003-1384-9153",
+      "h_index": 63,
+      "i10_index": 197,
+      "works_count": 281,
+      "cited_by_count": 13231,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Forestry -- 9.1",
+      "id": "https://openalex.org/A5047684788",
+      "display_name": "Hans Beeckman",
+      "orcid": "https://orcid.org/0000-0001-8954-6277",
+      "h_index": 63,
+      "i10_index": 176,
+      "works_count": 546,
+      "cited_by_count": 14795,
+      "discipline": "Forestry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Forestry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    }
+  ]
+}

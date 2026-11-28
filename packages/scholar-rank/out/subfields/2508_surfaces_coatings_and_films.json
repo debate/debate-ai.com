@@ -1,0 +1,2346 @@
+{
+  "kind": "subfield",
+  "id": 2508,
+  "name": "Surfaces, Coatings and Films",
+  "total_in_scrape": 117,
+  "count": 117,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Surfaces, Coatings and Films -- 9.9",
+      "id": "https://openalex.org/A5051537916",
+      "display_name": "George M. Whitesides",
+      "orcid": "https://orcid.org/0000-0001-9451-2442",
+      "h_index": 269,
+      "i10_index": 1301,
+      "works_count": 1857,
+      "cited_by_count": 348964,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Engineering",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Surfaces, Coatings and Films -- 9.9",
+      "id": "https://openalex.org/A5089379689",
+      "display_name": "Lei Jiang",
+      "orcid": "https://orcid.org/0000-0003-4579-728X",
+      "h_index": 221,
+      "i10_index": 1832,
+      "works_count": 2496,
+      "cited_by_count": 217886,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Engineering",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Surfaces, Coatings and Films -- 9.9",
+      "id": "https://openalex.org/A5024216881",
+      "display_name": "James Melvin Anderson",
+      "orcid": "https://orcid.org/0000-0003-2765-7996",
+      "h_index": 119,
+      "i10_index": 368,
+      "works_count": 515,
+      "cited_by_count": 66735,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Surfaces, Coatings and Films -- 9.9",
+      "id": "https://openalex.org/A5039070558",
+      "display_name": "Hans‐Jürgen Butt",
+      "orcid": "https://orcid.org/0000-0001-5391-2618",
+      "h_index": 114,
+      "i10_index": 521,
+      "works_count": 781,
+      "cited_by_count": 54976,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Surfaces, Coatings and Films -- 9.9",
+      "id": "https://openalex.org/A5008696872",
+      "display_name": "E. T. Kang",
+      "orcid": "https://orcid.org/0000-0003-0599-7834",
+      "h_index": 113,
+      "i10_index": 673,
+      "works_count": 831,
+      "cited_by_count": 50456,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Surfaces, Coatings and Films -- 9.9",
+      "id": "https://openalex.org/A5032777884",
+      "display_name": "Buddy D. Ratner",
+      "orcid": "https://orcid.org/0000-0001-5233-2216",
+      "h_index": 108,
+      "i10_index": 383,
+      "works_count": 571,
+      "cited_by_count": 42425,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5065253139",
+      "display_name": "Franz J. Himpsel",
+      "orcid": null,
+      "h_index": 107,
+      "i10_index": 380,
+      "works_count": 662,
+      "cited_by_count": 36729,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5057058267",
+      "display_name": "Wilhelm T. S. Huck",
+      "orcid": "https://orcid.org/0000-0003-4222-5411",
+      "h_index": 106,
+      "i10_index": 345,
+      "works_count": 472,
+      "cited_by_count": 45013,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Chemical Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5053655509",
+      "display_name": "Hongbo Zeng",
+      "orcid": "https://orcid.org/0000-0002-1432-5979",
+      "h_index": 105,
+      "i10_index": 569,
+      "works_count": 808,
+      "cited_by_count": 39993,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5075231234",
+      "display_name": "Anders Nilsson",
+      "orcid": "https://orcid.org/0000-0003-1968-8696",
+      "h_index": 104,
+      "i10_index": 353,
+      "works_count": 565,
+      "cited_by_count": 46178,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5067818467",
+      "display_name": "Shaoyi Jiang",
+      "orcid": "https://orcid.org/0000-0001-9863-6899",
+      "h_index": 103,
+      "i10_index": 247,
+      "works_count": 285,
+      "cited_by_count": 37414,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5026247328",
+      "display_name": "Zuankai Wang",
+      "orcid": "https://orcid.org/0000-0002-3510-1122",
+      "h_index": 100,
+      "i10_index": 320,
+      "works_count": 418,
+      "cited_by_count": 38190,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Engineering",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5013738849",
+      "display_name": "Phillip B. Messersmith",
+      "orcid": "https://orcid.org/0000-0002-1197-333X",
+      "h_index": 97,
+      "i10_index": 194,
+      "works_count": 261,
+      "cited_by_count": 51538,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5019726510",
+      "display_name": "J. Herbert Waite",
+      "orcid": "https://orcid.org/0000-0003-4683-7386",
+      "h_index": 96,
+      "i10_index": 225,
+      "works_count": 286,
+      "cited_by_count": 36102,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5030085752",
+      "display_name": "Zhiguang Guo",
+      "orcid": "https://orcid.org/0000-0002-4438-3344",
+      "h_index": 94,
+      "i10_index": 502,
+      "works_count": 740,
+      "cited_by_count": 33746,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5003247891",
+      "display_name": "Vladimir V. Tsukruk",
+      "orcid": "https://orcid.org/0000-0001-5489-0967",
+      "h_index": 94,
+      "i10_index": 442,
+      "works_count": 643,
+      "cited_by_count": 40286,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Surfaces, Coatings and Films -- 9.8",
+      "id": "https://openalex.org/A5100441327",
+      "display_name": "Shutao Wang",
+      "orcid": "https://orcid.org/0000-0002-2559-5181",
+      "h_index": 94,
+      "i10_index": 385,
+      "works_count": 583,
+      "cited_by_count": 37371,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5000091817",
+      "display_name": "W. Eberhardt",
+      "orcid": "https://orcid.org/0000-0002-0714-0300",
+      "h_index": 90,
+      "i10_index": 408,
+      "works_count": 570,
+      "cited_by_count": 29688,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5002943590",
+      "display_name": "M. Grunze",
+      "orcid": "https://orcid.org/0000-0002-2335-9513",
+      "h_index": 90,
+      "i10_index": 333,
+      "works_count": 501,
+      "cited_by_count": 27203,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5034127767",
+      "display_name": "David G. Castner",
+      "orcid": "https://orcid.org/0000-0001-6125-706X",
+      "h_index": 90,
+      "i10_index": 267,
+      "works_count": 328,
+      "cited_by_count": 25324,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5059573007",
+      "display_name": "Marcus Textor",
+      "orcid": "https://orcid.org/0000-0002-0178-1801",
+      "h_index": 90,
+      "i10_index": 228,
+      "works_count": 306,
+      "cited_by_count": 29058,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5000604839",
+      "display_name": "Haeshin Lee",
+      "orcid": "https://orcid.org/0000-0003-3961-9727",
+      "h_index": 89,
+      "i10_index": 237,
+      "works_count": 360,
+      "cited_by_count": 47911,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5005237164",
+      "display_name": "Kazuhíko Ishihara",
+      "orcid": "https://orcid.org/0000-0002-4196-5488",
+      "h_index": 87,
+      "i10_index": 564,
+      "works_count": 1016,
+      "cited_by_count": 34052,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5011061232",
+      "display_name": "Pierre Schaaf",
+      "orcid": "https://orcid.org/0000-0001-7423-5492",
+      "h_index": 87,
+      "i10_index": 300,
+      "works_count": 383,
+      "cited_by_count": 26941,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5100379155",
+      "display_name": "Li Chen",
+      "orcid": "https://orcid.org/0000-0001-5345-1620",
+      "h_index": 86,
+      "i10_index": 572,
+      "works_count": 987,
+      "cited_by_count": 31891,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5027510657",
+      "display_name": "L. Ley",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 297,
+      "works_count": 462,
+      "cited_by_count": 32557,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5108209269",
+      "display_name": "Jean‐Claude Voegel",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 304,
+      "works_count": 390,
+      "cited_by_count": 25734,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Surfaces, Coatings and Films -- 9.7",
+      "id": "https://openalex.org/A5100357435",
+      "display_name": "Chang‐Jiu Li",
+      "orcid": "https://orcid.org/0000-0001-7201-4741",
+      "h_index": 84,
+      "i10_index": 450,
+      "works_count": 840,
+      "cited_by_count": 25816,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5110425842",
+      "display_name": "Maureen E. Callow",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 202,
+      "works_count": 259,
+      "cited_by_count": 21777,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Immunology and Microbiology",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5045292432",
+      "display_name": "Hendrik Bluhm",
+      "orcid": "https://orcid.org/0000-0001-9381-3155",
+      "h_index": 83,
+      "i10_index": 222,
+      "works_count": 409,
+      "cited_by_count": 23860,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5109071972",
+      "display_name": "Junping Zhang",
+      "orcid": "https://orcid.org/0000-0002-3658-5878",
+      "h_index": 82,
+      "i10_index": 284,
+      "works_count": 398,
+      "cited_by_count": 21663,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5055120115",
+      "display_name": "Han T. Zuilhof",
+      "orcid": "https://orcid.org/0000-0001-5773-8506",
+      "h_index": 81,
+      "i10_index": 358,
+      "works_count": 698,
+      "cited_by_count": 24005,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5087027585",
+      "display_name": "Theodore E. Madey",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 315,
+      "works_count": 481,
+      "cited_by_count": 24245,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5024226675",
+      "display_name": "Gyula Julius Vancso",
+      "orcid": "https://orcid.org/0000-0003-4718-0507",
+      "h_index": 80,
+      "i10_index": 435,
+      "works_count": 967,
+      "cited_by_count": 26432,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5000799051",
+      "display_name": "Martyn C. Davies",
+      "orcid": "https://orcid.org/0000-0001-7695-0596",
+      "h_index": 80,
+      "i10_index": 334,
+      "works_count": 420,
+      "cited_by_count": 22988,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5100664149",
+      "display_name": "Elena P. Ivanova",
+      "orcid": "https://orcid.org/0000-0002-5509-8071",
+      "h_index": 80,
+      "i10_index": 305,
+      "works_count": 615,
+      "cited_by_count": 28399,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Immunology and Microbiology",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5059107068",
+      "display_name": "Jian Shen",
+      "orcid": "https://orcid.org/0000-0002-9009-6151",
+      "h_index": 79,
+      "i10_index": 457,
+      "works_count": 654,
+      "cited_by_count": 26555,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5011257685",
+      "display_name": "Léon Sanche",
+      "orcid": "https://orcid.org/0000-0003-0938-439X",
+      "h_index": 79,
+      "i10_index": 390,
+      "works_count": 548,
+      "cited_by_count": 26094,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Surfaces, Coatings and Films -- 9.6",
+      "id": "https://openalex.org/A5000870151",
+      "display_name": "Pedro Miguel Echenique",
+      "orcid": "https://orcid.org/0000-0003-4927-2042",
+      "h_index": 79,
+      "i10_index": 339,
+      "works_count": 537,
+      "cited_by_count": 26930,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5075724305",
+      "display_name": "Nicholas Winograd",
+      "orcid": "https://orcid.org/0000-0002-2690-7714",
+      "h_index": 79,
+      "i10_index": 333,
+      "works_count": 519,
+      "cited_by_count": 23994,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5090004184",
+      "display_name": "Bo Liedberg",
+      "orcid": "https://orcid.org/0000-0003-2883-6953",
+      "h_index": 79,
+      "i10_index": 296,
+      "works_count": 444,
+      "cited_by_count": 26737,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5060449567",
+      "display_name": "Robert Vaßen",
+      "orcid": "https://orcid.org/0000-0002-9198-3991",
+      "h_index": 79,
+      "i10_index": 289,
+      "works_count": 785,
+      "cited_by_count": 24944,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5026224614",
+      "display_name": "Rudolf M. Tromp",
+      "orcid": "https://orcid.org/0000-0002-4238-2647",
+      "h_index": 79,
+      "i10_index": 201,
+      "works_count": 311,
+      "cited_by_count": 25774,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5100402388",
+      "display_name": "Jian Li",
+      "orcid": "https://orcid.org/0000-0001-5104-1564",
+      "h_index": 78,
+      "i10_index": 269,
+      "works_count": 419,
+      "cited_by_count": 18549,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemical Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5111805408",
+      "display_name": "Kahp Yang Suh",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 194,
+      "works_count": 308,
+      "cited_by_count": 22780,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Engineering",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5084581772",
+      "display_name": "Sergiy Minko",
+      "orcid": "https://orcid.org/0000-0002-7747-9668",
+      "h_index": 76,
+      "i10_index": 197,
+      "works_count": 323,
+      "cited_by_count": 25897,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5108452439",
+      "display_name": "James A. Callow",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 168,
+      "works_count": 209,
+      "cited_by_count": 18117,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5051473902",
+      "display_name": "G. Michael. Bancroft",
+      "orcid": "https://orcid.org/0000-0002-9766-0915",
+      "h_index": 74,
+      "i10_index": 357,
+      "works_count": 489,
+      "cited_by_count": 20798,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5028614610",
+      "display_name": "C. Trautmann",
+      "orcid": "https://orcid.org/0000-0001-7058-6340",
+      "h_index": 74,
+      "i10_index": 355,
+      "works_count": 601,
+      "cited_by_count": 20122,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5106486167",
+      "display_name": "Jiacong Shen",
+      "orcid": "https://orcid.org/0000-0002-3506-6451",
+      "h_index": 74,
+      "i10_index": 296,
+      "works_count": 408,
+      "cited_by_count": 19155,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Surfaces, Coatings and Films -- 9.5",
+      "id": "https://openalex.org/A5052447327",
+      "display_name": "N. Mårtensson",
+      "orcid": "https://orcid.org/0000-0002-4884-3053",
+      "h_index": 74,
+      "i10_index": 255,
+      "works_count": 371,
+      "cited_by_count": 19075,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5004331670",
+      "display_name": "Morgan R. Alexander",
+      "orcid": "https://orcid.org/0000-0001-5182-493X",
+      "h_index": 74,
+      "i10_index": 244,
+      "works_count": 418,
+      "cited_by_count": 18892,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5059834359",
+      "display_name": "Gabriel P. López",
+      "orcid": "https://orcid.org/0000-0002-5383-0708",
+      "h_index": 74,
+      "i10_index": 200,
+      "works_count": 298,
+      "cited_by_count": 22292,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5112066970",
+      "display_name": "Dean E. Eastman",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 168,
+      "works_count": 216,
+      "cited_by_count": 18837,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5079520620",
+      "display_name": "Gero Decher",
+      "orcid": "https://orcid.org/0000-0002-7976-8818",
+      "h_index": 74,
+      "i10_index": 150,
+      "works_count": 198,
+      "cited_by_count": 39954,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5035813243",
+      "display_name": "David Phillip Woodruff",
+      "orcid": "https://orcid.org/0000-0001-8541-9721",
+      "h_index": 73,
+      "i10_index": 407,
+      "works_count": 616,
+      "cited_by_count": 19823,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5100420388",
+      "display_name": "Hong Chen",
+      "orcid": "https://orcid.org/0000-0001-7799-4961",
+      "h_index": 73,
+      "i10_index": 322,
+      "works_count": 440,
+      "cited_by_count": 21341,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5053551404",
+      "display_name": "Krasimir A. Vasilev",
+      "orcid": "https://orcid.org/0000-0003-3534-4754",
+      "h_index": 73,
+      "i10_index": 278,
+      "works_count": 466,
+      "cited_by_count": 17224,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Immunology and Microbiology",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5078435985",
+      "display_name": "Catherine Picart",
+      "orcid": "https://orcid.org/0000-0003-0130-1000",
+      "h_index": 73,
+      "i10_index": 148,
+      "works_count": 254,
+      "cited_by_count": 19151,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5100648406",
+      "display_name": "Tao Zhang",
+      "orcid": "https://orcid.org/0000-0001-9255-9802",
+      "h_index": 72,
+      "i10_index": 486,
+      "works_count": 802,
+      "cited_by_count": 21736,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Physics and Astronomy",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5079382386",
+      "display_name": "Martin P. Seah",
+      "orcid": "https://orcid.org/0000-0003-2633-3332",
+      "h_index": 72,
+      "i10_index": 250,
+      "works_count": 383,
+      "cited_by_count": 25399,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Surfaces, Coatings and Films -- 9.4",
+      "id": "https://openalex.org/A5065979852",
+      "display_name": "Rik Brydson",
+      "orcid": "https://orcid.org/0000-0003-2003-7612",
+      "h_index": 71,
+      "i10_index": 275,
+      "works_count": 493,
+      "cited_by_count": 16120,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5108795638",
+      "display_name": "Jürgen Rühe",
+      "orcid": "https://orcid.org/0000-0002-2534-8228",
+      "h_index": 71,
+      "i10_index": 258,
+      "works_count": 447,
+      "cited_by_count": 17784,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5031943023",
+      "display_name": "Sanjay Sampath",
+      "orcid": "https://orcid.org/0000-0002-9804-4647",
+      "h_index": 71,
+      "i10_index": 254,
+      "works_count": 480,
+      "cited_by_count": 17598,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5064993524",
+      "display_name": "Eberhard Umbach",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 253,
+      "works_count": 337,
+      "cited_by_count": 15937,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5085157952",
+      "display_name": "David W. Grainger",
+      "orcid": "https://orcid.org/0000-0003-1506-7286",
+      "h_index": 71,
+      "i10_index": 233,
+      "works_count": 400,
+      "cited_by_count": 20430,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Medicine",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Medicine",
+        "Materials Science",
+        "Engineering",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5057766761",
+      "display_name": "C. J. Powell",
+      "orcid": "https://orcid.org/0000-0001-8990-2286",
+      "h_index": 71,
+      "i10_index": 222,
+      "works_count": 343,
+      "cited_by_count": 26349,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5100732618",
+      "display_name": "Wei Gao",
+      "orcid": "https://orcid.org/0000-0002-5064-0917",
+      "h_index": 70,
+      "i10_index": 382,
+      "works_count": 764,
+      "cited_by_count": 19019,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5111771398",
+      "display_name": "Ning Zhao",
+      "orcid": "https://orcid.org/0009-0002-7333-9024",
+      "h_index": 70,
+      "i10_index": 262,
+      "works_count": 465,
+      "cited_by_count": 16312,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5022835935",
+      "display_name": "Jan Genzer",
+      "orcid": "https://orcid.org/0000-0002-1633-238X",
+      "h_index": 70,
+      "i10_index": 256,
+      "works_count": 485,
+      "cited_by_count": 28033,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5012321811",
+      "display_name": "Yung Chang",
+      "orcid": "https://orcid.org/0000-0003-1419-4478",
+      "h_index": 70,
+      "i10_index": 238,
+      "works_count": 318,
+      "cited_by_count": 15949,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5100327281",
+      "display_name": "Qinghua Zhang",
+      "orcid": "https://orcid.org/0000-0003-1350-6388",
+      "h_index": 70,
+      "i10_index": 233,
+      "works_count": 343,
+      "cited_by_count": 15067,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Surfaces, Coatings and Films -- 9.3",
+      "id": "https://openalex.org/A5016718780",
+      "display_name": "Hans J. Griesser",
+      "orcid": "https://orcid.org/0000-0003-1072-7863",
+      "h_index": 70,
+      "i10_index": 220,
+      "works_count": 309,
+      "cited_by_count": 16196,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Immunology and Microbiology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5000905216",
+      "display_name": "Agustín R. González-Elipe",
+      "orcid": "https://orcid.org/0000-0002-6417-1437",
+      "h_index": 69,
+      "i10_index": 428,
+      "works_count": 640,
+      "cited_by_count": 20325,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Energy",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5062716094",
+      "display_name": "Mohamed M. Chehimi",
+      "orcid": "https://orcid.org/0000-0002-6098-983X",
+      "h_index": 69,
+      "i10_index": 326,
+      "works_count": 479,
+      "cited_by_count": 17558,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5030760350",
+      "display_name": "Insung S. Choi",
+      "orcid": "https://orcid.org/0000-0002-9546-673X",
+      "h_index": 69,
+      "i10_index": 231,
+      "works_count": 436,
+      "cited_by_count": 18994,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5089342356",
+      "display_name": "Christopher C. Berndt",
+      "orcid": "https://orcid.org/0000-0002-7581-1639",
+      "h_index": 69,
+      "i10_index": 227,
+      "works_count": 486,
+      "cited_by_count": 17148,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Engineering",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5084371982",
+      "display_name": "Michael J. Pellin",
+      "orcid": "https://orcid.org/0000-0002-8149-9768",
+      "h_index": 69,
+      "i10_index": 224,
+      "works_count": 391,
+      "cited_by_count": 16631,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5089871629",
+      "display_name": "Donald R. Baer",
+      "orcid": "https://orcid.org/0000-0003-0875-5961",
+      "h_index": 69,
+      "i10_index": 217,
+      "works_count": 522,
+      "cited_by_count": 18385,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5048788075",
+      "display_name": "John Vedamuthu Kennedy",
+      "orcid": "https://orcid.org/0000-0002-9126-4997",
+      "h_index": 69,
+      "i10_index": 189,
+      "works_count": 378,
+      "cited_by_count": 13997,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5034446040",
+      "display_name": "Ilker S. Bayer",
+      "orcid": "https://orcid.org/0000-0002-7951-8851",
+      "h_index": 69,
+      "i10_index": 179,
+      "works_count": 254,
+      "cited_by_count": 16871,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5112202859",
+      "display_name": "Thomas A. Horbett",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 132,
+      "works_count": 232,
+      "cited_by_count": 13690,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5023324383",
+      "display_name": "David M. Hercules",
+      "orcid": "https://orcid.org/0000-0002-9299-6532",
+      "h_index": 68,
+      "i10_index": 334,
+      "works_count": 479,
+      "cited_by_count": 18556,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Surfaces, Coatings and Films -- 9.2",
+      "id": "https://openalex.org/A5100719712",
+      "display_name": "Guan‐Jun Yang",
+      "orcid": "https://orcid.org/0000-0002-7753-3636",
+      "h_index": 68,
+      "i10_index": 304,
+      "works_count": 529,
+      "cited_by_count": 16295,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5058552736",
+      "display_name": "Russell J. Crawford",
+      "orcid": "https://orcid.org/0000-0003-1054-5285",
+      "h_index": 68,
+      "i10_index": 183,
+      "works_count": 305,
+      "cited_by_count": 21864,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5100351061",
+      "display_name": "Yan Liu",
+      "orcid": "https://orcid.org/0000-0002-2523-997X",
+      "h_index": 67,
+      "i10_index": 343,
+      "works_count": 697,
+      "cited_by_count": 17388,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5080487700",
+      "display_name": "Richard E. Palmer",
+      "orcid": "https://orcid.org/0000-0001-8728-8083",
+      "h_index": 67,
+      "i10_index": 320,
+      "works_count": 557,
+      "cited_by_count": 16157,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5034192032",
+      "display_name": "Igor Zhitomirsky",
+      "orcid": "https://orcid.org/0000-0002-0435-1591",
+      "h_index": 67,
+      "i10_index": 271,
+      "works_count": 409,
+      "cited_by_count": 16386,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5110014335",
+      "display_name": "D. A. Shirley",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 259,
+      "works_count": 411,
+      "cited_by_count": 23179,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5003567873",
+      "display_name": "Jan Fransaer",
+      "orcid": "https://orcid.org/0000-0002-0232-0687",
+      "h_index": 67,
+      "i10_index": 250,
+      "works_count": 558,
+      "cited_by_count": 16665,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5008493329",
+      "display_name": "Thomas J. McCarthy",
+      "orcid": "https://orcid.org/0000-0003-0414-010X",
+      "h_index": 67,
+      "i10_index": 140,
+      "works_count": 195,
+      "cited_by_count": 21118,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5100434044",
+      "display_name": "Lei Zhang",
+      "orcid": "https://orcid.org/0000-0003-3638-6219",
+      "h_index": 66,
+      "i10_index": 289,
+      "works_count": 480,
+      "cited_by_count": 17907,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5100614114",
+      "display_name": "Bo Yu",
+      "orcid": "https://orcid.org/0000-0002-1635-0027",
+      "h_index": 66,
+      "i10_index": 228,
+      "works_count": 306,
+      "cited_by_count": 21579,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5108650655",
+      "display_name": "Pierre L. Fauchais",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 228,
+      "works_count": 724,
+      "cited_by_count": 17436,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Engineering",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Surfaces, Coatings and Films -- 9.1",
+      "id": "https://openalex.org/A5027935868",
+      "display_name": "Vincent Ball",
+      "orcid": "https://orcid.org/0000-0002-7432-4222",
+      "h_index": 66,
+      "i10_index": 181,
+      "works_count": 271,
+      "cited_by_count": 14038,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Surfaces, Coatings and Films -- 9.0",
+      "id": "https://openalex.org/A5076723145",
+      "display_name": "Hirohito Ogasawara",
+      "orcid": "https://orcid.org/0000-0001-5338-1079",
+      "h_index": 66,
+      "i10_index": 141,
+      "works_count": 235,
+      "cited_by_count": 18794,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Physics and Astronomy",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Surfaces, Coatings and Films -- 9.0",
+      "id": "https://openalex.org/A5056607336",
+      "display_name": "Manoj K. Chaudhury",
+      "orcid": "https://orcid.org/0000-0001-9842-0692",
+      "h_index": 66,
+      "i10_index": 122,
+      "works_count": 155,
+      "cited_by_count": 22789,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Engineering",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Surfaces, Coatings and Films -- 9.0",
+      "id": "https://openalex.org/A5111518164",
+      "display_name": "John L. Brash",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 221,
+      "works_count": 278,
+      "cited_by_count": 14788,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Surfaces, Coatings and Films -- 9.0",
+      "id": "https://openalex.org/A5025031597",
+      "display_name": "Junhu Zhang",
+      "orcid": "https://orcid.org/0000-0001-9100-6608",
+      "h_index": 65,
+      "i10_index": 215,
+      "works_count": 295,
+      "cited_by_count": 26304,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Surfaces, Coatings and Films -- 9.0",
+      "id": "https://openalex.org/A5001822496",
+      "display_name": "Jayachandran N. Kizhakkedathu",
+      "orcid": "https://orcid.org/0000-0001-7688-7574",
+      "h_index": 65,
+      "i10_index": 194,
+      "works_count": 288,
+      "cited_by_count": 14225,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5055624008",
+      "display_name": "C. Colliex",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 192,
+      "works_count": 383,
+      "cited_by_count": 18346,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5071161325",
+      "display_name": "Geoff Thornton",
+      "orcid": "https://orcid.org/0000-0002-1616-5606",
+      "h_index": 64,
+      "i10_index": 263,
+      "works_count": 426,
+      "cited_by_count": 16573,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5036572143",
+      "display_name": "Harish Chandra Barshilia",
+      "orcid": "https://orcid.org/0000-0003-3047-3100",
+      "h_index": 64,
+      "i10_index": 222,
+      "works_count": 383,
+      "cited_by_count": 12533,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Engineering",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5083939456",
+      "display_name": "L. Singheiser",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 188,
+      "works_count": 543,
+      "cited_by_count": 12676,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5110110807",
+      "display_name": "R. H. Ritchie",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 174,
+      "works_count": 372,
+      "cited_by_count": 18492,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5050052022",
+      "display_name": "Thomas R. Gengenbach",
+      "orcid": "https://orcid.org/0000-0003-4045-9564",
+      "h_index": 64,
+      "i10_index": 166,
+      "works_count": 210,
+      "cited_by_count": 12652,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5000486867",
+      "display_name": "Bin Su",
+      "orcid": "https://orcid.org/0000-0002-7122-6694",
+      "h_index": 64,
+      "i10_index": 164,
+      "works_count": 208,
+      "cited_by_count": 13453,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Engineering",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5000197896",
+      "display_name": "Svetlana A. Sukhishvili",
+      "orcid": "https://orcid.org/0000-0002-2328-4494",
+      "h_index": 64,
+      "i10_index": 152,
+      "works_count": 253,
+      "cited_by_count": 12238,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5004960875",
+      "display_name": "Donald E. Brooks",
+      "orcid": "https://orcid.org/0000-0002-7946-4320",
+      "h_index": 64,
+      "i10_index": 151,
+      "works_count": 261,
+      "cited_by_count": 12133,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5022872602",
+      "display_name": "Keiji Tanaka",
+      "orcid": "https://orcid.org/0000-0003-0314-3843",
+      "h_index": 63,
+      "i10_index": 284,
+      "works_count": 763,
+      "cited_by_count": 16098,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5052732364",
+      "display_name": "Barbara J. Garrison",
+      "orcid": "https://orcid.org/0000-0002-7053-5284",
+      "h_index": 63,
+      "i10_index": 284,
+      "works_count": 395,
+      "cited_by_count": 14408,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Surfaces, Coatings and Films -- 8.9",
+      "id": "https://openalex.org/A5061416325",
+      "display_name": "Philip D. Rack",
+      "orcid": "https://orcid.org/0000-0002-9964-3254",
+      "h_index": 63,
+      "i10_index": 242,
+      "works_count": 457,
+      "cited_by_count": 14454,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Surfaces, Coatings and Films -- 8.8",
+      "id": "https://openalex.org/A5079162412",
+      "display_name": "Omar Azzaroni",
+      "orcid": "https://orcid.org/0000-0002-5098-0612",
+      "h_index": 63,
+      "i10_index": 241,
+      "works_count": 387,
+      "cited_by_count": 14346,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Surfaces, Coatings and Films -- 8.8",
+      "id": "https://openalex.org/A5006772388",
+      "display_name": "J. W. Rabalais",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 238,
+      "works_count": 389,
+      "cited_by_count": 14774,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Surfaces, Coatings and Films -- 8.8",
+      "id": "https://openalex.org/A5011623800",
+      "display_name": "Masaru Tanaka",
+      "orcid": "https://orcid.org/0000-0002-1115-2080",
+      "h_index": 63,
+      "i10_index": 232,
+      "works_count": 463,
+      "cited_by_count": 14674,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Surfaces, Coatings and Films -- 8.8",
+      "id": "https://openalex.org/A5045511871",
+      "display_name": "R.G. Egdell",
+      "orcid": "https://orcid.org/0000-0002-1438-4426",
+      "h_index": 63,
+      "i10_index": 209,
+      "works_count": 299,
+      "cited_by_count": 15274,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Surfaces, Coatings and Films -- 8.8",
+      "id": "https://openalex.org/A5082270981",
+      "display_name": "Paul G. Rouxhet",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 197,
+      "works_count": 317,
+      "cited_by_count": 12215,
+      "discipline": "Surfaces, Coatings and Films",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Surfaces, Coatings and Films",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,202 @@
+{
+  "kind": "subfield",
+  "id": 2212,
+  "name": "Ocean Engineering",
+  "total_in_scrape": 10,
+  "count": 10,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Ocean Engineering -- 9.9",
+      "id": "https://openalex.org/A5068744113",
+      "display_name": "Carlos Guedes Soares",
+      "orcid": "https://orcid.org/0000-0002-8570-4263",
+      "h_index": 112,
+      "i10_index": 1329,
+      "works_count": 2464,
+      "cited_by_count": 67996,
+      "discipline": "Ocean Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ocean Engineering",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Ocean Engineering -- 9.9",
+      "id": "https://openalex.org/A5028946657",
+      "display_name": "Pei‐Yuan Qian",
+      "orcid": "https://orcid.org/0000-0003-4074-9078",
+      "h_index": 91,
+      "i10_index": 503,
+      "works_count": 1043,
+      "cited_by_count": 33257,
+      "discipline": "Ocean Engineering",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Ocean Engineering",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Ocean Engineering -- 9.9",
+      "id": "https://openalex.org/A5085832924",
+      "display_name": "Thor Inge Fossen",
+      "orcid": "https://orcid.org/0000-0003-0911-7021",
+      "h_index": 84,
+      "i10_index": 293,
+      "works_count": 410,
+      "cited_by_count": 39914,
+      "discipline": "Ocean Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ocean Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Ocean Engineering -- 9.9",
+      "id": "https://openalex.org/A5034690093",
+      "display_name": "Zaili Yang",
+      "orcid": "https://orcid.org/0000-0003-1385-493X",
+      "h_index": 83,
+      "i10_index": 265,
+      "works_count": 464,
+      "cited_by_count": 20455,
+      "discipline": "Ocean Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ocean Engineering",
+      "fields": [
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Ocean Engineering -- 9.9",
+      "id": "https://openalex.org/A5083161003",
+      "display_name": "Torgeir Moan",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 354,
+      "works_count": 645,
+      "cited_by_count": 21293,
+      "discipline": "Ocean Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ocean Engineering",
+      "fields": [
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Ocean Engineering -- 9.9",
+      "id": "https://openalex.org/A5024351061",
+      "display_name": "Gregório Iglesias",
+      "orcid": "https://orcid.org/0000-0003-2719-1663",
+      "h_index": 74,
+      "i10_index": 230,
+      "works_count": 403,
+      "cited_by_count": 16473,
+      "discipline": "Ocean Engineering",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Ocean Engineering",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Ocean Engineering -- 9.8",
+      "id": "https://openalex.org/A5000662848",
+      "display_name": "Koichi Masuda",
+      "orcid": "https://orcid.org/0000-0002-5361-4415",
+      "h_index": 72,
+      "i10_index": 185,
+      "works_count": 516,
+      "cited_by_count": 17083,
+      "discipline": "Ocean Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ocean Engineering",
+      "fields": [
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Ocean Engineering -- 9.8",
+      "id": "https://openalex.org/A5036514560",
+      "display_name": "Xinping Yan",
+      "orcid": "https://orcid.org/0000-0002-2265-2689",
+      "h_index": 71,
+      "i10_index": 250,
+      "works_count": 588,
+      "cited_by_count": 16210,
+      "discipline": "Ocean Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ocean Engineering",
+      "fields": [
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Ocean Engineering -- 9.8",
+      "id": "https://openalex.org/A5054370349",
+      "display_name": "Milica Stojanovic",
+      "orcid": "https://orcid.org/0000-0002-9127-9638",
+      "h_index": 68,
+      "i10_index": 199,
+      "works_count": 383,
+      "cited_by_count": 23084,
+      "discipline": "Ocean Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ocean Engineering",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Ocean Engineering -- 9.8",
+      "id": "https://openalex.org/A5020180048",
+      "display_name": "Jason M. Jonkman",
+      "orcid": "https://orcid.org/0000-0003-2990-7362",
+      "h_index": 63,
+      "i10_index": 190,
+      "works_count": 325,
+      "cited_by_count": 24368,
+      "discipline": "Ocean Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ocean Engineering",
+      "fields": [
+        "Engineering",
+        "Energy"
+      ]
+    }
+  ]
+}

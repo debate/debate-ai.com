@@ -1,0 +1,65 @@
+{
+  "kind": "subfield",
+  "id": 1212,
+  "name": "Religious studies",
+  "total_in_scrape": 3,
+  "count": 3,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Religious studies -- 9.9",
+      "id": "https://openalex.org/A5029871990",
+      "display_name": "Robert M. Grant",
+      "orcid": "https://orcid.org/0000-0002-0851-7085",
+      "h_index": 88,
+      "i10_index": 294,
+      "works_count": 861,
+      "cited_by_count": 43700,
+      "discipline": "Religious studies",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Religious studies",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Religious studies -- 9.9",
+      "id": "https://openalex.org/A5066805174",
+      "display_name": "Mike Bennett",
+      "orcid": "https://orcid.org/0000-0002-8369-8349",
+      "h_index": 77,
+      "i10_index": 248,
+      "works_count": 935,
+      "cited_by_count": 32905,
+      "discipline": "Religious studies",
+      "primary_field": "Medicine",
+      "primary_subfield": "Religious studies",
+      "fields": [
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Religious studies -- 9.9",
+      "id": "https://openalex.org/A5068853530",
+      "display_name": "Juan Pablo",
+      "orcid": "https://orcid.org/0000-0002-3526-516X",
+      "h_index": 72,
+      "i10_index": 299,
+      "works_count": 2428,
+      "cited_by_count": 18717,
+      "discipline": "Religious studies",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Religious studies",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    }
+  ]
+}

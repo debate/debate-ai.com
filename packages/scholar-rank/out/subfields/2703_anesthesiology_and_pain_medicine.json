@@ -1,0 +1,2545 @@
+{
+  "kind": "subfield",
+  "id": 2703,
+  "name": "Anesthesiology and Pain Medicine",
+  "total_in_scrape": 136,
+  "count": 136,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Anesthesiology and Pain Medicine -- 9.9",
+      "id": "https://openalex.org/A5025881972",
+      "display_name": "Henrik Kehlet",
+      "orcid": "https://orcid.org/0000-0002-2209-1711",
+      "h_index": 159,
+      "i10_index": 907,
+      "works_count": 1491,
+      "cited_by_count": 114691,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Anesthesiology and Pain Medicine -- 9.9",
+      "id": "https://openalex.org/A5042996287",
+      "display_name": "Daniel I. Sessler",
+      "orcid": "https://orcid.org/0000-0001-9932-3077",
+      "h_index": 149,
+      "i10_index": 906,
+      "works_count": 1420,
+      "cited_by_count": 101484,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Anesthesiology and Pain Medicine -- 9.9",
+      "id": "https://openalex.org/A5044329719",
+      "display_name": "Herta Flor",
+      "orcid": "https://orcid.org/0000-0003-4809-5398",
+      "h_index": 133,
+      "i10_index": 581,
+      "works_count": 1076,
+      "cited_by_count": 79199,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Anesthesiology and Pain Medicine -- 9.9",
+      "id": "https://openalex.org/A5070442023",
+      "display_name": "Roger Chou",
+      "orcid": "https://orcid.org/0000-0001-9889-8610",
+      "h_index": 122,
+      "i10_index": 332,
+      "works_count": 876,
+      "cited_by_count": 321192,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Anesthesiology and Pain Medicine -- 9.9",
+      "id": "https://openalex.org/A5034429046",
+      "display_name": "Paul F. White",
+      "orcid": "https://orcid.org/0000-0003-2275-819X",
+      "h_index": 113,
+      "i10_index": 404,
+      "works_count": 922,
+      "cited_by_count": 41475,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Anesthesiology and Pain Medicine -- 9.9",
+      "id": "https://openalex.org/A5077550249",
+      "display_name": "Frances F. Chung",
+      "orcid": "https://orcid.org/0000-0001-9576-3606",
+      "h_index": 110,
+      "i10_index": 377,
+      "works_count": 698,
+      "cited_by_count": 49729,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5090628353",
+      "display_name": "Russell K. Portenoy",
+      "orcid": "https://orcid.org/0000-0001-9637-9577",
+      "h_index": 105,
+      "i10_index": 256,
+      "works_count": 549,
+      "cited_by_count": 51801,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5037291100",
+      "display_name": "Laxmaiah Manchikanti",
+      "orcid": "https://orcid.org/0000-0002-4201-9063",
+      "h_index": 101,
+      "i10_index": 440,
+      "works_count": 723,
+      "cited_by_count": 36955,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5025692427",
+      "display_name": "Paul Stewart Myles",
+      "orcid": "https://orcid.org/0000-0002-3324-5456",
+      "h_index": 99,
+      "i10_index": 336,
+      "works_count": 616,
+      "cited_by_count": 43374,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5103192595",
+      "display_name": "Sheena Derry",
+      "orcid": "https://orcid.org/0000-0002-3630-0131",
+      "h_index": 99,
+      "i10_index": 267,
+      "works_count": 372,
+      "cited_by_count": 29014,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5051289606",
+      "display_name": "Darrell R. Schroeder",
+      "orcid": "https://orcid.org/0000-0001-8591-5936",
+      "h_index": 98,
+      "i10_index": 443,
+      "works_count": 661,
+      "cited_by_count": 37494,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5059775426",
+      "display_name": "Didier Bouhassira",
+      "orcid": "https://orcid.org/0000-0001-6446-8719",
+      "h_index": 98,
+      "i10_index": 234,
+      "works_count": 499,
+      "cited_by_count": 41383,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5062558520",
+      "display_name": "Robert H. Dworkin",
+      "orcid": "https://orcid.org/0000-0002-9464-5488",
+      "h_index": 97,
+      "i10_index": 290,
+      "works_count": 442,
+      "cited_by_count": 57812,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5065301160",
+      "display_name": "Mervyn Maze",
+      "orcid": "https://orcid.org/0000-0001-9794-2472",
+      "h_index": 96,
+      "i10_index": 286,
+      "works_count": 521,
+      "cited_by_count": 36169,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5086607155",
+      "display_name": "Ronald Melzack",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 220,
+      "works_count": 352,
+      "cited_by_count": 62788,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5111687328",
+      "display_name": "Edmond I. Eger",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 488,
+      "works_count": 813,
+      "cited_by_count": 32649,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Anesthesiology and Pain Medicine -- 9.8",
+      "id": "https://openalex.org/A5072986345",
+      "display_name": "Markus Werner Hollmann",
+      "orcid": "https://orcid.org/0000-0001-8248-0244",
+      "h_index": 93,
+      "i10_index": 476,
+      "works_count": 955,
+      "cited_by_count": 40686,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5051176970",
+      "display_name": "Bruno Riou",
+      "orcid": "https://orcid.org/0000-0003-1205-4738",
+      "h_index": 93,
+      "i10_index": 416,
+      "works_count": 959,
+      "cited_by_count": 33939,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5110096366",
+      "display_name": "Alfons G.H. Kessels",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 273,
+      "works_count": 401,
+      "cited_by_count": 30601,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5018558604",
+      "display_name": "Alan D. Kaye",
+      "orcid": "https://orcid.org/0000-0003-2464-0187",
+      "h_index": 92,
+      "i10_index": 740,
+      "works_count": 1685,
+      "cited_by_count": 43334,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5076070835",
+      "display_name": "Eija Anneli Kalso",
+      "orcid": "https://orcid.org/0000-0002-4899-605X",
+      "h_index": 92,
+      "i10_index": 282,
+      "works_count": 455,
+      "cited_by_count": 35281,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5109039984",
+      "display_name": "Henry J McQuay",
+      "orcid": null,
+      "h_index": 92,
+      "i10_index": 218,
+      "works_count": 302,
+      "cited_by_count": 53293,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5011326651",
+      "display_name": "Joel D Katz",
+      "orcid": "https://orcid.org/0000-0002-8686-447X",
+      "h_index": 90,
+      "i10_index": 287,
+      "works_count": 584,
+      "cited_by_count": 34235,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5077603374",
+      "display_name": "Albert Dahan",
+      "orcid": "https://orcid.org/0000-0003-3161-3945",
+      "h_index": 89,
+      "i10_index": 363,
+      "works_count": 730,
+      "cited_by_count": 28853,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5035302026",
+      "display_name": "Matthew T.V. Chan",
+      "orcid": "https://orcid.org/0000-0002-3574-7855",
+      "h_index": 88,
+      "i10_index": 322,
+      "works_count": 620,
+      "cited_by_count": 39320,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5066605437",
+      "display_name": "Cor J. Kalkman",
+      "orcid": "https://orcid.org/0000-0002-8372-6960",
+      "h_index": 88,
+      "i10_index": 292,
+      "works_count": 549,
+      "cited_by_count": 30536,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5068541699",
+      "display_name": "Andrea M. Kurz",
+      "orcid": "https://orcid.org/0000-0001-5887-3099",
+      "h_index": 88,
+      "i10_index": 244,
+      "works_count": 391,
+      "cited_by_count": 36638,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Anesthesiology and Pain Medicine -- 9.7",
+      "id": "https://openalex.org/A5085578019",
+      "display_name": "John T. Farrar",
+      "orcid": "https://orcid.org/0000-0001-8656-5157",
+      "h_index": 88,
+      "i10_index": 227,
+      "works_count": 399,
+      "cited_by_count": 48177,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5069369295",
+      "display_name": "Mark Daniel Sullivan",
+      "orcid": "https://orcid.org/0000-0002-4396-6038",
+      "h_index": 87,
+      "i10_index": 242,
+      "works_count": 400,
+      "cited_by_count": 37477,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5000136505",
+      "display_name": "Sean Mackey",
+      "orcid": "https://orcid.org/0000-0001-7744-5348",
+      "h_index": 85,
+      "i10_index": 235,
+      "works_count": 581,
+      "cited_by_count": 31158,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5100707338",
+      "display_name": "Daqing Ma",
+      "orcid": "https://orcid.org/0000-0003-1235-0537",
+      "h_index": 84,
+      "i10_index": 318,
+      "works_count": 560,
+      "cited_by_count": 27894,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5108385136",
+      "display_name": "Edmund A.M. Neugebauer",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 246,
+      "works_count": 489,
+      "cited_by_count": 29516,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5034519980",
+      "display_name": "Caroline J Doré",
+      "orcid": "https://orcid.org/0000-0001-9796-4970",
+      "h_index": 83,
+      "i10_index": 230,
+      "works_count": 444,
+      "cited_by_count": 34810,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5091579021",
+      "display_name": "Martin Richard Tramèr",
+      "orcid": "https://orcid.org/0000-0001-7393-9682",
+      "h_index": 83,
+      "i10_index": 146,
+      "works_count": 319,
+      "cited_by_count": 29401,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5100648279",
+      "display_name": "Vincent W. S. Chan",
+      "orcid": "https://orcid.org/0000-0003-0696-708X",
+      "h_index": 82,
+      "i10_index": 240,
+      "works_count": 364,
+      "cited_by_count": 23102,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5051964825",
+      "display_name": "Daniel B. Carr",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 230,
+      "works_count": 459,
+      "cited_by_count": 38829,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5018281416",
+      "display_name": "Hugo Van Aken",
+      "orcid": "https://orcid.org/0000-0001-6878-9851",
+      "h_index": 81,
+      "i10_index": 345,
+      "works_count": 868,
+      "cited_by_count": 27262,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5043800653",
+      "display_name": "Robert J. McCarthy",
+      "orcid": "https://orcid.org/0000-0002-0966-5311",
+      "h_index": 81,
+      "i10_index": 282,
+      "works_count": 633,
+      "cited_by_count": 22427,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Anesthesiology and Pain Medicine -- 9.6",
+      "id": "https://openalex.org/A5047395838",
+      "display_name": "James C. Eisenach",
+      "orcid": "https://orcid.org/0000-0002-9841-0176",
+      "h_index": 80,
+      "i10_index": 343,
+      "works_count": 752,
+      "cited_by_count": 23362,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5070245346",
+      "display_name": "Edward J. Mascha",
+      "orcid": "https://orcid.org/0000-0002-0451-1196",
+      "h_index": 80,
+      "i10_index": 250,
+      "works_count": 356,
+      "cited_by_count": 24725,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5089858947",
+      "display_name": "Srinivasa Naga Raja",
+      "orcid": "https://orcid.org/0000-0001-7991-7636",
+      "h_index": 80,
+      "i10_index": 213,
+      "works_count": 343,
+      "cited_by_count": 40730,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5021605317",
+      "display_name": "Gérald Chanques",
+      "orcid": "https://orcid.org/0000-0001-7851-8609",
+      "h_index": 80,
+      "i10_index": 178,
+      "works_count": 399,
+      "cited_by_count": 27389,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5057567008",
+      "display_name": "Nadine Attal",
+      "orcid": "https://orcid.org/0000-0003-3054-8387",
+      "h_index": 80,
+      "i10_index": 157,
+      "works_count": 377,
+      "cited_by_count": 38889,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5048307423",
+      "display_name": "Sebastiano Mercadante",
+      "orcid": "https://orcid.org/0000-0001-9859-6487",
+      "h_index": 79,
+      "i10_index": 378,
+      "works_count": 679,
+      "cited_by_count": 26027,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5051700311",
+      "display_name": "Steven Paul Cohen",
+      "orcid": "https://orcid.org/0000-0001-5928-2127",
+      "h_index": 79,
+      "i10_index": 262,
+      "works_count": 557,
+      "cited_by_count": 33555,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5080287940",
+      "display_name": "George A. Mashour",
+      "orcid": "https://orcid.org/0000-0001-5457-5932",
+      "h_index": 79,
+      "i10_index": 239,
+      "works_count": 465,
+      "cited_by_count": 19612,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5031592308",
+      "display_name": "Frank Birklein",
+      "orcid": "https://orcid.org/0000-0002-6672-4226",
+      "h_index": 79,
+      "i10_index": 233,
+      "works_count": 444,
+      "cited_by_count": 27687,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5065379272",
+      "display_name": "Zeev N. Kain",
+      "orcid": "https://orcid.org/0000-0001-5819-9196",
+      "h_index": 79,
+      "i10_index": 227,
+      "works_count": 442,
+      "cited_by_count": 22690,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5038998860",
+      "display_name": "Philip J Wiffen",
+      "orcid": "https://orcid.org/0000-0001-6085-1307",
+      "h_index": 79,
+      "i10_index": 150,
+      "works_count": 348,
+      "cited_by_count": 23428,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5051053156",
+      "display_name": "Timothy Ray Deer",
+      "orcid": "https://orcid.org/0000-0001-8907-7730",
+      "h_index": 78,
+      "i10_index": 267,
+      "works_count": 630,
+      "cited_by_count": 21172,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Anesthesiology and Pain Medicine -- 9.5",
+      "id": "https://openalex.org/A5102028034",
+      "display_name": "Tong Joo Gan",
+      "orcid": "https://orcid.org/0000-0001-5506-398X",
+      "h_index": 78,
+      "i10_index": 197,
+      "works_count": 317,
+      "cited_by_count": 27530,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5052673286",
+      "display_name": "Nicholas P. Franks",
+      "orcid": "https://orcid.org/0000-0003-4874-4212",
+      "h_index": 78,
+      "i10_index": 161,
+      "works_count": 231,
+      "cited_by_count": 26662,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5037087068",
+      "display_name": "Lars Simon Rasmussen",
+      "orcid": "https://orcid.org/0000-0002-7480-3004",
+      "h_index": 77,
+      "i10_index": 270,
+      "works_count": 480,
+      "cited_by_count": 21957,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5071557124",
+      "display_name": "Stavros G. Memtsoudis",
+      "orcid": "https://orcid.org/0000-0001-9093-0030",
+      "h_index": 77,
+      "i10_index": 258,
+      "works_count": 548,
+      "cited_by_count": 20810,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5103223501",
+      "display_name": "Robert M. Levy",
+      "orcid": "https://orcid.org/0000-0002-2736-4096",
+      "h_index": 77,
+      "i10_index": 194,
+      "works_count": 406,
+      "cited_by_count": 23125,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5020315021",
+      "display_name": "Kathleen Puntillo",
+      "orcid": "https://orcid.org/0000-0002-8012-9036",
+      "h_index": 77,
+      "i10_index": 156,
+      "works_count": 242,
+      "cited_by_count": 31592,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5012844446",
+      "display_name": "Evan D. Kharasch",
+      "orcid": "https://orcid.org/0000-0002-6613-922X",
+      "h_index": 76,
+      "i10_index": 271,
+      "works_count": 444,
+      "cited_by_count": 19001,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5060639158",
+      "display_name": "Charles B. Berde",
+      "orcid": "https://orcid.org/0000-0002-1801-6399",
+      "h_index": 76,
+      "i10_index": 204,
+      "works_count": 378,
+      "cited_by_count": 18799,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5109205473",
+      "display_name": "Lars I. Eriksson",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 203,
+      "works_count": 340,
+      "cited_by_count": 21340,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5107425082",
+      "display_name": "Christopher L. Wu",
+      "orcid": "https://orcid.org/0000-0002-4484-0787",
+      "h_index": 76,
+      "i10_index": 200,
+      "works_count": 350,
+      "cited_by_count": 26011,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5014226276",
+      "display_name": "Carla Ida Ripamonti",
+      "orcid": "https://orcid.org/0000-0001-5495-5054",
+      "h_index": 76,
+      "i10_index": 188,
+      "works_count": 336,
+      "cited_by_count": 22305,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Anesthesiology and Pain Medicine -- 9.4",
+      "id": "https://openalex.org/A5063394859",
+      "display_name": "Jason Walter Busse",
+      "orcid": "https://orcid.org/0000-0002-0178-8712",
+      "h_index": 75,
+      "i10_index": 275,
+      "works_count": 540,
+      "cited_by_count": 23602,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5074109764",
+      "display_name": "Girish P. Joshi",
+      "orcid": "https://orcid.org/0000-0003-1791-4012",
+      "h_index": 75,
+      "i10_index": 255,
+      "works_count": 525,
+      "cited_by_count": 20265,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5063707773",
+      "display_name": "Ajay D. Wasan",
+      "orcid": "https://orcid.org/0000-0002-6394-6077",
+      "h_index": 75,
+      "i10_index": 154,
+      "works_count": 315,
+      "cited_by_count": 18293,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5060782749",
+      "display_name": "Peter Kranke",
+      "orcid": "https://orcid.org/0000-0001-5324-981X",
+      "h_index": 74,
+      "i10_index": 270,
+      "works_count": 570,
+      "cited_by_count": 30091,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5065945106",
+      "display_name": "Michael J. Englesbe",
+      "orcid": "https://orcid.org/0000-0001-8691-9111",
+      "h_index": 74,
+      "i10_index": 269,
+      "works_count": 520,
+      "cited_by_count": 22312,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5002520132",
+      "display_name": "Justine Shults",
+      "orcid": "https://orcid.org/0000-0002-0266-0980",
+      "h_index": 74,
+      "i10_index": 256,
+      "works_count": 495,
+      "cited_by_count": 19250,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5073325161",
+      "display_name": "Chad M. Brummett",
+      "orcid": "https://orcid.org/0000-0003-0974-7242",
+      "h_index": 74,
+      "i10_index": 243,
+      "works_count": 438,
+      "cited_by_count": 26657,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5005229925",
+      "display_name": "Michael Simon Avidan",
+      "orcid": "https://orcid.org/0000-0001-6248-044X",
+      "h_index": 74,
+      "i10_index": 227,
+      "works_count": 466,
+      "cited_by_count": 20011,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5109228852",
+      "display_name": "Maarten van Kleef",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 165,
+      "works_count": 315,
+      "cited_by_count": 18525,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5017400006",
+      "display_name": "Jörn Lötsch",
+      "orcid": "https://orcid.org/0000-0002-5818-6958",
+      "h_index": 73,
+      "i10_index": 262,
+      "works_count": 415,
+      "cited_by_count": 17001,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5007303009",
+      "display_name": "Augusto Tommaso Caraceni",
+      "orcid": "https://orcid.org/0000-0002-0375-6204",
+      "h_index": 73,
+      "i10_index": 203,
+      "works_count": 356,
+      "cited_by_count": 24976,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Anesthesiology and Pain Medicine -- 9.3",
+      "id": "https://openalex.org/A5054312557",
+      "display_name": "Michael J. Cousins",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 203,
+      "works_count": 506,
+      "cited_by_count": 21646,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5091721438",
+      "display_name": "Klaus Tapio Olkkola",
+      "orcid": "https://orcid.org/0000-0001-7872-8665",
+      "h_index": 72,
+      "i10_index": 237,
+      "works_count": 380,
+      "cited_by_count": 16787,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5048910956",
+      "display_name": "Michel M. R. F. Struys",
+      "orcid": "https://orcid.org/0000-0003-0421-536X",
+      "h_index": 72,
+      "i10_index": 232,
+      "works_count": 556,
+      "cited_by_count": 19709,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5049385540",
+      "display_name": "Andrew Moore",
+      "orcid": "https://orcid.org/0000-0002-7932-5136",
+      "h_index": 72,
+      "i10_index": 160,
+      "works_count": 315,
+      "cited_by_count": 23220,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5031327561",
+      "display_name": "Yoshitaka Fujii",
+      "orcid": "https://orcid.org/0000-0003-2207-4230",
+      "h_index": 71,
+      "i10_index": 397,
+      "works_count": 707,
+      "cited_by_count": 30982,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5079966989",
+      "display_name": "Elizabeth Butzer Habermann",
+      "orcid": "https://orcid.org/0000-0002-1140-003X",
+      "h_index": 70,
+      "i10_index": 358,
+      "works_count": 748,
+      "cited_by_count": 18840,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5067856866",
+      "display_name": "David O. Warner",
+      "orcid": "https://orcid.org/0000-0002-0365-2536",
+      "h_index": 70,
+      "i10_index": 265,
+      "works_count": 538,
+      "cited_by_count": 20486,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5010222570",
+      "display_name": "Frank J.P.M. Huygen",
+      "orcid": "https://orcid.org/0000-0002-2852-4880",
+      "h_index": 70,
+      "i10_index": 202,
+      "works_count": 428,
+      "cited_by_count": 15950,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5010849046",
+      "display_name": "John D. Loeser",
+      "orcid": "https://orcid.org/0000-0003-1355-0952",
+      "h_index": 70,
+      "i10_index": 176,
+      "works_count": 354,
+      "cited_by_count": 27149,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5019104570",
+      "display_name": "Nagy A. Mekhail",
+      "orcid": "https://orcid.org/0000-0002-3823-9610",
+      "h_index": 70,
+      "i10_index": 172,
+      "works_count": 334,
+      "cited_by_count": 14814,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5067130173",
+      "display_name": "Robert N. Jamison",
+      "orcid": "https://orcid.org/0000-0003-1768-0906",
+      "h_index": 70,
+      "i10_index": 157,
+      "works_count": 305,
+      "cited_by_count": 14575,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Anesthesiology and Pain Medicine -- 9.2",
+      "id": "https://openalex.org/A5040320731",
+      "display_name": "Alejandro R. Jadad",
+      "orcid": "https://orcid.org/0000-0002-9591-5099",
+      "h_index": 70,
+      "i10_index": 133,
+      "works_count": 216,
+      "cited_by_count": 54618,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5070859758",
+      "display_name": "Richard D. Urman",
+      "orcid": "https://orcid.org/0000-0002-0516-5977",
+      "h_index": 69,
+      "i10_index": 410,
+      "works_count": 778,
+      "cited_by_count": 25836,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5019859846",
+      "display_name": "Giustino Varrassi",
+      "orcid": "https://orcid.org/0000-0002-3822-2923",
+      "h_index": 69,
+      "i10_index": 392,
+      "works_count": 768,
+      "cited_by_count": 20005,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5039629344",
+      "display_name": "Brendan Carvalho",
+      "orcid": "https://orcid.org/0000-0002-4919-4542",
+      "h_index": 69,
+      "i10_index": 230,
+      "works_count": 565,
+      "cited_by_count": 15779,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5063282981",
+      "display_name": "Xavier Capdevila",
+      "orcid": "https://orcid.org/0000-0002-9791-8779",
+      "h_index": 69,
+      "i10_index": 216,
+      "works_count": 468,
+      "cited_by_count": 18293,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5114009402",
+      "display_name": "R Andrew Moore",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 149,
+      "works_count": 190,
+      "cited_by_count": 18210,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5058647852",
+      "display_name": "Narinder Rawal",
+      "orcid": "https://orcid.org/0009-0003-2056-6888",
+      "h_index": 69,
+      "i10_index": 144,
+      "works_count": 276,
+      "cited_by_count": 14160,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5048394709",
+      "display_name": "Joseph Drew Tobias",
+      "orcid": "https://orcid.org/0000-0003-0550-6951",
+      "h_index": 68,
+      "i10_index": 554,
+      "works_count": 1155,
+      "cited_by_count": 22643,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5101705774",
+      "display_name": "Mark S. Wallace",
+      "orcid": "https://orcid.org/0000-0001-5647-6233",
+      "h_index": 68,
+      "i10_index": 189,
+      "works_count": 328,
+      "cited_by_count": 24981,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5076462126",
+      "display_name": "Steven L. Shafer",
+      "orcid": "https://orcid.org/0000-0002-0289-7793",
+      "h_index": 68,
+      "i10_index": 173,
+      "works_count": 454,
+      "cited_by_count": 20371,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5083244011",
+      "display_name": "Donal J. Buggy",
+      "orcid": "https://orcid.org/0000-0003-3922-4397",
+      "h_index": 68,
+      "i10_index": 166,
+      "works_count": 281,
+      "cited_by_count": 15379,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Anesthesiology and Pain Medicine -- 9.1",
+      "id": "https://openalex.org/A5083219961",
+      "display_name": "Kathleen M. Foley",
+      "orcid": "https://orcid.org/0000-0001-9707-007X",
+      "h_index": 68,
+      "i10_index": 152,
+      "works_count": 306,
+      "cited_by_count": 21990,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Anesthesiology and Pain Medicine -- 9.0",
+      "id": "https://openalex.org/A5111668468",
+      "display_name": "Michael C. Rowbotham",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 140,
+      "works_count": 190,
+      "cited_by_count": 26397,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Anesthesiology and Pain Medicine -- 9.0",
+      "id": "https://openalex.org/A5005627457",
+      "display_name": "Juraj Šprung",
+      "orcid": "https://orcid.org/0000-0002-0320-0230",
+      "h_index": 67,
+      "i10_index": 263,
+      "works_count": 545,
+      "cited_by_count": 20617,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Anesthesiology and Pain Medicine -- 9.0",
+      "id": "https://openalex.org/A5065601279",
+      "display_name": "Francis J. Bonnet",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 205,
+      "works_count": 710,
+      "cited_by_count": 16500,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Anesthesiology and Pain Medicine -- 9.0",
+      "id": "https://openalex.org/A5067118176",
+      "display_name": "Charles E. Inturrisi",
+      "orcid": "https://orcid.org/0000-0002-0890-6275",
+      "h_index": 67,
+      "i10_index": 194,
+      "works_count": 279,
+      "cited_by_count": 15439,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Anesthesiology and Pain Medicine -- 9.0",
+      "id": "https://openalex.org/A5020070598",
+      "display_name": "Michael M. Todd",
+      "orcid": "https://orcid.org/0000-0003-1531-5825",
+      "h_index": 67,
+      "i10_index": 184,
+      "works_count": 357,
+      "cited_by_count": 15462,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5027493491",
+      "display_name": "Tony Gin",
+      "orcid": "https://orcid.org/0000-0001-7283-6761",
+      "h_index": 67,
+      "i10_index": 181,
+      "works_count": 383,
+      "cited_by_count": 15018,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5039485353",
+      "display_name": "Gary R. Strichartz",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 175,
+      "works_count": 286,
+      "cited_by_count": 16705,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5001265546",
+      "display_name": "Nathaniel P. Katz",
+      "orcid": "https://orcid.org/0000-0001-6354-007X",
+      "h_index": 67,
+      "i10_index": 166,
+      "works_count": 261,
+      "cited_by_count": 24546,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5079455367",
+      "display_name": "Bengt Linderoth",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 163,
+      "works_count": 276,
+      "cited_by_count": 13527,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5002773156",
+      "display_name": "Gregory C. Fanelli",
+      "orcid": "https://orcid.org/0000-0002-2991-3378",
+      "h_index": 66,
+      "i10_index": 226,
+      "works_count": 430,
+      "cited_by_count": 15637,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5040357508",
+      "display_name": "Adrian W. Gelb",
+      "orcid": "https://orcid.org/0000-0001-7004-4410",
+      "h_index": 66,
+      "i10_index": 177,
+      "works_count": 426,
+      "cited_by_count": 14991,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5058521952",
+      "display_name": "Anthony Ray Absalom",
+      "orcid": "https://orcid.org/0000-0001-7563-9157",
+      "h_index": 66,
+      "i10_index": 168,
+      "works_count": 435,
+      "cited_by_count": 18019,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5102994531",
+      "display_name": "Richard B. Weiskopf",
+      "orcid": "https://orcid.org/0000-0003-1749-1726",
+      "h_index": 66,
+      "i10_index": 142,
+      "works_count": 274,
+      "cited_by_count": 15688,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5002058390",
+      "display_name": "Ann Merete Møller",
+      "orcid": "https://orcid.org/0000-0003-1852-1544",
+      "h_index": 66,
+      "i10_index": 137,
+      "works_count": 270,
+      "cited_by_count": 13724,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5079267921",
+      "display_name": "Ronald A. Thisted",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 111,
+      "works_count": 204,
+      "cited_by_count": 23347,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5064618439",
+      "display_name": "Dan Benhamou",
+      "orcid": "https://orcid.org/0000-0001-9893-209X",
+      "h_index": 65,
+      "i10_index": 309,
+      "works_count": 1051,
+      "cited_by_count": 19407,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Anesthesiology and Pain Medicine -- 8.9",
+      "id": "https://openalex.org/A5080061468",
+      "display_name": "Jennifer F. Waljee",
+      "orcid": "https://orcid.org/0000-0001-9878-5704",
+      "h_index": 65,
+      "i10_index": 245,
+      "works_count": 531,
+      "cited_by_count": 17690,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5080496480",
+      "display_name": "Stephen P. Bruehl",
+      "orcid": "https://orcid.org/0000-0003-2264-4758",
+      "h_index": 65,
+      "i10_index": 205,
+      "works_count": 330,
+      "cited_by_count": 18413,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5036649021",
+      "display_name": "Berthold Bein",
+      "orcid": "https://orcid.org/0000-0002-2539-2165",
+      "h_index": 65,
+      "i10_index": 202,
+      "works_count": 456,
+      "cited_by_count": 15858,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5030022752",
+      "display_name": "Michael F. Roizen",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 196,
+      "works_count": 682,
+      "cited_by_count": 15790,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5004260153",
+      "display_name": "Ian Gilron",
+      "orcid": "https://orcid.org/0000-0002-5293-8792",
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 317,
+      "cited_by_count": 21882,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5007309115",
+      "display_name": "Judith A. Paice",
+      "orcid": "https://orcid.org/0000-0001-7534-1756",
+      "h_index": 65,
+      "i10_index": 172,
+      "works_count": 342,
+      "cited_by_count": 21727,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5048998547",
+      "display_name": "Richard Brull",
+      "orcid": "https://orcid.org/0000-0002-7708-8843",
+      "h_index": 65,
+      "i10_index": 149,
+      "works_count": 272,
+      "cited_by_count": 15390,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5037429588",
+      "display_name": "Harry Scheinin",
+      "orcid": "https://orcid.org/0000-0002-1171-3511",
+      "h_index": 65,
+      "i10_index": 149,
+      "works_count": 225,
+      "cited_by_count": 12847,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5028528917",
+      "display_name": "Timothy J. Brennan",
+      "orcid": "https://orcid.org/0000-0002-0150-5145",
+      "h_index": 65,
+      "i10_index": 148,
+      "works_count": 326,
+      "cited_by_count": 18323,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5057382778",
+      "display_name": "Jianjun Yang",
+      "orcid": "https://orcid.org/0000-0001-6785-9627",
+      "h_index": 64,
+      "i10_index": 336,
+      "works_count": 662,
+      "cited_by_count": 18025,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5058604413",
+      "display_name": "Brian Joseph Anderson",
+      "orcid": "https://orcid.org/0000-0002-2826-3019",
+      "h_index": 64,
+      "i10_index": 205,
+      "works_count": 336,
+      "cited_by_count": 17017,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5077917178",
+      "display_name": "Maurice Lamy",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 196,
+      "works_count": 610,
+      "cited_by_count": 28184,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5003625713",
+      "display_name": "Pål Klepstad",
+      "orcid": "https://orcid.org/0000-0003-2804-8447",
+      "h_index": 64,
+      "i10_index": 192,
+      "works_count": 382,
+      "cited_by_count": 13816,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5015731656",
+      "display_name": "Kate Leslie",
+      "orcid": "https://orcid.org/0000-0001-8512-3517",
+      "h_index": 64,
+      "i10_index": 185,
+      "works_count": 345,
+      "cited_by_count": 21129,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5081960363",
+      "display_name": "Jianren Mao",
+      "orcid": "https://orcid.org/0000-0003-0298-486X",
+      "h_index": 64,
+      "i10_index": 155,
+      "works_count": 231,
+      "cited_by_count": 17225,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5029049881",
+      "display_name": "R Andrew Moore",
+      "orcid": "https://orcid.org/0000-0001-8393-2193",
+      "h_index": 64,
+      "i10_index": 145,
+      "works_count": 205,
+      "cited_by_count": 30271,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5026155522",
+      "display_name": "Terese T. Horlocker",
+      "orcid": "https://orcid.org/0000-0002-2392-6899",
+      "h_index": 64,
+      "i10_index": 112,
+      "works_count": 238,
+      "cited_by_count": 14632,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5100410369",
+      "display_name": "Hong Liu",
+      "orcid": "https://orcid.org/0000-0003-3611-7131",
+      "h_index": 63,
+      "i10_index": 347,
+      "works_count": 957,
+      "cited_by_count": 19481,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5060878734",
+      "display_name": "Ashraf Samir Habib",
+      "orcid": "https://orcid.org/0000-0002-6980-1856",
+      "h_index": 63,
+      "i10_index": 198,
+      "works_count": 383,
+      "cited_by_count": 18332,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5036709171",
+      "display_name": "Marie Fallon",
+      "orcid": "https://orcid.org/0000-0001-9214-0091",
+      "h_index": 63,
+      "i10_index": 173,
+      "works_count": 517,
+      "cited_by_count": 20049,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5025049560",
+      "display_name": "Esther Miriam Pogatzki-Zahn",
+      "orcid": "https://orcid.org/0000-0003-0981-3940",
+      "h_index": 63,
+      "i10_index": 171,
+      "works_count": 351,
+      "cited_by_count": 12789,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5100755625",
+      "display_name": "Anna So Youn Lee",
+      "orcid": "https://orcid.org/0000-0003-2864-0045",
+      "h_index": 63,
+      "i10_index": 170,
+      "works_count": 340,
+      "cited_by_count": 16150,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Anesthesiology and Pain Medicine -- 8.8",
+      "id": "https://openalex.org/A5055729686",
+      "display_name": "Brian M. Ilfeld",
+      "orcid": "https://orcid.org/0000-0002-6144-3273",
+      "h_index": 63,
+      "i10_index": 167,
+      "works_count": 295,
+      "cited_by_count": 12109,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Anesthesiology and Pain Medicine -- 8.7",
+      "id": "https://openalex.org/A5050116562",
+      "display_name": "Stephan Alexander Schug",
+      "orcid": "https://orcid.org/0000-0002-0302-2315",
+      "h_index": 63,
+      "i10_index": 156,
+      "works_count": 445,
+      "cited_by_count": 24236,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Anesthesiology and Pain Medicine -- 8.7",
+      "id": "https://openalex.org/A5031716854",
+      "display_name": "Nathan Leon Pace",
+      "orcid": "https://orcid.org/0000-0002-8646-5276",
+      "h_index": 63,
+      "i10_index": 144,
+      "works_count": 293,
+      "cited_by_count": 14403,
+      "discipline": "Anesthesiology and Pain Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Medicine"
+      ]
+    }
+  ]
+}

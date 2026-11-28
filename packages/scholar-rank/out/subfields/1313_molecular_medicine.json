@@ -1,0 +1,90 @@
+{
+  "kind": "subfield",
+  "id": 1313,
+  "name": "Molecular Medicine",
+  "total_in_scrape": 4,
+  "count": 4,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Molecular Medicine -- 9.9",
+      "id": "https://openalex.org/A5036163332",
+      "display_name": "Amirhossein Sahebkar",
+      "orcid": "https://orcid.org/0000-0002-8656-1444",
+      "h_index": 193,
+      "i10_index": 1682,
+      "works_count": 2597,
+      "cited_by_count": 318004,
+      "discipline": "Molecular Medicine",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Molecular Medicine",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Materials Science",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Molecular Medicine -- 9.9",
+      "id": "https://openalex.org/A5038274221",
+      "display_name": "Ajaikumar Bahulayan Kunnumakkara",
+      "orcid": "https://orcid.org/0000-0001-9121-6816",
+      "h_index": 84,
+      "i10_index": 230,
+      "works_count": 409,
+      "cited_by_count": 43930,
+      "discipline": "Molecular Medicine",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Molecular Medicine",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Molecular Medicine -- 9.9",
+      "id": "https://openalex.org/A5035613481",
+      "display_name": "Saeed Samarghandian",
+      "orcid": "https://orcid.org/0000-0001-5461-9579",
+      "h_index": 80,
+      "i10_index": 233,
+      "works_count": 349,
+      "cited_by_count": 17435,
+      "discipline": "Molecular Medicine",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Molecular Medicine",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Molecular Medicine -- 9.9",
+      "id": "https://openalex.org/A5054750006",
+      "display_name": "Tannaz Jamialahmadi",
+      "orcid": "https://orcid.org/0000-0001-9521-3153",
+      "h_index": 63,
+      "i10_index": 241,
+      "works_count": 456,
+      "cited_by_count": 12387,
+      "discipline": "Molecular Medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Molecular Medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    }
+  ]
+}

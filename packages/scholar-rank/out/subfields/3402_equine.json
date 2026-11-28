@@ -1,0 +1,107 @@
+{
+  "kind": "subfield",
+  "id": 3402,
+  "name": "Equine",
+  "total_in_scrape": 5,
+  "count": 5,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Equine -- 9.9",
+      "id": "https://openalex.org/A5067150314",
+      "display_name": "P. René van Weeren",
+      "orcid": "https://orcid.org/0000-0002-6654-1817",
+      "h_index": 81,
+      "i10_index": 354,
+      "works_count": 582,
+      "cited_by_count": 22549,
+      "discipline": "Equine",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Equine",
+      "fields": [
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Equine -- 9.9",
+      "id": "https://openalex.org/A5057770336",
+      "display_name": "C. Wayne McIlwraith",
+      "orcid": "https://orcid.org/0000-0002-7302-2265",
+      "h_index": 77,
+      "i10_index": 318,
+      "works_count": 523,
+      "cited_by_count": 20893,
+      "discipline": "Equine",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Equine",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Equine -- 9.9",
+      "id": "https://openalex.org/A5013794293",
+      "display_name": "Patricia A. Harris",
+      "orcid": "https://orcid.org/0000-0003-4068-1624",
+      "h_index": 68,
+      "i10_index": 278,
+      "works_count": 519,
+      "cited_by_count": 17067,
+      "discipline": "Equine",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Equine",
+      "fields": [
+        "Veterinary",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Equine -- 9.9",
+      "id": "https://openalex.org/A5083645031",
+      "display_name": "Alan M. Wilson",
+      "orcid": "https://orcid.org/0000-0001-9914-3455",
+      "h_index": 68,
+      "i10_index": 158,
+      "works_count": 286,
+      "cited_by_count": 15125,
+      "discipline": "Equine",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Equine",
+      "fields": [
+        "Veterinary",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Equine -- 9.9",
+      "id": "https://openalex.org/A5073998761",
+      "display_name": "Noah D. Cohen",
+      "orcid": "https://orcid.org/0000-0002-0384-2903",
+      "h_index": 64,
+      "i10_index": 275,
+      "works_count": 424,
+      "cited_by_count": 14004,
+      "discipline": "Equine",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Equine",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "kind": "subfield",
+  "id": 1706,
+  "name": "Computer Science Applications",
+  "total_in_scrape": 8,
+  "count": 8,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Computer Science Applications -- 9.9",
+      "id": "https://openalex.org/A5036855560",
+      "display_name": "Dragan Gašević",
+      "orcid": "https://orcid.org/0000-0001-9265-1908",
+      "h_index": 105,
+      "i10_index": 555,
+      "works_count": 922,
+      "cited_by_count": 53828,
+      "discipline": "Computer Science Applications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Science Applications",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Computer Science Applications -- 9.9",
+      "id": "https://openalex.org/A5088695714",
+      "display_name": "Ryan S. Baker",
+      "orcid": "https://orcid.org/0000-0002-3051-3232",
+      "h_index": 80,
+      "i10_index": 329,
+      "works_count": 552,
+      "cited_by_count": 31190,
+      "discipline": "Computer Science Applications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Science Applications",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Computer Science Applications -- 9.9",
+      "id": "https://openalex.org/A5076189854",
+      "display_name": "Michael S. Bernstein",
+      "orcid": "https://orcid.org/0000-0001-8020-9434",
+      "h_index": 78,
+      "i10_index": 175,
+      "works_count": 339,
+      "cited_by_count": 102830,
+      "discipline": "Computer Science Applications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Science Applications",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Computer Science Applications -- 9.9",
+      "id": "https://openalex.org/A5016446179",
+      "display_name": "Eric von Hippel",
+      "orcid": "https://orcid.org/0000-0002-7235-1032",
+      "h_index": 75,
+      "i10_index": 121,
+      "works_count": 252,
+      "cited_by_count": 59617,
+      "discipline": "Computer Science Applications",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Computer Science Applications",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Computer Science Applications -- 9.9",
+      "id": "https://openalex.org/A5007861624",
+      "display_name": "Kevin Crowston",
+      "orcid": "https://orcid.org/0000-0003-1996-3600",
+      "h_index": 71,
+      "i10_index": 178,
+      "works_count": 381,
+      "cited_by_count": 23820,
+      "discipline": "Computer Science Applications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Science Applications",
+      "fields": [
+        "Computer Science",
+        "Business, Management and Accounting",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Computer Science Applications -- 9.9",
+      "id": "https://openalex.org/A5029977269",
+      "display_name": "Michail N. Giannakos",
+      "orcid": "https://orcid.org/0000-0002-8016-6208",
+      "h_index": 67,
+      "i10_index": 209,
+      "works_count": 366,
+      "cited_by_count": 19653,
+      "discipline": "Computer Science Applications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Science Applications",
+      "fields": [
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Computer Science Applications -- 9.8",
+      "id": "https://openalex.org/A5102919398",
+      "display_name": "Christoph Meinel",
+      "orcid": "https://orcid.org/0000-0002-3410-3193",
+      "h_index": 63,
+      "i10_index": 425,
+      "works_count": 1329,
+      "cited_by_count": 20323,
+      "discipline": "Computer Science Applications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Science Applications",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Computer Science Applications -- 9.8",
+      "id": "https://openalex.org/A5100701166",
+      "display_name": "Zhiwen Yu",
+      "orcid": "https://orcid.org/0000-0002-9905-3238",
+      "h_index": 63,
+      "i10_index": 307,
+      "works_count": 816,
+      "cited_by_count": 18867,
+      "discipline": "Computer Science Applications",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computer Science Applications",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

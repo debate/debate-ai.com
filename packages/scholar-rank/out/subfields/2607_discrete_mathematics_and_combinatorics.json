@@ -1,0 +1,362 @@
+{
+  "kind": "subfield",
+  "id": 2607,
+  "name": "Discrete Mathematics and Combinatorics",
+  "total_in_scrape": 18,
+  "count": 18,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Discrete Mathematics and Combinatorics -- 9.9",
+      "id": "https://openalex.org/A5083469386",
+      "display_name": "Noga Alon",
+      "orcid": "https://orcid.org/0000-0003-1332-4883",
+      "h_index": 110,
+      "i10_index": 578,
+      "works_count": 1058,
+      "cited_by_count": 49627,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Discrete Mathematics and Combinatorics -- 9.9",
+      "id": "https://openalex.org/A5077107126",
+      "display_name": "Paul Erdős",
+      "orcid": null,
+      "h_index": 99,
+      "i10_index": 479,
+      "works_count": 938,
+      "cited_by_count": 51463,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Discrete Mathematics and Combinatorics -- 9.9",
+      "id": "https://openalex.org/A5110826490",
+      "display_name": "Donald E. Knuth",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 220,
+      "works_count": 532,
+      "cited_by_count": 52535,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Discrete Mathematics and Combinatorics -- 9.9",
+      "id": "https://openalex.org/A5072814838",
+      "display_name": "İvan Gutman",
+      "orcid": "https://orcid.org/0000-0001-9681-1550",
+      "h_index": 84,
+      "i10_index": 612,
+      "works_count": 1094,
+      "cited_by_count": 42058,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Discrete Mathematics and Combinatorics -- 9.9",
+      "id": "https://openalex.org/A5109915650",
+      "display_name": "Béla Bollobás",
+      "orcid": "https://orcid.org/0000-0002-9819-7213",
+      "h_index": 81,
+      "i10_index": 354,
+      "works_count": 845,
+      "cited_by_count": 40570,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Discrete Mathematics and Combinatorics -- 9.9",
+      "id": "https://openalex.org/A5111801246",
+      "display_name": "Frank Harary",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 292,
+      "works_count": 647,
+      "cited_by_count": 37435,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5005915779",
+      "display_name": "Neil J.A. Sloane",
+      "orcid": "https://orcid.org/0000-0001-7386-5222",
+      "h_index": 79,
+      "i10_index": 216,
+      "works_count": 439,
+      "cited_by_count": 30156,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5071015671",
+      "display_name": "Ron L. Graham",
+      "orcid": "https://orcid.org/0000-0003-3081-9351",
+      "h_index": 75,
+      "i10_index": 258,
+      "works_count": 593,
+      "cited_by_count": 36837,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5113657664",
+      "display_name": "Fan Chung",
+      "orcid": "https://orcid.org/0000-0002-6553-7402",
+      "h_index": 74,
+      "i10_index": 230,
+      "works_count": 372,
+      "cited_by_count": 28061,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5079674634",
+      "display_name": "Richard P. Stanley",
+      "orcid": "https://orcid.org/0000-0003-3123-8241",
+      "h_index": 74,
+      "i10_index": 168,
+      "works_count": 419,
+      "cited_by_count": 30583,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5081252768",
+      "display_name": "Milan Randić",
+      "orcid": "https://orcid.org/0000-0002-1169-4701",
+      "h_index": 67,
+      "i10_index": 287,
+      "works_count": 415,
+      "cited_by_count": 22289,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Chemistry",
+        "Physics and Astronomy",
+        "Computer Science",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5022615833",
+      "display_name": "Svante Janson",
+      "orcid": "https://orcid.org/0000-0002-9680-2790",
+      "h_index": 67,
+      "i10_index": 258,
+      "works_count": 472,
+      "cited_by_count": 19974,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5074480584",
+      "display_name": "Cunsheng Ding",
+      "orcid": "https://orcid.org/0000-0001-9392-9860",
+      "h_index": 67,
+      "i10_index": 185,
+      "works_count": 278,
+      "cited_by_count": 13533,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5035952740",
+      "display_name": "Andrew M. Odlyzko",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 182,
+      "works_count": 356,
+      "cited_by_count": 16071,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5035271865",
+      "display_name": "P. Erdös",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 262,
+      "works_count": 607,
+      "cited_by_count": 16610,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5042185860",
+      "display_name": "Ernesto Estrada",
+      "orcid": "https://orcid.org/0000-0002-3066-7418",
+      "h_index": 65,
+      "i10_index": 196,
+      "works_count": 332,
+      "cited_by_count": 18156,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy",
+        "Computer Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Discrete Mathematics and Combinatorics -- 9.8",
+      "id": "https://openalex.org/A5049802779",
+      "display_name": "Pauline Van den Driessche",
+      "orcid": "https://orcid.org/0000-0003-1485-8326",
+      "h_index": 64,
+      "i10_index": 204,
+      "works_count": 341,
+      "cited_by_count": 31811,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Discrete Mathematics and Combinatorics -- 9.7",
+      "id": "https://openalex.org/A5070164050",
+      "display_name": "Jiří Matoušek",
+      "orcid": "https://orcid.org/0000-0002-9447-0366",
+      "h_index": 64,
+      "i10_index": 189,
+      "works_count": 418,
+      "cited_by_count": 14595,
+      "discipline": "Discrete Mathematics and Combinatorics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Discrete Mathematics and Combinatorics",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    }
+  ]
+}
