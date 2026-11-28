@@ -21,6 +21,8 @@ import {
 } from "../../ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS, SourceArticlePanel } from "@debate-ai/research-evidence";
 import { isLikelyArticleUrl } from "../../lib/url-detection/article-url";
+import { useAdminUserCount } from "../../lib/admin/use-admin-user-count";
+import { UserCountBadge } from "./UserCountBadge";
 import { CardSourceExtractionPanel } from "./data/CardSourceExtractionPanel";
 import { CardTextR2Panel } from "./data/CardTextR2Panel";
 import { CaselistSyncPanel } from "./data/CaselistSyncPanel";
@@ -351,6 +353,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
     }
   }, [activeTab, loadUrlDetectionStats, loadUrlDetectionUrls]);
 
+  const userCount = useAdminUserCount(isAdmin);
   const visibleTabs = ADMIN_TABS.filter((tab) => isAdmin || !tab.adminOnly);
   const currentTab = visibleTabs.find((tab) => tab.key === activeTab) ?? visibleTabs[0];
 
@@ -375,6 +378,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
               {visibleTabs.map((tab) => (
                 <SelectItem key={tab.key} value={tab.key}>
                   {tab.name}
+                  {tab.key === "users" && userCount !== null ? ` (${userCount.toLocaleString()})` : ""}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -394,6 +398,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             >
               <tab.icon size={17} />
               <span>{tab.name}</span>
+              {tab.key === "users" && <UserCountBadge count={userCount} className="ml-auto" />}
             </button>
           ))}
         </nav>
