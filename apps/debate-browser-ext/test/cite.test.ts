@@ -218,3 +218,12 @@ describe('sourceFromUrl', () => {
     expect(sourceFromUrl('not a url')).toBeUndefined();
   });
 });
+
+describe('dates that cannot be read', () => {
+  it('cites an ISO-looking date that is not a real day exactly as the page wrote it', () => {
+    const input = { author: 'Jane Roe', title: 'T', source: 'S', date: '2024-13-45T00:00:00Z', url: 'https://x.org/a' };
+    for (const style of ['mla', 'apa', 'chicago'] as const) {
+      expect(buildCitation(input, style)).toContain('2024-13-45T00:00:00Z');
+    }
+  });
+});
