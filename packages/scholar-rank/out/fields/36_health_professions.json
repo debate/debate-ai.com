@@ -1,0 +1,5144 @@
+{
+  "kind": "field",
+  "id": 36,
+  "name": "Health Professions",
+  "total_in_scrape": 256,
+  "count": 256,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Health Professions -- 9.9",
+      "id": "https://openalex.org/A5036110536",
+      "display_name": "David Westfall Bates",
+      "orcid": "https://orcid.org/0000-0001-6268-1540",
+      "h_index": 172,
+      "i10_index": 949,
+      "works_count": 1590,
+      "cited_by_count": 136740,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Health Professions -- 9.9",
+      "id": "https://openalex.org/A5054403907",
+      "display_name": "Jeremy Grimshaw",
+      "orcid": "https://orcid.org/0000-0001-8015-8243",
+      "h_index": 154,
+      "i10_index": 635,
+      "works_count": 1033,
+      "cited_by_count": 352161,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Health Professions -- 9.9",
+      "id": "https://openalex.org/A5015302801",
+      "display_name": "Azeem Majeed",
+      "orcid": "https://orcid.org/0000-0002-2357-9858",
+      "h_index": 150,
+      "i10_index": 723,
+      "works_count": 1375,
+      "cited_by_count": 292880,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Health Professions -- 9.9",
+      "id": "https://openalex.org/A5018135109",
+      "display_name": "Bart Willem Koes",
+      "orcid": "https://orcid.org/0000-0002-0450-9969",
+      "h_index": 149,
+      "i10_index": 585,
+      "works_count": 1158,
+      "cited_by_count": 93420,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Health Professions -- 9.9",
+      "id": "https://openalex.org/A5059176055",
+      "display_name": "Trisha Greenhalgh",
+      "orcid": "https://orcid.org/0000-0003-2369-8088",
+      "h_index": 145,
+      "i10_index": 465,
+      "works_count": 1353,
+      "cited_by_count": 107986,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Health Professions -- 9.9",
+      "id": "https://openalex.org/A5013257135",
+      "display_name": "Stephen R. Lord",
+      "orcid": "https://orcid.org/0000-0002-7111-8802",
+      "h_index": 144,
+      "i10_index": 562,
+      "works_count": 893,
+      "cited_by_count": 78533,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5010317706",
+      "display_name": "Russell E. Glasgow",
+      "orcid": "https://orcid.org/0000-0003-4218-3231",
+      "h_index": 143,
+      "i10_index": 489,
+      "works_count": 695,
+      "cited_by_count": 83966,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5012328768",
+      "display_name": "Christopher Gerard Maher",
+      "orcid": "https://orcid.org/0000-0002-1628-7857",
+      "h_index": 138,
+      "i10_index": 599,
+      "works_count": 1163,
+      "cited_by_count": 88043,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5000192723",
+      "display_name": "Henrica C. W. de Vet",
+      "orcid": "https://orcid.org/0000-0002-5454-2804",
+      "h_index": 137,
+      "i10_index": 481,
+      "works_count": 903,
+      "cited_by_count": 120210,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5019442831",
+      "display_name": "Jeffrey M. Hausdorff",
+      "orcid": "https://orcid.org/0000-0002-1608-0776",
+      "h_index": 134,
+      "i10_index": 410,
+      "works_count": 714,
+      "cited_by_count": 98247,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5090631705",
+      "display_name": "Susan Michie",
+      "orcid": "https://orcid.org/0000-0003-0063-6378",
+      "h_index": 133,
+      "i10_index": 615,
+      "works_count": 1785,
+      "cited_by_count": 163040,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5090490801",
+      "display_name": "Maurits W. van Tulder",
+      "orcid": "https://orcid.org/0000-0002-7589-8471",
+      "h_index": 131,
+      "i10_index": 491,
+      "works_count": 1078,
+      "cited_by_count": 81588,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5025581939",
+      "display_name": "Yaser Mohammed Al‐Worafi",
+      "orcid": "https://orcid.org/0000-0002-5752-2913",
+      "h_index": 124,
+      "i10_index": 168,
+      "works_count": 1058,
+      "cited_by_count": 69470,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5007761401",
+      "display_name": "Sharon Elizabeth Straus",
+      "orcid": "https://orcid.org/0000-0002-6106-832X",
+      "h_index": 121,
+      "i10_index": 581,
+      "works_count": 936,
+      "cited_by_count": 132325,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5047802487",
+      "display_name": "Fay Bahling Horak",
+      "orcid": "https://orcid.org/0000-0001-7704-5459",
+      "h_index": 121,
+      "i10_index": 378,
+      "works_count": 564,
+      "cited_by_count": 61124,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5018059398",
+      "display_name": "Mario Plebani",
+      "orcid": "https://orcid.org/0000-0002-0270-1711",
+      "h_index": 120,
+      "i10_index": 1033,
+      "works_count": 1959,
+      "cited_by_count": 74338,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Health Professions -- 9.8",
+      "id": "https://openalex.org/A5079197101",
+      "display_name": "Johan W.S. Vlaeyen",
+      "orcid": "https://orcid.org/0000-0003-0437-6665",
+      "h_index": 120,
+      "i10_index": 374,
+      "works_count": 802,
+      "cited_by_count": 71201,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5090534884",
+      "display_name": "Ian D. Graham",
+      "orcid": "https://orcid.org/0000-0002-3669-1216",
+      "h_index": 119,
+      "i10_index": 529,
+      "works_count": 999,
+      "cited_by_count": 73528,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5056869880",
+      "display_name": "Glyn Jones Elwyn",
+      "orcid": "https://orcid.org/0000-0002-0917-6286",
+      "h_index": 115,
+      "i10_index": 453,
+      "works_count": 783,
+      "cited_by_count": 60076,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5082652200",
+      "display_name": "Andrew David Oxman",
+      "orcid": "https://orcid.org/0000-0002-5608-5061",
+      "h_index": 115,
+      "i10_index": 286,
+      "works_count": 454,
+      "cited_by_count": 171896,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5021398510",
+      "display_name": "Lucy Yardley",
+      "orcid": "https://orcid.org/0000-0002-3853-883X",
+      "h_index": 112,
+      "i10_index": 394,
+      "works_count": 915,
+      "cited_by_count": 65144,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5061312708",
+      "display_name": "Josip Car",
+      "orcid": "https://orcid.org/0000-0001-8969-371X",
+      "h_index": 111,
+      "i10_index": 376,
+      "works_count": 704,
+      "cited_by_count": 100803,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5061543609",
+      "display_name": "Peter R. Croft",
+      "orcid": "https://orcid.org/0000-0003-4914-5908",
+      "h_index": 111,
+      "i10_index": 313,
+      "works_count": 487,
+      "cited_by_count": 60314,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5015716277",
+      "display_name": "César Fernández‐de‐las‐Peñas",
+      "orcid": "https://orcid.org/0000-0003-3772-9690",
+      "h_index": 105,
+      "i10_index": 676,
+      "works_count": 1215,
+      "cited_by_count": 44010,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5082226580",
+      "display_name": "Robert Brian Haynes",
+      "orcid": "https://orcid.org/0000-0002-1453-3196",
+      "h_index": 105,
+      "i10_index": 311,
+      "works_count": 470,
+      "cited_by_count": 75878,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5071181592",
+      "display_name": "Gwendolen Anne Jull",
+      "orcid": "https://orcid.org/0000-0003-2670-1318",
+      "h_index": 104,
+      "i10_index": 287,
+      "works_count": 579,
+      "cited_by_count": 36730,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5032357819",
+      "display_name": "Rob Herbert",
+      "orcid": "https://orcid.org/0000-0003-4188-9195",
+      "h_index": 103,
+      "i10_index": 277,
+      "works_count": 520,
+      "cited_by_count": 40894,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Health Professions -- 9.7",
+      "id": "https://openalex.org/A5067755203",
+      "display_name": "Lynn Rochester",
+      "orcid": "https://orcid.org/0000-0001-5774-9272",
+      "h_index": 100,
+      "i10_index": 310,
+      "works_count": 783,
+      "cited_by_count": 34088,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5043925156",
+      "display_name": "Gerold Stucki",
+      "orcid": "https://orcid.org/0000-0002-6170-2749",
+      "h_index": 99,
+      "i10_index": 401,
+      "works_count": 550,
+      "cited_by_count": 42717,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5010647345",
+      "display_name": "Andrew Booth",
+      "orcid": "https://orcid.org/0000-0003-4808-3880",
+      "h_index": 98,
+      "i10_index": 301,
+      "works_count": 901,
+      "cited_by_count": 65046,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5045574598",
+      "display_name": "Alan M. Jette",
+      "orcid": "https://orcid.org/0000-0002-2117-9973",
+      "h_index": 98,
+      "i10_index": 297,
+      "works_count": 545,
+      "cited_by_count": 39510,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5048702534",
+      "display_name": "Carl R May",
+      "orcid": "https://orcid.org/0000-0002-0451-2690",
+      "h_index": 97,
+      "i10_index": 303,
+      "works_count": 714,
+      "cited_by_count": 39474,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5076299585",
+      "display_name": "Marc N. Elliott",
+      "orcid": "https://orcid.org/0000-0002-7147-5535",
+      "h_index": 96,
+      "i10_index": 376,
+      "works_count": 707,
+      "cited_by_count": 36295,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5054274979",
+      "display_name": "Debra L. Roter",
+      "orcid": "https://orcid.org/0000-0003-2203-9697",
+      "h_index": 96,
+      "i10_index": 296,
+      "works_count": 393,
+      "cited_by_count": 38743,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5051013760",
+      "display_name": "Joost Dekker",
+      "orcid": "https://orcid.org/0000-0003-2027-0027",
+      "h_index": 95,
+      "i10_index": 423,
+      "works_count": 1069,
+      "cited_by_count": 46917,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5068995535",
+      "display_name": "Sarah E Lamb",
+      "orcid": "https://orcid.org/0000-0003-4349-7195",
+      "h_index": 95,
+      "i10_index": 367,
+      "works_count": 732,
+      "cited_by_count": 60198,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5059234240",
+      "display_name": "Richard H. Osborne",
+      "orcid": "https://orcid.org/0000-0002-9081-2699",
+      "h_index": 95,
+      "i10_index": 313,
+      "works_count": 676,
+      "cited_by_count": 92395,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5060390916",
+      "display_name": "Christopher G. Chute",
+      "orcid": "https://orcid.org/0000-0001-5437-2545",
+      "h_index": 94,
+      "i10_index": 336,
+      "works_count": 676,
+      "cited_by_count": 38483,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Health Professions -- 9.6",
+      "id": "https://openalex.org/A5000236010",
+      "display_name": "Alarcos Cieza",
+      "orcid": "https://orcid.org/0000-0002-5045-4890",
+      "h_index": 94,
+      "i10_index": 333,
+      "works_count": 468,
+      "cited_by_count": 35308,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5023452123",
+      "display_name": "Michael S. Wolf",
+      "orcid": "https://orcid.org/0000-0002-4342-6517",
+      "h_index": 94,
+      "i10_index": 313,
+      "works_count": 545,
+      "cited_by_count": 31001,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5024746823",
+      "display_name": "Daniëlle van der Windt",
+      "orcid": "https://orcid.org/0000-0002-7248-6703",
+      "h_index": 94,
+      "i10_index": 273,
+      "works_count": 468,
+      "cited_by_count": 47758,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5060918839",
+      "display_name": "Lance M. McCracken",
+      "orcid": "https://orcid.org/0000-0002-9734-0153",
+      "h_index": 94,
+      "i10_index": 273,
+      "works_count": 556,
+      "cited_by_count": 31271,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5004325083",
+      "display_name": "Steven J. Linton",
+      "orcid": "https://orcid.org/0000-0001-5359-0452",
+      "h_index": 94,
+      "i10_index": 246,
+      "works_count": 407,
+      "cited_by_count": 39885,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5010945895",
+      "display_name": "France Légaré",
+      "orcid": "https://orcid.org/0000-0002-2296-6696",
+      "h_index": 93,
+      "i10_index": 386,
+      "works_count": 653,
+      "cited_by_count": 46215,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5049367753",
+      "display_name": "Ingo R. Titze",
+      "orcid": "https://orcid.org/0000-0003-0583-7515",
+      "h_index": 93,
+      "i10_index": 241,
+      "works_count": 496,
+      "cited_by_count": 25985,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Arts and Humanities",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5071878270",
+      "display_name": "Howard Leventhal",
+      "orcid": "https://orcid.org/0000-0001-5601-2500",
+      "h_index": 93,
+      "i10_index": 207,
+      "works_count": 264,
+      "cited_by_count": 33357,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5064181645",
+      "display_name": "Peter O’Sullivan",
+      "orcid": "https://orcid.org/0000-0002-3982-4088",
+      "h_index": 92,
+      "i10_index": 292,
+      "works_count": 478,
+      "cited_by_count": 30955,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5110033685",
+      "display_name": "Jozien M. Bensing",
+      "orcid": null,
+      "h_index": 92,
+      "i10_index": 240,
+      "works_count": 544,
+      "cited_by_count": 27582,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5066384568",
+      "display_name": "Mary Law",
+      "orcid": null,
+      "h_index": 92,
+      "i10_index": 231,
+      "works_count": 311,
+      "cited_by_count": 31309,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Occupational Therapy",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5074278851",
+      "display_name": "Markku Heliövaara",
+      "orcid": "https://orcid.org/0000-0002-5434-0639",
+      "h_index": 92,
+      "i10_index": 208,
+      "works_count": 304,
+      "cited_by_count": 29027,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Health Professions -- 9.5",
+      "id": "https://openalex.org/A5052983418",
+      "display_name": "Liselotte N. Dyrbye",
+      "orcid": "https://orcid.org/0000-0002-7820-704X",
+      "h_index": 92,
+      "i10_index": 179,
+      "works_count": 253,
+      "cited_by_count": 61101,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5019855413",
+      "display_name": "Robert J. Gatchel",
+      "orcid": "https://orcid.org/0000-0002-5093-8414",
+      "h_index": 91,
+      "i10_index": 332,
+      "works_count": 600,
+      "cited_by_count": 33948,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5048254064",
+      "display_name": "Anne E. Rogers",
+      "orcid": "https://orcid.org/0000-0002-7231-790X",
+      "h_index": 89,
+      "i10_index": 301,
+      "works_count": 602,
+      "cited_by_count": 31583,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5067755322",
+      "display_name": "Larry Davidson",
+      "orcid": "https://orcid.org/0000-0003-1183-8047",
+      "h_index": 88,
+      "i10_index": 345,
+      "works_count": 575,
+      "cited_by_count": 33729,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5039463522",
+      "display_name": "Pierre Côté",
+      "orcid": "https://orcid.org/0000-0002-6986-6676",
+      "h_index": 88,
+      "i10_index": 324,
+      "works_count": 656,
+      "cited_by_count": 36044,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5048738092",
+      "display_name": "Martin Christian Härter",
+      "orcid": "https://orcid.org/0000-0001-7443-9890",
+      "h_index": 87,
+      "i10_index": 425,
+      "works_count": 860,
+      "cited_by_count": 33541,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5066665869",
+      "display_name": "Rob A. de Bie",
+      "orcid": "https://orcid.org/0000-0001-5882-9303",
+      "h_index": 87,
+      "i10_index": 355,
+      "works_count": 711,
+      "cited_by_count": 28462,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5076010689",
+      "display_name": "Nicholas F. Taylor",
+      "orcid": "https://orcid.org/0000-0001-9474-2504",
+      "h_index": 87,
+      "i10_index": 352,
+      "works_count": 606,
+      "cited_by_count": 32609,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5090161362",
+      "display_name": "Hude Quan",
+      "orcid": "https://orcid.org/0000-0002-7848-7256",
+      "h_index": 87,
+      "i10_index": 350,
+      "works_count": 718,
+      "cited_by_count": 52311,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5033311669",
+      "display_name": "Gregory A. Aarons",
+      "orcid": "https://orcid.org/0000-0001-8969-5002",
+      "h_index": 87,
+      "i10_index": 292,
+      "works_count": 520,
+      "cited_by_count": 51152,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5053156614",
+      "display_name": "Dean Schillinger",
+      "orcid": "https://orcid.org/0000-0002-7221-7327",
+      "h_index": 87,
+      "i10_index": 259,
+      "works_count": 409,
+      "cited_by_count": 29173,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Health Professions -- 9.4",
+      "id": "https://openalex.org/A5031871819",
+      "display_name": "Richard L. Kravitz",
+      "orcid": "https://orcid.org/0000-0001-5575-529X",
+      "h_index": 87,
+      "i10_index": 252,
+      "works_count": 436,
+      "cited_by_count": 29449,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5090700680",
+      "display_name": "Tammy Hoffmann",
+      "orcid": "https://orcid.org/0000-0001-5210-8548",
+      "h_index": 87,
+      "i10_index": 247,
+      "works_count": 514,
+      "cited_by_count": 267912,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5113546544",
+      "display_name": "Martin Eccles",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 201,
+      "works_count": 373,
+      "cited_by_count": 70804,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5053670656",
+      "display_name": "George M. Hripcsak",
+      "orcid": "https://orcid.org/0000-0003-2664-7614",
+      "h_index": 86,
+      "i10_index": 360,
+      "works_count": 630,
+      "cited_by_count": 32352,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5085045867",
+      "display_name": "Annette M. Cormier O'Connor",
+      "orcid": "https://orcid.org/0000-0003-0604-7822",
+      "h_index": 86,
+      "i10_index": 328,
+      "works_count": 601,
+      "cited_by_count": 33753,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5072569206",
+      "display_name": "Scott Reeves",
+      "orcid": "https://orcid.org/0000-0002-0573-0622",
+      "h_index": 86,
+      "i10_index": 248,
+      "works_count": 436,
+      "cited_by_count": 35665,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Arts and Humanities",
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5083896661",
+      "display_name": "William Evans McIlroy",
+      "orcid": "https://orcid.org/0000-0003-2319-1746",
+      "h_index": 86,
+      "i10_index": 238,
+      "works_count": 379,
+      "cited_by_count": 24392,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5054277970",
+      "display_name": "Mark Linzer",
+      "orcid": "https://orcid.org/0000-0002-5507-3675",
+      "h_index": 86,
+      "i10_index": 197,
+      "works_count": 360,
+      "cited_by_count": 24382,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5065992780",
+      "display_name": "Colin P. West",
+      "orcid": "https://orcid.org/0000-0003-1628-5023",
+      "h_index": 86,
+      "i10_index": 189,
+      "works_count": 292,
+      "cited_by_count": 45703,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5018662278",
+      "display_name": "Kenneth D. Mandl",
+      "orcid": "https://orcid.org/0000-0002-9781-0477",
+      "h_index": 85,
+      "i10_index": 283,
+      "works_count": 530,
+      "cited_by_count": 25431,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5010287896",
+      "display_name": "Martijn W. Heymans",
+      "orcid": "https://orcid.org/0000-0002-3889-0921",
+      "h_index": 84,
+      "i10_index": 344,
+      "works_count": 650,
+      "cited_by_count": 27513,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Health Professions -- 9.3",
+      "id": "https://openalex.org/A5060405297",
+      "display_name": "Anne Margarethe Stiggelbout",
+      "orcid": "https://orcid.org/0000-0002-6293-4509",
+      "h_index": 84,
+      "i10_index": 272,
+      "works_count": 482,
+      "cited_by_count": 25633,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5011177296",
+      "display_name": "Iain Edward Buchan",
+      "orcid": "https://orcid.org/0000-0003-3392-1650",
+      "h_index": 84,
+      "i10_index": 250,
+      "works_count": 730,
+      "cited_by_count": 28512,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5087242254",
+      "display_name": "Shawn N. Murphy",
+      "orcid": "https://orcid.org/0000-0002-1905-8806",
+      "h_index": 84,
+      "i10_index": 250,
+      "works_count": 491,
+      "cited_by_count": 25138,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5050924923",
+      "display_name": "Wendy S. Levinson",
+      "orcid": "https://orcid.org/0000-0001-6356-3052",
+      "h_index": 84,
+      "i10_index": 207,
+      "works_count": 402,
+      "cited_by_count": 32377,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5084415954",
+      "display_name": "Lucila Ohno-Machado",
+      "orcid": "https://orcid.org/0000-0002-8005-7327",
+      "h_index": 83,
+      "i10_index": 306,
+      "works_count": 699,
+      "cited_by_count": 44268,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5058688355",
+      "display_name": "Steven Z. George",
+      "orcid": "https://orcid.org/0000-0003-4988-9421",
+      "h_index": 83,
+      "i10_index": 292,
+      "works_count": 527,
+      "cited_by_count": 26059,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5010098013",
+      "display_name": "Dean Forrest Sittig",
+      "orcid": "https://orcid.org/0000-0001-5811-8915",
+      "h_index": 83,
+      "i10_index": 282,
+      "works_count": 533,
+      "cited_by_count": 24459,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5065626862",
+      "display_name": "Simon A. Lewin",
+      "orcid": "https://orcid.org/0000-0001-7521-9515",
+      "h_index": 83,
+      "i10_index": 235,
+      "works_count": 399,
+      "cited_by_count": 88084,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5079167669",
+      "display_name": "William M. Tierney",
+      "orcid": "https://orcid.org/0000-0002-3379-3014",
+      "h_index": 83,
+      "i10_index": 229,
+      "works_count": 375,
+      "cited_by_count": 22687,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5006687609",
+      "display_name": "Simon de Lusignan",
+      "orcid": "https://orcid.org/0000-0002-8553-2641",
+      "h_index": 82,
+      "i10_index": 450,
+      "works_count": 937,
+      "cited_by_count": 28385,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5002721232",
+      "display_name": "Pieter Ubele Dijkstra",
+      "orcid": "https://orcid.org/0000-0002-5487-1907",
+      "h_index": 82,
+      "i10_index": 299,
+      "works_count": 448,
+      "cited_by_count": 22440,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Health Professions -- 9.2",
+      "id": "https://openalex.org/A5016730562",
+      "display_name": "John N. Lavis",
+      "orcid": "https://orcid.org/0000-0001-7917-3657",
+      "h_index": 82,
+      "i10_index": 263,
+      "works_count": 519,
+      "cited_by_count": 28001,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5068179853",
+      "display_name": "Nadine Elizabeth Foster",
+      "orcid": "https://orcid.org/0000-0003-4429-9756",
+      "h_index": 82,
+      "i10_index": 254,
+      "works_count": 784,
+      "cited_by_count": 39258,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5026490871",
+      "display_name": "Arianne Petra Verhagen",
+      "orcid": "https://orcid.org/0000-0002-6195-0128",
+      "h_index": 82,
+      "i10_index": 235,
+      "works_count": 603,
+      "cited_by_count": 25780,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5048713015",
+      "display_name": "Julie M. Fritz",
+      "orcid": "https://orcid.org/0000-0002-3599-1057",
+      "h_index": 82,
+      "i10_index": 223,
+      "works_count": 369,
+      "cited_by_count": 35942,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5032550277",
+      "display_name": "Kenneth A. Wallston",
+      "orcid": "https://orcid.org/0000-0001-6310-0306",
+      "h_index": 82,
+      "i10_index": 205,
+      "works_count": 474,
+      "cited_by_count": 30280,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5014128976",
+      "display_name": "Chris J. Main",
+      "orcid": "https://orcid.org/0000-0001-9071-5234",
+      "h_index": 82,
+      "i10_index": 159,
+      "works_count": 313,
+      "cited_by_count": 26277,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5083947815",
+      "display_name": "Joris Delanghe",
+      "orcid": "https://orcid.org/0000-0002-5702-6792",
+      "h_index": 81,
+      "i10_index": 374,
+      "works_count": 749,
+      "cited_by_count": 22837,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5045823606",
+      "display_name": "Andrew J. McLachlan",
+      "orcid": "https://orcid.org/0000-0003-4674-0242",
+      "h_index": 81,
+      "i10_index": 341,
+      "works_count": 671,
+      "cited_by_count": 25867,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5020392082",
+      "display_name": "Lawrence A. Palinkas",
+      "orcid": "https://orcid.org/0000-0003-0974-7330",
+      "h_index": 81,
+      "i10_index": 278,
+      "works_count": 495,
+      "cited_by_count": 46272,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5077898198",
+      "display_name": "Linda Carroll",
+      "orcid": "https://orcid.org/0000-0003-0876-2336",
+      "h_index": 81,
+      "i10_index": 190,
+      "works_count": 464,
+      "cited_by_count": 28368,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5016880174",
+      "display_name": "Michael J. L. Sullivan",
+      "orcid": "https://orcid.org/0000-0002-4228-1678",
+      "h_index": 81,
+      "i10_index": 186,
+      "works_count": 322,
+      "cited_by_count": 33490,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Health Professions -- 9.1",
+      "id": "https://openalex.org/A5069178600",
+      "display_name": "Jan M Wouters",
+      "orcid": "https://orcid.org/0000-0002-0093-698X",
+      "h_index": 80,
+      "i10_index": 349,
+      "works_count": 1107,
+      "cited_by_count": 21921,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Health Professions -- 9.0",
+      "id": "https://openalex.org/A5040224885",
+      "display_name": "Deborah Falla",
+      "orcid": "https://orcid.org/0000-0003-1689-6190",
+      "h_index": 80,
+      "i10_index": 347,
+      "works_count": 764,
+      "cited_by_count": 25089,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Health Professions -- 9.0",
+      "id": "https://openalex.org/A5088581420",
+      "display_name": "Enrico W Coiera",
+      "orcid": "https://orcid.org/0000-0002-6444-6584",
+      "h_index": 80,
+      "i10_index": 267,
+      "works_count": 530,
+      "cited_by_count": 25236,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Health Professions -- 9.0",
+      "id": "https://openalex.org/A5054431130",
+      "display_name": "Merrick Zwarenstein",
+      "orcid": "https://orcid.org/0000-0003-0162-7027",
+      "h_index": 80,
+      "i10_index": 259,
+      "works_count": 433,
+      "cited_by_count": 33117,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Mathematics",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Health Professions -- 9.0",
+      "id": "https://openalex.org/A5067911181",
+      "display_name": "Carole A. Estabrooks",
+      "orcid": "https://orcid.org/0000-0002-4753-6510",
+      "h_index": 80,
+      "i10_index": 236,
+      "works_count": 399,
+      "cited_by_count": 21065,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Health Professions -- 9.0",
+      "id": "https://openalex.org/A5061227329",
+      "display_name": "Elizabeth Murray",
+      "orcid": "https://orcid.org/0000-0002-8932-3695",
+      "h_index": 80,
+      "i10_index": 200,
+      "works_count": 417,
+      "cited_by_count": 30355,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5070727871",
+      "display_name": "Nancy E. Mayo",
+      "orcid": "https://orcid.org/0000-0003-2066-7120",
+      "h_index": 79,
+      "i10_index": 290,
+      "works_count": 563,
+      "cited_by_count": 23625,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5006306504",
+      "display_name": "Johan W. Groothoff",
+      "orcid": "https://orcid.org/0000-0002-6957-4358",
+      "h_index": 79,
+      "i10_index": 264,
+      "works_count": 434,
+      "cited_by_count": 19314,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5074363261",
+      "display_name": "Raymond Ostelo",
+      "orcid": "https://orcid.org/0000-0001-7679-7210",
+      "h_index": 79,
+      "i10_index": 260,
+      "works_count": 595,
+      "cited_by_count": 34407,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5087167067",
+      "display_name": "Manuela Loureiro Ferreira",
+      "orcid": "https://orcid.org/0000-0002-3479-0683",
+      "h_index": 79,
+      "i10_index": 247,
+      "works_count": 426,
+      "cited_by_count": 78432,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5000991227",
+      "display_name": "Alan Tennant",
+      "orcid": "https://orcid.org/0000-0002-0728-2130",
+      "h_index": 79,
+      "i10_index": 238,
+      "works_count": 511,
+      "cited_by_count": 23013,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5102800323",
+      "display_name": "Frank Robert Lin",
+      "orcid": "https://orcid.org/0000-0002-6458-1196",
+      "h_index": 79,
+      "i10_index": 221,
+      "works_count": 405,
+      "cited_by_count": 28733,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5023851909",
+      "display_name": "Darren A. DeWalt",
+      "orcid": "https://orcid.org/0000-0003-2270-751X",
+      "h_index": 79,
+      "i10_index": 181,
+      "works_count": 310,
+      "cited_by_count": 29962,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Nursing",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5057926319",
+      "display_name": "Mowafa Said Househ",
+      "orcid": "https://orcid.org/0000-0002-3648-6271",
+      "h_index": 78,
+      "i10_index": 212,
+      "works_count": 377,
+      "cited_by_count": 87449,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5067417878",
+      "display_name": "Paul W. Stratford",
+      "orcid": "https://orcid.org/0000-0003-4971-2386",
+      "h_index": 78,
+      "i10_index": 206,
+      "works_count": 322,
+      "cited_by_count": 40651,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5048877751",
+      "display_name": "Angela Fagerlin",
+      "orcid": "https://orcid.org/0000-0002-9192-2777",
+      "h_index": 77,
+      "i10_index": 232,
+      "works_count": 503,
+      "cited_by_count": 20983,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5008909480",
+      "display_name": "Sunil B. Kripalani",
+      "orcid": "https://orcid.org/0000-0002-4214-7129",
+      "h_index": 77,
+      "i10_index": 230,
+      "works_count": 385,
+      "cited_by_count": 26799,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Health Professions -- 8.9",
+      "id": "https://openalex.org/A5049974762",
+      "display_name": "Kirsten J. McCaffery",
+      "orcid": "https://orcid.org/0000-0003-2696-5006",
+      "h_index": 76,
+      "i10_index": 332,
+      "works_count": 747,
+      "cited_by_count": 23062,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5048150356",
+      "display_name": "Martin R Underwood",
+      "orcid": "https://orcid.org/0000-0002-0309-1708",
+      "h_index": 76,
+      "i10_index": 258,
+      "works_count": 680,
+      "cited_by_count": 41407,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5050634387",
+      "display_name": "Michael K. Paasche‐Orlow",
+      "orcid": "https://orcid.org/0000-0002-9276-7190",
+      "h_index": 76,
+      "i10_index": 228,
+      "works_count": 414,
+      "cited_by_count": 23309,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5040616920",
+      "display_name": "Luc de Witte",
+      "orcid": "https://orcid.org/0000-0002-3013-2640",
+      "h_index": 76,
+      "i10_index": 222,
+      "works_count": 436,
+      "cited_by_count": 18854,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Occupational Therapy",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5007311597",
+      "display_name": "T. Sheldon",
+      "orcid": "https://orcid.org/0000-0002-7479-5913",
+      "h_index": 76,
+      "i10_index": 213,
+      "works_count": 488,
+      "cited_by_count": 21401,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5108522350",
+      "display_name": "Angela Coulter",
+      "orcid": "https://orcid.org/0000-0002-6308-8375",
+      "h_index": 76,
+      "i10_index": 166,
+      "works_count": 278,
+      "cited_by_count": 26631,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5108807899",
+      "display_name": "Jeri A. Logemann",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 135,
+      "works_count": 196,
+      "cited_by_count": 17723,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5078405126",
+      "display_name": "Terry Peter Haines",
+      "orcid": "https://orcid.org/0000-0003-3150-6154",
+      "h_index": 75,
+      "i10_index": 345,
+      "works_count": 728,
+      "cited_by_count": 22206,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5072268854",
+      "display_name": "Graeme M. Clark",
+      "orcid": "https://orcid.org/0000-0002-5543-2789",
+      "h_index": 75,
+      "i10_index": 271,
+      "works_count": 793,
+      "cited_by_count": 18025,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Psychology",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5077428465",
+      "display_name": "David G. Baxter",
+      "orcid": "https://orcid.org/0000-0003-2968-6950",
+      "h_index": 75,
+      "i10_index": 214,
+      "works_count": 409,
+      "cited_by_count": 18562,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5066680318",
+      "display_name": "Nicky Britten",
+      "orcid": "https://orcid.org/0000-0002-7533-414X",
+      "h_index": 75,
+      "i10_index": 195,
+      "works_count": 327,
+      "cited_by_count": 34709,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5016639488",
+      "display_name": "Margareta C. Nordin",
+      "orcid": "https://orcid.org/0000-0003-0356-8665",
+      "h_index": 75,
+      "i10_index": 194,
+      "works_count": 350,
+      "cited_by_count": 20064,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5040772705",
+      "display_name": "Madelon L. Peters",
+      "orcid": "https://orcid.org/0000-0003-2969-6286",
+      "h_index": 75,
+      "i10_index": 186,
+      "works_count": 342,
+      "cited_by_count": 23113,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5002071945",
+      "display_name": "Martin Dugas",
+      "orcid": "https://orcid.org/0000-0001-9740-0788",
+      "h_index": 74,
+      "i10_index": 273,
+      "works_count": 687,
+      "cited_by_count": 22997,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5066580309",
+      "display_name": "Kasisomayajula Viswanath",
+      "orcid": "https://orcid.org/0000-0002-4795-5803",
+      "h_index": 74,
+      "i10_index": 270,
+      "works_count": 384,
+      "cited_by_count": 25199,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5024462248",
+      "display_name": "Dorcas Beaton",
+      "orcid": "https://orcid.org/0000-0002-5636-8766",
+      "h_index": 74,
+      "i10_index": 268,
+      "works_count": 406,
+      "cited_by_count": 59877,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5090430997",
+      "display_name": "Bernadette Mazurek Melnyk",
+      "orcid": "https://orcid.org/0000-0002-4704-1198",
+      "h_index": 74,
+      "i10_index": 264,
+      "works_count": 585,
+      "cited_by_count": 24117,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5024139960",
+      "display_name": "Jan Hartvigsen",
+      "orcid": "https://orcid.org/0000-0002-5876-7410",
+      "h_index": 74,
+      "i10_index": 255,
+      "works_count": 598,
+      "cited_by_count": 43946,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5077193177",
+      "display_name": "Jan H. B. Geertzen",
+      "orcid": "https://orcid.org/0000-0003-4719-0887",
+      "h_index": 74,
+      "i10_index": 240,
+      "works_count": 383,
+      "cited_by_count": 18268,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5002063692",
+      "display_name": "Sue Ziébland",
+      "orcid": "https://orcid.org/0000-0002-6496-4859",
+      "h_index": 74,
+      "i10_index": 204,
+      "works_count": 341,
+      "cited_by_count": 19258,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5065531684",
+      "display_name": "Nia Wyn Roberts",
+      "orcid": "https://orcid.org/0000-0002-1142-6440",
+      "h_index": 74,
+      "i10_index": 184,
+      "works_count": 321,
+      "cited_by_count": 18823,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine",
+        "Decision Sciences",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5051401339",
+      "display_name": "Bijan Najafi",
+      "orcid": "https://orcid.org/0000-0002-0320-8101",
+      "h_index": 73,
+      "i10_index": 263,
+      "works_count": 543,
+      "cited_by_count": 18735,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Health Professions -- 8.8",
+      "id": "https://openalex.org/A5002641110",
+      "display_name": "C. Hendricks Brown",
+      "orcid": "https://orcid.org/0000-0002-0294-2419",
+      "h_index": 73,
+      "i10_index": 203,
+      "works_count": 260,
+      "cited_by_count": 20512,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Mathematics",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5046431320",
+      "display_name": "Adrian C. Davis",
+      "orcid": "https://orcid.org/0000-0001-7134-7528",
+      "h_index": 73,
+      "i10_index": 172,
+      "works_count": 262,
+      "cited_by_count": 142269,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Medicine",
+        "Psychology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5004799706",
+      "display_name": "Walter R. Frontera",
+      "orcid": "https://orcid.org/0000-0001-8471-2248",
+      "h_index": 73,
+      "i10_index": 172,
+      "works_count": 458,
+      "cited_by_count": 29207,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physiology (medical)",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5052527590",
+      "display_name": "Judith H. Hibbard",
+      "orcid": "https://orcid.org/0000-0002-8376-8343",
+      "h_index": 73,
+      "i10_index": 144,
+      "works_count": 192,
+      "cited_by_count": 26229,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5032474439",
+      "display_name": "T. P. M. Vliet Vlieland",
+      "orcid": "https://orcid.org/0000-0001-6322-3859",
+      "h_index": 72,
+      "i10_index": 346,
+      "works_count": 674,
+      "cited_by_count": 21494,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5038306829",
+      "display_name": "Dawn Stacey",
+      "orcid": "https://orcid.org/0000-0002-2681-741X",
+      "h_index": 72,
+      "i10_index": 280,
+      "works_count": 617,
+      "cited_by_count": 29195,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5089354839",
+      "display_name": "Ellen M. A. Smets",
+      "orcid": "https://orcid.org/0000-0002-8145-8595",
+      "h_index": 72,
+      "i10_index": 243,
+      "works_count": 507,
+      "cited_by_count": 20401,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5020089672",
+      "display_name": "Bruce J. Gantz",
+      "orcid": "https://orcid.org/0000-0002-9916-6048",
+      "h_index": 72,
+      "i10_index": 221,
+      "works_count": 352,
+      "cited_by_count": 18637,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5088964555",
+      "display_name": "Elaine M. Hay",
+      "orcid": "https://orcid.org/0000-0002-9545-4296",
+      "h_index": 72,
+      "i10_index": 188,
+      "works_count": 336,
+      "cited_by_count": 23368,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5016463741",
+      "display_name": "Michael K. Nicholas",
+      "orcid": "https://orcid.org/0000-0002-4947-398X",
+      "h_index": 72,
+      "i10_index": 169,
+      "works_count": 264,
+      "cited_by_count": 28979,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5048169605",
+      "display_name": "Alicia O’Cathain",
+      "orcid": "https://orcid.org/0000-0003-4033-506X",
+      "h_index": 72,
+      "i10_index": 163,
+      "works_count": 436,
+      "cited_by_count": 45932,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5071800169",
+      "display_name": "Thomas Lenarz",
+      "orcid": "https://orcid.org/0000-0002-9307-5989",
+      "h_index": 71,
+      "i10_index": 496,
+      "works_count": 1526,
+      "cited_by_count": 22730,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5085613233",
+      "display_name": "Mauro Panteghini",
+      "orcid": "https://orcid.org/0000-0002-7147-3433",
+      "h_index": 71,
+      "i10_index": 305,
+      "works_count": 626,
+      "cited_by_count": 18331,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Physics and Astronomy",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5108195288",
+      "display_name": "Suzanne Bakken Henry",
+      "orcid": "https://orcid.org/0000-0001-6202-6001",
+      "h_index": 71,
+      "i10_index": 301,
+      "works_count": 675,
+      "cited_by_count": 24516,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5011689338",
+      "display_name": "Michael Edwin Matheny",
+      "orcid": "https://orcid.org/0000-0003-3217-4147",
+      "h_index": 71,
+      "i10_index": 235,
+      "works_count": 498,
+      "cited_by_count": 18097,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5060716064",
+      "display_name": "John Green",
+      "orcid": "https://orcid.org/0000-0002-2315-5326",
+      "h_index": 71,
+      "i10_index": 231,
+      "works_count": 784,
+      "cited_by_count": 18437,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5041464963",
+      "display_name": "Richard M. Frankel",
+      "orcid": "https://orcid.org/0000-0003-4132-4506",
+      "h_index": 71,
+      "i10_index": 215,
+      "works_count": 339,
+      "cited_by_count": 19228,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5032134756",
+      "display_name": "Sheilah Hogg‐Johnson",
+      "orcid": "https://orcid.org/0000-0002-1744-5036",
+      "h_index": 71,
+      "i10_index": 214,
+      "works_count": 405,
+      "cited_by_count": 20479,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5057779423",
+      "display_name": "Jill Francis",
+      "orcid": "https://orcid.org/0000-0001-5784-8895",
+      "h_index": 71,
+      "i10_index": 211,
+      "works_count": 362,
+      "cited_by_count": 46053,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5019109126",
+      "display_name": "Serge Poiraudeau",
+      "orcid": "https://orcid.org/0000-0002-1988-9124",
+      "h_index": 71,
+      "i10_index": 200,
+      "works_count": 468,
+      "cited_by_count": 16032,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5075453684",
+      "display_name": "Huw T.O. Davies",
+      "orcid": "https://orcid.org/0000-0002-6250-8497",
+      "h_index": 71,
+      "i10_index": 178,
+      "works_count": 328,
+      "cited_by_count": 21825,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5068887742",
+      "display_name": "Terry C. Davis",
+      "orcid": "https://orcid.org/0000-0002-5013-6120",
+      "h_index": 71,
+      "i10_index": 151,
+      "works_count": 229,
+      "cited_by_count": 20038,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Health Professions -- 8.7",
+      "id": "https://openalex.org/A5031087108",
+      "display_name": "Elaine Thomas",
+      "orcid": "https://orcid.org/0000-0002-9435-3653",
+      "h_index": 71,
+      "i10_index": 128,
+      "works_count": 199,
+      "cited_by_count": 17407,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5079182436",
+      "display_name": "Rory A. Cooper",
+      "orcid": "https://orcid.org/0000-0003-0405-5773",
+      "h_index": 70,
+      "i10_index": 322,
+      "works_count": 678,
+      "cited_by_count": 18169,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Occupational Therapy",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5054445562",
+      "display_name": "Brendan George McCormack",
+      "orcid": "https://orcid.org/0000-0001-8525-8905",
+      "h_index": 70,
+      "i10_index": 249,
+      "works_count": 572,
+      "cited_by_count": 26901,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5090424447",
+      "display_name": "Roger David Adams",
+      "orcid": "https://orcid.org/0000-0003-1465-1413",
+      "h_index": 70,
+      "i10_index": 248,
+      "works_count": 414,
+      "cited_by_count": 18049,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5007359139",
+      "display_name": "Bryan Jeffrey Weiner",
+      "orcid": "https://orcid.org/0000-0002-6996-9480",
+      "h_index": 70,
+      "i10_index": 243,
+      "works_count": 401,
+      "cited_by_count": 27679,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5042419068",
+      "display_name": "Louise M. H. Hickson",
+      "orcid": "https://orcid.org/0000-0001-6832-4173",
+      "h_index": 70,
+      "i10_index": 225,
+      "works_count": 393,
+      "cited_by_count": 15364,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5015765867",
+      "display_name": "Anne Julia Smith",
+      "orcid": "https://orcid.org/0000-0002-4667-7389",
+      "h_index": 70,
+      "i10_index": 220,
+      "works_count": 363,
+      "cited_by_count": 14805,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5109987927",
+      "display_name": "George G. Klee",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 191,
+      "works_count": 316,
+      "cited_by_count": 18492,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5084198747",
+      "display_name": "Père Clavé",
+      "orcid": "https://orcid.org/0000-0002-0696-8560",
+      "h_index": 70,
+      "i10_index": 186,
+      "works_count": 312,
+      "cited_by_count": 24020,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5067035898",
+      "display_name": "Eric L. Hurwitz",
+      "orcid": "https://orcid.org/0000-0003-3641-0784",
+      "h_index": 70,
+      "i10_index": 175,
+      "works_count": 292,
+      "cited_by_count": 19692,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5079743045",
+      "display_name": "Elaine Tomasi",
+      "orcid": "https://orcid.org/0000-0001-7328-6044",
+      "h_index": 70,
+      "i10_index": 172,
+      "works_count": 275,
+      "cited_by_count": 17941,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5006650843",
+      "display_name": "Peter Szolovits",
+      "orcid": "https://orcid.org/0000-0001-8411-6403",
+      "h_index": 70,
+      "i10_index": 171,
+      "works_count": 332,
+      "cited_by_count": 34400,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5081062494",
+      "display_name": "Lieven A. Danneels",
+      "orcid": "https://orcid.org/0000-0002-3030-2697",
+      "h_index": 70,
+      "i10_index": 171,
+      "works_count": 367,
+      "cited_by_count": 19832,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5031175048",
+      "display_name": "Matthew W. Kreuter",
+      "orcid": "https://orcid.org/0000-0001-7272-0785",
+      "h_index": 70,
+      "i10_index": 168,
+      "works_count": 266,
+      "cited_by_count": 29866,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5008987134",
+      "display_name": "Simo P. Taimela",
+      "orcid": "https://orcid.org/0000-0001-6755-2983",
+      "h_index": 70,
+      "i10_index": 162,
+      "works_count": 260,
+      "cited_by_count": 16945,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5027197772",
+      "display_name": "Kathryn M McPherson",
+      "orcid": "https://orcid.org/0000-0003-1240-8882",
+      "h_index": 70,
+      "i10_index": 142,
+      "works_count": 206,
+      "cited_by_count": 14072,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5040320731",
+      "display_name": "Alejandro R. Jadad",
+      "orcid": "https://orcid.org/0000-0002-9591-5099",
+      "h_index": 70,
+      "i10_index": 133,
+      "works_count": 216,
+      "cited_by_count": 54618,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Anesthesiology and Pain Medicine",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5030960534",
+      "display_name": "Steven McPhail",
+      "orcid": "https://orcid.org/0000-0002-1463-662X",
+      "h_index": 69,
+      "i10_index": 254,
+      "works_count": 649,
+      "cited_by_count": 38903,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5074571402",
+      "display_name": "Trudy van der Weijden",
+      "orcid": "https://orcid.org/0000-0002-7469-3781",
+      "h_index": 69,
+      "i10_index": 251,
+      "works_count": 558,
+      "cited_by_count": 20028,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5004895406",
+      "display_name": "Rinad S. Beidas",
+      "orcid": "https://orcid.org/0000-0001-6056-6071",
+      "h_index": 69,
+      "i10_index": 249,
+      "works_count": 502,
+      "cited_by_count": 19718,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5058493970",
+      "display_name": "Paulo H. Ferreira",
+      "orcid": "https://orcid.org/0000-0002-5861-7770",
+      "h_index": 69,
+      "i10_index": 222,
+      "works_count": 477,
+      "cited_by_count": 39115,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5033462351",
+      "display_name": "Richard Lewis Street",
+      "orcid": "https://orcid.org/0000-0001-7392-9927",
+      "h_index": 69,
+      "i10_index": 203,
+      "works_count": 329,
+      "cited_by_count": 25110,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Health Professions -- 8.6",
+      "id": "https://openalex.org/A5075777334",
+      "display_name": "David H. Gustafson",
+      "orcid": "https://orcid.org/0000-0001-9787-6428",
+      "h_index": 69,
+      "i10_index": 190,
+      "works_count": 284,
+      "cited_by_count": 15274,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5050932220",
+      "display_name": "Riccardo Bellazzi",
+      "orcid": "https://orcid.org/0000-0002-6974-9808",
+      "h_index": 68,
+      "i10_index": 303,
+      "works_count": 653,
+      "cited_by_count": 18671,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5049393044",
+      "display_name": "Chad E. Cook",
+      "orcid": "https://orcid.org/0000-0001-8622-8361",
+      "h_index": 68,
+      "i10_index": 284,
+      "works_count": 476,
+      "cited_by_count": 18553,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5009969443",
+      "display_name": "Sandra van Dulmen",
+      "orcid": "https://orcid.org/0000-0002-1651-7544",
+      "h_index": 68,
+      "i10_index": 280,
+      "works_count": 570,
+      "cited_by_count": 15620,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5071006594",
+      "display_name": "Werner Vach",
+      "orcid": "https://orcid.org/0000-0003-1865-8399",
+      "h_index": 68,
+      "i10_index": 268,
+      "works_count": 642,
+      "cited_by_count": 16432,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5072741575",
+      "display_name": "Peter Johannes Schulz",
+      "orcid": "https://orcid.org/0000-0003-4281-489X",
+      "h_index": 68,
+      "i10_index": 235,
+      "works_count": 517,
+      "cited_by_count": 18909,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5051428532",
+      "display_name": "Adrian Edwards",
+      "orcid": "https://orcid.org/0000-0002-6228-4446",
+      "h_index": 68,
+      "i10_index": 222,
+      "works_count": 430,
+      "cited_by_count": 18891,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5073010916",
+      "display_name": "Spiros Denaxas",
+      "orcid": "https://orcid.org/0000-0001-9612-7791",
+      "h_index": 68,
+      "i10_index": 204,
+      "works_count": 490,
+      "cited_by_count": 31979,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5038796650",
+      "display_name": "Michele M. Sterling",
+      "orcid": "https://orcid.org/0000-0003-1772-2248",
+      "h_index": 68,
+      "i10_index": 203,
+      "works_count": 442,
+      "cited_by_count": 16875,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5073704537",
+      "display_name": "Clement J. McDonald",
+      "orcid": "https://orcid.org/0000-0002-0514-9539",
+      "h_index": 68,
+      "i10_index": 190,
+      "works_count": 373,
+      "cited_by_count": 20937,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5066203871",
+      "display_name": "Luiz Augusto Facchini",
+      "orcid": "https://orcid.org/0000-0002-5746-5170",
+      "h_index": 68,
+      "i10_index": 187,
+      "works_count": 336,
+      "cited_by_count": 16022,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5012950439",
+      "display_name": "John K. Niparko",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 168,
+      "works_count": 286,
+      "cited_by_count": 14211,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5005060503",
+      "display_name": "Janice Light",
+      "orcid": "https://orcid.org/0000-0003-4449-798X",
+      "h_index": 68,
+      "i10_index": 146,
+      "works_count": 221,
+      "cited_by_count": 14493,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Occupational Therapy",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5085160284",
+      "display_name": "James J. Cimino",
+      "orcid": "https://orcid.org/0000-0003-4101-1622",
+      "h_index": 67,
+      "i10_index": 271,
+      "works_count": 489,
+      "cited_by_count": 17906,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5082027305",
+      "display_name": "Marie‐Pierre Gagnon",
+      "orcid": "https://orcid.org/0000-0002-0782-5457",
+      "h_index": 67,
+      "i10_index": 236,
+      "works_count": 442,
+      "cited_by_count": 27253,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5058150441",
+      "display_name": "Roger Brown",
+      "orcid": "https://orcid.org/0000-0001-9044-1085",
+      "h_index": 67,
+      "i10_index": 233,
+      "works_count": 427,
+      "cited_by_count": 18423,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5007536017",
+      "display_name": "Sandra M Eldridge",
+      "orcid": "https://orcid.org/0000-0001-5638-2317",
+      "h_index": 67,
+      "i10_index": 206,
+      "works_count": 412,
+      "cited_by_count": 70614,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Statistics and Probability",
+      "fields": [
+        "Health Professions",
+        "Mathematics",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5059349186",
+      "display_name": "Mark Jonathan Hancock",
+      "orcid": "https://orcid.org/0000-0002-9277-5377",
+      "h_index": 67,
+      "i10_index": 188,
+      "works_count": 442,
+      "cited_by_count": 26923,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5091256291",
+      "display_name": "David Armstrong",
+      "orcid": "https://orcid.org/0000-0003-3652-9662",
+      "h_index": 67,
+      "i10_index": 188,
+      "works_count": 444,
+      "cited_by_count": 16139,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5047558576",
+      "display_name": "Ewan B Ferlie",
+      "orcid": "https://orcid.org/0000-0003-2947-5141",
+      "h_index": 67,
+      "i10_index": 165,
+      "works_count": 430,
+      "cited_by_count": 22660,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5034990528",
+      "display_name": "Steven Woloshin",
+      "orcid": "https://orcid.org/0000-0003-2311-1005",
+      "h_index": 67,
+      "i10_index": 152,
+      "works_count": 303,
+      "cited_by_count": 19311,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5010608946",
+      "display_name": "Kate M. Dunn",
+      "orcid": "https://orcid.org/0000-0002-6202-2606",
+      "h_index": 67,
+      "i10_index": 143,
+      "works_count": 224,
+      "cited_by_count": 20660,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5047298979",
+      "display_name": "Sophie H. Staniszewska",
+      "orcid": "https://orcid.org/0000-0002-7723-9074",
+      "h_index": 67,
+      "i10_index": 128,
+      "works_count": 240,
+      "cited_by_count": 25570,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Social Sciences",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Health Professions -- 8.5",
+      "id": "https://openalex.org/A5040110248",
+      "display_name": "Kate Seers",
+      "orcid": "https://orcid.org/0000-0001-7921-552X",
+      "h_index": 67,
+      "i10_index": 121,
+      "works_count": 231,
+      "cited_by_count": 18432,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5109109779",
+      "display_name": "Aftab E. Patla",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 120,
+      "works_count": 156,
+      "cited_by_count": 20182,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5080734914",
+      "display_name": "Mohamed Azmi Hassali",
+      "orcid": "https://orcid.org/0000-0001-9575-403X",
+      "h_index": 66,
+      "i10_index": 350,
+      "works_count": 786,
+      "cited_by_count": 17591,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Pharmacy",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5006173918",
+      "display_name": "Blake Croll Papsin",
+      "orcid": "https://orcid.org/0000-0003-1704-3026",
+      "h_index": 66,
+      "i10_index": 240,
+      "works_count": 373,
+      "cited_by_count": 13568,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5035574394",
+      "display_name": "Nicholas Stergiou",
+      "orcid": "https://orcid.org/0000-0002-9737-9939",
+      "h_index": 66,
+      "i10_index": 239,
+      "works_count": 452,
+      "cited_by_count": 18383,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5044420007",
+      "display_name": "Per Nilsén",
+      "orcid": "https://orcid.org/0000-0003-0657-9079",
+      "h_index": 66,
+      "i10_index": 225,
+      "works_count": 421,
+      "cited_by_count": 22285,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5047069085",
+      "display_name": "Rainer Dziewas",
+      "orcid": "https://orcid.org/0000-0003-1592-8461",
+      "h_index": 66,
+      "i10_index": 219,
+      "works_count": 385,
+      "cited_by_count": 16326,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5012222147",
+      "display_name": "Nick A. Black",
+      "orcid": "https://orcid.org/0000-0003-4771-3481",
+      "h_index": 66,
+      "i10_index": 204,
+      "works_count": 382,
+      "cited_by_count": 20670,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5088736796",
+      "display_name": "Richard S. Tyler",
+      "orcid": "https://orcid.org/0000-0002-2101-4714",
+      "h_index": 66,
+      "i10_index": 201,
+      "works_count": 335,
+      "cited_by_count": 16339,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Psychology",
+        "Physics and Astronomy",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5043209770",
+      "display_name": "Rainu Kaushal",
+      "orcid": "https://orcid.org/0000-0002-4694-2517",
+      "h_index": 66,
+      "i10_index": 186,
+      "works_count": 300,
+      "cited_by_count": 22855,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5102820192",
+      "display_name": "Charlotte Leboeuf‐Yde",
+      "orcid": "https://orcid.org/0000-0003-1552-7772",
+      "h_index": 66,
+      "i10_index": 185,
+      "works_count": 276,
+      "cited_by_count": 17035,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5089185279",
+      "display_name": "Arnstein Finset",
+      "orcid": "https://orcid.org/0009-0006-0214-662X",
+      "h_index": 66,
+      "i10_index": 185,
+      "works_count": 379,
+      "cited_by_count": 13546,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5086982928",
+      "display_name": "Sandy R. Oliver",
+      "orcid": "https://orcid.org/0000-0001-9571-269X",
+      "h_index": 66,
+      "i10_index": 171,
+      "works_count": 471,
+      "cited_by_count": 26689,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5008365226",
+      "display_name": "Catherine J. Pope",
+      "orcid": "https://orcid.org/0000-0002-8935-6702",
+      "h_index": 66,
+      "i10_index": 167,
+      "works_count": 373,
+      "cited_by_count": 38517,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5038043213",
+      "display_name": "Krishnan Bhaskaran",
+      "orcid": "https://orcid.org/0000-0001-5364-8757",
+      "h_index": 66,
+      "i10_index": 159,
+      "works_count": 454,
+      "cited_by_count": 31017,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5052548757",
+      "display_name": "Christine A. Sinsky",
+      "orcid": "https://orcid.org/0000-0003-1101-5761",
+      "h_index": 66,
+      "i10_index": 145,
+      "works_count": 251,
+      "cited_by_count": 29591,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5066434491",
+      "display_name": "Sally Green",
+      "orcid": "https://orcid.org/0000-0002-9564-9050",
+      "h_index": 66,
+      "i10_index": 145,
+      "works_count": 241,
+      "cited_by_count": 17651,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5073018252",
+      "display_name": "Lindy Maxted Clemson",
+      "orcid": "https://orcid.org/0000-0003-2687-1114",
+      "h_index": 65,
+      "i10_index": 221,
+      "works_count": 490,
+      "cited_by_count": 24443,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5046258353",
+      "display_name": "Isabel de la Torre Díez",
+      "orcid": "https://orcid.org/0009-0001-4673-2747",
+      "h_index": 65,
+      "i10_index": 217,
+      "works_count": 481,
+      "cited_by_count": 16093,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5058883368",
+      "display_name": "Kemal Polat",
+      "orcid": "https://orcid.org/0000-0003-1840-9958",
+      "h_index": 65,
+      "i10_index": 205,
+      "works_count": 330,
+      "cited_by_count": 14515,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Engineering",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5083410346",
+      "display_name": "Brian J. Zikmund‐Fisher",
+      "orcid": "https://orcid.org/0000-0002-1637-4176",
+      "h_index": 65,
+      "i10_index": 198,
+      "works_count": 385,
+      "cited_by_count": 16237,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5090170882",
+      "display_name": "Brian Caulfield",
+      "orcid": "https://orcid.org/0000-0003-0290-9587",
+      "h_index": 65,
+      "i10_index": 197,
+      "works_count": 369,
+      "cited_by_count": 15071,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Computer Vision and Pattern Recognition",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Health Professions -- 8.4",
+      "id": "https://openalex.org/A5082614935",
+      "display_name": "Michael Calnan",
+      "orcid": "https://orcid.org/0000-0002-7239-6898",
+      "h_index": 65,
+      "i10_index": 196,
+      "works_count": 457,
+      "cited_by_count": 13597,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5057690689",
+      "display_name": "Rob Smeets",
+      "orcid": "https://orcid.org/0000-0002-9503-366X",
+      "h_index": 65,
+      "i10_index": 178,
+      "works_count": 408,
+      "cited_by_count": 28229,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5012299262",
+      "display_name": "Lorenzo Chiari",
+      "orcid": "https://orcid.org/0000-0002-2318-4370",
+      "h_index": 65,
+      "i10_index": 166,
+      "works_count": 475,
+      "cited_by_count": 19386,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Neuroscience",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5071362268",
+      "display_name": "Helene J. Polatajko",
+      "orcid": "https://orcid.org/0000-0003-1990-5371",
+      "h_index": 65,
+      "i10_index": 163,
+      "works_count": 286,
+      "cited_by_count": 16227,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Occupational Therapy",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5035016276",
+      "display_name": "Shaheen Hamdy",
+      "orcid": "https://orcid.org/0000-0001-9640-7427",
+      "h_index": 65,
+      "i10_index": 163,
+      "works_count": 424,
+      "cited_by_count": 16154,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5079222506",
+      "display_name": "Christy L. Ludlow",
+      "orcid": "https://orcid.org/0000-0002-2015-6171",
+      "h_index": 65,
+      "i10_index": 146,
+      "works_count": 216,
+      "cited_by_count": 13059,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5009507980",
+      "display_name": "Bonnie Sibbald",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 141,
+      "works_count": 296,
+      "cited_by_count": 24205,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5108428331",
+      "display_name": "Jacques Fermanian",
+      "orcid": "https://orcid.org/0000-0002-1645-0781",
+      "h_index": 65,
+      "i10_index": 132,
+      "works_count": 242,
+      "cited_by_count": 17873,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5041212198",
+      "display_name": "David Carrell",
+      "orcid": "https://orcid.org/0000-0002-8471-0928",
+      "h_index": 65,
+      "i10_index": 132,
+      "works_count": 240,
+      "cited_by_count": 16635,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5044623291",
+      "display_name": "Johannes R. Anema",
+      "orcid": "https://orcid.org/0000-0001-8657-0917",
+      "h_index": 64,
+      "i10_index": 220,
+      "works_count": 331,
+      "cited_by_count": 25230,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5075305921",
+      "display_name": "Riitta Suhonen",
+      "orcid": "https://orcid.org/0000-0002-4315-5550",
+      "h_index": 64,
+      "i10_index": 214,
+      "works_count": 357,
+      "cited_by_count": 13008,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5083205025",
+      "display_name": "Alison A. Kitson",
+      "orcid": "https://orcid.org/0000-0003-3053-8381",
+      "h_index": 64,
+      "i10_index": 207,
+      "works_count": 412,
+      "cited_by_count": 23476,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5086932309",
+      "display_name": "Ricardo S. Pietrobon",
+      "orcid": "https://orcid.org/0000-0003-2996-2193",
+      "h_index": 64,
+      "i10_index": 191,
+      "works_count": 455,
+      "cited_by_count": 15532,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Statistics and Probability",
+      "fields": [
+        "Health Professions",
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5058658231",
+      "display_name": "Leslie Leon Roos",
+      "orcid": "https://orcid.org/0000-0001-7083-4017",
+      "h_index": 64,
+      "i10_index": 176,
+      "works_count": 312,
+      "cited_by_count": 15274,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5088515918",
+      "display_name": "Robert E. Hillman",
+      "orcid": "https://orcid.org/0000-0002-7374-994X",
+      "h_index": 64,
+      "i10_index": 175,
+      "works_count": 281,
+      "cited_by_count": 14125,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5108429203",
+      "display_name": "Kent B Lewandrowski",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 170,
+      "works_count": 303,
+      "cited_by_count": 17532,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5026836695",
+      "display_name": "Don Nutbeam",
+      "orcid": "https://orcid.org/0000-0001-6497-2827",
+      "h_index": 64,
+      "i10_index": 165,
+      "works_count": 277,
+      "cited_by_count": 34331,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5112144793",
+      "display_name": "Carl V. Granger",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 165,
+      "works_count": 264,
+      "cited_by_count": 19671,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5014635573",
+      "display_name": "Scott Haldeman",
+      "orcid": "https://orcid.org/0000-0002-8688-9562",
+      "h_index": 64,
+      "i10_index": 165,
+      "works_count": 289,
+      "cited_by_count": 18701,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5083183492",
+      "display_name": "Tom G. Mayer",
+      "orcid": "https://orcid.org/0000-0002-4075-5374",
+      "h_index": 64,
+      "i10_index": 141,
+      "works_count": 295,
+      "cited_by_count": 14374,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5037492755",
+      "display_name": "Anthony Delitto",
+      "orcid": "https://orcid.org/0000-0002-2202-3436",
+      "h_index": 64,
+      "i10_index": 138,
+      "works_count": 209,
+      "cited_by_count": 18781,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5091010901",
+      "display_name": "Ruth M. Parker",
+      "orcid": "https://orcid.org/0000-0001-9685-6396",
+      "h_index": 64,
+      "i10_index": 129,
+      "works_count": 200,
+      "cited_by_count": 25592,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Health Professions -- 8.3",
+      "id": "https://openalex.org/A5049874372",
+      "display_name": "Mickey Trockel",
+      "orcid": "https://orcid.org/0000-0001-7191-5791",
+      "h_index": 64,
+      "i10_index": 126,
+      "works_count": 204,
+      "cited_by_count": 18395,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5072749993",
+      "display_name": "Li‐Shan Chou",
+      "orcid": "https://orcid.org/0000-0002-2777-7034",
+      "h_index": 64,
+      "i10_index": 119,
+      "works_count": 181,
+      "cited_by_count": 11511,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5109203608",
+      "display_name": "Lisa M. Schwartz",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 112,
+      "works_count": 192,
+      "cited_by_count": 16453,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5048176693",
+      "display_name": "Robert Thayer Sataloff",
+      "orcid": "https://orcid.org/0000-0001-5146-6319",
+      "h_index": 63,
+      "i10_index": 283,
+      "works_count": 1224,
+      "cited_by_count": 15152,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5000041866",
+      "display_name": "Karen Anne Grimmer",
+      "orcid": "https://orcid.org/0000-0002-9540-458X",
+      "h_index": 63,
+      "i10_index": 254,
+      "works_count": 405,
+      "cited_by_count": 16843,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5080199119",
+      "display_name": "Judy R. Dubno",
+      "orcid": "https://orcid.org/0000-0003-2340-4721",
+      "h_index": 63,
+      "i10_index": 196,
+      "works_count": 381,
+      "cited_by_count": 14304,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5017970648",
+      "display_name": "Jean‐Louis Denis",
+      "orcid": "https://orcid.org/0000-0003-1295-332X",
+      "h_index": 63,
+      "i10_index": 183,
+      "works_count": 465,
+      "cited_by_count": 18934,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5058555876",
+      "display_name": "Mark S. Redfern",
+      "orcid": "https://orcid.org/0000-0003-0097-4641",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 319,
+      "cited_by_count": 13904,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5034994490",
+      "display_name": "James M. Naessens",
+      "orcid": "https://orcid.org/0000-0002-9151-4220",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 295,
+      "cited_by_count": 12455,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5069614553",
+      "display_name": "Ian Douglas",
+      "orcid": "https://orcid.org/0000-0002-8970-1406",
+      "h_index": 63,
+      "i10_index": 158,
+      "works_count": 457,
+      "cited_by_count": 24035,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5105024363",
+      "display_name": "Glenn Robert",
+      "orcid": "https://orcid.org/0000-0001-8781-6675",
+      "h_index": 63,
+      "i10_index": 152,
+      "works_count": 450,
+      "cited_by_count": 25700,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "General Health Professions",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Health Professions -- 8.2",
+      "id": "https://openalex.org/A5060620724",
+      "display_name": "Fan‐Gang Zeng",
+      "orcid": "https://orcid.org/0000-0002-4325-2780",
+      "h_index": 63,
+      "i10_index": 141,
+      "works_count": 298,
+      "cited_by_count": 16935,
+      "discipline": "Health Professions",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Speech and Hearing",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Computer Science",
+        "Psychology"
+      ]
+    }
+  ]
+}

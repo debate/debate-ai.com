@@ -1,0 +1,791 @@
+{
+  "kind": "subfield",
+  "id": 3605,
+  "name": "Health Information Management",
+  "total_in_scrape": 39,
+  "count": 39,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Health Information Management -- 9.9",
+      "id": "https://openalex.org/A5036110536",
+      "display_name": "David Westfall Bates",
+      "orcid": "https://orcid.org/0000-0001-6268-1540",
+      "h_index": 172,
+      "i10_index": 949,
+      "works_count": 1590,
+      "cited_by_count": 136740,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Health Information Management -- 9.9",
+      "id": "https://openalex.org/A5022288501",
+      "display_name": "Liam L Smeeth",
+      "orcid": "https://orcid.org/0000-0002-9168-6022",
+      "h_index": 143,
+      "i10_index": 627,
+      "works_count": 1457,
+      "cited_by_count": 118624,
+      "discipline": "Health Information Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Health Information Management -- 9.9",
+      "id": "https://openalex.org/A5060390916",
+      "display_name": "Christopher G. Chute",
+      "orcid": "https://orcid.org/0000-0001-5437-2545",
+      "h_index": 94,
+      "i10_index": 336,
+      "works_count": 676,
+      "cited_by_count": 38483,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Health Information Management -- 9.9",
+      "id": "https://openalex.org/A5090161362",
+      "display_name": "Hude Quan",
+      "orcid": "https://orcid.org/0000-0002-7848-7256",
+      "h_index": 87,
+      "i10_index": 350,
+      "works_count": 718,
+      "cited_by_count": 52311,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Health Information Management -- 9.9",
+      "id": "https://openalex.org/A5053670656",
+      "display_name": "George M. Hripcsak",
+      "orcid": "https://orcid.org/0000-0003-2664-7614",
+      "h_index": 86,
+      "i10_index": 360,
+      "works_count": 630,
+      "cited_by_count": 32352,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Health Information Management -- 9.9",
+      "id": "https://openalex.org/A5018662278",
+      "display_name": "Kenneth D. Mandl",
+      "orcid": "https://orcid.org/0000-0002-9781-0477",
+      "h_index": 85,
+      "i10_index": 283,
+      "works_count": 530,
+      "cited_by_count": 25431,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5011177296",
+      "display_name": "Iain Edward Buchan",
+      "orcid": "https://orcid.org/0000-0003-3392-1650",
+      "h_index": 84,
+      "i10_index": 250,
+      "works_count": 730,
+      "cited_by_count": 28512,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5087242254",
+      "display_name": "Shawn N. Murphy",
+      "orcid": "https://orcid.org/0000-0002-1905-8806",
+      "h_index": 84,
+      "i10_index": 250,
+      "works_count": 491,
+      "cited_by_count": 25138,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5084415954",
+      "display_name": "Lucila Ohno-Machado",
+      "orcid": "https://orcid.org/0000-0002-8005-7327",
+      "h_index": 83,
+      "i10_index": 306,
+      "works_count": 699,
+      "cited_by_count": 44268,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5010098013",
+      "display_name": "Dean Forrest Sittig",
+      "orcid": "https://orcid.org/0000-0001-5811-8915",
+      "h_index": 83,
+      "i10_index": 282,
+      "works_count": 533,
+      "cited_by_count": 24459,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5079167669",
+      "display_name": "William M. Tierney",
+      "orcid": "https://orcid.org/0000-0002-3379-3014",
+      "h_index": 83,
+      "i10_index": 229,
+      "works_count": 375,
+      "cited_by_count": 22687,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5006687609",
+      "display_name": "Simon de Lusignan",
+      "orcid": "https://orcid.org/0000-0002-8553-2641",
+      "h_index": 82,
+      "i10_index": 450,
+      "works_count": 937,
+      "cited_by_count": 28385,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5087248896",
+      "display_name": "Hardeep Singh",
+      "orcid": "https://orcid.org/0000-0002-4419-8974",
+      "h_index": 82,
+      "i10_index": 292,
+      "works_count": 511,
+      "cited_by_count": 24282,
+      "discipline": "Health Information Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5088581420",
+      "display_name": "Enrico W Coiera",
+      "orcid": "https://orcid.org/0000-0002-6444-6584",
+      "h_index": 80,
+      "i10_index": 267,
+      "works_count": 530,
+      "cited_by_count": 25236,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5045744680",
+      "display_name": "Johanna Irene Westbrook",
+      "orcid": "https://orcid.org/0000-0003-1083-8192",
+      "h_index": 78,
+      "i10_index": 384,
+      "works_count": 740,
+      "cited_by_count": 27236,
+      "discipline": "Health Information Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5057926319",
+      "display_name": "Mowafa Said Househ",
+      "orcid": "https://orcid.org/0000-0002-3648-6271",
+      "h_index": 78,
+      "i10_index": 212,
+      "works_count": 377,
+      "cited_by_count": 87449,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Health Information Management -- 9.8",
+      "id": "https://openalex.org/A5037813012",
+      "display_name": "Dimitrios Ioannis Fotiadis",
+      "orcid": "https://orcid.org/0000-0002-7362-5082",
+      "h_index": 75,
+      "i10_index": 386,
+      "works_count": 981,
+      "cited_by_count": 25904,
+      "discipline": "Health Information Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5002071945",
+      "display_name": "Martin Dugas",
+      "orcid": "https://orcid.org/0000-0001-9740-0788",
+      "h_index": 74,
+      "i10_index": 273,
+      "works_count": 687,
+      "cited_by_count": 22997,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5108195288",
+      "display_name": "Suzanne Bakken Henry",
+      "orcid": "https://orcid.org/0000-0001-6202-6001",
+      "h_index": 71,
+      "i10_index": 301,
+      "works_count": 675,
+      "cited_by_count": 24516,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5040614650",
+      "display_name": "Nicolette F. de Keizer",
+      "orcid": "https://orcid.org/0000-0002-6651-1730",
+      "h_index": 71,
+      "i10_index": 258,
+      "works_count": 547,
+      "cited_by_count": 16311,
+      "discipline": "Health Information Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5011689338",
+      "display_name": "Michael Edwin Matheny",
+      "orcid": "https://orcid.org/0000-0003-3217-4147",
+      "h_index": 71,
+      "i10_index": 235,
+      "works_count": 498,
+      "cited_by_count": 18097,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5006650843",
+      "display_name": "Peter Szolovits",
+      "orcid": "https://orcid.org/0000-0001-8411-6403",
+      "h_index": 70,
+      "i10_index": 171,
+      "works_count": 332,
+      "cited_by_count": 34400,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5017974764",
+      "display_name": "Rohan Khera",
+      "orcid": "https://orcid.org/0000-0001-9467-6199",
+      "h_index": 69,
+      "i10_index": 222,
+      "works_count": 667,
+      "cited_by_count": 16624,
+      "discipline": "Health Information Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Computer Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5050932220",
+      "display_name": "Riccardo Bellazzi",
+      "orcid": "https://orcid.org/0000-0002-6974-9808",
+      "h_index": 68,
+      "i10_index": 303,
+      "works_count": 653,
+      "cited_by_count": 18671,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5073010916",
+      "display_name": "Spiros Denaxas",
+      "orcid": "https://orcid.org/0000-0001-9612-7791",
+      "h_index": 68,
+      "i10_index": 204,
+      "works_count": 490,
+      "cited_by_count": 31979,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5058439987",
+      "display_name": "Paul Christopher Webster",
+      "orcid": "https://orcid.org/0000-0002-1980-6931",
+      "h_index": 68,
+      "i10_index": 193,
+      "works_count": 520,
+      "cited_by_count": 27117,
+      "discipline": "Health Information Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5073704537",
+      "display_name": "Clement J. McDonald",
+      "orcid": "https://orcid.org/0000-0002-0514-9539",
+      "h_index": 68,
+      "i10_index": 190,
+      "works_count": 373,
+      "cited_by_count": 20937,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Health Information Management -- 9.7",
+      "id": "https://openalex.org/A5085160284",
+      "display_name": "James J. Cimino",
+      "orcid": "https://orcid.org/0000-0003-4101-1622",
+      "h_index": 67,
+      "i10_index": 271,
+      "works_count": 489,
+      "cited_by_count": 17906,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5102935340",
+      "display_name": "K. Shankar",
+      "orcid": "https://orcid.org/0000-0002-2803-3846",
+      "h_index": 67,
+      "i10_index": 157,
+      "works_count": 291,
+      "cited_by_count": 13053,
+      "discipline": "Health Information Management",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Computer Science",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5043209770",
+      "display_name": "Rainu Kaushal",
+      "orcid": "https://orcid.org/0000-0002-4694-2517",
+      "h_index": 66,
+      "i10_index": 186,
+      "works_count": 300,
+      "cited_by_count": 22855,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5038043213",
+      "display_name": "Krishnan Bhaskaran",
+      "orcid": "https://orcid.org/0000-0001-5364-8757",
+      "h_index": 66,
+      "i10_index": 159,
+      "works_count": 454,
+      "cited_by_count": 31017,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5046258353",
+      "display_name": "Isabel de la Torre Díez",
+      "orcid": "https://orcid.org/0009-0001-4673-2747",
+      "h_index": 65,
+      "i10_index": 217,
+      "works_count": 481,
+      "cited_by_count": 16093,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5058883368",
+      "display_name": "Kemal Polat",
+      "orcid": "https://orcid.org/0000-0003-1840-9958",
+      "h_index": 65,
+      "i10_index": 205,
+      "works_count": 330,
+      "cited_by_count": 14515,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Engineering",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5016223285",
+      "display_name": "Edward Hance Shortliffe",
+      "orcid": "https://orcid.org/0000-0001-5201-6176",
+      "h_index": 65,
+      "i10_index": 190,
+      "works_count": 402,
+      "cited_by_count": 23995,
+      "discipline": "Health Information Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5041212198",
+      "display_name": "David Carrell",
+      "orcid": "https://orcid.org/0000-0002-8471-0928",
+      "h_index": 65,
+      "i10_index": 132,
+      "works_count": 240,
+      "cited_by_count": 16635,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5022468464",
+      "display_name": "Karen Tu",
+      "orcid": "https://orcid.org/0000-0003-0883-4934",
+      "h_index": 64,
+      "i10_index": 202,
+      "works_count": 377,
+      "cited_by_count": 14980,
+      "discipline": "Health Information Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5058658231",
+      "display_name": "Leslie Leon Roos",
+      "orcid": "https://orcid.org/0000-0001-7083-4017",
+      "h_index": 64,
+      "i10_index": 176,
+      "works_count": 312,
+      "cited_by_count": 15274,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5034994490",
+      "display_name": "James M. Naessens",
+      "orcid": "https://orcid.org/0000-0002-9151-4220",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 295,
+      "cited_by_count": 12455,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Health Information Management -- 9.6",
+      "id": "https://openalex.org/A5069614553",
+      "display_name": "Ian Douglas",
+      "orcid": "https://orcid.org/0000-0002-8970-1406",
+      "h_index": 63,
+      "i10_index": 158,
+      "works_count": 457,
+      "cited_by_count": 24035,
+      "discipline": "Health Information Management",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Health Information Management",
+      "fields": [
+        "Health Professions",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Mathematics",
+        "Medicine"
+      ]
+    }
+  ]
+}

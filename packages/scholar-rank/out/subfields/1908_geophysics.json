@@ -1,0 +1,4091 @@
+{
+  "kind": "subfield",
+  "id": 1908,
+  "name": "Geophysics",
+  "total_in_scrape": 213,
+  "count": 213,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Geophysics -- 9.9",
+      "id": "https://openalex.org/A5034879784",
+      "display_name": "Russell J. Hemley",
+      "orcid": "https://orcid.org/0000-0001-7398-8521",
+      "h_index": 130,
+      "i10_index": 536,
+      "works_count": 1054,
+      "cited_by_count": 58626,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Geophysics -- 9.9",
+      "id": "https://openalex.org/A5107830854",
+      "display_name": "F Kiss",
+      "orcid": null,
+      "h_index": 129,
+      "i10_index": 307,
+      "works_count": 972,
+      "cited_by_count": 53403,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Geophysics -- 9.9",
+      "id": "https://openalex.org/A5001452413",
+      "display_name": "Hiroo Kanamori",
+      "orcid": "https://orcid.org/0000-0001-8219-9428",
+      "h_index": 127,
+      "i10_index": 426,
+      "works_count": 693,
+      "cited_by_count": 67108,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Geophysics -- 9.9",
+      "id": "https://openalex.org/A5017436458",
+      "display_name": "Péter Molnár",
+      "orcid": "https://orcid.org/0000-0002-3523-9172",
+      "h_index": 124,
+      "i10_index": 291,
+      "works_count": 513,
+      "cited_by_count": 63713,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Geophysics -- 9.9",
+      "id": "https://openalex.org/A5103714859",
+      "display_name": "Paul E. Tapponnier",
+      "orcid": "https://orcid.org/0000-0002-7135-1962",
+      "h_index": 112,
+      "i10_index": 232,
+      "works_count": 483,
+      "cited_by_count": 57909,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Geophysics -- 9.9",
+      "id": "https://openalex.org/A5081216175",
+      "display_name": "Jean‐Philippe Avouac",
+      "orcid": "https://orcid.org/0000-0002-3060-8442",
+      "h_index": 108,
+      "i10_index": 270,
+      "works_count": 695,
+      "cited_by_count": 39392,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5050880915",
+      "display_name": "Dan Peter McKenzie",
+      "orcid": null,
+      "h_index": 108,
+      "i10_index": 216,
+      "works_count": 338,
+      "cited_by_count": 63402,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5032058217",
+      "display_name": "Domenico Giardini",
+      "orcid": "https://orcid.org/0000-0002-5573-7638",
+      "h_index": 103,
+      "i10_index": 386,
+      "works_count": 978,
+      "cited_by_count": 39656,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5013004499",
+      "display_name": "Chris J. Pickard",
+      "orcid": "https://orcid.org/0000-0002-9684-5432",
+      "h_index": 99,
+      "i10_index": 314,
+      "works_count": 542,
+      "cited_by_count": 70669,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5049736310",
+      "display_name": "Taras Gerya",
+      "orcid": "https://orcid.org/0000-0002-1062-2722",
+      "h_index": 97,
+      "i10_index": 300,
+      "works_count": 1085,
+      "cited_by_count": 30753,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5049983897",
+      "display_name": "Kurt Lambeck",
+      "orcid": null,
+      "h_index": 97,
+      "i10_index": 234,
+      "works_count": 458,
+      "cited_by_count": 40927,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5087410125",
+      "display_name": "Laurent Jolivet",
+      "orcid": "https://orcid.org/0000-0002-2596-2017",
+      "h_index": 97,
+      "i10_index": 217,
+      "works_count": 512,
+      "cited_by_count": 30723,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5008590431",
+      "display_name": "James Jackson",
+      "orcid": "https://orcid.org/0000-0003-2927-1771",
+      "h_index": 97,
+      "i10_index": 175,
+      "works_count": 250,
+      "cited_by_count": 29265,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5051538825",
+      "display_name": "Roland Bürgmann",
+      "orcid": "https://orcid.org/0000-0002-3560-044X",
+      "h_index": 96,
+      "i10_index": 298,
+      "works_count": 802,
+      "cited_by_count": 30730,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5046672035",
+      "display_name": "Michel Campillo",
+      "orcid": "https://orcid.org/0000-0001-6971-4499",
+      "h_index": 96,
+      "i10_index": 259,
+      "works_count": 670,
+      "cited_by_count": 30559,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5074159971",
+      "display_name": "Yoshio Fukao",
+      "orcid": "https://orcid.org/0000-0003-2633-6576",
+      "h_index": 95,
+      "i10_index": 271,
+      "works_count": 453,
+      "cited_by_count": 26872,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Geophysics -- 9.8",
+      "id": "https://openalex.org/A5103336402",
+      "display_name": "Don L. Anderson",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 213,
+      "works_count": 364,
+      "cited_by_count": 40589,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5088817033",
+      "display_name": "Yanming Ma",
+      "orcid": "https://orcid.org/0000-0003-3711-0011",
+      "h_index": 93,
+      "i10_index": 377,
+      "works_count": 582,
+      "cited_by_count": 41913,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5034750019",
+      "display_name": "Sierd A.P.L. Cloetingh",
+      "orcid": "https://orcid.org/0000-0001-9472-7881",
+      "h_index": 93,
+      "i10_index": 366,
+      "works_count": 802,
+      "cited_by_count": 29293,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5012032240",
+      "display_name": "A. Revil",
+      "orcid": "https://orcid.org/0000-0001-7979-7005",
+      "h_index": 93,
+      "i10_index": 355,
+      "works_count": 723,
+      "cited_by_count": 30094,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5008810306",
+      "display_name": "Donald L. Turcotte",
+      "orcid": "https://orcid.org/0000-0002-4905-4435",
+      "h_index": 93,
+      "i10_index": 325,
+      "works_count": 614,
+      "cited_by_count": 39146,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5057039691",
+      "display_name": "Raymond Jeanloz",
+      "orcid": "https://orcid.org/0000-0002-3519-7929",
+      "h_index": 93,
+      "i10_index": 267,
+      "works_count": 642,
+      "cited_by_count": 24661,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5079066741",
+      "display_name": "Manfred R. Strecker",
+      "orcid": "https://orcid.org/0000-0002-5952-0057",
+      "h_index": 93,
+      "i10_index": 242,
+      "works_count": 697,
+      "cited_by_count": 23470,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5028735277",
+      "display_name": "T. H. Jordan",
+      "orcid": "https://orcid.org/0000-0001-6511-148X",
+      "h_index": 92,
+      "i10_index": 206,
+      "works_count": 569,
+      "cited_by_count": 27454,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5028587777",
+      "display_name": "Christopher H. Scholz",
+      "orcid": "https://orcid.org/0000-0002-3509-8429",
+      "h_index": 90,
+      "i10_index": 177,
+      "works_count": 266,
+      "cited_by_count": 36754,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5002807424",
+      "display_name": "Yehuda Ben‐Zion",
+      "orcid": "https://orcid.org/0000-0002-9602-2014",
+      "h_index": 89,
+      "i10_index": 313,
+      "works_count": 682,
+      "cited_by_count": 25056,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5050918085",
+      "display_name": "Anny Cazenave",
+      "orcid": "https://orcid.org/0000-0002-2289-1858",
+      "h_index": 89,
+      "i10_index": 253,
+      "works_count": 722,
+      "cited_by_count": 31403,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Geophysics -- 9.7",
+      "id": "https://openalex.org/A5076510143",
+      "display_name": "Peter M. Shearer",
+      "orcid": "https://orcid.org/0000-0002-2992-7630",
+      "h_index": 89,
+      "i10_index": 229,
+      "works_count": 539,
+      "cited_by_count": 24956,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5041118412",
+      "display_name": "Shun‐ichiro Karato",
+      "orcid": "https://orcid.org/0000-0002-1483-4589",
+      "h_index": 89,
+      "i10_index": 210,
+      "works_count": 393,
+      "cited_by_count": 28767,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5100765596",
+      "display_name": "Andrew P. Roberts",
+      "orcid": "https://orcid.org/0000-0003-0566-8117",
+      "h_index": 88,
+      "i10_index": 301,
+      "works_count": 539,
+      "cited_by_count": 29619,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5110269723",
+      "display_name": "Amos M. Nur",
+      "orcid": "https://orcid.org/0000-0002-5260-7918",
+      "h_index": 88,
+      "i10_index": 232,
+      "works_count": 471,
+      "cited_by_count": 30924,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5085030476",
+      "display_name": "Claudio Faccenna",
+      "orcid": "https://orcid.org/0000-0003-0765-4165",
+      "h_index": 87,
+      "i10_index": 239,
+      "works_count": 590,
+      "cited_by_count": 25063,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5022322569",
+      "display_name": "Vitali B. Prakapenka",
+      "orcid": "https://orcid.org/0000-0001-9270-2330",
+      "h_index": 86,
+      "i10_index": 421,
+      "works_count": 1069,
+      "cited_by_count": 32346,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5008295976",
+      "display_name": "Kei Hirose",
+      "orcid": "https://orcid.org/0000-0003-4366-7721",
+      "h_index": 85,
+      "i10_index": 266,
+      "works_count": 643,
+      "cited_by_count": 25697,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5013582768",
+      "display_name": "Dapeng Zhao",
+      "orcid": "https://orcid.org/0000-0002-4407-594X",
+      "h_index": 85,
+      "i10_index": 261,
+      "works_count": 390,
+      "cited_by_count": 25795,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5103696475",
+      "display_name": "Ho‐kwang Mao",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 225,
+      "works_count": 265,
+      "cited_by_count": 23132,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5044736391",
+      "display_name": "Michael Gurnis",
+      "orcid": "https://orcid.org/0000-0003-1704-597X",
+      "h_index": 85,
+      "i10_index": 215,
+      "works_count": 542,
+      "cited_by_count": 25739,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5030723338",
+      "display_name": "David M. Boore",
+      "orcid": "https://orcid.org/0000-0002-8605-9673",
+      "h_index": 85,
+      "i10_index": 189,
+      "works_count": 284,
+      "cited_by_count": 36165,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Geophysics -- 9.6",
+      "id": "https://openalex.org/A5023754718",
+      "display_name": "P. Segall",
+      "orcid": "https://orcid.org/0000-0001-5973-471X",
+      "h_index": 85,
+      "i10_index": 159,
+      "works_count": 414,
+      "cited_by_count": 25860,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5083410596",
+      "display_name": "John S. Tse",
+      "orcid": "https://orcid.org/0000-0001-8389-7615",
+      "h_index": 84,
+      "i10_index": 422,
+      "works_count": 692,
+      "cited_by_count": 27748,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Chemistry",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5063389980",
+      "display_name": "Howard A. Zebker",
+      "orcid": "https://orcid.org/0000-0001-9931-5237",
+      "h_index": 84,
+      "i10_index": 185,
+      "works_count": 590,
+      "cited_by_count": 36763,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5055979975",
+      "display_name": "Thorne Lay",
+      "orcid": "https://orcid.org/0000-0003-2360-4213",
+      "h_index": 83,
+      "i10_index": 309,
+      "works_count": 599,
+      "cited_by_count": 26119,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5010791423",
+      "display_name": "Yingwei Fei",
+      "orcid": "https://orcid.org/0000-0001-9955-5353",
+      "h_index": 83,
+      "i10_index": 218,
+      "works_count": 341,
+      "cited_by_count": 18362,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5057415738",
+      "display_name": "Joseph L. Kirschvink",
+      "orcid": "https://orcid.org/0000-0001-9486-6689",
+      "h_index": 83,
+      "i10_index": 186,
+      "works_count": 423,
+      "cited_by_count": 27878,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5085863207",
+      "display_name": "Ho‐kwang Mao",
+      "orcid": "https://orcid.org/0000-0002-0481-5683",
+      "h_index": 82,
+      "i10_index": 252,
+      "works_count": 426,
+      "cited_by_count": 29900,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5069588793",
+      "display_name": "Chris J. Marone",
+      "orcid": "https://orcid.org/0000-0002-4515-4500",
+      "h_index": 82,
+      "i10_index": 209,
+      "works_count": 606,
+      "cited_by_count": 24432,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5084849254",
+      "display_name": "Gregory C. Beroza",
+      "orcid": "https://orcid.org/0000-0002-8667-1838",
+      "h_index": 82,
+      "i10_index": 200,
+      "works_count": 485,
+      "cited_by_count": 29653,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5113433508",
+      "display_name": "Keiiti Aki",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 196,
+      "works_count": 328,
+      "cited_by_count": 38820,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5103163368",
+      "display_name": "Leonid Dubrovinsky",
+      "orcid": "https://orcid.org/0000-0002-3717-7585",
+      "h_index": 81,
+      "i10_index": 475,
+      "works_count": 1557,
+      "cited_by_count": 26257,
+      "discipline": "Geophysics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5004203338",
+      "display_name": "Yusheng Zhao",
+      "orcid": "https://orcid.org/0000-0003-1640-5216",
+      "h_index": 81,
+      "i10_index": 369,
+      "works_count": 533,
+      "cited_by_count": 26156,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Geophysics -- 9.5",
+      "id": "https://openalex.org/A5006341965",
+      "display_name": "Eiji Ohtani",
+      "orcid": "https://orcid.org/0000-0001-8631-0736",
+      "h_index": 81,
+      "i10_index": 348,
+      "works_count": 780,
+      "cited_by_count": 21744,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5021261518",
+      "display_name": "Adam M. Dziewoński",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 204,
+      "works_count": 400,
+      "cited_by_count": 43920,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5109835992",
+      "display_name": "Dennis A. Bazylinski",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 168,
+      "works_count": 295,
+      "cited_by_count": 18953,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5110290188",
+      "display_name": "M. Nafi Toksöz",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 285,
+      "works_count": 825,
+      "cited_by_count": 27963,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5068227248",
+      "display_name": "Lisa Tauxe",
+      "orcid": "https://orcid.org/0000-0002-4837-8200",
+      "h_index": 80,
+      "i10_index": 235,
+      "works_count": 898,
+      "cited_by_count": 22039,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5001976923",
+      "display_name": "Daniel J. Frost",
+      "orcid": "https://orcid.org/0000-0002-4443-8149",
+      "h_index": 80,
+      "i10_index": 221,
+      "works_count": 579,
+      "cited_by_count": 20091,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5032118177",
+      "display_name": "Andrew M. Binley",
+      "orcid": "https://orcid.org/0000-0002-0938-9070",
+      "h_index": 80,
+      "i10_index": 219,
+      "works_count": 562,
+      "cited_by_count": 26216,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5050677401",
+      "display_name": "Víctor A. Ramos",
+      "orcid": "https://orcid.org/0000-0002-2136-1345",
+      "h_index": 80,
+      "i10_index": 219,
+      "works_count": 371,
+      "cited_by_count": 24235,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5052640295",
+      "display_name": "David T. Sandwell",
+      "orcid": "https://orcid.org/0000-0001-5657-8707",
+      "h_index": 80,
+      "i10_index": 195,
+      "works_count": 490,
+      "cited_by_count": 30130,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5083908897",
+      "display_name": "Norman H. Sleep",
+      "orcid": "https://orcid.org/0000-0002-8721-6378",
+      "h_index": 80,
+      "i10_index": 175,
+      "works_count": 332,
+      "cited_by_count": 22991,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5074088495",
+      "display_name": "L. H. Royden",
+      "orcid": "https://orcid.org/0000-0002-6485-0026",
+      "h_index": 80,
+      "i10_index": 115,
+      "works_count": 218,
+      "cited_by_count": 29663,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Geophysics -- 9.4",
+      "id": "https://openalex.org/A5086989656",
+      "display_name": "Tadashi Matsunaga",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 364,
+      "works_count": 642,
+      "cited_by_count": 23670,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Energy",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5088664218",
+      "display_name": "Brian L. N. Kennett",
+      "orcid": "https://orcid.org/0000-0003-2206-5350",
+      "h_index": 79,
+      "i10_index": 290,
+      "works_count": 703,
+      "cited_by_count": 28746,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5050415200",
+      "display_name": "G. W. Collins",
+      "orcid": "https://orcid.org/0000-0002-4883-1087",
+      "h_index": 79,
+      "i10_index": 228,
+      "works_count": 749,
+      "cited_by_count": 19127,
+      "discipline": "Geophysics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5039853102",
+      "display_name": "Christopher James Spiers",
+      "orcid": "https://orcid.org/0000-0002-3436-8941",
+      "h_index": 79,
+      "i10_index": 200,
+      "works_count": 433,
+      "cited_by_count": 16645,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5042043834",
+      "display_name": "William L. Ellsworth",
+      "orcid": "https://orcid.org/0000-0001-8378-4979",
+      "h_index": 79,
+      "i10_index": 172,
+      "works_count": 402,
+      "cited_by_count": 23770,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5100716159",
+      "display_name": "Yanbin Wang",
+      "orcid": "https://orcid.org/0000-0001-5716-3183",
+      "h_index": 78,
+      "i10_index": 375,
+      "works_count": 670,
+      "cited_by_count": 25315,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5067258783",
+      "display_name": "Yasuo Ohishi",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 326,
+      "works_count": 611,
+      "cited_by_count": 21974,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5084344063",
+      "display_name": "Rixiang Zhu",
+      "orcid": "https://orcid.org/0000-0002-4985-925X",
+      "h_index": 78,
+      "i10_index": 274,
+      "works_count": 404,
+      "cited_by_count": 23592,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5117416175",
+      "display_name": "Roel Snieder",
+      "orcid": "https://orcid.org/0000-0003-1445-0857",
+      "h_index": 78,
+      "i10_index": 241,
+      "works_count": 730,
+      "cited_by_count": 20486,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5089907342",
+      "display_name": "Barbara A. Romanowicz",
+      "orcid": "https://orcid.org/0000-0002-6208-6044",
+      "h_index": 78,
+      "i10_index": 231,
+      "works_count": 681,
+      "cited_by_count": 19964,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5079907187",
+      "display_name": "Jean Virieux",
+      "orcid": "https://orcid.org/0000-0002-6201-1157",
+      "h_index": 78,
+      "i10_index": 207,
+      "works_count": 562,
+      "cited_by_count": 29000,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Geophysics -- 9.3",
+      "id": "https://openalex.org/A5052696012",
+      "display_name": "Richard B. Frankel",
+      "orcid": "https://orcid.org/0009-0001-2748-7344",
+      "h_index": 78,
+      "i10_index": 195,
+      "works_count": 307,
+      "cited_by_count": 20792,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Physics and Astronomy",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5034454973",
+      "display_name": "Stefan Wiemer",
+      "orcid": "https://orcid.org/0000-0002-4919-3283",
+      "h_index": 77,
+      "i10_index": 236,
+      "works_count": 776,
+      "cited_by_count": 22898,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Energy",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5054477457",
+      "display_name": "Göran Ekström",
+      "orcid": "https://orcid.org/0000-0001-6410-275X",
+      "h_index": 77,
+      "i10_index": 234,
+      "works_count": 414,
+      "cited_by_count": 23185,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5091606800",
+      "display_name": "David D. Pollard",
+      "orcid": "https://orcid.org/0000-0001-8481-1625",
+      "h_index": 77,
+      "i10_index": 150,
+      "works_count": 279,
+      "cited_by_count": 22723,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5027370068",
+      "display_name": "Andrea Morelli",
+      "orcid": "https://orcid.org/0000-0002-7400-8676",
+      "h_index": 76,
+      "i10_index": 240,
+      "works_count": 528,
+      "cited_by_count": 20402,
+      "discipline": "Geophysics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Medicine",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5034068742",
+      "display_name": "Jean‐Pierre Burg",
+      "orcid": "https://orcid.org/0000-0002-4927-4729",
+      "h_index": 76,
+      "i10_index": 218,
+      "works_count": 428,
+      "cited_by_count": 18886,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5017763249",
+      "display_name": "Guoyin Shen",
+      "orcid": "https://orcid.org/0000-0001-5146-1147",
+      "h_index": 76,
+      "i10_index": 215,
+      "works_count": 371,
+      "cited_by_count": 17191,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5031024584",
+      "display_name": "Douwe J.J. van Hinsbergen",
+      "orcid": "https://orcid.org/0000-0003-3410-0344",
+      "h_index": 76,
+      "i10_index": 211,
+      "works_count": 570,
+      "cited_by_count": 21978,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5071887632",
+      "display_name": "John Wahr",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 168,
+      "works_count": 426,
+      "cited_by_count": 30747,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5042485770",
+      "display_name": "E. Calais",
+      "orcid": "https://orcid.org/0000-0002-5935-8117",
+      "h_index": 76,
+      "i10_index": 165,
+      "works_count": 485,
+      "cited_by_count": 16414,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5056027481",
+      "display_name": "Geoffrey C. P. King",
+      "orcid": "https://orcid.org/0000-0002-8746-5999",
+      "h_index": 76,
+      "i10_index": 154,
+      "works_count": 273,
+      "cited_by_count": 24084,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Geophysics -- 9.2",
+      "id": "https://openalex.org/A5055785252",
+      "display_name": "Kenji Satake",
+      "orcid": "https://orcid.org/0000-0002-3368-3085",
+      "h_index": 75,
+      "i10_index": 253,
+      "works_count": 662,
+      "cited_by_count": 21003,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5075342837",
+      "display_name": "D. L. Kohlstedt",
+      "orcid": "https://orcid.org/0000-0002-6417-6465",
+      "h_index": 75,
+      "i10_index": 200,
+      "works_count": 451,
+      "cited_by_count": 27690,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5037961751",
+      "display_name": "Wim Spakman",
+      "orcid": "https://orcid.org/0000-0002-9557-778X",
+      "h_index": 75,
+      "i10_index": 128,
+      "works_count": 301,
+      "cited_by_count": 25898,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5066481236",
+      "display_name": "Philip Christopher England",
+      "orcid": "https://orcid.org/0000-0002-9024-8901",
+      "h_index": 75,
+      "i10_index": 118,
+      "works_count": 206,
+      "cited_by_count": 26530,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5033613288",
+      "display_name": "Mohamed Mézouar",
+      "orcid": "https://orcid.org/0000-0001-5336-544X",
+      "h_index": 74,
+      "i10_index": 275,
+      "works_count": 819,
+      "cited_by_count": 19115,
+      "discipline": "Geophysics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5005237932",
+      "display_name": "Sergey B. Fomel",
+      "orcid": "https://orcid.org/0000-0002-9024-5137",
+      "h_index": 74,
+      "i10_index": 263,
+      "works_count": 685,
+      "cited_by_count": 20299,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5010050328",
+      "display_name": "T. Rockwell",
+      "orcid": "https://orcid.org/0000-0001-5319-6447",
+      "h_index": 74,
+      "i10_index": 257,
+      "works_count": 523,
+      "cited_by_count": 19430,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5005595654",
+      "display_name": "Nicolas N. Baghdadi",
+      "orcid": "https://orcid.org/0000-0002-9461-4120",
+      "h_index": 74,
+      "i10_index": 224,
+      "works_count": 690,
+      "cited_by_count": 16149,
+      "discipline": "Geophysics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5014652050",
+      "display_name": "Robert Stephen White",
+      "orcid": "https://orcid.org/0000-0002-2972-397X",
+      "h_index": 74,
+      "i10_index": 216,
+      "works_count": 441,
+      "cited_by_count": 20780,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5053330088",
+      "display_name": "Bruce D. Smith",
+      "orcid": "https://orcid.org/0000-0002-1643-2997",
+      "h_index": 74,
+      "i10_index": 198,
+      "works_count": 588,
+      "cited_by_count": 28089,
+      "discipline": "Geophysics",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5046704757",
+      "display_name": "Fawwaz T. Ulaby",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 179,
+      "works_count": 498,
+      "cited_by_count": 30112,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Geophysics -- 9.1",
+      "id": "https://openalex.org/A5013399958",
+      "display_name": "Barry E. Parsons",
+      "orcid": "https://orcid.org/0000-0001-5120-4917",
+      "h_index": 74,
+      "i10_index": 118,
+      "works_count": 224,
+      "cited_by_count": 17816,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Geophysics -- 9.0",
+      "id": "https://openalex.org/A5082393508",
+      "display_name": "Rob Van der Voo",
+      "orcid": "https://orcid.org/0000-0002-7675-1770",
+      "h_index": 73,
+      "i10_index": 261,
+      "works_count": 550,
+      "cited_by_count": 21886,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Geophysics -- 9.0",
+      "id": "https://openalex.org/A5035057459",
+      "display_name": "Akira Hasegawa",
+      "orcid": "https://orcid.org/0000-0003-4916-8923",
+      "h_index": 73,
+      "i10_index": 221,
+      "works_count": 435,
+      "cited_by_count": 17449,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Geophysics -- 9.0",
+      "id": "https://openalex.org/A5067683479",
+      "display_name": "Jon H. Eggert",
+      "orcid": "https://orcid.org/0000-0001-5730-7108",
+      "h_index": 73,
+      "i10_index": 205,
+      "works_count": 601,
+      "cited_by_count": 17043,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Geophysics -- 9.0",
+      "id": "https://openalex.org/A5062511933",
+      "display_name": "Jean‐Paul Ampuero",
+      "orcid": "https://orcid.org/0000-0002-4827-7987",
+      "h_index": 73,
+      "i10_index": 201,
+      "works_count": 612,
+      "cited_by_count": 18052,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Geophysics -- 9.0",
+      "id": "https://openalex.org/A5040811104",
+      "display_name": "Gail Marie Atkinson",
+      "orcid": "https://orcid.org/0000-0003-2403-1349",
+      "h_index": 73,
+      "i10_index": 188,
+      "works_count": 299,
+      "cited_by_count": 21815,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5081130716",
+      "display_name": "Rob D. van der Hilst",
+      "orcid": "https://orcid.org/0000-0003-1650-6818",
+      "h_index": 73,
+      "i10_index": 166,
+      "works_count": 430,
+      "cited_by_count": 25083,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5014690995",
+      "display_name": "Jean-Pierre Brun",
+      "orcid": "https://orcid.org/0000-0002-5657-0518",
+      "h_index": 73,
+      "i10_index": 158,
+      "works_count": 237,
+      "cited_by_count": 16950,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5020910604",
+      "display_name": "Renata M. M. Wentzcovitch",
+      "orcid": "https://orcid.org/0000-0001-5663-9426",
+      "h_index": 72,
+      "i10_index": 220,
+      "works_count": 584,
+      "cited_by_count": 53699,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5001456207",
+      "display_name": "Dario Alfè",
+      "orcid": "https://orcid.org/0000-0002-9741-8678",
+      "h_index": 72,
+      "i10_index": 213,
+      "works_count": 363,
+      "cited_by_count": 19060,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5024542860",
+      "display_name": "Jacques Angelier",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 208,
+      "works_count": 311,
+      "cited_by_count": 20258,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5034672570",
+      "display_name": "Jeroen Tromp",
+      "orcid": "https://orcid.org/0000-0002-2742-8299",
+      "h_index": 72,
+      "i10_index": 187,
+      "works_count": 510,
+      "cited_by_count": 23814,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5037573161",
+      "display_name": "T. W. Becker",
+      "orcid": "https://orcid.org/0000-0002-5656-4564",
+      "h_index": 72,
+      "i10_index": 159,
+      "works_count": 431,
+      "cited_by_count": 16239,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5034157561",
+      "display_name": "Simon A. T. Redfern",
+      "orcid": "https://orcid.org/0000-0001-9513-0147",
+      "h_index": 71,
+      "i10_index": 226,
+      "works_count": 528,
+      "cited_by_count": 17999,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5037742614",
+      "display_name": "François Renard",
+      "orcid": "https://orcid.org/0000-0002-5125-5930",
+      "h_index": 71,
+      "i10_index": 221,
+      "works_count": 550,
+      "cited_by_count": 14790,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5080033015",
+      "display_name": "Douglas A. Wiens",
+      "orcid": "https://orcid.org/0000-0002-5169-4386",
+      "h_index": 71,
+      "i10_index": 199,
+      "works_count": 520,
+      "cited_by_count": 14611,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5000420749",
+      "display_name": "Walter D. Mooney",
+      "orcid": "https://orcid.org/0000-0002-5310-3631",
+      "h_index": 71,
+      "i10_index": 179,
+      "works_count": 503,
+      "cited_by_count": 20133,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Geophysics -- 8.9",
+      "id": "https://openalex.org/A5058475164",
+      "display_name": "Eric Jameson Fielding",
+      "orcid": "https://orcid.org/0000-0002-6648-8067",
+      "h_index": 71,
+      "i10_index": 137,
+      "works_count": 513,
+      "cited_by_count": 18771,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5034000352",
+      "display_name": "José Maria Carcione",
+      "orcid": "https://orcid.org/0000-0002-2839-705X",
+      "h_index": 70,
+      "i10_index": 290,
+      "works_count": 585,
+      "cited_by_count": 17599,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5080685651",
+      "display_name": "Frédéric Frappart",
+      "orcid": "https://orcid.org/0000-0002-4661-8274",
+      "h_index": 70,
+      "i10_index": 204,
+      "works_count": 490,
+      "cited_by_count": 16255,
+      "discipline": "Geophysics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5031752279",
+      "display_name": "R. E. Cohen",
+      "orcid": "https://orcid.org/0000-0001-5871-2359",
+      "h_index": 70,
+      "i10_index": 202,
+      "works_count": 495,
+      "cited_by_count": 25279,
+      "discipline": "Geophysics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5035442844",
+      "display_name": "Percy Williams Bridgman",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 190,
+      "works_count": 490,
+      "cited_by_count": 19271,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5031082257",
+      "display_name": "Nikolai M. Shapiro",
+      "orcid": "https://orcid.org/0000-0002-0144-723X",
+      "h_index": 70,
+      "i10_index": 164,
+      "works_count": 508,
+      "cited_by_count": 25104,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5108470994",
+      "display_name": "Orson L. Anderson",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 157,
+      "works_count": 266,
+      "cited_by_count": 21070,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5001535652",
+      "display_name": "Yehuda Bock",
+      "orcid": "https://orcid.org/0000-0001-8296-6623",
+      "h_index": 70,
+      "i10_index": 140,
+      "works_count": 382,
+      "cited_by_count": 18083,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5010271388",
+      "display_name": "M. Simons",
+      "orcid": "https://orcid.org/0000-0003-1412-6395",
+      "h_index": 70,
+      "i10_index": 137,
+      "works_count": 445,
+      "cited_by_count": 17993,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5019165446",
+      "display_name": "P.R. Cobbold",
+      "orcid": "https://orcid.org/0000-0001-6676-8379",
+      "h_index": 70,
+      "i10_index": 137,
+      "works_count": 249,
+      "cited_by_count": 16916,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5110216004",
+      "display_name": "Larry W Finger",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 136,
+      "works_count": 189,
+      "cited_by_count": 17811,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5019006329",
+      "display_name": "Stefan M. Schmid",
+      "orcid": "https://orcid.org/0000-0002-0318-5018",
+      "h_index": 70,
+      "i10_index": 128,
+      "works_count": 270,
+      "cited_by_count": 23136,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5049357016",
+      "display_name": "Daniel Errandonea",
+      "orcid": "https://orcid.org/0000-0003-0189-4221",
+      "h_index": 69,
+      "i10_index": 325,
+      "works_count": 697,
+      "cited_by_count": 16528,
+      "discipline": "Geophysics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5086300371",
+      "display_name": "J. M. Kendall",
+      "orcid": "https://orcid.org/0000-0002-1486-3945",
+      "h_index": 69,
+      "i10_index": 261,
+      "works_count": 743,
+      "cited_by_count": 16853,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5086242062",
+      "display_name": "Ross John Angel",
+      "orcid": "https://orcid.org/0000-0003-0861-398X",
+      "h_index": 69,
+      "i10_index": 237,
+      "works_count": 517,
+      "cited_by_count": 16894,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5009737054",
+      "display_name": "E. Boschi",
+      "orcid": "https://orcid.org/0000-0003-0527-9664",
+      "h_index": 69,
+      "i10_index": 208,
+      "works_count": 436,
+      "cited_by_count": 15823,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5041186038",
+      "display_name": "A. Deschamps",
+      "orcid": "https://orcid.org/0000-0002-6209-9814",
+      "h_index": 69,
+      "i10_index": 191,
+      "works_count": 374,
+      "cited_by_count": 18858,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5055696814",
+      "display_name": "Fabrice Cotton",
+      "orcid": "https://orcid.org/0000-0002-9242-3996",
+      "h_index": 69,
+      "i10_index": 187,
+      "works_count": 628,
+      "cited_by_count": 16704,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5010062950",
+      "display_name": "Peter L. Olson",
+      "orcid": "https://orcid.org/0000-0002-6730-2535",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 333,
+      "cited_by_count": 18060,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5078649459",
+      "display_name": "Onno Oncken",
+      "orcid": "https://orcid.org/0000-0002-2894-480X",
+      "h_index": 69,
+      "i10_index": 166,
+      "works_count": 503,
+      "cited_by_count": 13689,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5060121595",
+      "display_name": "Greg Hirth",
+      "orcid": "https://orcid.org/0000-0002-5271-6591",
+      "h_index": 69,
+      "i10_index": 147,
+      "works_count": 415,
+      "cited_by_count": 20447,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5055247698",
+      "display_name": "G. Zandt",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 143,
+      "works_count": 356,
+      "cited_by_count": 16015,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Geophysics -- 8.8",
+      "id": "https://openalex.org/A5074621972",
+      "display_name": "Cynthia J. Ebinger",
+      "orcid": "https://orcid.org/0000-0002-6211-3399",
+      "h_index": 69,
+      "i10_index": 140,
+      "works_count": 406,
+      "cited_by_count": 16700,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5072552158",
+      "display_name": "E. E. Brodsky",
+      "orcid": "https://orcid.org/0000-0002-6855-6860",
+      "h_index": 69,
+      "i10_index": 138,
+      "works_count": 380,
+      "cited_by_count": 16865,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5023871557",
+      "display_name": "John B. Parise",
+      "orcid": "https://orcid.org/0000-0002-1302-703X",
+      "h_index": 68,
+      "i10_index": 264,
+      "works_count": 404,
+      "cited_by_count": 17456,
+      "discipline": "Geophysics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5085257858",
+      "display_name": "David J. Dunlop",
+      "orcid": "https://orcid.org/0000-0001-5351-7036",
+      "h_index": 68,
+      "i10_index": 244,
+      "works_count": 453,
+      "cited_by_count": 23524,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5011568668",
+      "display_name": "Alexander F. Goncharov",
+      "orcid": "https://orcid.org/0000-0002-6422-8819",
+      "h_index": 68,
+      "i10_index": 241,
+      "works_count": 639,
+      "cited_by_count": 18417,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5045250992",
+      "display_name": "Michael Y. Hu",
+      "orcid": "https://orcid.org/0000-0002-3718-7169",
+      "h_index": 68,
+      "i10_index": 231,
+      "works_count": 452,
+      "cited_by_count": 21384,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5007133177",
+      "display_name": "L. Knopoff",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 207,
+      "works_count": 329,
+      "cited_by_count": 20099,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5108581906",
+      "display_name": "Zhang Peizhen",
+      "orcid": "https://orcid.org/0000-0002-5656-8442",
+      "h_index": 68,
+      "i10_index": 201,
+      "works_count": 415,
+      "cited_by_count": 21097,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5027250016",
+      "display_name": "Alan G. Jones",
+      "orcid": "https://orcid.org/0000-0002-3482-2518",
+      "h_index": 68,
+      "i10_index": 197,
+      "works_count": 499,
+      "cited_by_count": 16660,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5020607034",
+      "display_name": "Geoffrey David Price",
+      "orcid": "https://orcid.org/0000-0001-8232-6853",
+      "h_index": 68,
+      "i10_index": 191,
+      "works_count": 355,
+      "cited_by_count": 14578,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5081074565",
+      "display_name": "Donald J. Weidner",
+      "orcid": "https://orcid.org/0000-0002-5484-6285",
+      "h_index": 68,
+      "i10_index": 169,
+      "works_count": 345,
+      "cited_by_count": 13907,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5062471712",
+      "display_name": "Roger G. Bilham",
+      "orcid": "https://orcid.org/0000-0002-5547-4102",
+      "h_index": 68,
+      "i10_index": 167,
+      "works_count": 440,
+      "cited_by_count": 18297,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5010232195",
+      "display_name": "J. L. Davis",
+      "orcid": "https://orcid.org/0000-0003-3057-477X",
+      "h_index": 68,
+      "i10_index": 163,
+      "works_count": 354,
+      "cited_by_count": 23988,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5111742937",
+      "display_name": "Neil D. Opdyke",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 152,
+      "works_count": 370,
+      "cited_by_count": 16054,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5040087061",
+      "display_name": "Tim Wright",
+      "orcid": "https://orcid.org/0000-0001-8338-5935",
+      "h_index": 68,
+      "i10_index": 139,
+      "works_count": 378,
+      "cited_by_count": 16423,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5111473208",
+      "display_name": "Muawia Barazangi",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 111,
+      "works_count": 199,
+      "cited_by_count": 14048,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5025678199",
+      "display_name": "Masashi Hayakawa",
+      "orcid": "https://orcid.org/0000-0001-7252-0425",
+      "h_index": 67,
+      "i10_index": 441,
+      "works_count": 1033,
+      "cited_by_count": 21319,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5110077901",
+      "display_name": "David A. Yuen",
+      "orcid": "https://orcid.org/0000-0001-9827-0962",
+      "h_index": 67,
+      "i10_index": 353,
+      "works_count": 679,
+      "cited_by_count": 19960,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5007427445",
+      "display_name": "Zhenhong Li",
+      "orcid": "https://orcid.org/0000-0002-8054-7449",
+      "h_index": 67,
+      "i10_index": 255,
+      "works_count": 540,
+      "cited_by_count": 18060,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5067057709",
+      "display_name": "Xiwei Xu",
+      "orcid": "https://orcid.org/0000-0002-8301-7347",
+      "h_index": 67,
+      "i10_index": 249,
+      "works_count": 585,
+      "cited_by_count": 16524,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5004718675",
+      "display_name": "Peter Gerstoft",
+      "orcid": "https://orcid.org/0000-0002-0471-062X",
+      "h_index": 67,
+      "i10_index": 239,
+      "works_count": 735,
+      "cited_by_count": 17510,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5090515800",
+      "display_name": "Seth A. Stein",
+      "orcid": "https://orcid.org/0000-0003-0522-7418",
+      "h_index": 67,
+      "i10_index": 191,
+      "works_count": 504,
+      "cited_by_count": 26800,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Geophysics -- 8.7",
+      "id": "https://openalex.org/A5023580215",
+      "display_name": "Carlo Doglioni",
+      "orcid": "https://orcid.org/0000-0002-8651-6387",
+      "h_index": 67,
+      "i10_index": 190,
+      "works_count": 367,
+      "cited_by_count": 15524,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5073557562",
+      "display_name": "Jeffrey Todd Freymueller",
+      "orcid": "https://orcid.org/0000-0003-0614-0306",
+      "h_index": 67,
+      "i10_index": 175,
+      "works_count": 911,
+      "cited_by_count": 15699,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5025696944",
+      "display_name": "Nils Olsen",
+      "orcid": "https://orcid.org/0000-0003-1132-6113",
+      "h_index": 67,
+      "i10_index": 165,
+      "works_count": 418,
+      "cited_by_count": 17356,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5073788800",
+      "display_name": "Dirk Schüler",
+      "orcid": "https://orcid.org/0000-0002-2327-0762",
+      "h_index": 67,
+      "i10_index": 161,
+      "works_count": 265,
+      "cited_by_count": 15313,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5054922981",
+      "display_name": "Thuy Le Toan",
+      "orcid": "https://orcid.org/0000-0003-4843-5962",
+      "h_index": 67,
+      "i10_index": 157,
+      "works_count": 465,
+      "cited_by_count": 17380,
+      "discipline": "Geophysics",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5089098731",
+      "display_name": "Timothy H. Dixon",
+      "orcid": "https://orcid.org/0000-0002-5127-0583",
+      "h_index": 67,
+      "i10_index": 151,
+      "works_count": 301,
+      "cited_by_count": 15144,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5010943722",
+      "display_name": "Brian Keith Horton",
+      "orcid": "https://orcid.org/0000-0002-1402-3524",
+      "h_index": 67,
+      "i10_index": 129,
+      "works_count": 377,
+      "cited_by_count": 12827,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5078703695",
+      "display_name": "D. A. Lockner",
+      "orcid": "https://orcid.org/0000-0001-8630-6833",
+      "h_index": 67,
+      "i10_index": 128,
+      "works_count": 310,
+      "cited_by_count": 16555,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5026126663",
+      "display_name": "Bradford H. Hager",
+      "orcid": "https://orcid.org/0000-0002-5643-1374",
+      "h_index": 67,
+      "i10_index": 119,
+      "works_count": 392,
+      "cited_by_count": 16545,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5002164027",
+      "display_name": "Harry G. Drickamer",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 306,
+      "works_count": 484,
+      "cited_by_count": 16259,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5043712793",
+      "display_name": "C. K. Shum",
+      "orcid": "https://orcid.org/0000-0001-9378-4067",
+      "h_index": 66,
+      "i10_index": 254,
+      "works_count": 734,
+      "cited_by_count": 19679,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5017957257",
+      "display_name": "Andrew A. Nyblade",
+      "orcid": "https://orcid.org/0000-0002-6844-587X",
+      "h_index": 66,
+      "i10_index": 187,
+      "works_count": 563,
+      "cited_by_count": 12393,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5057168176",
+      "display_name": "Riccardo Lanari",
+      "orcid": "https://orcid.org/0000-0002-7296-2749",
+      "h_index": 66,
+      "i10_index": 180,
+      "works_count": 565,
+      "cited_by_count": 19950,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Environmental Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5091800985",
+      "display_name": "T. S. Duffy",
+      "orcid": "https://orcid.org/0000-0002-5357-1259",
+      "h_index": 66,
+      "i10_index": 173,
+      "works_count": 360,
+      "cited_by_count": 13339,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5004297558",
+      "display_name": "R. Kind",
+      "orcid": "https://orcid.org/0000-0001-7043-7978",
+      "h_index": 66,
+      "i10_index": 157,
+      "works_count": 436,
+      "cited_by_count": 15482,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5045665649",
+      "display_name": "S. L. Klemperer",
+      "orcid": "https://orcid.org/0000-0001-7050-1829",
+      "h_index": 66,
+      "i10_index": 141,
+      "works_count": 427,
+      "cited_by_count": 13337,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5019978950",
+      "display_name": "R. S. Nerem",
+      "orcid": "https://orcid.org/0000-0003-4064-8111",
+      "h_index": 66,
+      "i10_index": 139,
+      "works_count": 303,
+      "cited_by_count": 15287,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5024658529",
+      "display_name": "Tetsuo Irifune",
+      "orcid": "https://orcid.org/0000-0001-9194-6341",
+      "h_index": 65,
+      "i10_index": 313,
+      "works_count": 660,
+      "cited_by_count": 18165,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5069408979",
+      "display_name": "Surendra Kumar Saxena",
+      "orcid": "https://orcid.org/0000-0002-9957-5749",
+      "h_index": 65,
+      "i10_index": 231,
+      "works_count": 405,
+      "cited_by_count": 13279,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5010939292",
+      "display_name": "Johan Alexander Huisman",
+      "orcid": "https://orcid.org/0000-0002-1327-0945",
+      "h_index": 65,
+      "i10_index": 160,
+      "works_count": 562,
+      "cited_by_count": 17211,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5058362966",
+      "display_name": "Panayiotis Antoniou Varotsos",
+      "orcid": "https://orcid.org/0000-0001-6983-3420",
+      "h_index": 65,
+      "i10_index": 156,
+      "works_count": 380,
+      "cited_by_count": 11963,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Economics, Econometrics and Finance",
+        "Computer Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5055320146",
+      "display_name": "Lars P. Stixrude",
+      "orcid": "https://orcid.org/0000-0003-3778-2432",
+      "h_index": 65,
+      "i10_index": 147,
+      "works_count": 391,
+      "cited_by_count": 14440,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Geophysics -- 8.6",
+      "id": "https://openalex.org/A5043225292",
+      "display_name": "David Jay Wald",
+      "orcid": "https://orcid.org/0000-0002-1454-4514",
+      "h_index": 65,
+      "i10_index": 146,
+      "works_count": 306,
+      "cited_by_count": 19329,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5028856121",
+      "display_name": "R. Boehler",
+      "orcid": "https://orcid.org/0000-0003-0222-6997",
+      "h_index": 65,
+      "i10_index": 139,
+      "works_count": 246,
+      "cited_by_count": 13792,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5033068967",
+      "display_name": "Donald W. Forsyth",
+      "orcid": "https://orcid.org/0000-0003-1450-2143",
+      "h_index": 65,
+      "i10_index": 136,
+      "works_count": 290,
+      "cited_by_count": 15547,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5110598512",
+      "display_name": "Atilla Aydin",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 132,
+      "works_count": 212,
+      "cited_by_count": 16300,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5060695655",
+      "display_name": "Paul Loubeyre",
+      "orcid": "https://orcid.org/0000-0002-1778-3510",
+      "h_index": 65,
+      "i10_index": 127,
+      "works_count": 278,
+      "cited_by_count": 14914,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5028563042",
+      "display_name": "Bryan L. Isacks",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 112,
+      "works_count": 195,
+      "cited_by_count": 19627,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5075673639",
+      "display_name": "Bernard A. Chouet",
+      "orcid": "https://orcid.org/0000-0001-5527-0532",
+      "h_index": 65,
+      "i10_index": 111,
+      "works_count": 187,
+      "cited_by_count": 15069,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5084087727",
+      "display_name": "R. S. Detrick",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 105,
+      "works_count": 259,
+      "cited_by_count": 12867,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5057029070",
+      "display_name": "Richard Thomas Walker",
+      "orcid": "https://orcid.org/0000-0002-7551-4124",
+      "h_index": 64,
+      "i10_index": 251,
+      "works_count": 542,
+      "cited_by_count": 15646,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5039228894",
+      "display_name": "R. Redmer",
+      "orcid": "https://orcid.org/0000-0003-3440-863X",
+      "h_index": 64,
+      "i10_index": 238,
+      "works_count": 520,
+      "cited_by_count": 15512,
+      "discipline": "Geophysics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5010436195",
+      "display_name": "Zhong Lu",
+      "orcid": "https://orcid.org/0000-0001-9181-1818",
+      "h_index": 64,
+      "i10_index": 232,
+      "works_count": 440,
+      "cited_by_count": 15297,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5019972279",
+      "display_name": "Yangkang Chen",
+      "orcid": "https://orcid.org/0000-0001-6429-4261",
+      "h_index": 64,
+      "i10_index": 231,
+      "works_count": 344,
+      "cited_by_count": 14004,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5070652968",
+      "display_name": "Wenge Yang",
+      "orcid": "https://orcid.org/0000-0001-8436-8731",
+      "h_index": 64,
+      "i10_index": 220,
+      "works_count": 422,
+      "cited_by_count": 15364,
+      "discipline": "Geophysics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5043832264",
+      "display_name": "Kees Wapenaar",
+      "orcid": "https://orcid.org/0000-0002-1620-8282",
+      "h_index": 64,
+      "i10_index": 214,
+      "works_count": 870,
+      "cited_by_count": 16329,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5000126407",
+      "display_name": "Gerhard Heinzel",
+      "orcid": "https://orcid.org/0000-0003-1661-7868",
+      "h_index": 64,
+      "i10_index": 212,
+      "works_count": 414,
+      "cited_by_count": 43798,
+      "discipline": "Geophysics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5047364088",
+      "display_name": "Shuichi Kodaira",
+      "orcid": "https://orcid.org/0000-0002-5774-2561",
+      "h_index": 64,
+      "i10_index": 195,
+      "works_count": 763,
+      "cited_by_count": 13154,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5081546446",
+      "display_name": "Maurizio Ripepe",
+      "orcid": "https://orcid.org/0000-0002-1787-5618",
+      "h_index": 64,
+      "i10_index": 176,
+      "works_count": 409,
+      "cited_by_count": 11960,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5073494117",
+      "display_name": "Keith F. Priestley",
+      "orcid": "https://orcid.org/0000-0001-6515-1318",
+      "h_index": 64,
+      "i10_index": 158,
+      "works_count": 377,
+      "cited_by_count": 15653,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5059228831",
+      "display_name": "P. Mc Millan",
+      "orcid": "https://orcid.org/0000-0002-5298-780X",
+      "h_index": 64,
+      "i10_index": 155,
+      "works_count": 245,
+      "cited_by_count": 15897,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5100736562",
+      "display_name": "Kelin Wang",
+      "orcid": "https://orcid.org/0000-0001-7599-7798",
+      "h_index": 64,
+      "i10_index": 152,
+      "works_count": 247,
+      "cited_by_count": 15406,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5015792775",
+      "display_name": "Egill Hauksson",
+      "orcid": "https://orcid.org/0000-0002-6834-5051",
+      "h_index": 64,
+      "i10_index": 141,
+      "works_count": 297,
+      "cited_by_count": 15142,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5026543595",
+      "display_name": "Malcolm Sambridge",
+      "orcid": "https://orcid.org/0000-0003-2858-3175",
+      "h_index": 64,
+      "i10_index": 133,
+      "works_count": 297,
+      "cited_by_count": 21162,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5112069068",
+      "display_name": "Syun‐iti Akimoto",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 133,
+      "works_count": 169,
+      "cited_by_count": 9902,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Geophysics -- 8.5",
+      "id": "https://openalex.org/A5026346452",
+      "display_name": "Michael H. Ritzwoller",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 114,
+      "works_count": 367,
+      "cited_by_count": 20617,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5073894089",
+      "display_name": "Huadong Guo",
+      "orcid": "https://orcid.org/0000-0003-0337-1862",
+      "h_index": 63,
+      "i10_index": 297,
+      "works_count": 779,
+      "cited_by_count": 16169,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Computer Science",
+        "Environmental Science",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5071386500",
+      "display_name": "Zvi Ben‐Avraham",
+      "orcid": "https://orcid.org/0000-0002-1232-0082",
+      "h_index": 63,
+      "i10_index": 223,
+      "works_count": 398,
+      "cited_by_count": 12496,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5061428813",
+      "display_name": "K. Syassen",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 211,
+      "works_count": 325,
+      "cited_by_count": 13076,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5087236919",
+      "display_name": "Tomoo Katsura",
+      "orcid": "https://orcid.org/0000-0001-7857-5101",
+      "h_index": 63,
+      "i10_index": 203,
+      "works_count": 484,
+      "cited_by_count": 15751,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5091740143",
+      "display_name": "Graeme J. Ackland",
+      "orcid": "https://orcid.org/0000-0002-1205-7675",
+      "h_index": 63,
+      "i10_index": 200,
+      "works_count": 403,
+      "cited_by_count": 18350,
+      "discipline": "Geophysics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5020121884",
+      "display_name": "Mark J. Dekkers",
+      "orcid": "https://orcid.org/0000-0002-4156-3841",
+      "h_index": 63,
+      "i10_index": 195,
+      "works_count": 436,
+      "cited_by_count": 13317,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5048751781",
+      "display_name": "Wendy L. Mao",
+      "orcid": "https://orcid.org/0000-0003-0595-7760",
+      "h_index": 63,
+      "i10_index": 187,
+      "works_count": 360,
+      "cited_by_count": 15388,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5070992380",
+      "display_name": "Alan G. Green",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 186,
+      "works_count": 353,
+      "cited_by_count": 12000,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5044875056",
+      "display_name": "Paul F. McMillan",
+      "orcid": "https://orcid.org/0000-0002-5298-780X",
+      "h_index": 63,
+      "i10_index": 174,
+      "works_count": 323,
+      "cited_by_count": 15567,
+      "discipline": "Geophysics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5008198868",
+      "display_name": "D. M. Saffer",
+      "orcid": "https://orcid.org/0000-0003-3681-0040",
+      "h_index": 63,
+      "i10_index": 170,
+      "works_count": 546,
+      "cited_by_count": 13994,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5082234324",
+      "display_name": "R. C. Aster",
+      "orcid": "https://orcid.org/0000-0002-0821-4906",
+      "h_index": 63,
+      "i10_index": 161,
+      "works_count": 410,
+      "cited_by_count": 14143,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Geophysics -- 8.4",
+      "id": "https://openalex.org/A5012365110",
+      "display_name": "Gary Mavko",
+      "orcid": "https://orcid.org/0000-0001-6750-2652",
+      "h_index": 63,
+      "i10_index": 158,
+      "works_count": 473,
+      "cited_by_count": 19110,
+      "discipline": "Geophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Energy"
+      ]
+    }
+  ]
+}

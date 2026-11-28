@@ -1,0 +1,656 @@
+{
+  "kind": "subfield",
+  "id": 2714,
+  "name": "Family Practice",
+  "total_in_scrape": 33,
+  "count": 33,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Family Practice -- 9.9",
+      "id": "https://openalex.org/A5015302801",
+      "display_name": "Azeem Majeed",
+      "orcid": "https://orcid.org/0000-0002-2357-9858",
+      "h_index": 150,
+      "i10_index": 723,
+      "works_count": 1375,
+      "cited_by_count": 292880,
+      "discipline": "Family Practice",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Family Practice -- 9.9",
+      "id": "https://openalex.org/A5045322011",
+      "display_name": "Barbara H. Starfield",
+      "orcid": null,
+      "h_index": 104,
+      "i10_index": 279,
+      "works_count": 433,
+      "cited_by_count": 53359,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Family Practice -- 9.9",
+      "id": "https://openalex.org/A5063525389",
+      "display_name": "John A Weinman",
+      "orcid": "https://orcid.org/0000-0002-6786-0166",
+      "h_index": 97,
+      "i10_index": 308,
+      "works_count": 536,
+      "cited_by_count": 49758,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Family Practice -- 9.9",
+      "id": "https://openalex.org/A5032399461",
+      "display_name": "Edward H. Wagner",
+      "orcid": "https://orcid.org/0000-0001-5856-6021",
+      "h_index": 97,
+      "i10_index": 261,
+      "works_count": 336,
+      "cited_by_count": 51189,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Family Practice -- 9.9",
+      "id": "https://openalex.org/A5087416292",
+      "display_name": "Martin O Roland",
+      "orcid": "https://orcid.org/0000-0002-8533-3060",
+      "h_index": 94,
+      "i10_index": 267,
+      "works_count": 490,
+      "cited_by_count": 41117,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Family Practice -- 9.9",
+      "id": "https://openalex.org/A5052895077",
+      "display_name": "Robert Horne",
+      "orcid": "https://orcid.org/0000-0002-3068-8438",
+      "h_index": 89,
+      "i10_index": 280,
+      "works_count": 564,
+      "cited_by_count": 38202,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5046241966",
+      "display_name": "François Schellevis",
+      "orcid": "https://orcid.org/0000-0001-9745-6394",
+      "h_index": 86,
+      "i10_index": 335,
+      "works_count": 887,
+      "cited_by_count": 29606,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5082147781",
+      "display_name": "Sabina De Geest",
+      "orcid": "https://orcid.org/0000-0001-6596-7237",
+      "h_index": 84,
+      "i10_index": 325,
+      "works_count": 734,
+      "cited_by_count": 32294,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5034918030",
+      "display_name": "Kurt C. Stange",
+      "orcid": "https://orcid.org/0000-0002-2189-0191",
+      "h_index": 84,
+      "i10_index": 265,
+      "works_count": 575,
+      "cited_by_count": 23999,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5081830188",
+      "display_name": "Rahim Moineddin",
+      "orcid": "https://orcid.org/0000-0002-5506-084X",
+      "h_index": 80,
+      "i10_index": 380,
+      "works_count": 697,
+      "cited_by_count": 22785,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5024642607",
+      "display_name": "Chris Salisbury",
+      "orcid": "https://orcid.org/0000-0002-4378-3960",
+      "h_index": 79,
+      "i10_index": 237,
+      "works_count": 595,
+      "cited_by_count": 26011,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5075502587",
+      "display_name": "Arch G. Mainous",
+      "orcid": "https://orcid.org/0000-0002-2535-7685",
+      "h_index": 78,
+      "i10_index": 337,
+      "works_count": 548,
+      "cited_by_count": 23335,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5042583736",
+      "display_name": "Richard Henry Glazier",
+      "orcid": "https://orcid.org/0000-0002-7952-8320",
+      "h_index": 78,
+      "i10_index": 284,
+      "works_count": 441,
+      "cited_by_count": 22669,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5060121086",
+      "display_name": "Moira Stewart",
+      "orcid": "https://orcid.org/0000-0002-5552-0762",
+      "h_index": 78,
+      "i10_index": 269,
+      "works_count": 482,
+      "cited_by_count": 33724,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5041536527",
+      "display_name": "Benjamin F. Crabtree",
+      "orcid": "https://orcid.org/0000-0003-2292-6835",
+      "h_index": 78,
+      "i10_index": 224,
+      "works_count": 375,
+      "cited_by_count": 31391,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5034168264",
+      "display_name": "David J. Reeves",
+      "orcid": "https://orcid.org/0000-0001-6377-6859",
+      "h_index": 77,
+      "i10_index": 206,
+      "works_count": 480,
+      "cited_by_count": 21726,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Family Practice -- 9.8",
+      "id": "https://openalex.org/A5049834363",
+      "display_name": "John Campbell",
+      "orcid": "https://orcid.org/0000-0002-6752-3493",
+      "h_index": 75,
+      "i10_index": 259,
+      "works_count": 533,
+      "cited_by_count": 21044,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5010513682",
+      "display_name": "Stephen Campbell",
+      "orcid": "https://orcid.org/0000-0002-2328-4136",
+      "h_index": 75,
+      "i10_index": 255,
+      "works_count": 481,
+      "cited_by_count": 26863,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5049349862",
+      "display_name": "Martin Scherer",
+      "orcid": "https://orcid.org/0000-0003-3448-9679",
+      "h_index": 72,
+      "i10_index": 345,
+      "works_count": 1445,
+      "cited_by_count": 32604,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5022527000",
+      "display_name": "José M Valderas",
+      "orcid": "https://orcid.org/0000-0002-9299-1555",
+      "h_index": 71,
+      "i10_index": 215,
+      "works_count": 542,
+      "cited_by_count": 25012,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5086944353",
+      "display_name": "Richard Baker",
+      "orcid": "https://orcid.org/0000-0002-9215-0086",
+      "h_index": 70,
+      "i10_index": 245,
+      "works_count": 631,
+      "cited_by_count": 19861,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5111852438",
+      "display_name": "Jerome P. Kassirer",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 142,
+      "works_count": 385,
+      "cited_by_count": 18740,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Social Sciences",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5022854257",
+      "display_name": "Donald Edward Morisky",
+      "orcid": "https://orcid.org/0000-0003-1338-2231",
+      "h_index": 68,
+      "i10_index": 233,
+      "works_count": 331,
+      "cited_by_count": 27585,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5006058688",
+      "display_name": "Lisa V. Rubenstein",
+      "orcid": "https://orcid.org/0000-0002-4186-7191",
+      "h_index": 67,
+      "i10_index": 213,
+      "works_count": 400,
+      "cited_by_count": 17913,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5012044853",
+      "display_name": "Christos D Lionis",
+      "orcid": "https://orcid.org/0000-0002-9324-2839",
+      "h_index": 66,
+      "i10_index": 365,
+      "works_count": 721,
+      "cited_by_count": 41797,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5032506395",
+      "display_name": "Walter P. Wodchis",
+      "orcid": "https://orcid.org/0000-0003-2494-7031",
+      "h_index": 66,
+      "i10_index": 227,
+      "works_count": 466,
+      "cited_by_count": 18489,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5109896371",
+      "display_name": "Gert P. Westert",
+      "orcid": "https://orcid.org/0000-0003-3744-8207",
+      "h_index": 66,
+      "i10_index": 203,
+      "works_count": 370,
+      "cited_by_count": 16603,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Family Practice -- 9.7",
+      "id": "https://openalex.org/A5060258796",
+      "display_name": "Peter Vedsted",
+      "orcid": "https://orcid.org/0000-0003-2113-5599",
+      "h_index": 65,
+      "i10_index": 304,
+      "works_count": 595,
+      "cited_by_count": 17150,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Family Practice -- 9.6",
+      "id": "https://openalex.org/A5047328073",
+      "display_name": "Vimla Lodhia Patel",
+      "orcid": "https://orcid.org/0000-0003-1656-6642",
+      "h_index": 65,
+      "i10_index": 165,
+      "works_count": 315,
+      "cited_by_count": 15269,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Family Practice -- 9.6",
+      "id": "https://openalex.org/A5020136312",
+      "display_name": "Frede Olesen",
+      "orcid": "https://orcid.org/0000-0002-5787-4687",
+      "h_index": 64,
+      "i10_index": 154,
+      "works_count": 444,
+      "cited_by_count": 17166,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Family Practice -- 9.6",
+      "id": "https://openalex.org/A5086284086",
+      "display_name": "Jeffrey L. Jackson",
+      "orcid": "https://orcid.org/0000-0002-9820-5834",
+      "h_index": 64,
+      "i10_index": 142,
+      "works_count": 269,
+      "cited_by_count": 15743,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Family Practice -- 9.6",
+      "id": "https://openalex.org/A5045046848",
+      "display_name": "Joachim Szécsényi",
+      "orcid": "https://orcid.org/0000-0002-4483-0028",
+      "h_index": 63,
+      "i10_index": 329,
+      "works_count": 576,
+      "cited_by_count": 15949,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Family Practice -- 9.6",
+      "id": "https://openalex.org/A5083325667",
+      "display_name": "Stephen G. Pauker",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 149,
+      "works_count": 294,
+      "cited_by_count": 21143,
+      "discipline": "Family Practice",
+      "primary_field": "Medicine",
+      "primary_subfield": "Family Practice",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    }
+  ]
+}

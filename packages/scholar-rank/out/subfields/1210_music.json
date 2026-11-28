@@ -1,0 +1,155 @@
+{
+  "kind": "subfield",
+  "id": 1210,
+  "name": "Music",
+  "total_in_scrape": 7,
+  "count": 7,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Music -- 9.9",
+      "id": "https://openalex.org/A5032367595",
+      "display_name": "Roger Thornton Dean",
+      "orcid": "https://orcid.org/0000-0002-8859-8902",
+      "h_index": 76,
+      "i10_index": 230,
+      "works_count": 572,
+      "cited_by_count": 23105,
+      "discipline": "Music",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Music -- 9.9",
+      "id": "https://openalex.org/A5032654374",
+      "display_name": "David J. Hargreaves",
+      "orcid": "https://orcid.org/0000-0002-2726-7229",
+      "h_index": 72,
+      "i10_index": 190,
+      "works_count": 369,
+      "cited_by_count": 22959,
+      "discipline": "Music",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Music -- 9.9",
+      "id": "https://openalex.org/A5109969019",
+      "display_name": "Peter H. Schreier",
+      "orcid": "https://orcid.org/0000-0003-1930-0145",
+      "h_index": 69,
+      "i10_index": 340,
+      "works_count": 560,
+      "cited_by_count": 30300,
+      "discipline": "Music",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Music -- 9.9",
+      "id": "https://openalex.org/A5075922585",
+      "display_name": "Johan Sundberg",
+      "orcid": "https://orcid.org/0000-0002-7234-7551",
+      "h_index": 69,
+      "i10_index": 233,
+      "works_count": 505,
+      "cited_by_count": 19164,
+      "discipline": "Music",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Music -- 9.9",
+      "id": "https://openalex.org/A5112422064",
+      "display_name": "Susan Hallam",
+      "orcid": "https://orcid.org/0000-0002-6705-0614",
+      "h_index": 68,
+      "i10_index": 162,
+      "works_count": 407,
+      "cited_by_count": 15427,
+      "discipline": "Music",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Music -- 9.9",
+      "id": "https://openalex.org/A5114376326",
+      "display_name": "Lars Berglund",
+      "orcid": "https://orcid.org/0000-0002-7437-9047",
+      "h_index": 68,
+      "i10_index": 143,
+      "works_count": 289,
+      "cited_by_count": 17558,
+      "discipline": "Music",
+      "primary_field": "Medicine",
+      "primary_subfield": "Music",
+      "fields": [
+        "Medicine",
+        "Arts and Humanities",
+        "Health Professions",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Music -- 9.8",
+      "id": "https://openalex.org/A5074110444",
+      "display_name": "John A. Sloboda",
+      "orcid": "https://orcid.org/0000-0001-9375-4474",
+      "h_index": 64,
+      "i10_index": 117,
+      "works_count": 217,
+      "cited_by_count": 17057,
+      "discipline": "Music",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    }
+  ]
+}

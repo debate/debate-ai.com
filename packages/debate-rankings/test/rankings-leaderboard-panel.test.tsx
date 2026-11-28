@@ -232,11 +232,14 @@ describe("LeaderboardPanel", () => {
       }
       expect(root.textContent).toContain("National Parliamentary Debate League rankings, 2024-25");
       expect(root.textContent).toContain("Ada & Bo");
-      // No ballots behind the NPDL points, so the graph card says so instead of drawing one.
+      // No Tabroom rounds are synced for this season, so the card says so instead of drawing record sheets.
+      for (let i = 0; i < 50 && root.querySelector('[data-testid="h2h-network-empty"]')?.textContent?.includes("Loading"); i++) {
+        await flush(() => new Promise((resolve) => setTimeout(resolve, 10)));
+      }
       expect(root.querySelector('[data-testid="rankings-split-right"] #h2h-network-title')?.textContent).toBe(
         "Who debated whom",
       );
-      expect(root.querySelector('[data-testid="h2h-network-empty"]')?.textContent).toContain("not the ballots");
+      expect(root.querySelector('[data-testid="h2h-network-empty"]')?.textContent).toContain("No Tabroom rounds for the top Parli teams in 2024-25");
       // Parli reuses the shared Teams/Schools toggle and season select; the section has none of its own.
       expect(root.querySelector('[aria-label="Rankings view"]')).not.toBeNull();
       expect(root.querySelector('[aria-label="Parliamentary season"]')).toBeNull();

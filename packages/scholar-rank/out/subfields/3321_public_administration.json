@@ -1,0 +1,199 @@
+{
+  "kind": "subfield",
+  "id": 3321,
+  "name": "Public Administration",
+  "total_in_scrape": 10,
+  "count": 10,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Public Administration -- 9.9",
+      "id": "https://openalex.org/A5008083587",
+      "display_name": "Barry L. Bozeman",
+      "orcid": "https://orcid.org/0000-0002-8084-3379",
+      "h_index": 81,
+      "i10_index": 207,
+      "works_count": 394,
+      "cited_by_count": 32116,
+      "discipline": "Public Administration",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Public Administration",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Public Administration -- 9.9",
+      "id": "https://openalex.org/A5053940388",
+      "display_name": "Kenneth J. Meier",
+      "orcid": "https://orcid.org/0000-0002-6378-0855",
+      "h_index": 79,
+      "i10_index": 240,
+      "works_count": 487,
+      "cited_by_count": 25124,
+      "discipline": "Public Administration",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Public Administration",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Public Administration -- 9.9",
+      "id": "https://openalex.org/A5053572128",
+      "display_name": "Donald P. Moynihan",
+      "orcid": "https://orcid.org/0000-0003-4097-6908",
+      "h_index": 78,
+      "i10_index": 161,
+      "works_count": 283,
+      "cited_by_count": 25562,
+      "discipline": "Public Administration",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Public Administration",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Public Administration -- 9.9",
+      "id": "https://openalex.org/A5035135766",
+      "display_name": "George A. Boyne",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 142,
+      "works_count": 249,
+      "cited_by_count": 20012,
+      "discipline": "Public Administration",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Public Administration",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Public Administration -- 9.9",
+      "id": "https://openalex.org/A5087469637",
+      "display_name": "Jacob Torfing",
+      "orcid": "https://orcid.org/0000-0002-9627-086X",
+      "h_index": 74,
+      "i10_index": 160,
+      "works_count": 502,
+      "cited_by_count": 27828,
+      "discipline": "Public Administration",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Public Administration",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Public Administration -- 9.9",
+      "id": "https://openalex.org/A5046930270",
+      "display_name": "Richard M. Walker",
+      "orcid": "https://orcid.org/0000-0003-1503-1814",
+      "h_index": 72,
+      "i10_index": 153,
+      "works_count": 314,
+      "cited_by_count": 18722,
+      "discipline": "Public Administration",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Public Administration",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Public Administration -- 9.8",
+      "id": "https://openalex.org/A5081521085",
+      "display_name": "Mark N. Lubell",
+      "orcid": "https://orcid.org/0000-0001-5757-7116",
+      "h_index": 71,
+      "i10_index": 140,
+      "works_count": 221,
+      "cited_by_count": 17315,
+      "discipline": "Public Administration",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Public Administration",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Public Administration -- 9.8",
+      "id": "https://openalex.org/A5008602905",
+      "display_name": "Erik‐Hans Klijn",
+      "orcid": "https://orcid.org/0000-0002-2121-6818",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 293,
+      "cited_by_count": 21459,
+      "discipline": "Public Administration",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Public Administration",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Public Administration -- 9.8",
+      "id": "https://openalex.org/A5011022122",
+      "display_name": "Jens Newig",
+      "orcid": "https://orcid.org/0000-0003-2390-2982",
+      "h_index": 64,
+      "i10_index": 128,
+      "works_count": 222,
+      "cited_by_count": 20142,
+      "discipline": "Public Administration",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Public Administration",
+      "fields": [
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Public Administration -- 9.8",
+      "id": "https://openalex.org/A5068030881",
+      "display_name": "Lars G. Tummers",
+      "orcid": "https://orcid.org/0000-0001-9940-9874",
+      "h_index": 63,
+      "i10_index": 104,
+      "works_count": 346,
+      "cited_by_count": 22288,
+      "discipline": "Public Administration",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Public Administration",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    }
+  ]
+}

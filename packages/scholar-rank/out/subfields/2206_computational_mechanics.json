@@ -1,0 +1,4662 @@
+{
+  "kind": "subfield",
+  "id": 2206,
+  "name": "Computational Mechanics",
+  "total_in_scrape": 239,
+  "count": 239,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Computational Mechanics -- 9.9",
+      "id": "https://openalex.org/A5009658255",
+      "display_name": "George Em Karniadakis",
+      "orcid": "https://orcid.org/0000-0002-9713-7120",
+      "h_index": 161,
+      "i10_index": 691,
+      "works_count": 1290,
+      "cited_by_count": 167549,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Computational Mechanics -- 9.9",
+      "id": "https://openalex.org/A5068730007",
+      "display_name": "Tasawar Hayat",
+      "orcid": "https://orcid.org/0000-0001-5952-4106",
+      "h_index": 151,
+      "i10_index": 2204,
+      "works_count": 2768,
+      "cited_by_count": 142082,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Computational Mechanics -- 9.9",
+      "id": "https://openalex.org/A5031451887",
+      "display_name": "Thomas J.R. Hughes",
+      "orcid": "https://orcid.org/0000-0001-7024-8368",
+      "h_index": 150,
+      "i10_index": 371,
+      "works_count": 693,
+      "cited_by_count": 109784,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Computational Mechanics -- 9.9",
+      "id": "https://openalex.org/A5022621691",
+      "display_name": "Ali Jawad Chamkha",
+      "orcid": "https://orcid.org/0000-0002-8335-3121",
+      "h_index": 147,
+      "i10_index": 981,
+      "works_count": 1415,
+      "cited_by_count": 69729,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Computational Mechanics -- 9.9",
+      "id": "https://openalex.org/A5036500320",
+      "display_name": "Ted Belytschko",
+      "orcid": null,
+      "h_index": 145,
+      "i10_index": 400,
+      "works_count": 665,
+      "cited_by_count": 97755,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Computational Mechanics -- 9.9",
+      "id": "https://openalex.org/A5108681726",
+      "display_name": "Ahmed Alsaedi",
+      "orcid": "https://orcid.org/0000-0003-3452-8922",
+      "h_index": 136,
+      "i10_index": 1542,
+      "works_count": 2050,
+      "cited_by_count": 97821,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5083316408",
+      "display_name": "Howard A. Stone",
+      "orcid": "https://orcid.org/0000-0002-9670-0639",
+      "h_index": 136,
+      "i10_index": 643,
+      "works_count": 1405,
+      "cited_by_count": 85969,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5046453069",
+      "display_name": "Ioan Victor Pop",
+      "orcid": "https://orcid.org/0000-0002-0660-6543",
+      "h_index": 131,
+      "i10_index": 1167,
+      "works_count": 1725,
+      "cited_by_count": 76643,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5009800106",
+      "display_name": "Davood Domiri Ganji",
+      "orcid": "https://orcid.org/0000-0002-2344-526X",
+      "h_index": 130,
+      "i10_index": 786,
+      "works_count": 1121,
+      "cited_by_count": 60130,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5066010665",
+      "display_name": "Detlef Lohse",
+      "orcid": "https://orcid.org/0000-0003-4138-2255",
+      "h_index": 128,
+      "i10_index": 675,
+      "works_count": 1424,
+      "cited_by_count": 62476,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5002037883",
+      "display_name": "Stanley Osher",
+      "orcid": "https://orcid.org/0000-0002-7900-4658",
+      "h_index": 125,
+      "i10_index": 446,
+      "works_count": 677,
+      "cited_by_count": 130778,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5003773421",
+      "display_name": "Parviz Moin",
+      "orcid": "https://orcid.org/0000-0002-0491-7065",
+      "h_index": 122,
+      "i10_index": 314,
+      "works_count": 788,
+      "cited_by_count": 76872,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5088771037",
+      "display_name": "Aibing Yu",
+      "orcid": "https://orcid.org/0000-0002-5139-0657",
+      "h_index": 116,
+      "i10_index": 786,
+      "works_count": 1233,
+      "cited_by_count": 62106,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5047035333",
+      "display_name": "Chi‐Wang Shu",
+      "orcid": "https://orcid.org/0000-0001-7720-9564",
+      "h_index": 113,
+      "i10_index": 444,
+      "works_count": 723,
+      "cited_by_count": 82395,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5064863623",
+      "display_name": "Martín Olazar",
+      "orcid": "https://orcid.org/0000-0002-5740-727X",
+      "h_index": 104,
+      "i10_index": 389,
+      "works_count": 529,
+      "cited_by_count": 33078,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Energy",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5013514374",
+      "display_name": "Dimos Poulikakos",
+      "orcid": "https://orcid.org/0000-0001-5733-6478",
+      "h_index": 103,
+      "i10_index": 430,
+      "works_count": 721,
+      "cited_by_count": 39137,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Computational Mechanics -- 9.8",
+      "id": "https://openalex.org/A5040474854",
+      "display_name": "Tayfun E. Tezduyar",
+      "orcid": "https://orcid.org/0000-0001-8707-3162",
+      "h_index": 103,
+      "i10_index": 315,
+      "works_count": 619,
+      "cited_by_count": 33889,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5109123232",
+      "display_name": "Olgierd Cecil Zienkiewicz",
+      "orcid": null,
+      "h_index": 101,
+      "i10_index": 225,
+      "works_count": 425,
+      "cited_by_count": 49227,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5074054198",
+      "display_name": "Ivo M. Babuska",
+      "orcid": null,
+      "h_index": 100,
+      "i10_index": 300,
+      "works_count": 544,
+      "cited_by_count": 51762,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5050154528",
+      "display_name": "Muhammad Ijaz Khan",
+      "orcid": "https://orcid.org/0000-0002-9041-3292",
+      "h_index": 99,
+      "i10_index": 455,
+      "works_count": 595,
+      "cited_by_count": 31619,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5071048612",
+      "display_name": "Johannes A. M. Kuipers",
+      "orcid": "https://orcid.org/0000-0002-0102-1271",
+      "h_index": 98,
+      "i10_index": 437,
+      "works_count": 814,
+      "cited_by_count": 35764,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5044309986",
+      "display_name": "Mehdi Dehghan",
+      "orcid": "https://orcid.org/0000-0002-2573-9755",
+      "h_index": 97,
+      "i10_index": 674,
+      "works_count": 956,
+      "cited_by_count": 39607,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5111687126",
+      "display_name": "Ephraim M. Sparrow",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 481,
+      "works_count": 892,
+      "cited_by_count": 36625,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5059258770",
+      "display_name": "L. E. Scriven",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 348,
+      "works_count": 469,
+      "cited_by_count": 35653,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5021644233",
+      "display_name": "Klaus‐Jürgen Bathe",
+      "orcid": "https://orcid.org/0000-0003-2049-3925",
+      "h_index": 94,
+      "i10_index": 262,
+      "works_count": 460,
+      "cited_by_count": 37689,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5040120385",
+      "display_name": "Sidney R. Nagel",
+      "orcid": "https://orcid.org/0000-0003-3486-8898",
+      "h_index": 94,
+      "i10_index": 220,
+      "works_count": 453,
+      "cited_by_count": 51391,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5039921516",
+      "display_name": "Daniel Bonn",
+      "orcid": "https://orcid.org/0000-0001-8925-1997",
+      "h_index": 93,
+      "i10_index": 352,
+      "works_count": 556,
+      "cited_by_count": 34200,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Computational Mechanics -- 9.7",
+      "id": "https://openalex.org/A5100631623",
+      "display_name": "Shiyi Chen",
+      "orcid": "https://orcid.org/0000-0002-2913-4497",
+      "h_index": 92,
+      "i10_index": 407,
+      "works_count": 754,
+      "cited_by_count": 42114,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5064139543",
+      "display_name": "Charbel Farhat",
+      "orcid": "https://orcid.org/0000-0003-2563-8820",
+      "h_index": 92,
+      "i10_index": 295,
+      "works_count": 576,
+      "cited_by_count": 33789,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5043543824",
+      "display_name": "Katepalli R. Sreenivasan",
+      "orcid": "https://orcid.org/0000-0002-3943-6827",
+      "h_index": 92,
+      "i10_index": 281,
+      "works_count": 620,
+      "cited_by_count": 29864,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5039090702",
+      "display_name": "Geoffrey Ingram Taylor",
+      "orcid": null,
+      "h_index": 92,
+      "i10_index": 145,
+      "works_count": 191,
+      "cited_by_count": 81090,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5013754088",
+      "display_name": "Alfio Maria Quarteroni",
+      "orcid": "https://orcid.org/0000-0002-5947-6885",
+      "h_index": 91,
+      "i10_index": 400,
+      "works_count": 1167,
+      "cited_by_count": 44505,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5006706781",
+      "display_name": "John R. Grace",
+      "orcid": "https://orcid.org/0000-0001-8274-8909",
+      "h_index": 90,
+      "i10_index": 483,
+      "works_count": 646,
+      "cited_by_count": 30062,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5037572274",
+      "display_name": "Charles Meneveau",
+      "orcid": "https://orcid.org/0000-0001-6947-3605",
+      "h_index": 90,
+      "i10_index": 273,
+      "works_count": 670,
+      "cited_by_count": 35322,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Energy",
+        "Chemical Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5048124899",
+      "display_name": "Harry L. Swinney",
+      "orcid": "https://orcid.org/0000-0002-6817-5363",
+      "h_index": 90,
+      "i10_index": 247,
+      "works_count": 503,
+      "cited_by_count": 44636,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5028800510",
+      "display_name": "Yuri Bazilevs",
+      "orcid": "https://orcid.org/0000-0003-4022-5039",
+      "h_index": 90,
+      "i10_index": 197,
+      "works_count": 358,
+      "cited_by_count": 41905,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5017683963",
+      "display_name": "S. Nadeem",
+      "orcid": "https://orcid.org/0000-0002-1052-011X",
+      "h_index": 89,
+      "i10_index": 590,
+      "works_count": 719,
+      "cited_by_count": 31859,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5100330950",
+      "display_name": "Jian‐Feng Chen",
+      "orcid": "https://orcid.org/0000-0003-1947-0603",
+      "h_index": 88,
+      "i10_index": 625,
+      "works_count": 897,
+      "cited_by_count": 34707,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Computational Mechanics -- 9.6",
+      "id": "https://openalex.org/A5033550883",
+      "display_name": "Mohammad Mehdi Rashidi",
+      "orcid": "https://orcid.org/0000-0002-6309-8688",
+      "h_index": 88,
+      "i10_index": 338,
+      "works_count": 479,
+      "cited_by_count": 24612,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5016987095",
+      "display_name": "Peter Wriggers",
+      "orcid": "https://orcid.org/0000-0002-2676-1145",
+      "h_index": 87,
+      "i10_index": 400,
+      "works_count": 1148,
+      "cited_by_count": 30955,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5075516550",
+      "display_name": "Petros Koumoutsakos",
+      "orcid": "https://orcid.org/0000-0001-8337-2122",
+      "h_index": 87,
+      "i10_index": 252,
+      "works_count": 550,
+      "cited_by_count": 35008,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5109919627",
+      "display_name": "Antony Jameson",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 347,
+      "works_count": 722,
+      "cited_by_count": 34692,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5027163198",
+      "display_name": "Stéphane Bordas",
+      "orcid": "https://orcid.org/0000-0001-7622-2193",
+      "h_index": 86,
+      "i10_index": 294,
+      "works_count": 675,
+      "cited_by_count": 26372,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5090354103",
+      "display_name": "Xiaotao Tony Bi",
+      "orcid": "https://orcid.org/0000-0001-9514-3685",
+      "h_index": 85,
+      "i10_index": 379,
+      "works_count": 593,
+      "cited_by_count": 27321,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5063607239",
+      "display_name": "Kambiz Vafai",
+      "orcid": "https://orcid.org/0000-0002-9720-3618",
+      "h_index": 85,
+      "i10_index": 377,
+      "works_count": 613,
+      "cited_by_count": 35210,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5080937639",
+      "display_name": "Alexander L. Yarin",
+      "orcid": "https://orcid.org/0000-0001-8032-2525",
+      "h_index": 85,
+      "i10_index": 337,
+      "works_count": 663,
+      "cited_by_count": 42073,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5022506941",
+      "display_name": "Steven A. Orszag",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 182,
+      "works_count": 384,
+      "cited_by_count": 49318,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5013992441",
+      "display_name": "Raphael T. Haftka",
+      "orcid": "https://orcid.org/0000-0003-0417-6911",
+      "h_index": 84,
+      "i10_index": 405,
+      "works_count": 837,
+      "cited_by_count": 31866,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5038626545",
+      "display_name": "Wei Shyy",
+      "orcid": "https://orcid.org/0000-0001-6670-5394",
+      "h_index": 84,
+      "i10_index": 391,
+      "works_count": 932,
+      "cited_by_count": 36006,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5011286963",
+      "display_name": "Herbert E. Huppert",
+      "orcid": "https://orcid.org/0000-0002-0185-0598",
+      "h_index": 84,
+      "i10_index": 225,
+      "works_count": 409,
+      "cited_by_count": 24035,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Computational Mechanics -- 9.5",
+      "id": "https://openalex.org/A5001027226",
+      "display_name": "Michael P. Brenner",
+      "orcid": "https://orcid.org/0000-0002-5673-7947",
+      "h_index": 84,
+      "i10_index": 219,
+      "works_count": 487,
+      "cited_by_count": 31172,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5111367917",
+      "display_name": "J.C. Simo",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 108,
+      "works_count": 142,
+      "cited_by_count": 42668,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5089894989",
+      "display_name": "Sankaran Mahadevan",
+      "orcid": "https://orcid.org/0000-0003-1969-2388",
+      "h_index": 83,
+      "i10_index": 344,
+      "works_count": 713,
+      "cited_by_count": 28203,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5075643472",
+      "display_name": "Sauro Succi",
+      "orcid": "https://orcid.org/0000-0002-3070-3079",
+      "h_index": 82,
+      "i10_index": 399,
+      "works_count": 903,
+      "cited_by_count": 33763,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5028981574",
+      "display_name": "Jie Shen",
+      "orcid": "https://orcid.org/0000-0002-4885-5732",
+      "h_index": 82,
+      "i10_index": 256,
+      "works_count": 402,
+      "cited_by_count": 31348,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5004297395",
+      "display_name": "David Quéré",
+      "orcid": "https://orcid.org/0000-0003-2117-4651",
+      "h_index": 82,
+      "i10_index": 180,
+      "works_count": 369,
+      "cited_by_count": 43049,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5000105014",
+      "display_name": "Jyeshtharaj Bhalchandra Joshi",
+      "orcid": "https://orcid.org/0000-0002-4945-0788",
+      "h_index": 81,
+      "i10_index": 476,
+      "works_count": 693,
+      "cited_by_count": 28050,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Chemical Engineering",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5087096547",
+      "display_name": "Mikhail А. Sheremet",
+      "orcid": "https://orcid.org/0000-0002-4750-0227",
+      "h_index": 81,
+      "i10_index": 378,
+      "works_count": 591,
+      "cited_by_count": 20994,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5100729784",
+      "display_name": "Xu Han",
+      "orcid": "https://orcid.org/0000-0002-8967-4372",
+      "h_index": 81,
+      "i10_index": 363,
+      "works_count": 716,
+      "cited_by_count": 20874,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5049309790",
+      "display_name": "Eugenio Oñate",
+      "orcid": "https://orcid.org/0000-0002-0804-7095",
+      "h_index": 81,
+      "i10_index": 338,
+      "works_count": 885,
+      "cited_by_count": 28719,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5111468583",
+      "display_name": "J. C. R. Hunt",
+      "orcid": "https://orcid.org/0000-0002-1840-7277",
+      "h_index": 81,
+      "i10_index": 244,
+      "works_count": 569,
+      "cited_by_count": 27501,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Computational Mechanics -- 9.4",
+      "id": "https://openalex.org/A5074793579",
+      "display_name": "Muhammad Mubashir Bhatti",
+      "orcid": "https://orcid.org/0000-0002-3219-7579",
+      "h_index": 81,
+      "i10_index": 240,
+      "works_count": 294,
+      "cited_by_count": 17511,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5056905478",
+      "display_name": "F. Durst",
+      "orcid": "https://orcid.org/0000-0001-6921-9252",
+      "h_index": 80,
+      "i10_index": 337,
+      "works_count": 852,
+      "cited_by_count": 25925,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5039085579",
+      "display_name": "Oluwole Daniel Makinde",
+      "orcid": "https://orcid.org/0000-0002-3991-4948",
+      "h_index": 79,
+      "i10_index": 508,
+      "works_count": 760,
+      "cited_by_count": 26715,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5052056626",
+      "display_name": "Ashutosh Sharma",
+      "orcid": "https://orcid.org/0000-0002-2653-0806",
+      "h_index": 79,
+      "i10_index": 333,
+      "works_count": 457,
+      "cited_by_count": 20328,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5027528063",
+      "display_name": "Filip Johnsson",
+      "orcid": "https://orcid.org/0000-0003-3106-5379",
+      "h_index": 79,
+      "i10_index": 299,
+      "works_count": 590,
+      "cited_by_count": 21528,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5038134825",
+      "display_name": "John Tinsley Oden",
+      "orcid": "https://orcid.org/0000-0001-9973-9566",
+      "h_index": 79,
+      "i10_index": 274,
+      "works_count": 463,
+      "cited_by_count": 30918,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5034895999",
+      "display_name": "Pierre Sagaut",
+      "orcid": "https://orcid.org/0000-0002-3785-120X",
+      "h_index": 79,
+      "i10_index": 269,
+      "works_count": 692,
+      "cited_by_count": 21535,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5052815108",
+      "display_name": "Muhammad Khurram Waqas",
+      "orcid": "https://orcid.org/0000-0001-6858-651X",
+      "h_index": 79,
+      "i10_index": 255,
+      "works_count": 331,
+      "cited_by_count": 17235,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5009767255",
+      "display_name": "Chih‐Ming Ho",
+      "orcid": "https://orcid.org/0000-0001-7369-5446",
+      "h_index": 79,
+      "i10_index": 246,
+      "works_count": 477,
+      "cited_by_count": 25891,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5050089803",
+      "display_name": "Andréa Prosperetti",
+      "orcid": "https://orcid.org/0000-0003-4129-7130",
+      "h_index": 79,
+      "i10_index": 239,
+      "works_count": 548,
+      "cited_by_count": 24279,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5044820795",
+      "display_name": "Thomas J. Hanratty",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 197,
+      "works_count": 291,
+      "cited_by_count": 17299,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Computational Mechanics -- 9.3",
+      "id": "https://openalex.org/A5100347295",
+      "display_name": "Chang Shu",
+      "orcid": "https://orcid.org/0000-0003-0825-0883",
+      "h_index": 78,
+      "i10_index": 369,
+      "works_count": 578,
+      "cited_by_count": 27669,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5056115552",
+      "display_name": "Qiang Du",
+      "orcid": "https://orcid.org/0000-0002-1067-8937",
+      "h_index": 78,
+      "i10_index": 258,
+      "works_count": 432,
+      "cited_by_count": 23318,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5044268173",
+      "display_name": "Guenter Ahlers",
+      "orcid": "https://orcid.org/0000-0002-8176-4664",
+      "h_index": 78,
+      "i10_index": 236,
+      "works_count": 438,
+      "cited_by_count": 19220,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5068628707",
+      "display_name": "Ivan Maruŝiĉ",
+      "orcid": "https://orcid.org/0000-0003-2700-8435",
+      "h_index": 78,
+      "i10_index": 217,
+      "works_count": 554,
+      "cited_by_count": 24600,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5052683313",
+      "display_name": "W. Rodi",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 181,
+      "works_count": 410,
+      "cited_by_count": 28103,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5040077936",
+      "display_name": "Andrea Saltelli",
+      "orcid": "https://orcid.org/0000-0003-4222-6975",
+      "h_index": 78,
+      "i10_index": 179,
+      "works_count": 419,
+      "cited_by_count": 56802,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Decision Sciences",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5066453821",
+      "display_name": "Peter V. Coveney",
+      "orcid": "https://orcid.org/0000-0002-8787-7256",
+      "h_index": 77,
+      "i10_index": 370,
+      "works_count": 750,
+      "cited_by_count": 23637,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5028427879",
+      "display_name": "M. van Sint Annaland",
+      "orcid": "https://orcid.org/0000-0002-2903-7443",
+      "h_index": 77,
+      "i10_index": 295,
+      "works_count": 551,
+      "cited_by_count": 22399,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5090707978",
+      "display_name": "Andrea Louise Bertozzi",
+      "orcid": "https://orcid.org/0000-0003-0396-7391",
+      "h_index": 77,
+      "i10_index": 255,
+      "works_count": 499,
+      "cited_by_count": 23022,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5027137900",
+      "display_name": "Dan S. Henningson",
+      "orcid": "https://orcid.org/0000-0001-7864-3071",
+      "h_index": 77,
+      "i10_index": 219,
+      "works_count": 545,
+      "cited_by_count": 24568,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5039105160",
+      "display_name": "D.B. Ingham",
+      "orcid": "https://orcid.org/0000-0002-4633-0852",
+      "h_index": 76,
+      "i10_index": 444,
+      "works_count": 861,
+      "cited_by_count": 23449,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Computational Mechanics -- 9.2",
+      "id": "https://openalex.org/A5056015724",
+      "display_name": "Boo Cheong Khoo",
+      "orcid": "https://orcid.org/0000-0003-4710-4598",
+      "h_index": 76,
+      "i10_index": 432,
+      "works_count": 796,
+      "cited_by_count": 22212,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5108068122",
+      "display_name": "Yuantong Gu",
+      "orcid": "https://orcid.org/0000-0002-2770-5014",
+      "h_index": 76,
+      "i10_index": 366,
+      "works_count": 692,
+      "cited_by_count": 26135,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5016426588",
+      "display_name": "Anuar Mohd Ishak",
+      "orcid": "https://orcid.org/0000-0002-2353-5919",
+      "h_index": 76,
+      "i10_index": 326,
+      "works_count": 544,
+      "cited_by_count": 20914,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5110448103",
+      "display_name": "Christoph Schwab",
+      "orcid": "https://orcid.org/0000-0002-7570-1472",
+      "h_index": 76,
+      "i10_index": 287,
+      "works_count": 623,
+      "cited_by_count": 21799,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5076283476",
+      "display_name": "Max Gunzburger",
+      "orcid": "https://orcid.org/0000-0003-0921-9079",
+      "h_index": 76,
+      "i10_index": 273,
+      "works_count": 517,
+      "cited_by_count": 25263,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5091196582",
+      "display_name": "Mark Andrew Ainsworth",
+      "orcid": "https://orcid.org/0000-0002-4899-1048",
+      "h_index": 76,
+      "i10_index": 231,
+      "works_count": 446,
+      "cited_by_count": 22877,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5034699997",
+      "display_name": "Alexander John Smits",
+      "orcid": "https://orcid.org/0000-0002-3883-8648",
+      "h_index": 76,
+      "i10_index": 225,
+      "works_count": 660,
+      "cited_by_count": 21024,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5059810716",
+      "display_name": "Qinjun Kang",
+      "orcid": "https://orcid.org/0000-0002-4754-2240",
+      "h_index": 76,
+      "i10_index": 157,
+      "works_count": 268,
+      "cited_by_count": 18099,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5053685870",
+      "display_name": "Irfan Anjum Badruddin",
+      "orcid": "https://orcid.org/0000-0002-2247-7999",
+      "h_index": 75,
+      "i10_index": 306,
+      "works_count": 497,
+      "cited_by_count": 23076,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5082124093",
+      "display_name": "Fernando J. Muzzio",
+      "orcid": "https://orcid.org/0000-0002-8822-9664",
+      "h_index": 75,
+      "i10_index": 263,
+      "works_count": 352,
+      "cited_by_count": 17639,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5072688935",
+      "display_name": "Robert Lee Taylor III",
+      "orcid": "https://orcid.org/0000-0002-9650-737X",
+      "h_index": 75,
+      "i10_index": 218,
+      "works_count": 490,
+      "cited_by_count": 35468,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Computational Mechanics -- 9.1",
+      "id": "https://openalex.org/A5051840350",
+      "display_name": "Françoise Brochard‐Wyart",
+      "orcid": "https://orcid.org/0000-0001-7455-5875",
+      "h_index": 75,
+      "i10_index": 201,
+      "works_count": 363,
+      "cited_by_count": 23961,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Computational Mechanics -- 9.0",
+      "id": "https://openalex.org/A5091258269",
+      "display_name": "Bernardo Cockburn",
+      "orcid": "https://orcid.org/0000-0001-6085-3441",
+      "h_index": 75,
+      "i10_index": 181,
+      "works_count": 252,
+      "cited_by_count": 36586,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Computational Mechanics -- 9.0",
+      "id": "https://openalex.org/A5066230869",
+      "display_name": "Albert J. Libchaber",
+      "orcid": "https://orcid.org/0009-0004-7874-9326",
+      "h_index": 75,
+      "i10_index": 152,
+      "works_count": 275,
+      "cited_by_count": 27168,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Computational Mechanics -- 9.0",
+      "id": "https://openalex.org/A5041097179",
+      "display_name": "Earl H. Dowell",
+      "orcid": "https://orcid.org/0000-0001-6687-2467",
+      "h_index": 74,
+      "i10_index": 375,
+      "works_count": 828,
+      "cited_by_count": 23338,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Computational Mechanics -- 9.0",
+      "id": "https://openalex.org/A5108403295",
+      "display_name": "R. A. Antonia",
+      "orcid": "https://orcid.org/0009-0004-8682-1391",
+      "h_index": 74,
+      "i10_index": 336,
+      "works_count": 590,
+      "cited_by_count": 24044,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Computational Mechanics -- 9.0",
+      "id": "https://openalex.org/A5000055792",
+      "display_name": "Cameron D. Tropea",
+      "orcid": "https://orcid.org/0000-0002-1506-9655",
+      "h_index": 74,
+      "i10_index": 332,
+      "works_count": 857,
+      "cited_by_count": 26384,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5089357934",
+      "display_name": "Yvon Maday",
+      "orcid": "https://orcid.org/0000-0002-0443-6544",
+      "h_index": 74,
+      "i10_index": 258,
+      "works_count": 499,
+      "cited_by_count": 22281,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5055086734",
+      "display_name": "Liang‐Shih Fan",
+      "orcid": "https://orcid.org/0000-0002-3892-5362",
+      "h_index": 74,
+      "i10_index": 258,
+      "works_count": 371,
+      "cited_by_count": 18627,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5077177539",
+      "display_name": "Sanjiva K. Lele",
+      "orcid": "https://orcid.org/0000-0003-0126-0915",
+      "h_index": 74,
+      "i10_index": 244,
+      "works_count": 637,
+      "cited_by_count": 31385,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5001942781",
+      "display_name": "Morteza Gharib",
+      "orcid": "https://orcid.org/0000-0003-0754-4193",
+      "h_index": 74,
+      "i10_index": 224,
+      "works_count": 603,
+      "cited_by_count": 20238,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5014584215",
+      "display_name": "Fotis Sotiropoulos",
+      "orcid": "https://orcid.org/0000-0003-4865-1999",
+      "h_index": 74,
+      "i10_index": 212,
+      "works_count": 514,
+      "cited_by_count": 17316,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Energy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5058132217",
+      "display_name": "Brian E. Launder",
+      "orcid": "https://orcid.org/0000-0002-5122-4894",
+      "h_index": 74,
+      "i10_index": 194,
+      "works_count": 466,
+      "cited_by_count": 54811,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5012425517",
+      "display_name": "Yves Pomeau",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 192,
+      "works_count": 445,
+      "cited_by_count": 24654,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5016949052",
+      "display_name": "J. P. Gollub",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 137,
+      "works_count": 316,
+      "cited_by_count": 18266,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5011875207",
+      "display_name": "Ilyas Khan",
+      "orcid": "https://orcid.org/0000-0002-2056-9371",
+      "h_index": 73,
+      "i10_index": 600,
+      "works_count": 898,
+      "cited_by_count": 24831,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5078293402",
+      "display_name": "Nikolaus A. Adams",
+      "orcid": "https://orcid.org/0000-0001-5048-8639",
+      "h_index": 73,
+      "i10_index": 260,
+      "works_count": 717,
+      "cited_by_count": 21535,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5030732775",
+      "display_name": "Vigor Yang",
+      "orcid": "https://orcid.org/0000-0003-4519-0234",
+      "h_index": 73,
+      "i10_index": 252,
+      "works_count": 496,
+      "cited_by_count": 20704,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Computational Mechanics -- 8.9",
+      "id": "https://openalex.org/A5031163364",
+      "display_name": "Fazle Hussain",
+      "orcid": "https://orcid.org/0000-0002-2209-9270",
+      "h_index": 73,
+      "i10_index": 240,
+      "works_count": 541,
+      "cited_by_count": 29021,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5111484618",
+      "display_name": "Michael S. Triantafyllou",
+      "orcid": "https://orcid.org/0000-0002-4960-7060",
+      "h_index": 73,
+      "i10_index": 238,
+      "works_count": 572,
+      "cited_by_count": 24518,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5068244186",
+      "display_name": "Rajat Mittal",
+      "orcid": "https://orcid.org/0000-0002-8107-9499",
+      "h_index": 73,
+      "i10_index": 221,
+      "works_count": 511,
+      "cited_by_count": 24021,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5010714351",
+      "display_name": "John S. Lowengrub",
+      "orcid": "https://orcid.org/0000-0003-1759-0900",
+      "h_index": 73,
+      "i10_index": 183,
+      "works_count": 352,
+      "cited_by_count": 20548,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5077509981",
+      "display_name": "Taseer Muhammad",
+      "orcid": "https://orcid.org/0000-0002-0838-2731",
+      "h_index": 72,
+      "i10_index": 563,
+      "works_count": 789,
+      "cited_by_count": 24664,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5006213939",
+      "display_name": "David Frederick Fletcher",
+      "orcid": "https://orcid.org/0000-0003-2221-4192",
+      "h_index": 72,
+      "i10_index": 277,
+      "works_count": 455,
+      "cited_by_count": 17379,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5061387217",
+      "display_name": "Stefan Luding",
+      "orcid": "https://orcid.org/0000-0001-7598-0929",
+      "h_index": 72,
+      "i10_index": 255,
+      "works_count": 852,
+      "cited_by_count": 18408,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5065685420",
+      "display_name": "D. Beysens",
+      "orcid": "https://orcid.org/0000-0002-7557-4928",
+      "h_index": 72,
+      "i10_index": 250,
+      "works_count": 564,
+      "cited_by_count": 16032,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5024841389",
+      "display_name": "Jan Baeyens",
+      "orcid": "https://orcid.org/0000-0001-6213-132X",
+      "h_index": 72,
+      "i10_index": 226,
+      "works_count": 412,
+      "cited_by_count": 32127,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5080574295",
+      "display_name": "F. H. Busse",
+      "orcid": "https://orcid.org/0000-0002-4166-9582",
+      "h_index": 72,
+      "i10_index": 224,
+      "works_count": 460,
+      "cited_by_count": 19067,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5037681511",
+      "display_name": "Jan S. Hesthaven",
+      "orcid": "https://orcid.org/0000-0001-8074-1586",
+      "h_index": 72,
+      "i10_index": 186,
+      "works_count": 420,
+      "cited_by_count": 23092,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5089732960",
+      "display_name": "Fernando Porté‐Agel",
+      "orcid": "https://orcid.org/0000-0002-9913-3350",
+      "h_index": 72,
+      "i10_index": 161,
+      "works_count": 449,
+      "cited_by_count": 20077,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Energy",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5073696154",
+      "display_name": "Franco Brezzi",
+      "orcid": "https://orcid.org/0000-0003-4715-5475",
+      "h_index": 72,
+      "i10_index": 152,
+      "works_count": 259,
+      "cited_by_count": 38833,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5078037189",
+      "display_name": "Nehad Ali Shah",
+      "orcid": "https://orcid.org/0000-0002-1949-5643",
+      "h_index": 71,
+      "i10_index": 324,
+      "works_count": 505,
+      "cited_by_count": 14473,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5025099904",
+      "display_name": "Peixue Jiang",
+      "orcid": "https://orcid.org/0000-0002-9777-8075",
+      "h_index": 71,
+      "i10_index": 266,
+      "works_count": 408,
+      "cited_by_count": 16233,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5077833180",
+      "display_name": "Gavin Walker",
+      "orcid": "https://orcid.org/0000-0003-4102-0019",
+      "h_index": 71,
+      "i10_index": 216,
+      "works_count": 335,
+      "cited_by_count": 19811,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Environmental Science",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5055235277",
+      "display_name": "Julio M. Ottino",
+      "orcid": "https://orcid.org/0000-0003-4813-3489",
+      "h_index": 71,
+      "i10_index": 216,
+      "works_count": 406,
+      "cited_by_count": 18164,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5051559583",
+      "display_name": "Michael Dumbser",
+      "orcid": "https://orcid.org/0000-0002-8201-8372",
+      "h_index": 71,
+      "i10_index": 186,
+      "works_count": 326,
+      "cited_by_count": 17031,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5030166628",
+      "display_name": "Zahir Shah",
+      "orcid": "https://orcid.org/0000-0002-5539-4225",
+      "h_index": 70,
+      "i10_index": 360,
+      "works_count": 502,
+      "cited_by_count": 17257,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5043578209",
+      "display_name": "Wolfgang Schröder",
+      "orcid": "https://orcid.org/0000-0002-3472-1813",
+      "h_index": 70,
+      "i10_index": 347,
+      "works_count": 1095,
+      "cited_by_count": 19239,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5001233392",
+      "display_name": "Sabir Ali Shehzad",
+      "orcid": "https://orcid.org/0000-0001-8359-9706",
+      "h_index": 70,
+      "i10_index": 296,
+      "works_count": 388,
+      "cited_by_count": 16236,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5056887719",
+      "display_name": "Roland Glowinski",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 255,
+      "works_count": 635,
+      "cited_by_count": 24635,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Computational Mechanics -- 8.8",
+      "id": "https://openalex.org/A5049834116",
+      "display_name": "Michael P. Païdoussis",
+      "orcid": "https://orcid.org/0000-0002-0516-6531",
+      "h_index": 70,
+      "i10_index": 251,
+      "works_count": 440,
+      "cited_by_count": 18543,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5033274288",
+      "display_name": "Tim Colonius",
+      "orcid": "https://orcid.org/0000-0003-0326-3909",
+      "h_index": 70,
+      "i10_index": 235,
+      "works_count": 616,
+      "cited_by_count": 25042,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5009909053",
+      "display_name": "Paul W. Cleary",
+      "orcid": "https://orcid.org/0000-0002-6481-3284",
+      "h_index": 70,
+      "i10_index": 215,
+      "works_count": 336,
+      "cited_by_count": 17135,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5061350734",
+      "display_name": "Spencer J. Sherwin",
+      "orcid": "https://orcid.org/0000-0001-7681-2820",
+      "h_index": 70,
+      "i10_index": 211,
+      "works_count": 480,
+      "cited_by_count": 19795,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5047149314",
+      "display_name": "Eberhard Bodenschatz",
+      "orcid": "https://orcid.org/0000-0002-2901-0144",
+      "h_index": 70,
+      "i10_index": 206,
+      "works_count": 627,
+      "cited_by_count": 18620,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5014278817",
+      "display_name": "Chris Baker",
+      "orcid": "https://orcid.org/0000-0001-7572-1871",
+      "h_index": 70,
+      "i10_index": 167,
+      "works_count": 267,
+      "cited_by_count": 14402,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5108554238",
+      "display_name": "Patrick Tabeling",
+      "orcid": "https://orcid.org/0000-0001-5468-2746",
+      "h_index": 70,
+      "i10_index": 158,
+      "works_count": 331,
+      "cited_by_count": 14821,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5038419345",
+      "display_name": "James A. Sethian",
+      "orcid": "https://orcid.org/0000-0002-7250-7789",
+      "h_index": 70,
+      "i10_index": 142,
+      "works_count": 236,
+      "cited_by_count": 51774,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5040226905",
+      "display_name": "Saeed Islam",
+      "orcid": "https://orcid.org/0000-0001-5263-4871",
+      "h_index": 69,
+      "i10_index": 316,
+      "works_count": 469,
+      "cited_by_count": 15191,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5064824230",
+      "display_name": "Hyung Jin Sung",
+      "orcid": "https://orcid.org/0000-0002-4671-3626",
+      "h_index": 69,
+      "i10_index": 310,
+      "works_count": 736,
+      "cited_by_count": 18848,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5082505917",
+      "display_name": "Zhiguo Qu",
+      "orcid": "https://orcid.org/0000-0003-1469-6152",
+      "h_index": 69,
+      "i10_index": 303,
+      "works_count": 478,
+      "cited_by_count": 18064,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5053323760",
+      "display_name": "Wolfgang A. Wall",
+      "orcid": "https://orcid.org/0000-0001-7419-3384",
+      "h_index": 69,
+      "i10_index": 282,
+      "works_count": 736,
+      "cited_by_count": 17962,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5000594901",
+      "display_name": "Iskander Tlili",
+      "orcid": "https://orcid.org/0000-0002-3007-5930",
+      "h_index": 69,
+      "i10_index": 265,
+      "works_count": 353,
+      "cited_by_count": 14442,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5062751298",
+      "display_name": "A‐Man Zhang",
+      "orcid": "https://orcid.org/0000-0003-1299-3049",
+      "h_index": 69,
+      "i10_index": 247,
+      "works_count": 332,
+      "cited_by_count": 16483,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5046395237",
+      "display_name": "N. Sandeep",
+      "orcid": "https://orcid.org/0000-0001-8295-0429",
+      "h_index": 69,
+      "i10_index": 220,
+      "works_count": 292,
+      "cited_by_count": 13156,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5017431306",
+      "display_name": "Karen E. Willcox",
+      "orcid": "https://orcid.org/0000-0003-2156-9338",
+      "h_index": 69,
+      "i10_index": 211,
+      "works_count": 415,
+      "cited_by_count": 24678,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5018352470",
+      "display_name": "Kenji Takizawa",
+      "orcid": "https://orcid.org/0000-0003-1172-113X",
+      "h_index": 69,
+      "i10_index": 190,
+      "works_count": 408,
+      "cited_by_count": 13702,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5002237478",
+      "display_name": "Fulvio Scarano",
+      "orcid": "https://orcid.org/0000-0003-2755-6669",
+      "h_index": 69,
+      "i10_index": 185,
+      "works_count": 452,
+      "cited_by_count": 21183,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5016099408",
+      "display_name": "John Andrew Evans",
+      "orcid": "https://orcid.org/0000-0002-1973-1458",
+      "h_index": 69,
+      "i10_index": 184,
+      "works_count": 421,
+      "cited_by_count": 21117,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5112829111",
+      "display_name": "C. L. Tien",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 177,
+      "works_count": 269,
+      "cited_by_count": 16914,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5080617716",
+      "display_name": "Annick G. Pouquet",
+      "orcid": "https://orcid.org/0000-0002-2355-2671",
+      "h_index": 69,
+      "i10_index": 162,
+      "works_count": 361,
+      "cited_by_count": 15615,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5088466985",
+      "display_name": "Jiyuan Y. Tu",
+      "orcid": "https://orcid.org/0000-0002-1264-4837",
+      "h_index": 68,
+      "i10_index": 435,
+      "works_count": 936,
+      "cited_by_count": 18964,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Computational Mechanics -- 8.7",
+      "id": "https://openalex.org/A5086013783",
+      "display_name": "Jesse Zhu",
+      "orcid": "https://orcid.org/0000-0001-7749-8917",
+      "h_index": 68,
+      "i10_index": 401,
+      "works_count": 654,
+      "cited_by_count": 20415,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5060238164",
+      "display_name": "Masood Khan",
+      "orcid": "https://orcid.org/0000-0003-4404-1456",
+      "h_index": 68,
+      "i10_index": 360,
+      "works_count": 450,
+      "cited_by_count": 17493,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5100375460",
+      "display_name": "Xinxin Zhang",
+      "orcid": "https://orcid.org/0000-0002-2767-8570",
+      "h_index": 68,
+      "i10_index": 303,
+      "works_count": 543,
+      "cited_by_count": 16506,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5059930044",
+      "display_name": "Darryl D. Holm",
+      "orcid": "https://orcid.org/0000-0001-6362-9912",
+      "h_index": 68,
+      "i10_index": 258,
+      "works_count": 599,
+      "cited_by_count": 23896,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5072178531",
+      "display_name": "Yurong He",
+      "orcid": "https://orcid.org/0000-0003-3009-0468",
+      "h_index": 68,
+      "i10_index": 227,
+      "works_count": 320,
+      "cited_by_count": 15675,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5074305055",
+      "display_name": "Mustafa Türkyılmazoğlu",
+      "orcid": "https://orcid.org/0000-0002-5043-3379",
+      "h_index": 68,
+      "i10_index": 218,
+      "works_count": 291,
+      "cited_by_count": 13696,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5030002366",
+      "display_name": "Elaine S. Oran",
+      "orcid": "https://orcid.org/0000-0002-6280-3672",
+      "h_index": 68,
+      "i10_index": 195,
+      "works_count": 551,
+      "cited_by_count": 17587,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5069268724",
+      "display_name": "John B. Bell",
+      "orcid": "https://orcid.org/0000-0002-5749-334X",
+      "h_index": 68,
+      "i10_index": 193,
+      "works_count": 437,
+      "cited_by_count": 19981,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5108197016",
+      "display_name": "Milorad P. Dudukovic",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 191,
+      "works_count": 274,
+      "cited_by_count": 13840,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5072355478",
+      "display_name": "Eitan Tadmor",
+      "orcid": "https://orcid.org/0000-0001-7424-6327",
+      "h_index": 68,
+      "i10_index": 157,
+      "works_count": 237,
+      "cited_by_count": 22549,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5083334491",
+      "display_name": "Ronald J. Adrian",
+      "orcid": "https://orcid.org/0000-0001-9201-0510",
+      "h_index": 68,
+      "i10_index": 155,
+      "works_count": 431,
+      "cited_by_count": 34397,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5063350067",
+      "display_name": "Anthony T. Patera",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 152,
+      "works_count": 287,
+      "cited_by_count": 21918,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5114016862",
+      "display_name": "George M. Homsy",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 145,
+      "works_count": 287,
+      "cited_by_count": 15210,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5112052610",
+      "display_name": "Philip Geoffrey Saffman",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 140,
+      "works_count": 219,
+      "cited_by_count": 31319,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5048053471",
+      "display_name": "Fateh Mebarek‐Oudina",
+      "orcid": "https://orcid.org/0000-0001-6145-8195",
+      "h_index": 68,
+      "i10_index": 132,
+      "works_count": 211,
+      "cited_by_count": 9605,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5089443428",
+      "display_name": "Faïçal Larachi",
+      "orcid": "https://orcid.org/0000-0002-0127-4738",
+      "h_index": 67,
+      "i10_index": 342,
+      "works_count": 536,
+      "cited_by_count": 18273,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5054985021",
+      "display_name": "Muhammad Yousaf Malik",
+      "orcid": "https://orcid.org/0000-0002-5301-4145",
+      "h_index": 67,
+      "i10_index": 329,
+      "works_count": 424,
+      "cited_by_count": 15965,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5028459373",
+      "display_name": "R. Viskanta",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 314,
+      "works_count": 549,
+      "cited_by_count": 20050,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5049271409",
+      "display_name": "Ishak Hashim",
+      "orcid": "https://orcid.org/0000-0003-4237-7140",
+      "h_index": 67,
+      "i10_index": 314,
+      "works_count": 575,
+      "cited_by_count": 15485,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5029758740",
+      "display_name": "Jia Wei Chew",
+      "orcid": "https://orcid.org/0000-0002-6603-1649",
+      "h_index": 67,
+      "i10_index": 283,
+      "works_count": 400,
+      "cited_by_count": 18267,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Environmental Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5060841915",
+      "display_name": "Ballajja Chandrappa Prasannakumara",
+      "orcid": "https://orcid.org/0000-0003-1950-4666",
+      "h_index": 67,
+      "i10_index": 236,
+      "works_count": 281,
+      "cited_by_count": 13101,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5017099728",
+      "display_name": "Luca Brandt",
+      "orcid": "https://orcid.org/0000-0002-4346-4732",
+      "h_index": 67,
+      "i10_index": 219,
+      "works_count": 490,
+      "cited_by_count": 14854,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Computational Mechanics -- 8.6",
+      "id": "https://openalex.org/A5000765124",
+      "display_name": "Mojtaba Ghadiri",
+      "orcid": "https://orcid.org/0000-0003-0479-2845",
+      "h_index": 67,
+      "i10_index": 217,
+      "works_count": 338,
+      "cited_by_count": 15146,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5004381013",
+      "display_name": "Frieder G. Mugele",
+      "orcid": "https://orcid.org/0000-0003-3824-3617",
+      "h_index": 67,
+      "i10_index": 215,
+      "works_count": 483,
+      "cited_by_count": 16579,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5051390140",
+      "display_name": "Odd M. Faltinsen",
+      "orcid": "https://orcid.org/0000-0002-5609-1074",
+      "h_index": 67,
+      "i10_index": 203,
+      "works_count": 395,
+      "cited_by_count": 18991,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5004354331",
+      "display_name": "Bo G Leckner",
+      "orcid": "https://orcid.org/0000-0002-4858-7045",
+      "h_index": 67,
+      "i10_index": 196,
+      "works_count": 459,
+      "cited_by_count": 17320,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5090955190",
+      "display_name": "Sankaran Sundaresan",
+      "orcid": "https://orcid.org/0000-0002-5868-1975",
+      "h_index": 67,
+      "i10_index": 184,
+      "works_count": 292,
+      "cited_by_count": 14216,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5075006459",
+      "display_name": "Grétar Tryggvason",
+      "orcid": "https://orcid.org/0000-0002-9884-8901",
+      "h_index": 67,
+      "i10_index": 165,
+      "works_count": 439,
+      "cited_by_count": 19142,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5055835028",
+      "display_name": "Charles S. Peskin",
+      "orcid": "https://orcid.org/0000-0003-3749-9864",
+      "h_index": 67,
+      "i10_index": 162,
+      "works_count": 328,
+      "cited_by_count": 32127,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5112213883",
+      "display_name": "Stephen Whitaker",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 144,
+      "works_count": 314,
+      "cited_by_count": 23362,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Environmental Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5086500715",
+      "display_name": "Christian Oliver Paschereit",
+      "orcid": "https://orcid.org/0000-0001-7899-2685",
+      "h_index": 66,
+      "i10_index": 334,
+      "works_count": 1080,
+      "cited_by_count": 15804,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5001997189",
+      "display_name": "Philipp Schlatter",
+      "orcid": "https://orcid.org/0000-0001-9627-5903",
+      "h_index": 66,
+      "i10_index": 233,
+      "works_count": 585,
+      "cited_by_count": 19275,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5064227757",
+      "display_name": "Vivek Vinayak Ranade",
+      "orcid": "https://orcid.org/0000-0003-0558-6971",
+      "h_index": 66,
+      "i10_index": 217,
+      "works_count": 439,
+      "cited_by_count": 13604,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5030754859",
+      "display_name": "Shinichi A. Ookawara",
+      "orcid": "https://orcid.org/0000-0002-7912-3403",
+      "h_index": 66,
+      "i10_index": 193,
+      "works_count": 406,
+      "cited_by_count": 12534,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5005311880",
+      "display_name": "Rajesh N. Davé",
+      "orcid": "https://orcid.org/0000-0001-7706-2259",
+      "h_index": 66,
+      "i10_index": 184,
+      "works_count": 289,
+      "cited_by_count": 14639,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5052429979",
+      "display_name": "Stephan Herminghaus",
+      "orcid": "https://orcid.org/0000-0003-0711-664X",
+      "h_index": 66,
+      "i10_index": 180,
+      "works_count": 329,
+      "cited_by_count": 19839,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5059098475",
+      "display_name": "Philippe R. Spalart",
+      "orcid": "https://orcid.org/0000-0002-2872-7661",
+      "h_index": 66,
+      "i10_index": 177,
+      "works_count": 321,
+      "cited_by_count": 41800,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5006138292",
+      "display_name": "Roger Ghanem",
+      "orcid": "https://orcid.org/0000-0002-1890-920X",
+      "h_index": 66,
+      "i10_index": 175,
+      "works_count": 417,
+      "cited_by_count": 21964,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5004827664",
+      "display_name": "Yasuo Kawaguchi",
+      "orcid": "https://orcid.org/0000-0002-7483-8362",
+      "h_index": 66,
+      "i10_index": 168,
+      "works_count": 507,
+      "cited_by_count": 21427,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Neuroscience",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5103121024",
+      "display_name": "Christopher K. W. Tam",
+      "orcid": "https://orcid.org/0000-0002-9422-9644",
+      "h_index": 66,
+      "i10_index": 158,
+      "works_count": 363,
+      "cited_by_count": 19255,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5062395408",
+      "display_name": "U. Frisch",
+      "orcid": "https://orcid.org/0000-0002-1470-7205",
+      "h_index": 66,
+      "i10_index": 151,
+      "works_count": 311,
+      "cited_by_count": 28105,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Mathematics",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5064516810",
+      "display_name": "Javier Jiménez",
+      "orcid": "https://orcid.org/0000-0003-0755-843X",
+      "h_index": 66,
+      "i10_index": 128,
+      "works_count": 379,
+      "cited_by_count": 22116,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5041078095",
+      "display_name": "Abdul Sattar Dogonchi",
+      "orcid": "https://orcid.org/0000-0003-3153-1851",
+      "h_index": 66,
+      "i10_index": 97,
+      "works_count": 100,
+      "cited_by_count": 9133,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5111537132",
+      "display_name": "Osman Anwar Bég",
+      "orcid": "https://orcid.org/0000-0001-5925-6711",
+      "h_index": 65,
+      "i10_index": 342,
+      "works_count": 532,
+      "cited_by_count": 16132,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5075395567",
+      "display_name": "Johannes Khinast",
+      "orcid": "https://orcid.org/0000-0002-2076-1822",
+      "h_index": 65,
+      "i10_index": 305,
+      "works_count": 807,
+      "cited_by_count": 14916,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Computational Mechanics -- 8.5",
+      "id": "https://openalex.org/A5086899202",
+      "display_name": "Bijjanal Jayanna Gireesha",
+      "orcid": "https://orcid.org/0000-0002-4761-1082",
+      "h_index": 65,
+      "i10_index": 299,
+      "works_count": 492,
+      "cited_by_count": 14082,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5035789002",
+      "display_name": "S. Balachandar",
+      "orcid": "https://orcid.org/0000-0003-3619-3695",
+      "h_index": 65,
+      "i10_index": 258,
+      "works_count": 676,
+      "cited_by_count": 21286,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5004341878",
+      "display_name": "Miguel R. Visbal",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 253,
+      "works_count": 476,
+      "cited_by_count": 18358,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5020484604",
+      "display_name": "Roberto Verzicco",
+      "orcid": "https://orcid.org/0000-0002-2690-9998",
+      "h_index": 65,
+      "i10_index": 217,
+      "works_count": 509,
+      "cited_by_count": 15646,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5108356751",
+      "display_name": "J. Peraire",
+      "orcid": "https://orcid.org/0000-0002-8556-685X",
+      "h_index": 65,
+      "i10_index": 216,
+      "works_count": 449,
+      "cited_by_count": 17931,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5040750454",
+      "display_name": "Wei Huang",
+      "orcid": "https://orcid.org/0000-0001-9805-985X",
+      "h_index": 65,
+      "i10_index": 205,
+      "works_count": 347,
+      "cited_by_count": 13041,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5038334215",
+      "display_name": "James G. Glimm",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 196,
+      "works_count": 635,
+      "cited_by_count": 15854,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5029573210",
+      "display_name": "Ionel Michael Navon",
+      "orcid": "https://orcid.org/0000-0001-7830-7094",
+      "h_index": 65,
+      "i10_index": 195,
+      "works_count": 320,
+      "cited_by_count": 12744,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5067000740",
+      "display_name": "Kenneth Breuer",
+      "orcid": "https://orcid.org/0000-0002-5122-2231",
+      "h_index": 65,
+      "i10_index": 193,
+      "works_count": 528,
+      "cited_by_count": 13340,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5077459315",
+      "display_name": "S. Chandra",
+      "orcid": "https://orcid.org/0000-0001-7661-4525",
+      "h_index": 65,
+      "i10_index": 176,
+      "works_count": 379,
+      "cited_by_count": 15914,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5049331711",
+      "display_name": "Omar N. Ghattas",
+      "orcid": "https://orcid.org/0000-0001-7742-2509",
+      "h_index": 65,
+      "i10_index": 142,
+      "works_count": 267,
+      "cited_by_count": 14138,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5103049427",
+      "display_name": "J. S. Turner",
+      "orcid": "https://orcid.org/0000-0003-3392-0316",
+      "h_index": 65,
+      "i10_index": 105,
+      "works_count": 151,
+      "cited_by_count": 24319,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5044592175",
+      "display_name": "Mostafa Barzegar Gerdroodbary",
+      "orcid": "https://orcid.org/0000-0002-8243-9476",
+      "h_index": 65,
+      "i10_index": 105,
+      "works_count": 136,
+      "cited_by_count": 8591,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5008977788",
+      "display_name": "Kuppalapalle Vajravelu",
+      "orcid": "https://orcid.org/0000-0003-0213-5630",
+      "h_index": 64,
+      "i10_index": 290,
+      "works_count": 479,
+      "cited_by_count": 15014,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5033445616",
+      "display_name": "Kai Hong Luo",
+      "orcid": "https://orcid.org/0000-0003-4023-7259",
+      "h_index": 64,
+      "i10_index": 279,
+      "works_count": 509,
+      "cited_by_count": 18354,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5057930491",
+      "display_name": "Kolumban Hutter",
+      "orcid": "https://orcid.org/0000-0003-4512-5264",
+      "h_index": 64,
+      "i10_index": 251,
+      "works_count": 626,
+      "cited_by_count": 17124,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5100344439",
+      "display_name": "Wei Chen",
+      "orcid": "https://orcid.org/0000-0002-4653-7124",
+      "h_index": 64,
+      "i10_index": 230,
+      "works_count": 397,
+      "cited_by_count": 16909,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Materials Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5030435894",
+      "display_name": "Rainald Löhner",
+      "orcid": "https://orcid.org/0000-0003-0083-5131",
+      "h_index": 64,
+      "i10_index": 230,
+      "works_count": 532,
+      "cited_by_count": 15275,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5004033194",
+      "display_name": "Zhaoli Guo",
+      "orcid": "https://orcid.org/0000-0002-2922-5268",
+      "h_index": 64,
+      "i10_index": 220,
+      "works_count": 347,
+      "cited_by_count": 20801,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5040904742",
+      "display_name": "Pierre Ladevèze",
+      "orcid": "https://orcid.org/0000-0003-2995-5196",
+      "h_index": 64,
+      "i10_index": 217,
+      "works_count": 690,
+      "cited_by_count": 16805,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5070104179",
+      "display_name": "Donald A. Nield",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 210,
+      "works_count": 306,
+      "cited_by_count": 22262,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5112364821",
+      "display_name": "C. Jim Lim",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 202,
+      "works_count": 240,
+      "cited_by_count": 13006,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Computational Mechanics -- 8.4",
+      "id": "https://openalex.org/A5079420272",
+      "display_name": "E. Rank",
+      "orcid": "https://orcid.org/0000-0002-2419-313X",
+      "h_index": 64,
+      "i10_index": 185,
+      "works_count": 535,
+      "cited_by_count": 13066,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5048005086",
+      "display_name": "Khellil Sefiane",
+      "orcid": "https://orcid.org/0000-0003-3300-0210",
+      "h_index": 64,
+      "i10_index": 185,
+      "works_count": 517,
+      "cited_by_count": 12742,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5044925111",
+      "display_name": "Joseph Katz",
+      "orcid": "https://orcid.org/0000-0001-9067-2473",
+      "h_index": 64,
+      "i10_index": 181,
+      "works_count": 398,
+      "cited_by_count": 15469,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5052825919",
+      "display_name": "George Haller",
+      "orcid": "https://orcid.org/0000-0003-1260-877X",
+      "h_index": 64,
+      "i10_index": 176,
+      "works_count": 407,
+      "cited_by_count": 17811,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Mathematics",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5013515385",
+      "display_name": "Xiaofeng Yang",
+      "orcid": "https://orcid.org/0000-0001-7382-3006",
+      "h_index": 64,
+      "i10_index": 170,
+      "works_count": 271,
+      "cited_by_count": 12664,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5024390567",
+      "display_name": "Bruno Sudret",
+      "orcid": "https://orcid.org/0000-0002-9501-7395",
+      "h_index": 64,
+      "i10_index": 167,
+      "works_count": 569,
+      "cited_by_count": 22650,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5089407146",
+      "display_name": "Omar Kamal Matar",
+      "orcid": "https://orcid.org/0000-0002-0530-8317",
+      "h_index": 63,
+      "i10_index": 273,
+      "works_count": 801,
+      "cited_by_count": 14590,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5030362122",
+      "display_name": "Thomas De Beer",
+      "orcid": "https://orcid.org/0000-0001-6296-0443",
+      "h_index": 63,
+      "i10_index": 268,
+      "works_count": 468,
+      "cited_by_count": 13798,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5035687670",
+      "display_name": "Richard V. Craster",
+      "orcid": "https://orcid.org/0000-0001-9799-9639",
+      "h_index": 63,
+      "i10_index": 253,
+      "works_count": 557,
+      "cited_by_count": 15459,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5049616413",
+      "display_name": "Ricardo Vinuesa",
+      "orcid": "https://orcid.org/0000-0001-6570-5499",
+      "h_index": 63,
+      "i10_index": 200,
+      "works_count": 457,
+      "cited_by_count": 18068,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5054726175",
+      "display_name": "Stephen H. Davis",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 194,
+      "works_count": 403,
+      "cited_by_count": 19749,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5042632861",
+      "display_name": "Niels Gerbrand Deen",
+      "orcid": "https://orcid.org/0000-0003-4159-3909",
+      "h_index": 63,
+      "i10_index": 184,
+      "works_count": 366,
+      "cited_by_count": 14984,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5062194228",
+      "display_name": "Ashim Kumar Datta",
+      "orcid": "https://orcid.org/0000-0002-1397-6892",
+      "h_index": 63,
+      "i10_index": 180,
+      "works_count": 295,
+      "cited_by_count": 12726,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5062242845",
+      "display_name": "Massoud Kaviany",
+      "orcid": "https://orcid.org/0000-0002-3183-6877",
+      "h_index": 63,
+      "i10_index": 171,
+      "works_count": 381,
+      "cited_by_count": 16871,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5110234826",
+      "display_name": "Willibrordus P.M. Van Swaaij",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 169,
+      "works_count": 313,
+      "cited_by_count": 16861,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5044149519",
+      "display_name": "Haecheon Choi",
+      "orcid": "https://orcid.org/0000-0003-0696-847X",
+      "h_index": 63,
+      "i10_index": 136,
+      "works_count": 538,
+      "cited_by_count": 17575,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Computational Mechanics -- 8.3",
+      "id": "https://openalex.org/A5018874846",
+      "display_name": "Nicholas T. Hutchins",
+      "orcid": "https://orcid.org/0000-0003-1599-002X",
+      "h_index": 63,
+      "i10_index": 134,
+      "works_count": 351,
+      "cited_by_count": 14796,
+      "discipline": "Computational Mechanics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Computational Mechanics",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    }
+  ]
+}

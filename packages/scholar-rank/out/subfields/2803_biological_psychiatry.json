@@ -1,0 +1,323 @@
+{
+  "kind": "subfield",
+  "id": 2803,
+  "name": "Biological Psychiatry",
+  "total_in_scrape": 16,
+  "count": 16,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Biological Psychiatry -- 9.9",
+      "id": "https://openalex.org/A5032880777",
+      "display_name": "Michael H. J. Maes",
+      "orcid": "https://orcid.org/0000-0002-2012-871X",
+      "h_index": 146,
+      "i10_index": 907,
+      "works_count": 1508,
+      "cited_by_count": 90867,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Biological Psychiatry -- 9.9",
+      "id": "https://openalex.org/A5078488552",
+      "display_name": "Robert Dantzer",
+      "orcid": "https://orcid.org/0000-0001-9399-6107",
+      "h_index": 126,
+      "i10_index": 454,
+      "works_count": 916,
+      "cited_by_count": 65823,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Biological Psychiatry -- 9.9",
+      "id": "https://openalex.org/A5076322374",
+      "display_name": "Andrew H. Miller",
+      "orcid": "https://orcid.org/0000-0001-8260-7997",
+      "h_index": 111,
+      "i10_index": 288,
+      "works_count": 542,
+      "cited_by_count": 69489,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Biological Psychiatry -- 9.9",
+      "id": "https://openalex.org/A5081156604",
+      "display_name": "Dietmar Fuchs",
+      "orcid": "https://orcid.org/0000-0003-1627-9563",
+      "h_index": 106,
+      "i10_index": 637,
+      "works_count": 1080,
+      "cited_by_count": 45591,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Biological Psychiatry -- 9.9",
+      "id": "https://openalex.org/A5075562396",
+      "display_name": "Gilles J. Guillemin",
+      "orcid": "https://orcid.org/0000-0001-8105-4470",
+      "h_index": 97,
+      "i10_index": 319,
+      "works_count": 555,
+      "cited_by_count": 33199,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Biological Psychiatry -- 9.9",
+      "id": "https://openalex.org/A5016792975",
+      "display_name": "Keith W. Kelley",
+      "orcid": "https://orcid.org/0000-0002-6837-8793",
+      "h_index": 93,
+      "i10_index": 264,
+      "works_count": 419,
+      "cited_by_count": 38904,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Biological Psychiatry -- 9.8",
+      "id": "https://openalex.org/A5049171963",
+      "display_name": "Robert M. Schwarcz",
+      "orcid": "https://orcid.org/0000-0003-0486-129X",
+      "h_index": 90,
+      "i10_index": 270,
+      "works_count": 340,
+      "cited_by_count": 30161,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Biological Psychiatry -- 9.8",
+      "id": "https://openalex.org/A5108009774",
+      "display_name": "Norbert Müller",
+      "orcid": "https://orcid.org/0000-0001-6653-9103",
+      "h_index": 87,
+      "i10_index": 379,
+      "works_count": 720,
+      "cited_by_count": 27408,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Biological Psychiatry -- 9.8",
+      "id": "https://openalex.org/A5100682436",
+      "display_name": "Markus Schwarz",
+      "orcid": "https://orcid.org/0000-0001-8895-3743",
+      "h_index": 81,
+      "i10_index": 212,
+      "works_count": 390,
+      "cited_by_count": 23537,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Biological Psychiatry -- 9.8",
+      "id": "https://openalex.org/A5064433833",
+      "display_name": "George Anderson",
+      "orcid": "https://orcid.org/0000-0001-7243-0817",
+      "h_index": 75,
+      "i10_index": 210,
+      "works_count": 287,
+      "cited_by_count": 19088,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Biological Psychiatry -- 9.8",
+      "id": "https://openalex.org/A5087422318",
+      "display_name": "Günter Kenis",
+      "orcid": "https://orcid.org/0000-0002-1263-0590",
+      "h_index": 72,
+      "i10_index": 155,
+      "works_count": 252,
+      "cited_by_count": 20624,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Biological Psychiatry -- 9.8",
+      "id": "https://openalex.org/A5127651838",
+      "display_name": "Urs Meyer",
+      "orcid": "https://orcid.org/0000-0001-7244-0345",
+      "h_index": 72,
+      "i10_index": 123,
+      "works_count": 247,
+      "cited_by_count": 17478,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Biological Psychiatry -- 9.8",
+      "id": "https://openalex.org/A5024726266",
+      "display_name": "Charles L. Raison",
+      "orcid": "https://orcid.org/0000-0001-6687-0066",
+      "h_index": 69,
+      "i10_index": 147,
+      "works_count": 315,
+      "cited_by_count": 36407,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Biological Psychiatry -- 9.8",
+      "id": "https://openalex.org/A5077418824",
+      "display_name": "Simon N. Young",
+      "orcid": "https://orcid.org/0000-0001-9666-8096",
+      "h_index": 68,
+      "i10_index": 203,
+      "works_count": 306,
+      "cited_by_count": 15399,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Biological Psychiatry -- 9.8",
+      "id": "https://openalex.org/A5064378634",
+      "display_name": "Juan Carlos Leza",
+      "orcid": "https://orcid.org/0000-0002-9901-0094",
+      "h_index": 67,
+      "i10_index": 203,
+      "works_count": 316,
+      "cited_by_count": 14090,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Biological Psychiatry -- 9.8",
+      "id": "https://openalex.org/A5052650172",
+      "display_name": "Neil Andrew Harrison",
+      "orcid": "https://orcid.org/0000-0002-9584-3769",
+      "h_index": 67,
+      "i10_index": 139,
+      "works_count": 312,
+      "cited_by_count": 18684,
+      "discipline": "Biological Psychiatry",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Biological Psychiatry",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    }
+  ]
+}

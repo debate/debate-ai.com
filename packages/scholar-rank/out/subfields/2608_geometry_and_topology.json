@@ -1,0 +1,217 @@
+{
+  "kind": "subfield",
+  "id": 2608,
+  "name": "Geometry and Topology",
+  "total_in_scrape": 11,
+  "count": 11,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Geometry and Topology -- 9.9",
+      "id": "https://openalex.org/A5006865040",
+      "display_name": "Shing–Tung Yau",
+      "orcid": "https://orcid.org/0000-0003-3394-2187",
+      "h_index": 116,
+      "i10_index": 558,
+      "works_count": 1502,
+      "cited_by_count": 60907,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Geometry and Topology -- 9.9",
+      "id": "https://openalex.org/A5053868357",
+      "display_name": "Philip J. Holmes",
+      "orcid": "https://orcid.org/0000-0002-1459-7157",
+      "h_index": 80,
+      "i10_index": 247,
+      "works_count": 462,
+      "cited_by_count": 47872,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Physics and Astronomy",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Geometry and Topology -- 9.9",
+      "id": "https://openalex.org/A5042327004",
+      "display_name": "Michael Francis Atiyah",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 159,
+      "works_count": 451,
+      "cited_by_count": 42448,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Geometry and Topology -- 9.9",
+      "id": "https://openalex.org/A5109260257",
+      "display_name": "Vladimir I. Arnold",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 243,
+      "works_count": 827,
+      "cited_by_count": 41715,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Geometry and Topology -- 9.9",
+      "id": "https://openalex.org/A5068411152",
+      "display_name": "John Milnor",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 128,
+      "works_count": 322,
+      "cited_by_count": 36048,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Geometry and Topology -- 9.9",
+      "id": "https://openalex.org/A5075669127",
+      "display_name": "A. A. Morozov",
+      "orcid": "https://orcid.org/0009-0006-2971-149X",
+      "h_index": 72,
+      "i10_index": 340,
+      "works_count": 578,
+      "cited_by_count": 18032,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Geometry and Topology -- 9.8",
+      "id": "https://openalex.org/A5024923217",
+      "display_name": "Saharon Shelah",
+      "orcid": "https://orcid.org/0000-0003-0462-3152",
+      "h_index": 71,
+      "i10_index": 615,
+      "works_count": 1552,
+      "cited_by_count": 28292,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Geometry and Topology -- 9.8",
+      "id": "https://openalex.org/A5020587578",
+      "display_name": "Masaki Kashiwara",
+      "orcid": "https://orcid.org/0000-0001-6851-7581",
+      "h_index": 66,
+      "i10_index": 183,
+      "works_count": 416,
+      "cited_by_count": 19711,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Geometry and Topology -- 9.8",
+      "id": "https://openalex.org/A5112196549",
+      "display_name": "David B. Mumford",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 111,
+      "works_count": 350,
+      "cited_by_count": 28373,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Geometry and Topology -- 9.8",
+      "id": "https://openalex.org/A5046015548",
+      "display_name": "Jaume Llibre",
+      "orcid": "https://orcid.org/0000-0002-9511-5999",
+      "h_index": 65,
+      "i10_index": 553,
+      "works_count": 1539,
+      "cited_by_count": 21506,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Geometry and Topology -- 9.8",
+      "id": "https://openalex.org/A5018563718",
+      "display_name": "John M. Guckenheimer",
+      "orcid": "https://orcid.org/0000-0001-6655-7862",
+      "h_index": 64,
+      "i10_index": 144,
+      "works_count": 282,
+      "cited_by_count": 26829,
+      "discipline": "Geometry and Topology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Geometry and Topology",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    }
+  ]
+}

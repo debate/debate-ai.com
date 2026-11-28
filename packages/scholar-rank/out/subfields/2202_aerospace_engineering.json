@@ -1,0 +1,663 @@
+{
+  "kind": "subfield",
+  "id": 2202,
+  "name": "Aerospace Engineering",
+  "total_in_scrape": 34,
+  "count": 34,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Aerospace Engineering -- 9.9",
+      "id": "https://openalex.org/A5053939876",
+      "display_name": "George V. Lauder",
+      "orcid": "https://orcid.org/0000-0003-0731-286X",
+      "h_index": 104,
+      "i10_index": 278,
+      "works_count": 441,
+      "cited_by_count": 33397,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Aerospace Engineering -- 9.9",
+      "id": "https://openalex.org/A5007305559",
+      "display_name": "Daniel John Inman",
+      "orcid": "https://orcid.org/0000-0001-6195-1334",
+      "h_index": 96,
+      "i10_index": 465,
+      "works_count": 1062,
+      "cited_by_count": 55135,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Aerospace Engineering -- 9.9",
+      "id": "https://openalex.org/A5063992481",
+      "display_name": "Michael H. Dickinson",
+      "orcid": "https://orcid.org/0000-0002-8587-9936",
+      "h_index": 96,
+      "i10_index": 181,
+      "works_count": 342,
+      "cited_by_count": 31424,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Aerospace Engineering -- 9.9",
+      "id": "https://openalex.org/A5059369445",
+      "display_name": "Dario Floreano",
+      "orcid": "https://orcid.org/0000-0002-5330-4863",
+      "h_index": 94,
+      "i10_index": 313,
+      "works_count": 557,
+      "cited_by_count": 34758,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Aerospace Engineering -- 9.9",
+      "id": "https://openalex.org/A5019392883",
+      "display_name": "Peter Willett",
+      "orcid": "https://orcid.org/0000-0001-8443-5586",
+      "h_index": 91,
+      "i10_index": 584,
+      "works_count": 1188,
+      "cited_by_count": 47635,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Computer Science",
+        "Engineering",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Aerospace Engineering -- 9.9",
+      "id": "https://openalex.org/A5021928700",
+      "display_name": "Daniel J. Scheeres",
+      "orcid": "https://orcid.org/0000-0003-0558-3842",
+      "h_index": 88,
+      "i10_index": 406,
+      "works_count": 1189,
+      "cited_by_count": 31107,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5002602051",
+      "display_name": "Joaquim R. R. A. Martins",
+      "orcid": "https://orcid.org/0000-0003-2143-1478",
+      "h_index": 85,
+      "i10_index": 296,
+      "works_count": 515,
+      "cited_by_count": 27651,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5044127482",
+      "display_name": "Yaakov Bar‐Shalom",
+      "orcid": "https://orcid.org/0000-0003-1317-3368",
+      "h_index": 83,
+      "i10_index": 356,
+      "works_count": 764,
+      "cited_by_count": 45288,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5100402458",
+      "display_name": "Jian Li",
+      "orcid": "https://orcid.org/0000-0002-0030-1423",
+      "h_index": 83,
+      "i10_index": 328,
+      "works_count": 745,
+      "cited_by_count": 30463,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5007661434",
+      "display_name": "Moeness G. Amin",
+      "orcid": "https://orcid.org/0000-0002-0926-4120",
+      "h_index": 82,
+      "i10_index": 447,
+      "works_count": 882,
+      "cited_by_count": 27369,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5005072193",
+      "display_name": "Chunxiao Jiang",
+      "orcid": "https://orcid.org/0000-0002-3703-121X",
+      "h_index": 79,
+      "i10_index": 380,
+      "works_count": 719,
+      "cited_by_count": 27204,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5059663096",
+      "display_name": "Peter J. G. Teunissen",
+      "orcid": "https://orcid.org/0000-0003-4143-6006",
+      "h_index": 78,
+      "i10_index": 265,
+      "works_count": 462,
+      "cited_by_count": 23581,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Mathematics",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5018635001",
+      "display_name": "Maurizio Porfiri",
+      "orcid": "https://orcid.org/0000-0002-1480-3539",
+      "h_index": 75,
+      "i10_index": 364,
+      "works_count": 737,
+      "cited_by_count": 20248,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5067803447",
+      "display_name": "Ran Tao",
+      "orcid": "https://orcid.org/0000-0002-5243-7189",
+      "h_index": 73,
+      "i10_index": 285,
+      "works_count": 692,
+      "cited_by_count": 18850,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5082966126",
+      "display_name": "Byron D. Tapley",
+      "orcid": "https://orcid.org/0000-0003-3689-5750",
+      "h_index": 73,
+      "i10_index": 185,
+      "works_count": 467,
+      "cited_by_count": 25857,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5023264711",
+      "display_name": "Antonio De Maio",
+      "orcid": "https://orcid.org/0000-0001-8421-3318",
+      "h_index": 72,
+      "i10_index": 217,
+      "works_count": 483,
+      "cited_by_count": 15786,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Aerospace Engineering -- 9.8",
+      "id": "https://openalex.org/A5057947815",
+      "display_name": "Aníbal Ollero",
+      "orcid": "https://orcid.org/0000-0003-2155-2472",
+      "h_index": 71,
+      "i10_index": 390,
+      "works_count": 800,
+      "cited_by_count": 21513,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5024708104",
+      "display_name": "Min Han Tan",
+      "orcid": "https://orcid.org/0000-0002-1986-8438",
+      "h_index": 70,
+      "i10_index": 370,
+      "works_count": 752,
+      "cited_by_count": 18654,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5021408538",
+      "display_name": "Mengdao Xing",
+      "orcid": "https://orcid.org/0000-0002-4084-0915",
+      "h_index": 70,
+      "i10_index": 357,
+      "works_count": 894,
+      "cited_by_count": 17961,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5040530780",
+      "display_name": "S. Haykin",
+      "orcid": "https://orcid.org/0000-0002-0346-261X",
+      "h_index": 70,
+      "i10_index": 193,
+      "works_count": 438,
+      "cited_by_count": 44751,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5019287056",
+      "display_name": "Kristine M. Larson",
+      "orcid": "https://orcid.org/0000-0003-4666-8885",
+      "h_index": 68,
+      "i10_index": 132,
+      "works_count": 274,
+      "cited_by_count": 18792,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5035533740",
+      "display_name": "Jens Wickert",
+      "orcid": "https://orcid.org/0000-0002-7379-5276",
+      "h_index": 67,
+      "i10_index": 239,
+      "works_count": 705,
+      "cited_by_count": 14846,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5007300589",
+      "display_name": "Simon J. Hook",
+      "orcid": "https://orcid.org/0000-0002-0953-6165",
+      "h_index": 67,
+      "i10_index": 152,
+      "works_count": 423,
+      "cited_by_count": 21337,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Computer Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5033355107",
+      "display_name": "Qinglei Hu",
+      "orcid": "https://orcid.org/0000-0002-5563-310X",
+      "h_index": 66,
+      "i10_index": 205,
+      "works_count": 533,
+      "cited_by_count": 13817,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5073958329",
+      "display_name": "Junzhi Yu",
+      "orcid": "https://orcid.org/0000-0002-6347-572X",
+      "h_index": 65,
+      "i10_index": 309,
+      "works_count": 603,
+      "cited_by_count": 14565,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5045179998",
+      "display_name": "Alfonso Farina",
+      "orcid": "https://orcid.org/0000-0003-3247-2427",
+      "h_index": 65,
+      "i10_index": 287,
+      "works_count": 718,
+      "cited_by_count": 17185,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5001714538",
+      "display_name": "Zhiyong Feng",
+      "orcid": "https://orcid.org/0000-0001-5322-222X",
+      "h_index": 64,
+      "i10_index": 351,
+      "works_count": 844,
+      "cited_by_count": 19277,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Aerospace Engineering -- 9.7",
+      "id": "https://openalex.org/A5052926185",
+      "display_name": "Shuanggen Jin",
+      "orcid": "https://orcid.org/0000-0002-5108-4828",
+      "h_index": 64,
+      "i10_index": 282,
+      "works_count": 674,
+      "cited_by_count": 13717,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Aerospace Engineering -- 9.6",
+      "id": "https://openalex.org/A5102927094",
+      "display_name": "Zheng Bao",
+      "orcid": "https://orcid.org/0000-0002-7348-7644",
+      "h_index": 64,
+      "i10_index": 246,
+      "works_count": 655,
+      "cited_by_count": 14629,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Aerospace Engineering -- 9.6",
+      "id": "https://openalex.org/A5100365817",
+      "display_name": "Hongbin Li",
+      "orcid": "https://orcid.org/0000-0003-1453-847X",
+      "h_index": 64,
+      "i10_index": 220,
+      "works_count": 513,
+      "cited_by_count": 14509,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Aerospace Engineering -- 9.6",
+      "id": "https://openalex.org/A5061884304",
+      "display_name": "Henry Leung",
+      "orcid": "https://orcid.org/0000-0002-5984-107X",
+      "h_index": 63,
+      "i10_index": 326,
+      "works_count": 703,
+      "cited_by_count": 17723,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Aerospace Engineering -- 9.6",
+      "id": "https://openalex.org/A5085012064",
+      "display_name": "Antonios Tsourdos",
+      "orcid": "https://orcid.org/0000-0002-3966-7633",
+      "h_index": 63,
+      "i10_index": 318,
+      "works_count": 823,
+      "cited_by_count": 16444,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Aerospace Engineering -- 9.6",
+      "id": "https://openalex.org/A5052210425",
+      "display_name": "Guisheng Liao",
+      "orcid": "https://orcid.org/0000-0002-5919-0713",
+      "h_index": 63,
+      "i10_index": 298,
+      "works_count": 865,
+      "cited_by_count": 15615,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Aerospace Engineering -- 9.6",
+      "id": "https://openalex.org/A5042577942",
+      "display_name": "Rick S. Blum",
+      "orcid": "https://orcid.org/0000-0002-1024-6771",
+      "h_index": 63,
+      "i10_index": 221,
+      "works_count": 471,
+      "cited_by_count": 21951,
+      "discipline": "Aerospace Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Aerospace Engineering",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    }
+  ]
+}
