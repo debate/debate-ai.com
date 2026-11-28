@@ -111,7 +111,7 @@ export const VIDEO_COLLEGE_FILTER_LINKS: SidebarVideoLink[] = VIDEO_ALL_VIDEOS_F
   (link) => link.id === "acc" || link.id === "parli",
 );
 
-/** The reference view listed under Inference rather than as a videos row.
+/** The reference view listed under Debates rather than as a videos row.
  *  Team Rankings lives in the Research tool section instead, so rankings
  *  appear only once. The glossary used to be here too; it is a tab of
  *  `/practice/rules` now, which is not a video library page. */
