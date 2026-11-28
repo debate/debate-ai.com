@@ -25,6 +25,7 @@ export const WORDMARK_ROWS: readonly WordmarkRow[] = [
   ["colleges/kansas.png", "college", "University of Kansas", "KS"],
   ["colleges/kentucky.png", "college", "University of Kentucky", "KY"],
   ["colleges/liberty.png", "college", "Liberty University", "VA"],
+  ["colleges/louisville.png", "college", "University of Louisville", "KY"],
   ["colleges/loyola-chicago.png", "college", "Loyola University Chicago", "IL"],
   ["colleges/macalester.png", "college", "Macalester College", "MN"],
   ["colleges/michigan-state.png", "college", "Michigan State University", "MI"],

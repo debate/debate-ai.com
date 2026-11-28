@@ -9,7 +9,8 @@
  * of one kind (`/api/settings/saved-data/[kind]`) with open / export links,
  * plus Delete for every kind the server marks `deletable`. "More saved work"
  * counts the rows tools keep in their own SQL tables (briefings, flashcard
- * decks, opponent personas…), each linked to the page that opens them.
+ * decks, opponent personas…), each linked to the page that opens them, with
+ * an **Export** link that downloads that table's rows as JSON.
  *
  * @module components/settings/sections/SavedDataSection
  */
@@ -405,7 +406,18 @@ export function SavedDataSection() {
             {state.summary.sqlTools?.map((tool) => (
               <div key={tool.key} className="col-span-2 flex justify-between gap-2 sm:col-span-1">
                 <SavedLabel label={tool.label} href={tool.href} />
-                <dd className="font-medium tabular-nums">{tool.count}</dd>
+                <dd className="flex items-baseline gap-2">
+                  <span className="font-medium tabular-nums">{tool.count}</span>
+                  <a
+                    href={`/api/settings/saved-data?export=sql&key=${encodeURIComponent(tool.key)}`}
+                    download
+                    title={`Download your ${tool.label.toLowerCase()} as JSON (a backup; Restore from export… doesn't read these back yet)`}
+                    aria-label={`Export ${tool.label} as JSON`}
+                    className="text-xs text-muted-foreground underline hover:text-foreground"
+                  >
+                    Export
+                  </a>
+                </dd>
               </div>
             ))}
           </dl>

@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { buildCardCopy, highlightedSpan, paragraphBlocks } from '@/src/reader/copy-card';
+import { buildCardCopy, highlightedSpan, paragraphBlocks, writeCardToClipboard } from '@/src/reader/copy-card';
 
 let root: HTMLElement;
 
@@ -60,5 +60,72 @@ describe('buildCardCopy', () => {
 
   it('lists every paragraph for the whole-article copy', () => {
     expect(paragraphBlocks(root)).toHaveLength(5);
+  });
+});
+
+describe('buildCardCopy details', () => {
+  it('puts the AI preface above the citation, with line breaks kept in the HTML', () => {
+    const copy = buildCardCopy([], 'Cite line', '  Line one\nLine two <b>  ');
+    expect(copy.text).toBe('Line one\nLine two <b>\n\nCite line');
+    expect(copy.html).toBe('<div><p>Line one<br>Line two &lt;b&gt;</p>\n<p>Cite line</p></div>');
+  });
+
+  it('skips a blank preface and a blank citation', () => {
+    expect(buildCardCopy([], '  ', '  ').text).toBe('');
+  });
+
+  it('drops images and media, and strips classes, ids, data attributes and keeps links', () => {
+    document.body.innerHTML = `<p id="p1" class="x" data-k="1">See <a href="https://x.org" class="l">this</a>
+      <img src="a.png"><svg></svg><picture><source></picture><ins>added</ins><mark>marked</mark></p>`;
+    const copy = buildCardCopy([document.querySelector('p') as HTMLElement], '');
+    expect(copy.html).toContain('<a href="https://x.org">this</a>');
+    expect(copy.html).toContain('<span style="text-decoration:underline">added</span>');
+    expect(copy.html).toContain('background-color:#ffff00');
+    for (const gone of ['<img', '<svg', '<picture', 'class=', 'id=', 'data-k']) {
+      expect(copy.html).not.toContain(gone);
+    }
+  });
+});
+
+describe('writeCardToClipboard', () => {
+  const copy = { html: '<p>Hi</p>', text: 'Hi', paragraphCount: 1 };
+  const write = vi.fn();
+  const writeText = vi.fn();
+
+  class FakeClipboardItem {
+    constructor(public items: Record<string, Blob>) {}
+  }
+
+  beforeEach(() => {
+    write.mockReset().mockResolvedValue(undefined);
+    writeText.mockReset().mockResolvedValue(undefined);
+    vi.stubGlobal('ClipboardItem', FakeClipboardItem);
+    Object.defineProperty(navigator, 'clipboard', { value: { write, writeText }, configurable: true });
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('writes both the HTML and plain versions when the browser can', async () => {
+    await writeCardToClipboard(copy);
+    expect(writeText).not.toHaveBeenCalled();
+    const [[items]] = write.mock.calls;
+    expect(Object.keys(items[0].items)).toEqual(['text/html', 'text/plain']);
+    expect(await items[0].items['text/html'].text()).toBe('<p>Hi</p>');
+    expect(await items[0].items['text/plain'].text()).toBe('Hi');
+  });
+
+  it('falls back to plain text when the rich write is refused', async () => {
+    write.mockRejectedValue(new Error('NotAllowedError'));
+    await writeCardToClipboard(copy);
+    expect(writeText).toHaveBeenCalledWith('Hi');
+  });
+
+  it('writes plain text when there is no ClipboardItem', async () => {
+    vi.stubGlobal('ClipboardItem', undefined);
+    await writeCardToClipboard(copy);
+    expect(write).not.toHaveBeenCalled();
+    expect(writeText).toHaveBeenCalledWith('Hi');
   });
 });

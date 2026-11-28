@@ -45,8 +45,7 @@ helpers in `state/savedSummaryFilter.ts` decide what it shows: `filterSavedSumma
 (newest, oldest, name — natural, case-insensitive, ties by `clientId`) and
 `savedSummaryCountLabel` (`"3"`, or `"2 of 5"` while searching). Remove asks with
 `confirm()` before calling `DELETE`, and a failed delete sets the row's status to
-`"remove-error"`, which shows a `role="alert"` line. Deleting a saved round never
-deletes its saved flows (the route only touches `saved_rounds`). The sort choice is
+`"remove-error"`, which shows a `role="alert"` line. The sort choice is
 remembered in `state/savedListSortPreferences.ts` (`getSavedListSort` /
 `saveSavedListSort`, surface `"flow-history-saved"`): a JSON array under the
 `savedListSortPreferences` key, one `{ id, sort, updatedAt }` record per list surface,
@@ -65,6 +64,37 @@ remove it" comes through as is), anything else a generic "try again". The line i
 `role="alert"` under the row and is cleared when the dialog reopens. Loading a saved
 round fetches its missing flows with `.catch(() => null)`, so a flow that fails to load
 is skipped like one that was never saved instead of failing the whole round.
+
+### Removing a saved round with its flows
+
+A plain `DELETE /api/rounds/[clientId]` touches only `saved_rounds`. With
+`?withFlows=1` the route reads every one of the user's saved rounds, takes the
+target's flow ids (`readSavedRoundFlowIds` — integer `flowIds` only, so a row
+that fails `isValidRound` still counts), and `planSavedRoundFlowRemoval` splits
+them into `remove` and `kept` (another saved round of the same user points at
+them). It deletes the `remove` flows that are in `saved_flows` (owner-scoped,
+50 ids per `IN (…)`), then the round, and answers a `DeleteSavedRoundResult`:
+`removedFlowIds`, `keptFlowIds` (both only ids that were saved) and
+`flowsUnreadable` (the round's own `data` couldn't be parsed, so no flow was
+touched). Another round whose `data` can't be parsed counts as using no flows,
+since it can't be opened anyway. Flows go first: if the round's delete then
+fails, the round is still listed and loading it skips the flows that are gone.
+
+`deleteSavedRound(clientId, endpoint?, { withFlows })` sends the flag and
+normalizes the answer (malformed ids dropped; a bodiless or older-server
+answer reads as an empty result). In `FlowHistoryDialog`, after the first
+`confirm()`, the dialog fetches the saved round only when the Flows list has
+items, counts its flows that are in that list, and asks
+`savedRoundFlowsPrompt(label, count)` when there is at least one. A round
+that can't be fetched is removed on its own. Removed flows leave the Flows
+list, and `describeSavedRoundRemoval(label, outcome, choice)` (choice
+`"none"` / `"kept"` / `"removed"`) fills a `role="status"` line under the
+Rounds heading, cleared when the dialog reopens.
+
+Known gaps: the reads and deletes are separate statements, not one
+transaction, so a round saved from another tab mid-delete may lose a flow it
+just started using. Removing a single saved flow still never checks which
+saved rounds use it.
 
 ## Tests
 

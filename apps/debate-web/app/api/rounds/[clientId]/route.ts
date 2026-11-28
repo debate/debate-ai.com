@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
-import { and, eq } from "drizzle-orm"
+import { and, eq, inArray } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
-import { savedRounds } from "@/lib/database/schema"
+import { savedFlows, savedRounds } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import { parseSavedRowData } from "@/lib/api/saved-rows"
-import { deriveRoundLabel, hasRoundSaveConflict, isValidRound, MAX_SAVED_ROUND_BYTES } from "@debate-ai/round"
+import {
+  deriveRoundLabel,
+  hasRoundSaveConflict,
+  isValidRound,
+  MAX_SAVED_ROUND_BYTES,
+  planSavedRoundFlowRemoval,
+  readSavedRoundFlowIds,
+  type DeleteSavedRoundResult,
+} from "@debate-ai/round"
 
 /**
  * Account-linked round cloud save — TODO.md idea #17, follow-up (3)/(b),
@@ -19,8 +27,23 @@ import { deriveRoundLabel, hasRoundSaveConflict, isValidRound, MAX_SAVED_ROUND_B
  *   the route's `clientId` must match `round.id`. Rejects with 409 (see
  *   `hasRoundSaveConflict`) instead of overwriting when a row already
  *   exists and `baseUpdatedAt` doesn't match it, unless `force` is set.
- * DELETE — removes the saved round for this `clientId`.
+ * DELETE — removes the saved round for this `clientId`. With
+ *   `?withFlows=1` it also removes the round's saved flows (`flowIds`),
+ *   except those another of the user's saved rounds points at
+ *   (`planSavedRoundFlowRemoval`), and answers a `DeleteSavedRoundResult`.
+ *   A round whose own `data` can't be read is removed with none of its
+ *   flows (`flowsUnreadable: true`); another round that can't be read is
+ *   treated as using no flows, since it can't be opened anyway.
  */
+
+/** Flow ids per `IN (…)` query, well under D1's bound-parameter limit. */
+const FLOW_ID_CHUNK = 50
+
+function chunk<T>(items: readonly T[], size: number): T[][] {
+  const out: T[][] = []
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size))
+  return out
+}
 
 function parseClientId(raw: string): number | null {
   const id = Number(raw)
@@ -133,7 +156,49 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ c
   }
 
   const db = await getDBFromContext()
-  await db.delete(savedRounds).where(and(eq(savedRounds.userId, userId), eq(savedRounds.clientId, clientId)))
+  const ownRound = and(eq(savedRounds.userId, userId), eq(savedRounds.clientId, clientId))
 
-  return NextResponse.json({ success: true })
+  if (req.nextUrl.searchParams.get("withFlows") !== "1") {
+    await db.delete(savedRounds).where(ownRound)
+    return NextResponse.json({ success: true })
+  }
+
+  const rounds: { clientId: number; data: string }[] = await db
+    .select({ clientId: savedRounds.clientId, data: savedRounds.data })
+    .from(savedRounds)
+    .where(eq(savedRounds.userId, userId))
+  const target = rounds.find((row) => row.clientId === clientId)
+  const parsedTarget = target ? parseSavedRowData(target.data) : null
+  const flowsUnreadable = parsedTarget !== null && !parsedTarget.ok
+  const roundFlowIds = parsedTarget?.ok ? readSavedRoundFlowIds(parsedTarget.value) : []
+
+  const otherRoundsFlowIds = rounds
+    .filter((row) => row.clientId !== clientId)
+    .map((row) => {
+      const parsed = parseSavedRowData(row.data)
+      return parsed.ok ? readSavedRoundFlowIds(parsed.value) : []
+    })
+  const plan = planSavedRoundFlowRemoval(roundFlowIds, otherRoundsFlowIds)
+
+  // Only report flows that are actually in the account.
+  const saved = new Set<number>()
+  for (const ids of chunk([...plan.remove, ...plan.kept], FLOW_ID_CHUNK)) {
+    const rows: { clientId: number }[] = await db
+      .select({ clientId: savedFlows.clientId })
+      .from(savedFlows)
+      .where(and(eq(savedFlows.userId, userId), inArray(savedFlows.clientId, ids)))
+    for (const row of rows) saved.add(row.clientId)
+  }
+  const removedFlowIds = plan.remove.filter((id) => saved.has(id))
+  const keptFlowIds = plan.kept.filter((id) => saved.has(id))
+
+  // Flows first: if the round's delete then fails, loading the round skips
+  // flows that are gone, so nothing is left half-broken.
+  for (const ids of chunk(removedFlowIds, FLOW_ID_CHUNK)) {
+    await db.delete(savedFlows).where(and(eq(savedFlows.userId, userId), inArray(savedFlows.clientId, ids)))
+  }
+  await db.delete(savedRounds).where(ownRound)
+
+  const result: DeleteSavedRoundResult = { removedFlowIds, keptFlowIds, flowsUnreadable }
+  return NextResponse.json({ success: true, ...result })
 }

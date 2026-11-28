@@ -62,6 +62,7 @@ import {
   Loader2,
   Sparkles,
   Upload,
+  X,
 } from "lucide-react"
 import { toast } from "sonner"
 import {
@@ -405,6 +406,8 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
     createDocument,
     deleteDocument,
     moveDocument,
+    saveRefusal,
+    dismissSaveRefusal,
     updateTitle,
     selectTopicDocument,
     importFiles,
@@ -1006,6 +1009,19 @@ export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsS
               </ul>
             )}
             {downloadError && <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{downloadError}</p>}
+            {saveRefusal && (
+              <div role="alert" className="flex shrink-0 items-start gap-1 px-3 pb-2 text-xs text-destructive">
+                <p className="min-w-0 flex-1">{saveRefusal}</p>
+                <button
+                  type="button"
+                  onClick={dismissSaveRefusal}
+                  aria-label="Dismiss"
+                  className="shrink-0 rounded p-0.5 hover:bg-destructive/10"
+                >
+                  <X className="size-3" aria-hidden />
+                </button>
+              </div>
+            )}
           </>
         )}
       </SidebarSection>

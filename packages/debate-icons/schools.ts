@@ -20,6 +20,7 @@ export { default as IconSchoolIowa } from "../school-rank/wordmarks/colleges/iow
 export { default as IconSchoolKansas } from "../school-rank/wordmarks/colleges/kansas.png";
 export { default as IconSchoolKentucky } from "../school-rank/wordmarks/colleges/kentucky.png";
 export { default as IconSchoolLiberty } from "../school-rank/wordmarks/colleges/liberty.png";
+export { default as IconSchoolLouisville } from "../school-rank/wordmarks/colleges/louisville.png";
 export { default as IconSchoolLoyolaChicago } from "../school-rank/wordmarks/colleges/loyola-chicago.png";
 export { default as IconSchoolMacalester } from "../school-rank/wordmarks/colleges/macalester.png";
 export { default as IconSchoolMichiganState } from "../school-rank/wordmarks/colleges/michigan-state.png";

@@ -127,6 +127,67 @@ describe('toReadingMode', () => {
   });
 });
 
+describe('collecting the article around the winning container', () => {
+  const LEAD =
+    'In a lead paragraph that sits outside the main container, the author frames why the question matters to the round.';
+  const prose = (text: string) => `<div class="lead"><p>${text}</p></div>`;
+
+  it('brings along a sibling that is real prose, and leaves the rest of the page behind', () => {
+    const result = toReadingMode(
+      docFrom(`
+        <body><div class="wrap">
+          ${prose(LEAD)}
+          <div class="entry">${article(6)}</div>
+          <div class="short"><p>Too short.</p></div>
+          <div class="promo">${Array.from({ length: 4 }, (_, i) => `<a href="/p${i}">Promoted story ${i} with a long headline here</a>`).join(' ')}</div>
+          <div class="comment-list"><p>${'A reader comment that goes on and on without any links at all. '.repeat(3)}</p></div>
+        </div></body>`),
+      'https://example.com/story',
+    )!;
+
+    expect(result.html).toContain('frames why the question matters');
+    expect(result.html).toContain('the affirmative bears the burden');
+    expect(result.html).not.toContain('Too short');
+    expect(result.html).not.toContain('Promoted story');
+    expect(result.html).not.toContain('A reader comment');
+  });
+
+  it('leaves out a sibling that is tiny next to the winner', () => {
+    const result = toReadingMode(
+      docFrom(`
+        <body><div class="wrap">
+          <div class="entry">${article(40)}</div>
+          <div class="aside-text"><p>${'An eighty-character-plus remark that is nowhere near a tenth of the article. '.repeat(1)}</p></div>
+        </div></body>`),
+      'https://example.com/story',
+    )!;
+    expect(result.html).not.toContain('An eighty-character-plus remark');
+  });
+
+  it('falls back to the first <article> when no container scores', () => {
+    const result = toReadingMode(
+      docFrom(`<body><article>${'<span>' + PARAGRAPH.repeat(2) + '</span>'}</article></body>`),
+      'https://example.com/story',
+    );
+    expect(result!.html).toContain('the affirmative bears the burden');
+  });
+
+  it('scores a table cell, a list and a heading below the prose container', () => {
+    const result = toReadingMode(
+      docFrom(`
+        <body>
+          <ul><li><p>${PARAGRAPH}</p></li></ul>
+          <table><tr><td><p>${PARAGRAPH}${PARAGRAPH}</p></td></tr></table>
+          <h2><p>${PARAGRAPH}</p></h2>
+          <div class="story-body">${article(3)}</div>
+        </body>`),
+      'https://example.com/story',
+    )!;
+    expect(result.html).toContain('0 The resolution asks');
+    expect(result.html).toContain('2 The resolution asks');
+  });
+});
+
 describe('absolutize', () => {
   it('resolves a relative URL against the page', () => {
     expect(absolutize('/a', 'https://example.com/x/y')).toBe('https://example.com/a');
@@ -142,5 +203,10 @@ describe('absolutize', () => {
     expect(absolutize('javascript:alert(1)', 'https://example.com')).toBeNull();
     expect(absolutize('data:text/html,<script>', 'https://example.com')).toBeNull();
     expect(absolutize('  ', 'https://example.com')).toBeNull();
+  });
+
+  it('rejects a URL that cannot be resolved at all', () => {
+    expect(absolutize('//', 'not a base')).toBeNull();
+    expect(absolutize('/path', 'not a base')).toBeNull();
   });
 });

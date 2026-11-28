@@ -465,7 +465,7 @@ export function LecturesVideoGridView({
             activeId={activeQuickLinkId}
           />
 
-          {/* The rest of the sidebar tree — Research / Debates / Inference,
+          {/* The rest of the sidebar tree — Research / Debates,
               then Learning. The tiles above cover only its Videos section, so
               without this the tool sections had no counterpart on a phone
               anywhere on the page (the dock's Settings menu carries them too).
