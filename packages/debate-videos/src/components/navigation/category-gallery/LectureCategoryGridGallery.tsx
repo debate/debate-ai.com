@@ -6,7 +6,7 @@
  * open one is drawn selected.
  *
  * The top of the bar is a row of badges for the main round collections —
- * College Policy, HS Policy, Individual and Forum — drawn with the logos the
+ * College Policy, HS Policy, Forum and Individual — drawn with the logos the
  * rankings page shows beside its topic names. Parli has no logo and is listed
  * under Formats instead.
  *
