@@ -1,0 +1,5356 @@
+{
+  "kind": "subfield",
+  "id": 3204,
+  "name": "Developmental and Educational Psychology",
+  "total_in_scrape": 274,
+  "count": 274,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Developmental and Educational Psychology -- 9.9",
+      "id": "https://openalex.org/A5001549927",
+      "display_name": "Herbert W. Marsh",
+      "orcid": "https://orcid.org/0000-0002-1078-9717",
+      "h_index": 196,
+      "i10_index": 635,
+      "works_count": 981,
+      "cited_by_count": 155431,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Developmental and Educational Psychology -- 9.9",
+      "id": "https://openalex.org/A5071512605",
+      "display_name": "Michael Tomasello",
+      "orcid": "https://orcid.org/0000-0002-1649-088X",
+      "h_index": 192,
+      "i10_index": 696,
+      "works_count": 1009,
+      "cited_by_count": 158068,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Agricultural and Biological Sciences",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Developmental and Educational Psychology -- 9.9",
+      "id": "https://openalex.org/A5110910530",
+      "display_name": "Albert Bandura",
+      "orcid": null,
+      "h_index": 180,
+      "i10_index": 289,
+      "works_count": 404,
+      "cited_by_count": 502919,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Developmental and Educational Psychology -- 9.9",
+      "id": "https://openalex.org/A5002848010",
+      "display_name": "Jacquelynne S. Eccles",
+      "orcid": "https://orcid.org/0000-0002-6405-9330",
+      "h_index": 157,
+      "i10_index": 354,
+      "works_count": 546,
+      "cited_by_count": 138371,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Developmental and Educational Psychology -- 9.9",
+      "id": "https://openalex.org/A5109805624",
+      "display_name": "Keith Rayner",
+      "orcid": null,
+      "h_index": 141,
+      "i10_index": 361,
+      "works_count": 541,
+      "cited_by_count": 80683,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Developmental and Educational Psychology -- 9.9",
+      "id": "https://openalex.org/A5046821941",
+      "display_name": "Carol Sorich Dweck",
+      "orcid": "https://orcid.org/0000-0001-7741-0073",
+      "h_index": 132,
+      "i10_index": 233,
+      "works_count": 474,
+      "cited_by_count": 113608,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5010940647",
+      "display_name": "Dorothy Bishop",
+      "orcid": "https://orcid.org/0000-0002-2448-4033",
+      "h_index": 128,
+      "i10_index": 343,
+      "works_count": 1414,
+      "cited_by_count": 61528,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5050838768",
+      "display_name": "Marc H. Bornstein",
+      "orcid": "https://orcid.org/0000-0002-6810-8427",
+      "h_index": 125,
+      "i10_index": 571,
+      "works_count": 971,
+      "cited_by_count": 64748,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5028144127",
+      "display_name": "Lynn S. Fuchs",
+      "orcid": "https://orcid.org/0000-0003-2099-5247",
+      "h_index": 123,
+      "i10_index": 399,
+      "works_count": 624,
+      "cited_by_count": 54142,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5022208991",
+      "display_name": "Jack McKay Fletcher",
+      "orcid": "https://orcid.org/0000-0002-1181-6721",
+      "h_index": 121,
+      "i10_index": 424,
+      "works_count": 529,
+      "cited_by_count": 56692,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5000443091",
+      "display_name": "Reinhard H. Pekrun",
+      "orcid": "https://orcid.org/0000-0003-4489-3827",
+      "h_index": 120,
+      "i10_index": 288,
+      "works_count": 509,
+      "cited_by_count": 72070,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5027680628",
+      "display_name": "Steve Graham",
+      "orcid": "https://orcid.org/0000-0002-6702-5865",
+      "h_index": 118,
+      "i10_index": 297,
+      "works_count": 407,
+      "cited_by_count": 50373,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5111729908",
+      "display_name": "Margaret J. Snowling",
+      "orcid": "https://orcid.org/0000-0003-0836-3861",
+      "h_index": 118,
+      "i10_index": 291,
+      "works_count": 593,
+      "cited_by_count": 56907,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5047650337",
+      "display_name": "Andrew J. Elliot",
+      "orcid": "https://orcid.org/0000-0002-1664-6426",
+      "h_index": 118,
+      "i10_index": 253,
+      "works_count": 406,
+      "cited_by_count": 88140,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5024865781",
+      "display_name": "Ellen Bialystok",
+      "orcid": "https://orcid.org/0000-0001-9844-2082",
+      "h_index": 117,
+      "i10_index": 261,
+      "works_count": 422,
+      "cited_by_count": 65336,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5079621379",
+      "display_name": "Andrew N. Meltzoff",
+      "orcid": "https://orcid.org/0000-0001-8683-0547",
+      "h_index": 116,
+      "i10_index": 285,
+      "works_count": 439,
+      "cited_by_count": 61113,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Developmental and Educational Psychology -- 9.8",
+      "id": "https://openalex.org/A5007894346",
+      "display_name": "Bruce F. Pennington",
+      "orcid": "https://orcid.org/0000-0001-9541-8204",
+      "h_index": 116,
+      "i10_index": 252,
+      "works_count": 303,
+      "cited_by_count": 56486,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5049547394",
+      "display_name": "Gwo‐Jen Hwang",
+      "orcid": "https://orcid.org/0000-0001-5155-276X",
+      "h_index": 115,
+      "i10_index": 456,
+      "works_count": 674,
+      "cited_by_count": 55687,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Computer Science",
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5083379656",
+      "display_name": "Elizabeth S. Spelke",
+      "orcid": "https://orcid.org/0000-0002-6925-3618",
+      "h_index": 115,
+      "i10_index": 276,
+      "works_count": 743,
+      "cited_by_count": 62366,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5037837474",
+      "display_name": "Keith Davids",
+      "orcid": "https://orcid.org/0000-0003-1398-6123",
+      "h_index": 113,
+      "i10_index": 478,
+      "works_count": 782,
+      "cited_by_count": 44912,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5078597198",
+      "display_name": "Sharon R. Vaughn",
+      "orcid": "https://orcid.org/0000-0001-8305-5549",
+      "h_index": 113,
+      "i10_index": 371,
+      "works_count": 536,
+      "cited_by_count": 41305,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5082083948",
+      "display_name": "Charles Hulme",
+      "orcid": "https://orcid.org/0000-0001-9499-5958",
+      "h_index": 112,
+      "i10_index": 275,
+      "works_count": 521,
+      "cited_by_count": 46749,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5070167652",
+      "display_name": "Douglas Fuchs",
+      "orcid": "https://orcid.org/0000-0002-5094-1023",
+      "h_index": 111,
+      "i10_index": 312,
+      "works_count": 491,
+      "cited_by_count": 42520,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5054951151",
+      "display_name": "Susan Goldin-Meadow",
+      "orcid": "https://orcid.org/0000-0001-8536-2673",
+      "h_index": 111,
+      "i10_index": 283,
+      "works_count": 552,
+      "cited_by_count": 41083,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5049663620",
+      "display_name": "Helen B. Tager-Flusberg",
+      "orcid": "https://orcid.org/0000-0002-8768-5414",
+      "h_index": 111,
+      "i10_index": 259,
+      "works_count": 422,
+      "cited_by_count": 44036,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5108245941",
+      "display_name": "Mihály Csíkszentmihályi",
+      "orcid": null,
+      "h_index": 110,
+      "i10_index": 290,
+      "works_count": 479,
+      "cited_by_count": 101585,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5081168727",
+      "display_name": "Uta Frith",
+      "orcid": "https://orcid.org/0000-0002-9063-4466",
+      "h_index": 110,
+      "i10_index": 211,
+      "works_count": 409,
+      "cited_by_count": 82442,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Developmental and Educational Psychology -- 9.7",
+      "id": "https://openalex.org/A5069373510",
+      "display_name": "Paul A. Kirschner",
+      "orcid": "https://orcid.org/0000-0002-8743-0462",
+      "h_index": 108,
+      "i10_index": 316,
+      "works_count": 976,
+      "cited_by_count": 55039,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5078114880",
+      "display_name": "Keith E. Stanovich",
+      "orcid": "https://orcid.org/0000-0001-7395-329X",
+      "h_index": 108,
+      "i10_index": 214,
+      "works_count": 391,
+      "cited_by_count": 68440,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5054347387",
+      "display_name": "Jean Piaget",
+      "orcid": null,
+      "h_index": 105,
+      "i10_index": 310,
+      "works_count": 775,
+      "cited_by_count": 75985,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5070482924",
+      "display_name": "Joan L. Duda",
+      "orcid": "https://orcid.org/0000-0002-0068-257X",
+      "h_index": 105,
+      "i10_index": 282,
+      "works_count": 456,
+      "cited_by_count": 44705,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5089014558",
+      "display_name": "Katariina Salmela‐Aro",
+      "orcid": "https://orcid.org/0000-0003-1901-4712",
+      "h_index": 104,
+      "i10_index": 340,
+      "works_count": 633,
+      "cited_by_count": 36589,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5077002731",
+      "display_name": "Paul B. Baltes",
+      "orcid": null,
+      "h_index": 104,
+      "i10_index": 281,
+      "works_count": 516,
+      "cited_by_count": 57212,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5073333693",
+      "display_name": "Jari‐Erik Nurmi",
+      "orcid": "https://orcid.org/0000-0002-1576-0710",
+      "h_index": 103,
+      "i10_index": 269,
+      "works_count": 327,
+      "cited_by_count": 31935,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5023940180",
+      "display_name": "Jeroen J. G. van Merriënboer",
+      "orcid": "https://orcid.org/0000-0002-5868-7031",
+      "h_index": 101,
+      "i10_index": 339,
+      "works_count": 783,
+      "cited_by_count": 59422,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5102718452",
+      "display_name": "Richard M. Lerner",
+      "orcid": "https://orcid.org/0000-0002-9426-9048",
+      "h_index": 101,
+      "i10_index": 322,
+      "works_count": 671,
+      "cited_by_count": 36529,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5086577266",
+      "display_name": "Ulrich Trautwein",
+      "orcid": "https://orcid.org/0000-0003-0647-0057",
+      "h_index": 101,
+      "i10_index": 314,
+      "works_count": 545,
+      "cited_by_count": 42885,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5001445237",
+      "display_name": "Jonathan Grainger",
+      "orcid": "https://orcid.org/0000-0002-6737-5646",
+      "h_index": 101,
+      "i10_index": 302,
+      "works_count": 685,
+      "cited_by_count": 32357,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Developmental and Educational Psychology -- 9.6",
+      "id": "https://openalex.org/A5109831137",
+      "display_name": "Jerome S. Bruner",
+      "orcid": null,
+      "h_index": 100,
+      "i10_index": 222,
+      "works_count": 453,
+      "cited_by_count": 112529,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5060508562",
+      "display_name": "Robert S. Siegler",
+      "orcid": "https://orcid.org/0000-0001-5457-5158",
+      "h_index": 100,
+      "i10_index": 210,
+      "works_count": 393,
+      "cited_by_count": 41055,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5103420301",
+      "display_name": "Marian Sigman",
+      "orcid": null,
+      "h_index": 100,
+      "i10_index": 200,
+      "works_count": 272,
+      "cited_by_count": 40110,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5067428951",
+      "display_name": "Max Coltheart",
+      "orcid": "https://orcid.org/0000-0002-6580-0047",
+      "h_index": 99,
+      "i10_index": 353,
+      "works_count": 680,
+      "cited_by_count": 46995,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5021168696",
+      "display_name": "Susan A. Gelman",
+      "orcid": "https://orcid.org/0000-0003-1005-2691",
+      "h_index": 99,
+      "i10_index": 293,
+      "works_count": 491,
+      "cited_by_count": 35073,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5017756615",
+      "display_name": "Andrew J. Martin",
+      "orcid": "https://orcid.org/0000-0001-5504-392X",
+      "h_index": 99,
+      "i10_index": 289,
+      "works_count": 425,
+      "cited_by_count": 37103,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5066269555",
+      "display_name": "Charles A. Perfetti",
+      "orcid": "https://orcid.org/0000-0002-0211-8518",
+      "h_index": 99,
+      "i10_index": 247,
+      "works_count": 369,
+      "cited_by_count": 38812,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5085240636",
+      "display_name": "Linda B. Smith",
+      "orcid": "https://orcid.org/0000-0001-7163-8181",
+      "h_index": 98,
+      "i10_index": 267,
+      "works_count": 581,
+      "cited_by_count": 40081,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5083209779",
+      "display_name": "Marc Brysbaert",
+      "orcid": "https://orcid.org/0000-0002-3645-3189",
+      "h_index": 98,
+      "i10_index": 250,
+      "works_count": 550,
+      "cited_by_count": 47009,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5034754652",
+      "display_name": "Elizabeth A. Bates",
+      "orcid": "https://orcid.org/0000-0001-8694-8078",
+      "h_index": 98,
+      "i10_index": 212,
+      "works_count": 320,
+      "cited_by_count": 38740,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5059081206",
+      "display_name": "Dan P. McAdams",
+      "orcid": "https://orcid.org/0000-0001-6646-0227",
+      "h_index": 97,
+      "i10_index": 233,
+      "works_count": 444,
+      "cited_by_count": 47196,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5001624726",
+      "display_name": "Susan Elizabeth Gathercole",
+      "orcid": "https://orcid.org/0000-0001-6618-586X",
+      "h_index": 97,
+      "i10_index": 185,
+      "works_count": 322,
+      "cited_by_count": 49784,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Developmental and Educational Psychology -- 9.5",
+      "id": "https://openalex.org/A5039525707",
+      "display_name": "Paul L. Harris",
+      "orcid": "https://orcid.org/0000-0003-4907-0539",
+      "h_index": 96,
+      "i10_index": 289,
+      "works_count": 527,
+      "cited_by_count": 35291,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5041803876",
+      "display_name": "Laura Marie Justice",
+      "orcid": "https://orcid.org/0000-0002-0580-0280",
+      "h_index": 95,
+      "i10_index": 312,
+      "works_count": 460,
+      "cited_by_count": 30288,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5070463035",
+      "display_name": "Usha Goswami",
+      "orcid": "https://orcid.org/0000-0001-7858-2336",
+      "h_index": 95,
+      "i10_index": 215,
+      "works_count": 419,
+      "cited_by_count": 31294,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5051331521",
+      "display_name": "Susan E. Carey",
+      "orcid": "https://orcid.org/0000-0001-7913-2687",
+      "h_index": 95,
+      "i10_index": 173,
+      "works_count": 351,
+      "cited_by_count": 46628,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5087366961",
+      "display_name": "R. Harald Baayen",
+      "orcid": "https://orcid.org/0000-0003-3178-3944",
+      "h_index": 94,
+      "i10_index": 258,
+      "works_count": 496,
+      "cited_by_count": 51865,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5101896316",
+      "display_name": "David W. Johnson",
+      "orcid": "https://orcid.org/0000-0002-1092-339X",
+      "h_index": 94,
+      "i10_index": 238,
+      "works_count": 348,
+      "cited_by_count": 52245,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5070516273",
+      "display_name": "Catherine Elizabeth Snow",
+      "orcid": "https://orcid.org/0000-0002-6292-1126",
+      "h_index": 94,
+      "i10_index": 237,
+      "works_count": 461,
+      "cited_by_count": 39579,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5078851994",
+      "display_name": "Philip David Zelazo",
+      "orcid": "https://orcid.org/0000-0001-6017-2988",
+      "h_index": 94,
+      "i10_index": 191,
+      "works_count": 333,
+      "cited_by_count": 40241,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5042989846",
+      "display_name": "Robyn Fıvush",
+      "orcid": "https://orcid.org/0000-0003-3526-1588",
+      "h_index": 94,
+      "i10_index": 190,
+      "works_count": 353,
+      "cited_by_count": 29089,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5112179407",
+      "display_name": "John C. DeFries",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 247,
+      "works_count": 334,
+      "cited_by_count": 29545,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5087575367",
+      "display_name": "Roberta Michnick Golinkoff",
+      "orcid": "https://orcid.org/0000-0003-3299-9720",
+      "h_index": 93,
+      "i10_index": 233,
+      "works_count": 448,
+      "cited_by_count": 31416,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Developmental and Educational Psychology -- 9.4",
+      "id": "https://openalex.org/A5104060529",
+      "display_name": "Roger T. Johnson",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 218,
+      "works_count": 285,
+      "cited_by_count": 50511,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5034843093",
+      "display_name": "Henry M. Wellman",
+      "orcid": "https://orcid.org/0000-0001-6745-6959",
+      "h_index": 93,
+      "i10_index": 184,
+      "works_count": 280,
+      "cited_by_count": 43090,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5111460424",
+      "display_name": "Barry J. Zimmerman",
+      "orcid": "https://orcid.org/0009-0005-3163-8685",
+      "h_index": 93,
+      "i10_index": 181,
+      "works_count": 285,
+      "cited_by_count": 102055,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5038842110",
+      "display_name": "Gabriele Wulf",
+      "orcid": "https://orcid.org/0000-0002-5175-6962",
+      "h_index": 93,
+      "i10_index": 159,
+      "works_count": 207,
+      "cited_by_count": 31827,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5029129567",
+      "display_name": "Daniel T. L. Shek",
+      "orcid": "https://orcid.org/0000-0003-3359-6229",
+      "h_index": 91,
+      "i10_index": 592,
+      "works_count": 1448,
+      "cited_by_count": 31873,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5083887170",
+      "display_name": "Catherine P. Bradshaw",
+      "orcid": "https://orcid.org/0000-0003-2048-3225",
+      "h_index": 91,
+      "i10_index": 253,
+      "works_count": 433,
+      "cited_by_count": 29115,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5110545801",
+      "display_name": "Robert H. Horner",
+      "orcid": "https://orcid.org/0000-0003-3514-5907",
+      "h_index": 91,
+      "i10_index": 221,
+      "works_count": 311,
+      "cited_by_count": 39359,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5087958152",
+      "display_name": "Michael G. Pressley",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 219,
+      "works_count": 303,
+      "cited_by_count": 27393,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5016194439",
+      "display_name": "Karen R. Harris",
+      "orcid": "https://orcid.org/0000-0002-2618-8510",
+      "h_index": 91,
+      "i10_index": 198,
+      "works_count": 277,
+      "cited_by_count": 27259,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5053928403",
+      "display_name": "Lorraine Komisarjevsky Tyler",
+      "orcid": "https://orcid.org/0000-0002-9943-118X",
+      "h_index": 91,
+      "i10_index": 193,
+      "works_count": 324,
+      "cited_by_count": 26341,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5043710796",
+      "display_name": "Brian MacWhinney",
+      "orcid": "https://orcid.org/0000-0002-4988-1342",
+      "h_index": 89,
+      "i10_index": 255,
+      "works_count": 452,
+      "cited_by_count": 31638,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Developmental and Educational Psychology -- 9.3",
+      "id": "https://openalex.org/A5033137531",
+      "display_name": "Annette Karmiloff‐Smith",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 234,
+      "works_count": 505,
+      "cited_by_count": 33453,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5042220355",
+      "display_name": "Frank M. Gresham",
+      "orcid": "https://orcid.org/0000-0002-5615-0716",
+      "h_index": 89,
+      "i10_index": 232,
+      "works_count": 295,
+      "cited_by_count": 26845,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5071699243",
+      "display_name": "Rebecca R. Saxe",
+      "orcid": "https://orcid.org/0000-0003-2377-1791",
+      "h_index": 89,
+      "i10_index": 172,
+      "works_count": 731,
+      "cited_by_count": 33543,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5017634301",
+      "display_name": "William D. Marslen‐Wilson",
+      "orcid": "https://orcid.org/0000-0003-0690-6308",
+      "h_index": 89,
+      "i10_index": 168,
+      "works_count": 287,
+      "cited_by_count": 30661,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5088142195",
+      "display_name": "Janet F. Werker",
+      "orcid": "https://orcid.org/0000-0002-1168-9013",
+      "h_index": 89,
+      "i10_index": 164,
+      "works_count": 314,
+      "cited_by_count": 33510,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5053270801",
+      "display_name": "Allan Wigfield",
+      "orcid": "https://orcid.org/0000-0001-5195-7900",
+      "h_index": 89,
+      "i10_index": 145,
+      "works_count": 201,
+      "cited_by_count": 80957,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5028381426",
+      "display_name": "Manuel Carreiras",
+      "orcid": "https://orcid.org/0000-0001-6726-7613",
+      "h_index": 88,
+      "i10_index": 299,
+      "works_count": 572,
+      "cited_by_count": 24957,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5039382653",
+      "display_name": "Juho Hamari",
+      "orcid": "https://orcid.org/0000-0002-6573-588X",
+      "h_index": 88,
+      "i10_index": 261,
+      "works_count": 622,
+      "cited_by_count": 58063,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5024330627",
+      "display_name": "Brian A. Iwata",
+      "orcid": "https://orcid.org/0000-0001-8217-2049",
+      "h_index": 88,
+      "i10_index": 204,
+      "works_count": 249,
+      "cited_by_count": 28698,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5020616647",
+      "display_name": "Robert L. Koegel",
+      "orcid": "https://orcid.org/0000-0001-7597-7930",
+      "h_index": 88,
+      "i10_index": 162,
+      "works_count": 420,
+      "cited_by_count": 24878,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5028571578",
+      "display_name": "Kathy Hirsh‐Pasek",
+      "orcid": "https://orcid.org/0000-0003-2947-4544",
+      "h_index": 87,
+      "i10_index": 218,
+      "works_count": 447,
+      "cited_by_count": 29898,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Developmental and Educational Psychology -- 9.2",
+      "id": "https://openalex.org/A5059244192",
+      "display_name": "David J. Francis",
+      "orcid": "https://orcid.org/0000-0003-3944-3274",
+      "h_index": 87,
+      "i10_index": 216,
+      "works_count": 317,
+      "cited_by_count": 26854,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5090969136",
+      "display_name": "Erik G. Willcutt",
+      "orcid": "https://orcid.org/0000-0003-0113-7431",
+      "h_index": 87,
+      "i10_index": 169,
+      "works_count": 234,
+      "cited_by_count": 35588,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5039068082",
+      "display_name": "Dale H. Schunk",
+      "orcid": "https://orcid.org/0000-0003-3963-9306",
+      "h_index": 87,
+      "i10_index": 141,
+      "works_count": 212,
+      "cited_by_count": 59823,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5035514631",
+      "display_name": "Duarte Araújo",
+      "orcid": "https://orcid.org/0000-0001-7932-3192",
+      "h_index": 86,
+      "i10_index": 222,
+      "works_count": 394,
+      "cited_by_count": 25081,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5027472539",
+      "display_name": "Philip David Parker",
+      "orcid": "https://orcid.org/0000-0002-4604-8566",
+      "h_index": 86,
+      "i10_index": 184,
+      "works_count": 288,
+      "cited_by_count": 27664,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5002087258",
+      "display_name": "Mark S. Seidenberg",
+      "orcid": "https://orcid.org/0000-0001-8519-3259",
+      "h_index": 86,
+      "i10_index": 160,
+      "works_count": 251,
+      "cited_by_count": 40321,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5062253481",
+      "display_name": "Alison Gopnik",
+      "orcid": "https://orcid.org/0000-0002-7183-0867",
+      "h_index": 85,
+      "i10_index": 187,
+      "works_count": 407,
+      "cited_by_count": 30795,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5086600904",
+      "display_name": "Richard K. Olson",
+      "orcid": "https://orcid.org/0000-0001-6399-571X",
+      "h_index": 85,
+      "i10_index": 182,
+      "works_count": 255,
+      "cited_by_count": 23801,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5032581937",
+      "display_name": "John Cairney",
+      "orcid": "https://orcid.org/0000-0003-2856-3967",
+      "h_index": 84,
+      "i10_index": 321,
+      "works_count": 594,
+      "cited_by_count": 33085,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5100738158",
+      "display_name": "Kang Lee",
+      "orcid": "https://orcid.org/0000-0001-5695-2615",
+      "h_index": 84,
+      "i10_index": 290,
+      "works_count": 462,
+      "cited_by_count": 27054,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5027327799",
+      "display_name": "H. Lee Swanson",
+      "orcid": "https://orcid.org/0000-0002-5700-4497",
+      "h_index": 84,
+      "i10_index": 226,
+      "works_count": 341,
+      "cited_by_count": 24846,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Developmental and Educational Psychology -- 9.1",
+      "id": "https://openalex.org/A5054198262",
+      "display_name": "Sanna Järvelä",
+      "orcid": "https://orcid.org/0000-0001-6223-3668",
+      "h_index": 84,
+      "i10_index": 218,
+      "works_count": 317,
+      "cited_by_count": 27282,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Developmental and Educational Psychology -- 9.0",
+      "id": "https://openalex.org/A5033979240",
+      "display_name": "Catherine S. Tamis‐LeMonda",
+      "orcid": "https://orcid.org/0000-0002-9071-4028",
+      "h_index": 84,
+      "i10_index": 208,
+      "works_count": 403,
+      "cited_by_count": 28295,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Developmental and Educational Psychology -- 9.0",
+      "id": "https://openalex.org/A5108400463",
+      "display_name": "Alexander Pollatsek",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 192,
+      "works_count": 296,
+      "cited_by_count": 24447,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Developmental and Educational Psychology -- 9.0",
+      "id": "https://openalex.org/A5033303691",
+      "display_name": "K. Anders Ericsson",
+      "orcid": "https://orcid.org/0000-0002-3763-8089",
+      "h_index": 84,
+      "i10_index": 163,
+      "works_count": 229,
+      "cited_by_count": 69338,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Developmental and Educational Psychology -- 9.0",
+      "id": "https://openalex.org/A5087909125",
+      "display_name": "Jeffrey Jensen Arnett",
+      "orcid": "https://orcid.org/0000-0002-6968-7168",
+      "h_index": 84,
+      "i10_index": 143,
+      "works_count": 333,
+      "cited_by_count": 69111,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Developmental and Educational Psychology -- 9.0",
+      "id": "https://openalex.org/A5062148662",
+      "display_name": "Nora S. Newcombe",
+      "orcid": "https://orcid.org/0000-0002-7044-6046",
+      "h_index": 83,
+      "i10_index": 227,
+      "works_count": 428,
+      "cited_by_count": 26483,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5039969309",
+      "display_name": "Nick C. Ellis",
+      "orcid": "https://orcid.org/0000-0002-4235-6481",
+      "h_index": 83,
+      "i10_index": 191,
+      "works_count": 293,
+      "cited_by_count": 33266,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5086788224",
+      "display_name": "Jean Côté",
+      "orcid": "https://orcid.org/0000-0002-3487-2670",
+      "h_index": 83,
+      "i10_index": 184,
+      "works_count": 350,
+      "cited_by_count": 33543,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5083681859",
+      "display_name": "Christopher J. Lonigan",
+      "orcid": "https://orcid.org/0000-0001-8173-0723",
+      "h_index": 83,
+      "i10_index": 166,
+      "works_count": 214,
+      "cited_by_count": 30449,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5050858042",
+      "display_name": "Michael Lewis",
+      "orcid": "https://orcid.org/0000-0002-9703-8456",
+      "h_index": 82,
+      "i10_index": 256,
+      "works_count": 406,
+      "cited_by_count": 23268,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5015946944",
+      "display_name": "Richard Ν. Aslin",
+      "orcid": "https://orcid.org/0000-0003-4092-1712",
+      "h_index": 82,
+      "i10_index": 186,
+      "works_count": 386,
+      "cited_by_count": 39872,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5077079209",
+      "display_name": "David H. Jonassen",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 184,
+      "works_count": 369,
+      "cited_by_count": 43366,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5061646387",
+      "display_name": "Reed W. Larson",
+      "orcid": "https://orcid.org/0009-0009-4181-4821",
+      "h_index": 82,
+      "i10_index": 154,
+      "works_count": 210,
+      "cited_by_count": 34344,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5110804547",
+      "display_name": "Jacques Mehler",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 154,
+      "works_count": 290,
+      "cited_by_count": 30613,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5078464782",
+      "display_name": "Johnmarshall Reeve",
+      "orcid": "https://orcid.org/0000-0002-6827-293X",
+      "h_index": 82,
+      "i10_index": 129,
+      "works_count": 240,
+      "cited_by_count": 45208,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5053668579",
+      "display_name": "Ludo T. W. Verhoeven",
+      "orcid": "https://orcid.org/0000-0002-5108-4705",
+      "h_index": 81,
+      "i10_index": 373,
+      "works_count": 580,
+      "cited_by_count": 24306,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5061563341",
+      "display_name": "Rebecca Treiman",
+      "orcid": "https://orcid.org/0000-0002-6819-8338",
+      "h_index": 81,
+      "i10_index": 216,
+      "works_count": 405,
+      "cited_by_count": 22253,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Developmental and Educational Psychology -- 8.9",
+      "id": "https://openalex.org/A5103350893",
+      "display_name": "Richard C. Anderson",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 211,
+      "works_count": 370,
+      "cited_by_count": 30926,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5091616688",
+      "display_name": "Linda S. Siegel",
+      "orcid": "https://orcid.org/0000-0001-7500-5189",
+      "h_index": 81,
+      "i10_index": 203,
+      "works_count": 321,
+      "cited_by_count": 25366,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5063812383",
+      "display_name": "Heikki Lyytinen",
+      "orcid": "https://orcid.org/0000-0003-2867-1749",
+      "h_index": 81,
+      "i10_index": 193,
+      "works_count": 303,
+      "cited_by_count": 21766,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5023903365",
+      "display_name": "Jeff Sigafoos",
+      "orcid": "https://orcid.org/0000-0002-1239-759X",
+      "h_index": 80,
+      "i10_index": 480,
+      "works_count": 815,
+      "cited_by_count": 25868,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5005995116",
+      "display_name": "Frank Fischer",
+      "orcid": "https://orcid.org/0000-0003-0253-659X",
+      "h_index": 80,
+      "i10_index": 267,
+      "works_count": 576,
+      "cited_by_count": 48393,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5013486786",
+      "display_name": "Margie E. Lachman",
+      "orcid": "https://orcid.org/0000-0003-3027-8735",
+      "h_index": 80,
+      "i10_index": 203,
+      "works_count": 388,
+      "cited_by_count": 26106,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5050933629",
+      "display_name": "Virginia Wise Berninger",
+      "orcid": "https://orcid.org/0000-0003-4099-9683",
+      "h_index": 80,
+      "i10_index": 200,
+      "works_count": 301,
+      "cited_by_count": 24551,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5102012564",
+      "display_name": "Thomas Goetz",
+      "orcid": "https://orcid.org/0000-0002-8908-2166",
+      "h_index": 80,
+      "i10_index": 148,
+      "works_count": 242,
+      "cited_by_count": 36622,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5073715876",
+      "display_name": "Gergely Csibra",
+      "orcid": "https://orcid.org/0000-0002-7044-3056",
+      "h_index": 80,
+      "i10_index": 146,
+      "works_count": 372,
+      "cited_by_count": 29986,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5110479882",
+      "display_name": "Catherine A. McBride-Chang",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 136,
+      "works_count": 194,
+      "cited_by_count": 20436,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5044403132",
+      "display_name": "Giulio E. Lancioni",
+      "orcid": "https://orcid.org/0000-0002-6515-5690",
+      "h_index": 79,
+      "i10_index": 554,
+      "works_count": 862,
+      "cited_by_count": 27442,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Neuroscience",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5073852965",
+      "display_name": "José Carlos Núñez",
+      "orcid": "https://orcid.org/0000-0002-9187-1201",
+      "h_index": 79,
+      "i10_index": 281,
+      "works_count": 506,
+      "cited_by_count": 19776,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5065475749",
+      "display_name": "Philip S. Dale",
+      "orcid": "https://orcid.org/0000-0002-7697-8510",
+      "h_index": 79,
+      "i10_index": 202,
+      "works_count": 271,
+      "cited_by_count": 24677,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5102836564",
+      "display_name": "Daniel Ansari",
+      "orcid": "https://orcid.org/0000-0002-7625-618X",
+      "h_index": 79,
+      "i10_index": 173,
+      "works_count": 303,
+      "cited_by_count": 21348,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5030956489",
+      "display_name": "Laura L. Carstensen",
+      "orcid": "https://orcid.org/0000-0002-5011-3789",
+      "h_index": 79,
+      "i10_index": 157,
+      "works_count": 342,
+      "cited_by_count": 57144,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5051305353",
+      "display_name": "Wolfgang Schneider",
+      "orcid": "https://orcid.org/0000-0002-1231-0597",
+      "h_index": 78,
+      "i10_index": 315,
+      "works_count": 1032,
+      "cited_by_count": 24520,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5071612872",
+      "display_name": "Bennett A. Shaywitz",
+      "orcid": "https://orcid.org/0009-0001-2906-453X",
+      "h_index": 78,
+      "i10_index": 195,
+      "works_count": 324,
+      "cited_by_count": 31990,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5073795867",
+      "display_name": "Christopher K. Hertzog",
+      "orcid": "https://orcid.org/0000-0002-2432-8532",
+      "h_index": 78,
+      "i10_index": 191,
+      "works_count": 350,
+      "cited_by_count": 23856,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5090396631",
+      "display_name": "Susan Cohen Levine",
+      "orcid": "https://orcid.org/0000-0002-8579-9290",
+      "h_index": 78,
+      "i10_index": 152,
+      "works_count": 280,
+      "cited_by_count": 25433,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5078581523",
+      "display_name": "Paul Bloom",
+      "orcid": "https://orcid.org/0000-0003-2335-3389",
+      "h_index": 78,
+      "i10_index": 147,
+      "works_count": 254,
+      "cited_by_count": 30461,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5061656502",
+      "display_name": "Alexander Renkl",
+      "orcid": "https://orcid.org/0000-0001-7971-0619",
+      "h_index": 77,
+      "i10_index": 219,
+      "works_count": 385,
+      "cited_by_count": 27587,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5100513282",
+      "display_name": "Hua Shu",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 207,
+      "works_count": 359,
+      "cited_by_count": 18558,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Developmental and Educational Psychology -- 8.8",
+      "id": "https://openalex.org/A5071087860",
+      "display_name": "Matthieu E. M. Lenoir",
+      "orcid": "https://orcid.org/0000-0003-3906-1137",
+      "h_index": 76,
+      "i10_index": 198,
+      "works_count": 398,
+      "cited_by_count": 19383,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5022128090",
+      "display_name": "Christopher W. Schatschneider",
+      "orcid": "https://orcid.org/0000-0002-1700-7685",
+      "h_index": 76,
+      "i10_index": 197,
+      "works_count": 272,
+      "cited_by_count": 20531,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5053809954",
+      "display_name": "Samuel L. Odom",
+      "orcid": "https://orcid.org/0000-0003-1745-7915",
+      "h_index": 76,
+      "i10_index": 182,
+      "works_count": 287,
+      "cited_by_count": 31669,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5044066576",
+      "display_name": "Cecilia M. Heyes",
+      "orcid": "https://orcid.org/0000-0001-9119-9913",
+      "h_index": 76,
+      "i10_index": 170,
+      "works_count": 255,
+      "cited_by_count": 25059,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Agricultural and Biological Sciences",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5089378115",
+      "display_name": "George M. Sugai",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 158,
+      "works_count": 257,
+      "cited_by_count": 25182,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5086438946",
+      "display_name": "J. Bruce Tomblin",
+      "orcid": "https://orcid.org/0000-0001-8785-1665",
+      "h_index": 76,
+      "i10_index": 151,
+      "works_count": 234,
+      "cited_by_count": 25490,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5110076151",
+      "display_name": "Nathan H. Azrin",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 146,
+      "works_count": 190,
+      "cited_by_count": 18678,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5054341318",
+      "display_name": "Renée Baillargeon",
+      "orcid": "https://orcid.org/0000-0002-1177-9940",
+      "h_index": 76,
+      "i10_index": 116,
+      "works_count": 188,
+      "cited_by_count": 22424,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5081559194",
+      "display_name": "Mark F. O’Reilly",
+      "orcid": "https://orcid.org/0000-0002-6433-3475",
+      "h_index": 75,
+      "i10_index": 477,
+      "works_count": 704,
+      "cited_by_count": 24171,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Neuroscience",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5039294488",
+      "display_name": "Elena L. Grigorenko",
+      "orcid": "https://orcid.org/0000-0001-9646-4181",
+      "h_index": 75,
+      "i10_index": 274,
+      "works_count": 687,
+      "cited_by_count": 22118,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5022732985",
+      "display_name": "Kathleen Lynne Lane",
+      "orcid": "https://orcid.org/0000-0001-6364-838X",
+      "h_index": 75,
+      "i10_index": 243,
+      "works_count": 404,
+      "cited_by_count": 17311,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5019212451",
+      "display_name": "Roger Azevedo",
+      "orcid": "https://orcid.org/0000-0002-5018-6232",
+      "h_index": 75,
+      "i10_index": 210,
+      "works_count": 380,
+      "cited_by_count": 24765,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5044351672",
+      "display_name": "Anna‐Maija Poikkeus",
+      "orcid": "https://orcid.org/0000-0001-7913-8691",
+      "h_index": 75,
+      "i10_index": 168,
+      "works_count": 222,
+      "cited_by_count": 14758,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5013353171",
+      "display_name": "Josef Perner",
+      "orcid": "https://orcid.org/0000-0002-7855-0788",
+      "h_index": 75,
+      "i10_index": 161,
+      "works_count": 247,
+      "cited_by_count": 27954,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5077061315",
+      "display_name": "Sally E. Shaywitz",
+      "orcid": "https://orcid.org/0000-0002-8931-553X",
+      "h_index": 75,
+      "i10_index": 136,
+      "works_count": 246,
+      "cited_by_count": 30236,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5058957631",
+      "display_name": "Nilám Ram",
+      "orcid": "https://orcid.org/0000-0003-1671-5257",
+      "h_index": 74,
+      "i10_index": 239,
+      "works_count": 520,
+      "cited_by_count": 20018,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5024015382",
+      "display_name": "Paul van den Broek",
+      "orcid": "https://orcid.org/0000-0001-9058-721X",
+      "h_index": 74,
+      "i10_index": 238,
+      "works_count": 410,
+      "cited_by_count": 23698,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5019897192",
+      "display_name": "Remco C. J. Polman",
+      "orcid": "https://orcid.org/0000-0003-2951-0904",
+      "h_index": 74,
+      "i10_index": 190,
+      "works_count": 372,
+      "cited_by_count": 18546,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5025956286",
+      "display_name": "Patricia M. Greenfield",
+      "orcid": "https://orcid.org/0000-0001-6861-5050",
+      "h_index": 74,
+      "i10_index": 182,
+      "works_count": 308,
+      "cited_by_count": 27219,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5080662911",
+      "display_name": "Harald Clahsen",
+      "orcid": "https://orcid.org/0000-0002-6190-1318",
+      "h_index": 74,
+      "i10_index": 161,
+      "works_count": 334,
+      "cited_by_count": 20877,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5025537378",
+      "display_name": "Bruce Abernethy",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 152,
+      "works_count": 253,
+      "cited_by_count": 19833,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5057548987",
+      "display_name": "Paul D. Nation",
+      "orcid": "https://orcid.org/0000-0002-2920-9874",
+      "h_index": 74,
+      "i10_index": 144,
+      "works_count": 380,
+      "cited_by_count": 43557,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Developmental and Educational Psychology -- 8.7",
+      "id": "https://openalex.org/A5063018089",
+      "display_name": "Dave J. Collins",
+      "orcid": "https://orcid.org/0000-0002-7601-0454",
+      "h_index": 73,
+      "i10_index": 241,
+      "works_count": 429,
+      "cited_by_count": 18746,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5077805317",
+      "display_name": "Laurence B. Leonard",
+      "orcid": "https://orcid.org/0000-0002-9189-4438",
+      "h_index": 73,
+      "i10_index": 234,
+      "works_count": 340,
+      "cited_by_count": 21775,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5081621956",
+      "display_name": "Morten H. Christiansen",
+      "orcid": "https://orcid.org/0000-0002-3850-0655",
+      "h_index": 73,
+      "i10_index": 200,
+      "works_count": 390,
+      "cited_by_count": 25721,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5011671341",
+      "display_name": "John W. Rowe",
+      "orcid": "https://orcid.org/0000-0002-3620-6612",
+      "h_index": 73,
+      "i10_index": 185,
+      "works_count": 305,
+      "cited_by_count": 34455,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5031856599",
+      "display_name": "Roger A. Bakeman",
+      "orcid": "https://orcid.org/0000-0001-6517-3111",
+      "h_index": 73,
+      "i10_index": 178,
+      "works_count": 268,
+      "cited_by_count": 24433,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5014953513",
+      "display_name": "Cynthia K. Thompson",
+      "orcid": "https://orcid.org/0000-0003-3197-3457",
+      "h_index": 73,
+      "i10_index": 177,
+      "works_count": 302,
+      "cited_by_count": 15739,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5044697266",
+      "display_name": "Paula Anne Tallal",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 125,
+      "works_count": 195,
+      "cited_by_count": 24069,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5028256522",
+      "display_name": "Norbert Schmitt",
+      "orcid": "https://orcid.org/0000-0001-8590-5471",
+      "h_index": 73,
+      "i10_index": 98,
+      "works_count": 213,
+      "cited_by_count": 28806,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5001602859",
+      "display_name": "Asko J. Tolvanen",
+      "orcid": "https://orcid.org/0000-0001-6430-8897",
+      "h_index": 72,
+      "i10_index": 248,
+      "works_count": 383,
+      "cited_by_count": 17668,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5067573804",
+      "display_name": "Joseph R. Baker",
+      "orcid": "https://orcid.org/0000-0002-5686-1737",
+      "h_index": 72,
+      "i10_index": 220,
+      "works_count": 405,
+      "cited_by_count": 20902,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5075093236",
+      "display_name": "Lisa Michele Barnett",
+      "orcid": "https://orcid.org/0000-0002-9731-625X",
+      "h_index": 72,
+      "i10_index": 216,
+      "works_count": 402,
+      "cited_by_count": 26234,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5004016764",
+      "display_name": "Jean‐François Démonet",
+      "orcid": "https://orcid.org/0000-0003-0100-6175",
+      "h_index": 72,
+      "i10_index": 200,
+      "works_count": 453,
+      "cited_by_count": 20225,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5024683409",
+      "display_name": "Ilene C. Siegler",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 190,
+      "works_count": 283,
+      "cited_by_count": 17596,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5078098439",
+      "display_name": "Russell M. Gersten",
+      "orcid": "https://orcid.org/0000-0003-0825-9095",
+      "h_index": 72,
+      "i10_index": 164,
+      "works_count": 289,
+      "cited_by_count": 21402,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5015291615",
+      "display_name": "Kevin Durkin",
+      "orcid": "https://orcid.org/0000-0002-6167-3407",
+      "h_index": 72,
+      "i10_index": 157,
+      "works_count": 267,
+      "cited_by_count": 16189,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5017360081",
+      "display_name": "Johannes Christoph Ziegler",
+      "orcid": "https://orcid.org/0000-0002-2061-5729",
+      "h_index": 72,
+      "i10_index": 156,
+      "works_count": 332,
+      "cited_by_count": 27900,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5086071113",
+      "display_name": "Deanna Kuhn",
+      "orcid": "https://orcid.org/0000-0002-1321-3289",
+      "h_index": 72,
+      "i10_index": 151,
+      "works_count": 240,
+      "cited_by_count": 27199,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5064454785",
+      "display_name": "Leslie A. Rescorla",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 141,
+      "works_count": 201,
+      "cited_by_count": 23321,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5110435978",
+      "display_name": "Lew Hardy",
+      "orcid": "https://orcid.org/0009-0003-0784-9349",
+      "h_index": 72,
+      "i10_index": 139,
+      "works_count": 211,
+      "cited_by_count": 17219,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5109436410",
+      "display_name": "Willem J. M. Levelt",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 130,
+      "works_count": 337,
+      "cited_by_count": 38135,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5069524893",
+      "display_name": "Richard K. Wagner",
+      "orcid": "https://orcid.org/0000-0002-3243-7894",
+      "h_index": 72,
+      "i10_index": 130,
+      "works_count": 183,
+      "cited_by_count": 30020,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5109919786",
+      "display_name": "Diane N. Ruble",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 127,
+      "works_count": 179,
+      "cited_by_count": 17993,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Developmental and Educational Psychology -- 8.6",
+      "id": "https://openalex.org/A5040071710",
+      "display_name": "Sian Leah Beilock",
+      "orcid": "https://orcid.org/0000-0002-0556-5241",
+      "h_index": 72,
+      "i10_index": 107,
+      "works_count": 211,
+      "cited_by_count": 26612,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5110895362",
+      "display_name": "Thomas R. Kratochwill",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 225,
+      "works_count": 376,
+      "cited_by_count": 19902,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5039286778",
+      "display_name": "Wayne W. Fisher",
+      "orcid": "https://orcid.org/0000-0001-6601-7743",
+      "h_index": 71,
+      "i10_index": 197,
+      "works_count": 250,
+      "cited_by_count": 17111,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Neuroscience",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5080760142",
+      "display_name": "Keith James Topping",
+      "orcid": "https://orcid.org/0000-0002-0589-6796",
+      "h_index": 71,
+      "i10_index": 188,
+      "works_count": 429,
+      "cited_by_count": 23961,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5028288417",
+      "display_name": "Margo A. Mastropieri",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 179,
+      "works_count": 289,
+      "cited_by_count": 18911,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5085857112",
+      "display_name": "Albert M. Galaburda",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 174,
+      "works_count": 252,
+      "cited_by_count": 22524,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5089165062",
+      "display_name": "Kou Murayama",
+      "orcid": "https://orcid.org/0000-0003-2902-9600",
+      "h_index": 71,
+      "i10_index": 171,
+      "works_count": 354,
+      "cited_by_count": 29171,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5110022305",
+      "display_name": "K. Warner Schaie",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 170,
+      "works_count": 387,
+      "cited_by_count": 17351,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5069400021",
+      "display_name": "Philip H. Winne",
+      "orcid": "https://orcid.org/0000-0001-5133-7525",
+      "h_index": 71,
+      "i10_index": 146,
+      "works_count": 265,
+      "cited_by_count": 25260,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5006362866",
+      "display_name": "Jacqui Smith",
+      "orcid": "https://orcid.org/0000-0002-6499-103X",
+      "h_index": 71,
+      "i10_index": 146,
+      "works_count": 288,
+      "cited_by_count": 20365,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5019038438",
+      "display_name": "Daniel R. Gould",
+      "orcid": "https://orcid.org/0000-0002-2428-8999",
+      "h_index": 71,
+      "i10_index": 140,
+      "works_count": 216,
+      "cited_by_count": 21481,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5059382575",
+      "display_name": "Barbara Rogoff",
+      "orcid": "https://orcid.org/0000-0002-4153-3992",
+      "h_index": 71,
+      "i10_index": 134,
+      "works_count": 231,
+      "cited_by_count": 34444,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5024919143",
+      "display_name": "Jane V. Oakhill",
+      "orcid": "https://orcid.org/0000-0001-8810-3714",
+      "h_index": 71,
+      "i10_index": 133,
+      "works_count": 277,
+      "cited_by_count": 20816,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5082043878",
+      "display_name": "Peter Clive Mundy",
+      "orcid": "https://orcid.org/0000-0002-2484-5206",
+      "h_index": 71,
+      "i10_index": 129,
+      "works_count": 188,
+      "cited_by_count": 21536,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5031892250",
+      "display_name": "Vern L. Bengtson",
+      "orcid": "https://orcid.org/0000-0002-4978-1827",
+      "h_index": 71,
+      "i10_index": 125,
+      "works_count": 212,
+      "cited_by_count": 22827,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5103403855",
+      "display_name": "John H. Flavell",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 123,
+      "works_count": 179,
+      "cited_by_count": 45343,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5027575662",
+      "display_name": "Judith M. Harackiewicz",
+      "orcid": "https://orcid.org/0000-0003-4748-1174",
+      "h_index": 71,
+      "i10_index": 114,
+      "works_count": 178,
+      "cited_by_count": 36571,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5100435506",
+      "display_name": "Ping Li",
+      "orcid": "https://orcid.org/0000-0002-3314-943X",
+      "h_index": 70,
+      "i10_index": 225,
+      "works_count": 710,
+      "cited_by_count": 20950,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5006329075",
+      "display_name": "Matti Laine",
+      "orcid": "https://orcid.org/0000-0003-4529-4965",
+      "h_index": 70,
+      "i10_index": 214,
+      "works_count": 326,
+      "cited_by_count": 15918,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5015353263",
+      "display_name": "Christopher Ring",
+      "orcid": "https://orcid.org/0000-0001-9921-0435",
+      "h_index": 70,
+      "i10_index": 195,
+      "works_count": 252,
+      "cited_by_count": 13492,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5064294435",
+      "display_name": "Gina Conti‐Ramsden",
+      "orcid": "https://orcid.org/0000-0003-0235-7209",
+      "h_index": 70,
+      "i10_index": 159,
+      "works_count": 266,
+      "cited_by_count": 18085,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5042303513",
+      "display_name": "Karen E. Adolph",
+      "orcid": "https://orcid.org/0000-0003-2819-134X",
+      "h_index": 70,
+      "i10_index": 157,
+      "works_count": 319,
+      "cited_by_count": 15503,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5006476089",
+      "display_name": "Brian L. Butterworth",
+      "orcid": "https://orcid.org/0000-0001-8201-3347",
+      "h_index": 70,
+      "i10_index": 150,
+      "works_count": 281,
+      "cited_by_count": 20359,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Developmental and Educational Psychology -- 8.5",
+      "id": "https://openalex.org/A5107862287",
+      "display_name": "Gregory J. Schraw",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 113,
+      "works_count": 179,
+      "cited_by_count": 27411,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5030116727",
+      "display_name": "Paul R. Pintrich",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 103,
+      "works_count": 138,
+      "cited_by_count": 84032,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5083821830",
+      "display_name": "Pierre Dillenbourg",
+      "orcid": "https://orcid.org/0000-0001-9455-5119",
+      "h_index": 69,
+      "i10_index": 269,
+      "works_count": 617,
+      "cited_by_count": 26162,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5010264892",
+      "display_name": "Denis Gerstorf",
+      "orcid": "https://orcid.org/0000-0002-2133-9498",
+      "h_index": 69,
+      "i10_index": 228,
+      "works_count": 533,
+      "cited_by_count": 18221,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5103234894",
+      "display_name": "Michael C. Frank",
+      "orcid": "https://orcid.org/0000-0002-7551-4378",
+      "h_index": 69,
+      "i10_index": 215,
+      "works_count": 1273,
+      "cited_by_count": 20810,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5042558086",
+      "display_name": "Sheena Reilly",
+      "orcid": "https://orcid.org/0000-0001-6506-4767",
+      "h_index": 69,
+      "i10_index": 188,
+      "works_count": 299,
+      "cited_by_count": 14598,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5012037349",
+      "display_name": "Thomas E. Scruggs",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 185,
+      "works_count": 287,
+      "cited_by_count": 18518,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5075005317",
+      "display_name": "David N. Caplan",
+      "orcid": "https://orcid.org/0000-0002-1170-1174",
+      "h_index": 69,
+      "i10_index": 170,
+      "works_count": 428,
+      "cited_by_count": 18958,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5009291016",
+      "display_name": "Stephen D. Krashen",
+      "orcid": "https://orcid.org/0000-0003-4009-4382",
+      "h_index": 69,
+      "i10_index": 169,
+      "works_count": 300,
+      "cited_by_count": 39530,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5066061139",
+      "display_name": "Toni C. Antonucci",
+      "orcid": "https://orcid.org/0000-0002-1420-5328",
+      "h_index": 69,
+      "i10_index": 155,
+      "works_count": 362,
+      "cited_by_count": 20925,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5111586814",
+      "display_name": "Glen Dunlap",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 150,
+      "works_count": 215,
+      "cited_by_count": 17503,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5008722925",
+      "display_name": "Ghislaine Dehaene‐Lambertz",
+      "orcid": "https://orcid.org/0000-0003-2221-9081",
+      "h_index": 69,
+      "i10_index": 138,
+      "works_count": 268,
+      "cited_by_count": 25571,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5024406485",
+      "display_name": "Gabriella Vigliocco",
+      "orcid": "https://orcid.org/0000-0002-7190-3659",
+      "h_index": 69,
+      "i10_index": 137,
+      "works_count": 378,
+      "cited_by_count": 19770,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5049815500",
+      "display_name": "Kate Nation",
+      "orcid": "https://orcid.org/0000-0001-5048-6107",
+      "h_index": 69,
+      "i10_index": 121,
+      "works_count": 205,
+      "cited_by_count": 20064,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5068092641",
+      "display_name": "Hans‐Werner Wahl",
+      "orcid": "https://orcid.org/0000-0003-0625-3239",
+      "h_index": 68,
+      "i10_index": 246,
+      "works_count": 588,
+      "cited_by_count": 17380,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5057357328",
+      "display_name": "Daniel Memmert",
+      "orcid": "https://orcid.org/0000-0002-3406-9175",
+      "h_index": 68,
+      "i10_index": 236,
+      "works_count": 778,
+      "cited_by_count": 16608,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5071070416",
+      "display_name": "Ronnel Bornasal King",
+      "orcid": "https://orcid.org/0000-0003-1723-1748",
+      "h_index": 68,
+      "i10_index": 222,
+      "works_count": 361,
+      "cited_by_count": 15228,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5075908438",
+      "display_name": "Patricia J. Bauer",
+      "orcid": "https://orcid.org/0000-0002-4456-7717",
+      "h_index": 68,
+      "i10_index": 186,
+      "works_count": 394,
+      "cited_by_count": 14602,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5080816517",
+      "display_name": "Elena Lieven",
+      "orcid": "https://orcid.org/0000-0002-2270-8910",
+      "h_index": 68,
+      "i10_index": 170,
+      "works_count": 394,
+      "cited_by_count": 17259,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5086739388",
+      "display_name": "Mark Wilson",
+      "orcid": "https://orcid.org/0000-0001-8145-6971",
+      "h_index": 68,
+      "i10_index": 169,
+      "works_count": 275,
+      "cited_by_count": 12971,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5054470541",
+      "display_name": "Craig R Hall",
+      "orcid": "https://orcid.org/0000-0001-9609-6358",
+      "h_index": 68,
+      "i10_index": 152,
+      "works_count": 225,
+      "cited_by_count": 14992,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5078432143",
+      "display_name": "Raymond P. Perry",
+      "orcid": "https://orcid.org/0000-0002-1684-5628",
+      "h_index": 68,
+      "i10_index": 142,
+      "works_count": 222,
+      "cited_by_count": 27525,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Developmental and Educational Psychology -- 8.4",
+      "id": "https://openalex.org/A5049747641",
+      "display_name": "Maureen R. Weiss",
+      "orcid": "https://orcid.org/0000-0003-4172-7700",
+      "h_index": 68,
+      "i10_index": 114,
+      "works_count": 170,
+      "cited_by_count": 13874,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5059989201",
+      "display_name": "Janellen Huttenlocher",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 112,
+      "works_count": 159,
+      "cited_by_count": 22194,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5061790322",
+      "display_name": "Malinda Carpenter",
+      "orcid": "https://orcid.org/0000-0003-3983-2034",
+      "h_index": 68,
+      "i10_index": 109,
+      "works_count": 141,
+      "cited_by_count": 30286,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5029188884",
+      "display_name": "Camilla Persson Benbow",
+      "orcid": "https://orcid.org/0000-0003-0370-1526",
+      "h_index": 68,
+      "i10_index": 109,
+      "works_count": 163,
+      "cited_by_count": 18943,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5035815271",
+      "display_name": "Nirbhay Nand Singh",
+      "orcid": "https://orcid.org/0000-0002-4418-4847",
+      "h_index": 67,
+      "i10_index": 467,
+      "works_count": 719,
+      "cited_by_count": 22516,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Health Professions",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5028338673",
+      "display_name": "Scott A. Crossley",
+      "orcid": "https://orcid.org/0000-0002-5148-0273",
+      "h_index": 67,
+      "i10_index": 206,
+      "works_count": 351,
+      "cited_by_count": 18992,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Arts and Humanities",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5025759103",
+      "display_name": "Timothy R. Vollmer",
+      "orcid": "https://orcid.org/0000-0003-2750-9985",
+      "h_index": 67,
+      "i10_index": 191,
+      "works_count": 333,
+      "cited_by_count": 20595,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5000268884",
+      "display_name": "Ivar Bråten",
+      "orcid": "https://orcid.org/0000-0002-9242-9087",
+      "h_index": 67,
+      "i10_index": 156,
+      "works_count": 287,
+      "cited_by_count": 13795,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5081187278",
+      "display_name": "Sandra R. Waxman",
+      "orcid": "https://orcid.org/0000-0002-5009-2068",
+      "h_index": 67,
+      "i10_index": 146,
+      "works_count": 237,
+      "cited_by_count": 13859,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5011113177",
+      "display_name": "Franck Ramus",
+      "orcid": "https://orcid.org/0000-0002-1122-5913",
+      "h_index": 67,
+      "i10_index": 125,
+      "works_count": 328,
+      "cited_by_count": 19909,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5055927762",
+      "display_name": "Michel Fayol",
+      "orcid": "https://orcid.org/0000-0002-0672-5702",
+      "h_index": 66,
+      "i10_index": 194,
+      "works_count": 509,
+      "cited_by_count": 14152,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5071463629",
+      "display_name": "Fernand R. Gobet",
+      "orcid": "https://orcid.org/0000-0002-9317-6886",
+      "h_index": 66,
+      "i10_index": 182,
+      "works_count": 566,
+      "cited_by_count": 17690,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5015753322",
+      "display_name": "Karen D. Emmorey",
+      "orcid": "https://orcid.org/0000-0002-5647-0066",
+      "h_index": 66,
+      "i10_index": 172,
+      "works_count": 341,
+      "cited_by_count": 14997,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5027880541",
+      "display_name": "Peter Henry Wilson",
+      "orcid": "https://orcid.org/0000-0003-3747-0287",
+      "h_index": 66,
+      "i10_index": 159,
+      "works_count": 308,
+      "cited_by_count": 16697,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5027970307",
+      "display_name": "Stewart Anthony Vella",
+      "orcid": "https://orcid.org/0000-0003-0537-9366",
+      "h_index": 66,
+      "i10_index": 148,
+      "works_count": 228,
+      "cited_by_count": 12768,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5072332628",
+      "display_name": "Moshe Zeidner",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 147,
+      "works_count": 209,
+      "cited_by_count": 18987,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5049933813",
+      "display_name": "Elizabeth M. Brannon",
+      "orcid": "https://orcid.org/0000-0003-0971-1194",
+      "h_index": 66,
+      "i10_index": 131,
+      "works_count": 265,
+      "cited_by_count": 15941,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Agricultural and Biological Sciences",
+        "Neuroscience",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5033062395",
+      "display_name": "Judith F. Kroll",
+      "orcid": "https://orcid.org/0000-0002-7951-0702",
+      "h_index": 66,
+      "i10_index": 130,
+      "works_count": 252,
+      "cited_by_count": 23278,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5075273256",
+      "display_name": "John T. Guthrie",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 126,
+      "works_count": 309,
+      "cited_by_count": 24321,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5036564676",
+      "display_name": "Donald Shankweiler",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 115,
+      "works_count": 176,
+      "cited_by_count": 24501,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5067336405",
+      "display_name": "Liat Ayalon",
+      "orcid": "https://orcid.org/0000-0003-3339-7879",
+      "h_index": 65,
+      "i10_index": 262,
+      "works_count": 520,
+      "cited_by_count": 17988,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5073077661",
+      "display_name": "Peter Martin",
+      "orcid": "https://orcid.org/0000-0002-9781-4961",
+      "h_index": 65,
+      "i10_index": 225,
+      "works_count": 401,
+      "cited_by_count": 16002,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Developmental and Educational Psychology -- 8.3",
+      "id": "https://openalex.org/A5021793828",
+      "display_name": "Yannick Stéphan",
+      "orcid": "https://orcid.org/0000-0002-8029-8809",
+      "h_index": 65,
+      "i10_index": 224,
+      "works_count": 374,
+      "cited_by_count": 14514,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5090013094",
+      "display_name": "Dorthe Berntsen",
+      "orcid": "https://orcid.org/0000-0001-5941-314X",
+      "h_index": 65,
+      "i10_index": 178,
+      "works_count": 356,
+      "cited_by_count": 18184,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5019267477",
+      "display_name": "Patricia A. Alexander",
+      "orcid": "https://orcid.org/0000-0001-7060-2582",
+      "h_index": 65,
+      "i10_index": 168,
+      "works_count": 302,
+      "cited_by_count": 22325,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5009521559",
+      "display_name": "Detlev Leutner",
+      "orcid": "https://orcid.org/0000-0001-5308-9094",
+      "h_index": 65,
+      "i10_index": 157,
+      "works_count": 258,
+      "cited_by_count": 17271,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5021085855",
+      "display_name": "Carolien J. Rieffe",
+      "orcid": "https://orcid.org/0000-0002-7584-6698",
+      "h_index": 65,
+      "i10_index": 154,
+      "works_count": 313,
+      "cited_by_count": 12579,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5041722464",
+      "display_name": "Susan H. Landry",
+      "orcid": "https://orcid.org/0000-0002-7820-3559",
+      "h_index": 65,
+      "i10_index": 153,
+      "works_count": 217,
+      "cited_by_count": 15125,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5046627985",
+      "display_name": "Joseph K. Torgesen",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 125,
+      "works_count": 184,
+      "cited_by_count": 26951,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5015154801",
+      "display_name": "John D. Bransford",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 123,
+      "works_count": 190,
+      "cited_by_count": 37205,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5069558333",
+      "display_name": "Carol McDonald Connor",
+      "orcid": "https://orcid.org/0000-0001-5803-456X",
+      "h_index": 65,
+      "i10_index": 114,
+      "works_count": 175,
+      "cited_by_count": 16168,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5017921526",
+      "display_name": "Adele D. Diamond",
+      "orcid": "https://orcid.org/0000-0002-1453-6434",
+      "h_index": 65,
+      "i10_index": 101,
+      "works_count": 210,
+      "cited_by_count": 57127,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5052387000",
+      "display_name": "Esther Thelen",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 101,
+      "works_count": 154,
+      "cited_by_count": 24216,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5104044378",
+      "display_name": "Joseph J. Campos",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 100,
+      "works_count": 146,
+      "cited_by_count": 15581,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 257,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5011871170",
+      "display_name": "Manuel Perea",
+      "orcid": "https://orcid.org/0000-0002-3291-1365",
+      "h_index": 64,
+      "i10_index": 236,
+      "works_count": 454,
+      "cited_by_count": 15639,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 258,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5070422516",
+      "display_name": "Raymond G. Miltenberger",
+      "orcid": "https://orcid.org/0000-0002-6331-298X",
+      "h_index": 64,
+      "i10_index": 206,
+      "works_count": 314,
+      "cited_by_count": 12598,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 259,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5008469784",
+      "display_name": "Frank C. Keil",
+      "orcid": "https://orcid.org/0000-0003-3688-7558",
+      "h_index": 64,
+      "i10_index": 172,
+      "works_count": 518,
+      "cited_by_count": 21389,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Decision Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 260,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5070364712",
+      "display_name": "Andrew M. Lane",
+      "orcid": "https://orcid.org/0000-0002-8296-1248",
+      "h_index": 64,
+      "i10_index": 170,
+      "works_count": 291,
+      "cited_by_count": 16226,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 261,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5032220513",
+      "display_name": "Jutta Heckhausen",
+      "orcid": "https://orcid.org/0000-0002-9722-6246",
+      "h_index": 64,
+      "i10_index": 162,
+      "works_count": 301,
+      "cited_by_count": 19750,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 262,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5015819945",
+      "display_name": "Scott Michael Hofer",
+      "orcid": "https://orcid.org/0000-0001-8923-4337",
+      "h_index": 64,
+      "i10_index": 161,
+      "works_count": 403,
+      "cited_by_count": 15484,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Mathematics",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 263,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5030219680",
+      "display_name": "Deborah Carr",
+      "orcid": "https://orcid.org/0000-0002-8175-5303",
+      "h_index": 64,
+      "i10_index": 139,
+      "works_count": 359,
+      "cited_by_count": 16143,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 264,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5012663487",
+      "display_name": "David Howard",
+      "orcid": "https://orcid.org/0000-0001-9141-5751",
+      "h_index": 64,
+      "i10_index": 139,
+      "works_count": 295,
+      "cited_by_count": 13417,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 265,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5006034844",
+      "display_name": "Núria Sebastián‐Gallés",
+      "orcid": "https://orcid.org/0000-0001-6938-2498",
+      "h_index": 64,
+      "i10_index": 117,
+      "works_count": 255,
+      "cited_by_count": 18311,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 266,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5059000422",
+      "display_name": "Gerd Schulte‐Körne",
+      "orcid": "https://orcid.org/0000-0002-9960-1572",
+      "h_index": 63,
+      "i10_index": 218,
+      "works_count": 515,
+      "cited_by_count": 15905,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 267,
+      "score": 8.2,
+      "label": "Developmental and Educational Psychology -- 8.2",
+      "id": "https://openalex.org/A5039508907",
+      "display_name": "Hans‐Christoph Nuerk",
+      "orcid": "https://orcid.org/0000-0002-0331-7498",
+      "h_index": 63,
+      "i10_index": 218,
+      "works_count": 344,
+      "cited_by_count": 13645,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 268,
+      "score": 8.1,
+      "label": "Developmental and Educational Psychology -- 8.1",
+      "id": "https://openalex.org/A5078654187",
+      "display_name": "Rainer Κ. Silbereisen",
+      "orcid": "https://orcid.org/0000-0003-4128-6538",
+      "h_index": 63,
+      "i10_index": 201,
+      "works_count": 539,
+      "cited_by_count": 13464,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 269,
+      "score": 8.1,
+      "label": "Developmental and Educational Psychology -- 8.1",
+      "id": "https://openalex.org/A5089666098",
+      "display_name": "Bouwien C. M. Smits-Engelsman",
+      "orcid": "https://orcid.org/0000-0003-0632-3276",
+      "h_index": 63,
+      "i10_index": 184,
+      "works_count": 346,
+      "cited_by_count": 15715,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 270,
+      "score": 8.1,
+      "label": "Developmental and Educational Psychology -- 8.1",
+      "id": "https://openalex.org/A5052507233",
+      "display_name": "Pol Ghesquière",
+      "orcid": "https://orcid.org/0000-0001-9056-7550",
+      "h_index": 63,
+      "i10_index": 174,
+      "works_count": 617,
+      "cited_by_count": 12735,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 271,
+      "score": 8.1,
+      "label": "Developmental and Educational Psychology -- 8.1",
+      "id": "https://openalex.org/A5027967262",
+      "display_name": "Joseph S. Renzulli",
+      "orcid": "https://orcid.org/0000-0002-5370-9633",
+      "h_index": 63,
+      "i10_index": 171,
+      "works_count": 406,
+      "cited_by_count": 15040,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 272,
+      "score": 8.1,
+      "label": "Developmental and Educational Psychology -- 8.1",
+      "id": "https://openalex.org/A5006743778",
+      "display_name": "Penny M. Pexman",
+      "orcid": "https://orcid.org/0000-0001-7130-0973",
+      "h_index": 63,
+      "i10_index": 149,
+      "works_count": 350,
+      "cited_by_count": 11455,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 273,
+      "score": 8.1,
+      "label": "Developmental and Educational Psychology -- 8.1",
+      "id": "https://openalex.org/A5082085150",
+      "display_name": "Frank Boers",
+      "orcid": "https://orcid.org/0000-0001-7552-4931",
+      "h_index": 63,
+      "i10_index": 133,
+      "works_count": 343,
+      "cited_by_count": 11459,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 274,
+      "score": 8.1,
+      "label": "Developmental and Educational Psychology -- 8.1",
+      "id": "https://openalex.org/A5066348039",
+      "display_name": "Lynn Kern Koegel",
+      "orcid": "https://orcid.org/0000-0002-4758-6841",
+      "h_index": 63,
+      "i10_index": 102,
+      "works_count": 319,
+      "cited_by_count": 14795,
+      "discipline": "Developmental and Educational Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Developmental and Educational Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "kind": "subfield",
+  "id": 3300,
+  "name": "General Social Sciences",
+  "total_in_scrape": 1,
+  "count": 1,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "General Social Sciences -- 9.9",
+      "id": "https://openalex.org/A5108111179",
+      "display_name": "Manuel Castells",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 261,
+      "works_count": 666,
+      "cited_by_count": 63291,
+      "discipline": "General Social Sciences",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "General Social Sciences",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    }
+  ]
+}

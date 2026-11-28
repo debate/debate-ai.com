@@ -1,0 +1,2637 @@
+{
+  "kind": "subfield",
+  "id": 2717,
+  "name": "Geriatrics and Gerontology",
+  "total_in_scrape": 139,
+  "count": 139,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Geriatrics and Gerontology -- 9.9",
+      "id": "https://openalex.org/A5048196698",
+      "display_name": "Luigi Ferrucci",
+      "orcid": "https://orcid.org/0000-0002-6273-1613",
+      "h_index": 266,
+      "i10_index": 1791,
+      "works_count": 2866,
+      "cited_by_count": 337806,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Geriatrics and Gerontology -- 9.9",
+      "id": "https://openalex.org/A5012619895",
+      "display_name": "Jack M. Guralnik",
+      "orcid": "https://orcid.org/0000-0001-5108-7263",
+      "h_index": 202,
+      "i10_index": 808,
+      "works_count": 1090,
+      "cited_by_count": 166825,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Geriatrics and Gerontology -- 9.9",
+      "id": "https://openalex.org/A5102748794",
+      "display_name": "John Edward Morley",
+      "orcid": "https://orcid.org/0000-0003-1104-0393",
+      "h_index": 176,
+      "i10_index": 1061,
+      "works_count": 1570,
+      "cited_by_count": 136973,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Geriatrics and Gerontology -- 9.9",
+      "id": "https://openalex.org/A5079554237",
+      "display_name": "Linda P. Fried",
+      "orcid": "https://orcid.org/0000-0002-0815-1706",
+      "h_index": 149,
+      "i10_index": 438,
+      "works_count": 557,
+      "cited_by_count": 122479,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Geriatrics and Gerontology -- 9.9",
+      "id": "https://openalex.org/A5006205778",
+      "display_name": "Kenneth J. Rockwood",
+      "orcid": "https://orcid.org/0000-0002-6674-995X",
+      "h_index": 144,
+      "i10_index": 646,
+      "works_count": 1218,
+      "cited_by_count": 138426,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Geriatrics and Gerontology -- 9.9",
+      "id": "https://openalex.org/A5009126435",
+      "display_name": "Matteo Cesari",
+      "orcid": "https://orcid.org/0000-0002-0348-3664",
+      "h_index": 130,
+      "i10_index": 545,
+      "works_count": 847,
+      "cited_by_count": 87902,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5090671996",
+      "display_name": "Eleanor Marie Simonsick",
+      "orcid": "https://orcid.org/0000-0002-5460-3494",
+      "h_index": 130,
+      "i10_index": 457,
+      "works_count": 781,
+      "cited_by_count": 71829,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5037200438",
+      "display_name": "Roberto Bernabei",
+      "orcid": "https://orcid.org/0000-0002-9197-004X",
+      "h_index": 120,
+      "i10_index": 464,
+      "works_count": 745,
+      "cited_by_count": 63698,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5033950708",
+      "display_name": "Nicola Veronese",
+      "orcid": "https://orcid.org/0000-0002-9328-289X",
+      "h_index": 116,
+      "i10_index": 644,
+      "works_count": 986,
+      "cited_by_count": 65099,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5084644208",
+      "display_name": "Vincent Mor",
+      "orcid": "https://orcid.org/0000-0003-0084-1267",
+      "h_index": 114,
+      "i10_index": 541,
+      "works_count": 884,
+      "cited_by_count": 50473,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5111661626",
+      "display_name": "Robert L Kane",
+      "orcid": "https://orcid.org/0009-0005-8505-6218",
+      "h_index": 112,
+      "i10_index": 488,
+      "works_count": 1659,
+      "cited_by_count": 48424,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5003965846",
+      "display_name": "Robert Graham Cumming",
+      "orcid": "https://orcid.org/0000-0002-0261-6103",
+      "h_index": 111,
+      "i10_index": 435,
+      "works_count": 619,
+      "cited_by_count": 48926,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5044282024",
+      "display_name": "Graziano Onder",
+      "orcid": "https://orcid.org/0000-0003-3400-4491",
+      "h_index": 109,
+      "i10_index": 449,
+      "works_count": 716,
+      "cited_by_count": 56510,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5017585651",
+      "display_name": "Thomas M. Gill",
+      "orcid": "https://orcid.org/0000-0002-6450-0368",
+      "h_index": 107,
+      "i10_index": 391,
+      "works_count": 652,
+      "cited_by_count": 47592,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5086987637",
+      "display_name": "Jeremy D Walston",
+      "orcid": "https://orcid.org/0000-0002-6965-2723",
+      "h_index": 106,
+      "i10_index": 306,
+      "works_count": 496,
+      "cited_by_count": 77618,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5112361229",
+      "display_name": "Harvey Jay Cohen",
+      "orcid": "https://orcid.org/0009-0008-3602-2750",
+      "h_index": 105,
+      "i10_index": 415,
+      "works_count": 682,
+      "cited_by_count": 47282,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Geriatrics and Gerontology -- 9.8",
+      "id": "https://openalex.org/A5110085503",
+      "display_name": "Marco Pahor",
+      "orcid": null,
+      "h_index": 105,
+      "i10_index": 290,
+      "works_count": 388,
+      "cited_by_count": 50372,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5015962886",
+      "display_name": "Antonio Cherubini",
+      "orcid": "https://orcid.org/0000-0003-0261-9897",
+      "h_index": 103,
+      "i10_index": 355,
+      "works_count": 627,
+      "cited_by_count": 46168,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5065468510",
+      "display_name": "Muhammad Mamdani",
+      "orcid": "https://orcid.org/0000-0001-5199-6344",
+      "h_index": 100,
+      "i10_index": 476,
+      "works_count": 757,
+      "cited_by_count": 43698,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5036241160",
+      "display_name": "James S. Goodwin",
+      "orcid": "https://orcid.org/0000-0001-5507-1613",
+      "h_index": 100,
+      "i10_index": 367,
+      "works_count": 535,
+      "cited_by_count": 34929,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5089946924",
+      "display_name": "Jerry H. Gurwitz",
+      "orcid": "https://orcid.org/0000-0003-1630-8213",
+      "h_index": 99,
+      "i10_index": 361,
+      "works_count": 604,
+      "cited_by_count": 37001,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5102999988",
+      "display_name": "Mary E. Tinetti",
+      "orcid": "https://orcid.org/0000-0003-0940-9702",
+      "h_index": 98,
+      "i10_index": 211,
+      "works_count": 267,
+      "cited_by_count": 59024,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5039104588",
+      "display_name": "Karen Bandeen‐Roche",
+      "orcid": "https://orcid.org/0000-0003-3895-8313",
+      "h_index": 97,
+      "i10_index": 271,
+      "works_count": 465,
+      "cited_by_count": 37067,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5067976655",
+      "display_name": "C. Seth Landefeld",
+      "orcid": null,
+      "h_index": 97,
+      "i10_index": 176,
+      "works_count": 242,
+      "cited_by_count": 42172,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5081622372",
+      "display_name": "Stefania Maggi",
+      "orcid": "https://orcid.org/0000-0002-0453-8663",
+      "h_index": 96,
+      "i10_index": 452,
+      "works_count": 722,
+      "cited_by_count": 38190,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5072667634",
+      "display_name": "Yves Rolland",
+      "orcid": "https://orcid.org/0009-0003-9486-9144",
+      "h_index": 96,
+      "i10_index": 372,
+      "works_count": 680,
+      "cited_by_count": 87057,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5076061467",
+      "display_name": "Hidenori Arai",
+      "orcid": "https://orcid.org/0000-0002-9000-6849",
+      "h_index": 94,
+      "i10_index": 315,
+      "works_count": 643,
+      "cited_by_count": 48295,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Geriatrics and Gerontology -- 9.7",
+      "id": "https://openalex.org/A5045222539",
+      "display_name": "Kenneth E. Covinsky",
+      "orcid": "https://orcid.org/0009-0006-6119-6176",
+      "h_index": 93,
+      "i10_index": 242,
+      "works_count": 461,
+      "cited_by_count": 36087,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5009725215",
+      "display_name": "Kenneth E. Schmader",
+      "orcid": "https://orcid.org/0000-0001-5036-2155",
+      "h_index": 93,
+      "i10_index": 241,
+      "works_count": 360,
+      "cited_by_count": 40792,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5041339246",
+      "display_name": "Arti Hurria",
+      "orcid": "https://orcid.org/0000-0001-7983-9615",
+      "h_index": 92,
+      "i10_index": 262,
+      "works_count": 474,
+      "cited_by_count": 35515,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5073041790",
+      "display_name": "Takao Suzuki",
+      "orcid": "https://orcid.org/0000-0001-5489-0983",
+      "h_index": 91,
+      "i10_index": 461,
+      "works_count": 983,
+      "cited_by_count": 38513,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5024588131",
+      "display_name": "Toine C. G. Egberts",
+      "orcid": "https://orcid.org/0000-0003-1758-7779",
+      "h_index": 91,
+      "i10_index": 418,
+      "works_count": 838,
+      "cited_by_count": 30364,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5030643265",
+      "display_name": "Paula A. Rochon",
+      "orcid": "https://orcid.org/0000-0002-5973-4151",
+      "h_index": 91,
+      "i10_index": 333,
+      "works_count": 550,
+      "cited_by_count": 30619,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5059503327",
+      "display_name": "David George Le Couteur",
+      "orcid": "https://orcid.org/0000-0002-4227-5817",
+      "h_index": 89,
+      "i10_index": 370,
+      "works_count": 588,
+      "cited_by_count": 39153,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5015624122",
+      "display_name": "W. John Boscardin",
+      "orcid": "https://orcid.org/0000-0003-3121-9526",
+      "h_index": 89,
+      "i10_index": 283,
+      "works_count": 544,
+      "cited_by_count": 26682,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5004792362",
+      "display_name": "Leocadio Rodríguez‐Mañas",
+      "orcid": "https://orcid.org/0000-0002-6551-1333",
+      "h_index": 88,
+      "i10_index": 327,
+      "works_count": 559,
+      "cited_by_count": 40386,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5015665688",
+      "display_name": "Andrea Britta Maier",
+      "orcid": "https://orcid.org/0000-0001-7206-1724",
+      "h_index": 87,
+      "i10_index": 377,
+      "works_count": 705,
+      "cited_by_count": 35020,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5005808294",
+      "display_name": "Darren Mark Ashcroft",
+      "orcid": "https://orcid.org/0000-0002-2958-915X",
+      "h_index": 87,
+      "i10_index": 351,
+      "works_count": 1230,
+      "cited_by_count": 32195,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Geriatrics and Gerontology -- 9.6",
+      "id": "https://openalex.org/A5013373829",
+      "display_name": "Jacobijn Gussekloo",
+      "orcid": "https://orcid.org/0000-0001-7186-8278",
+      "h_index": 86,
+      "i10_index": 289,
+      "works_count": 498,
+      "cited_by_count": 27504,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5032072075",
+      "display_name": "Melissa Andrea Simon",
+      "orcid": "https://orcid.org/0000-0001-9021-7315",
+      "h_index": 85,
+      "i10_index": 288,
+      "works_count": 490,
+      "cited_by_count": 30408,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5010558391",
+      "display_name": "Wayne A. Ray",
+      "orcid": "https://orcid.org/0000-0001-9188-9017",
+      "h_index": 85,
+      "i10_index": 191,
+      "works_count": 241,
+      "cited_by_count": 30184,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5076080691",
+      "display_name": "Jos M. G. A. Schols",
+      "orcid": "https://orcid.org/0000-0002-4062-2061",
+      "h_index": 84,
+      "i10_index": 367,
+      "works_count": 953,
+      "cited_by_count": 33272,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5026568654",
+      "display_name": "Joseph T. Hanlon",
+      "orcid": "https://orcid.org/0000-0003-4124-2578",
+      "h_index": 84,
+      "i10_index": 279,
+      "works_count": 472,
+      "cited_by_count": 29392,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Health Professions",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5038508194",
+      "display_name": "Supriya Gupta Mohile",
+      "orcid": "https://orcid.org/0000-0003-0867-327X",
+      "h_index": 84,
+      "i10_index": 258,
+      "works_count": 616,
+      "cited_by_count": 30262,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5051501131",
+      "display_name": "Yngve Gustafson",
+      "orcid": "https://orcid.org/0000-0002-0999-377X",
+      "h_index": 84,
+      "i10_index": 222,
+      "works_count": 358,
+      "cited_by_count": 24096,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5028593104",
+      "display_name": "Qian‐Li Xue",
+      "orcid": "https://orcid.org/0000-0001-8818-7444",
+      "h_index": 84,
+      "i10_index": 206,
+      "works_count": 352,
+      "cited_by_count": 29489,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5111875126",
+      "display_name": "Sheryl Itkin Zimmerman",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 322,
+      "works_count": 556,
+      "cited_by_count": 23133,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5009156847",
+      "display_name": "Tom P Fahey",
+      "orcid": "https://orcid.org/0000-0002-5896-5783",
+      "h_index": 83,
+      "i10_index": 268,
+      "works_count": 553,
+      "cited_by_count": 24435,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5044708371",
+      "display_name": "Gertrudis I. J. M. Kempen",
+      "orcid": "https://orcid.org/0000-0002-7053-2198",
+      "h_index": 82,
+      "i10_index": 263,
+      "works_count": 525,
+      "cited_by_count": 29270,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5055605251",
+      "display_name": "Cynthia M. Boyd",
+      "orcid": "https://orcid.org/0000-0001-5642-9015",
+      "h_index": 82,
+      "i10_index": 236,
+      "works_count": 399,
+      "cited_by_count": 28723,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Geriatrics and Gerontology -- 9.5",
+      "id": "https://openalex.org/A5045823606",
+      "display_name": "Andrew J. McLachlan",
+      "orcid": "https://orcid.org/0000-0003-4674-0242",
+      "h_index": 81,
+      "i10_index": 341,
+      "works_count": 671,
+      "cited_by_count": 25867,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5056389726",
+      "display_name": "Jiska Cohen‐Mansfield",
+      "orcid": "https://orcid.org/0000-0003-0209-7304",
+      "h_index": 81,
+      "i10_index": 289,
+      "works_count": 420,
+      "cited_by_count": 44840,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5017849159",
+      "display_name": "Lauren E. Griffith",
+      "orcid": "https://orcid.org/0000-0002-2794-9692",
+      "h_index": 81,
+      "i10_index": 258,
+      "works_count": 430,
+      "cited_by_count": 33552,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5086426526",
+      "display_name": "David B. Hogan",
+      "orcid": "https://orcid.org/0000-0002-9462-5460",
+      "h_index": 81,
+      "i10_index": 255,
+      "works_count": 497,
+      "cited_by_count": 27255,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5001620644",
+      "display_name": "Stefano Volpato",
+      "orcid": "https://orcid.org/0000-0003-4335-6034",
+      "h_index": 81,
+      "i10_index": 243,
+      "works_count": 468,
+      "cited_by_count": 22160,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5073377612",
+      "display_name": "Sara J. Czaja",
+      "orcid": "https://orcid.org/0000-0002-8096-5413",
+      "h_index": 80,
+      "i10_index": 229,
+      "works_count": 567,
+      "cited_by_count": 27719,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Nursing",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5084827019",
+      "display_name": "Peter T. Donnan",
+      "orcid": "https://orcid.org/0000-0001-7828-0610",
+      "h_index": 79,
+      "i10_index": 224,
+      "works_count": 429,
+      "cited_by_count": 21982,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5086275374",
+      "display_name": "Jesper Hallas",
+      "orcid": "https://orcid.org/0000-0002-8097-8708",
+      "h_index": 78,
+      "i10_index": 363,
+      "works_count": 723,
+      "cited_by_count": 27396,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5027525816",
+      "display_name": "Kaisu Hannele Pitkälä",
+      "orcid": "https://orcid.org/0000-0001-9659-6985",
+      "h_index": 78,
+      "i10_index": 321,
+      "works_count": 629,
+      "cited_by_count": 27633,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5040409145",
+      "display_name": "Ruud J.G. Halfens",
+      "orcid": "https://orcid.org/0000-0003-2778-9120",
+      "h_index": 78,
+      "i10_index": 254,
+      "works_count": 463,
+      "cited_by_count": 20202,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5054921649",
+      "display_name": "Ingalill Rahm Hallberg",
+      "orcid": "https://orcid.org/0000-0002-3286-6023",
+      "h_index": 78,
+      "i10_index": 216,
+      "works_count": 323,
+      "cited_by_count": 16642,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Geriatrics and Gerontology -- 9.4",
+      "id": "https://openalex.org/A5029418116",
+      "display_name": "Albert L. Siu",
+      "orcid": "https://orcid.org/0000-0001-6330-8502",
+      "h_index": 78,
+      "i10_index": 180,
+      "works_count": 318,
+      "cited_by_count": 31908,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5000191861",
+      "display_name": "Sarah Nicole Hilmer",
+      "orcid": "https://orcid.org/0000-0002-5970-1501",
+      "h_index": 77,
+      "i10_index": 293,
+      "works_count": 546,
+      "cited_by_count": 25135,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5013669199",
+      "display_name": "David B. Reuben",
+      "orcid": "https://orcid.org/0000-0002-1363-4745",
+      "h_index": 77,
+      "i10_index": 248,
+      "works_count": 439,
+      "cited_by_count": 24285,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5105413668",
+      "display_name": "Astrid Norberg",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 240,
+      "works_count": 264,
+      "cited_by_count": 23221,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5062583220",
+      "display_name": "Mirko Petrović",
+      "orcid": "https://orcid.org/0000-0002-7506-8646",
+      "h_index": 75,
+      "i10_index": 253,
+      "works_count": 636,
+      "cited_by_count": 23577,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5086220632",
+      "display_name": "Masahiro Akishita",
+      "orcid": "https://orcid.org/0000-0001-5498-7224",
+      "h_index": 75,
+      "i10_index": 250,
+      "works_count": 581,
+      "cited_by_count": 31843,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5075775675",
+      "display_name": "Christoph Rudolf Meier",
+      "orcid": "https://orcid.org/0000-0002-7120-6378",
+      "h_index": 75,
+      "i10_index": 193,
+      "works_count": 324,
+      "cited_by_count": 16720,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5013941418",
+      "display_name": "Laurence Z. Rubenstein",
+      "orcid": "https://orcid.org/0000-0001-5910-0266",
+      "h_index": 74,
+      "i10_index": 186,
+      "works_count": 261,
+      "cited_by_count": 39061,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5083549189",
+      "display_name": "Jill Manthorpe",
+      "orcid": "https://orcid.org/0000-0001-9006-1410",
+      "h_index": 73,
+      "i10_index": 489,
+      "works_count": 1454,
+      "cited_by_count": 23195,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5086359211",
+      "display_name": "Liang‐Kung Chen",
+      "orcid": "https://orcid.org/0000-0002-2387-8508",
+      "h_index": 73,
+      "i10_index": 369,
+      "works_count": 627,
+      "cited_by_count": 36916,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5058671942",
+      "display_name": "Barbara M. Resnick",
+      "orcid": "https://orcid.org/0000-0002-2839-5783",
+      "h_index": 73,
+      "i10_index": 347,
+      "works_count": 1143,
+      "cited_by_count": 23659,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Geriatrics and Gerontology -- 9.3",
+      "id": "https://openalex.org/A5101503529",
+      "display_name": "Wendy A. Rogers",
+      "orcid": "https://orcid.org/0000-0002-0787-2130",
+      "h_index": 73,
+      "i10_index": 247,
+      "works_count": 705,
+      "cited_by_count": 23309,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Health Professions",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5014963906",
+      "display_name": "Anthony John Avery",
+      "orcid": "https://orcid.org/0000-0001-7591-4438",
+      "h_index": 73,
+      "i10_index": 237,
+      "works_count": 552,
+      "cited_by_count": 24736,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5104883236",
+      "display_name": "Marieke J. Schuurmans",
+      "orcid": "https://orcid.org/0000-0001-6679-2141",
+      "h_index": 73,
+      "i10_index": 198,
+      "works_count": 465,
+      "cited_by_count": 18145,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5054877075",
+      "display_name": "Karlene Ball",
+      "orcid": "https://orcid.org/0000-0003-1811-9870",
+      "h_index": 73,
+      "i10_index": 134,
+      "works_count": 242,
+      "cited_by_count": 24967,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5024056755",
+      "display_name": "Kate L. Lapane",
+      "orcid": "https://orcid.org/0000-0001-9957-7747",
+      "h_index": 72,
+      "i10_index": 321,
+      "works_count": 633,
+      "cited_by_count": 19543,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5010011424",
+      "display_name": "Shabbir M.H. Alibhai",
+      "orcid": "https://orcid.org/0000-0001-7815-6046",
+      "h_index": 72,
+      "i10_index": 313,
+      "works_count": 769,
+      "cited_by_count": 20156,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5015970177",
+      "display_name": "Maria Crotty",
+      "orcid": "https://orcid.org/0000-0002-2996-5135",
+      "h_index": 72,
+      "i10_index": 287,
+      "works_count": 510,
+      "cited_by_count": 20380,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5005688821",
+      "display_name": "David C. Grabowski",
+      "orcid": "https://orcid.org/0000-0003-2915-5770",
+      "h_index": 72,
+      "i10_index": 244,
+      "works_count": 422,
+      "cited_by_count": 17859,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Nursing",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5004274648",
+      "display_name": "Philip D. Sloane",
+      "orcid": "https://orcid.org/0000-0002-7194-4995",
+      "h_index": 72,
+      "i10_index": 243,
+      "works_count": 454,
+      "cited_by_count": 17890,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5089102062",
+      "display_name": "John F. Schnelle",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 215,
+      "works_count": 293,
+      "cited_by_count": 15500,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5029938799",
+      "display_name": "Robyn M Tamblyn",
+      "orcid": "https://orcid.org/0000-0003-0134-6954",
+      "h_index": 72,
+      "i10_index": 210,
+      "works_count": 358,
+      "cited_by_count": 24068,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Geriatrics and Gerontology -- 9.2",
+      "id": "https://openalex.org/A5072289832",
+      "display_name": "Lodovico Balducci",
+      "orcid": "https://orcid.org/0000-0003-3103-2892",
+      "h_index": 72,
+      "i10_index": 200,
+      "works_count": 443,
+      "cited_by_count": 19306,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5102981004",
+      "display_name": "Jürgen Martin Bauer",
+      "orcid": "https://orcid.org/0000-0001-7379-0646",
+      "h_index": 72,
+      "i10_index": 178,
+      "works_count": 394,
+      "cited_by_count": 55134,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5007098709",
+      "display_name": "Dan K. Kiely",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 121,
+      "works_count": 144,
+      "cited_by_count": 18031,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5022802779",
+      "display_name": "Tero J. Vahlberg",
+      "orcid": "https://orcid.org/0000-0002-4935-3056",
+      "h_index": 71,
+      "i10_index": 368,
+      "works_count": 581,
+      "cited_by_count": 19231,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5015600063",
+      "display_name": "Kathleen Bennett",
+      "orcid": "https://orcid.org/0000-0002-2861-7665",
+      "h_index": 71,
+      "i10_index": 329,
+      "works_count": 660,
+      "cited_by_count": 19603,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5076880975",
+      "display_name": "Phyo Kyaw Myint",
+      "orcid": "https://orcid.org/0000-0003-3852-6158",
+      "h_index": 71,
+      "i10_index": 313,
+      "works_count": 703,
+      "cited_by_count": 21618,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5035221383",
+      "display_name": "Heather Gwynn Allore",
+      "orcid": "https://orcid.org/0000-0001-7685-8175",
+      "h_index": 71,
+      "i10_index": 224,
+      "works_count": 436,
+      "cited_by_count": 22087,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5072047481",
+      "display_name": "John R. F. Gladman",
+      "orcid": "https://orcid.org/0000-0002-8506-7786",
+      "h_index": 71,
+      "i10_index": 202,
+      "works_count": 400,
+      "cited_by_count": 15316,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5038815138",
+      "display_name": "Hiroyuki Shimada",
+      "orcid": "https://orcid.org/0000-0001-8111-6440",
+      "h_index": 70,
+      "i10_index": 312,
+      "works_count": 563,
+      "cited_by_count": 19919,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5034237911",
+      "display_name": "Carmel M Hughes",
+      "orcid": "https://orcid.org/0000-0002-4656-6021",
+      "h_index": 70,
+      "i10_index": 288,
+      "works_count": 574,
+      "cited_by_count": 20780,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5031827995",
+      "display_name": "Ngaire M Kerse",
+      "orcid": "https://orcid.org/0000-0002-5992-3681",
+      "h_index": 70,
+      "i10_index": 260,
+      "works_count": 487,
+      "cited_by_count": 24247,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Geriatrics and Gerontology -- 9.1",
+      "id": "https://openalex.org/A5070056940",
+      "display_name": "Dan R. Berlowitz",
+      "orcid": "https://orcid.org/0000-0002-8783-5611",
+      "h_index": 70,
+      "i10_index": 220,
+      "works_count": 369,
+      "cited_by_count": 20554,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Geriatrics and Gerontology -- 9.0",
+      "id": "https://openalex.org/A5043937017",
+      "display_name": "Karl Andrew Pillemer",
+      "orcid": "https://orcid.org/0000-0002-7700-3563",
+      "h_index": 70,
+      "i10_index": 217,
+      "works_count": 400,
+      "cited_by_count": 19649,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Social Sciences",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Geriatrics and Gerontology -- 9.0",
+      "id": "https://openalex.org/A5042534616",
+      "display_name": "Marit Kirkevold",
+      "orcid": "https://orcid.org/0000-0002-3979-0631",
+      "h_index": 70,
+      "i10_index": 202,
+      "works_count": 335,
+      "cited_by_count": 14211,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Geriatrics and Gerontology -- 9.0",
+      "id": "https://openalex.org/A5076325206",
+      "display_name": "Sylvie Bastuji‐Garin",
+      "orcid": "https://orcid.org/0000-0001-9855-5183",
+      "h_index": 70,
+      "i10_index": 177,
+      "works_count": 360,
+      "cited_by_count": 22487,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Geriatrics and Gerontology -- 9.0",
+      "id": "https://openalex.org/A5005983470",
+      "display_name": "Pálmi V. Jónsson",
+      "orcid": "https://orcid.org/0009-0002-7174-2274",
+      "h_index": 70,
+      "i10_index": 165,
+      "works_count": 304,
+      "cited_by_count": 34653,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Geriatrics and Gerontology -- 9.0",
+      "id": "https://openalex.org/A5012965788",
+      "display_name": "William Dale",
+      "orcid": "https://orcid.org/0000-0001-8674-9394",
+      "h_index": 69,
+      "i10_index": 204,
+      "works_count": 441,
+      "cited_by_count": 19337,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5056586858",
+      "display_name": "Alessandra Marengoni",
+      "orcid": "https://orcid.org/0000-0002-4851-1825",
+      "h_index": 69,
+      "i10_index": 190,
+      "works_count": 403,
+      "cited_by_count": 20370,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5078948882",
+      "display_name": "Theo W.N. Dassen",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 181,
+      "works_count": 270,
+      "cited_by_count": 12411,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5027453724",
+      "display_name": "Denis O’Mahony",
+      "orcid": "https://orcid.org/0000-0003-2236-5222",
+      "h_index": 69,
+      "i10_index": 180,
+      "works_count": 332,
+      "cited_by_count": 27021,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5105459433",
+      "display_name": "Arnold Mitnitski",
+      "orcid": "https://orcid.org/0000-0003-4596-2847",
+      "h_index": 69,
+      "i10_index": 128,
+      "works_count": 211,
+      "cited_by_count": 27077,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5063428081",
+      "display_name": "J. Simon Bell",
+      "orcid": "https://orcid.org/0000-0002-6115-2767",
+      "h_index": 68,
+      "i10_index": 280,
+      "works_count": 502,
+      "cited_by_count": 17693,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5057645839",
+      "display_name": "Arduino Aleksander Mangoni",
+      "orcid": "https://orcid.org/0000-0001-8699-1412",
+      "h_index": 67,
+      "i10_index": 314,
+      "works_count": 651,
+      "cited_by_count": 19555,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5072859924",
+      "display_name": "Anton Pottegård",
+      "orcid": "https://orcid.org/0000-0001-9314-5679",
+      "h_index": 67,
+      "i10_index": 294,
+      "works_count": 670,
+      "cited_by_count": 18136,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5022452378",
+      "display_name": "John P. Hirdes",
+      "orcid": "https://orcid.org/0000-0001-9619-6543",
+      "h_index": 67,
+      "i10_index": 267,
+      "works_count": 443,
+      "cited_by_count": 17547,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5009314558",
+      "display_name": "Koen Milisen",
+      "orcid": "https://orcid.org/0000-0001-9230-1246",
+      "h_index": 67,
+      "i10_index": 202,
+      "works_count": 732,
+      "cited_by_count": 20945,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5100708978",
+      "display_name": "Timothy Frank Chen",
+      "orcid": "https://orcid.org/0000-0003-4189-8403",
+      "h_index": 67,
+      "i10_index": 198,
+      "works_count": 349,
+      "cited_by_count": 17597,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5082039317",
+      "display_name": "Gary Naglie",
+      "orcid": "https://orcid.org/0000-0002-6274-0894",
+      "h_index": 67,
+      "i10_index": 176,
+      "works_count": 342,
+      "cited_by_count": 15702,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Geriatrics and Gerontology -- 8.9",
+      "id": "https://openalex.org/A5079675791",
+      "display_name": "Reto Werner Kressig",
+      "orcid": "https://orcid.org/0000-0002-3215-7681",
+      "h_index": 67,
+      "i10_index": 173,
+      "works_count": 347,
+      "cited_by_count": 20042,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5001616422",
+      "display_name": "Jan P.H. Hamers",
+      "orcid": "https://orcid.org/0000-0003-1228-3493",
+      "h_index": 67,
+      "i10_index": 171,
+      "works_count": 381,
+      "cited_by_count": 13439,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5045146149",
+      "display_name": "Martin Wehling",
+      "orcid": "https://orcid.org/0000-0003-1393-1691",
+      "h_index": 66,
+      "i10_index": 212,
+      "works_count": 462,
+      "cited_by_count": 17280,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5055689793",
+      "display_name": "Sophia E. de Rooij",
+      "orcid": "https://orcid.org/0000-0001-5130-1987",
+      "h_index": 66,
+      "i10_index": 195,
+      "works_count": 423,
+      "cited_by_count": 18511,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5078009095",
+      "display_name": "Robert M. Boudreau",
+      "orcid": "https://orcid.org/0000-0003-0162-5187",
+      "h_index": 66,
+      "i10_index": 194,
+      "works_count": 342,
+      "cited_by_count": 19158,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5109358672",
+      "display_name": "Giovanni Gambassi",
+      "orcid": "https://orcid.org/0000-0002-7030-9359",
+      "h_index": 66,
+      "i10_index": 184,
+      "works_count": 346,
+      "cited_by_count": 16047,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5089589083",
+      "display_name": "Brant E. Fries",
+      "orcid": "https://orcid.org/0000-0002-1592-2433",
+      "h_index": 66,
+      "i10_index": 141,
+      "works_count": 236,
+      "cited_by_count": 19128,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5111859153",
+      "display_name": "Réjean Hébert",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 133,
+      "works_count": 222,
+      "cited_by_count": 17740,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5087855733",
+      "display_name": "John N. Morris",
+      "orcid": "https://orcid.org/0000-0001-5867-0697",
+      "h_index": 66,
+      "i10_index": 131,
+      "works_count": 194,
+      "cited_by_count": 24558,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5078699064",
+      "display_name": "Sirpa A. Hartikainen",
+      "orcid": "https://orcid.org/0000-0002-4714-455X",
+      "h_index": 65,
+      "i10_index": 241,
+      "works_count": 387,
+      "cited_by_count": 19736,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5091160797",
+      "display_name": "Simon Pieter Mooijaart",
+      "orcid": "https://orcid.org/0000-0003-3106-3568",
+      "h_index": 65,
+      "i10_index": 232,
+      "works_count": 431,
+      "cited_by_count": 16959,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5014202628",
+      "display_name": "Fabrizia Lattanzio",
+      "orcid": "https://orcid.org/0000-0003-4051-1289",
+      "h_index": 65,
+      "i10_index": 218,
+      "works_count": 386,
+      "cited_by_count": 14892,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5017995901",
+      "display_name": "Jean‐Pierre Michel",
+      "orcid": "https://orcid.org/0000-0003-0718-4394",
+      "h_index": 65,
+      "i10_index": 163,
+      "works_count": 341,
+      "cited_by_count": 43842,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5002594323",
+      "display_name": "Neil H. Charness",
+      "orcid": "https://orcid.org/0000-0002-1002-3439",
+      "h_index": 65,
+      "i10_index": 155,
+      "works_count": 443,
+      "cited_by_count": 25712,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5080077346",
+      "display_name": "Davide Liborio Vetrano",
+      "orcid": "https://orcid.org/0000-0002-3099-4830",
+      "h_index": 64,
+      "i10_index": 212,
+      "works_count": 389,
+      "cited_by_count": 14705,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5052309155",
+      "display_name": "Sirkka‐Liisa Kivelä",
+      "orcid": "https://orcid.org/0009-0006-0390-6926",
+      "h_index": 64,
+      "i10_index": 203,
+      "works_count": 303,
+      "cited_by_count": 15896,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5046465972",
+      "display_name": "Ben R. Carter",
+      "orcid": "https://orcid.org/0000-0003-0318-8865",
+      "h_index": 64,
+      "i10_index": 191,
+      "works_count": 400,
+      "cited_by_count": 15781,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5012336098",
+      "display_name": "Finbarr C. Martin",
+      "orcid": "https://orcid.org/0000-0002-6911-3498",
+      "h_index": 64,
+      "i10_index": 158,
+      "works_count": 312,
+      "cited_by_count": 44531,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5014379891",
+      "display_name": "Ronald I. Shorr",
+      "orcid": "https://orcid.org/0000-0002-1457-4668",
+      "h_index": 64,
+      "i10_index": 134,
+      "works_count": 224,
+      "cited_by_count": 15675,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5015952023",
+      "display_name": "Silvio Monfardini",
+      "orcid": "https://orcid.org/0000-0002-9130-3896",
+      "h_index": 63,
+      "i10_index": 232,
+      "works_count": 565,
+      "cited_by_count": 15604,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5036258941",
+      "display_name": "Giuseppe Bellelli",
+      "orcid": "https://orcid.org/0000-0001-5430-0947",
+      "h_index": 63,
+      "i10_index": 228,
+      "works_count": 534,
+      "cited_by_count": 13893,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5053293986",
+      "display_name": "Wanzhu Tu",
+      "orcid": "https://orcid.org/0000-0002-4236-9135",
+      "h_index": 63,
+      "i10_index": 214,
+      "works_count": 416,
+      "cited_by_count": 16372,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Geriatrics and Gerontology -- 8.8",
+      "id": "https://openalex.org/A5063517050",
+      "display_name": "Riccardo Alberto Audisio",
+      "orcid": "https://orcid.org/0000-0002-7538-4809",
+      "h_index": 63,
+      "i10_index": 210,
+      "works_count": 524,
+      "cited_by_count": 20086,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Geriatrics and Gerontology -- 8.7",
+      "id": "https://openalex.org/A5110290614",
+      "display_name": "Shoji Shinkai",
+      "orcid": "https://orcid.org/0009-0009-5303-8460",
+      "h_index": 63,
+      "i10_index": 202,
+      "works_count": 342,
+      "cited_by_count": 13361,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Geriatrics and Gerontology -- 8.7",
+      "id": "https://openalex.org/A5027877714",
+      "display_name": "John B. Young",
+      "orcid": "https://orcid.org/0000-0003-4085-9306",
+      "h_index": 63,
+      "i10_index": 186,
+      "works_count": 308,
+      "cited_by_count": 29339,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Geriatrics and Gerontology -- 8.7",
+      "id": "https://openalex.org/A5035706633",
+      "display_name": "Hein P.J. van Hout",
+      "orcid": "https://orcid.org/0000-0002-2495-4808",
+      "h_index": 63,
+      "i10_index": 177,
+      "works_count": 400,
+      "cited_by_count": 12431,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Geriatrics and Gerontology -- 8.7",
+      "id": "https://openalex.org/A5083477380",
+      "display_name": "Bruce A. Leff",
+      "orcid": "https://orcid.org/0000-0003-1714-7458",
+      "h_index": 63,
+      "i10_index": 167,
+      "works_count": 304,
+      "cited_by_count": 13050,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Geriatrics and Gerontology -- 8.7",
+      "id": "https://openalex.org/A5076902698",
+      "display_name": "Olga Theou",
+      "orcid": "https://orcid.org/0000-0001-6460-782X",
+      "h_index": 63,
+      "i10_index": 156,
+      "works_count": 344,
+      "cited_by_count": 19746,
+      "discipline": "Geriatrics and Gerontology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Geriatrics and Gerontology",
+      "fields": [
+        "Medicine"
+      ]
+    }
+  ]
+}

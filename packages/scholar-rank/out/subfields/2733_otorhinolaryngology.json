@@ -1,0 +1,3003 @@
+{
+  "kind": "subfield",
+  "id": 2733,
+  "name": "Otorhinolaryngology",
+  "total_in_scrape": 158,
+  "count": 158,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Otorhinolaryngology -- 9.9",
+      "id": "https://openalex.org/A5078173230",
+      "display_name": "Adel K. El‐Naggar",
+      "orcid": "https://orcid.org/0000-0002-7175-9466",
+      "h_index": 145,
+      "i10_index": 738,
+      "works_count": 1326,
+      "cited_by_count": 92193,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Otorhinolaryngology -- 9.9",
+      "id": "https://openalex.org/A5072284989",
+      "display_name": "Kevin Joseph Harrington",
+      "orcid": "https://orcid.org/0000-0002-6014-348X",
+      "h_index": 120,
+      "i10_index": 652,
+      "works_count": 1476,
+      "cited_by_count": 76854,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Otorhinolaryngology -- 9.9",
+      "id": "https://openalex.org/A5021281217",
+      "display_name": "William H. Westra",
+      "orcid": "https://orcid.org/0000-0001-5568-6634",
+      "h_index": 120,
+      "i10_index": 352,
+      "works_count": 661,
+      "cited_by_count": 65484,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Otorhinolaryngology -- 9.9",
+      "id": "https://openalex.org/A5037725319",
+      "display_name": "Brian O’Sullivan",
+      "orcid": "https://orcid.org/0000-0001-8887-843X",
+      "h_index": 118,
+      "i10_index": 463,
+      "works_count": 1012,
+      "cited_by_count": 54734,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Otorhinolaryngology -- 9.9",
+      "id": "https://openalex.org/A5008642709",
+      "display_name": "William M. Mendenhall",
+      "orcid": "https://orcid.org/0000-0002-6592-2810",
+      "h_index": 116,
+      "i10_index": 610,
+      "works_count": 1171,
+      "cited_by_count": 46902,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Otorhinolaryngology -- 9.9",
+      "id": "https://openalex.org/A5086074491",
+      "display_name": "Robert Louis Ferris",
+      "orcid": "https://orcid.org/0000-0001-6605-2071",
+      "h_index": 116,
+      "i10_index": 507,
+      "works_count": 1205,
+      "cited_by_count": 61370,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5083855375",
+      "display_name": "Gregory T. Wolf",
+      "orcid": "https://orcid.org/0000-0002-3219-9515",
+      "h_index": 107,
+      "i10_index": 337,
+      "works_count": 624,
+      "cited_by_count": 60627,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5070012126",
+      "display_name": "Charles René Leemans",
+      "orcid": "https://orcid.org/0000-0001-7887-083X",
+      "h_index": 106,
+      "i10_index": 482,
+      "works_count": 962,
+      "cited_by_count": 57890,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5040159243",
+      "display_name": "Carol Rossier Bradford",
+      "orcid": "https://orcid.org/0000-0002-2768-4532",
+      "h_index": 106,
+      "i10_index": 337,
+      "works_count": 542,
+      "cited_by_count": 54602,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5013860869",
+      "display_name": "Quynh‐Thu Le",
+      "orcid": "https://orcid.org/0000-0002-3682-1439",
+      "h_index": 104,
+      "i10_index": 357,
+      "works_count": 971,
+      "cited_by_count": 46424,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5088851557",
+      "display_name": "Anthony T.�C. Chan",
+      "orcid": "https://orcid.org/0000-0002-6912-8091",
+      "h_index": 104,
+      "i10_index": 335,
+      "works_count": 648,
+      "cited_by_count": 42241,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5076901251",
+      "display_name": "Maura L. Gillison",
+      "orcid": "https://orcid.org/0000-0002-8145-5749",
+      "h_index": 104,
+      "i10_index": 242,
+      "works_count": 617,
+      "cited_by_count": 69963,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5031390646",
+      "display_name": "David I. Rosenthal",
+      "orcid": "https://orcid.org/0000-0001-7124-7447",
+      "h_index": 103,
+      "i10_index": 400,
+      "works_count": 909,
+      "cited_by_count": 41684,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5047627835",
+      "display_name": "Randal S. Weber",
+      "orcid": "https://orcid.org/0000-0002-1980-7248",
+      "h_index": 103,
+      "i10_index": 355,
+      "works_count": 652,
+      "cited_by_count": 49897,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5047897878",
+      "display_name": "Luiz Paulo Kowalski",
+      "orcid": "https://orcid.org/0000-0002-0481-156X",
+      "h_index": 102,
+      "i10_index": 633,
+      "works_count": 1196,
+      "cited_by_count": 38834,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5061124523",
+      "display_name": "Adam S. Garden",
+      "orcid": "https://orcid.org/0000-0001-7926-2641",
+      "h_index": 102,
+      "i10_index": 383,
+      "works_count": 872,
+      "cited_by_count": 37576,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Otorhinolaryngology -- 9.8",
+      "id": "https://openalex.org/A5100405296",
+      "display_name": "Jun Ma",
+      "orcid": "https://orcid.org/0000-0002-1137-9349",
+      "h_index": 101,
+      "i10_index": 544,
+      "works_count": 877,
+      "cited_by_count": 43279,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5007067879",
+      "display_name": "Jan Baptist Vermorken",
+      "orcid": "https://orcid.org/0000-0001-8515-7848",
+      "h_index": 101,
+      "i10_index": 485,
+      "works_count": 1001,
+      "cited_by_count": 45854,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5076508788",
+      "display_name": "Thomas E. Carey",
+      "orcid": "https://orcid.org/0000-0002-5202-7518",
+      "h_index": 100,
+      "i10_index": 337,
+      "works_count": 601,
+      "cited_by_count": 67034,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5068906036",
+      "display_name": "David Neil Hayes",
+      "orcid": "https://orcid.org/0000-0001-6203-7771",
+      "h_index": 100,
+      "i10_index": 229,
+      "works_count": 576,
+      "cited_by_count": 91285,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5068133733",
+      "display_name": "Tuula Anneli Salo",
+      "orcid": "https://orcid.org/0000-0001-6039-0088",
+      "h_index": 99,
+      "i10_index": 420,
+      "works_count": 649,
+      "cited_by_count": 37320,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5088286120",
+      "display_name": "Jennifer Rubin Grandis",
+      "orcid": "https://orcid.org/0000-0002-1013-8965",
+      "h_index": 98,
+      "i10_index": 315,
+      "works_count": 772,
+      "cited_by_count": 41811,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5027111963",
+      "display_name": "Alfio Ferlito",
+      "orcid": "https://orcid.org/0000-0002-8247-8002",
+      "h_index": 97,
+      "i10_index": 640,
+      "works_count": 875,
+      "cited_by_count": 38594,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5052610122",
+      "display_name": "Nancy Y. Lee",
+      "orcid": "https://orcid.org/0000-0003-3044-9522",
+      "h_index": 95,
+      "i10_index": 351,
+      "works_count": 677,
+      "cited_by_count": 44176,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5078966058",
+      "display_name": "Snehal G. Patel",
+      "orcid": "https://orcid.org/0000-0001-9775-5132",
+      "h_index": 95,
+      "i10_index": 303,
+      "works_count": 554,
+      "cited_by_count": 30905,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5010399375",
+      "display_name": "Dong Moon Shin",
+      "orcid": "https://orcid.org/0000-0002-8245-4174",
+      "h_index": 95,
+      "i10_index": 292,
+      "works_count": 617,
+      "cited_by_count": 54549,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5054848341",
+      "display_name": "Alessandra Rinaldo",
+      "orcid": "https://orcid.org/0000-0001-7956-6709",
+      "h_index": 94,
+      "i10_index": 452,
+      "works_count": 541,
+      "cited_by_count": 30845,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Otorhinolaryngology -- 9.7",
+      "id": "https://openalex.org/A5080875822",
+      "display_name": "Robert I. Haddad",
+      "orcid": "https://orcid.org/0000-0003-1413-0079",
+      "h_index": 94,
+      "i10_index": 293,
+      "works_count": 717,
+      "cited_by_count": 43580,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5049419392",
+      "display_name": "Richard M. Rosenfeld",
+      "orcid": "https://orcid.org/0000-0002-3557-3795",
+      "h_index": 93,
+      "i10_index": 256,
+      "works_count": 500,
+      "cited_by_count": 35348,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5017600358",
+      "display_name": "Joseph A. Califano",
+      "orcid": "https://orcid.org/0000-0002-4715-6761",
+      "h_index": 92,
+      "i10_index": 312,
+      "works_count": 752,
+      "cited_by_count": 32901,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5053996737",
+      "display_name": "Maroeska Mariet Rovers",
+      "orcid": "https://orcid.org/0000-0002-3095-170X",
+      "h_index": 92,
+      "i10_index": 282,
+      "works_count": 569,
+      "cited_by_count": 40560,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5047193688",
+      "display_name": "Lisa Francesca Licitra",
+      "orcid": "https://orcid.org/0000-0003-0623-4118",
+      "h_index": 91,
+      "i10_index": 369,
+      "works_count": 968,
+      "cited_by_count": 44533,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5075136197",
+      "display_name": "Ian Ganly",
+      "orcid": "https://orcid.org/0000-0001-7636-5426",
+      "h_index": 91,
+      "i10_index": 305,
+      "works_count": 724,
+      "cited_by_count": 34789,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5005775817",
+      "display_name": "David G. Pfister",
+      "orcid": "https://orcid.org/0000-0002-2109-3221",
+      "h_index": 91,
+      "i10_index": 244,
+      "works_count": 484,
+      "cited_by_count": 39043,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5101717665",
+      "display_name": "Bhuvanesh Singh",
+      "orcid": "https://orcid.org/0000-0003-1457-0066",
+      "h_index": 91,
+      "i10_index": 192,
+      "works_count": 281,
+      "cited_by_count": 51756,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5002839107",
+      "display_name": "Jonas Talmadge Johnson",
+      "orcid": "https://orcid.org/0000-0002-2376-4594",
+      "h_index": 90,
+      "i10_index": 380,
+      "works_count": 774,
+      "cited_by_count": 29039,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5068859775",
+      "display_name": "Jeffrey N. Myers",
+      "orcid": "https://orcid.org/0000-0003-4767-3408",
+      "h_index": 90,
+      "i10_index": 314,
+      "works_count": 882,
+      "cited_by_count": 29551,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5062767641",
+      "display_name": "Benny Chung-Ying Zee",
+      "orcid": "https://orcid.org/0000-0002-7238-845X",
+      "h_index": 90,
+      "i10_index": 248,
+      "works_count": 431,
+      "cited_by_count": 36043,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Otorhinolaryngology -- 9.6",
+      "id": "https://openalex.org/A5033853754",
+      "display_name": "Wayne M. Koch",
+      "orcid": "https://orcid.org/0000-0002-9499-1516",
+      "h_index": 90,
+      "i10_index": 224,
+      "works_count": 426,
+      "cited_by_count": 33791,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5084313111",
+      "display_name": "Claire L Hopkins",
+      "orcid": "https://orcid.org/0000-0003-3993-1569",
+      "h_index": 89,
+      "i10_index": 273,
+      "works_count": 550,
+      "cited_by_count": 41066,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5017526826",
+      "display_name": "William E. Gooding",
+      "orcid": "https://orcid.org/0000-0001-9070-3559",
+      "h_index": 88,
+      "i10_index": 233,
+      "works_count": 453,
+      "cited_by_count": 26194,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5001334189",
+      "display_name": "Ezra E.W. Cohen",
+      "orcid": "https://orcid.org/0000-0002-9872-6242",
+      "h_index": 87,
+      "i10_index": 302,
+      "works_count": 764,
+      "cited_by_count": 34314,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5011385272",
+      "display_name": "André Lopes Carvalho",
+      "orcid": "https://orcid.org/0000-0001-7214-6402",
+      "h_index": 87,
+      "i10_index": 280,
+      "works_count": 528,
+      "cited_by_count": 50961,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5037094593",
+      "display_name": "Avraham Eisbruch",
+      "orcid": "https://orcid.org/0000-0002-4102-5197",
+      "h_index": 86,
+      "i10_index": 252,
+      "works_count": 494,
+      "cited_by_count": 30515,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5080448292",
+      "display_name": "Ying Hao Sun",
+      "orcid": "https://orcid.org/0000-0002-5888-2929",
+      "h_index": 85,
+      "i10_index": 361,
+      "works_count": 545,
+      "cited_by_count": 31233,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5079759742",
+      "display_name": "Anil Tejbhan Ahuja",
+      "orcid": "https://orcid.org/0000-0002-0726-5402",
+      "h_index": 85,
+      "i10_index": 333,
+      "works_count": 510,
+      "cited_by_count": 26263,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5015488796",
+      "display_name": "Helmuth Goepfert",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 207,
+      "works_count": 294,
+      "cited_by_count": 27521,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5089106956",
+      "display_name": "Remco de Bree",
+      "orcid": "https://orcid.org/0000-0001-7128-5814",
+      "h_index": 84,
+      "i10_index": 422,
+      "works_count": 804,
+      "cited_by_count": 26815,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5056955251",
+      "display_name": "Raja R. Seethala",
+      "orcid": "https://orcid.org/0000-0003-3617-075X",
+      "h_index": 82,
+      "i10_index": 223,
+      "works_count": 437,
+      "cited_by_count": 31848,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5077313879",
+      "display_name": "Neil Bhattacharyya",
+      "orcid": "https://orcid.org/0000-0003-0000-5824",
+      "h_index": 81,
+      "i10_index": 252,
+      "works_count": 402,
+      "cited_by_count": 25538,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Otorhinolaryngology -- 9.5",
+      "id": "https://openalex.org/A5111670846",
+      "display_name": "Yi-Xin Zeng",
+      "orcid": "https://orcid.org/0009-0004-8428-8183",
+      "h_index": 81,
+      "i10_index": 220,
+      "works_count": 245,
+      "cited_by_count": 21151,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5002490436",
+      "display_name": "Gary L. Clayman",
+      "orcid": "https://orcid.org/0000-0002-2746-0387",
+      "h_index": 81,
+      "i10_index": 206,
+      "works_count": 306,
+      "cited_by_count": 23609,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5107480486",
+      "display_name": "Erich M. Sturgis",
+      "orcid": "https://orcid.org/0000-0002-1069-4822",
+      "h_index": 80,
+      "i10_index": 323,
+      "works_count": 526,
+      "cited_by_count": 26478,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5005803971",
+      "display_name": "William H. Morrison",
+      "orcid": "https://orcid.org/0000-0002-9546-0805",
+      "h_index": 80,
+      "i10_index": 215,
+      "works_count": 494,
+      "cited_by_count": 24895,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5090322942",
+      "display_name": "Marshall R. Posner",
+      "orcid": "https://orcid.org/0000-0003-1912-3281",
+      "h_index": 79,
+      "i10_index": 295,
+      "works_count": 606,
+      "cited_by_count": 25407,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5111442103",
+      "display_name": "Gordon B. Snow",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 271,
+      "works_count": 442,
+      "cited_by_count": 21892,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5083170859",
+      "display_name": "Robert L. Foote",
+      "orcid": "https://orcid.org/0000-0003-3470-6872",
+      "h_index": 79,
+      "i10_index": 228,
+      "works_count": 478,
+      "cited_by_count": 21241,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5039039295",
+      "display_name": "Mark E. Prince",
+      "orcid": "https://orcid.org/0000-0002-1120-9008",
+      "h_index": 79,
+      "i10_index": 205,
+      "works_count": 455,
+      "cited_by_count": 45771,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5007965763",
+      "display_name": "Antti A. Mäkitie",
+      "orcid": "https://orcid.org/0000-0002-0451-2404",
+      "h_index": 78,
+      "i10_index": 445,
+      "works_count": 745,
+      "cited_by_count": 29551,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5052721859",
+      "display_name": "Jonathan Crawford Irish",
+      "orcid": "https://orcid.org/0000-0002-1631-2717",
+      "h_index": 78,
+      "i10_index": 342,
+      "works_count": 601,
+      "cited_by_count": 20926,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5110218090",
+      "display_name": "Reidar A. Grenman",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 302,
+      "works_count": 448,
+      "cited_by_count": 19187,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Otorhinolaryngology -- 9.4",
+      "id": "https://openalex.org/A5023000705",
+      "display_name": "Barbara Ann Burtness",
+      "orcid": "https://orcid.org/0000-0003-4660-1859",
+      "h_index": 78,
+      "i10_index": 274,
+      "works_count": 760,
+      "cited_by_count": 39112,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5070461179",
+      "display_name": "Kwok Wai Lo",
+      "orcid": "https://orcid.org/0000-0002-3488-6124",
+      "h_index": 78,
+      "i10_index": 234,
+      "works_count": 439,
+      "cited_by_count": 22339,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5069613777",
+      "display_name": "Alexander Dimitrios Colevas",
+      "orcid": "https://orcid.org/0000-0003-3849-4264",
+      "h_index": 78,
+      "i10_index": 209,
+      "works_count": 444,
+      "cited_by_count": 33040,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5048943540",
+      "display_name": "Michael D. McClean",
+      "orcid": "https://orcid.org/0000-0002-3902-8823",
+      "h_index": 78,
+      "i10_index": 183,
+      "works_count": 322,
+      "cited_by_count": 20243,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5005861774",
+      "display_name": "Robert Paul Takes",
+      "orcid": "https://orcid.org/0000-0003-4784-0499",
+      "h_index": 77,
+      "i10_index": 274,
+      "works_count": 409,
+      "cited_by_count": 18340,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5060469120",
+      "display_name": "Danny Rischin",
+      "orcid": "https://orcid.org/0000-0002-3368-0386",
+      "h_index": 77,
+      "i10_index": 271,
+      "works_count": 692,
+      "cited_by_count": 32765,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5023976598",
+      "display_name": "Lorenzo Richiardi",
+      "orcid": "https://orcid.org/0000-0003-0316-9402",
+      "h_index": 77,
+      "i10_index": 239,
+      "works_count": 465,
+      "cited_by_count": 22520,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5002679236",
+      "display_name": "David W. Eisele",
+      "orcid": "https://orcid.org/0000-0003-4003-9439",
+      "h_index": 77,
+      "i10_index": 234,
+      "works_count": 407,
+      "cited_by_count": 20507,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5072945901",
+      "display_name": "Mu‐Sheng Zeng",
+      "orcid": "https://orcid.org/0000-0003-3509-5591",
+      "h_index": 76,
+      "i10_index": 299,
+      "works_count": 538,
+      "cited_by_count": 21259,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5013854802",
+      "display_name": "James A. Bonner",
+      "orcid": "https://orcid.org/0000-0002-8413-3788",
+      "h_index": 76,
+      "i10_index": 233,
+      "works_count": 468,
+      "cited_by_count": 26108,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5053008699",
+      "display_name": "Robert C. Kern",
+      "orcid": "https://orcid.org/0000-0002-8995-9175",
+      "h_index": 76,
+      "i10_index": 229,
+      "works_count": 503,
+      "cited_by_count": 26277,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Otorhinolaryngology -- 9.3",
+      "id": "https://openalex.org/A5067960602",
+      "display_name": "Carter Van Waes",
+      "orcid": "https://orcid.org/0000-0002-9599-5113",
+      "h_index": 76,
+      "i10_index": 173,
+      "works_count": 537,
+      "cited_by_count": 21955,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5009028536",
+      "display_name": "S.N. Rogers",
+      "orcid": "https://orcid.org/0000-0002-5989-6142",
+      "h_index": 75,
+      "i10_index": 318,
+      "works_count": 599,
+      "cited_by_count": 19694,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5100690851",
+      "display_name": "Wei Xu",
+      "orcid": "https://orcid.org/0000-0002-0257-8856",
+      "h_index": 75,
+      "i10_index": 310,
+      "works_count": 725,
+      "cited_by_count": 24820,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5078178893",
+      "display_name": "Richard J. Wong",
+      "orcid": "https://orcid.org/0000-0001-6259-7314",
+      "h_index": 75,
+      "i10_index": 238,
+      "works_count": 544,
+      "cited_by_count": 24866,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5014133933",
+      "display_name": "Paul M. Harari",
+      "orcid": "https://orcid.org/0000-0002-6207-5505",
+      "h_index": 75,
+      "i10_index": 206,
+      "works_count": 694,
+      "cited_by_count": 28406,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5027048828",
+      "display_name": "Nadeem Riaz",
+      "orcid": "https://orcid.org/0000-0001-9873-5862",
+      "h_index": 75,
+      "i10_index": 202,
+      "works_count": 760,
+      "cited_by_count": 31636,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5008617030",
+      "display_name": "Juan Pablo Rodrigo",
+      "orcid": "https://orcid.org/0000-0003-3063-0890",
+      "h_index": 74,
+      "i10_index": 319,
+      "works_count": 512,
+      "cited_by_count": 18870,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5048548771",
+      "display_name": "Peter‐John Wormald",
+      "orcid": "https://orcid.org/0000-0001-7753-7277",
+      "h_index": 74,
+      "i10_index": 292,
+      "works_count": 432,
+      "cited_by_count": 22331,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5086275218",
+      "display_name": "Eben Lloyd Rosenthal",
+      "orcid": "https://orcid.org/0000-0003-0294-5203",
+      "h_index": 74,
+      "i10_index": 272,
+      "works_count": 636,
+      "cited_by_count": 17804,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5111334826",
+      "display_name": "Anne Auperin",
+      "orcid": "https://orcid.org/0000-0003-1545-0373",
+      "h_index": 74,
+      "i10_index": 177,
+      "works_count": 380,
+      "cited_by_count": 21775,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5063649167",
+      "display_name": "Christophe Le Tourneau",
+      "orcid": "https://orcid.org/0000-0001-9772-4686",
+      "h_index": 73,
+      "i10_index": 267,
+      "works_count": 889,
+      "cited_by_count": 25626,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Otorhinolaryngology -- 9.2",
+      "id": "https://openalex.org/A5027679923",
+      "display_name": "Jay F. Piccirillo",
+      "orcid": "https://orcid.org/0000-0002-4062-1747",
+      "h_index": 73,
+      "i10_index": 247,
+      "works_count": 537,
+      "cited_by_count": 29606,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5111974573",
+      "display_name": "Dora L.�W. Kwong",
+      "orcid": "https://orcid.org/0000-0002-1304-2854",
+      "h_index": 73,
+      "i10_index": 246,
+      "works_count": 419,
+      "cited_by_count": 22008,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5077403448",
+      "display_name": "Ruud H. Brakenhoff",
+      "orcid": "https://orcid.org/0000-0003-3251-5378",
+      "h_index": 73,
+      "i10_index": 232,
+      "works_count": 614,
+      "cited_by_count": 24739,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5032753703",
+      "display_name": "Jolie G. Ringash",
+      "orcid": "https://orcid.org/0000-0002-7151-2383",
+      "h_index": 73,
+      "i10_index": 212,
+      "works_count": 579,
+      "cited_by_count": 18735,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5016127308",
+      "display_name": "Christine H. Chung",
+      "orcid": "https://orcid.org/0000-0001-5199-4306",
+      "h_index": 73,
+      "i10_index": 201,
+      "works_count": 612,
+      "cited_by_count": 31571,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5053487762",
+      "display_name": "Nishant Agrawal",
+      "orcid": "https://orcid.org/0000-0002-1361-3231",
+      "h_index": 73,
+      "i10_index": 174,
+      "works_count": 407,
+      "cited_by_count": 45913,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5018624121",
+      "display_name": "Paolo Bossi",
+      "orcid": "https://orcid.org/0000-0003-0135-0224",
+      "h_index": 72,
+      "i10_index": 289,
+      "works_count": 689,
+      "cited_by_count": 19496,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5109918850",
+      "display_name": "Gregory Steven Weinstein",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 213,
+      "works_count": 387,
+      "cited_by_count": 20676,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5034148230",
+      "display_name": "John N. Waldron",
+      "orcid": "https://orcid.org/0000-0002-1050-7329",
+      "h_index": 72,
+      "i10_index": 201,
+      "works_count": 588,
+      "cited_by_count": 16856,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5058702476",
+      "display_name": "John Andrew Ridge",
+      "orcid": "https://orcid.org/0000-0002-5527-3546",
+      "h_index": 72,
+      "i10_index": 180,
+      "works_count": 355,
+      "cited_by_count": 32248,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5087457107",
+      "display_name": "Laura S. Rozek",
+      "orcid": "https://orcid.org/0000-0001-6731-7000",
+      "h_index": 72,
+      "i10_index": 161,
+      "works_count": 463,
+      "cited_by_count": 48759,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Otorhinolaryngology -- 9.1",
+      "id": "https://openalex.org/A5090745215",
+      "display_name": "Jerry Polesel",
+      "orcid": "https://orcid.org/0000-0001-9381-1520",
+      "h_index": 71,
+      "i10_index": 269,
+      "works_count": 438,
+      "cited_by_count": 18153,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Otorhinolaryngology -- 9.0",
+      "id": "https://openalex.org/A5030649192",
+      "display_name": "Stephan Lang",
+      "orcid": "https://orcid.org/0009-0000-4420-9664",
+      "h_index": 71,
+      "i10_index": 233,
+      "works_count": 750,
+      "cited_by_count": 16384,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Otorhinolaryngology -- 9.0",
+      "id": "https://openalex.org/A5112088351",
+      "display_name": "Charles D. Bluestone",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 217,
+      "works_count": 369,
+      "cited_by_count": 16131,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Otorhinolaryngology -- 9.0",
+      "id": "https://openalex.org/A5112408130",
+      "display_name": "Theodoros Nicholas Teknos",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 198,
+      "works_count": 347,
+      "cited_by_count": 16093,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Otorhinolaryngology -- 9.0",
+      "id": "https://openalex.org/A5026963337",
+      "display_name": "Paul Michael Speight",
+      "orcid": "https://orcid.org/0000-0001-6459-1370",
+      "h_index": 71,
+      "i10_index": 189,
+      "works_count": 381,
+      "cited_by_count": 17071,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Otorhinolaryngology -- 9.0",
+      "id": "https://openalex.org/A5109183518",
+      "display_name": "Merrill S. Kies",
+      "orcid": "https://orcid.org/0009-0001-8711-1699",
+      "h_index": 71,
+      "i10_index": 170,
+      "works_count": 305,
+      "cited_by_count": 24854,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5048060803",
+      "display_name": "Barbara A. Murphy",
+      "orcid": "https://orcid.org/0000-0002-6376-6180",
+      "h_index": 71,
+      "i10_index": 165,
+      "works_count": 385,
+      "cited_by_count": 25140,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5084339717",
+      "display_name": "David Paul Goldstein",
+      "orcid": "https://orcid.org/0000-0001-9390-7928",
+      "h_index": 70,
+      "i10_index": 296,
+      "works_count": 589,
+      "cited_by_count": 16844,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5081622824",
+      "display_name": "Stephen Yenzen Lai",
+      "orcid": "https://orcid.org/0000-0001-8301-7286",
+      "h_index": 69,
+      "i10_index": 242,
+      "works_count": 571,
+      "cited_by_count": 18030,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5090412207",
+      "display_name": "Douglas Brian Chepeha",
+      "orcid": "https://orcid.org/0000-0001-9062-3719",
+      "h_index": 69,
+      "i10_index": 190,
+      "works_count": 407,
+      "cited_by_count": 16444,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5013714253",
+      "display_name": "Jong‐Lyel Roh",
+      "orcid": "https://orcid.org/0000-0002-1537-1977",
+      "h_index": 68,
+      "i10_index": 280,
+      "works_count": 406,
+      "cited_by_count": 17143,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5010067099",
+      "display_name": "Andrew J. Hope",
+      "orcid": "https://orcid.org/0000-0001-6793-2863",
+      "h_index": 68,
+      "i10_index": 240,
+      "works_count": 697,
+      "cited_by_count": 14876,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5080259332",
+      "display_name": "Robert J. Amdur",
+      "orcid": "https://orcid.org/0000-0002-9850-0964",
+      "h_index": 68,
+      "i10_index": 236,
+      "works_count": 577,
+      "cited_by_count": 16974,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5111815744",
+      "display_name": "Johannes H.A.M. Kaanders",
+      "orcid": "https://orcid.org/0000-0001-5374-9558",
+      "h_index": 68,
+      "i10_index": 223,
+      "works_count": 353,
+      "cited_by_count": 15935,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5042123586",
+      "display_name": "Eric Winquist",
+      "orcid": "https://orcid.org/0000-0002-8829-5979",
+      "h_index": 68,
+      "i10_index": 201,
+      "works_count": 439,
+      "cited_by_count": 26466,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5101759433",
+      "display_name": "Rakesh Kumar Chandra",
+      "orcid": "https://orcid.org/0000-0002-3612-0026",
+      "h_index": 68,
+      "i10_index": 192,
+      "works_count": 419,
+      "cited_by_count": 15516,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5016416819",
+      "display_name": "Kevin Thomas Robbins",
+      "orcid": "https://orcid.org/0000-0002-3255-8960",
+      "h_index": 68,
+      "i10_index": 186,
+      "works_count": 264,
+      "cited_by_count": 15226,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Otorhinolaryngology -- 8.9",
+      "id": "https://openalex.org/A5111973506",
+      "display_name": "Anthony Mancuso",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 178,
+      "works_count": 320,
+      "cited_by_count": 20279,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5020771385",
+      "display_name": "Jan L.N. Roodenburg",
+      "orcid": "https://orcid.org/0000-0001-8599-1242",
+      "h_index": 68,
+      "i10_index": 162,
+      "works_count": 245,
+      "cited_by_count": 12595,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5025094543",
+      "display_name": "Howard E. Rockette",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 148,
+      "works_count": 243,
+      "cited_by_count": 18676,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5063981653",
+      "display_name": "Robert J. Baatenburg de Jong",
+      "orcid": "https://orcid.org/0000-0001-7236-264X",
+      "h_index": 67,
+      "i10_index": 223,
+      "works_count": 369,
+      "cited_by_count": 14077,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5040830331",
+      "display_name": "Primož Strojan",
+      "orcid": "https://orcid.org/0000-0002-0445-112X",
+      "h_index": 67,
+      "i10_index": 221,
+      "works_count": 472,
+      "cited_by_count": 15194,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5022036818",
+      "display_name": "Francis Paul Worden",
+      "orcid": "https://orcid.org/0000-0002-6632-4951",
+      "h_index": 67,
+      "i10_index": 213,
+      "works_count": 498,
+      "cited_by_count": 24871,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5108209817",
+      "display_name": "Eugene N. Myers",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 211,
+      "works_count": 377,
+      "cited_by_count": 15969,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5077476688",
+      "display_name": "Noam A. Cohen",
+      "orcid": "https://orcid.org/0000-0002-9462-3932",
+      "h_index": 67,
+      "i10_index": 203,
+      "works_count": 334,
+      "cited_by_count": 17456,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5051493426",
+      "display_name": "Rodney R. Million",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 190,
+      "works_count": 317,
+      "cited_by_count": 13823,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5073112024",
+      "display_name": "Simion I. Chiosea",
+      "orcid": "https://orcid.org/0000-0002-5766-8779",
+      "h_index": 67,
+      "i10_index": 141,
+      "works_count": 213,
+      "cited_by_count": 13983,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5056841878",
+      "display_name": "Andy Trotti",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 130,
+      "works_count": 253,
+      "cited_by_count": 27869,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5036672833",
+      "display_name": "Nabil F. Saba",
+      "orcid": "https://orcid.org/0000-0003-4972-1477",
+      "h_index": 66,
+      "i10_index": 298,
+      "works_count": 813,
+      "cited_by_count": 24859,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5012310620",
+      "display_name": "Michiel W. M. van den Brekel",
+      "orcid": "https://orcid.org/0000-0002-6338-6743",
+      "h_index": 66,
+      "i10_index": 270,
+      "works_count": 495,
+      "cited_by_count": 16252,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5071494218",
+      "display_name": "Martin Stuschke",
+      "orcid": "https://orcid.org/0000-0001-6836-0940",
+      "h_index": 66,
+      "i10_index": 251,
+      "works_count": 816,
+      "cited_by_count": 17569,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5028568357",
+      "display_name": "Elisabeth Bloemena",
+      "orcid": "https://orcid.org/0000-0002-0221-9538",
+      "h_index": 66,
+      "i10_index": 203,
+      "works_count": 448,
+      "cited_by_count": 16633,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5065660974",
+      "display_name": "Bayardo Perez‐Ordoñez",
+      "orcid": "https://orcid.org/0000-0003-1222-8208",
+      "h_index": 66,
+      "i10_index": 172,
+      "works_count": 304,
+      "cited_by_count": 16395,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5113377156",
+      "display_name": "K. Kian Ang",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 142,
+      "works_count": 230,
+      "cited_by_count": 23790,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5065416384",
+      "display_name": "Richard C. Jordan",
+      "orcid": "https://orcid.org/0000-0002-2558-0537",
+      "h_index": 66,
+      "i10_index": 139,
+      "works_count": 287,
+      "cited_by_count": 29371,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5046740359",
+      "display_name": "David M. Brizel",
+      "orcid": "https://orcid.org/0000-0001-9828-4790",
+      "h_index": 66,
+      "i10_index": 134,
+      "works_count": 273,
+      "cited_by_count": 19980,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5037043658",
+      "display_name": "Thomas F. Pajak",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 133,
+      "works_count": 217,
+      "cited_by_count": 34901,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5084997825",
+      "display_name": "Fernando Augusto Soares",
+      "orcid": "https://orcid.org/0000-0003-1647-7842",
+      "h_index": 65,
+      "i10_index": 318,
+      "works_count": 669,
+      "cited_by_count": 15694,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5070515910",
+      "display_name": "Christian von Buchwald",
+      "orcid": "https://orcid.org/0000-0001-6753-8129",
+      "h_index": 65,
+      "i10_index": 296,
+      "works_count": 670,
+      "cited_by_count": 21218,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Otorhinolaryngology -- 8.8",
+      "id": "https://openalex.org/A5001942999",
+      "display_name": "David J. Lim",
+      "orcid": "https://orcid.org/0000-0002-2837-0973",
+      "h_index": 65,
+      "i10_index": 287,
+      "works_count": 563,
+      "cited_by_count": 16230,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5011675274",
+      "display_name": "Makoto Tahara",
+      "orcid": "https://orcid.org/0000-0001-9035-3106",
+      "h_index": 65,
+      "i10_index": 255,
+      "works_count": 579,
+      "cited_by_count": 31522,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5063134810",
+      "display_name": "Amanda K. Psyrri",
+      "orcid": "https://orcid.org/0000-0002-4321-766X",
+      "h_index": 65,
+      "i10_index": 226,
+      "works_count": 596,
+      "cited_by_count": 20273,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5007434920",
+      "display_name": "William J. Doyle",
+      "orcid": "https://orcid.org/0000-0002-7001-7073",
+      "h_index": 65,
+      "i10_index": 221,
+      "works_count": 355,
+      "cited_by_count": 17844,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5006075716",
+      "display_name": "James S. Lewis",
+      "orcid": "https://orcid.org/0000-0001-9002-1283",
+      "h_index": 65,
+      "i10_index": 205,
+      "works_count": 362,
+      "cited_by_count": 14298,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5088433858",
+      "display_name": "Zachary M. Soler",
+      "orcid": "https://orcid.org/0000-0002-4304-595X",
+      "h_index": 65,
+      "i10_index": 197,
+      "works_count": 393,
+      "cited_by_count": 13911,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5066909750",
+      "display_name": "Carole Fakhry",
+      "orcid": "https://orcid.org/0000-0002-5251-6178",
+      "h_index": 65,
+      "i10_index": 168,
+      "works_count": 330,
+      "cited_by_count": 23232,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5036572642",
+      "display_name": "Alan Loh Ho",
+      "orcid": "https://orcid.org/0000-0002-6885-3742",
+      "h_index": 65,
+      "i10_index": 162,
+      "works_count": 548,
+      "cited_by_count": 26664,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5110096154",
+      "display_name": "Gilbert H. Fletcher",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 160,
+      "works_count": 264,
+      "cited_by_count": 12106,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5058226349",
+      "display_name": "Mark William Lingen",
+      "orcid": "https://orcid.org/0000-0001-9666-7608",
+      "h_index": 65,
+      "i10_index": 159,
+      "works_count": 472,
+      "cited_by_count": 14331,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5113636651",
+      "display_name": "Efstratios Patsouris",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 318,
+      "works_count": 449,
+      "cited_by_count": 14414,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5101789276",
+      "display_name": "Thomas Karl Hoffmann",
+      "orcid": "https://orcid.org/0000-0001-5127-3779",
+      "h_index": 64,
+      "i10_index": 271,
+      "works_count": 752,
+      "cited_by_count": 18873,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5053082742",
+      "display_name": "Khee Chee Soo",
+      "orcid": "https://orcid.org/0000-0001-8768-6786",
+      "h_index": 64,
+      "i10_index": 263,
+      "works_count": 472,
+      "cited_by_count": 18415,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5061989961",
+      "display_name": "Alfons J. M. Balm",
+      "orcid": "https://orcid.org/0000-0001-9935-3217",
+      "h_index": 64,
+      "i10_index": 226,
+      "works_count": 347,
+      "cited_by_count": 13782,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5023364103",
+      "display_name": "Ann Dorothy King",
+      "orcid": "https://orcid.org/0000-0002-5280-8349",
+      "h_index": 64,
+      "i10_index": 201,
+      "works_count": 315,
+      "cited_by_count": 14534,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5019860962",
+      "display_name": "Anil K. Chaturvedi",
+      "orcid": "https://orcid.org/0000-0003-2696-8899",
+      "h_index": 64,
+      "i10_index": 125,
+      "works_count": 259,
+      "cited_by_count": 26863,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5064787486",
+      "display_name": "Michael Mauro Paparella",
+      "orcid": "https://orcid.org/0000-0002-2727-1674",
+      "h_index": 63,
+      "i10_index": 295,
+      "works_count": 692,
+      "cited_by_count": 14270,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5054234961",
+      "display_name": "Pankaj Chaturvedi",
+      "orcid": "https://orcid.org/0000-0002-3520-1342",
+      "h_index": 63,
+      "i10_index": 229,
+      "works_count": 527,
+      "cited_by_count": 54240,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5042210553",
+      "display_name": "Zhengjia Chen",
+      "orcid": "https://orcid.org/0000-0002-6301-4931",
+      "h_index": 63,
+      "i10_index": 189,
+      "works_count": 472,
+      "cited_by_count": 12599,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5091058494",
+      "display_name": "Yan‐Ping Mao",
+      "orcid": "https://orcid.org/0000-0003-1027-071X",
+      "h_index": 63,
+      "i10_index": 186,
+      "works_count": 309,
+      "cited_by_count": 15604,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5035671410",
+      "display_name": "Mark McGurk",
+      "orcid": "https://orcid.org/0000-0002-2822-639X",
+      "h_index": 63,
+      "i10_index": 185,
+      "works_count": 472,
+      "cited_by_count": 13526,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5080301921",
+      "display_name": "David Raben",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 169,
+      "works_count": 406,
+      "cited_by_count": 24658,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Otorhinolaryngology -- 8.7",
+      "id": "https://openalex.org/A5108674923",
+      "display_name": "John J. Rosowski",
+      "orcid": "https://orcid.org/0009-0004-8387-5319",
+      "h_index": 63,
+      "i10_index": 169,
+      "works_count": 320,
+      "cited_by_count": 11665,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Otorhinolaryngology -- 8.6",
+      "id": "https://openalex.org/A5048523520",
+      "display_name": "David Ian Conway",
+      "orcid": "https://orcid.org/0000-0001-7762-4063",
+      "h_index": 63,
+      "i10_index": 165,
+      "works_count": 302,
+      "cited_by_count": 16165,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Otorhinolaryngology -- 8.6",
+      "id": "https://openalex.org/A5060837018",
+      "display_name": "Henry T. Hoffman",
+      "orcid": "https://orcid.org/0000-0003-4486-855X",
+      "h_index": 63,
+      "i10_index": 161,
+      "works_count": 327,
+      "cited_by_count": 14166,
+      "discipline": "Otorhinolaryngology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Otorhinolaryngology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    }
+  ]
+}
