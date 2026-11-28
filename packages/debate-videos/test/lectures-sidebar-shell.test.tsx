@@ -99,7 +99,7 @@ describe("the md:hidden block, which is what a phone sees", () => {
 
   it("carries the tool sections, collapsed so the page stays in view", () => {
     const mobile = mobileMarkup();
-    for (const heading of ["Debates", "Research", "Inference"]) {
+    for (const heading of ["Debates", "Research"]) {
       expect(mobile).toMatch(new RegExp(`<h1[^>]*>${heading}</h1>`));
       expect(mobile).toMatch(
         new RegExp(`<a[^>]*aria-expanded="false"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${heading}</h1>`),

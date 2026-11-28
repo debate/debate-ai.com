@@ -48,7 +48,7 @@ async function mountCard(video: VideoType): Promise<HTMLElement> {
 
 /** Team badges ringed in the winner's gold glow (the round-level badge is amber too, without it). */
 const goldBorders = (root: HTMLElement) =>
-  [...root.querySelectorAll("span")].filter((el) => el.className.includes("rgba(251,191,36")).length;
+  [...root.querySelectorAll("span, a")].filter((el) => el.className.includes("rgba(251,191,36")).length;
 
 describe("video card decision reveal", () => {
   it("hides the winner's gold border and the decision until revealed", async () => {

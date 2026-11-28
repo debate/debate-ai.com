@@ -246,7 +246,7 @@ export function LecturesVideoGridView({
   // Debate Rounds (`/videos/rounds`): every format's rounds in one listing.
   const browsingRounds = browsingLibrary && isRoundsListing(slug)
   // A lecture category from the gallery's Formats section (Worlds, NSDA
-  // Speech, Demo Debates, Open Super Debates …) is part of Debate Rounds, not
+  // Speech, Demo Debates, Open Public …) is part of Debate Rounds, not
   // Strategy Lectures, though its videos list as lectures.
   const browsingFormatsCategory = useMemo(() => {
     if (!browsingLibrary || selectedCategory === "all") return false
@@ -465,7 +465,7 @@ export function LecturesVideoGridView({
             activeId={activeQuickLinkId}
           />
 
-          {/* The rest of the sidebar tree — Research / Debates / Inference,
+          {/* The rest of the sidebar tree — Research / Debates,
               then Learning. The tiles above cover only its Videos section, so
               without this the tool sections had no counterpart on a phone
               anywhere on the page (the dock's Settings menu carries them too).

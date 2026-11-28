@@ -246,7 +246,8 @@ describe("a related row", () => {
       row?.click()
     })
     expect(push).toHaveBeenCalledTimes(1)
-    expect(String(push.mock.calls[0][0])).toMatch(/^\/videos\//)
+    // Round watch pages live at the short `/<topic code><yy>/…` address.
+    expect(String(push.mock.calls[0][0])).toBe("/vcx22/harvard/finals/texas-georgetown")
   })
 
   it("offers the popout player in place of the transcript link", () => {
