@@ -1,0 +1,2552 @@
+{
+  "kind": "subfield",
+  "id": 3109,
+  "name": "Statistical and Nonlinear Physics",
+  "total_in_scrape": 128,
+  "count": 128,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Statistical and Nonlinear Physics -- 9.9",
+      "id": "https://openalex.org/A5023574266",
+      "display_name": "Yuri S. Kivshar",
+      "orcid": "https://orcid.org/0000-0002-3410-812X",
+      "h_index": 172,
+      "i10_index": 1133,
+      "works_count": 2663,
+      "cited_by_count": 137681,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Statistical and Nonlinear Physics -- 9.9",
+      "id": "https://openalex.org/A5091272738",
+      "display_name": "Jure Leskovec",
+      "orcid": "https://orcid.org/0000-0002-5411-923X",
+      "h_index": 167,
+      "i10_index": 427,
+      "works_count": 663,
+      "cited_by_count": 207407,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Statistical and Nonlinear Physics -- 9.9",
+      "id": "https://openalex.org/A5038976962",
+      "display_name": "Albert-Ĺaszló Barabási",
+      "orcid": "https://orcid.org/0000-0002-4028-3522",
+      "h_index": 166,
+      "i10_index": 365,
+      "works_count": 727,
+      "cited_by_count": 256478,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Statistical and Nonlinear Physics -- 9.9",
+      "id": "https://openalex.org/A5024633466",
+      "display_name": "Guanrong Chen",
+      "orcid": "https://orcid.org/0000-0003-1381-7418",
+      "h_index": 156,
+      "i10_index": 1158,
+      "works_count": 2041,
+      "cited_by_count": 116250,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Statistical and Nonlinear Physics -- 9.9",
+      "id": "https://openalex.org/A5085207296",
+      "display_name": "Jürgen Kurths",
+      "orcid": "https://orcid.org/0000-0002-5926-4276",
+      "h_index": 140,
+      "i10_index": 1118,
+      "works_count": 1996,
+      "cited_by_count": 109839,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Statistical and Nonlinear Physics -- 9.9",
+      "id": "https://openalex.org/A5046546654",
+      "display_name": "Alessandro Vespignani",
+      "orcid": "https://orcid.org/0000-0003-3419-4205",
+      "h_index": 132,
+      "i10_index": 305,
+      "works_count": 601,
+      "cited_by_count": 95488,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5090657067",
+      "display_name": "Leon Ong Chua",
+      "orcid": "https://orcid.org/0000-0002-1652-5464",
+      "h_index": 126,
+      "i10_index": 594,
+      "works_count": 1006,
+      "cited_by_count": 87623,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5044431363",
+      "display_name": "Matjaž Perc",
+      "orcid": "https://orcid.org/0000-0002-3087-541X",
+      "h_index": 124,
+      "i10_index": 557,
+      "works_count": 705,
+      "cited_by_count": 57348,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Social Sciences",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5055710645",
+      "display_name": "Jon Michael Kleinberg",
+      "orcid": "https://orcid.org/0000-0002-1929-2512",
+      "h_index": 124,
+      "i10_index": 548,
+      "works_count": 1091,
+      "cited_by_count": 115644,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Computer Science",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5082913931",
+      "display_name": "Edward Ott",
+      "orcid": "https://orcid.org/0000-0002-9395-5062",
+      "h_index": 116,
+      "i10_index": 453,
+      "works_count": 750,
+      "cited_by_count": 62147,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5067142016",
+      "display_name": "Mark E. J. Newman",
+      "orcid": "https://orcid.org/0000-0002-0907-1660",
+      "h_index": 116,
+      "i10_index": 210,
+      "works_count": 380,
+      "cited_by_count": 221551,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5081601906",
+      "display_name": "Mordechai Segev",
+      "orcid": "https://orcid.org/0000-0002-9421-2148",
+      "h_index": 113,
+      "i10_index": 351,
+      "works_count": 958,
+      "cited_by_count": 56297,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5058886467",
+      "display_name": "Peter Hänggi",
+      "orcid": "https://orcid.org/0000-0001-6679-2563",
+      "h_index": 109,
+      "i10_index": 523,
+      "works_count": 875,
+      "cited_by_count": 64647,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5090892882",
+      "display_name": "Boris A. Malomed",
+      "orcid": "https://orcid.org/0000-0001-5323-1847",
+      "h_index": 104,
+      "i10_index": 1028,
+      "works_count": 1793,
+      "cited_by_count": 55395,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5020005824",
+      "display_name": "Anjan Biswas",
+      "orcid": "https://orcid.org/0000-0002-8131-6044",
+      "h_index": 104,
+      "i10_index": 868,
+      "works_count": 1283,
+      "cited_by_count": 42298,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5052042350",
+      "display_name": "Abdul‐Majid Wazwaz",
+      "orcid": "https://orcid.org/0000-0002-8325-7500",
+      "h_index": 104,
+      "i10_index": 631,
+      "works_count": 827,
+      "cited_by_count": 44004,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Statistical and Nonlinear Physics -- 9.8",
+      "id": "https://openalex.org/A5044662930",
+      "display_name": "Ralf Metzler",
+      "orcid": "https://orcid.org/0000-0002-6013-7020",
+      "h_index": 101,
+      "i10_index": 403,
+      "works_count": 598,
+      "cited_by_count": 51290,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5061661736",
+      "display_name": "Aly Ramadan Seadawy",
+      "orcid": "https://orcid.org/0000-0002-7412-4773",
+      "h_index": 99,
+      "i10_index": 505,
+      "works_count": 695,
+      "cited_by_count": 27539,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5062594909",
+      "display_name": "Wen‐Xiu Ma",
+      "orcid": "https://orcid.org/0000-0001-5309-1493",
+      "h_index": 97,
+      "i10_index": 393,
+      "works_count": 573,
+      "cited_by_count": 29581,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5027706684",
+      "display_name": "Vito Latora",
+      "orcid": "https://orcid.org/0000-0002-0984-8038",
+      "h_index": 94,
+      "i10_index": 223,
+      "works_count": 404,
+      "cited_by_count": 55143,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5019554559",
+      "display_name": "Celso Grebogi",
+      "orcid": "https://orcid.org/0000-0002-9811-4617",
+      "h_index": 93,
+      "i10_index": 361,
+      "works_count": 597,
+      "cited_by_count": 37790,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5012444491",
+      "display_name": "Nail Akhmediev",
+      "orcid": "https://orcid.org/0000-0001-7294-8958",
+      "h_index": 93,
+      "i10_index": 304,
+      "works_count": 630,
+      "cited_by_count": 39581,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5113524343",
+      "display_name": "Eshel Ben‐Jacob",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 287,
+      "works_count": 419,
+      "cited_by_count": 34909,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5062653961",
+      "display_name": "Steven L. Brunton",
+      "orcid": "https://orcid.org/0000-0002-6565-5118",
+      "h_index": 90,
+      "i10_index": 240,
+      "works_count": 565,
+      "cited_by_count": 57716,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5114406750",
+      "display_name": "Bernardo A. Huberman",
+      "orcid": "https://orcid.org/0000-0002-6783-0864",
+      "h_index": 88,
+      "i10_index": 243,
+      "works_count": 504,
+      "cited_by_count": 42538,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5083450863",
+      "display_name": "Jose Nathan Kutz",
+      "orcid": "https://orcid.org/0000-0002-6004-2275",
+      "h_index": 87,
+      "i10_index": 306,
+      "works_count": 605,
+      "cited_by_count": 46978,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5080004413",
+      "display_name": "Udo Seifert",
+      "orcid": "https://orcid.org/0000-0002-9271-6190",
+      "h_index": 87,
+      "i10_index": 221,
+      "works_count": 330,
+      "cited_by_count": 31249,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Statistical and Nonlinear Physics -- 9.7",
+      "id": "https://openalex.org/A5100422377",
+      "display_name": "Zhen Wang",
+      "orcid": "https://orcid.org/0000-0002-8182-2852",
+      "h_index": 86,
+      "i10_index": 394,
+      "works_count": 629,
+      "cited_by_count": 36494,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Social Sciences",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5105529475",
+      "display_name": "F. Lederer",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 380,
+      "works_count": 821,
+      "cited_by_count": 30034,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5041060587",
+      "display_name": "Bard Ermentrout",
+      "orcid": "https://orcid.org/0000-0002-5854-0654",
+      "h_index": 86,
+      "i10_index": 265,
+      "works_count": 530,
+      "cited_by_count": 34093,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Neuroscience",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5025409614",
+      "display_name": "Vladimir Evgen'evich Zakharov",
+      "orcid": "https://orcid.org/0000-0001-8855-7185",
+      "h_index": 86,
+      "i10_index": 232,
+      "works_count": 582,
+      "cited_by_count": 34269,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5029418921",
+      "display_name": "Steven H. Strogatz",
+      "orcid": "https://orcid.org/0000-0003-2923-3118",
+      "h_index": 86,
+      "i10_index": 161,
+      "works_count": 283,
+      "cited_by_count": 109174,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5084793824",
+      "display_name": "Yamir Moreno",
+      "orcid": "https://orcid.org/0000-0002-0895-1893",
+      "h_index": 85,
+      "i10_index": 226,
+      "works_count": 351,
+      "cited_by_count": 49623,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5038078845",
+      "display_name": "Kazuyuki Aihara",
+      "orcid": "https://orcid.org/0000-0002-4602-9816",
+      "h_index": 83,
+      "i10_index": 511,
+      "works_count": 1781,
+      "cited_by_count": 31476,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5085927300",
+      "display_name": "Kathleen M. Carley",
+      "orcid": "https://orcid.org/0000-0002-6356-0238",
+      "h_index": 82,
+      "i10_index": 417,
+      "works_count": 872,
+      "cited_by_count": 33140,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Social Sciences",
+        "Physics and Astronomy",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5039565111",
+      "display_name": "Mark J. Ablowitz",
+      "orcid": "https://orcid.org/0000-0001-5755-9217",
+      "h_index": 82,
+      "i10_index": 248,
+      "works_count": 463,
+      "cited_by_count": 38217,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5090925242",
+      "display_name": "Tao Zhou",
+      "orcid": "https://orcid.org/0000-0003-0561-2316",
+      "h_index": 81,
+      "i10_index": 337,
+      "works_count": 940,
+      "cited_by_count": 33800,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5051386391",
+      "display_name": "Sundarapandian V. Vaidyanathan",
+      "orcid": "https://orcid.org/0000-0003-4696-908X",
+      "h_index": 81,
+      "i10_index": 295,
+      "works_count": 648,
+      "cited_by_count": 17816,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Computer Science",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Statistical and Nonlinear Physics -- 9.6",
+      "id": "https://openalex.org/A5084821293",
+      "display_name": "Tom A. B. Snijders",
+      "orcid": "https://orcid.org/0000-0003-3157-4157",
+      "h_index": 81,
+      "i10_index": 180,
+      "works_count": 342,
+      "cited_by_count": 40944,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5041689394",
+      "display_name": "Mohamed Sayed Ali Osman",
+      "orcid": "https://orcid.org/0000-0002-5783-0940",
+      "h_index": 80,
+      "i10_index": 239,
+      "works_count": 312,
+      "cited_by_count": 14939,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5014662127",
+      "display_name": "Alain Barrat",
+      "orcid": "https://orcid.org/0000-0001-8683-269X",
+      "h_index": 80,
+      "i10_index": 196,
+      "works_count": 403,
+      "cited_by_count": 36399,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5100357282",
+      "display_name": "Jun Ma",
+      "orcid": "https://orcid.org/0000-0002-6127-000X",
+      "h_index": 79,
+      "i10_index": 409,
+      "works_count": 732,
+      "cited_by_count": 21980,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5022368086",
+      "display_name": "Ginestra Bianconi",
+      "orcid": "https://orcid.org/0000-0002-3380-887X",
+      "h_index": 79,
+      "i10_index": 200,
+      "works_count": 315,
+      "cited_by_count": 26008,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5054719860",
+      "display_name": "P. G. Kevrekidis",
+      "orcid": "https://orcid.org/0000-0002-7714-3689",
+      "h_index": 78,
+      "i10_index": 463,
+      "works_count": 779,
+      "cited_by_count": 25442,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5013954074",
+      "display_name": "Irving R. Epstein",
+      "orcid": "https://orcid.org/0000-0003-3180-4055",
+      "h_index": 78,
+      "i10_index": 368,
+      "works_count": 541,
+      "cited_by_count": 23273,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5036566464",
+      "display_name": "Ioannis G. Kevrekidis",
+      "orcid": "https://orcid.org/0000-0003-2220-3522",
+      "h_index": 77,
+      "i10_index": 360,
+      "works_count": 591,
+      "cited_by_count": 38719,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5022862584",
+      "display_name": "Qin Zhou",
+      "orcid": "https://orcid.org/0000-0001-5334-7188",
+      "h_index": 77,
+      "i10_index": 360,
+      "works_count": 432,
+      "cited_by_count": 19401,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5051451815",
+      "display_name": "Constantino Tsallis",
+      "orcid": "https://orcid.org/0000-0002-9387-9194",
+      "h_index": 77,
+      "i10_index": 326,
+      "works_count": 688,
+      "cited_by_count": 40414,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5027588100",
+      "display_name": "Àlex Arenas",
+      "orcid": "https://orcid.org/0000-0003-0937-0334",
+      "h_index": 77,
+      "i10_index": 200,
+      "works_count": 300,
+      "cited_by_count": 41334,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Mathematics",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5057756312",
+      "display_name": "Bernardo Spagnolo",
+      "orcid": "https://orcid.org/0000-0002-6625-3989",
+      "h_index": 77,
+      "i10_index": 161,
+      "works_count": 401,
+      "cited_by_count": 11504,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Statistical and Nonlinear Physics -- 9.5",
+      "id": "https://openalex.org/A5112784484",
+      "display_name": "Hermann Haken",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 342,
+      "works_count": 1415,
+      "cited_by_count": 34701,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5044033087",
+      "display_name": "János Kertész",
+      "orcid": "https://orcid.org/0000-0003-4957-5406",
+      "h_index": 75,
+      "i10_index": 222,
+      "works_count": 407,
+      "cited_by_count": 24246,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5102995786",
+      "display_name": "Ying‐Cheng Lai",
+      "orcid": "https://orcid.org/0000-0002-0723-733X",
+      "h_index": 74,
+      "i10_index": 378,
+      "works_count": 585,
+      "cited_by_count": 24499,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5021516635",
+      "display_name": "Eckehard Schöll",
+      "orcid": "https://orcid.org/0000-0002-7318-2672",
+      "h_index": 74,
+      "i10_index": 363,
+      "works_count": 627,
+      "cited_by_count": 21437,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5035637526",
+      "display_name": "Lluís Torner",
+      "orcid": "https://orcid.org/0000-0002-6491-4210",
+      "h_index": 74,
+      "i10_index": 303,
+      "works_count": 566,
+      "cited_by_count": 24420,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5081308615",
+      "display_name": "Julien Clinton Sprott",
+      "orcid": "https://orcid.org/0000-0001-7014-3283",
+      "h_index": 74,
+      "i10_index": 231,
+      "works_count": 436,
+      "cited_by_count": 20979,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5082923475",
+      "display_name": "Guido Caldarelli",
+      "orcid": "https://orcid.org/0000-0001-9377-3616",
+      "h_index": 74,
+      "i10_index": 209,
+      "works_count": 446,
+      "cited_by_count": 28770,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5027893198",
+      "display_name": "Milivoj R. Belić",
+      "orcid": "https://orcid.org/0000-0002-2622-6425",
+      "h_index": 73,
+      "i10_index": 572,
+      "works_count": 932,
+      "cited_by_count": 25298,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5073800371",
+      "display_name": "Igor M. Sokolov",
+      "orcid": "https://orcid.org/0000-0002-4688-9162",
+      "h_index": 73,
+      "i10_index": 259,
+      "works_count": 463,
+      "cited_by_count": 20372,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5084685727",
+      "display_name": "Ramin Golestanian",
+      "orcid": "https://orcid.org/0000-0002-3149-4002",
+      "h_index": 73,
+      "i10_index": 244,
+      "works_count": 388,
+      "cited_by_count": 23138,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5034255098",
+      "display_name": "Ilya Prigogine",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 223,
+      "works_count": 948,
+      "cited_by_count": 30108,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Statistical and Nonlinear Physics -- 9.4",
+      "id": "https://openalex.org/A5054779878",
+      "display_name": "Hanspeter Herzel",
+      "orcid": "https://orcid.org/0000-0003-0414-7889",
+      "h_index": 73,
+      "i10_index": 201,
+      "works_count": 305,
+      "cited_by_count": 17312,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5000679279",
+      "display_name": "Duncan J. Watts",
+      "orcid": "https://orcid.org/0000-0001-5005-4961",
+      "h_index": 73,
+      "i10_index": 112,
+      "works_count": 177,
+      "cited_by_count": 115288,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5043670176",
+      "display_name": "Luigi Fortuna",
+      "orcid": "https://orcid.org/0000-0003-2285-2979",
+      "h_index": 72,
+      "i10_index": 294,
+      "works_count": 898,
+      "cited_by_count": 17525,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5052684713",
+      "display_name": "Mohammad Naeim Mirzazadeh",
+      "orcid": "https://orcid.org/0000-0002-3635-7090",
+      "h_index": 72,
+      "i10_index": 255,
+      "works_count": 328,
+      "cited_by_count": 15204,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5100332250",
+      "display_name": "Zhigang Chen",
+      "orcid": "https://orcid.org/0000-0001-7050-9943",
+      "h_index": 72,
+      "i10_index": 242,
+      "works_count": 686,
+      "cited_by_count": 18642,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5061287527",
+      "display_name": "Marc Barthélemy",
+      "orcid": "https://orcid.org/0000-0003-0890-9713",
+      "h_index": 72,
+      "i10_index": 140,
+      "works_count": 355,
+      "cited_by_count": 41416,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5027512257",
+      "display_name": "Stephen P. Borgatti",
+      "orcid": "https://orcid.org/0000-0002-5776-5579",
+      "h_index": 72,
+      "i10_index": 136,
+      "works_count": 240,
+      "cited_by_count": 53343,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Social Sciences",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5065692438",
+      "display_name": "Kimmo  K. Kaski",
+      "orcid": "https://orcid.org/0000-0002-3805-9687",
+      "h_index": 71,
+      "i10_index": 271,
+      "works_count": 635,
+      "cited_by_count": 23022,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5044438667",
+      "display_name": "Arkady S. Pikovsky",
+      "orcid": "https://orcid.org/0000-0001-9682-7122",
+      "h_index": 71,
+      "i10_index": 233,
+      "works_count": 407,
+      "cited_by_count": 32113,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5050626727",
+      "display_name": "Eric J. Heller",
+      "orcid": "https://orcid.org/0000-0002-5398-0861",
+      "h_index": 71,
+      "i10_index": 221,
+      "works_count": 422,
+      "cited_by_count": 24637,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5005081662",
+      "display_name": "Henry D. I. Abarbanel",
+      "orcid": "https://orcid.org/0000-0002-4690-6081",
+      "h_index": 71,
+      "i10_index": 198,
+      "works_count": 414,
+      "cited_by_count": 26642,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Neuroscience",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Statistical and Nonlinear Physics -- 9.3",
+      "id": "https://openalex.org/A5058684689",
+      "display_name": "Mason Alexander Porter",
+      "orcid": "https://orcid.org/0000-0002-5166-0717",
+      "h_index": 71,
+      "i10_index": 179,
+      "works_count": 351,
+      "cited_by_count": 25647,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5010200247",
+      "display_name": "Adrian Constantin",
+      "orcid": "https://orcid.org/0000-0001-8868-9305",
+      "h_index": 71,
+      "i10_index": 159,
+      "works_count": 289,
+      "cited_by_count": 23671,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5082377417",
+      "display_name": "Lev S. Tsimring",
+      "orcid": "https://orcid.org/0000-0003-0709-3548",
+      "h_index": 71,
+      "i10_index": 159,
+      "works_count": 282,
+      "cited_by_count": 22645,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5039177932",
+      "display_name": "Bruce J. West",
+      "orcid": "https://orcid.org/0000-0003-4961-1542",
+      "h_index": 70,
+      "i10_index": 286,
+      "works_count": 716,
+      "cited_by_count": 19489,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5111702353",
+      "display_name": "Denis J. Evans",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 197,
+      "works_count": 311,
+      "cited_by_count": 23206,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Chemistry",
+        "Materials Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5064286839",
+      "display_name": "Thomas William Valente",
+      "orcid": "https://orcid.org/0000-0002-8824-5816",
+      "h_index": 70,
+      "i10_index": 191,
+      "works_count": 345,
+      "cited_by_count": 28063,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5008724211",
+      "display_name": "Clemens Bechinger",
+      "orcid": "https://orcid.org/0000-0002-5496-5268",
+      "h_index": 70,
+      "i10_index": 172,
+      "works_count": 243,
+      "cited_by_count": 22212,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5100344522",
+      "display_name": "Wei Chen",
+      "orcid": "https://orcid.org/0000-0003-0065-3610",
+      "h_index": 69,
+      "i10_index": 280,
+      "works_count": 726,
+      "cited_by_count": 50371,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5040141151",
+      "display_name": "Pavel Winternitz",
+      "orcid": "https://orcid.org/0000-0003-1671-1213",
+      "h_index": 69,
+      "i10_index": 253,
+      "works_count": 512,
+      "cited_by_count": 15521,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5076980006",
+      "display_name": "Wieslaw Z. Krolikowski",
+      "orcid": "https://orcid.org/0009-0000-5983-8180",
+      "h_index": 69,
+      "i10_index": 241,
+      "works_count": 583,
+      "cited_by_count": 17497,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5083819212",
+      "display_name": "Stefano Boccaletti",
+      "orcid": "https://orcid.org/0000-0002-5758-7012",
+      "h_index": 69,
+      "i10_index": 226,
+      "works_count": 391,
+      "cited_by_count": 35220,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Statistical and Nonlinear Physics -- 9.2",
+      "id": "https://openalex.org/A5053385465",
+      "display_name": "Gaetano Assanto",
+      "orcid": "https://orcid.org/0000-0002-3070-5250",
+      "h_index": 68,
+      "i10_index": 317,
+      "works_count": 864,
+      "cited_by_count": 19164,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5017925448",
+      "display_name": "Bocheng Bao",
+      "orcid": "https://orcid.org/0000-0001-6413-3038",
+      "h_index": 68,
+      "i10_index": 214,
+      "works_count": 293,
+      "cited_by_count": 14840,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5019170728",
+      "display_name": "Manlio De Domenico",
+      "orcid": "https://orcid.org/0000-0001-5158-8594",
+      "h_index": 68,
+      "i10_index": 167,
+      "works_count": 304,
+      "cited_by_count": 22671,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5014962078",
+      "display_name": "Sajad Jafari",
+      "orcid": "https://orcid.org/0000-0002-6845-7539",
+      "h_index": 67,
+      "i10_index": 328,
+      "works_count": 538,
+      "cited_by_count": 17735,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Computer Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5089206820",
+      "display_name": "John Ross",
+      "orcid": "https://orcid.org/0000-0001-8524-4474",
+      "h_index": 67,
+      "i10_index": 289,
+      "works_count": 476,
+      "cited_by_count": 18681,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Chemistry",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5049634383",
+      "display_name": "Kristina Lerman",
+      "orcid": "https://orcid.org/0000-0002-5071-0575",
+      "h_index": 67,
+      "i10_index": 235,
+      "works_count": 417,
+      "cited_by_count": 26104,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5001877366",
+      "display_name": "Piet Van Mieghem",
+      "orcid": "https://orcid.org/0000-0002-3786-7922",
+      "h_index": 67,
+      "i10_index": 225,
+      "works_count": 516,
+      "cited_by_count": 20556,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5101532923",
+      "display_name": "Yi‐Cheng Zhang",
+      "orcid": "https://orcid.org/0009-0001-8645-4710",
+      "h_index": 67,
+      "i10_index": 186,
+      "works_count": 358,
+      "cited_by_count": 32049,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5028907771",
+      "display_name": "P. V. E. McClintock",
+      "orcid": "https://orcid.org/0000-0003-3375-045X",
+      "h_index": 66,
+      "i10_index": 308,
+      "works_count": 903,
+      "cited_by_count": 16913,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5046071226",
+      "display_name": "M. Lakshmanan",
+      "orcid": "https://orcid.org/0000-0001-6687-4251",
+      "h_index": 66,
+      "i10_index": 304,
+      "works_count": 582,
+      "cited_by_count": 17714,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5065649147",
+      "display_name": "Edgar Knobloch",
+      "orcid": "https://orcid.org/0000-0002-1567-9314",
+      "h_index": 66,
+      "i10_index": 281,
+      "works_count": 538,
+      "cited_by_count": 15106,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Mathematics",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Statistical and Nonlinear Physics -- 9.1",
+      "id": "https://openalex.org/A5027644473",
+      "display_name": "Adel Ouannas",
+      "orcid": "https://orcid.org/0000-0001-9611-2047",
+      "h_index": 66,
+      "i10_index": 249,
+      "works_count": 389,
+      "cited_by_count": 11870,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Statistical and Nonlinear Physics -- 9.0",
+      "id": "https://openalex.org/A5027716467",
+      "display_name": "Chao‐Qing Dai",
+      "orcid": "https://orcid.org/0000-0001-9743-0143",
+      "h_index": 66,
+      "i10_index": 229,
+      "works_count": 343,
+      "cited_by_count": 12244,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Statistical and Nonlinear Physics -- 9.0",
+      "id": "https://openalex.org/A5089574004",
+      "display_name": "Philippa Eleanor Pattison",
+      "orcid": "https://orcid.org/0000-0001-9626-2897",
+      "h_index": 66,
+      "i10_index": 128,
+      "works_count": 209,
+      "cited_by_count": 20919,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Social Sciences",
+        "Computer Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Statistical and Nonlinear Physics -- 9.0",
+      "id": "https://openalex.org/A5069025309",
+      "display_name": "Robert W. Zwanzig",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 124,
+      "works_count": 169,
+      "cited_by_count": 29910,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Chemistry",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Statistical and Nonlinear Physics -- 9.0",
+      "id": "https://openalex.org/A5011228873",
+      "display_name": "Alessandro Flammini",
+      "orcid": "https://orcid.org/0000-0003-1670-9156",
+      "h_index": 66,
+      "i10_index": 116,
+      "works_count": 193,
+      "cited_by_count": 26849,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Social Sciences",
+        "Computer Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Statistical and Nonlinear Physics -- 9.0",
+      "id": "https://openalex.org/A5083504898",
+      "display_name": "Francisco Chinesta",
+      "orcid": "https://orcid.org/0000-0002-6272-3429",
+      "h_index": 65,
+      "i10_index": 364,
+      "works_count": 1650,
+      "cited_by_count": 19907,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5061576841",
+      "display_name": "Yaroslav V. Kartashov",
+      "orcid": "https://orcid.org/0000-0001-8692-982X",
+      "h_index": 65,
+      "i10_index": 288,
+      "works_count": 484,
+      "cited_by_count": 15858,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5044211016",
+      "display_name": "C. Martijn de Sterke",
+      "orcid": "https://orcid.org/0000-0003-0548-4078",
+      "h_index": 65,
+      "i10_index": 265,
+      "works_count": 677,
+      "cited_by_count": 17137,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5034953482",
+      "display_name": "Mario di Bernardo",
+      "orcid": "https://orcid.org/0000-0002-2171-4745",
+      "h_index": 65,
+      "i10_index": 241,
+      "works_count": 555,
+      "cited_by_count": 17219,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5053417186",
+      "display_name": "Kunihiko Kaneko",
+      "orcid": "https://orcid.org/0000-0001-6400-8587",
+      "h_index": 65,
+      "i10_index": 240,
+      "works_count": 599,
+      "cited_by_count": 17999,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5090529274",
+      "display_name": "Nikolay A. Kudryashov",
+      "orcid": "https://orcid.org/0000-0001-5926-9715",
+      "h_index": 65,
+      "i10_index": 221,
+      "works_count": 519,
+      "cited_by_count": 14181,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5059393436",
+      "display_name": "Giulio Casati",
+      "orcid": "https://orcid.org/0000-0002-8788-3090",
+      "h_index": 65,
+      "i10_index": 191,
+      "works_count": 408,
+      "cited_by_count": 17085,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5015294864",
+      "display_name": "Ingo Müller",
+      "orcid": "https://orcid.org/0000-0002-7477-6632",
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 564,
+      "cited_by_count": 15629,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Mathematics",
+        "Immunology and Microbiology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5034372799",
+      "display_name": "Renaud Lambiotte",
+      "orcid": "https://orcid.org/0000-0002-0583-4595",
+      "h_index": 65,
+      "i10_index": 164,
+      "works_count": 343,
+      "cited_by_count": 45192,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5053938061",
+      "display_name": "Santo Fortunato",
+      "orcid": "https://orcid.org/0000-0002-9039-4730",
+      "h_index": 65,
+      "i10_index": 128,
+      "works_count": 218,
+      "cited_by_count": 49330,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5111752453",
+      "display_name": "Bo Tian",
+      "orcid": "https://orcid.org/0000-0003-2688-6324",
+      "h_index": 64,
+      "i10_index": 371,
+      "works_count": 634,
+      "cited_by_count": 16382,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5041147881",
+      "display_name": "Raymond Kapral",
+      "orcid": "https://orcid.org/0000-0002-4652-645X",
+      "h_index": 64,
+      "i10_index": 266,
+      "works_count": 440,
+      "cited_by_count": 18812,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Statistical and Nonlinear Physics -- 8.9",
+      "id": "https://openalex.org/A5068912075",
+      "display_name": "Hadi Rezazadeh",
+      "orcid": "https://orcid.org/0000-0003-3800-8406",
+      "h_index": 64,
+      "i10_index": 263,
+      "works_count": 386,
+      "cited_by_count": 13395,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5038689239",
+      "display_name": "Frédéric Dias",
+      "orcid": "https://orcid.org/0000-0002-5123-4929",
+      "h_index": 64,
+      "i10_index": 205,
+      "works_count": 502,
+      "cited_by_count": 15944,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5045565551",
+      "display_name": "Stefan Thurner",
+      "orcid": "https://orcid.org/0000-0003-2495-6819",
+      "h_index": 64,
+      "i10_index": 203,
+      "works_count": 413,
+      "cited_by_count": 17011,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5075146702",
+      "display_name": "Eli Barkai",
+      "orcid": "https://orcid.org/0000-0002-9518-6949",
+      "h_index": 64,
+      "i10_index": 180,
+      "works_count": 279,
+      "cited_by_count": 18681,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5033344651",
+      "display_name": "Sergio Ciliberto",
+      "orcid": "https://orcid.org/0000-0002-4366-6094",
+      "h_index": 64,
+      "i10_index": 163,
+      "works_count": 332,
+      "cited_by_count": 16163,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5108570448",
+      "display_name": "Alan C. Newell",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 160,
+      "works_count": 306,
+      "cited_by_count": 24030,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5015055144",
+      "display_name": "Michael P. Small",
+      "orcid": "https://orcid.org/0000-0001-5378-1582",
+      "h_index": 63,
+      "i10_index": 316,
+      "works_count": 670,
+      "cited_by_count": 16766,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5005669749",
+      "display_name": "Luciano da Fontoura Costa",
+      "orcid": "https://orcid.org/0000-0001-5203-4366",
+      "h_index": 63,
+      "i10_index": 287,
+      "works_count": 904,
+      "cited_by_count": 21748,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Economics, Econometrics and Finance",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5022615156",
+      "display_name": "Tomasz Kapitaniak",
+      "orcid": "https://orcid.org/0000-0001-9651-752X",
+      "h_index": 63,
+      "i10_index": 259,
+      "works_count": 514,
+      "cited_by_count": 13360,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5051753739",
+      "display_name": "Miki Wadati",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 236,
+      "works_count": 456,
+      "cited_by_count": 15471,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5074511334",
+      "display_name": "David A. Kessler",
+      "orcid": "https://orcid.org/0000-0002-5279-1655",
+      "h_index": 63,
+      "i10_index": 228,
+      "works_count": 468,
+      "cited_by_count": 16242,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5073258256",
+      "display_name": "William Graham Hoover",
+      "orcid": "https://orcid.org/0000-0002-1717-052X",
+      "h_index": 63,
+      "i10_index": 205,
+      "works_count": 379,
+      "cited_by_count": 44996,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5065368261",
+      "display_name": "Pierre Gaspard",
+      "orcid": "https://orcid.org/0000-0003-3804-2110",
+      "h_index": 63,
+      "i10_index": 189,
+      "works_count": 376,
+      "cited_by_count": 14515,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5014334832",
+      "display_name": "Igor Mezić",
+      "orcid": "https://orcid.org/0000-0002-2873-9013",
+      "h_index": 63,
+      "i10_index": 184,
+      "works_count": 421,
+      "cited_by_count": 26766,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5110954986",
+      "display_name": "E. G. D. Cohen",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 181,
+      "works_count": 310,
+      "cited_by_count": 17524,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5008745801",
+      "display_name": "Amir Barati Farimani",
+      "orcid": "https://orcid.org/0000-0002-2952-8576",
+      "h_index": 63,
+      "i10_index": 173,
+      "works_count": 295,
+      "cited_by_count": 14948,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Statistical and Nonlinear Physics -- 8.8",
+      "id": "https://openalex.org/A5051756179",
+      "display_name": "Miguel Onorato",
+      "orcid": "https://orcid.org/0000-0001-9141-2147",
+      "h_index": 63,
+      "i10_index": 130,
+      "works_count": 306,
+      "cited_by_count": 13216,
+      "discipline": "Statistical and Nonlinear Physics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Statistical and Nonlinear Physics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Mathematics",
+        "Engineering"
+      ]
+    }
+  ]
+}

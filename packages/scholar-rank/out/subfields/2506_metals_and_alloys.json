@@ -1,0 +1,2880 @@
+{
+  "kind": "subfield",
+  "id": 2506,
+  "name": "Metals and Alloys",
+  "total_in_scrape": 150,
+  "count": 150,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Metals and Alloys -- 9.9",
+      "id": "https://openalex.org/A5101454429",
+      "display_name": "Akihisa Inoue",
+      "orcid": "https://orcid.org/0000-0002-1054-8649",
+      "h_index": 150,
+      "i10_index": 1809,
+      "works_count": 3910,
+      "cited_by_count": 129214,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Metals and Alloys -- 9.9",
+      "id": "https://openalex.org/A5064551487",
+      "display_name": "Terence G. Langdon",
+      "orcid": "https://orcid.org/0000-0003-3541-9250",
+      "h_index": 147,
+      "i10_index": 957,
+      "works_count": 1535,
+      "cited_by_count": 93531,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Metals and Alloys -- 9.9",
+      "id": "https://openalex.org/A5027297848",
+      "display_name": "Peter Kaehuei Liaw",
+      "orcid": "https://orcid.org/0000-0003-0185-3411",
+      "h_index": 141,
+      "i10_index": 1134,
+      "works_count": 1729,
+      "cited_by_count": 102571,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Metals and Alloys -- 9.9",
+      "id": "https://openalex.org/A5028673400",
+      "display_name": "Yuntian Theodore Zhu",
+      "orcid": "https://orcid.org/0000-0002-5961-7422",
+      "h_index": 132,
+      "i10_index": 464,
+      "works_count": 672,
+      "cited_by_count": 68493,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Metals and Alloys -- 9.9",
+      "id": "https://openalex.org/A5068327424",
+      "display_name": "Evan Ma",
+      "orcid": "https://orcid.org/0000-0002-7468-4340",
+      "h_index": 129,
+      "i10_index": 397,
+      "works_count": 570,
+      "cited_by_count": 67246,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Metals and Alloys -- 9.9",
+      "id": "https://openalex.org/A5100606368",
+      "display_name": "Mingwei W. Chen",
+      "orcid": "https://orcid.org/0000-0002-8274-3099",
+      "h_index": 127,
+      "i10_index": 412,
+      "works_count": 581,
+      "cited_by_count": 74042,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5044445973",
+      "display_name": "Ruslan Zufarovich Valiev",
+      "orcid": "https://orcid.org/0000-0003-4340-4067",
+      "h_index": 123,
+      "i10_index": 651,
+      "works_count": 1308,
+      "cited_by_count": 74630,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5028967959",
+      "display_name": "Jürgen Eckert",
+      "orcid": "https://orcid.org/0000-0003-4112-3181",
+      "h_index": 120,
+      "i10_index": 1114,
+      "works_count": 1718,
+      "cited_by_count": 72272,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5027593036",
+      "display_name": "Zenji Horita",
+      "orcid": "https://orcid.org/0009-0008-3395-0308",
+      "h_index": 114,
+      "i10_index": 461,
+      "works_count": 801,
+      "cited_by_count": 48246,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5100370326",
+      "display_name": "Jian Wang",
+      "orcid": "https://orcid.org/0000-0001-5130-300X",
+      "h_index": 112,
+      "i10_index": 834,
+      "works_count": 1701,
+      "cited_by_count": 50262,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5110117081",
+      "display_name": "William D. Nix",
+      "orcid": null,
+      "h_index": 108,
+      "i10_index": 344,
+      "works_count": 563,
+      "cited_by_count": 63987,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5049092867",
+      "display_name": "K. Lu",
+      "orcid": "https://orcid.org/0000-0001-5763-9145",
+      "h_index": 107,
+      "i10_index": 324,
+      "works_count": 399,
+      "cited_by_count": 56111,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5040626656",
+      "display_name": "Jannie S. J. van Deventer",
+      "orcid": "https://orcid.org/0000-0001-7783-9398",
+      "h_index": 107,
+      "i10_index": 272,
+      "works_count": 357,
+      "cited_by_count": 56014,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5036265708",
+      "display_name": "Mark Asta",
+      "orcid": "https://orcid.org/0000-0002-8968-321X",
+      "h_index": 102,
+      "i10_index": 325,
+      "works_count": 572,
+      "cited_by_count": 46625,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5111532035",
+      "display_name": "J. Häfner",
+      "orcid": "https://orcid.org/0000-0002-9733-8723",
+      "h_index": 100,
+      "i10_index": 499,
+      "works_count": 708,
+      "cited_by_count": 132825,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5001821097",
+      "display_name": "Geoffrey Michael Gadd",
+      "orcid": "https://orcid.org/0000-0001-6874-870X",
+      "h_index": 100,
+      "i10_index": 385,
+      "works_count": 561,
+      "cited_by_count": 40994,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Metals and Alloys -- 9.8",
+      "id": "https://openalex.org/A5063628099",
+      "display_name": "William L. Johnson",
+      "orcid": "https://orcid.org/0000-0003-2616-2553",
+      "h_index": 100,
+      "i10_index": 315,
+      "works_count": 483,
+      "cited_by_count": 44643,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5100462392",
+      "display_name": "Zi‐Kui Liu",
+      "orcid": "https://orcid.org/0000-0003-3346-3696",
+      "h_index": 99,
+      "i10_index": 578,
+      "works_count": 962,
+      "cited_by_count": 40322,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5035224025",
+      "display_name": "Yoshiyuki Kawazoe",
+      "orcid": "https://orcid.org/0000-0002-2369-7045",
+      "h_index": 98,
+      "i10_index": 795,
+      "works_count": 2487,
+      "cited_by_count": 51217,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5075404776",
+      "display_name": "Horst Hahn",
+      "orcid": "https://orcid.org/0000-0001-9901-3861",
+      "h_index": 98,
+      "i10_index": 538,
+      "works_count": 968,
+      "cited_by_count": 39744,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5034851444",
+      "display_name": "Irene J. Beyerlein",
+      "orcid": "https://orcid.org/0000-0002-5489-5132",
+      "h_index": 97,
+      "i10_index": 434,
+      "works_count": 655,
+      "cited_by_count": 36045,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5100419806",
+      "display_name": "Yong Zhang",
+      "orcid": "https://orcid.org/0000-0002-6355-9923",
+      "h_index": 95,
+      "i10_index": 517,
+      "works_count": 946,
+      "cited_by_count": 54235,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5125661741",
+      "display_name": "Hyoung Seop Kim",
+      "orcid": "https://orcid.org/0000-0002-3155-583X",
+      "h_index": 94,
+      "i10_index": 666,
+      "works_count": 1297,
+      "cited_by_count": 38104,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5085252036",
+      "display_name": "Peter David Lee",
+      "orcid": "https://orcid.org/0000-0002-3898-8881",
+      "h_index": 94,
+      "i10_index": 371,
+      "works_count": 639,
+      "cited_by_count": 28017,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5021048066",
+      "display_name": "Nobuhiro Tsuji",
+      "orcid": "https://orcid.org/0000-0002-2132-1327",
+      "h_index": 94,
+      "i10_index": 367,
+      "works_count": 669,
+      "cited_by_count": 37357,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5045729228",
+      "display_name": "W.A. Curtin",
+      "orcid": "https://orcid.org/0000-0002-8269-3642",
+      "h_index": 94,
+      "i10_index": 278,
+      "works_count": 419,
+      "cited_by_count": 30919,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5113850996",
+      "display_name": "Yves J. M. Brechet",
+      "orcid": "https://orcid.org/0000-0002-5249-9611",
+      "h_index": 92,
+      "i10_index": 347,
+      "works_count": 891,
+      "cited_by_count": 29573,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Metals and Alloys -- 9.7",
+      "id": "https://openalex.org/A5055304339",
+      "display_name": "Christopher Allan Schuh",
+      "orcid": "https://orcid.org/0000-0001-9856-2682",
+      "h_index": 92,
+      "i10_index": 297,
+      "works_count": 489,
+      "cited_by_count": 33508,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5111492310",
+      "display_name": "Ali S. Argon",
+      "orcid": null,
+      "h_index": 92,
+      "i10_index": 254,
+      "works_count": 406,
+      "cited_by_count": 34303,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5035644810",
+      "display_name": "David L. McDowell",
+      "orcid": "https://orcid.org/0000-0003-2178-066X",
+      "h_index": 90,
+      "i10_index": 368,
+      "works_count": 606,
+      "cited_by_count": 27702,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5069784195",
+      "display_name": "Xiaozhou Liao",
+      "orcid": "https://orcid.org/0000-0001-8565-1758",
+      "h_index": 90,
+      "i10_index": 306,
+      "works_count": 411,
+      "cited_by_count": 33702,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5103106905",
+      "display_name": "Surya R. Kalidindi",
+      "orcid": "https://orcid.org/0000-0001-6909-7507",
+      "h_index": 90,
+      "i10_index": 285,
+      "works_count": 515,
+      "cited_by_count": 28737,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5042339347",
+      "display_name": "C.N. Tomé",
+      "orcid": "https://orcid.org/0000-0003-3405-0500",
+      "h_index": 89,
+      "i10_index": 230,
+      "works_count": 359,
+      "cited_by_count": 32324,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5069187070",
+      "display_name": "J. P. Hirth",
+      "orcid": "https://orcid.org/0009-0006-5570-7216",
+      "h_index": 88,
+      "i10_index": 345,
+      "works_count": 582,
+      "cited_by_count": 33974,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5043073898",
+      "display_name": "K. Ishida",
+      "orcid": "https://orcid.org/0000-0002-9824-6388",
+      "h_index": 88,
+      "i10_index": 319,
+      "works_count": 479,
+      "cited_by_count": 28111,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5024979529",
+      "display_name": "H. Gleiter",
+      "orcid": "https://orcid.org/0000-0001-6390-9332",
+      "h_index": 88,
+      "i10_index": 272,
+      "works_count": 470,
+      "cited_by_count": 39109,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5002460370",
+      "display_name": "T. Egami",
+      "orcid": "https://orcid.org/0000-0002-1126-0276",
+      "h_index": 87,
+      "i10_index": 394,
+      "works_count": 758,
+      "cited_by_count": 29385,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5079893090",
+      "display_name": "Liyuan Chai",
+      "orcid": "https://orcid.org/0000-0001-8641-9774",
+      "h_index": 86,
+      "i10_index": 433,
+      "works_count": 688,
+      "cited_by_count": 26129,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Metals and Alloys -- 9.6",
+      "id": "https://openalex.org/A5008603600",
+      "display_name": "Reinhard Pıppan",
+      "orcid": "https://orcid.org/0000-0003-4723-3170",
+      "h_index": 86,
+      "i10_index": 403,
+      "works_count": 700,
+      "cited_by_count": 28034,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5013884845",
+      "display_name": "Amit Misra",
+      "orcid": "https://orcid.org/0000-0003-3634-6823",
+      "h_index": 86,
+      "i10_index": 324,
+      "works_count": 496,
+      "cited_by_count": 28160,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5060904631",
+      "display_name": "Anthony D. Rollett",
+      "orcid": "https://orcid.org/0000-0003-4445-2191",
+      "h_index": 85,
+      "i10_index": 335,
+      "works_count": 645,
+      "cited_by_count": 29204,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5073061221",
+      "display_name": "John R. Scully",
+      "orcid": "https://orcid.org/0000-0001-5353-766X",
+      "h_index": 84,
+      "i10_index": 327,
+      "works_count": 694,
+      "cited_by_count": 24731,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5112262870",
+      "display_name": "Hongbin Cao",
+      "orcid": "https://orcid.org/0000-0001-5968-9357",
+      "h_index": 84,
+      "i10_index": 315,
+      "works_count": 403,
+      "cited_by_count": 27222,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5012602129",
+      "display_name": "G. S. Frankel",
+      "orcid": "https://orcid.org/0000-0003-0573-3548",
+      "h_index": 84,
+      "i10_index": 290,
+      "works_count": 530,
+      "cited_by_count": 26933,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5101496982",
+      "display_name": "Ting Zhu",
+      "orcid": "https://orcid.org/0000-0001-8612-9689",
+      "h_index": 83,
+      "i10_index": 157,
+      "works_count": 230,
+      "cited_by_count": 31293,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5024231552",
+      "display_name": "Yuri Estrin",
+      "orcid": "https://orcid.org/0000-0001-7784-5704",
+      "h_index": 82,
+      "i10_index": 293,
+      "works_count": 448,
+      "cited_by_count": 28332,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5089538318",
+      "display_name": "Kaveh Edalati",
+      "orcid": "https://orcid.org/0000-0003-3885-2121",
+      "h_index": 82,
+      "i10_index": 236,
+      "works_count": 340,
+      "cited_by_count": 19301,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5019878908",
+      "display_name": "David Turnbull",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 183,
+      "works_count": 371,
+      "cited_by_count": 37150,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5035361887",
+      "display_name": "Xinghang Zhang",
+      "orcid": "https://orcid.org/0000-0002-8380-8667",
+      "h_index": 81,
+      "i10_index": 342,
+      "works_count": 466,
+      "cited_by_count": 22109,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5047700735",
+      "display_name": "Duane D. Johnson",
+      "orcid": "https://orcid.org/0000-0003-0794-7283",
+      "h_index": 81,
+      "i10_index": 304,
+      "works_count": 548,
+      "cited_by_count": 21873,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Agricultural and Biological Sciences",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Metals and Alloys -- 9.5",
+      "id": "https://openalex.org/A5010935066",
+      "display_name": "Boris Borisovich Straumal",
+      "orcid": "https://orcid.org/0000-0001-5601-0660",
+      "h_index": 81,
+      "i10_index": 264,
+      "works_count": 484,
+      "cited_by_count": 15735,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5091494582",
+      "display_name": "David Barrie Johnson",
+      "orcid": "https://orcid.org/0000-0001-7348-4016",
+      "h_index": 81,
+      "i10_index": 210,
+      "works_count": 307,
+      "cited_by_count": 22541,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5028215237",
+      "display_name": "Jerzy A. Szpunar",
+      "orcid": "https://orcid.org/0000-0002-1291-8375",
+      "h_index": 79,
+      "i10_index": 502,
+      "works_count": 915,
+      "cited_by_count": 26942,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5033943286",
+      "display_name": "Günter Gottstein",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 298,
+      "works_count": 630,
+      "cited_by_count": 22136,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5073968015",
+      "display_name": "Byeong‐Joo Lee",
+      "orcid": "https://orcid.org/0000-0001-6263-7996",
+      "h_index": 79,
+      "i10_index": 290,
+      "works_count": 418,
+      "cited_by_count": 21762,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5071754637",
+      "display_name": "Carl C. Koch",
+      "orcid": "https://orcid.org/0009-0005-1614-0205",
+      "h_index": 79,
+      "i10_index": 272,
+      "works_count": 432,
+      "cited_by_count": 27255,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5078657592",
+      "display_name": "Zhaoping Lü",
+      "orcid": "https://orcid.org/0000-0003-1463-8948",
+      "h_index": 78,
+      "i10_index": 227,
+      "works_count": 304,
+      "cited_by_count": 29905,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5100728816",
+      "display_name": "Jun Sun",
+      "orcid": "https://orcid.org/0000-0001-9127-088X",
+      "h_index": 77,
+      "i10_index": 447,
+      "works_count": 645,
+      "cited_by_count": 25379,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5087422295",
+      "display_name": "T. Masumoto",
+      "orcid": "https://orcid.org/0000-0002-3157-1055",
+      "h_index": 77,
+      "i10_index": 419,
+      "works_count": 897,
+      "cited_by_count": 23331,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5029524832",
+      "display_name": "Gregory S. Rohrer",
+      "orcid": "https://orcid.org/0000-0002-9671-3034",
+      "h_index": 77,
+      "i10_index": 285,
+      "works_count": 478,
+      "cited_by_count": 20174,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5011552484",
+      "display_name": "Vaclav VITEK",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 231,
+      "works_count": 402,
+      "cited_by_count": 21012,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Metals and Alloys -- 9.4",
+      "id": "https://openalex.org/A5091375664",
+      "display_name": "Marko Knežević",
+      "orcid": "https://orcid.org/0000-0001-5849-9164",
+      "h_index": 77,
+      "i10_index": 227,
+      "works_count": 322,
+      "cited_by_count": 15468,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5100715727",
+      "display_name": "Yong Du",
+      "orcid": "https://orcid.org/0000-0002-4187-3989",
+      "h_index": 76,
+      "i10_index": 767,
+      "works_count": 1362,
+      "cited_by_count": 31208,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5006765192",
+      "display_name": "Peter Gumbsch",
+      "orcid": "https://orcid.org/0000-0001-7995-228X",
+      "h_index": 75,
+      "i10_index": 250,
+      "works_count": 587,
+      "cited_by_count": 22269,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5113584387",
+      "display_name": "T.G. Nieh",
+      "orcid": "https://orcid.org/0000-0002-2814-3746",
+      "h_index": 75,
+      "i10_index": 205,
+      "works_count": 325,
+      "cited_by_count": 23431,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5030598389",
+      "display_name": "Jan Schroers",
+      "orcid": "https://orcid.org/0000-0001-5877-6782",
+      "h_index": 75,
+      "i10_index": 205,
+      "works_count": 314,
+      "cited_by_count": 18453,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5080113059",
+      "display_name": "A. Deschamps",
+      "orcid": "https://orcid.org/0000-0002-6038-9201",
+      "h_index": 75,
+      "i10_index": 168,
+      "works_count": 408,
+      "cited_by_count": 20044,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5057214099",
+      "display_name": "Huizhou Liu",
+      "orcid": "https://orcid.org/0000-0001-5390-014X",
+      "h_index": 74,
+      "i10_index": 350,
+      "works_count": 545,
+      "cited_by_count": 21385,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5100335022",
+      "display_name": "Jian Zhi Xu",
+      "orcid": "https://orcid.org/0000-0002-9370-4829",
+      "h_index": 74,
+      "i10_index": 294,
+      "works_count": 403,
+      "cited_by_count": 19480,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5100721121",
+      "display_name": "Yi Wang",
+      "orcid": "https://orcid.org/0000-0001-6154-945X",
+      "h_index": 74,
+      "i10_index": 234,
+      "works_count": 383,
+      "cited_by_count": 19168,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5100637219",
+      "display_name": "Yonghao Zhao",
+      "orcid": "https://orcid.org/0000-0002-2462-6003",
+      "h_index": 74,
+      "i10_index": 231,
+      "works_count": 328,
+      "cited_by_count": 24335,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5021895988",
+      "display_name": "Matthew Robert Barnett",
+      "orcid": "https://orcid.org/0000-0001-8287-9044",
+      "h_index": 74,
+      "i10_index": 213,
+      "works_count": 390,
+      "cited_by_count": 24822,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Metals and Alloys -- 9.3",
+      "id": "https://openalex.org/A5064483130",
+      "display_name": "David Henry StJohn",
+      "orcid": "https://orcid.org/0000-0001-5509-265X",
+      "h_index": 74,
+      "i10_index": 205,
+      "works_count": 319,
+      "cited_by_count": 23341,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5016763937",
+      "display_name": "Scott X. Mao",
+      "orcid": "https://orcid.org/0000-0003-0202-4391",
+      "h_index": 74,
+      "i10_index": 171,
+      "works_count": 246,
+      "cited_by_count": 24642,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5100412439",
+      "display_name": "Gang Liu",
+      "orcid": "https://orcid.org/0000-0002-3636-7029",
+      "h_index": 73,
+      "i10_index": 295,
+      "works_count": 470,
+      "cited_by_count": 19362,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5047365846",
+      "display_name": "Bjørn Clausen",
+      "orcid": "https://orcid.org/0000-0003-3906-846X",
+      "h_index": 73,
+      "i10_index": 229,
+      "works_count": 420,
+      "cited_by_count": 21387,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5010996601",
+      "display_name": "Tamás Ungár",
+      "orcid": "https://orcid.org/0000-0003-4392-8856",
+      "h_index": 73,
+      "i10_index": 203,
+      "works_count": 372,
+      "cited_by_count": 21475,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5111918608",
+      "display_name": "D. Wolf",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 192,
+      "works_count": 315,
+      "cited_by_count": 20155,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5084609483",
+      "display_name": "Jian‐Feng Nie",
+      "orcid": "https://orcid.org/0000-0002-2768-2414",
+      "h_index": 73,
+      "i10_index": 189,
+      "works_count": 273,
+      "cited_by_count": 21842,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5100375860",
+      "display_name": "Tao Zhang",
+      "orcid": "https://orcid.org/0000-0002-9561-3242",
+      "h_index": 71,
+      "i10_index": 334,
+      "works_count": 542,
+      "cited_by_count": 21203,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5075439885",
+      "display_name": "Gerhard Dehm",
+      "orcid": "https://orcid.org/0000-0003-1601-8267",
+      "h_index": 71,
+      "i10_index": 327,
+      "works_count": 909,
+      "cited_by_count": 20140,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5101774064",
+      "display_name": "Yoshihito Kawamura",
+      "orcid": "https://orcid.org/0000-0003-4823-9793",
+      "h_index": 71,
+      "i10_index": 260,
+      "works_count": 552,
+      "cited_by_count": 21025,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5027990573",
+      "display_name": "Jörg F. Löffler",
+      "orcid": "https://orcid.org/0000-0003-2825-6027",
+      "h_index": 71,
+      "i10_index": 227,
+      "works_count": 360,
+      "cited_by_count": 17252,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Metals and Alloys -- 9.2",
+      "id": "https://openalex.org/A5051582506",
+      "display_name": "Gordon Southam",
+      "orcid": "https://orcid.org/0000-0002-8941-1249",
+      "h_index": 71,
+      "i10_index": 225,
+      "works_count": 465,
+      "cited_by_count": 18699,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5111641998",
+      "display_name": "Helena Van Swygenhoven",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 202,
+      "works_count": 288,
+      "cited_by_count": 21099,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5086923308",
+      "display_name": "Yong Gang Yang",
+      "orcid": "https://orcid.org/0000-0002-0491-8295",
+      "h_index": 70,
+      "i10_index": 219,
+      "works_count": 355,
+      "cited_by_count": 22896,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5040245164",
+      "display_name": "Philip B. Prangnell",
+      "orcid": "https://orcid.org/0000-0003-3589-2021",
+      "h_index": 70,
+      "i10_index": 180,
+      "works_count": 291,
+      "cited_by_count": 19432,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5065780416",
+      "display_name": "Satyam Suwas",
+      "orcid": "https://orcid.org/0000-0002-1722-6650",
+      "h_index": 69,
+      "i10_index": 355,
+      "works_count": 602,
+      "cited_by_count": 18255,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5041041634",
+      "display_name": "Veena Sahajwalla",
+      "orcid": "https://orcid.org/0000-0001-9528-9967",
+      "h_index": 69,
+      "i10_index": 352,
+      "works_count": 537,
+      "cited_by_count": 18716,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5090651808",
+      "display_name": "J.Z. Jiang",
+      "orcid": "https://orcid.org/0000-0001-9504-1726",
+      "h_index": 69,
+      "i10_index": 332,
+      "works_count": 505,
+      "cited_by_count": 18018,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5086486169",
+      "display_name": "Rustam Oskarovich Kaibyshev",
+      "orcid": "https://orcid.org/0000-0003-1474-6084",
+      "h_index": 69,
+      "i10_index": 315,
+      "works_count": 670,
+      "cited_by_count": 21565,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5028578315",
+      "display_name": "Xiaoxu Huang",
+      "orcid": "https://orcid.org/0000-0002-4635-6112",
+      "h_index": 69,
+      "i10_index": 241,
+      "works_count": 466,
+      "cited_by_count": 23850,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5003934143",
+      "display_name": "Wolfgang Sand",
+      "orcid": "https://orcid.org/0000-0002-6724-0960",
+      "h_index": 69,
+      "i10_index": 204,
+      "works_count": 339,
+      "cited_by_count": 18435,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5047173595",
+      "display_name": "Erik Van der Giessen",
+      "orcid": "https://orcid.org/0000-0002-8369-2254",
+      "h_index": 69,
+      "i10_index": 203,
+      "works_count": 509,
+      "cited_by_count": 16582,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Metals and Alloys -- 9.1",
+      "id": "https://openalex.org/A5051966639",
+      "display_name": "Gang Sha",
+      "orcid": "https://orcid.org/0000-0001-9842-6728",
+      "h_index": 69,
+      "i10_index": 198,
+      "works_count": 276,
+      "cited_by_count": 18654,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Metals and Alloys -- 9.0",
+      "id": "https://openalex.org/A5040519029",
+      "display_name": "Ricardo A. Lebensohn",
+      "orcid": "https://orcid.org/0000-0002-3152-9105",
+      "h_index": 69,
+      "i10_index": 192,
+      "works_count": 375,
+      "cited_by_count": 17915,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Metals and Alloys -- 9.0",
+      "id": "https://openalex.org/A5051554668",
+      "display_name": "F. John Humphreys",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 134,
+      "works_count": 197,
+      "cited_by_count": 21724,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Metals and Alloys -- 9.0",
+      "id": "https://openalex.org/A5037372327",
+      "display_name": "Franz Roters",
+      "orcid": "https://orcid.org/0000-0002-9098-9566",
+      "h_index": 69,
+      "i10_index": 133,
+      "works_count": 547,
+      "cited_by_count": 19192,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Metals and Alloys -- 9.0",
+      "id": "https://openalex.org/A5100364356",
+      "display_name": "Tao Jiang",
+      "orcid": "https://orcid.org/0000-0002-8521-8054",
+      "h_index": 68,
+      "i10_index": 463,
+      "works_count": 773,
+      "cited_by_count": 19656,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Metals and Alloys -- 9.0",
+      "id": "https://openalex.org/A5022447876",
+      "display_name": "Min Jung Song",
+      "orcid": "https://orcid.org/0000-0002-3197-4647",
+      "h_index": 68,
+      "i10_index": 360,
+      "works_count": 583,
+      "cited_by_count": 17988,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5085569095",
+      "display_name": "Levente Vitos",
+      "orcid": "https://orcid.org/0000-0003-2832-3293",
+      "h_index": 68,
+      "i10_index": 337,
+      "works_count": 510,
+      "cited_by_count": 23571,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5051284757",
+      "display_name": "Gerhard Wilde",
+      "orcid": "https://orcid.org/0000-0001-8001-5998",
+      "h_index": 68,
+      "i10_index": 337,
+      "works_count": 607,
+      "cited_by_count": 17540,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5005255033",
+      "display_name": "Amauri Garcia",
+      "orcid": "https://orcid.org/0000-0002-3834-3258",
+      "h_index": 68,
+      "i10_index": 311,
+      "works_count": 467,
+      "cited_by_count": 15171,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5036716615",
+      "display_name": "Guoqiang Xie",
+      "orcid": "https://orcid.org/0000-0001-8102-9638",
+      "h_index": 68,
+      "i10_index": 309,
+      "works_count": 510,
+      "cited_by_count": 16930,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5076627740",
+      "display_name": "Shun‐Li Shang",
+      "orcid": "https://orcid.org/0000-0002-6524-8897",
+      "h_index": 68,
+      "i10_index": 275,
+      "works_count": 422,
+      "cited_by_count": 16016,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5075815101",
+      "display_name": "Arthur Daniel Pelton",
+      "orcid": "https://orcid.org/0000-0002-5356-0605",
+      "h_index": 68,
+      "i10_index": 255,
+      "works_count": 535,
+      "cited_by_count": 23177,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5087996871",
+      "display_name": "Brent T. Fultz",
+      "orcid": "https://orcid.org/0000-0002-6364-8782",
+      "h_index": 68,
+      "i10_index": 224,
+      "works_count": 531,
+      "cited_by_count": 17605,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5026381585",
+      "display_name": "Yen‐Peng Ting",
+      "orcid": "https://orcid.org/0000-0002-9811-2435",
+      "h_index": 68,
+      "i10_index": 141,
+      "works_count": 200,
+      "cited_by_count": 14467,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5031797179",
+      "display_name": "J.C. Huang",
+      "orcid": "https://orcid.org/0000-0001-6843-3396",
+      "h_index": 67,
+      "i10_index": 325,
+      "works_count": 479,
+      "cited_by_count": 21029,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5086242428",
+      "display_name": "Kōji Hashimoto",
+      "orcid": "https://orcid.org/0000-0003-0331-0218",
+      "h_index": 67,
+      "i10_index": 291,
+      "works_count": 596,
+      "cited_by_count": 17087,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5064618743",
+      "display_name": "Angus J. Wilkinson",
+      "orcid": "https://orcid.org/0000-0002-8801-4102",
+      "h_index": 67,
+      "i10_index": 162,
+      "works_count": 293,
+      "cited_by_count": 15814,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Metals and Alloys -- 8.9",
+      "id": "https://openalex.org/A5111950612",
+      "display_name": "Richard G. Hoagland",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 152,
+      "works_count": 258,
+      "cited_by_count": 16223,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5100337173",
+      "display_name": "Libo Zhang",
+      "orcid": "https://orcid.org/0000-0003-3244-0142",
+      "h_index": 66,
+      "i10_index": 329,
+      "works_count": 576,
+      "cited_by_count": 18195,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5091227387",
+      "display_name": "Y. A. Chang",
+      "orcid": "https://orcid.org/0000-0002-0997-4069",
+      "h_index": 66,
+      "i10_index": 304,
+      "works_count": 541,
+      "cited_by_count": 17067,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5008143694",
+      "display_name": "Bart Blanpain",
+      "orcid": "https://orcid.org/0000-0002-5603-3456",
+      "h_index": 66,
+      "i10_index": 297,
+      "works_count": 675,
+      "cited_by_count": 21575,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5023712329",
+      "display_name": "Hiroshi Fujita",
+      "orcid": "https://orcid.org/0000-0002-9082-4120",
+      "h_index": 66,
+      "i10_index": 288,
+      "works_count": 665,
+      "cited_by_count": 18944,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Chemical Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5110128442",
+      "display_name": "Tsuyoshi Masumoto",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 271,
+      "works_count": 577,
+      "cited_by_count": 21693,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5112412125",
+      "display_name": "A.K. Mukherjee",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 254,
+      "works_count": 404,
+      "cited_by_count": 19836,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5012029603",
+      "display_name": "Z. Fan",
+      "orcid": "https://orcid.org/0000-0003-4079-7336",
+      "h_index": 66,
+      "i10_index": 250,
+      "works_count": 414,
+      "cited_by_count": 14890,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5068575989",
+      "display_name": "Donald W. Brown",
+      "orcid": "https://orcid.org/0000-0003-4565-8212",
+      "h_index": 66,
+      "i10_index": 224,
+      "works_count": 510,
+      "cited_by_count": 16437,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5084999328",
+      "display_name": "Brian G. Thomas",
+      "orcid": "https://orcid.org/0000-0001-8485-3438",
+      "h_index": 66,
+      "i10_index": 212,
+      "works_count": 391,
+      "cited_by_count": 15136,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5086997030",
+      "display_name": "John David Embury",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 200,
+      "works_count": 318,
+      "cited_by_count": 15468,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5100319435",
+      "display_name": "Chuang Dong",
+      "orcid": "https://orcid.org/0000-0001-5631-9641",
+      "h_index": 65,
+      "i10_index": 417,
+      "works_count": 868,
+      "cited_by_count": 21727,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5110367416",
+      "display_name": "Guanzhou Qiu",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 367,
+      "works_count": 539,
+      "cited_by_count": 16183,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5057215841",
+      "display_name": "John H. Perepezko",
+      "orcid": "https://orcid.org/0000-0002-2814-6816",
+      "h_index": 65,
+      "i10_index": 269,
+      "works_count": 490,
+      "cited_by_count": 15576,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5066594049",
+      "display_name": "R. Kirchheim",
+      "orcid": "https://orcid.org/0000-0003-2517-8342",
+      "h_index": 65,
+      "i10_index": 205,
+      "works_count": 367,
+      "cited_by_count": 16677,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5085070449",
+      "display_name": "M. Rappaz",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 174,
+      "works_count": 395,
+      "cited_by_count": 18050,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5068614764",
+      "display_name": "Chris H. J. Davies",
+      "orcid": "https://orcid.org/0000-0001-8910-7426",
+      "h_index": 65,
+      "i10_index": 146,
+      "works_count": 250,
+      "cited_by_count": 15351,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5061197405",
+      "display_name": "N. Hansen",
+      "orcid": "https://orcid.org/0009-0009-2957-3033",
+      "h_index": 65,
+      "i10_index": 116,
+      "works_count": 166,
+      "cited_by_count": 14877,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5077859546",
+      "display_name": "Keiko Sasaki",
+      "orcid": "https://orcid.org/0000-0002-2882-0700",
+      "h_index": 64,
+      "i10_index": 327,
+      "works_count": 529,
+      "cited_by_count": 14575,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5100642360",
+      "display_name": "Hyunjung Kim",
+      "orcid": "https://orcid.org/0000-0003-2115-6891",
+      "h_index": 64,
+      "i10_index": 204,
+      "works_count": 419,
+      "cited_by_count": 14879,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5079940041",
+      "display_name": "John Ågren",
+      "orcid": "https://orcid.org/0000-0002-4521-6089",
+      "h_index": 64,
+      "i10_index": 198,
+      "works_count": 384,
+      "cited_by_count": 14518,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5067403228",
+      "display_name": "S. Scudino",
+      "orcid": "https://orcid.org/0000-0001-7415-131X",
+      "h_index": 64,
+      "i10_index": 177,
+      "works_count": 253,
+      "cited_by_count": 15957,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Metals and Alloys -- 8.8",
+      "id": "https://openalex.org/A5058998927",
+      "display_name": "R. W. Balluffi",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 159,
+      "works_count": 353,
+      "cited_by_count": 16414,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5068814870",
+      "display_name": "Fionn P.E. Dunne",
+      "orcid": "https://orcid.org/0000-0002-4295-3948",
+      "h_index": 64,
+      "i10_index": 151,
+      "works_count": 271,
+      "cited_by_count": 12719,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Engineering",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5071017348",
+      "display_name": "L.P. Kubin",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 149,
+      "works_count": 264,
+      "cited_by_count": 15759,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5085647485",
+      "display_name": "Peter Bernhard Hirsch",
+      "orcid": "https://orcid.org/0000-0002-2353-5310",
+      "h_index": 64,
+      "i10_index": 149,
+      "works_count": 258,
+      "cited_by_count": 15200,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5058582694",
+      "display_name": "Yuri M. Mishin",
+      "orcid": "https://orcid.org/0000-0001-7299-433X",
+      "h_index": 64,
+      "i10_index": 147,
+      "works_count": 243,
+      "cited_by_count": 21383,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5039821621",
+      "display_name": "Michael W. Finnis",
+      "orcid": "https://orcid.org/0000-0002-5999-7576",
+      "h_index": 64,
+      "i10_index": 137,
+      "works_count": 237,
+      "cited_by_count": 16327,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5109837755",
+      "display_name": "Lei Lu",
+      "orcid": "https://orcid.org/0000-0002-2689-0027",
+      "h_index": 64,
+      "i10_index": 124,
+      "works_count": 160,
+      "cited_by_count": 26579,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5033621773",
+      "display_name": "Krzysztof  Jan Kurzydłowski",
+      "orcid": "https://orcid.org/0000-0003-3875-4820",
+      "h_index": 63,
+      "i10_index": 387,
+      "works_count": 959,
+      "cited_by_count": 17753,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5100393104",
+      "display_name": "Guanghui Li",
+      "orcid": "https://orcid.org/0000-0001-8835-8346",
+      "h_index": 63,
+      "i10_index": 384,
+      "works_count": 802,
+      "cited_by_count": 16260,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5078220443",
+      "display_name": "Xingjun Liu",
+      "orcid": "https://orcid.org/0000-0002-3015-8525",
+      "h_index": 63,
+      "i10_index": 346,
+      "works_count": 611,
+      "cited_by_count": 17946,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5079338426",
+      "display_name": "M.D. Baró",
+      "orcid": "https://orcid.org/0000-0002-8636-1063",
+      "h_index": 63,
+      "i10_index": 252,
+      "works_count": 437,
+      "cited_by_count": 15674,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5024145949",
+      "display_name": "Konrad H. Samwer",
+      "orcid": "https://orcid.org/0000-0003-4266-449X",
+      "h_index": 63,
+      "i10_index": 229,
+      "works_count": 557,
+      "cited_by_count": 19676,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5112016604",
+      "display_name": "Hans CONRAD",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 229,
+      "works_count": 416,
+      "cited_by_count": 16146,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5109917962",
+      "display_name": "Derek John Fray",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 220,
+      "works_count": 352,
+      "cited_by_count": 16421,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5084771155",
+      "display_name": "Dmitry G. Eskin",
+      "orcid": "https://orcid.org/0000-0002-0303-2249",
+      "h_index": 63,
+      "i10_index": 205,
+      "works_count": 431,
+      "cited_by_count": 14247,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5013657946",
+      "display_name": "Francesco Vegliò",
+      "orcid": "https://orcid.org/0000-0002-7252-2727",
+      "h_index": 63,
+      "i10_index": 199,
+      "works_count": 386,
+      "cited_by_count": 14952,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Metals and Alloys -- 8.7",
+      "id": "https://openalex.org/A5068020944",
+      "display_name": "Mats Hillert",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 187,
+      "works_count": 312,
+      "cited_by_count": 19336,
+      "discipline": "Metals and Alloys",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Metals and Alloys",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    }
+  ]
+}

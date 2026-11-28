@@ -1,0 +1,3459 @@
+{
+  "kind": "subfield",
+  "id": 3612,
+  "name": "Physical Therapy, Sports Therapy and Rehabilitation",
+  "total_in_scrape": 175,
+  "count": 175,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5032296470",
+      "display_name": "L.M. Bouter",
+      "orcid": "https://orcid.org/0000-0002-2659-5482",
+      "h_index": 171,
+      "i10_index": 567,
+      "works_count": 1476,
+      "cited_by_count": 146240,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Social Sciences",
+        "Health Professions",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5018135109",
+      "display_name": "Bart Willem Koes",
+      "orcid": "https://orcid.org/0000-0002-0450-9969",
+      "h_index": 149,
+      "i10_index": 585,
+      "works_count": 1158,
+      "cited_by_count": 93420,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5013257135",
+      "display_name": "Stephen R. Lord",
+      "orcid": "https://orcid.org/0000-0002-7111-8802",
+      "h_index": 144,
+      "i10_index": 562,
+      "works_count": 893,
+      "cited_by_count": 78533,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5087733041",
+      "display_name": "Richard A. Deyo",
+      "orcid": "https://orcid.org/0000-0002-1313-3721",
+      "h_index": 144,
+      "i10_index": 392,
+      "works_count": 560,
+      "cited_by_count": 99669,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5036470851",
+      "display_name": "Rachelle Buchbinder",
+      "orcid": "https://orcid.org/0000-0002-0597-0933",
+      "h_index": 143,
+      "i10_index": 531,
+      "works_count": 947,
+      "cited_by_count": 193422,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.9",
+      "id": "https://openalex.org/A5112036918",
+      "display_name": "Michael Von Korff",
+      "orcid": "https://orcid.org/0000-0001-5386-8477",
+      "h_index": 140,
+      "i10_index": 323,
+      "works_count": 434,
+      "cited_by_count": 78837,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5012328768",
+      "display_name": "Christopher Gerard Maher",
+      "orcid": "https://orcid.org/0000-0002-1628-7857",
+      "h_index": 138,
+      "i10_index": 599,
+      "works_count": 1163,
+      "cited_by_count": 88043,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5000192723",
+      "display_name": "Henrica C. W. de Vet",
+      "orcid": "https://orcid.org/0000-0002-5454-2804",
+      "h_index": 137,
+      "i10_index": 481,
+      "works_count": 903,
+      "cited_by_count": 120210,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5019442831",
+      "display_name": "Jeffrey M. Hausdorff",
+      "orcid": "https://orcid.org/0000-0002-1608-0776",
+      "h_index": 134,
+      "i10_index": 410,
+      "works_count": 714,
+      "cited_by_count": 98247,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5014653008",
+      "display_name": "Kim Louise Bennell",
+      "orcid": "https://orcid.org/0000-0003-4982-5639",
+      "h_index": 131,
+      "i10_index": 560,
+      "works_count": 1033,
+      "cited_by_count": 64267,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5090490801",
+      "display_name": "Maurits W. van Tulder",
+      "orcid": "https://orcid.org/0000-0002-7589-8471",
+      "h_index": 131,
+      "i10_index": 491,
+      "works_count": 1078,
+      "cited_by_count": 81588,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5108796786",
+      "display_name": "Dennis C. Turk",
+      "orcid": null,
+      "h_index": 129,
+      "i10_index": 408,
+      "works_count": 644,
+      "cited_by_count": 75123,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5016546686",
+      "display_name": "Mark P. Jensen",
+      "orcid": "https://orcid.org/0000-0003-3392-9767",
+      "h_index": 123,
+      "i10_index": 582,
+      "works_count": 939,
+      "cited_by_count": 71539,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5047802487",
+      "display_name": "Fay Bahling Horak",
+      "orcid": "https://orcid.org/0000-0001-7704-5459",
+      "h_index": 121,
+      "i10_index": 378,
+      "works_count": 564,
+      "cited_by_count": 61124,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5078787552",
+      "display_name": "Francis J. Keefe",
+      "orcid": "https://orcid.org/0000-0003-0583-9326",
+      "h_index": 120,
+      "i10_index": 455,
+      "works_count": 701,
+      "cited_by_count": 66092,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5079197101",
+      "display_name": "Johan W.S. Vlaeyen",
+      "orcid": "https://orcid.org/0000-0003-0437-6665",
+      "h_index": 120,
+      "i10_index": 374,
+      "works_count": 802,
+      "cited_by_count": 71201,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.8",
+      "id": "https://openalex.org/A5010255332",
+      "display_name": "Catherine Sherrington",
+      "orcid": "https://orcid.org/0000-0001-8934-4368",
+      "h_index": 119,
+      "i10_index": 471,
+      "works_count": 891,
+      "cited_by_count": 69315,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5019364168",
+      "display_name": "Geert Crombez",
+      "orcid": "https://orcid.org/0000-0002-4744-8561",
+      "h_index": 113,
+      "i10_index": 410,
+      "works_count": 833,
+      "cited_by_count": 51926,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5000503897",
+      "display_name": "Stephanie A. Studenski",
+      "orcid": "https://orcid.org/0000-0003-2133-6235",
+      "h_index": 113,
+      "i10_index": 313,
+      "works_count": 454,
+      "cited_by_count": 66278,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5073785098",
+      "display_name": "Nikolai Bogduk",
+      "orcid": "https://orcid.org/0000-0002-9051-0332",
+      "h_index": 113,
+      "i10_index": 264,
+      "works_count": 566,
+      "cited_by_count": 40783,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5062205858",
+      "display_name": "Christopher Eccleston",
+      "orcid": "https://orcid.org/0000-0003-0698-1543",
+      "h_index": 112,
+      "i10_index": 300,
+      "works_count": 610,
+      "cited_by_count": 48475,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5061543609",
+      "display_name": "Peter R. Croft",
+      "orcid": "https://orcid.org/0000-0003-4914-5908",
+      "h_index": 111,
+      "i10_index": 313,
+      "works_count": 487,
+      "cited_by_count": 60314,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5053915331",
+      "display_name": "Gary John Macfarlane",
+      "orcid": "https://orcid.org/0000-0003-2322-3314",
+      "h_index": 110,
+      "i10_index": 369,
+      "works_count": 803,
+      "cited_by_count": 42293,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5049587248",
+      "display_name": "Robert Randolph Edwards",
+      "orcid": "https://orcid.org/0000-0003-4873-0443",
+      "h_index": 107,
+      "i10_index": 370,
+      "works_count": 727,
+      "cited_by_count": 40300,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5042857846",
+      "display_name": "Ewa Maria Roos",
+      "orcid": "https://orcid.org/0000-0001-5425-2199",
+      "h_index": 106,
+      "i10_index": 325,
+      "works_count": 738,
+      "cited_by_count": 56757,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5015716277",
+      "display_name": "César Fernández‐de‐las‐Peñas",
+      "orcid": "https://orcid.org/0000-0003-3772-9690",
+      "h_index": 105,
+      "i10_index": 676,
+      "works_count": 1215,
+      "cited_by_count": 44010,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5002603484",
+      "display_name": "G. Lorimer Moseley",
+      "orcid": "https://orcid.org/0000-0002-3750-4945",
+      "h_index": 105,
+      "i10_index": 338,
+      "works_count": 784,
+      "cited_by_count": 40195,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.7",
+      "id": "https://openalex.org/A5071181592",
+      "display_name": "Gwendolen Anne Jull",
+      "orcid": "https://orcid.org/0000-0003-2670-1318",
+      "h_index": 104,
+      "i10_index": 287,
+      "works_count": 579,
+      "cited_by_count": 36730,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5063887990",
+      "display_name": "Derick T Wade",
+      "orcid": "https://orcid.org/0000-0002-1188-8442",
+      "h_index": 103,
+      "i10_index": 308,
+      "works_count": 533,
+      "cited_by_count": 50040,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5032357819",
+      "display_name": "Rob Herbert",
+      "orcid": "https://orcid.org/0000-0003-4188-9195",
+      "h_index": 103,
+      "i10_index": 277,
+      "works_count": 520,
+      "cited_by_count": 40894,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Decision Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5086114226",
+      "display_name": "Jo Nijs",
+      "orcid": "https://orcid.org/0000-0002-4976-6563",
+      "h_index": 100,
+      "i10_index": 374,
+      "works_count": 898,
+      "cited_by_count": 33084,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5060776202",
+      "display_name": "Gillian A. Hawker",
+      "orcid": "https://orcid.org/0000-0001-6358-1197",
+      "h_index": 100,
+      "i10_index": 314,
+      "works_count": 546,
+      "cited_by_count": 70273,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5067755203",
+      "display_name": "Lynn Rochester",
+      "orcid": "https://orcid.org/0000-0001-5774-9272",
+      "h_index": 100,
+      "i10_index": 310,
+      "works_count": 783,
+      "cited_by_count": 34088,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5043925156",
+      "display_name": "Gerold Stucki",
+      "orcid": "https://orcid.org/0000-0002-6170-2749",
+      "h_index": 99,
+      "i10_index": 401,
+      "works_count": 550,
+      "cited_by_count": 42717,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5045574598",
+      "display_name": "Alan M. Jette",
+      "orcid": "https://orcid.org/0000-0002-2117-9973",
+      "h_index": 98,
+      "i10_index": 297,
+      "works_count": 545,
+      "cited_by_count": 39510,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5051013760",
+      "display_name": "Joost Dekker",
+      "orcid": "https://orcid.org/0000-0003-2027-0027",
+      "h_index": 95,
+      "i10_index": 423,
+      "works_count": 1069,
+      "cited_by_count": 46917,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5068995535",
+      "display_name": "Sarah E Lamb",
+      "orcid": "https://orcid.org/0000-0003-4349-7195",
+      "h_index": 95,
+      "i10_index": 367,
+      "works_count": 732,
+      "cited_by_count": 60198,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5110340846",
+      "display_name": "Dirk L. Knol",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 303,
+      "works_count": 419,
+      "cited_by_count": 61701,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.6",
+      "id": "https://openalex.org/A5047280218",
+      "display_name": "Kathryn Margaret Refshauge",
+      "orcid": "https://orcid.org/0000-0002-8127-6847",
+      "h_index": 95,
+      "i10_index": 253,
+      "works_count": 425,
+      "cited_by_count": 31382,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5023495924",
+      "display_name": "Judith Axler Turner",
+      "orcid": "https://orcid.org/0000-0002-0519-3521",
+      "h_index": 95,
+      "i10_index": 231,
+      "works_count": 392,
+      "cited_by_count": 49167,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5000236010",
+      "display_name": "Alarcos Cieza",
+      "orcid": "https://orcid.org/0000-0002-5045-4890",
+      "h_index": 94,
+      "i10_index": 333,
+      "works_count": 468,
+      "cited_by_count": 35308,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5024746823",
+      "display_name": "Daniëlle van der Windt",
+      "orcid": "https://orcid.org/0000-0002-7248-6703",
+      "h_index": 94,
+      "i10_index": 273,
+      "works_count": 468,
+      "cited_by_count": 47758,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5060918839",
+      "display_name": "Lance M. McCracken",
+      "orcid": "https://orcid.org/0000-0002-9734-0153",
+      "h_index": 94,
+      "i10_index": 273,
+      "works_count": 556,
+      "cited_by_count": 31271,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5004325083",
+      "display_name": "Steven J. Linton",
+      "orcid": "https://orcid.org/0000-0001-5359-0452",
+      "h_index": 94,
+      "i10_index": 246,
+      "works_count": 407,
+      "cited_by_count": 39885,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5064992004",
+      "display_name": "Anthony D. Woolf",
+      "orcid": "https://orcid.org/0000-0001-8482-8056",
+      "h_index": 94,
+      "i10_index": 190,
+      "works_count": 391,
+      "cited_by_count": 179544,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5023934541",
+      "display_name": "Meg E. Morris",
+      "orcid": "https://orcid.org/0000-0002-0114-4175",
+      "h_index": 93,
+      "i10_index": 293,
+      "works_count": 467,
+      "cited_by_count": 34855,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5113448595",
+      "display_name": "John David Cassidy",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 232,
+      "works_count": 387,
+      "cited_by_count": 36536,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5064181645",
+      "display_name": "Peter O’Sullivan",
+      "orcid": "https://orcid.org/0000-0002-3982-4088",
+      "h_index": 92,
+      "i10_index": 292,
+      "works_count": 478,
+      "cited_by_count": 30955,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5074278851",
+      "display_name": "Markku Heliövaara",
+      "orcid": "https://orcid.org/0000-0002-5434-0639",
+      "h_index": 92,
+      "i10_index": 208,
+      "works_count": 304,
+      "cited_by_count": 29027,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5019855413",
+      "display_name": "Robert J. Gatchel",
+      "orcid": "https://orcid.org/0000-0002-5093-8414",
+      "h_index": 91,
+      "i10_index": 332,
+      "works_count": 600,
+      "cited_by_count": 33948,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.5",
+      "id": "https://openalex.org/A5042167831",
+      "display_name": "Richard Wallace Bohannon",
+      "orcid": "https://orcid.org/0000-0002-3124-082X",
+      "h_index": 91,
+      "i10_index": 313,
+      "works_count": 516,
+      "cited_by_count": 46845,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5032642772",
+      "display_name": "Aileen M. Davis",
+      "orcid": "https://orcid.org/0000-0002-9903-9399",
+      "h_index": 91,
+      "i10_index": 274,
+      "works_count": 434,
+      "cited_by_count": 36639,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5039463522",
+      "display_name": "Pierre Côté",
+      "orcid": "https://orcid.org/0000-0002-6986-6676",
+      "h_index": 88,
+      "i10_index": 324,
+      "works_count": 656,
+      "cited_by_count": 36044,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5085278107",
+      "display_name": "Tor Devin Tosteson",
+      "orcid": "https://orcid.org/0000-0001-9302-4762",
+      "h_index": 88,
+      "i10_index": 218,
+      "works_count": 315,
+      "cited_by_count": 33064,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5066665869",
+      "display_name": "Rob A. de Bie",
+      "orcid": "https://orcid.org/0000-0001-5882-9303",
+      "h_index": 87,
+      "i10_index": 355,
+      "works_count": 711,
+      "cited_by_count": 28462,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5076010689",
+      "display_name": "Nicholas F. Taylor",
+      "orcid": "https://orcid.org/0000-0001-9474-2504",
+      "h_index": 87,
+      "i10_index": 352,
+      "works_count": 606,
+      "cited_by_count": 32609,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5015081262",
+      "display_name": "Rana S. Hinman",
+      "orcid": "https://orcid.org/0000-0001-6368-9456",
+      "h_index": 87,
+      "i10_index": 312,
+      "works_count": 588,
+      "cited_by_count": 27940,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5003456341",
+      "display_name": "Alex Zautra",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 198,
+      "works_count": 502,
+      "cited_by_count": 23107,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Psychology",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5083896661",
+      "display_name": "William Evans McIlroy",
+      "orcid": "https://orcid.org/0000-0003-2319-1746",
+      "h_index": 86,
+      "i10_index": 238,
+      "works_count": 379,
+      "cited_by_count": 24392,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5110879068",
+      "display_name": "Michael E. Robinson",
+      "orcid": "https://orcid.org/0000-0001-6485-7247",
+      "h_index": 85,
+      "i10_index": 258,
+      "works_count": 373,
+      "cited_by_count": 25410,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5010287896",
+      "display_name": "Martijn W. Heymans",
+      "orcid": "https://orcid.org/0000-0002-3889-0921",
+      "h_index": 84,
+      "i10_index": 344,
+      "works_count": 650,
+      "cited_by_count": 27513,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.4",
+      "id": "https://openalex.org/A5059592671",
+      "display_name": "Kenneth J. Ottenbacher",
+      "orcid": "https://orcid.org/0000-0001-5990-3982",
+      "h_index": 84,
+      "i10_index": 341,
+      "works_count": 608,
+      "cited_by_count": 31009,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5027190537",
+      "display_name": "Jennifer A. Haythornthwaite",
+      "orcid": "https://orcid.org/0000-0002-5924-7580",
+      "h_index": 84,
+      "i10_index": 198,
+      "works_count": 451,
+      "cited_by_count": 42524,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5058688355",
+      "display_name": "Steven Z. George",
+      "orcid": "https://orcid.org/0000-0003-4988-9421",
+      "h_index": 83,
+      "i10_index": 292,
+      "works_count": 527,
+      "cited_by_count": 26059,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5002721232",
+      "display_name": "Pieter Ubele Dijkstra",
+      "orcid": "https://orcid.org/0000-0002-5487-1907",
+      "h_index": 82,
+      "i10_index": 299,
+      "works_count": 448,
+      "cited_by_count": 22440,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5060425374",
+      "display_name": "Robert D. Kerns",
+      "orcid": "https://orcid.org/0000-0002-3834-973X",
+      "h_index": 82,
+      "i10_index": 274,
+      "works_count": 459,
+      "cited_by_count": 37135,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5068179853",
+      "display_name": "Nadine Elizabeth Foster",
+      "orcid": "https://orcid.org/0000-0003-4429-9756",
+      "h_index": 82,
+      "i10_index": 254,
+      "works_count": 784,
+      "cited_by_count": 39258,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5026490871",
+      "display_name": "Arianne Petra Verhagen",
+      "orcid": "https://orcid.org/0000-0002-6195-0128",
+      "h_index": 82,
+      "i10_index": 235,
+      "works_count": 603,
+      "cited_by_count": 25780,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5048713015",
+      "display_name": "Julie M. Fritz",
+      "orcid": "https://orcid.org/0000-0002-3599-1057",
+      "h_index": 82,
+      "i10_index": 223,
+      "works_count": 369,
+      "cited_by_count": 35942,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5033577510",
+      "display_name": "Suzanne G. Leveille",
+      "orcid": "https://orcid.org/0000-0003-0427-1580",
+      "h_index": 82,
+      "i10_index": 197,
+      "works_count": 322,
+      "cited_by_count": 26684,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5014128976",
+      "display_name": "Chris J. Main",
+      "orcid": "https://orcid.org/0000-0001-9071-5234",
+      "h_index": 82,
+      "i10_index": 159,
+      "works_count": 313,
+      "cited_by_count": 26277,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5069906869",
+      "display_name": "Fiona Blyth",
+      "orcid": "https://orcid.org/0000-0003-1128-6756",
+      "h_index": 81,
+      "i10_index": 273,
+      "works_count": 451,
+      "cited_by_count": 126919,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.3",
+      "id": "https://openalex.org/A5107466880",
+      "display_name": "Jöel Coste",
+      "orcid": "https://orcid.org/0000-0001-7674-7192",
+      "h_index": 81,
+      "i10_index": 240,
+      "works_count": 572,
+      "cited_by_count": 22525,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Arts and Humanities",
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5010026595",
+      "display_name": "James Henry McAuley",
+      "orcid": "https://orcid.org/0000-0002-0550-828X",
+      "h_index": 81,
+      "i10_index": 224,
+      "works_count": 426,
+      "cited_by_count": 27386,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5077898198",
+      "display_name": "Linda Carroll",
+      "orcid": "https://orcid.org/0000-0003-0876-2336",
+      "h_index": 81,
+      "i10_index": 190,
+      "works_count": 464,
+      "cited_by_count": 28368,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5016880174",
+      "display_name": "Michael J. L. Sullivan",
+      "orcid": "https://orcid.org/0000-0002-4228-1678",
+      "h_index": 81,
+      "i10_index": 186,
+      "works_count": 322,
+      "cited_by_count": 33490,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5040224885",
+      "display_name": "Deborah Falla",
+      "orcid": "https://orcid.org/0000-0003-1689-6190",
+      "h_index": 80,
+      "i10_index": 347,
+      "works_count": 764,
+      "cited_by_count": 25089,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5032813108",
+      "display_name": "Jaro Ilari Karppinen",
+      "orcid": "https://orcid.org/0000-0002-2158-6042",
+      "h_index": 80,
+      "i10_index": 278,
+      "works_count": 549,
+      "cited_by_count": 33861,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5050542219",
+      "display_name": "Ian Douglas Cameron",
+      "orcid": "https://orcid.org/0000-0003-0147-047X",
+      "h_index": 79,
+      "i10_index": 364,
+      "works_count": 599,
+      "cited_by_count": 29068,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5100446244",
+      "display_name": "Wenjun Li",
+      "orcid": "https://orcid.org/0000-0001-5335-7386",
+      "h_index": 79,
+      "i10_index": 319,
+      "works_count": 650,
+      "cited_by_count": 23739,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5070727871",
+      "display_name": "Nancy E. Mayo",
+      "orcid": "https://orcid.org/0000-0003-2066-7120",
+      "h_index": 79,
+      "i10_index": 290,
+      "works_count": 563,
+      "cited_by_count": 23625,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5006306504",
+      "display_name": "Johan W. Groothoff",
+      "orcid": "https://orcid.org/0000-0002-6957-4358",
+      "h_index": 79,
+      "i10_index": 264,
+      "works_count": 434,
+      "cited_by_count": 19314,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5074363261",
+      "display_name": "Raymond Ostelo",
+      "orcid": "https://orcid.org/0000-0001-7679-7210",
+      "h_index": 79,
+      "i10_index": 260,
+      "works_count": 595,
+      "cited_by_count": 34407,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.2",
+      "id": "https://openalex.org/A5087167067",
+      "display_name": "Manuela Loureiro Ferreira",
+      "orcid": "https://orcid.org/0000-0002-3479-0683",
+      "h_index": 79,
+      "i10_index": 247,
+      "works_count": 426,
+      "cited_by_count": 78432,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5000991227",
+      "display_name": "Alan Tennant",
+      "orcid": "https://orcid.org/0000-0002-0728-2130",
+      "h_index": 79,
+      "i10_index": 238,
+      "works_count": 511,
+      "cited_by_count": 23013,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5068900098",
+      "display_name": "Anne Frances Mannion",
+      "orcid": "https://orcid.org/0000-0002-1203-1096",
+      "h_index": 79,
+      "i10_index": 202,
+      "works_count": 347,
+      "cited_by_count": 24858,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5045313264",
+      "display_name": "Eugene J. Carragee",
+      "orcid": "https://orcid.org/0000-0001-9922-4386",
+      "h_index": 79,
+      "i10_index": 145,
+      "works_count": 268,
+      "cited_by_count": 22480,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5067417878",
+      "display_name": "Paul W. Stratford",
+      "orcid": "https://orcid.org/0000-0003-4971-2386",
+      "h_index": 78,
+      "i10_index": 206,
+      "works_count": 322,
+      "cited_by_count": 40651,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5013594231",
+      "display_name": "Amanda C de C Williams",
+      "orcid": "https://orcid.org/0000-0003-3761-8704",
+      "h_index": 77,
+      "i10_index": 215,
+      "works_count": 421,
+      "cited_by_count": 26394,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5048150356",
+      "display_name": "Martin R Underwood",
+      "orcid": "https://orcid.org/0000-0002-0309-1708",
+      "h_index": 76,
+      "i10_index": 258,
+      "works_count": 680,
+      "cited_by_count": 41407,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5064599465",
+      "display_name": "Thomas J. Schnitzer",
+      "orcid": "https://orcid.org/0000-0002-4048-5431",
+      "h_index": 76,
+      "i10_index": 199,
+      "works_count": 343,
+      "cited_by_count": 33017,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5107429321",
+      "display_name": "Damian G Hoy",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 111,
+      "works_count": 149,
+      "cited_by_count": 231020,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5078050533",
+      "display_name": "Allen Walter Heinemann",
+      "orcid": "https://orcid.org/0000-0003-2782-7326",
+      "h_index": 75,
+      "i10_index": 371,
+      "works_count": 740,
+      "cited_by_count": 24070,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5078405126",
+      "display_name": "Terry Peter Haines",
+      "orcid": "https://orcid.org/0000-0003-3150-6154",
+      "h_index": 75,
+      "i10_index": 345,
+      "works_count": 728,
+      "cited_by_count": 22206,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.1",
+      "id": "https://openalex.org/A5010787218",
+      "display_name": "Keith Hill",
+      "orcid": "https://orcid.org/0000-0002-2191-0308",
+      "h_index": 75,
+      "i10_index": 336,
+      "works_count": 651,
+      "cited_by_count": 22326,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.0",
+      "id": "https://openalex.org/A5048017178",
+      "display_name": "Björn U. C. Gerdle",
+      "orcid": "https://orcid.org/0000-0002-4316-1264",
+      "h_index": 75,
+      "i10_index": 291,
+      "works_count": 433,
+      "cited_by_count": 18825,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.0",
+      "id": "https://openalex.org/A5077428465",
+      "display_name": "David G. Baxter",
+      "orcid": "https://orcid.org/0000-0003-2968-6950",
+      "h_index": 75,
+      "i10_index": 214,
+      "works_count": 409,
+      "cited_by_count": 18562,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.0",
+      "id": "https://openalex.org/A5016639488",
+      "display_name": "Margareta C. Nordin",
+      "orcid": "https://orcid.org/0000-0003-0356-8665",
+      "h_index": 75,
+      "i10_index": 194,
+      "works_count": 350,
+      "cited_by_count": 20064,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.0",
+      "id": "https://openalex.org/A5040772705",
+      "display_name": "Madelon L. Peters",
+      "orcid": "https://orcid.org/0000-0003-2969-6286",
+      "h_index": 75,
+      "i10_index": 186,
+      "works_count": 342,
+      "cited_by_count": 23113,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 9.0",
+      "id": "https://openalex.org/A5024462248",
+      "display_name": "Dorcas Beaton",
+      "orcid": "https://orcid.org/0000-0002-5636-8766",
+      "h_index": 74,
+      "i10_index": 268,
+      "works_count": 406,
+      "cited_by_count": 59877,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5024139960",
+      "display_name": "Jan Hartvigsen",
+      "orcid": "https://orcid.org/0000-0002-5876-7410",
+      "h_index": 74,
+      "i10_index": 255,
+      "works_count": 598,
+      "cited_by_count": 43946,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5077193177",
+      "display_name": "Jan H. B. Geertzen",
+      "orcid": "https://orcid.org/0000-0003-4719-0887",
+      "h_index": 74,
+      "i10_index": 240,
+      "works_count": 383,
+      "cited_by_count": 18268,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5080909344",
+      "display_name": "Arja Helena Häkkinen",
+      "orcid": "https://orcid.org/0000-0002-5779-1259",
+      "h_index": 74,
+      "i10_index": 227,
+      "works_count": 365,
+      "cited_by_count": 17618,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5039067937",
+      "display_name": "Geert J. M. G. van der Heijden",
+      "orcid": "https://orcid.org/0000-0003-4979-2099",
+      "h_index": 74,
+      "i10_index": 187,
+      "works_count": 364,
+      "cited_by_count": 22642,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Dentistry",
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5051401339",
+      "display_name": "Bijan Najafi",
+      "orcid": "https://orcid.org/0000-0002-0320-8101",
+      "h_index": 73,
+      "i10_index": 263,
+      "works_count": 543,
+      "cited_by_count": 18735,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5019708076",
+      "display_name": "Mira Meeus",
+      "orcid": "https://orcid.org/0000-0002-2022-5114",
+      "h_index": 73,
+      "i10_index": 246,
+      "works_count": 529,
+      "cited_by_count": 19485,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5017788181",
+      "display_name": "John‐Anker Zwart",
+      "orcid": "https://orcid.org/0000-0001-5721-0154",
+      "h_index": 73,
+      "i10_index": 210,
+      "works_count": 296,
+      "cited_by_count": 25376,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5032474439",
+      "display_name": "T. P. M. Vliet Vlieland",
+      "orcid": "https://orcid.org/0000-0001-6322-3859",
+      "h_index": 72,
+      "i10_index": 346,
+      "works_count": 674,
+      "cited_by_count": 21494,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5053132917",
+      "display_name": "Kim Delbaere",
+      "orcid": "https://orcid.org/0000-0002-5655-0234",
+      "h_index": 72,
+      "i10_index": 191,
+      "works_count": 392,
+      "cited_by_count": 24127,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5088964555",
+      "display_name": "Elaine M. Hay",
+      "orcid": "https://orcid.org/0000-0002-9545-4296",
+      "h_index": 72,
+      "i10_index": 188,
+      "works_count": 336,
+      "cited_by_count": 23368,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5110207499",
+      "display_name": "Michael E. Miller",
+      "orcid": "https://orcid.org/0000-0002-3903-6655",
+      "h_index": 72,
+      "i10_index": 174,
+      "works_count": 290,
+      "cited_by_count": 20290,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.9",
+      "id": "https://openalex.org/A5108486779",
+      "display_name": "Johanne Desrosiers",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 173,
+      "works_count": 250,
+      "cited_by_count": 14253,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5013087377",
+      "display_name": "Mark R. Speechley",
+      "orcid": "https://orcid.org/0000-0002-7563-8709",
+      "h_index": 72,
+      "i10_index": 172,
+      "works_count": 273,
+      "cited_by_count": 34435,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5016463741",
+      "display_name": "Michael K. Nicholas",
+      "orcid": "https://orcid.org/0000-0002-4947-398X",
+      "h_index": 72,
+      "i10_index": 169,
+      "works_count": 264,
+      "cited_by_count": 28979,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5032134756",
+      "display_name": "Sheilah Hogg‐Johnson",
+      "orcid": "https://orcid.org/0000-0002-1744-5036",
+      "h_index": 71,
+      "i10_index": 214,
+      "works_count": 405,
+      "cited_by_count": 20479,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5019109126",
+      "display_name": "Serge Poiraudeau",
+      "orcid": "https://orcid.org/0000-0002-1988-9124",
+      "h_index": 71,
+      "i10_index": 200,
+      "works_count": 468,
+      "cited_by_count": 16032,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5083265759",
+      "display_name": "Michele C. Battié",
+      "orcid": "https://orcid.org/0000-0001-8499-2040",
+      "h_index": 71,
+      "i10_index": 189,
+      "works_count": 273,
+      "cited_by_count": 19517,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5031087108",
+      "display_name": "Elaine Thomas",
+      "orcid": "https://orcid.org/0000-0002-9435-3653",
+      "h_index": 71,
+      "i10_index": 128,
+      "works_count": 199,
+      "cited_by_count": 17407,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5090424447",
+      "display_name": "Roger David Adams",
+      "orcid": "https://orcid.org/0000-0003-1465-1413",
+      "h_index": 70,
+      "i10_index": 248,
+      "works_count": 414,
+      "cited_by_count": 18049,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5071199150",
+      "display_name": "Susan Brenda Jaglal",
+      "orcid": "https://orcid.org/0000-0002-2930-1443",
+      "h_index": 70,
+      "i10_index": 235,
+      "works_count": 367,
+      "cited_by_count": 16052,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5073755681",
+      "display_name": "Subashan Perera",
+      "orcid": "https://orcid.org/0000-0002-5509-8928",
+      "h_index": 70,
+      "i10_index": 224,
+      "works_count": 371,
+      "cited_by_count": 23498,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5039461146",
+      "display_name": "François Rannou",
+      "orcid": "https://orcid.org/0000-0001-8780-4797",
+      "h_index": 70,
+      "i10_index": 223,
+      "works_count": 614,
+      "cited_by_count": 19572,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5015765867",
+      "display_name": "Anne Julia Smith",
+      "orcid": "https://orcid.org/0000-0002-4667-7389",
+      "h_index": 70,
+      "i10_index": 220,
+      "works_count": 363,
+      "cited_by_count": 14805,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5012765015",
+      "display_name": "Jacqueline Close",
+      "orcid": "https://orcid.org/0000-0003-2908-9507",
+      "h_index": 70,
+      "i10_index": 215,
+      "works_count": 363,
+      "cited_by_count": 29297,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5067035898",
+      "display_name": "Eric L. Hurwitz",
+      "orcid": "https://orcid.org/0000-0003-3641-0784",
+      "h_index": 70,
+      "i10_index": 175,
+      "works_count": 292,
+      "cited_by_count": 19692,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5081062494",
+      "display_name": "Lieven A. Danneels",
+      "orcid": "https://orcid.org/0000-0002-3030-2697",
+      "h_index": 70,
+      "i10_index": 171,
+      "works_count": 367,
+      "cited_by_count": 19832,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5008987134",
+      "display_name": "Simo P. Taimela",
+      "orcid": "https://orcid.org/0000-0001-6755-2983",
+      "h_index": 70,
+      "i10_index": 162,
+      "works_count": 260,
+      "cited_by_count": 16945,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5076440538",
+      "display_name": "Elsa S. Strotmeyer",
+      "orcid": "https://orcid.org/0000-0002-4093-6036",
+      "h_index": 70,
+      "i10_index": 161,
+      "works_count": 289,
+      "cited_by_count": 17058,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5027197772",
+      "display_name": "Kathryn M McPherson",
+      "orcid": "https://orcid.org/0000-0003-1240-8882",
+      "h_index": 70,
+      "i10_index": 142,
+      "works_count": 206,
+      "cited_by_count": 14072,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5030960534",
+      "display_name": "Steven McPhail",
+      "orcid": "https://orcid.org/0000-0002-1463-662X",
+      "h_index": 69,
+      "i10_index": 254,
+      "works_count": 649,
+      "cited_by_count": 38903,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5058493970",
+      "display_name": "Paulo H. Ferreira",
+      "orcid": "https://orcid.org/0000-0002-5861-7770",
+      "h_index": 69,
+      "i10_index": 222,
+      "works_count": 477,
+      "cited_by_count": 39115,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5049393044",
+      "display_name": "Chad E. Cook",
+      "orcid": "https://orcid.org/0000-0001-8622-8361",
+      "h_index": 68,
+      "i10_index": 284,
+      "works_count": 476,
+      "cited_by_count": 18553,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5071006594",
+      "display_name": "Werner Vach",
+      "orcid": "https://orcid.org/0000-0003-1865-8399",
+      "h_index": 68,
+      "i10_index": 268,
+      "works_count": 642,
+      "cited_by_count": 16432,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.8",
+      "id": "https://openalex.org/A5077894738",
+      "display_name": "Elizabeth M. Badley",
+      "orcid": "https://orcid.org/0000-0002-6045-2549",
+      "h_index": 68,
+      "i10_index": 219,
+      "works_count": 412,
+      "cited_by_count": 17238,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5038796650",
+      "display_name": "Michele M. Sterling",
+      "orcid": "https://orcid.org/0000-0003-1772-2248",
+      "h_index": 68,
+      "i10_index": 203,
+      "works_count": 442,
+      "cited_by_count": 16875,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5006191973",
+      "display_name": "Jens Ivar Brox",
+      "orcid": "https://orcid.org/0000-0002-2507-1812",
+      "h_index": 68,
+      "i10_index": 189,
+      "works_count": 321,
+      "cited_by_count": 17306,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5010126878",
+      "display_name": "Laurence A. Bradley",
+      "orcid": "https://orcid.org/0000-0002-1206-2263",
+      "h_index": 68,
+      "i10_index": 145,
+      "works_count": 245,
+      "cited_by_count": 17388,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5040007229",
+      "display_name": "Lucie Brosseau",
+      "orcid": "https://orcid.org/0000-0002-9587-7504",
+      "h_index": 68,
+      "i10_index": 121,
+      "works_count": 177,
+      "cited_by_count": 12353,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5021730709",
+      "display_name": "Pekka J. Laippala",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 203,
+      "works_count": 249,
+      "cited_by_count": 15106,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5090841224",
+      "display_name": "Susan D. Horn",
+      "orcid": "https://orcid.org/0000-0003-0199-4513",
+      "h_index": 67,
+      "i10_index": 196,
+      "works_count": 308,
+      "cited_by_count": 16086,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5059349186",
+      "display_name": "Mark Jonathan Hancock",
+      "orcid": "https://orcid.org/0000-0002-9277-5377",
+      "h_index": 67,
+      "i10_index": 188,
+      "works_count": 442,
+      "cited_by_count": 26923,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5042308315",
+      "display_name": "Sabine Verschueren",
+      "orcid": "https://orcid.org/0000-0003-2592-494X",
+      "h_index": 67,
+      "i10_index": 175,
+      "works_count": 363,
+      "cited_by_count": 16337,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5085576236",
+      "display_name": "Gary M. Franklin",
+      "orcid": "https://orcid.org/0000-0002-1355-4091",
+      "h_index": 67,
+      "i10_index": 164,
+      "works_count": 233,
+      "cited_by_count": 14394,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5085028090",
+      "display_name": "Jane Latimer",
+      "orcid": "https://orcid.org/0000-0002-4809-5753",
+      "h_index": 67,
+      "i10_index": 158,
+      "works_count": 272,
+      "cited_by_count": 15540,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5010608946",
+      "display_name": "Kate M. Dunn",
+      "orcid": "https://orcid.org/0000-0002-6202-2606",
+      "h_index": 67,
+      "i10_index": 143,
+      "works_count": 224,
+      "cited_by_count": 20660,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5109109779",
+      "display_name": "Aftab E. Patla",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 120,
+      "works_count": 156,
+      "cited_by_count": 20182,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5108549466",
+      "display_name": "Daniel C. Cherkin",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 120,
+      "works_count": 153,
+      "cited_by_count": 17932,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5035574394",
+      "display_name": "Nicholas Stergiou",
+      "orcid": "https://orcid.org/0000-0002-9737-9939",
+      "h_index": 66,
+      "i10_index": 239,
+      "works_count": 452,
+      "cited_by_count": 18383,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5102820192",
+      "display_name": "Charlotte Leboeuf‐Yde",
+      "orcid": "https://orcid.org/0000-0003-1552-7772",
+      "h_index": 66,
+      "i10_index": 185,
+      "works_count": 276,
+      "cited_by_count": 17035,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5009534806",
+      "display_name": "Serge Perrot",
+      "orcid": "https://orcid.org/0000-0002-0509-1592",
+      "h_index": 66,
+      "i10_index": 177,
+      "works_count": 517,
+      "cited_by_count": 27517,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5034243681",
+      "display_name": "George Peat",
+      "orcid": "https://orcid.org/0000-0002-9008-0184",
+      "h_index": 66,
+      "i10_index": 168,
+      "works_count": 364,
+      "cited_by_count": 17352,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5069421572",
+      "display_name": "Paul Michael J Peloso",
+      "orcid": "https://orcid.org/0000-0001-6979-306X",
+      "h_index": 66,
+      "i10_index": 129,
+      "works_count": 250,
+      "cited_by_count": 18352,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5079072330",
+      "display_name": "Clemens Becker",
+      "orcid": "https://orcid.org/0000-0003-1624-8353",
+      "h_index": 65,
+      "i10_index": 243,
+      "works_count": 435,
+      "cited_by_count": 21449,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5073018252",
+      "display_name": "Lindy Maxted Clemson",
+      "orcid": "https://orcid.org/0000-0003-2687-1114",
+      "h_index": 65,
+      "i10_index": 221,
+      "works_count": 490,
+      "cited_by_count": 24443,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5051623464",
+      "display_name": "Eling Douwe de Bruin",
+      "orcid": "https://orcid.org/0000-0002-6542-7385",
+      "h_index": 65,
+      "i10_index": 183,
+      "works_count": 481,
+      "cited_by_count": 14175,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.7",
+      "id": "https://openalex.org/A5057690689",
+      "display_name": "Rob Smeets",
+      "orcid": "https://orcid.org/0000-0002-9503-366X",
+      "h_index": 65,
+      "i10_index": 178,
+      "works_count": 408,
+      "cited_by_count": 28229,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5043057203",
+      "display_name": "Dawn M. Ehde",
+      "orcid": "https://orcid.org/0000-0002-9555-2347",
+      "h_index": 65,
+      "i10_index": 176,
+      "works_count": 314,
+      "cited_by_count": 14729,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5012299262",
+      "display_name": "Lorenzo Chiari",
+      "orcid": "https://orcid.org/0000-0002-2318-4370",
+      "h_index": 65,
+      "i10_index": 166,
+      "works_count": 475,
+      "cited_by_count": 19386,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Computer Science",
+        "Neuroscience",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5071986605",
+      "display_name": "Liesbet Goubert",
+      "orcid": "https://orcid.org/0000-0002-7657-5148",
+      "h_index": 65,
+      "i10_index": 164,
+      "works_count": 396,
+      "cited_by_count": 15471,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5088245876",
+      "display_name": "Jorunn L. Helbostad",
+      "orcid": "https://orcid.org/0000-0003-0214-9290",
+      "h_index": 65,
+      "i10_index": 160,
+      "works_count": 281,
+      "cited_by_count": 13934,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5108428331",
+      "display_name": "Jacques Fermanian",
+      "orcid": "https://orcid.org/0000-0002-1645-0781",
+      "h_index": 65,
+      "i10_index": 132,
+      "works_count": 242,
+      "cited_by_count": 17873,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5027463490",
+      "display_name": "Raffaele De",
+      "orcid": "https://orcid.org/0000-0002-2307-0277",
+      "h_index": 64,
+      "i10_index": 251,
+      "works_count": 452,
+      "cited_by_count": 15049,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5061762196",
+      "display_name": "Stefano Masiero",
+      "orcid": "https://orcid.org/0000-0002-0361-4898",
+      "h_index": 64,
+      "i10_index": 234,
+      "works_count": 556,
+      "cited_by_count": 14372,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5044623291",
+      "display_name": "Johannes R. Anema",
+      "orcid": "https://orcid.org/0000-0001-8657-0917",
+      "h_index": 64,
+      "i10_index": 220,
+      "works_count": 331,
+      "cited_by_count": 25230,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5112144793",
+      "display_name": "Carl V. Granger",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 165,
+      "works_count": 264,
+      "cited_by_count": 19671,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5014635573",
+      "display_name": "Scott Haldeman",
+      "orcid": "https://orcid.org/0000-0002-8688-9562",
+      "h_index": 64,
+      "i10_index": 165,
+      "works_count": 289,
+      "cited_by_count": 18701,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5040487116",
+      "display_name": "Astrid Bergland",
+      "orcid": "https://orcid.org/0000-0003-4349-8200",
+      "h_index": 64,
+      "i10_index": 163,
+      "works_count": 389,
+      "cited_by_count": 12358,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5025020088",
+      "display_name": "John H. J. Allum",
+      "orcid": "https://orcid.org/0000-0002-0439-4065",
+      "h_index": 64,
+      "i10_index": 158,
+      "works_count": 250,
+      "cited_by_count": 13258,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5083183492",
+      "display_name": "Tom G. Mayer",
+      "orcid": "https://orcid.org/0000-0002-4075-5374",
+      "h_index": 64,
+      "i10_index": 141,
+      "works_count": 295,
+      "cited_by_count": 14374,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5021859258",
+      "display_name": "Kushang V. Patel",
+      "orcid": "https://orcid.org/0000-0002-8443-2876",
+      "h_index": 64,
+      "i10_index": 140,
+      "works_count": 207,
+      "cited_by_count": 17527,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5037492755",
+      "display_name": "Anthony Delitto",
+      "orcid": "https://orcid.org/0000-0002-2202-3436",
+      "h_index": 64,
+      "i10_index": 138,
+      "works_count": 209,
+      "cited_by_count": 18781,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5052218111",
+      "display_name": "Roee Holtzer",
+      "orcid": "https://orcid.org/0000-0001-6639-0724",
+      "h_index": 64,
+      "i10_index": 126,
+      "works_count": 241,
+      "cited_by_count": 15144,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5072749993",
+      "display_name": "Li‐Shan Chou",
+      "orcid": "https://orcid.org/0000-0002-2777-7034",
+      "h_index": 64,
+      "i10_index": 119,
+      "works_count": 181,
+      "cited_by_count": 11511,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Engineering",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5065548560",
+      "display_name": "Carla Stecco",
+      "orcid": "https://orcid.org/0000-0002-8767-4555",
+      "h_index": 63,
+      "i10_index": 204,
+      "works_count": 436,
+      "cited_by_count": 12976,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Physical Therapy, Sports Therapy and Rehabilitation -- 8.6",
+      "id": "https://openalex.org/A5058555876",
+      "display_name": "Mark S. Redfern",
+      "orcid": "https://orcid.org/0000-0003-0097-4641",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 319,
+      "cited_by_count": 13904,
+      "discipline": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Health Professions",
+        "Neuroscience",
+        "Engineering",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4903 @@
+{
+  "kind": "subfield",
+  "id": 2305,
+  "name": "Environmental Engineering",
+  "total_in_scrape": 248,
+  "count": 248,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Environmental Engineering -- 9.9",
+      "id": "https://openalex.org/A5021568652",
+      "display_name": "Derek R. Lovley",
+      "orcid": "https://orcid.org/0000-0001-7158-3555",
+      "h_index": 197,
+      "i10_index": 510,
+      "works_count": 656,
+      "cited_by_count": 129736,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Environmental Engineering -- 9.9",
+      "id": "https://openalex.org/A5006144504",
+      "display_name": "Bruce E. Logan",
+      "orcid": "https://orcid.org/0000-0001-7478-8070",
+      "h_index": 165,
+      "i10_index": 532,
+      "works_count": 722,
+      "cited_by_count": 110645,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Energy",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Environmental Engineering -- 9.9",
+      "id": "https://openalex.org/A5100337957",
+      "display_name": "Han‐Qing Yu",
+      "orcid": "https://orcid.org/0000-0001-5247-6244",
+      "h_index": 146,
+      "i10_index": 803,
+      "works_count": 984,
+      "cited_by_count": 81877,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Environmental Engineering -- 9.9",
+      "id": "https://openalex.org/A5100666569",
+      "display_name": "Jianlong Wang",
+      "orcid": "https://orcid.org/0000-0001-9572-851X",
+      "h_index": 136,
+      "i10_index": 613,
+      "works_count": 827,
+      "cited_by_count": 79365,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Environmental Engineering -- 9.9",
+      "id": "https://openalex.org/A5034510214",
+      "display_name": "Kenneth H. Nealson",
+      "orcid": "https://orcid.org/0000-0001-5189-3732",
+      "h_index": 132,
+      "i10_index": 404,
+      "works_count": 630,
+      "cited_by_count": 66658,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Environmental Engineering -- 9.9",
+      "id": "https://openalex.org/A5049519363",
+      "display_name": "Bin Gao",
+      "orcid": "https://orcid.org/0000-0003-3769-0191",
+      "h_index": 129,
+      "i10_index": 435,
+      "works_count": 559,
+      "cited_by_count": 67970,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5079063327",
+      "display_name": "Yong Geng",
+      "orcid": "https://orcid.org/0000-0002-2284-1375",
+      "h_index": 119,
+      "i10_index": 425,
+      "works_count": 568,
+      "cited_by_count": 50041,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5089681312",
+      "display_name": "Dabo Guan",
+      "orcid": "https://orcid.org/0000-0003-3773-3403",
+      "h_index": 118,
+      "i10_index": 305,
+      "works_count": 535,
+      "cited_by_count": 52096,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5082646301",
+      "display_name": "Klaus Hubacek",
+      "orcid": "https://orcid.org/0000-0003-2561-6090",
+      "h_index": 113,
+      "i10_index": 310,
+      "works_count": 494,
+      "cited_by_count": 52875,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5075190563",
+      "display_name": "Özgür Kişi",
+      "orcid": "https://orcid.org/0000-0001-7847-5872",
+      "h_index": 111,
+      "i10_index": 540,
+      "works_count": 732,
+      "cited_by_count": 41158,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5066754586",
+      "display_name": "Wolfgang Wagner",
+      "orcid": "https://orcid.org/0000-0001-7704-6857",
+      "h_index": 111,
+      "i10_index": 387,
+      "works_count": 828,
+      "cited_by_count": 55214,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5058179400",
+      "display_name": "Manfred Lenzen",
+      "orcid": "https://orcid.org/0000-0002-0828-5288",
+      "h_index": 109,
+      "i10_index": 285,
+      "works_count": 457,
+      "cited_by_count": 51906,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5080819705",
+      "display_name": "Arjen Y. Hoekstra",
+      "orcid": "https://orcid.org/0000-0002-4769-5239",
+      "h_index": 109,
+      "i10_index": 264,
+      "works_count": 491,
+      "cited_by_count": 55982,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5068869127",
+      "display_name": "Michael Zwicky Hauschild",
+      "orcid": "https://orcid.org/0000-0002-8331-7390",
+      "h_index": 108,
+      "i10_index": 320,
+      "works_count": 599,
+      "cited_by_count": 45716,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5081904302",
+      "display_name": "Kwok‐wing Chau",
+      "orcid": "https://orcid.org/0000-0001-6457-161X",
+      "h_index": 107,
+      "i10_index": 322,
+      "works_count": 479,
+      "cited_by_count": 36845,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5067513167",
+      "display_name": "Martinus Th. van Genuchten",
+      "orcid": "https://orcid.org/0000-0003-1654-8858",
+      "h_index": 107,
+      "i10_index": 317,
+      "works_count": 483,
+      "cited_by_count": 78522,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Engineering",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Environmental Engineering -- 9.8",
+      "id": "https://openalex.org/A5015586783",
+      "display_name": "Cees J.N. Buisman",
+      "orcid": "https://orcid.org/0000-0002-3820-1137",
+      "h_index": 107,
+      "i10_index": 310,
+      "works_count": 420,
+      "cited_by_count": 35559,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5100632966",
+      "display_name": "Nanqi Ren",
+      "orcid": "https://orcid.org/0000-0001-6314-9783",
+      "h_index": 106,
+      "i10_index": 504,
+      "works_count": 688,
+      "cited_by_count": 40918,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5016604523",
+      "display_name": "Korneel Rabaey",
+      "orcid": "https://orcid.org/0000-0001-8738-7778",
+      "h_index": 105,
+      "i10_index": 272,
+      "works_count": 578,
+      "cited_by_count": 51806,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemistry",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5080182359",
+      "display_name": "Mark A. J. Huijbregts",
+      "orcid": "https://orcid.org/0000-0002-7037-680X",
+      "h_index": 104,
+      "i10_index": 355,
+      "works_count": 668,
+      "cited_by_count": 45669,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5102930688",
+      "display_name": "Thomas J. Jackson",
+      "orcid": "https://orcid.org/0000-0001-6297-5290",
+      "h_index": 104,
+      "i10_index": 325,
+      "works_count": 848,
+      "cited_by_count": 42980,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5009184611",
+      "display_name": "Gregory Victor Lowry",
+      "orcid": "https://orcid.org/0000-0001-8599-008X",
+      "h_index": 104,
+      "i10_index": 241,
+      "works_count": 371,
+      "cited_by_count": 44534,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5028331853",
+      "display_name": "Harry Vereecken",
+      "orcid": "https://orcid.org/0000-0002-8051-8517",
+      "h_index": 103,
+      "i10_index": 622,
+      "works_count": 1680,
+      "cited_by_count": 47163,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5042575873",
+      "display_name": "T. E. Graedel",
+      "orcid": "https://orcid.org/0000-0002-4007-3189",
+      "h_index": 103,
+      "i10_index": 284,
+      "works_count": 466,
+      "cited_by_count": 38938,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5031926871",
+      "display_name": "Bert J. E. Blocken",
+      "orcid": "https://orcid.org/0000-0003-2935-9562",
+      "h_index": 103,
+      "i10_index": 253,
+      "works_count": 557,
+      "cited_by_count": 35229,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5010777390",
+      "display_name": "John M. Zachara",
+      "orcid": "https://orcid.org/0000-0002-9883-7874",
+      "h_index": 102,
+      "i10_index": 264,
+      "works_count": 3766,
+      "cited_by_count": 35230,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5007157661",
+      "display_name": "Byong‐Hun Jeon",
+      "orcid": "https://orcid.org/0000-0002-5478-765X",
+      "h_index": 100,
+      "i10_index": 530,
+      "works_count": 733,
+      "cited_by_count": 38327,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Environmental Engineering -- 9.7",
+      "id": "https://openalex.org/A5017290925",
+      "display_name": "Jan Carmeliet",
+      "orcid": "https://orcid.org/0000-0001-7489-2652",
+      "h_index": 100,
+      "i10_index": 430,
+      "works_count": 940,
+      "cited_by_count": 35502,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5070534468",
+      "display_name": "Teresa J. Bandosz",
+      "orcid": "https://orcid.org/0000-0003-2673-3782",
+      "h_index": 100,
+      "i10_index": 418,
+      "works_count": 521,
+      "cited_by_count": 36361,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5066752579",
+      "display_name": "Andreas A. Kappler",
+      "orcid": "https://orcid.org/0000-0002-3558-9500",
+      "h_index": 100,
+      "i10_index": 394,
+      "works_count": 785,
+      "cited_by_count": 40727,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5086735912",
+      "display_name": "Bridget R. Scanlon",
+      "orcid": "https://orcid.org/0000-0002-1234-4199",
+      "h_index": 99,
+      "i10_index": 222,
+      "works_count": 581,
+      "cited_by_count": 42824,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5052647280",
+      "display_name": "Yann H. Kerr",
+      "orcid": "https://orcid.org/0000-0001-6352-1717",
+      "h_index": 97,
+      "i10_index": 332,
+      "works_count": 994,
+      "cited_by_count": 41236,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5064715778",
+      "display_name": "Yuguo Li",
+      "orcid": "https://orcid.org/0000-0002-2281-4529",
+      "h_index": 97,
+      "i10_index": 325,
+      "works_count": 689,
+      "cited_by_count": 41481,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5085491613",
+      "display_name": "Dara Entekhabi",
+      "orcid": "https://orcid.org/0000-0002-8362-4761",
+      "h_index": 97,
+      "i10_index": 300,
+      "works_count": 817,
+      "cited_by_count": 38153,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5080948346",
+      "display_name": "Helmut Haberl",
+      "orcid": "https://orcid.org/0000-0003-2104-5446",
+      "h_index": 97,
+      "i10_index": 218,
+      "works_count": 462,
+      "cited_by_count": 38521,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5037953109",
+      "display_name": "Zaher Mundher Yaseen‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬‬",
+      "orcid": "https://orcid.org/0000-0003-3647-7137",
+      "h_index": 96,
+      "i10_index": 496,
+      "works_count": 717,
+      "cited_by_count": 32594,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5024402179",
+      "display_name": "Sue Grimmond",
+      "orcid": "https://orcid.org/0000-0002-3166-9415",
+      "h_index": 96,
+      "i10_index": 258,
+      "works_count": 1167,
+      "cited_by_count": 32944,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5038103208",
+      "display_name": "Edgar G. Hertwich",
+      "orcid": "https://orcid.org/0000-0002-4934-3421",
+      "h_index": 95,
+      "i10_index": 231,
+      "works_count": 433,
+      "cited_by_count": 34742,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Environmental Engineering -- 9.6",
+      "id": "https://openalex.org/A5001523912",
+      "display_name": "Yujie Feng",
+      "orcid": "https://orcid.org/0000-0002-0686-3937",
+      "h_index": 94,
+      "i10_index": 490,
+      "works_count": 755,
+      "cited_by_count": 34519,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5055385768",
+      "display_name": "Tammo Siert Steenhuis",
+      "orcid": "https://orcid.org/0000-0003-0508-9350",
+      "h_index": 94,
+      "i10_index": 430,
+      "works_count": 778,
+      "cited_by_count": 31069,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5055432128",
+      "display_name": "Shungui Zhou",
+      "orcid": "https://orcid.org/0000-0003-0899-4225",
+      "h_index": 94,
+      "i10_index": 377,
+      "works_count": 495,
+      "cited_by_count": 27192,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5100325378",
+      "display_name": "Chunmiao Zheng",
+      "orcid": "https://orcid.org/0000-0001-5839-1305",
+      "h_index": 93,
+      "i10_index": 442,
+      "works_count": 669,
+      "cited_by_count": 37530,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5100427744",
+      "display_name": "Zhen He",
+      "orcid": "https://orcid.org/0000-0001-6302-6556",
+      "h_index": 93,
+      "i10_index": 340,
+      "works_count": 483,
+      "cited_by_count": 29602,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5103151967",
+      "display_name": "Bernhard Schink",
+      "orcid": "https://orcid.org/0000-0003-0253-5423",
+      "h_index": 93,
+      "i10_index": 317,
+      "works_count": 482,
+      "cited_by_count": 30784,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5042318951",
+      "display_name": "Aijie Wang",
+      "orcid": "https://orcid.org/0000-0001-8868-5232",
+      "h_index": 92,
+      "i10_index": 512,
+      "works_count": 676,
+      "cited_by_count": 31739,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5041703311",
+      "display_name": "María Teresa Moreira",
+      "orcid": "https://orcid.org/0000-0001-9354-3298",
+      "h_index": 92,
+      "i10_index": 396,
+      "works_count": 572,
+      "cited_by_count": 26615,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Immunology and Microbiology",
+        "Nursing",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5043940512",
+      "display_name": "Jean‐Pierre Wigneron",
+      "orcid": "https://orcid.org/0000-0001-5345-3618",
+      "h_index": 92,
+      "i10_index": 311,
+      "works_count": 923,
+      "cited_by_count": 34054,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5067191342",
+      "display_name": "Yaobin Zhang",
+      "orcid": "https://orcid.org/0000-0001-6052-0508",
+      "h_index": 92,
+      "i10_index": 255,
+      "works_count": 319,
+      "cited_by_count": 24231,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5005953829",
+      "display_name": "Hubertus V. M. Hamelers",
+      "orcid": "https://orcid.org/0000-0002-0990-4773",
+      "h_index": 92,
+      "i10_index": 181,
+      "works_count": 302,
+      "cited_by_count": 37006,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering",
+        "Energy",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5109011370",
+      "display_name": "Amir Hosein Mosavi",
+      "orcid": "https://orcid.org/0000-0003-4842-0613",
+      "h_index": 91,
+      "i10_index": 384,
+      "works_count": 627,
+      "cited_by_count": 30879,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Mathematics",
+        "Environmental Science",
+        "Decision Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Environmental Engineering -- 9.5",
+      "id": "https://openalex.org/A5012801147",
+      "display_name": "John S. Kimball",
+      "orcid": "https://orcid.org/0000-0002-5493-5878",
+      "h_index": 91,
+      "i10_index": 251,
+      "works_count": 631,
+      "cited_by_count": 35761,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5111566439",
+      "display_name": "Zhifeng Yang",
+      "orcid": "https://orcid.org/0000-0002-7669-5713",
+      "h_index": 90,
+      "i10_index": 523,
+      "works_count": 706,
+      "cited_by_count": 32366,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5111972280",
+      "display_name": "Shahaboddin Shamshirband",
+      "orcid": "https://orcid.org/0000-0002-6605-498X",
+      "h_index": 90,
+      "i10_index": 331,
+      "works_count": 445,
+      "cited_by_count": 28192,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5061314516",
+      "display_name": "Adisa Azapagic",
+      "orcid": "https://orcid.org/0000-0003-2380-918X",
+      "h_index": 90,
+      "i10_index": 236,
+      "works_count": 456,
+      "cited_by_count": 31535,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Nursing",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5100405434",
+      "display_name": "Fei Chen",
+      "orcid": "https://orcid.org/0000-0003-2573-3828",
+      "h_index": 90,
+      "i10_index": 233,
+      "works_count": 419,
+      "cited_by_count": 39588,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5049493168",
+      "display_name": "Kuishuang Feng",
+      "orcid": "https://orcid.org/0000-0001-5139-444X",
+      "h_index": 90,
+      "i10_index": 215,
+      "works_count": 297,
+      "cited_by_count": 25930,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5050368837",
+      "display_name": "Stefanie Hellweg",
+      "orcid": "https://orcid.org/0000-0001-6376-9878",
+      "h_index": 88,
+      "i10_index": 217,
+      "works_count": 392,
+      "cited_by_count": 35794,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5109231295",
+      "display_name": "Kelly P. Nevin",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 117,
+      "works_count": 133,
+      "cited_by_count": 30077,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5020270621",
+      "display_name": "Jeffrey P. Walker",
+      "orcid": "https://orcid.org/0000-0002-4817-2712",
+      "h_index": 87,
+      "i10_index": 346,
+      "works_count": 660,
+      "cited_by_count": 37139,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5081196975",
+      "display_name": "Gumersindo Feijóo",
+      "orcid": "https://orcid.org/0000-0001-6231-3887",
+      "h_index": 87,
+      "i10_index": 344,
+      "works_count": 533,
+      "cited_by_count": 23794,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Immunology and Microbiology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5100440681",
+      "display_name": "Hailong Li",
+      "orcid": "https://orcid.org/0000-0003-0652-6655",
+      "h_index": 87,
+      "i10_index": 333,
+      "works_count": 554,
+      "cited_by_count": 27527,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Environmental Engineering -- 9.4",
+      "id": "https://openalex.org/A5100748681",
+      "display_name": "Wen‐Wei Li",
+      "orcid": "https://orcid.org/0000-0001-9280-0045",
+      "h_index": 86,
+      "i10_index": 350,
+      "works_count": 452,
+      "cited_by_count": 28063,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5040998762",
+      "display_name": "Jo P. Dewulf",
+      "orcid": "https://orcid.org/0000-0003-1870-4930",
+      "h_index": 86,
+      "i10_index": 289,
+      "works_count": 561,
+      "cited_by_count": 27355,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5003269590",
+      "display_name": "Serenella Sala",
+      "orcid": "https://orcid.org/0000-0003-1919-9948",
+      "h_index": 86,
+      "i10_index": 203,
+      "works_count": 378,
+      "cited_by_count": 27667,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5065141057",
+      "display_name": "Ravinesh Chand Deo",
+      "orcid": "https://orcid.org/0000-0002-2290-6749",
+      "h_index": 85,
+      "i10_index": 283,
+      "works_count": 407,
+      "cited_by_count": 23041,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5086749698",
+      "display_name": "John A. Cherry",
+      "orcid": "https://orcid.org/0000-0003-1000-9335",
+      "h_index": 85,
+      "i10_index": 190,
+      "works_count": 348,
+      "cited_by_count": 21144,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5073561211",
+      "display_name": "Mark L. Brusseau",
+      "orcid": "https://orcid.org/0000-0002-6937-2975",
+      "h_index": 84,
+      "i10_index": 342,
+      "works_count": 576,
+      "cited_by_count": 24653,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5060137389",
+      "display_name": "Luca Brocca",
+      "orcid": "https://orcid.org/0000-0002-9080-260X",
+      "h_index": 84,
+      "i10_index": 225,
+      "works_count": 568,
+      "cited_by_count": 27824,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5073161521",
+      "display_name": "Matthew Rodell",
+      "orcid": "https://orcid.org/0000-0003-0106-7437",
+      "h_index": 84,
+      "i10_index": 159,
+      "works_count": 464,
+      "cited_by_count": 43603,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5022863657",
+      "display_name": "Wei‐xian Zhang",
+      "orcid": "https://orcid.org/0000-0002-3876-4036",
+      "h_index": 83,
+      "i10_index": 250,
+      "works_count": 334,
+      "cited_by_count": 31314,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5030277930",
+      "display_name": "Jesús Carrera",
+      "orcid": "https://orcid.org/0000-0002-8054-4352",
+      "h_index": 83,
+      "i10_index": 241,
+      "works_count": 638,
+      "cited_by_count": 22917,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5002330623",
+      "display_name": "Reinout Heijungs",
+      "orcid": "https://orcid.org/0000-0002-0724-5962",
+      "h_index": 83,
+      "i10_index": 228,
+      "works_count": 383,
+      "cited_by_count": 31233,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Environmental Engineering -- 9.3",
+      "id": "https://openalex.org/A5008179908",
+      "display_name": "Ahmed El‐Shafie",
+      "orcid": "https://orcid.org/0000-0001-5018-8505",
+      "h_index": 82,
+      "i10_index": 377,
+      "works_count": 535,
+      "cited_by_count": 24511,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5042908199",
+      "display_name": "Fangbai Li",
+      "orcid": "https://orcid.org/0000-0001-9027-9313",
+      "h_index": 82,
+      "i10_index": 328,
+      "works_count": 480,
+      "cited_by_count": 22036,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5002127283",
+      "display_name": "Zhiyong Jason Ren",
+      "orcid": "https://orcid.org/0000-0001-7606-0331",
+      "h_index": 82,
+      "i10_index": 246,
+      "works_count": 351,
+      "cited_by_count": 25712,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5025301254",
+      "display_name": "Karsten Pruess",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 243,
+      "works_count": 513,
+      "cited_by_count": 29419,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5029403476",
+      "display_name": "Xin Wang",
+      "orcid": "https://orcid.org/0000-0002-3522-5627",
+      "h_index": 81,
+      "i10_index": 329,
+      "works_count": 586,
+      "cited_by_count": 23485,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5076923860",
+      "display_name": "Sérgio Ulgiati",
+      "orcid": "https://orcid.org/0000-0001-6159-4947",
+      "h_index": 81,
+      "i10_index": 237,
+      "works_count": 500,
+      "cited_by_count": 33430,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5082838900",
+      "display_name": "Arnold Tukker",
+      "orcid": "https://orcid.org/0000-0002-8229-2929",
+      "h_index": 81,
+      "i10_index": 215,
+      "works_count": 451,
+      "cited_by_count": 35840,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5100438321",
+      "display_name": "Michael Wang",
+      "orcid": "https://orcid.org/0000-0002-8315-0201",
+      "h_index": 81,
+      "i10_index": 194,
+      "works_count": 265,
+      "cited_by_count": 21467,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Energy",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5090131090",
+      "display_name": "Martin Reinhard",
+      "orcid": "https://orcid.org/0000-0002-7833-6175",
+      "h_index": 81,
+      "i10_index": 165,
+      "works_count": 225,
+      "cited_by_count": 22040,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5020577930",
+      "display_name": "David Butler",
+      "orcid": "https://orcid.org/0000-0001-5515-3416",
+      "h_index": 80,
+      "i10_index": 267,
+      "works_count": 552,
+      "cited_by_count": 22938,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5030126925",
+      "display_name": "Uwe Schröder",
+      "orcid": "https://orcid.org/0000-0002-8144-0328",
+      "h_index": 80,
+      "i10_index": 261,
+      "works_count": 477,
+      "cited_by_count": 30537,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Environmental Engineering -- 9.2",
+      "id": "https://openalex.org/A5006292900",
+      "display_name": "Ana Deletić",
+      "orcid": "https://orcid.org/0000-0002-3535-7451",
+      "h_index": 80,
+      "i10_index": 246,
+      "works_count": 454,
+      "cited_by_count": 22632,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5053606298",
+      "display_name": "Rolf Helmut Reichle",
+      "orcid": "https://orcid.org/0000-0001-5513-0150",
+      "h_index": 80,
+      "i10_index": 184,
+      "works_count": 515,
+      "cited_by_count": 43228,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5026818785",
+      "display_name": "Albert I. J. M. van Dijk",
+      "orcid": "https://orcid.org/0000-0002-6508-7480",
+      "h_index": 80,
+      "i10_index": 175,
+      "works_count": 353,
+      "cited_by_count": 29897,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5061910536",
+      "display_name": "Wouter Arnoud Dorigo",
+      "orcid": "https://orcid.org/0000-0001-8054-7572",
+      "h_index": 80,
+      "i10_index": 168,
+      "works_count": 493,
+      "cited_by_count": 31075,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5046172737",
+      "display_name": "Thomas Wiedmann",
+      "orcid": "https://orcid.org/0000-0002-6395-8887",
+      "h_index": 80,
+      "i10_index": 162,
+      "works_count": 223,
+      "cited_by_count": 32715,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5026873103",
+      "display_name": "J.‐Y. Parlange",
+      "orcid": "https://orcid.org/0000-0002-0419-6077",
+      "h_index": 79,
+      "i10_index": 315,
+      "works_count": 624,
+      "cited_by_count": 21374,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5043779152",
+      "display_name": "José A. Sobrino",
+      "orcid": "https://orcid.org/0000-0003-3787-9373",
+      "h_index": 79,
+      "i10_index": 235,
+      "works_count": 551,
+      "cited_by_count": 29503,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5026341101",
+      "display_name": "Irene M.C. Lo",
+      "orcid": "https://orcid.org/0000-0002-7001-6900",
+      "h_index": 79,
+      "i10_index": 220,
+      "works_count": 459,
+      "cited_by_count": 21875,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5071968278",
+      "display_name": "Tim D. Fletcher",
+      "orcid": "https://orcid.org/0000-0001-8819-5567",
+      "h_index": 79,
+      "i10_index": 218,
+      "works_count": 388,
+      "cited_by_count": 27518,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5017424109",
+      "display_name": "Krishna R. Reddy",
+      "orcid": "https://orcid.org/0000-0002-6577-1151",
+      "h_index": 78,
+      "i10_index": 327,
+      "works_count": 587,
+      "cited_by_count": 22743,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5037183827",
+      "display_name": "Zhongbo Su",
+      "orcid": "https://orcid.org/0000-0003-2096-1733",
+      "h_index": 78,
+      "i10_index": 326,
+      "works_count": 721,
+      "cited_by_count": 27342,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Environmental Engineering -- 9.1",
+      "id": "https://openalex.org/A5013715539",
+      "display_name": "Raymond Jianxiong Zeng",
+      "orcid": "https://orcid.org/0000-0003-3060-588X",
+      "h_index": 78,
+      "i10_index": 288,
+      "works_count": 370,
+      "cited_by_count": 19951,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Environmental Engineering -- 9.0",
+      "id": "https://openalex.org/A5023208867",
+      "display_name": "Peng Liang",
+      "orcid": "https://orcid.org/0000-0001-7345-0844",
+      "h_index": 78,
+      "i10_index": 260,
+      "works_count": 375,
+      "cited_by_count": 20316,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Environmental Engineering -- 9.0",
+      "id": "https://openalex.org/A5087783891",
+      "display_name": "Wade T. Crow",
+      "orcid": "https://orcid.org/0000-0002-8217-261X",
+      "h_index": 78,
+      "i10_index": 231,
+      "works_count": 490,
+      "cited_by_count": 25690,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Environmental Engineering -- 9.0",
+      "id": "https://openalex.org/A5015103248",
+      "display_name": "Fridolin Krausmann",
+      "orcid": "https://orcid.org/0000-0002-9995-2372",
+      "h_index": 78,
+      "i10_index": 170,
+      "works_count": 310,
+      "cited_by_count": 28509,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Environmental Engineering -- 9.0",
+      "id": "https://openalex.org/A5061204636",
+      "display_name": "Eric Roden",
+      "orcid": "https://orcid.org/0000-0002-1555-4343",
+      "h_index": 78,
+      "i10_index": 160,
+      "works_count": 1340,
+      "cited_by_count": 20151,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Environmental Engineering -- 9.0",
+      "id": "https://openalex.org/A5113524976",
+      "display_name": "B.W. Ang",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 132,
+      "works_count": 167,
+      "cited_by_count": 31894,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Energy",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5083362762",
+      "display_name": "Alimorad Rashidi",
+      "orcid": "https://orcid.org/0000-0001-6753-1939",
+      "h_index": 77,
+      "i10_index": 393,
+      "works_count": 613,
+      "cited_by_count": 23130,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5033107100",
+      "display_name": "P. Suresh C. Rao",
+      "orcid": "https://orcid.org/0000-0002-5982-3736",
+      "h_index": 77,
+      "i10_index": 234,
+      "works_count": 311,
+      "cited_by_count": 20142,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5109115258",
+      "display_name": "James K. Fredrickson",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 143,
+      "works_count": 179,
+      "cited_by_count": 24816,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5053023126",
+      "display_name": "Friedrich Widdel",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 111,
+      "works_count": 204,
+      "cited_by_count": 32334,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5006321580",
+      "display_name": "Andreas Matzarakis",
+      "orcid": "https://orcid.org/0000-0003-3076-555X",
+      "h_index": 76,
+      "i10_index": 294,
+      "works_count": 608,
+      "cited_by_count": 26323,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5057491110",
+      "display_name": "G.Q. Chen",
+      "orcid": "https://orcid.org/0000-0003-1173-6796",
+      "h_index": 76,
+      "i10_index": 211,
+      "works_count": 241,
+      "cited_by_count": 15882,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5046192263",
+      "display_name": "Edward Ng",
+      "orcid": "https://orcid.org/0000-0002-2483-9922",
+      "h_index": 76,
+      "i10_index": 190,
+      "works_count": 307,
+      "cited_by_count": 21838,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5083397861",
+      "display_name": "Sangwon Suh",
+      "orcid": "https://orcid.org/0000-0001-8290-6276",
+      "h_index": 76,
+      "i10_index": 161,
+      "works_count": 281,
+      "cited_by_count": 37456,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5058040417",
+      "display_name": "Zhao-Liang Li",
+      "orcid": "https://orcid.org/0000-0001-9369-8548",
+      "h_index": 75,
+      "i10_index": 303,
+      "works_count": 672,
+      "cited_by_count": 27074,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5100413863",
+      "display_name": "Ming Xu",
+      "orcid": "https://orcid.org/0000-0002-7106-8390",
+      "h_index": 75,
+      "i10_index": 196,
+      "works_count": 305,
+      "cited_by_count": 16547,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5080466893",
+      "display_name": "James J. Corbett",
+      "orcid": "https://orcid.org/0000-0002-2588-3474",
+      "h_index": 75,
+      "i10_index": 183,
+      "works_count": 355,
+      "cited_by_count": 24551,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Medicine",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Environmental Engineering -- 8.9",
+      "id": "https://openalex.org/A5039798346",
+      "display_name": "Gregory A. Keoleian",
+      "orcid": "https://orcid.org/0000-0002-7096-1304",
+      "h_index": 75,
+      "i10_index": 180,
+      "works_count": 285,
+      "cited_by_count": 20546,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5019869869",
+      "display_name": "Jens Hartmann",
+      "orcid": "https://orcid.org/0000-0003-1878-9321",
+      "h_index": 75,
+      "i10_index": 166,
+      "works_count": 364,
+      "cited_by_count": 27814,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5100347977",
+      "display_name": "Yifeng Zhang",
+      "orcid": "https://orcid.org/0000-0002-2832-2277",
+      "h_index": 74,
+      "i10_index": 339,
+      "works_count": 556,
+      "cited_by_count": 24101,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5051942456",
+      "display_name": "Shabbir H. Gheewala",
+      "orcid": "https://orcid.org/0000-0002-4300-1551",
+      "h_index": 74,
+      "i10_index": 298,
+      "works_count": 447,
+      "cited_by_count": 17905,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5026090581",
+      "display_name": "Wolfgang A. Rauch",
+      "orcid": "https://orcid.org/0000-0002-6462-2832",
+      "h_index": 74,
+      "i10_index": 293,
+      "works_count": 504,
+      "cited_by_count": 20784,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5048671365",
+      "display_name": "Luca Ridolfi",
+      "orcid": "https://orcid.org/0000-0003-2947-8641",
+      "h_index": 74,
+      "i10_index": 241,
+      "works_count": 588,
+      "cited_by_count": 21043,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5072356911",
+      "display_name": "Thilo Hofmann",
+      "orcid": "https://orcid.org/0000-0001-8929-6933",
+      "h_index": 74,
+      "i10_index": 222,
+      "works_count": 419,
+      "cited_by_count": 24373,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5024240572",
+      "display_name": "Jianlei Niu",
+      "orcid": "https://orcid.org/0000-0002-1176-9179",
+      "h_index": 74,
+      "i10_index": 219,
+      "works_count": 370,
+      "cited_by_count": 17015,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5077217744",
+      "display_name": "Peter K. Kitanidis",
+      "orcid": "https://orcid.org/0000-0001-8113-9968",
+      "h_index": 74,
+      "i10_index": 214,
+      "works_count": 416,
+      "cited_by_count": 18826,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5025247468",
+      "display_name": "Michael H. Cosh",
+      "orcid": "https://orcid.org/0000-0003-4776-1918",
+      "h_index": 74,
+      "i10_index": 213,
+      "works_count": 460,
+      "cited_by_count": 21818,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5009772135",
+      "display_name": "Philippe Davy",
+      "orcid": "https://orcid.org/0000-0002-6648-0145",
+      "h_index": 74,
+      "i10_index": 151,
+      "works_count": 407,
+      "cited_by_count": 17141,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5014416358",
+      "display_name": "Valéry Masson",
+      "orcid": "https://orcid.org/0000-0001-8807-0545",
+      "h_index": 74,
+      "i10_index": 150,
+      "works_count": 415,
+      "cited_by_count": 21947,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5014238433",
+      "display_name": "Gary Thomas Rochelle",
+      "orcid": "https://orcid.org/0000-0003-2887-356X",
+      "h_index": 73,
+      "i10_index": 243,
+      "works_count": 391,
+      "cited_by_count": 28502,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5004343247",
+      "display_name": "Carl I. Steefel",
+      "orcid": "https://orcid.org/0000-0002-2802-611X",
+      "h_index": 73,
+      "i10_index": 168,
+      "works_count": 499,
+      "cited_by_count": 19146,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5039727503",
+      "display_name": "Richard A. Wood",
+      "orcid": "https://orcid.org/0000-0002-7906-3324",
+      "h_index": 73,
+      "i10_index": 149,
+      "works_count": 275,
+      "cited_by_count": 20014,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5100545317",
+      "display_name": "Zhaohui Yang",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 136,
+      "works_count": 166,
+      "cited_by_count": 15182,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5048548441",
+      "display_name": "Christoph A. Herrmann",
+      "orcid": "https://orcid.org/0000-0002-5621-1822",
+      "h_index": 72,
+      "i10_index": 414,
+      "works_count": 863,
+      "cited_by_count": 22601,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Engineering",
+        "Environmental Science",
+        "Business, Management and Accounting",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5057887079",
+      "display_name": "Makarand M. Ghangrekar",
+      "orcid": "https://orcid.org/0000-0002-0691-9873",
+      "h_index": 72,
+      "i10_index": 278,
+      "works_count": 482,
+      "cited_by_count": 17561,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5017413865",
+      "display_name": "John Greenman",
+      "orcid": "https://orcid.org/0000-0003-1732-7037",
+      "h_index": 72,
+      "i10_index": 231,
+      "works_count": 368,
+      "cited_by_count": 15444,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Chemistry",
+        "Dentistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5055698547",
+      "display_name": "Brian Berkowitz",
+      "orcid": "https://orcid.org/0000-0003-3078-1859",
+      "h_index": 72,
+      "i10_index": 221,
+      "works_count": 454,
+      "cited_by_count": 21294,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Mathematics",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5010792482",
+      "display_name": "Raphael O. Idem",
+      "orcid": "https://orcid.org/0000-0002-2708-0608",
+      "h_index": 72,
+      "i10_index": 201,
+      "works_count": 278,
+      "cited_by_count": 16333,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Chemical Engineering",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Chemical Engineering",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5075286459",
+      "display_name": "Arpad Horvath",
+      "orcid": "https://orcid.org/0000-0003-1340-7099",
+      "h_index": 72,
+      "i10_index": 156,
+      "works_count": 246,
+      "cited_by_count": 22687,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Environmental Engineering -- 8.8",
+      "id": "https://openalex.org/A5044643350",
+      "display_name": "Steven M. Gorelick",
+      "orcid": "https://orcid.org/0000-0003-2486-1318",
+      "h_index": 72,
+      "i10_index": 144,
+      "works_count": 271,
+      "cited_by_count": 17206,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5100341065",
+      "display_name": "Nan Li",
+      "orcid": "https://orcid.org/0000-0002-5852-2325",
+      "h_index": 71,
+      "i10_index": 284,
+      "works_count": 504,
+      "cited_by_count": 18458,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5030174039",
+      "display_name": "Daohui Lin",
+      "orcid": "https://orcid.org/0000-0002-9662-7195",
+      "h_index": 71,
+      "i10_index": 248,
+      "works_count": 334,
+      "cited_by_count": 22279,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5090223095",
+      "display_name": "Ashantha Goonetilleke",
+      "orcid": "https://orcid.org/0000-0002-8783-1223",
+      "h_index": 71,
+      "i10_index": 241,
+      "works_count": 514,
+      "cited_by_count": 18970,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5072396651",
+      "display_name": "Chuanping Feng",
+      "orcid": "https://orcid.org/0000-0002-9700-4416",
+      "h_index": 71,
+      "i10_index": 241,
+      "works_count": 348,
+      "cited_by_count": 15325,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5079038545",
+      "display_name": "Yanbiao Liu",
+      "orcid": "https://orcid.org/0000-0001-8404-3806",
+      "h_index": 71,
+      "i10_index": 211,
+      "works_count": 296,
+      "cited_by_count": 15208,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5004381242",
+      "display_name": "Chongxuan Liu",
+      "orcid": "https://orcid.org/0000-0002-7403-6001",
+      "h_index": 71,
+      "i10_index": 210,
+      "works_count": 276,
+      "cited_by_count": 14282,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5026154119",
+      "display_name": "Wim G. M. Bastiaanssen",
+      "orcid": "https://orcid.org/0000-0002-7931-5018",
+      "h_index": 71,
+      "i10_index": 143,
+      "works_count": 313,
+      "cited_by_count": 22939,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5046285994",
+      "display_name": "Alfred Michael Spormann",
+      "orcid": "https://orcid.org/0000-0001-5103-9704",
+      "h_index": 71,
+      "i10_index": 140,
+      "works_count": 253,
+      "cited_by_count": 16219,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5100687897",
+      "display_name": "Ping Ning",
+      "orcid": "https://orcid.org/0000-0002-0481-2482",
+      "h_index": 70,
+      "i10_index": 507,
+      "works_count": 969,
+      "cited_by_count": 23577,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5083408654",
+      "display_name": "Boxiong Shen",
+      "orcid": "https://orcid.org/0000-0003-1445-5332",
+      "h_index": 70,
+      "i10_index": 337,
+      "works_count": 516,
+      "cited_by_count": 17381,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5026822758",
+      "display_name": "D. A. Barry",
+      "orcid": "https://orcid.org/0000-0002-8621-0425",
+      "h_index": 70,
+      "i10_index": 282,
+      "works_count": 831,
+      "cited_by_count": 20549,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5100718510",
+      "display_name": "Yutao Wang",
+      "orcid": "https://orcid.org/0000-0001-8297-8579",
+      "h_index": 70,
+      "i10_index": 221,
+      "works_count": 363,
+      "cited_by_count": 15553,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5037279767",
+      "display_name": "Catherine Prigent",
+      "orcid": "https://orcid.org/0000-0003-0266-1403",
+      "h_index": 70,
+      "i10_index": 201,
+      "works_count": 405,
+      "cited_by_count": 21835,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5070667788",
+      "display_name": "Shlomo P. Neuman",
+      "orcid": "https://orcid.org/0000-0003-4358-3173",
+      "h_index": 70,
+      "i10_index": 195,
+      "works_count": 392,
+      "cited_by_count": 21286,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5028242808",
+      "display_name": "Mehrez Zribi",
+      "orcid": "https://orcid.org/0000-0001-6141-8222",
+      "h_index": 70,
+      "i10_index": 191,
+      "works_count": 599,
+      "cited_by_count": 14863,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5110649430",
+      "display_name": "Frank E. Löffler",
+      "orcid": "https://orcid.org/0000-0002-9797-4279",
+      "h_index": 70,
+      "i10_index": 189,
+      "works_count": 278,
+      "cited_by_count": 19834,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5026653232",
+      "display_name": "Gang Liu",
+      "orcid": "https://orcid.org/0000-0002-7613-1985",
+      "h_index": 70,
+      "i10_index": 186,
+      "works_count": 417,
+      "cited_by_count": 17398,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Nursing",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5072730205",
+      "display_name": "Peter Fantke",
+      "orcid": "https://orcid.org/0000-0001-7148-6982",
+      "h_index": 70,
+      "i10_index": 185,
+      "works_count": 442,
+      "cited_by_count": 16475,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5042113874",
+      "display_name": "Jean‐Christophe Calvet",
+      "orcid": "https://orcid.org/0000-0001-6425-6492",
+      "h_index": 70,
+      "i10_index": 180,
+      "works_count": 484,
+      "cited_by_count": 19028,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5014308617",
+      "display_name": "Jing Meng",
+      "orcid": "https://orcid.org/0000-0001-8708-0485",
+      "h_index": 70,
+      "i10_index": 172,
+      "works_count": 264,
+      "cited_by_count": 18818,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5048253730",
+      "display_name": "Joan Rieradevall",
+      "orcid": "https://orcid.org/0000-0003-3360-6829",
+      "h_index": 70,
+      "i10_index": 169,
+      "works_count": 343,
+      "cited_by_count": 14111,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Social Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Environmental Engineering -- 8.7",
+      "id": "https://openalex.org/A5036240168",
+      "display_name": "Michael S. Wong",
+      "orcid": "https://orcid.org/0000-0002-3652-3378",
+      "h_index": 70,
+      "i10_index": 168,
+      "works_count": 289,
+      "cited_by_count": 17795,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5043300923",
+      "display_name": "Harold L. Drake",
+      "orcid": "https://orcid.org/0000-0001-6886-345X",
+      "h_index": 70,
+      "i10_index": 157,
+      "works_count": 220,
+      "cited_by_count": 13500,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5037791977",
+      "display_name": "Stephan Pfister",
+      "orcid": "https://orcid.org/0000-0001-8984-2041",
+      "h_index": 70,
+      "i10_index": 154,
+      "works_count": 333,
+      "cited_by_count": 19137,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5056787306",
+      "display_name": "Niko E. C. Verhoest",
+      "orcid": "https://orcid.org/0000-0003-4116-8881",
+      "h_index": 70,
+      "i10_index": 154,
+      "works_count": 435,
+      "cited_by_count": 17698,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5061043268",
+      "display_name": "Shaoan Cheng",
+      "orcid": "https://orcid.org/0000-0002-8746-5104",
+      "h_index": 70,
+      "i10_index": 152,
+      "works_count": 199,
+      "cited_by_count": 24935,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5049326709",
+      "display_name": "M. Bayani Cardenas",
+      "orcid": "https://orcid.org/0000-0001-6270-3105",
+      "h_index": 70,
+      "i10_index": 152,
+      "works_count": 367,
+      "cited_by_count": 13778,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5043735479",
+      "display_name": "Hashem Akbari",
+      "orcid": "https://orcid.org/0000-0001-8808-8112",
+      "h_index": 70,
+      "i10_index": 147,
+      "works_count": 231,
+      "cited_by_count": 22975,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5044084507",
+      "display_name": "Xin Dong Hu",
+      "orcid": "https://orcid.org/0000-0002-9851-1049",
+      "h_index": 70,
+      "i10_index": 144,
+      "works_count": 182,
+      "cited_by_count": 12837,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5086850291",
+      "display_name": "Richard de Jeu",
+      "orcid": "https://orcid.org/0000-0002-4498-8984",
+      "h_index": 70,
+      "i10_index": 136,
+      "works_count": 305,
+      "cited_by_count": 31953,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5074207705",
+      "display_name": "Francesco Cherubini",
+      "orcid": "https://orcid.org/0000-0002-7147-4292",
+      "h_index": 70,
+      "i10_index": 129,
+      "works_count": 218,
+      "cited_by_count": 20073,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5110753491",
+      "display_name": "T. R. Oke",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 112,
+      "works_count": 161,
+      "cited_by_count": 48052,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5090395315",
+      "display_name": "Xiang Gao",
+      "orcid": "https://orcid.org/0000-0002-1732-2132",
+      "h_index": 69,
+      "i10_index": 332,
+      "works_count": 524,
+      "cited_by_count": 16863,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5100435319",
+      "display_name": "Ling Li",
+      "orcid": "https://orcid.org/0000-0001-8725-1221",
+      "h_index": 69,
+      "i10_index": 276,
+      "works_count": 496,
+      "cited_by_count": 16459,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5010789167",
+      "display_name": "Ali Najah Ahmed",
+      "orcid": "https://orcid.org/0000-0002-5618-6663",
+      "h_index": 69,
+      "i10_index": 259,
+      "works_count": 385,
+      "cited_by_count": 16292,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5100427350",
+      "display_name": "Bin Chen",
+      "orcid": "https://orcid.org/0000-0002-5488-6850",
+      "h_index": 69,
+      "i10_index": 218,
+      "works_count": 330,
+      "cited_by_count": 14484,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5085513692",
+      "display_name": "Bao‐Jie He",
+      "orcid": "https://orcid.org/0000-0002-8841-0711",
+      "h_index": 69,
+      "i10_index": 173,
+      "works_count": 363,
+      "cited_by_count": 14630,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5081225281",
+      "display_name": "Scott A. Bradford",
+      "orcid": "https://orcid.org/0000-0002-3260-2968",
+      "h_index": 69,
+      "i10_index": 168,
+      "works_count": 245,
+      "cited_by_count": 16188,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5048257969",
+      "display_name": "Michael A. Celia",
+      "orcid": "https://orcid.org/0000-0002-1927-6600",
+      "h_index": 69,
+      "i10_index": 163,
+      "works_count": 380,
+      "cited_by_count": 19954,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5036643782",
+      "display_name": "Lars Peter Nielsen",
+      "orcid": "https://orcid.org/0000-0002-7269-4860",
+      "h_index": 69,
+      "i10_index": 115,
+      "works_count": 189,
+      "cited_by_count": 17116,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5001105097",
+      "display_name": "Matthias Finkbeiner",
+      "orcid": "https://orcid.org/0000-0003-3790-5922",
+      "h_index": 68,
+      "i10_index": 251,
+      "works_count": 440,
+      "cited_by_count": 18133,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Business, Management and Accounting",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5030056936",
+      "display_name": "Wenzong Liu",
+      "orcid": "https://orcid.org/0000-0002-1331-6480",
+      "h_index": 68,
+      "i10_index": 235,
+      "works_count": 316,
+      "cited_by_count": 13658,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5031544034",
+      "display_name": "Craig T. Simmons",
+      "orcid": "https://orcid.org/0000-0001-5399-6292",
+      "h_index": 68,
+      "i10_index": 223,
+      "works_count": 387,
+      "cited_by_count": 19216,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Environmental Engineering -- 8.6",
+      "id": "https://openalex.org/A5054164034",
+      "display_name": "Sally M. Benson",
+      "orcid": "https://orcid.org/0000-0002-3733-4296",
+      "h_index": 68,
+      "i10_index": 212,
+      "works_count": 575,
+      "cited_by_count": 23181,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5083368553",
+      "display_name": "M. Mercedes Maroto‐Valer",
+      "orcid": "https://orcid.org/0000-0003-1643-2863",
+      "h_index": 68,
+      "i10_index": 209,
+      "works_count": 411,
+      "cited_by_count": 20378,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5001805122",
+      "display_name": "Kazuya Watanabe",
+      "orcid": "https://orcid.org/0000-0002-1214-9393",
+      "h_index": 68,
+      "i10_index": 201,
+      "works_count": 441,
+      "cited_by_count": 20288,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5084332193",
+      "display_name": "Xavier Gabarrell",
+      "orcid": "https://orcid.org/0000-0003-1730-4337",
+      "h_index": 68,
+      "i10_index": 198,
+      "works_count": 337,
+      "cited_by_count": 14229,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5034768232",
+      "display_name": "Ioannis Andrea Ieropoulos",
+      "orcid": "https://orcid.org/0000-0002-9641-5504",
+      "h_index": 68,
+      "i10_index": 190,
+      "works_count": 301,
+      "cited_by_count": 14852,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Chemistry",
+        "Energy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5008417002",
+      "display_name": "R. M. Maxwell",
+      "orcid": "https://orcid.org/0000-0002-1364-4441",
+      "h_index": 68,
+      "i10_index": 171,
+      "works_count": 552,
+      "cited_by_count": 21529,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5074764733",
+      "display_name": "Robert U. Ayres",
+      "orcid": "https://orcid.org/0000-0003-2823-7280",
+      "h_index": 68,
+      "i10_index": 168,
+      "works_count": 544,
+      "cited_by_count": 17359,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5089631266",
+      "display_name": "Paul G. Tratnyek",
+      "orcid": "https://orcid.org/0000-0001-8818-6417",
+      "h_index": 68,
+      "i10_index": 145,
+      "works_count": 255,
+      "cited_by_count": 19594,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5007097881",
+      "display_name": "Wangwang Tang",
+      "orcid": "https://orcid.org/0000-0001-7774-7493",
+      "h_index": 68,
+      "i10_index": 136,
+      "works_count": 175,
+      "cited_by_count": 16267,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5044456630",
+      "display_name": "Liyuan Liang",
+      "orcid": "https://orcid.org/0000-0003-1338-0324",
+      "h_index": 68,
+      "i10_index": 135,
+      "works_count": 226,
+      "cited_by_count": 15573,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5059204760",
+      "display_name": "Di Long",
+      "orcid": "https://orcid.org/0000-0001-9033-5039",
+      "h_index": 68,
+      "i10_index": 105,
+      "works_count": 184,
+      "cited_by_count": 18300,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5064065544",
+      "display_name": "Masaki Hayashi",
+      "orcid": "https://orcid.org/0000-0003-4890-3113",
+      "h_index": 67,
+      "i10_index": 254,
+      "works_count": 532,
+      "cited_by_count": 16840,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5085132355",
+      "display_name": "Feng Zhao",
+      "orcid": "https://orcid.org/0000-0002-1525-042X",
+      "h_index": 67,
+      "i10_index": 210,
+      "works_count": 367,
+      "cited_by_count": 15903,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Materials Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5090336889",
+      "display_name": "Olaf Arie Cirpka",
+      "orcid": "https://orcid.org/0000-0003-3509-4118",
+      "h_index": 67,
+      "i10_index": 190,
+      "works_count": 484,
+      "cited_by_count": 11684,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5100436334",
+      "display_name": "Dae Sung Lee",
+      "orcid": "https://orcid.org/0000-0003-3579-0076",
+      "h_index": 67,
+      "i10_index": 188,
+      "works_count": 298,
+      "cited_by_count": 12834,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5053615193",
+      "display_name": "Sara González‐García",
+      "orcid": "https://orcid.org/0000-0002-2553-0863",
+      "h_index": 67,
+      "i10_index": 176,
+      "works_count": 248,
+      "cited_by_count": 11275,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Immunology and Microbiology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5037269256",
+      "display_name": "Branko Bijeljic",
+      "orcid": "https://orcid.org/0000-0003-0079-4624",
+      "h_index": 67,
+      "i10_index": 168,
+      "works_count": 338,
+      "cited_by_count": 17795,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5060097144",
+      "display_name": "Ruben Juanes",
+      "orcid": "https://orcid.org/0000-0002-7370-2332",
+      "h_index": 67,
+      "i10_index": 165,
+      "works_count": 475,
+      "cited_by_count": 17679,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5056408351",
+      "display_name": "Patricia de Rosnay",
+      "orcid": "https://orcid.org/0000-0002-7374-3820",
+      "h_index": 67,
+      "i10_index": 143,
+      "works_count": 401,
+      "cited_by_count": 82681,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5057591034",
+      "display_name": "Timothy J. Strathmann",
+      "orcid": "https://orcid.org/0000-0002-7299-3115",
+      "h_index": 67,
+      "i10_index": 135,
+      "works_count": 178,
+      "cited_by_count": 15190,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5100405681",
+      "display_name": "Jia Li",
+      "orcid": "https://orcid.org/0000-0002-3108-8645",
+      "h_index": 66,
+      "i10_index": 311,
+      "works_count": 670,
+      "cited_by_count": 20272,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5100374926",
+      "display_name": "Jing Liu",
+      "orcid": "https://orcid.org/0000-0001-6520-9612",
+      "h_index": 66,
+      "i10_index": 306,
+      "works_count": 473,
+      "cited_by_count": 15006,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5008323996",
+      "display_name": "Jinyou Shen",
+      "orcid": "https://orcid.org/0000-0002-0753-6612",
+      "h_index": 66,
+      "i10_index": 235,
+      "works_count": 299,
+      "cited_by_count": 14807,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Environmental Engineering -- 8.5",
+      "id": "https://openalex.org/A5100739312",
+      "display_name": "Wei‐Qiang Chen",
+      "orcid": "https://orcid.org/0000-0002-7686-2331",
+      "h_index": 66,
+      "i10_index": 234,
+      "works_count": 441,
+      "cited_by_count": 17096,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5008497258",
+      "display_name": "Zhenxue Dai",
+      "orcid": "https://orcid.org/0000-0002-0805-7621",
+      "h_index": 66,
+      "i10_index": 210,
+      "works_count": 352,
+      "cited_by_count": 12585,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5072945183",
+      "display_name": "Roland Clift",
+      "orcid": "https://orcid.org/0000-0003-1183-496X",
+      "h_index": 66,
+      "i10_index": 183,
+      "works_count": 371,
+      "cited_by_count": 20367,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Chemical Engineering",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5089373766",
+      "display_name": "Gédéon Dagan",
+      "orcid": "https://orcid.org/0000-0002-5827-3939",
+      "h_index": 66,
+      "i10_index": 182,
+      "works_count": 323,
+      "cited_by_count": 17102,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5028536689",
+      "display_name": "Sai Liang",
+      "orcid": "https://orcid.org/0000-0002-6306-5800",
+      "h_index": 66,
+      "i10_index": 167,
+      "works_count": 221,
+      "cited_by_count": 12117,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5017210906",
+      "display_name": "Peter G. Cook",
+      "orcid": "https://orcid.org/0000-0002-1418-8214",
+      "h_index": 66,
+      "i10_index": 159,
+      "works_count": 255,
+      "cited_by_count": 15923,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5082603739",
+      "display_name": "Manuele D. Margni",
+      "orcid": "https://orcid.org/0000-0002-2475-0768",
+      "h_index": 66,
+      "i10_index": 158,
+      "works_count": 255,
+      "cited_by_count": 20206,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5089210819",
+      "display_name": "John D. Coates",
+      "orcid": "https://orcid.org/0000-0002-1631-734X",
+      "h_index": 66,
+      "i10_index": 141,
+      "works_count": 274,
+      "cited_by_count": 21900,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5063597830",
+      "display_name": "Matthew J. Eckelman",
+      "orcid": "https://orcid.org/0000-0002-0595-3682",
+      "h_index": 66,
+      "i10_index": 133,
+      "works_count": 200,
+      "cited_by_count": 28039,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5044176140",
+      "display_name": "Anders Hammer Strømman",
+      "orcid": "https://orcid.org/0000-0003-2987-5583",
+      "h_index": 66,
+      "i10_index": 129,
+      "works_count": 212,
+      "cited_by_count": 19527,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5003947910",
+      "display_name": "Joseph N. Ryan",
+      "orcid": "https://orcid.org/0000-0002-0308-0590",
+      "h_index": 66,
+      "i10_index": 94,
+      "works_count": 152,
+      "cited_by_count": 13000,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5100427280",
+      "display_name": "Bin Chen",
+      "orcid": "https://orcid.org/0000-0001-8326-4551",
+      "h_index": 65,
+      "i10_index": 249,
+      "works_count": 455,
+      "cited_by_count": 15415,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5107466378",
+      "display_name": "Sven Erik Jørgensen",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 195,
+      "works_count": 508,
+      "cited_by_count": 15584,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5100367224",
+      "display_name": "Fang Zhang",
+      "orcid": "https://orcid.org/0000-0002-0480-7501",
+      "h_index": 65,
+      "i10_index": 189,
+      "works_count": 304,
+      "cited_by_count": 13401,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5056762843",
+      "display_name": "S. Majid Hassanizadeh",
+      "orcid": "https://orcid.org/0000-0002-6473-9838",
+      "h_index": 65,
+      "i10_index": 184,
+      "works_count": 385,
+      "cited_by_count": 15564,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Engineering",
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5047740126",
+      "display_name": "Haluk Beyenal",
+      "orcid": "https://orcid.org/0000-0003-3931-0244",
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 308,
+      "cited_by_count": 15942,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5058365563",
+      "display_name": "Liang Dong",
+      "orcid": "https://orcid.org/0000-0001-9747-5851",
+      "h_index": 65,
+      "i10_index": 175,
+      "works_count": 284,
+      "cited_by_count": 11786,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5073183434",
+      "display_name": "Sang‐Eun Oh",
+      "orcid": "https://orcid.org/0009-0005-1583-2592",
+      "h_index": 65,
+      "i10_index": 137,
+      "works_count": 214,
+      "cited_by_count": 16118,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5081501705",
+      "display_name": "Paul R. Houser",
+      "orcid": "https://orcid.org/0000-0002-2991-0441",
+      "h_index": 65,
+      "i10_index": 130,
+      "works_count": 406,
+      "cited_by_count": 27149,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5084230451",
+      "display_name": "David J. Sailor",
+      "orcid": "https://orcid.org/0000-0003-1720-8214",
+      "h_index": 65,
+      "i10_index": 129,
+      "works_count": 220,
+      "cited_by_count": 17383,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5006636279",
+      "display_name": "Jiancheng Shi",
+      "orcid": "https://orcid.org/0000-0002-6163-2912",
+      "h_index": 64,
+      "i10_index": 246,
+      "works_count": 738,
+      "cited_by_count": 19344,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5100339506",
+      "display_name": "Xiaoyuan Zhang",
+      "orcid": "https://orcid.org/0000-0003-3196-3443",
+      "h_index": 64,
+      "i10_index": 202,
+      "works_count": 290,
+      "cited_by_count": 13612,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Environmental Engineering -- 8.4",
+      "id": "https://openalex.org/A5006211721",
+      "display_name": "Simon H Yueh",
+      "orcid": "https://orcid.org/0000-0001-7061-5295",
+      "h_index": 64,
+      "i10_index": 191,
+      "works_count": 606,
+      "cited_by_count": 15634,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5059072846",
+      "display_name": "Marco Dentz",
+      "orcid": "https://orcid.org/0000-0002-3940-282X",
+      "h_index": 64,
+      "i10_index": 182,
+      "works_count": 560,
+      "cited_by_count": 12724,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Mathematics",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5039103443",
+      "display_name": "Yang Mu",
+      "orcid": "https://orcid.org/0000-0001-7338-7398",
+      "h_index": 64,
+      "i10_index": 178,
+      "works_count": 241,
+      "cited_by_count": 13964,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5100410336",
+      "display_name": "Hong Liu",
+      "orcid": "https://orcid.org/0000-0002-9319-2819",
+      "h_index": 64,
+      "i10_index": 177,
+      "works_count": 270,
+      "cited_by_count": 19540,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5034316724",
+      "display_name": "Liang Shi",
+      "orcid": "https://orcid.org/0000-0003-4546-4741",
+      "h_index": 64,
+      "i10_index": 173,
+      "works_count": 228,
+      "cited_by_count": 19776,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5073316244",
+      "display_name": "Shijie You",
+      "orcid": "https://orcid.org/0000-0001-8178-9418",
+      "h_index": 64,
+      "i10_index": 173,
+      "works_count": 251,
+      "cited_by_count": 11952,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5052895119",
+      "display_name": "Baogang Zhang",
+      "orcid": "https://orcid.org/0000-0002-0060-503X",
+      "h_index": 64,
+      "i10_index": 167,
+      "works_count": 236,
+      "cited_by_count": 11245,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5065335772",
+      "display_name": "Yong Yuan",
+      "orcid": "https://orcid.org/0000-0003-1513-9542",
+      "h_index": 64,
+      "i10_index": 163,
+      "works_count": 214,
+      "cited_by_count": 11792,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5079269816",
+      "display_name": "Göran Finnveden",
+      "orcid": "https://orcid.org/0000-0002-5600-0726",
+      "h_index": 64,
+      "i10_index": 134,
+      "works_count": 333,
+      "cited_by_count": 22300,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5050341064",
+      "display_name": "Tsuyoshi Fujita",
+      "orcid": "https://orcid.org/0000-0003-0204-0332",
+      "h_index": 64,
+      "i10_index": 131,
+      "works_count": 341,
+      "cited_by_count": 12679,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5044260589",
+      "display_name": "Chao Ren",
+      "orcid": "https://orcid.org/0000-0002-8494-2585",
+      "h_index": 64,
+      "i10_index": 130,
+      "works_count": 204,
+      "cited_by_count": 12478,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5112506356",
+      "display_name": "Philip M. Jardine",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 122,
+      "works_count": 250,
+      "cited_by_count": 11700,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5109062755",
+      "display_name": "Robert W. Gillham",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 118,
+      "works_count": 177,
+      "cited_by_count": 14072,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5073492252",
+      "display_name": "Adriano Camps",
+      "orcid": "https://orcid.org/0000-0002-9514-4992",
+      "h_index": 63,
+      "i10_index": 349,
+      "works_count": 793,
+      "cited_by_count": 17199,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5072142807",
+      "display_name": "Bin Liang",
+      "orcid": "https://orcid.org/0000-0003-2942-4686",
+      "h_index": 63,
+      "i10_index": 279,
+      "works_count": 439,
+      "cited_by_count": 14792,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5077096282",
+      "display_name": "Olaf Kolditz",
+      "orcid": "https://orcid.org/0000-0002-8098-4905",
+      "h_index": 63,
+      "i10_index": 268,
+      "works_count": 714,
+      "cited_by_count": 15811,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5089882448",
+      "display_name": "Vahid Nourani",
+      "orcid": "https://orcid.org/0000-0002-6931-7060",
+      "h_index": 63,
+      "i10_index": 238,
+      "works_count": 425,
+      "cited_by_count": 14587,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5015989936",
+      "display_name": "Pierre Le Cloirec",
+      "orcid": "https://orcid.org/0000-0002-3376-1493",
+      "h_index": 63,
+      "i10_index": 209,
+      "works_count": 399,
+      "cited_by_count": 14603,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5015592037",
+      "display_name": "Okke Batelaan",
+      "orcid": "https://orcid.org/0000-0003-1443-6385",
+      "h_index": 63,
+      "i10_index": 186,
+      "works_count": 668,
+      "cited_by_count": 15302,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5047322900",
+      "display_name": "Hui Min Lu",
+      "orcid": "https://orcid.org/0000-0003-1640-239X",
+      "h_index": 63,
+      "i10_index": 185,
+      "works_count": 367,
+      "cited_by_count": 13858,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5011040589",
+      "display_name": "Peter Grathwohl",
+      "orcid": "https://orcid.org/0000-0002-9712-8339",
+      "h_index": 63,
+      "i10_index": 175,
+      "works_count": 407,
+      "cited_by_count": 12877,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5026977406",
+      "display_name": "Wolfgang K. H. Kinzelbach",
+      "orcid": "https://orcid.org/0000-0002-8230-5953",
+      "h_index": 63,
+      "i10_index": 173,
+      "works_count": 428,
+      "cited_by_count": 11925,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Environmental Engineering -- 8.3",
+      "id": "https://openalex.org/A5085063957",
+      "display_name": "Abhijit Mukherjee",
+      "orcid": "https://orcid.org/0000-0001-6972-8962",
+      "h_index": 63,
+      "i10_index": 162,
+      "works_count": 312,
+      "cited_by_count": 13714,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Engineering",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Engineering",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Environmental Engineering -- 8.2",
+      "id": "https://openalex.org/A5033733533",
+      "display_name": "Aaron I. Packman",
+      "orcid": "https://orcid.org/0000-0003-3172-4549",
+      "h_index": 63,
+      "i10_index": 151,
+      "works_count": 356,
+      "cited_by_count": 15861,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Environmental Engineering -- 8.2",
+      "id": "https://openalex.org/A5068808702",
+      "display_name": "Alberto Martilli",
+      "orcid": "https://orcid.org/0000-0002-7795-5871",
+      "h_index": 63,
+      "i10_index": 149,
+      "works_count": 346,
+      "cited_by_count": 16150,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Environmental Engineering -- 8.2",
+      "id": "https://openalex.org/A5004732749",
+      "display_name": "Elie R. Bou-Zeid",
+      "orcid": "https://orcid.org/0000-0002-6137-8109",
+      "h_index": 63,
+      "i10_index": 149,
+      "works_count": 410,
+      "cited_by_count": 15083,
+      "discipline": "Environmental Engineering",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Engineering",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    }
+  ]
+}

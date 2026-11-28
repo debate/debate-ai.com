@@ -415,7 +415,7 @@ export function SavedDataSection() {
         <a
           href="/api/settings/saved-data?export=all"
           download
-          title="Every saved item, plus each tool's synced data, in one file"
+          title="Every saved item, your More saved work, and each tool's synced data, in one file"
           className="mt-3 inline-block text-xs underline"
         >
           Export all as JSON

@@ -1,0 +1,2185 @@
+{
+  "kind": "subfield",
+  "id": 1408,
+  "name": "Strategy and Management",
+  "total_in_scrape": 113,
+  "count": 113,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Strategy and Management -- 9.9",
+      "id": "https://openalex.org/A5088407334",
+      "display_name": "Joseph Sarkis",
+      "orcid": "https://orcid.org/0000-0003-0143-804X",
+      "h_index": 145,
+      "i10_index": 446,
+      "works_count": 715,
+      "cited_by_count": 103429,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Strategy and Management -- 9.9",
+      "id": "https://openalex.org/A5076646419",
+      "display_name": "Kannan Govindan",
+      "orcid": "https://orcid.org/0000-0002-6204-1196",
+      "h_index": 140,
+      "i10_index": 415,
+      "works_count": 528,
+      "cited_by_count": 70084,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Strategy and Management -- 9.9",
+      "id": "https://openalex.org/A5046110173",
+      "display_name": "Angappa Gunasekaran",
+      "orcid": "https://orcid.org/0000-0002-6335-1962",
+      "h_index": 138,
+      "i10_index": 414,
+      "works_count": 580,
+      "cited_by_count": 81341,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Strategy and Management -- 9.9",
+      "id": "https://openalex.org/A5110834966",
+      "display_name": "Michael A. Hitt",
+      "orcid": null,
+      "h_index": 131,
+      "i10_index": 298,
+      "works_count": 504,
+      "cited_by_count": 103116,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Strategy and Management -- 9.9",
+      "id": "https://openalex.org/A5055158022",
+      "display_name": "Sascha Kraus",
+      "orcid": "https://orcid.org/0000-0003-4886-7482",
+      "h_index": 128,
+      "i10_index": 418,
+      "works_count": 639,
+      "cited_by_count": 73704,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Strategy and Management -- 9.9",
+      "id": "https://openalex.org/A5081922410",
+      "display_name": "Michael E. Porter",
+      "orcid": "https://orcid.org/0000-0001-9380-6625",
+      "h_index": 121,
+      "i10_index": 271,
+      "works_count": 805,
+      "cited_by_count": 218321,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5046028773",
+      "display_name": "Shaker A. Zahra",
+      "orcid": "https://orcid.org/0000-0001-8518-7166",
+      "h_index": 118,
+      "i10_index": 234,
+      "works_count": 353,
+      "cited_by_count": 100732,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5016373986",
+      "display_name": "David J. Teece",
+      "orcid": "https://orcid.org/0000-0002-0485-798X",
+      "h_index": 111,
+      "i10_index": 256,
+      "works_count": 629,
+      "cited_by_count": 183229,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5057782868",
+      "display_name": "Jiju Antony",
+      "orcid": "https://orcid.org/0000-0002-8197-5736",
+      "h_index": 109,
+      "i10_index": 444,
+      "works_count": 747,
+      "cited_by_count": 42123,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5063349276",
+      "display_name": "Ming‐Lang Tseng",
+      "orcid": "https://orcid.org/0000-0002-2702-3590",
+      "h_index": 103,
+      "i10_index": 414,
+      "works_count": 538,
+      "cited_by_count": 36705,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5090290465",
+      "display_name": "David J. Ketchen",
+      "orcid": "https://orcid.org/0000-0001-9861-9781",
+      "h_index": 103,
+      "i10_index": 184,
+      "works_count": 276,
+      "cited_by_count": 61569,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5085640653",
+      "display_name": "Dmitry Ivanov",
+      "orcid": "https://orcid.org/0000-0003-4932-9627",
+      "h_index": 101,
+      "i10_index": 248,
+      "works_count": 508,
+      "cited_by_count": 53688,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5042599675",
+      "display_name": "Nicolai J. Foss",
+      "orcid": "https://orcid.org/0000-0003-0327-4624",
+      "h_index": 100,
+      "i10_index": 343,
+      "works_count": 689,
+      "cited_by_count": 49213,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5101124135",
+      "display_name": "Yadong Luo",
+      "orcid": "https://orcid.org/0000-0002-1413-104X",
+      "h_index": 99,
+      "i10_index": 182,
+      "works_count": 304,
+      "cited_by_count": 40996,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5043993835",
+      "display_name": "G. Tomas M. Hult",
+      "orcid": "https://orcid.org/0000-0003-1728-7856",
+      "h_index": 98,
+      "i10_index": 195,
+      "works_count": 309,
+      "cited_by_count": 95674,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5077893005",
+      "display_name": "Sunil Luthra",
+      "orcid": "https://orcid.org/0000-0001-7571-1331",
+      "h_index": 97,
+      "i10_index": 252,
+      "works_count": 324,
+      "cited_by_count": 31402,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Strategy and Management -- 9.8",
+      "id": "https://openalex.org/A5052510961",
+      "display_name": "Isabel Sánchez",
+      "orcid": "https://orcid.org/0000-0003-4711-8631",
+      "h_index": 96,
+      "i10_index": 237,
+      "works_count": 520,
+      "cited_by_count": 29416,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5000682856",
+      "display_name": "Sachin Kumar Mangla",
+      "orcid": "https://orcid.org/0000-0001-7166-5315",
+      "h_index": 95,
+      "i10_index": 249,
+      "works_count": 325,
+      "cited_by_count": 29997,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5021634249",
+      "display_name": "Roger J. Calantone",
+      "orcid": "https://orcid.org/0000-0002-0444-9038",
+      "h_index": 95,
+      "i10_index": 233,
+      "works_count": 355,
+      "cited_by_count": 50832,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5013166854",
+      "display_name": "Mike W. Peng",
+      "orcid": "https://orcid.org/0000-0002-2436-8497",
+      "h_index": 94,
+      "i10_index": 171,
+      "works_count": 258,
+      "cited_by_count": 52912,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5090362709",
+      "display_name": "Vinit Parida",
+      "orcid": "https://orcid.org/0000-0003-3255-414X",
+      "h_index": 93,
+      "i10_index": 186,
+      "works_count": 342,
+      "cited_by_count": 37345,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5055251050",
+      "display_name": "Jay Bryan Barney",
+      "orcid": "https://orcid.org/0000-0003-0875-6702",
+      "h_index": 92,
+      "i10_index": 157,
+      "works_count": 288,
+      "cited_by_count": 187081,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5048543797",
+      "display_name": "Peter Jennings Buckley",
+      "orcid": "https://orcid.org/0000-0002-0450-5589",
+      "h_index": 91,
+      "i10_index": 320,
+      "works_count": 819,
+      "cited_by_count": 39640,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5044548638",
+      "display_name": "Salih Tamer Cavusgil",
+      "orcid": "https://orcid.org/0000-0003-1947-492X",
+      "h_index": 91,
+      "i10_index": 199,
+      "works_count": 356,
+      "cited_by_count": 42426,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5040844824",
+      "display_name": "Demetris Vrontis",
+      "orcid": "https://orcid.org/0000-0001-7570-6241",
+      "h_index": 89,
+      "i10_index": 404,
+      "works_count": 787,
+      "cited_by_count": 33928,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5066123323",
+      "display_name": "R. Duane Ireland",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 158,
+      "works_count": 254,
+      "cited_by_count": 63998,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5082043453",
+      "display_name": "Anil Kumar",
+      "orcid": "https://orcid.org/0000-0002-1691-0098",
+      "h_index": 87,
+      "i10_index": 319,
+      "works_count": 793,
+      "cited_by_count": 27557,
+      "discipline": "Strategy and Management",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Strategy and Management -- 9.7",
+      "id": "https://openalex.org/A5068275309",
+      "display_name": "Hau L. Lee",
+      "orcid": "https://orcid.org/0000-0003-2910-6696",
+      "h_index": 87,
+      "i10_index": 169,
+      "works_count": 322,
+      "cited_by_count": 41310,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5041014295",
+      "display_name": "Nancy M. P. Bocken",
+      "orcid": "https://orcid.org/0000-0003-0137-4074",
+      "h_index": 85,
+      "i10_index": 170,
+      "works_count": 264,
+      "cited_by_count": 56715,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5019548704",
+      "display_name": "Julian Birkinshaw",
+      "orcid": "https://orcid.org/0000-0001-8954-4132",
+      "h_index": 84,
+      "i10_index": 160,
+      "works_count": 363,
+      "cited_by_count": 49309,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5002496240",
+      "display_name": "Amrik Singh Sohal",
+      "orcid": "https://orcid.org/0000-0003-1247-4337",
+      "h_index": 83,
+      "i10_index": 238,
+      "works_count": 467,
+      "cited_by_count": 26470,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5048844041",
+      "display_name": "Stefan A. Seuring",
+      "orcid": "https://orcid.org/0000-0003-4204-9948",
+      "h_index": 83,
+      "i10_index": 164,
+      "works_count": 221,
+      "cited_by_count": 40069,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5108481942",
+      "display_name": "Michael L. Tushman",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 134,
+      "works_count": 285,
+      "cited_by_count": 80217,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5024010407",
+      "display_name": "Ming Kim Lim",
+      "orcid": "https://orcid.org/0000-0003-0809-9431",
+      "h_index": 82,
+      "i10_index": 292,
+      "works_count": 458,
+      "cited_by_count": 24626,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5072422543",
+      "display_name": "Khaled Hussainey",
+      "orcid": "https://orcid.org/0000-0003-3641-1031",
+      "h_index": 82,
+      "i10_index": 240,
+      "works_count": 369,
+      "cited_by_count": 22107,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5089486619",
+      "display_name": "Syed Abdul Rehman Khan",
+      "orcid": "https://orcid.org/0000-0001-5197-2318",
+      "h_index": 82,
+      "i10_index": 157,
+      "works_count": 267,
+      "cited_by_count": 22673,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5085181118",
+      "display_name": "Qinghua Zhu",
+      "orcid": "https://orcid.org/0000-0003-2648-0260",
+      "h_index": 82,
+      "i10_index": 143,
+      "works_count": 197,
+      "cited_by_count": 38004,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5079604713",
+      "display_name": "Paul W. Beamish",
+      "orcid": "https://orcid.org/0000-0003-3823-2627",
+      "h_index": 81,
+      "i10_index": 148,
+      "works_count": 271,
+      "cited_by_count": 32617,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Strategy and Management -- 9.6",
+      "id": "https://openalex.org/A5074611888",
+      "display_name": "Rameshwar Dubey",
+      "orcid": "https://orcid.org/0000-0002-3913-030X",
+      "h_index": 81,
+      "i10_index": 140,
+      "works_count": 198,
+      "cited_by_count": 47624,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5019143179",
+      "display_name": "Joakim Wincent",
+      "orcid": "https://orcid.org/0000-0002-3135-5571",
+      "h_index": 80,
+      "i10_index": 182,
+      "works_count": 320,
+      "cited_by_count": 27793,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5110911045",
+      "display_name": "Robert E. Hoskisson",
+      "orcid": "https://orcid.org/0000-0002-1539-7771",
+      "h_index": 80,
+      "i10_index": 131,
+      "works_count": 215,
+      "cited_by_count": 43740,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5045613469",
+      "display_name": "Kathleen M. Eisenhardt",
+      "orcid": "https://orcid.org/0000-0002-4879-1679",
+      "h_index": 80,
+      "i10_index": 126,
+      "works_count": 206,
+      "cited_by_count": 207403,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5100694308",
+      "display_name": "Prof Vikas Kumar",
+      "orcid": "https://orcid.org/0000-0002-8062-7123",
+      "h_index": 79,
+      "i10_index": 243,
+      "works_count": 621,
+      "cited_by_count": 23765,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5019265966",
+      "display_name": "Gary Gereffi",
+      "orcid": "https://orcid.org/0000-0002-0905-5206",
+      "h_index": 79,
+      "i10_index": 204,
+      "works_count": 449,
+      "cited_by_count": 46241,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5061967017",
+      "display_name": "Henry Mintzberg",
+      "orcid": "https://orcid.org/0009-0008-8754-0865",
+      "h_index": 79,
+      "i10_index": 154,
+      "works_count": 344,
+      "cited_by_count": 64205,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5033683053",
+      "display_name": "Ans Kolk",
+      "orcid": "https://orcid.org/0000-0001-5345-2965",
+      "h_index": 79,
+      "i10_index": 137,
+      "works_count": 304,
+      "cited_by_count": 28040,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5077783950",
+      "display_name": "Jeffrey G. Covin",
+      "orcid": "https://orcid.org/0000-0003-1627-5300",
+      "h_index": 79,
+      "i10_index": 110,
+      "works_count": 169,
+      "cited_by_count": 51017,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5023290544",
+      "display_name": "Shivam Gupta",
+      "orcid": "https://orcid.org/0000-0002-2714-4958",
+      "h_index": 78,
+      "i10_index": 185,
+      "works_count": 304,
+      "cited_by_count": 23379,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5001404219",
+      "display_name": "Ana Beatriz Lopes de Sousa Jabbour",
+      "orcid": "https://orcid.org/0000-0001-6423-8868",
+      "h_index": 78,
+      "i10_index": 166,
+      "works_count": 229,
+      "cited_by_count": 25054,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5005065868",
+      "display_name": "Roger G. Schroeder",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 123,
+      "works_count": 169,
+      "cited_by_count": 37348,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Strategy and Management -- 9.5",
+      "id": "https://openalex.org/A5037595668",
+      "display_name": "Robert G. Lord",
+      "orcid": "https://orcid.org/0000-0002-4428-5357",
+      "h_index": 78,
+      "i10_index": 122,
+      "works_count": 211,
+      "cited_by_count": 28440,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5034330961",
+      "display_name": "Michael G. Harvey",
+      "orcid": "https://orcid.org/0000-0001-8050-6068",
+      "h_index": 77,
+      "i10_index": 230,
+      "works_count": 384,
+      "cited_by_count": 22239,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5013275602",
+      "display_name": "James Guthrie",
+      "orcid": "https://orcid.org/0000-0001-6356-2682",
+      "h_index": 77,
+      "i10_index": 220,
+      "works_count": 506,
+      "cited_by_count": 32140,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5059490845",
+      "display_name": "John J. Child",
+      "orcid": "https://orcid.org/0000-0002-5419-9516",
+      "h_index": 77,
+      "i10_index": 166,
+      "works_count": 548,
+      "cited_by_count": 33787,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5064346361",
+      "display_name": "Georg von Krogh",
+      "orcid": "https://orcid.org/0000-0002-1203-3569",
+      "h_index": 77,
+      "i10_index": 160,
+      "works_count": 355,
+      "cited_by_count": 36981,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5102800341",
+      "display_name": "Alain C. Verbeke",
+      "orcid": "https://orcid.org/0000-0003-0187-0959",
+      "h_index": 76,
+      "i10_index": 193,
+      "works_count": 704,
+      "cited_by_count": 28600,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5073033406",
+      "display_name": "Oliver Gassmann",
+      "orcid": "https://orcid.org/0000-0002-0448-1564",
+      "h_index": 76,
+      "i10_index": 190,
+      "works_count": 1018,
+      "cited_by_count": 31535,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5112246843",
+      "display_name": "John H. Dunning",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 187,
+      "works_count": 431,
+      "cited_by_count": 48133,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5077195203",
+      "display_name": "Kurt Matzler",
+      "orcid": "https://orcid.org/0000-0002-3132-4388",
+      "h_index": 76,
+      "i10_index": 161,
+      "works_count": 402,
+      "cited_by_count": 25434,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5047360486",
+      "display_name": "Paavo Ritala",
+      "orcid": "https://orcid.org/0000-0002-8525-4610",
+      "h_index": 76,
+      "i10_index": 160,
+      "works_count": 281,
+      "cited_by_count": 22350,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5021879098",
+      "display_name": "Nick Bontis",
+      "orcid": "https://orcid.org/0000-0002-8347-0870",
+      "h_index": 76,
+      "i10_index": 154,
+      "works_count": 220,
+      "cited_by_count": 36422,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Strategy and Management -- 9.4",
+      "id": "https://openalex.org/A5075165921",
+      "display_name": "Gerard George",
+      "orcid": "https://orcid.org/0000-0002-6963-5085",
+      "h_index": 76,
+      "i10_index": 120,
+      "works_count": 236,
+      "cited_by_count": 53005,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5076666054",
+      "display_name": "Shlomo Y. Tarba",
+      "orcid": "https://orcid.org/0000-0002-1919-084X",
+      "h_index": 75,
+      "i10_index": 169,
+      "works_count": 254,
+      "cited_by_count": 19352,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5025632015",
+      "display_name": "Alberto Ferraris",
+      "orcid": "https://orcid.org/0000-0003-3125-1710",
+      "h_index": 75,
+      "i10_index": 159,
+      "works_count": 271,
+      "cited_by_count": 18419,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5084730139",
+      "display_name": "Alan M. Rugman",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 200,
+      "works_count": 669,
+      "cited_by_count": 25463,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5108386243",
+      "display_name": "Denis R. Towill",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 189,
+      "works_count": 367,
+      "cited_by_count": 23170,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5077965593",
+      "display_name": "Henry W. Chesbrough",
+      "orcid": "https://orcid.org/0009-0006-8933-1464",
+      "h_index": 74,
+      "i10_index": 125,
+      "works_count": 242,
+      "cited_by_count": 80104,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5038778695",
+      "display_name": "Ram Mudambi",
+      "orcid": "https://orcid.org/0000-0002-5396-5602",
+      "h_index": 73,
+      "i10_index": 156,
+      "works_count": 340,
+      "cited_by_count": 22127,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5003071337",
+      "display_name": "Zaheer Khan",
+      "orcid": "https://orcid.org/0000-0001-5538-3123",
+      "h_index": 73,
+      "i10_index": 149,
+      "works_count": 214,
+      "cited_by_count": 15791,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5068668597",
+      "display_name": "Stephan M. Wagner",
+      "orcid": "https://orcid.org/0000-0003-0471-5663",
+      "h_index": 72,
+      "i10_index": 156,
+      "works_count": 255,
+      "cited_by_count": 21919,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5063028935",
+      "display_name": "Olivier Boiral",
+      "orcid": "https://orcid.org/0000-0002-9722-7644",
+      "h_index": 72,
+      "i10_index": 141,
+      "works_count": 230,
+      "cited_by_count": 25604,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5100681539",
+      "display_name": "Qingyu Zhang",
+      "orcid": "https://orcid.org/0000-0001-9739-3899",
+      "h_index": 71,
+      "i10_index": 243,
+      "works_count": 541,
+      "cited_by_count": 20762,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Strategy and Management -- 9.3",
+      "id": "https://openalex.org/A5082812353",
+      "display_name": "Alexander Michael Brem",
+      "orcid": "https://orcid.org/0000-0002-6901-7498",
+      "h_index": 71,
+      "i10_index": 215,
+      "works_count": 485,
+      "cited_by_count": 19916,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5026361868",
+      "display_name": "John Dumay",
+      "orcid": "https://orcid.org/0000-0001-6896-850X",
+      "h_index": 71,
+      "i10_index": 139,
+      "works_count": 263,
+      "cited_by_count": 22919,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5068962017",
+      "display_name": "Klaus E. Meyer",
+      "orcid": "https://orcid.org/0000-0002-3253-9364",
+      "h_index": 71,
+      "i10_index": 132,
+      "works_count": 366,
+      "cited_by_count": 26028,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5030886244",
+      "display_name": "Mohamad Y. Jaber",
+      "orcid": "https://orcid.org/0000-0001-7490-5396",
+      "h_index": 70,
+      "i10_index": 190,
+      "works_count": 255,
+      "cited_by_count": 15726,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5046384052",
+      "display_name": "Manlio Del Giudice",
+      "orcid": "https://orcid.org/0000-0002-2389-4495",
+      "h_index": 70,
+      "i10_index": 151,
+      "works_count": 271,
+      "cited_by_count": 20874,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5025430409",
+      "display_name": "Antonio Messeni Petruzzelli",
+      "orcid": "https://orcid.org/0000-0002-6852-5167",
+      "h_index": 70,
+      "i10_index": 146,
+      "works_count": 261,
+      "cited_by_count": 19002,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5082290474",
+      "display_name": "Robert J. Kauffman",
+      "orcid": "https://orcid.org/0000-0002-3757-0010",
+      "h_index": 69,
+      "i10_index": 192,
+      "works_count": 541,
+      "cited_by_count": 20719,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5087156433",
+      "display_name": "Radosław Wolniak",
+      "orcid": "https://orcid.org/0000-0003-0317-9811",
+      "h_index": 69,
+      "i10_index": 177,
+      "works_count": 548,
+      "cited_by_count": 12954,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5086481564",
+      "display_name": "Martin F. Kenney",
+      "orcid": "https://orcid.org/0000-0001-5093-917X",
+      "h_index": 69,
+      "i10_index": 158,
+      "works_count": 311,
+      "cited_by_count": 20925,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5000368010",
+      "display_name": "Jonathan P. Doh",
+      "orcid": "https://orcid.org/0000-0003-4337-2800",
+      "h_index": 69,
+      "i10_index": 116,
+      "works_count": 290,
+      "cited_by_count": 20650,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5025054703",
+      "display_name": "Rodney McAdam",
+      "orcid": "https://orcid.org/0000-0001-5503-3385",
+      "h_index": 68,
+      "i10_index": 170,
+      "works_count": 266,
+      "cited_by_count": 15652,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Strategy and Management -- 9.2",
+      "id": "https://openalex.org/A5043169421",
+      "display_name": "Collins Gyakari Ntim",
+      "orcid": "https://orcid.org/0000-0002-1042-4056",
+      "h_index": 68,
+      "i10_index": 134,
+      "works_count": 226,
+      "cited_by_count": 18505,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5021867135",
+      "display_name": "Θάνος Παπαδόπουλος",
+      "orcid": "https://orcid.org/0000-0001-6821-1136",
+      "h_index": 68,
+      "i10_index": 133,
+      "works_count": 197,
+      "cited_by_count": 25309,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5021053213",
+      "display_name": "Kim Hua Tan",
+      "orcid": "https://orcid.org/0000-0003-4894-293X",
+      "h_index": 67,
+      "i10_index": 186,
+      "works_count": 303,
+      "cited_by_count": 16431,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5035410562",
+      "display_name": "Yenchun Jim Wu",
+      "orcid": "https://orcid.org/0000-0001-5479-2873",
+      "h_index": 67,
+      "i10_index": 179,
+      "works_count": 277,
+      "cited_by_count": 14385,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5028518710",
+      "display_name": "Torben Pedersen",
+      "orcid": "https://orcid.org/0000-0001-7541-9365",
+      "h_index": 67,
+      "i10_index": 151,
+      "works_count": 334,
+      "cited_by_count": 20403,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5085797169",
+      "display_name": "Ruth V. Aguilera",
+      "orcid": "https://orcid.org/0000-0002-1144-1499",
+      "h_index": 67,
+      "i10_index": 127,
+      "works_count": 251,
+      "cited_by_count": 33253,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5091208704",
+      "display_name": "John Bessant",
+      "orcid": "https://orcid.org/0000-0002-5040-4949",
+      "h_index": 66,
+      "i10_index": 172,
+      "works_count": 546,
+      "cited_by_count": 28918,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5046545987",
+      "display_name": "Kamel Mellahi",
+      "orcid": "https://orcid.org/0000-0003-4998-0145",
+      "h_index": 66,
+      "i10_index": 120,
+      "works_count": 200,
+      "cited_by_count": 18512,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5067310724",
+      "display_name": "George S. Day",
+      "orcid": "https://orcid.org/0000-0003-4233-8432",
+      "h_index": 66,
+      "i10_index": 115,
+      "works_count": 241,
+      "cited_by_count": 35802,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5071560736",
+      "display_name": "Will Mitchell",
+      "orcid": "https://orcid.org/0000-0002-2748-0150",
+      "h_index": 66,
+      "i10_index": 106,
+      "works_count": 191,
+      "cited_by_count": 24730,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5037740806",
+      "display_name": "Surendra M. Gupta",
+      "orcid": "https://orcid.org/0000-0002-6194-2857",
+      "h_index": 65,
+      "i10_index": 197,
+      "works_count": 513,
+      "cited_by_count": 14827,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Strategy and Management -- 9.1",
+      "id": "https://openalex.org/A5058671187",
+      "display_name": "Jörg Sydow",
+      "orcid": "https://orcid.org/0000-0002-9359-7242",
+      "h_index": 65,
+      "i10_index": 182,
+      "works_count": 481,
+      "cited_by_count": 21879,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Strategy and Management -- 9.0",
+      "id": "https://openalex.org/A5042436386",
+      "display_name": "S.G. Deshmukh",
+      "orcid": "https://orcid.org/0000-0002-7043-6948",
+      "h_index": 65,
+      "i10_index": 149,
+      "works_count": 207,
+      "cited_by_count": 16602,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Strategy and Management -- 9.0",
+      "id": "https://openalex.org/A5024663943",
+      "display_name": "José Francisco Molina-Azorín",
+      "orcid": "https://orcid.org/0000-0002-6337-0514",
+      "h_index": 65,
+      "i10_index": 148,
+      "works_count": 342,
+      "cited_by_count": 16775,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Strategy and Management -- 9.0",
+      "id": "https://openalex.org/A5100697310",
+      "display_name": "Zhang Yu",
+      "orcid": "https://orcid.org/0000-0002-9892-7642",
+      "h_index": 65,
+      "i10_index": 141,
+      "works_count": 318,
+      "cited_by_count": 15272,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Strategy and Management -- 9.0",
+      "id": "https://openalex.org/A5087239763",
+      "display_name": "Henry Wai‐chung Yeung",
+      "orcid": "https://orcid.org/0000-0002-0647-0658",
+      "h_index": 65,
+      "i10_index": 136,
+      "works_count": 252,
+      "cited_by_count": 22048,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Strategy and Management -- 9.0",
+      "id": "https://openalex.org/A5011312404",
+      "display_name": "Masaaki “Mike” Kotabe",
+      "orcid": "https://orcid.org/0000-0002-1078-4844",
+      "h_index": 65,
+      "i10_index": 128,
+      "works_count": 232,
+      "cited_by_count": 19531,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5090229795",
+      "display_name": "Anne-Wil K. Harzing",
+      "orcid": "https://orcid.org/0000-0003-1509-3003",
+      "h_index": 65,
+      "i10_index": 105,
+      "works_count": 176,
+      "cited_by_count": 22289,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5100613640",
+      "display_name": "Yang Liu",
+      "orcid": "https://orcid.org/0000-0001-8006-3236",
+      "h_index": 64,
+      "i10_index": 192,
+      "works_count": 453,
+      "cited_by_count": 14541,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5074925082",
+      "display_name": "Sanjoy Kumar Paul",
+      "orcid": "https://orcid.org/0000-0001-9523-179X",
+      "h_index": 64,
+      "i10_index": 189,
+      "works_count": 355,
+      "cited_by_count": 15209,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5017019326",
+      "display_name": "Pervez Nasim Ghauri",
+      "orcid": "https://orcid.org/0000-0002-9728-485X",
+      "h_index": 64,
+      "i10_index": 171,
+      "works_count": 454,
+      "cited_by_count": 17563,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5023850919",
+      "display_name": "Ricarda B. Bouncken",
+      "orcid": "https://orcid.org/0000-0003-0510-7491",
+      "h_index": 64,
+      "i10_index": 148,
+      "works_count": 378,
+      "cited_by_count": 15811,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5112728077",
+      "display_name": "S.C. Lenny Koh",
+      "orcid": "https://orcid.org/0000-0001-9957-9355",
+      "h_index": 64,
+      "i10_index": 134,
+      "works_count": 224,
+      "cited_by_count": 18390,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5043430673",
+      "display_name": "David A. Griffith",
+      "orcid": "https://orcid.org/0000-0002-2026-3305",
+      "h_index": 64,
+      "i10_index": 128,
+      "works_count": 174,
+      "cited_by_count": 15373,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5023185369",
+      "display_name": "Jeffrey J. Reuer",
+      "orcid": "https://orcid.org/0000-0002-1397-8134",
+      "h_index": 64,
+      "i10_index": 126,
+      "works_count": 254,
+      "cited_by_count": 16220,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5028285930",
+      "display_name": "Ekrem Tatoğlu",
+      "orcid": "https://orcid.org/0000-0002-9119-3252",
+      "h_index": 64,
+      "i10_index": 123,
+      "works_count": 209,
+      "cited_by_count": 13854,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5019868834",
+      "display_name": "Devika Kannan",
+      "orcid": "https://orcid.org/0000-0003-4365-0313",
+      "h_index": 64,
+      "i10_index": 92,
+      "works_count": 114,
+      "cited_by_count": 19459,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5069901933",
+      "display_name": "Vijay Edward Pereira",
+      "orcid": "https://orcid.org/0000-0001-6755-0793",
+      "h_index": 63,
+      "i10_index": 212,
+      "works_count": 358,
+      "cited_by_count": 17202,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Strategy and Management -- 8.9",
+      "id": "https://openalex.org/A5039615103",
+      "display_name": "Malte Brettel",
+      "orcid": "https://orcid.org/0000-0001-9369-7553",
+      "h_index": 63,
+      "i10_index": 147,
+      "works_count": 734,
+      "cited_by_count": 16756,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Strategy and Management -- 8.8",
+      "id": "https://openalex.org/A5070555150",
+      "display_name": "Rudolf R. Sinkovics",
+      "orcid": "https://orcid.org/0000-0002-4471-5054",
+      "h_index": 63,
+      "i10_index": 118,
+      "works_count": 301,
+      "cited_by_count": 33632,
+      "discipline": "Strategy and Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Strategy and Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    }
+  ]
+}
