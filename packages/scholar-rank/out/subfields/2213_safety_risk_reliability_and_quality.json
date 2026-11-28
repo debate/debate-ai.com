@@ -1,0 +1,650 @@
+{
+  "kind": "subfield",
+  "id": 2213,
+  "name": "Safety, Risk, Reliability and Quality",
+  "total_in_scrape": 33,
+  "count": 33,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Safety, Risk, Reliability and Quality -- 9.9",
+      "id": "https://openalex.org/A5014307031",
+      "display_name": "Faisal Irshad Khan",
+      "orcid": "https://orcid.org/0000-0002-5638-4299",
+      "h_index": 109,
+      "i10_index": 665,
+      "works_count": 931,
+      "cited_by_count": 50236,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Safety, Risk, Reliability and Quality -- 9.9",
+      "id": "https://openalex.org/A5012431211",
+      "display_name": "Enrico Zio",
+      "orcid": "https://orcid.org/0000-0002-7108-637X",
+      "h_index": 108,
+      "i10_index": 847,
+      "works_count": 2088,
+      "cited_by_count": 55883,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Safety, Risk, Reliability and Quality -- 9.9",
+      "id": "https://openalex.org/A5040847417",
+      "display_name": "Mohamed A. Abdel-Aty",
+      "orcid": "https://orcid.org/0000-0002-4838-1573",
+      "h_index": 102,
+      "i10_index": 453,
+      "works_count": 803,
+      "cited_by_count": 37565,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Safety, Risk, Reliability and Quality -- 9.9",
+      "id": "https://openalex.org/A5100781076",
+      "display_name": "Jinhua Sun",
+      "orcid": "https://orcid.org/0000-0002-6456-023X",
+      "h_index": 91,
+      "i10_index": 322,
+      "works_count": 385,
+      "cited_by_count": 31173,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Safety, Risk, Reliability and Quality -- 9.9",
+      "id": "https://openalex.org/A5108418191",
+      "display_name": "Roy Billinton",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 434,
+      "works_count": 740,
+      "cited_by_count": 39942,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Safety, Risk, Reliability and Quality -- 9.9",
+      "id": "https://openalex.org/A5053499906",
+      "display_name": "Donald A. Redelmeier",
+      "orcid": "https://orcid.org/0000-0003-4147-3544",
+      "h_index": 88,
+      "i10_index": 260,
+      "works_count": 471,
+      "cited_by_count": 35107,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Medicine",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5070617875",
+      "display_name": "Fred Mannering",
+      "orcid": "https://orcid.org/0000-0002-2803-4582",
+      "h_index": 88,
+      "i10_index": 187,
+      "works_count": 329,
+      "cited_by_count": 35582,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5070592593",
+      "display_name": "Min Xie",
+      "orcid": "https://orcid.org/0000-0002-8500-8364",
+      "h_index": 87,
+      "i10_index": 478,
+      "works_count": 818,
+      "cited_by_count": 32904,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5043676611",
+      "display_name": "Ming Jian Zuo",
+      "orcid": "https://orcid.org/0000-0002-8607-2923",
+      "h_index": 87,
+      "i10_index": 342,
+      "works_count": 544,
+      "cited_by_count": 30282,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5086752958",
+      "display_name": "Bruce G. Simons‐Morton",
+      "orcid": "https://orcid.org/0000-0003-1099-6617",
+      "h_index": 87,
+      "i10_index": 277,
+      "works_count": 406,
+      "cited_by_count": 30394,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Medicine",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5035868848",
+      "display_name": "Terje Aven",
+      "orcid": "https://orcid.org/0000-0001-8309-7861",
+      "h_index": 86,
+      "i10_index": 276,
+      "works_count": 713,
+      "cited_by_count": 27658,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5086790937",
+      "display_name": "Valerio Cozzani",
+      "orcid": "https://orcid.org/0000-0003-4680-535X",
+      "h_index": 79,
+      "i10_index": 311,
+      "works_count": 702,
+      "cited_by_count": 20368,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5111411620",
+      "display_name": "Michael V. Sivak",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 294,
+      "works_count": 717,
+      "cited_by_count": 24436,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Social Sciences",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5073259170",
+      "display_name": "Abdülbari Bener",
+      "orcid": "https://orcid.org/0000-0002-7902-5803",
+      "h_index": 76,
+      "i10_index": 385,
+      "works_count": 663,
+      "cited_by_count": 20251,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Medicine",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5036535728",
+      "display_name": "Tarek Sayed",
+      "orcid": "https://orcid.org/0000-0001-8797-0541",
+      "h_index": 76,
+      "i10_index": 284,
+      "works_count": 422,
+      "cited_by_count": 19388,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5100380164",
+      "display_name": "Guohua Li",
+      "orcid": "https://orcid.org/0000-0003-4732-2448",
+      "h_index": 73,
+      "i10_index": 266,
+      "works_count": 449,
+      "cited_by_count": 21260,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Medicine",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Safety, Risk, Reliability and Quality -- 9.8",
+      "id": "https://openalex.org/A5077991809",
+      "display_name": "S.A. Abbasi",
+      "orcid": "https://orcid.org/0000-0002-1523-5836",
+      "h_index": 72,
+      "i10_index": 221,
+      "works_count": 434,
+      "cited_by_count": 18479,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Agricultural and Biological Sciences",
+        "Energy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5041543612",
+      "display_name": "Genserik Reniers",
+      "orcid": "https://orcid.org/0000-0001-9592-1811",
+      "h_index": 71,
+      "i10_index": 305,
+      "works_count": 782,
+      "cited_by_count": 18327,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5104353906",
+      "display_name": "Allan F. Williams",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 208,
+      "works_count": 306,
+      "cited_by_count": 15494,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5023722015",
+      "display_name": "Richard K.K. Yuen",
+      "orcid": "https://orcid.org/0000-0002-3846-0307",
+      "h_index": 70,
+      "i10_index": 231,
+      "works_count": 313,
+      "cited_by_count": 14320,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Social Sciences",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5067643456",
+      "display_name": "Simon P. Washington",
+      "orcid": "https://orcid.org/0000-0002-5241-2491",
+      "h_index": 70,
+      "i10_index": 157,
+      "works_count": 297,
+      "cited_by_count": 19222,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5021438991",
+      "display_name": "Rouzbeh Abbassi",
+      "orcid": "https://orcid.org/0000-0002-9230-6175",
+      "h_index": 69,
+      "i10_index": 181,
+      "works_count": 283,
+      "cited_by_count": 13958,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5033272811",
+      "display_name": "Guillermo Rein",
+      "orcid": "https://orcid.org/0000-0001-7207-2685",
+      "h_index": 68,
+      "i10_index": 193,
+      "works_count": 463,
+      "cited_by_count": 14949,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Environmental Science",
+        "Energy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5006986266",
+      "display_name": "Rebecca Ivers",
+      "orcid": "https://orcid.org/0000-0003-3448-662X",
+      "h_index": 67,
+      "i10_index": 275,
+      "works_count": 631,
+      "cited_by_count": 54035,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Medicine",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5041128595",
+      "display_name": "Chanan Singh",
+      "orcid": "https://orcid.org/0000-0003-1941-1259",
+      "h_index": 67,
+      "i10_index": 245,
+      "works_count": 456,
+      "cited_by_count": 17469,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5027439463",
+      "display_name": "Jose Luis Torero",
+      "orcid": "https://orcid.org/0000-0001-6265-9327",
+      "h_index": 67,
+      "i10_index": 244,
+      "works_count": 589,
+      "cited_by_count": 14998,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5047303870",
+      "display_name": "Paul R Amyotte",
+      "orcid": "https://orcid.org/0000-0001-7563-1956",
+      "h_index": 67,
+      "i10_index": 210,
+      "works_count": 360,
+      "cited_by_count": 15590,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Safety, Risk, Reliability and Quality -- 9.7",
+      "id": "https://openalex.org/A5016357519",
+      "display_name": "Helai Huang",
+      "orcid": "https://orcid.org/0000-0003-2334-4124",
+      "h_index": 67,
+      "i10_index": 179,
+      "works_count": 257,
+      "cited_by_count": 13852,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Safety, Risk, Reliability and Quality -- 9.6",
+      "id": "https://openalex.org/A5013847446",
+      "display_name": "David W. Coit",
+      "orcid": "https://orcid.org/0000-0002-5825-2548",
+      "h_index": 65,
+      "i10_index": 160,
+      "works_count": 252,
+      "cited_by_count": 17360,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Safety, Risk, Reliability and Quality -- 9.6",
+      "id": "https://openalex.org/A5005097891",
+      "display_name": "Mohammed Quddus",
+      "orcid": "https://orcid.org/0000-0001-6969-2365",
+      "h_index": 65,
+      "i10_index": 154,
+      "works_count": 286,
+      "cited_by_count": 17224,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Safety, Risk, Reliability and Quality -- 9.6",
+      "id": "https://openalex.org/A5012962458",
+      "display_name": "M. Sam Mannan",
+      "orcid": "https://orcid.org/0000-0002-4058-2119",
+      "h_index": 63,
+      "i10_index": 296,
+      "works_count": 429,
+      "cited_by_count": 13858,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Safety, Risk, Reliability and Quality -- 9.6",
+      "id": "https://openalex.org/A5056521338",
+      "display_name": "Longhua Hu",
+      "orcid": "https://orcid.org/0000-0001-8478-0654",
+      "h_index": 63,
+      "i10_index": 255,
+      "works_count": 433,
+      "cited_by_count": 13883,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Safety, Risk, Reliability and Quality -- 9.6",
+      "id": "https://openalex.org/A5010228559",
+      "display_name": "Yiik Diew Wong",
+      "orcid": "https://orcid.org/0000-0001-7419-5777",
+      "h_index": 63,
+      "i10_index": 198,
+      "works_count": 329,
+      "cited_by_count": 12714,
+      "discipline": "Safety, Risk, Reliability and Quality",
+      "primary_field": "Engineering",
+      "primary_subfield": "Safety, Risk, Reliability and Quality",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

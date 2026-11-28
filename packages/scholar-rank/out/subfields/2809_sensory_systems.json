@@ -1,0 +1,1814 @@
+{
+  "kind": "subfield",
+  "id": 2809,
+  "name": "Sensory Systems",
+  "total_in_scrape": 90,
+  "count": 90,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Sensory Systems -- 9.9",
+      "id": "https://openalex.org/A5035555934",
+      "display_name": "Katsuhiko Mikoshiba",
+      "orcid": "https://orcid.org/0000-0002-3487-6970",
+      "h_index": 133,
+      "i10_index": 650,
+      "works_count": 945,
+      "cited_by_count": 71421,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Sensory Systems -- 9.9",
+      "id": "https://openalex.org/A5088654598",
+      "display_name": "Thomas R. Hummel",
+      "orcid": "https://orcid.org/0000-0001-9713-0183",
+      "h_index": 128,
+      "i10_index": 926,
+      "works_count": 1626,
+      "cited_by_count": 71545,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Sensory Systems -- 9.9",
+      "id": "https://openalex.org/A5014833790",
+      "display_name": "Richard J. Smith",
+      "orcid": "https://orcid.org/0000-0003-1201-6731",
+      "h_index": 116,
+      "i10_index": 621,
+      "works_count": 1197,
+      "cited_by_count": 52918,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Sensory Systems -- 9.9",
+      "id": "https://openalex.org/A5035701879",
+      "display_name": "M. Charles Liberman",
+      "orcid": "https://orcid.org/0000-0002-1973-1730",
+      "h_index": 111,
+      "i10_index": 220,
+      "works_count": 288,
+      "cited_by_count": 40834,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Sensory Systems -- 9.9",
+      "id": "https://openalex.org/A5078967543",
+      "display_name": "Yasuo Mori",
+      "orcid": "https://orcid.org/0000-0001-7180-1938",
+      "h_index": 104,
+      "i10_index": 349,
+      "works_count": 838,
+      "cited_by_count": 38628,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Sensory Systems -- 9.9",
+      "id": "https://openalex.org/A5072048458",
+      "display_name": "Christine Petit",
+      "orcid": "https://orcid.org/0000-0002-9069-002X",
+      "h_index": 103,
+      "i10_index": 287,
+      "works_count": 471,
+      "cited_by_count": 35932,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5056055894",
+      "display_name": "Richard L. Doty",
+      "orcid": "https://orcid.org/0000-0001-8378-2623",
+      "h_index": 99,
+      "i10_index": 330,
+      "works_count": 509,
+      "cited_by_count": 38073,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Engineering",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5021952303",
+      "display_name": "Thomas Voets",
+      "orcid": "https://orcid.org/0000-0001-5526-5821",
+      "h_index": 97,
+      "i10_index": 219,
+      "works_count": 405,
+      "cited_by_count": 33814,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5064104774",
+      "display_name": "Berthold Langguth",
+      "orcid": "https://orcid.org/0000-0002-7066-510X",
+      "h_index": 92,
+      "i10_index": 373,
+      "works_count": 741,
+      "cited_by_count": 61424,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5012988440",
+      "display_name": "Edwin W. Rubel",
+      "orcid": "https://orcid.org/0000-0002-7265-0411",
+      "h_index": 91,
+      "i10_index": 275,
+      "works_count": 348,
+      "cited_by_count": 23238,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5066449841",
+      "display_name": "Ardem Patapoutian",
+      "orcid": "https://orcid.org/0000-0003-0726-7034",
+      "h_index": 91,
+      "i10_index": 118,
+      "works_count": 183,
+      "cited_by_count": 51461,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5052931874",
+      "display_name": "Gordon M. Shepherd",
+      "orcid": "https://orcid.org/0000-0002-1455-8262",
+      "h_index": 90,
+      "i10_index": 248,
+      "works_count": 570,
+      "cited_by_count": 27330,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5059866150",
+      "display_name": "Doron Lancet",
+      "orcid": "https://orcid.org/0000-0001-5424-1393",
+      "h_index": 90,
+      "i10_index": 244,
+      "works_count": 382,
+      "cited_by_count": 68729,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5000137807",
+      "display_name": "Guy Van Camp",
+      "orcid": "https://orcid.org/0000-0001-5105-9000",
+      "h_index": 89,
+      "i10_index": 347,
+      "works_count": 672,
+      "cited_by_count": 26917,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5102740667",
+      "display_name": "Gary K. Beauchamp",
+      "orcid": "https://orcid.org/0000-0001-9805-0847",
+      "h_index": 89,
+      "i10_index": 238,
+      "works_count": 322,
+      "cited_by_count": 26495,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5056752653",
+      "display_name": "Veit Flockerzi",
+      "orcid": "https://orcid.org/0000-0001-6002-6294",
+      "h_index": 89,
+      "i10_index": 230,
+      "works_count": 366,
+      "cited_by_count": 30525,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Sensory Systems -- 9.8",
+      "id": "https://openalex.org/A5057549975",
+      "display_name": "Albert James Hudspeth",
+      "orcid": "https://orcid.org/0000-0002-0295-1323",
+      "h_index": 89,
+      "i10_index": 187,
+      "works_count": 298,
+      "cited_by_count": 27973,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5014886042",
+      "display_name": "David J. Julius",
+      "orcid": "https://orcid.org/0000-0002-6365-4867",
+      "h_index": 88,
+      "i10_index": 131,
+      "works_count": 268,
+      "cited_by_count": 81195,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5050109541",
+      "display_name": "Bernd Fritzsch",
+      "orcid": "https://orcid.org/0000-0002-4882-8398",
+      "h_index": 87,
+      "i10_index": 324,
+      "works_count": 616,
+      "cited_by_count": 24416,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5074653699",
+      "display_name": "Makoto Tominaga",
+      "orcid": "https://orcid.org/0000-0003-3111-3772",
+      "h_index": 87,
+      "i10_index": 320,
+      "works_count": 593,
+      "cited_by_count": 45598,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5065854689",
+      "display_name": "Thomas W. Gudermann",
+      "orcid": "https://orcid.org/0000-0002-0323-7965",
+      "h_index": 87,
+      "i10_index": 283,
+      "works_count": 489,
+      "cited_by_count": 27238,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5081441104",
+      "display_name": "David P. Corey",
+      "orcid": "https://orcid.org/0000-0003-4497-6016",
+      "h_index": 86,
+      "i10_index": 139,
+      "works_count": 220,
+      "cited_by_count": 26914,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5011922155",
+      "display_name": "Michael X. Zhu",
+      "orcid": "https://orcid.org/0000-0002-5676-841X",
+      "h_index": 85,
+      "i10_index": 220,
+      "works_count": 365,
+      "cited_by_count": 24318,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5053465320",
+      "display_name": "Robert F. Margolskee",
+      "orcid": "https://orcid.org/0000-0002-9572-2887",
+      "h_index": 84,
+      "i10_index": 168,
+      "works_count": 260,
+      "cited_by_count": 24458,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5082879421",
+      "display_name": "Jan B. Parys",
+      "orcid": "https://orcid.org/0000-0002-3591-4967",
+      "h_index": 81,
+      "i10_index": 244,
+      "works_count": 332,
+      "cited_by_count": 31913,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5009872018",
+      "display_name": "Wolfgang Meyerhof",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 197,
+      "works_count": 352,
+      "cited_by_count": 19474,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5013409747",
+      "display_name": "Thomas B. Friedman",
+      "orcid": "https://orcid.org/0000-0003-4614-6630",
+      "h_index": 80,
+      "i10_index": 204,
+      "works_count": 332,
+      "cited_by_count": 20590,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Sensory Systems -- 9.7",
+      "id": "https://openalex.org/A5103425586",
+      "display_name": "Arnold Starr",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 202,
+      "works_count": 318,
+      "cited_by_count": 21615,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5063731202",
+      "display_name": "Tobias Moser",
+      "orcid": "https://orcid.org/0000-0001-7145-0533",
+      "h_index": 80,
+      "i10_index": 180,
+      "works_count": 476,
+      "cited_by_count": 19960,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5102827064",
+      "display_name": "Dirk De Ridder",
+      "orcid": "https://orcid.org/0000-0002-4625-268X",
+      "h_index": 79,
+      "i10_index": 270,
+      "works_count": 413,
+      "cited_by_count": 26909,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5013559745",
+      "display_name": "Donald A. Wilson",
+      "orcid": "https://orcid.org/0000-0001-8918-2151",
+      "h_index": 79,
+      "i10_index": 223,
+      "works_count": 394,
+      "cited_by_count": 23472,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5006983341",
+      "display_name": "Pierre‐Marie Lledo",
+      "orcid": "https://orcid.org/0000-0002-8156-7003",
+      "h_index": 79,
+      "i10_index": 149,
+      "works_count": 333,
+      "cited_by_count": 22300,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5069892540",
+      "display_name": "Wolfgang Liedtke",
+      "orcid": "https://orcid.org/0000-0003-4166-5394",
+      "h_index": 79,
+      "i10_index": 141,
+      "works_count": 255,
+      "cited_by_count": 22945,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5046283555",
+      "display_name": "Richard Salvi",
+      "orcid": "https://orcid.org/0000-0001-9061-8602",
+      "h_index": 78,
+      "i10_index": 359,
+      "works_count": 527,
+      "cited_by_count": 23452,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5027728332",
+      "display_name": "David R. Moore",
+      "orcid": "https://orcid.org/0000-0002-1567-1945",
+      "h_index": 78,
+      "i10_index": 214,
+      "works_count": 325,
+      "cited_by_count": 16871,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5067381843",
+      "display_name": "Bechara Kachar",
+      "orcid": "https://orcid.org/0000-0002-2803-8700",
+      "h_index": 78,
+      "i10_index": 198,
+      "works_count": 254,
+      "cited_by_count": 20819,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5058526709",
+      "display_name": "Sidney A. Simon",
+      "orcid": "https://orcid.org/0000-0002-7437-0149",
+      "h_index": 78,
+      "i10_index": 176,
+      "works_count": 217,
+      "cited_by_count": 16312,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5047021234",
+      "display_name": "Peter Mombaerts",
+      "orcid": "https://orcid.org/0000-0001-8082-4971",
+      "h_index": 78,
+      "i10_index": 134,
+      "works_count": 196,
+      "cited_by_count": 29264,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Sensory Systems -- 9.6",
+      "id": "https://openalex.org/A5026655274",
+      "display_name": "Jochen Schacht",
+      "orcid": "https://orcid.org/0000-0001-8201-6580",
+      "h_index": 77,
+      "i10_index": 227,
+      "works_count": 337,
+      "cited_by_count": 18146,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5020338160",
+      "display_name": "Gary R. Lewin",
+      "orcid": "https://orcid.org/0000-0002-2890-6352",
+      "h_index": 77,
+      "i10_index": 157,
+      "works_count": 234,
+      "cited_by_count": 23491,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5032876132",
+      "display_name": "Heinz Breer",
+      "orcid": "https://orcid.org/0000-0002-6221-5862",
+      "h_index": 76,
+      "i10_index": 258,
+      "works_count": 372,
+      "cited_by_count": 19741,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5109275573",
+      "display_name": "Cor W. R. J. Cremers",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 342,
+      "works_count": 477,
+      "cited_by_count": 21399,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5068417036",
+      "display_name": "Karen P. Steel",
+      "orcid": "https://orcid.org/0000-0002-8019-5359",
+      "h_index": 75,
+      "i10_index": 201,
+      "works_count": 303,
+      "cited_by_count": 22553,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5007220163",
+      "display_name": "Natalia B. Prevarskaya",
+      "orcid": "https://orcid.org/0000-0003-0316-197X",
+      "h_index": 75,
+      "i10_index": 172,
+      "works_count": 268,
+      "cited_by_count": 16636,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5112730670",
+      "display_name": "Aage R. Møller",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 208,
+      "works_count": 367,
+      "cited_by_count": 15014,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5018903333",
+      "display_name": "Linda M. Bartoshuk",
+      "orcid": "https://orcid.org/0000-0002-3834-9086",
+      "h_index": 73,
+      "i10_index": 133,
+      "works_count": 223,
+      "cited_by_count": 16663,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5058943509",
+      "display_name": "Reinhold Penner",
+      "orcid": "https://orcid.org/0000-0002-5366-1537",
+      "h_index": 73,
+      "i10_index": 120,
+      "works_count": 181,
+      "cited_by_count": 24888,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Nursing",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5015317989",
+      "display_name": "Mustafa Nazıroğlu",
+      "orcid": "https://orcid.org/0000-0003-0887-6974",
+      "h_index": 71,
+      "i10_index": 257,
+      "works_count": 406,
+      "cited_by_count": 15265,
+      "discipline": "Sensory Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5046059565",
+      "display_name": "Sven Vanneste",
+      "orcid": "https://orcid.org/0000-0003-1513-5752",
+      "h_index": 71,
+      "i10_index": 250,
+      "works_count": 384,
+      "cited_by_count": 19920,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5027312074",
+      "display_name": "David J. Beech",
+      "orcid": "https://orcid.org/0000-0002-7683-9422",
+      "h_index": 71,
+      "i10_index": 194,
+      "works_count": 365,
+      "cited_by_count": 16188,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Sensory Systems -- 9.5",
+      "id": "https://openalex.org/A5067443757",
+      "display_name": "Thomas E. Finger",
+      "orcid": "https://orcid.org/0000-0001-5923-5099",
+      "h_index": 71,
+      "i10_index": 161,
+      "works_count": 294,
+      "cited_by_count": 13486,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5061265968",
+      "display_name": "Hanns H. Hatt",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 233,
+      "works_count": 406,
+      "cited_by_count": 16714,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5017999350",
+      "display_name": "Joseph B. Nadol",
+      "orcid": "https://orcid.org/0000-0002-4033-3104",
+      "h_index": 70,
+      "i10_index": 217,
+      "works_count": 307,
+      "cited_by_count": 14669,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5008209397",
+      "display_name": "Susan S. Schiffman",
+      "orcid": "https://orcid.org/0000-0002-4704-7629",
+      "h_index": 70,
+      "i10_index": 162,
+      "works_count": 228,
+      "cited_by_count": 16538,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Agricultural and Biological Sciences",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5091404565",
+      "display_name": "Stefan Feske",
+      "orcid": "https://orcid.org/0000-0001-5431-8178",
+      "h_index": 70,
+      "i10_index": 111,
+      "works_count": 182,
+      "cited_by_count": 23313,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5079970746",
+      "display_name": "Randall R. Reed",
+      "orcid": "https://orcid.org/0000-0001-8103-7128",
+      "h_index": 70,
+      "i10_index": 111,
+      "works_count": 141,
+      "cited_by_count": 22911,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5000861547",
+      "display_name": "Tatsuya Yamasoba",
+      "orcid": "https://orcid.org/0000-0003-3608-0973",
+      "h_index": 69,
+      "i10_index": 350,
+      "works_count": 726,
+      "cited_by_count": 22046,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5004388848",
+      "display_name": "Keiko Abe",
+      "orcid": "https://orcid.org/0000-0001-5844-8199",
+      "h_index": 69,
+      "i10_index": 307,
+      "works_count": 591,
+      "cited_by_count": 16633,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5053689452",
+      "display_name": "Renjie Chai",
+      "orcid": "https://orcid.org/0000-0002-3885-543X",
+      "h_index": 69,
+      "i10_index": 258,
+      "works_count": 403,
+      "cited_by_count": 16336,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5079050175",
+      "display_name": "Janós Szolcsányi",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 217,
+      "works_count": 300,
+      "cited_by_count": 16591,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5014529631",
+      "display_name": "Hannie Kremer",
+      "orcid": "https://orcid.org/0000-0002-0841-8693",
+      "h_index": 69,
+      "i10_index": 205,
+      "works_count": 315,
+      "cited_by_count": 18604,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Sensory Systems -- 9.4",
+      "id": "https://openalex.org/A5111633936",
+      "display_name": "William S. Cain",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 153,
+      "works_count": 195,
+      "cited_by_count": 13966,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5112758679",
+      "display_name": "Saumil N. Merchant",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 149,
+      "works_count": 218,
+      "cited_by_count": 14158,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5065750854",
+      "display_name": "Guy Peel Richardson",
+      "orcid": "https://orcid.org/0000-0001-8476-0223",
+      "h_index": 69,
+      "i10_index": 140,
+      "works_count": 216,
+      "cited_by_count": 14951,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5056512930",
+      "display_name": "Sheikh Amer Riazuddin",
+      "orcid": "https://orcid.org/0000-0001-6012-0192",
+      "h_index": 68,
+      "i10_index": 197,
+      "works_count": 288,
+      "cited_by_count": 16208,
+      "discipline": "Sensory Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5072175699",
+      "display_name": "Danielle R. Reed",
+      "orcid": "https://orcid.org/0000-0002-4374-6107",
+      "h_index": 67,
+      "i10_index": 142,
+      "works_count": 212,
+      "cited_by_count": 15427,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5112163675",
+      "display_name": "Gabriele V. Ronnett",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 122,
+      "works_count": 145,
+      "cited_by_count": 14183,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5022210067",
+      "display_name": "Richard James Stevenson",
+      "orcid": "https://orcid.org/0000-0002-2461-5777",
+      "h_index": 66,
+      "i10_index": 225,
+      "works_count": 378,
+      "cited_by_count": 16688,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5051696318",
+      "display_name": "Benoîst Schaal",
+      "orcid": "https://orcid.org/0000-0002-9419-3282",
+      "h_index": 66,
+      "i10_index": 199,
+      "works_count": 578,
+      "cited_by_count": 13839,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5075164186",
+      "display_name": "Deborah Ann Hall",
+      "orcid": "https://orcid.org/0000-0002-3804-1452",
+      "h_index": 66,
+      "i10_index": 175,
+      "works_count": 292,
+      "cited_by_count": 16114,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5064754617",
+      "display_name": "Michael H. Nathanson",
+      "orcid": "https://orcid.org/0000-0001-9964-0160",
+      "h_index": 66,
+      "i10_index": 174,
+      "works_count": 372,
+      "cited_by_count": 14355,
+      "discipline": "Sensory Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5061372270",
+      "display_name": "Mohamed Trebak",
+      "orcid": "https://orcid.org/0000-0001-6759-864X",
+      "h_index": 66,
+      "i10_index": 140,
+      "works_count": 283,
+      "cited_by_count": 13816,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Sensory Systems -- 9.3",
+      "id": "https://openalex.org/A5037947412",
+      "display_name": "Allen Frederic Ryan",
+      "orcid": "https://orcid.org/0000-0001-9894-8083",
+      "h_index": 65,
+      "i10_index": 263,
+      "works_count": 419,
+      "cited_by_count": 16030,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5028308311",
+      "display_name": "Erik Fransén",
+      "orcid": "https://orcid.org/0000-0001-7785-4790",
+      "h_index": 65,
+      "i10_index": 254,
+      "works_count": 435,
+      "cited_by_count": 14300,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5080498077",
+      "display_name": "Juan Antonio Rosado",
+      "orcid": "https://orcid.org/0000-0002-9749-2325",
+      "h_index": 65,
+      "i10_index": 225,
+      "works_count": 306,
+      "cited_by_count": 11836,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5067291970",
+      "display_name": "Peter Dallos",
+      "orcid": "https://orcid.org/0000-0002-9731-6591",
+      "h_index": 65,
+      "i10_index": 168,
+      "works_count": 274,
+      "cited_by_count": 16025,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5012891699",
+      "display_name": "Yuzo Ninomiya",
+      "orcid": "https://orcid.org/0000-0003-4822-7880",
+      "h_index": 65,
+      "i10_index": 160,
+      "works_count": 278,
+      "cited_by_count": 14140,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5072338475",
+      "display_name": "Alexei V. Tepikin",
+      "orcid": "https://orcid.org/0000-0002-8172-7513",
+      "h_index": 65,
+      "i10_index": 123,
+      "works_count": 221,
+      "cited_by_count": 16272,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5089691588",
+      "display_name": "Catherine G. Dulac",
+      "orcid": "https://orcid.org/0000-0001-5024-5418",
+      "h_index": 65,
+      "i10_index": 93,
+      "works_count": 158,
+      "cited_by_count": 24266,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5032381547",
+      "display_name": "Anil K. Lalwani",
+      "orcid": "https://orcid.org/0000-0002-3823-3470",
+      "h_index": 64,
+      "i10_index": 211,
+      "works_count": 383,
+      "cited_by_count": 13157,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5103861569",
+      "display_name": "Richard R. Fay",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 185,
+      "works_count": 307,
+      "cited_by_count": 12916,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5050248943",
+      "display_name": "Richard A. Altschuler",
+      "orcid": "https://orcid.org/0000-0002-8231-6660",
+      "h_index": 64,
+      "i10_index": 180,
+      "works_count": 232,
+      "cited_by_count": 13096,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5001201586",
+      "display_name": "Yehoash Raphael",
+      "orcid": "https://orcid.org/0000-0003-3693-6495",
+      "h_index": 64,
+      "i10_index": 165,
+      "works_count": 233,
+      "cited_by_count": 13746,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Sensory Systems -- 9.2",
+      "id": "https://openalex.org/A5052036878",
+      "display_name": "Leonard P. Rybak",
+      "orcid": "https://orcid.org/0000-0002-9365-5924",
+      "h_index": 64,
+      "i10_index": 160,
+      "works_count": 254,
+      "cited_by_count": 13486,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Sensory Systems -- 9.1",
+      "id": "https://openalex.org/A5027146792",
+      "display_name": "Thomas R. Van De Water",
+      "orcid": "https://orcid.org/0000-0002-5051-9041",
+      "h_index": 64,
+      "i10_index": 157,
+      "works_count": 233,
+      "cited_by_count": 11003,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Sensory Systems -- 9.1",
+      "id": "https://openalex.org/A5075862457",
+      "display_name": "Marc Freichel",
+      "orcid": "https://orcid.org/0000-0003-1387-2636",
+      "h_index": 64,
+      "i10_index": 145,
+      "works_count": 253,
+      "cited_by_count": 12595,
+      "discipline": "Sensory Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Sensory Systems -- 9.1",
+      "id": "https://openalex.org/A5081477424",
+      "display_name": "Kazushige Touhara",
+      "orcid": "https://orcid.org/0000-0001-7856-0786",
+      "h_index": 64,
+      "i10_index": 127,
+      "works_count": 248,
+      "cited_by_count": 17551,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Sensory Systems -- 9.1",
+      "id": "https://openalex.org/A5077884514",
+      "display_name": "John J. Guinan",
+      "orcid": "https://orcid.org/0000-0003-1774-4738",
+      "h_index": 64,
+      "i10_index": 106,
+      "works_count": 172,
+      "cited_by_count": 13533,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Sensory Systems -- 9.1",
+      "id": "https://openalex.org/A5068225495",
+      "display_name": "Robert Fettiplace",
+      "orcid": "https://orcid.org/0000-0003-0754-7239",
+      "h_index": 64,
+      "i10_index": 101,
+      "works_count": 137,
+      "cited_by_count": 13762,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Sensory Systems -- 9.1",
+      "id": "https://openalex.org/A5071986751",
+      "display_name": "Shin‐ichi Usami",
+      "orcid": "https://orcid.org/0000-0002-5068-6122",
+      "h_index": 63,
+      "i10_index": 261,
+      "works_count": 495,
+      "cited_by_count": 14683,
+      "discipline": "Sensory Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Sensory Systems",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    }
+  ]
+}

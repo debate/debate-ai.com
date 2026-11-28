@@ -1,0 +1,2600 @@
+{
+  "kind": "field",
+  "id": 12,
+  "name": "Arts and Humanities",
+  "total_in_scrape": 132,
+  "count": 132,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Arts and Humanities -- 9.9",
+      "id": "https://openalex.org/A5108357701",
+      "display_name": "Herbert A. Simon",
+      "orcid": null,
+      "h_index": 156,
+      "i10_index": 419,
+      "works_count": 840,
+      "cited_by_count": 164512,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Arts and Humanities -- 9.9",
+      "id": "https://openalex.org/A5109864576",
+      "display_name": "Jacques Derrida",
+      "orcid": null,
+      "h_index": 123,
+      "i10_index": 425,
+      "works_count": 1023,
+      "cited_by_count": 78699,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Arts and Humanities -- 9.9",
+      "id": "https://openalex.org/A5072532913",
+      "display_name": "Noam Chomsky",
+      "orcid": "https://orcid.org/0000-0002-3632-2461",
+      "h_index": 122,
+      "i10_index": 456,
+      "works_count": 1578,
+      "cited_by_count": 141005,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Arts and Humanities -- 9.9",
+      "id": "https://openalex.org/A5018806471",
+      "display_name": "Linus Carl Pauling",
+      "orcid": null,
+      "h_index": 114,
+      "i10_index": 366,
+      "works_count": 893,
+      "cited_by_count": 69939,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine",
+        "Nursing",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Arts and Humanities -- 9.9",
+      "id": "https://openalex.org/A5037978750",
+      "display_name": "Stephen C. Levinson",
+      "orcid": "https://orcid.org/0000-0001-8961-5316",
+      "h_index": 107,
+      "i10_index": 232,
+      "works_count": 2415,
+      "cited_by_count": 93366,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Arts and Humanities -- 9.9",
+      "id": "https://openalex.org/A5027223144",
+      "display_name": "Gert Biesta",
+      "orcid": "https://orcid.org/0000-0001-8530-7105",
+      "h_index": 106,
+      "i10_index": 330,
+      "works_count": 887,
+      "cited_by_count": 54567,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5051368800",
+      "display_name": "Kewal Krishan",
+      "orcid": "https://orcid.org/0000-0001-5321-0958",
+      "h_index": 104,
+      "i10_index": 262,
+      "works_count": 538,
+      "cited_by_count": 175017,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5025473979",
+      "display_name": "Martha C. Nussbaum",
+      "orcid": null,
+      "h_index": 102,
+      "i10_index": 419,
+      "works_count": 1112,
+      "cited_by_count": 86615,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5041017273",
+      "display_name": "Jean‐Marc Dewaele",
+      "orcid": "https://orcid.org/0000-0001-8480-0977",
+      "h_index": 102,
+      "i10_index": 293,
+      "works_count": 565,
+      "cited_by_count": 39440,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5034271321",
+      "display_name": "Rod Ellis",
+      "orcid": "https://orcid.org/0000-0003-0131-1743",
+      "h_index": 101,
+      "i10_index": 203,
+      "works_count": 420,
+      "cited_by_count": 62760,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5026388329",
+      "display_name": "Janet B. Croft",
+      "orcid": "https://orcid.org/0000-0003-2692-3586",
+      "h_index": 97,
+      "i10_index": 271,
+      "works_count": 506,
+      "cited_by_count": 42236,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5110714596",
+      "display_name": "Paul R. Berg",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 193,
+      "works_count": 319,
+      "cited_by_count": 46219,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5112523816",
+      "display_name": "Ronald Aylmer Fisher",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 260,
+      "works_count": 1086,
+      "cited_by_count": 116765,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5050563294",
+      "display_name": "Arthur M. Kleinman",
+      "orcid": "https://orcid.org/0000-0003-0721-2017",
+      "h_index": 94,
+      "i10_index": 227,
+      "works_count": 469,
+      "cited_by_count": 54182,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5054618195",
+      "display_name": "Zoltán Dörnyei",
+      "orcid": "https://orcid.org/0000-0002-7820-1254",
+      "h_index": 92,
+      "i10_index": 133,
+      "works_count": 365,
+      "cited_by_count": 76472,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5072247317",
+      "display_name": "Martín Haspelmath",
+      "orcid": "https://orcid.org/0000-0003-2100-8493",
+      "h_index": 90,
+      "i10_index": 199,
+      "works_count": 469,
+      "cited_by_count": 34430,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Arts and Humanities -- 9.8",
+      "id": "https://openalex.org/A5051216244",
+      "display_name": "Barry Smith",
+      "orcid": "https://orcid.org/0000-0003-1384-116X",
+      "h_index": 89,
+      "i10_index": 367,
+      "works_count": 1267,
+      "cited_by_count": 38535,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5000597416",
+      "display_name": "Steven A. Pinker",
+      "orcid": "https://orcid.org/0000-0002-2319-4085",
+      "h_index": 89,
+      "i10_index": 174,
+      "works_count": 479,
+      "cited_by_count": 55008,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5029871990",
+      "display_name": "Robert M. Grant",
+      "orcid": "https://orcid.org/0000-0002-0851-7085",
+      "h_index": 88,
+      "i10_index": 294,
+      "works_count": 861,
+      "cited_by_count": 43700,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Religious studies",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5111629560",
+      "display_name": "Charles Tilly",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 239,
+      "works_count": 804,
+      "cited_by_count": 48414,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5088734703",
+      "display_name": "Paul Ricœur",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 322,
+      "works_count": 1259,
+      "cited_by_count": 43492,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5089434398",
+      "display_name": "Christopher B. Ruff",
+      "orcid": "https://orcid.org/0000-0002-2932-3634",
+      "h_index": 86,
+      "i10_index": 187,
+      "works_count": 324,
+      "cited_by_count": 26847,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5091064969",
+      "display_name": "Bruce A. Barton",
+      "orcid": "https://orcid.org/0000-0001-7878-8895",
+      "h_index": 85,
+      "i10_index": 272,
+      "works_count": 530,
+      "cited_by_count": 30660,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Visual Arts and Performing Arts",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5059016534",
+      "display_name": "Philip N. Pettit",
+      "orcid": "https://orcid.org/0000-0002-0355-3896",
+      "h_index": 85,
+      "i10_index": 225,
+      "works_count": 544,
+      "cited_by_count": 27558,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5086234972",
+      "display_name": "Francisco J. Varela",
+      "orcid": "https://orcid.org/0000-0001-8403-4467",
+      "h_index": 85,
+      "i10_index": 169,
+      "works_count": 307,
+      "cited_by_count": 65197,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5101074400",
+      "display_name": "Martín Heidegger",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 334,
+      "works_count": 868,
+      "cited_by_count": 40229,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5104058935",
+      "display_name": "Stuart Hall",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 212,
+      "works_count": 590,
+      "cited_by_count": 56350,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Cultural Studies",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Arts and Humanities -- 9.7",
+      "id": "https://openalex.org/A5042469905",
+      "display_name": "Koen Henri Janssens",
+      "orcid": "https://orcid.org/0000-0002-6752-6408",
+      "h_index": 83,
+      "i10_index": 370,
+      "works_count": 881,
+      "cited_by_count": 27551,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Physics and Astronomy",
+        "Materials Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5029057336",
+      "display_name": "Ray S. Jackendoff",
+      "orcid": "https://orcid.org/0000-0002-1358-9200",
+      "h_index": 83,
+      "i10_index": 154,
+      "works_count": 297,
+      "cited_by_count": 50491,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5109804111",
+      "display_name": "Daniel M. Wegner",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 139,
+      "works_count": 244,
+      "cited_by_count": 48859,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5113463563",
+      "display_name": "Hilary Putnam",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 249,
+      "works_count": 661,
+      "cited_by_count": 42201,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5107466880",
+      "display_name": "Jöel Coste",
+      "orcid": "https://orcid.org/0000-0001-7674-7192",
+      "h_index": 81,
+      "i10_index": 240,
+      "works_count": 572,
+      "cited_by_count": 22525,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Physical Therapy, Sports Therapy and Rehabilitation",
+      "fields": [
+        "Arts and Humanities",
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5062808281",
+      "display_name": "Robert Lew",
+      "orcid": "https://orcid.org/0000-0002-6772-210X",
+      "h_index": 80,
+      "i10_index": 212,
+      "works_count": 319,
+      "cited_by_count": 22683,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5071902216",
+      "display_name": "Peter D. MacIntyre",
+      "orcid": "https://orcid.org/0000-0002-1085-6692",
+      "h_index": 80,
+      "i10_index": 160,
+      "works_count": 260,
+      "cited_by_count": 45494,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5029669651",
+      "display_name": "Shaun Gallagher",
+      "orcid": "https://orcid.org/0000-0002-3147-9929",
+      "h_index": 79,
+      "i10_index": 278,
+      "works_count": 616,
+      "cited_by_count": 36366,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5109876781",
+      "display_name": "Ernst Mayr",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 255,
+      "works_count": 839,
+      "cited_by_count": 42166,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5090458959",
+      "display_name": "Lorenza Mondada",
+      "orcid": "https://orcid.org/0000-0002-7543-9769",
+      "h_index": 79,
+      "i10_index": 249,
+      "works_count": 594,
+      "cited_by_count": 24668,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5071663279",
+      "display_name": "Stephen Jay Gould",
+      "orcid": "https://orcid.org/0000-0001-8929-7899",
+      "h_index": 79,
+      "i10_index": 229,
+      "works_count": 666,
+      "cited_by_count": 57882,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Arts and Humanities -- 9.6",
+      "id": "https://openalex.org/A5020923463",
+      "display_name": "Immanuel Kant",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 247,
+      "works_count": 1295,
+      "cited_by_count": 42534,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5110903974",
+      "display_name": "John Rogers Searle",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 221,
+      "works_count": 566,
+      "cited_by_count": 83537,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5109636964",
+      "display_name": "Jerry A. Fodor",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 147,
+      "works_count": 337,
+      "cited_by_count": 59966,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5056648439",
+      "display_name": "Piero Baglioni",
+      "orcid": "https://orcid.org/0000-0003-1312-8700",
+      "h_index": 77,
+      "i10_index": 453,
+      "works_count": 879,
+      "cited_by_count": 25861,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Physical and Theoretical Chemistry",
+      "fields": [
+        "Arts and Humanities",
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5040938903",
+      "display_name": "Michael J. Day",
+      "orcid": "https://orcid.org/0000-0001-5856-1685",
+      "h_index": 77,
+      "i10_index": 335,
+      "works_count": 935,
+      "cited_by_count": 22202,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5047293181",
+      "display_name": "Edmund Husserl",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 218,
+      "works_count": 1072,
+      "cited_by_count": 26951,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5088506012",
+      "display_name": "Andy Clark",
+      "orcid": "https://orcid.org/0000-0002-1233-8629",
+      "h_index": 77,
+      "i10_index": 179,
+      "works_count": 443,
+      "cited_by_count": 45562,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5023188928",
+      "display_name": "Gilles Deleuze",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 170,
+      "works_count": 562,
+      "cited_by_count": 43036,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5032367595",
+      "display_name": "Roger Thornton Dean",
+      "orcid": "https://orcid.org/0000-0002-8859-8902",
+      "h_index": 76,
+      "i10_index": 230,
+      "works_count": 572,
+      "cited_by_count": 23105,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5003086136",
+      "display_name": "Charles Robert Darwin",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 224,
+      "works_count": 1056,
+      "cited_by_count": 43691,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5060372973",
+      "display_name": "Rebecca L. Oxford",
+      "orcid": "https://orcid.org/0000-0001-5387-7285",
+      "h_index": 76,
+      "i10_index": 145,
+      "works_count": 226,
+      "cited_by_count": 31299,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5026078859",
+      "display_name": "Umberto Eco",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 232,
+      "works_count": 710,
+      "cited_by_count": 27877,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Arts and Humanities -- 9.5",
+      "id": "https://openalex.org/A5037189034",
+      "display_name": "Peter Carruthers",
+      "orcid": "https://orcid.org/0000-0002-7149-2327",
+      "h_index": 75,
+      "i10_index": 232,
+      "works_count": 550,
+      "cited_by_count": 23952,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5108657500",
+      "display_name": "Jacques Rancière",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 203,
+      "works_count": 657,
+      "cited_by_count": 35676,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5031927870",
+      "display_name": "Dan Zahavi",
+      "orcid": "https://orcid.org/0000-0002-2869-4951",
+      "h_index": 75,
+      "i10_index": 196,
+      "works_count": 520,
+      "cited_by_count": 21372,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5072980637",
+      "display_name": "Bernd Heine",
+      "orcid": "https://orcid.org/0000-0002-9304-7814",
+      "h_index": 75,
+      "i10_index": 172,
+      "works_count": 410,
+      "cited_by_count": 31271,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5060375992",
+      "display_name": "Aristotle ",
+      "orcid": "https://orcid.org/0000-0003-2052-1391",
+      "h_index": 74,
+      "i10_index": 284,
+      "works_count": 1221,
+      "cited_by_count": 26107,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5010043674",
+      "display_name": "Graham Anderson",
+      "orcid": "https://orcid.org/0000-0002-2917-4085",
+      "h_index": 74,
+      "i10_index": 228,
+      "works_count": 399,
+      "cited_by_count": 20890,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Immunology",
+      "fields": [
+        "Arts and Humanities",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5075335677",
+      "display_name": "Stefan Τh. Gries",
+      "orcid": "https://orcid.org/0000-0002-6497-3958",
+      "h_index": 74,
+      "i10_index": 176,
+      "works_count": 394,
+      "cited_by_count": 22982,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5083402270",
+      "display_name": "Paul R. Thagard",
+      "orcid": "https://orcid.org/0000-0002-6594-4761",
+      "h_index": 74,
+      "i10_index": 175,
+      "works_count": 394,
+      "cited_by_count": 25870,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5101873597",
+      "display_name": "Thomas A. E. Fuchs",
+      "orcid": "https://orcid.org/0000-0001-9466-4956",
+      "h_index": 74,
+      "i10_index": 173,
+      "works_count": 435,
+      "cited_by_count": 18893,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5017528933",
+      "display_name": "Dan Sperber",
+      "orcid": "https://orcid.org/0000-0002-4066-3058",
+      "h_index": 74,
+      "i10_index": 160,
+      "works_count": 408,
+      "cited_by_count": 48050,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5111631801",
+      "display_name": "George Armitage Miller",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 148,
+      "works_count": 316,
+      "cited_by_count": 90582,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Arts and Humanities -- 9.4",
+      "id": "https://openalex.org/A5079129069",
+      "display_name": "Richard M. Rorty",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 294,
+      "works_count": 1144,
+      "cited_by_count": 40054,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5073211389",
+      "display_name": "Lawrence Jun Zhang",
+      "orcid": "https://orcid.org/0000-0003-1025-1746",
+      "h_index": 73,
+      "i10_index": 245,
+      "works_count": 459,
+      "cited_by_count": 18797,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5083743331",
+      "display_name": "Daniel C. Dennett",
+      "orcid": "https://orcid.org/0000-0003-1181-3093",
+      "h_index": 73,
+      "i10_index": 201,
+      "works_count": 518,
+      "cited_by_count": 41127,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5066139560",
+      "display_name": "Henry Ryan Wagner",
+      "orcid": "https://orcid.org/0000-0003-3954-6556",
+      "h_index": 73,
+      "i10_index": 200,
+      "works_count": 357,
+      "cited_by_count": 19398,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5069893226",
+      "display_name": "Josef Parnas",
+      "orcid": "https://orcid.org/0000-0001-7864-295X",
+      "h_index": 73,
+      "i10_index": 199,
+      "works_count": 332,
+      "cited_by_count": 18484,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5075530900",
+      "display_name": "Ellen Winner",
+      "orcid": "https://orcid.org/0000-0003-0494-6621",
+      "h_index": 73,
+      "i10_index": 156,
+      "works_count": 331,
+      "cited_by_count": 20116,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Visual Arts and Performing Arts",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5103215889",
+      "display_name": "David J. Chalmers",
+      "orcid": "https://orcid.org/0000-0003-4190-3161",
+      "h_index": 73,
+      "i10_index": 128,
+      "works_count": 240,
+      "cited_by_count": 36719,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5068853530",
+      "display_name": "Juan Pablo",
+      "orcid": "https://orcid.org/0000-0002-3526-516X",
+      "h_index": 72,
+      "i10_index": 299,
+      "works_count": 2428,
+      "cited_by_count": 18717,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Religious studies",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5000584677",
+      "display_name": "Colin Renfrew",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 193,
+      "works_count": 567,
+      "cited_by_count": 18786,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5032654374",
+      "display_name": "David J. Hargreaves",
+      "orcid": "https://orcid.org/0000-0002-2726-7229",
+      "h_index": 72,
+      "i10_index": 190,
+      "works_count": 369,
+      "cited_by_count": 22959,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5041926618",
+      "display_name": "Jack C. Richards",
+      "orcid": "https://orcid.org/0000-0001-9746-0852",
+      "h_index": 72,
+      "i10_index": 153,
+      "works_count": 582,
+      "cited_by_count": 51251,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Arts and Humanities -- 9.3",
+      "id": "https://openalex.org/A5025743622",
+      "display_name": "Marshall W. Nirenberg",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 148,
+      "works_count": 317,
+      "cited_by_count": 21212,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5064362701",
+      "display_name": "Larry M. Hyman",
+      "orcid": "https://orcid.org/0000-0002-7676-6358",
+      "h_index": 72,
+      "i10_index": 148,
+      "works_count": 287,
+      "cited_by_count": 16271,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5036392428",
+      "display_name": "Roland Barthes",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 181,
+      "works_count": 439,
+      "cited_by_count": 44522,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5088841767",
+      "display_name": "Joel Myerson",
+      "orcid": "https://orcid.org/0000-0001-8108-9892",
+      "h_index": 71,
+      "i10_index": 172,
+      "works_count": 474,
+      "cited_by_count": 21980,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Decision Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5103783172",
+      "display_name": "Donald Davidson",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 167,
+      "works_count": 386,
+      "cited_by_count": 34460,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5104114047",
+      "display_name": "Bernard Williams",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 165,
+      "works_count": 450,
+      "cited_by_count": 32322,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5103081287",
+      "display_name": "Robert L. Hill",
+      "orcid": "https://orcid.org/0009-0001-2747-3997",
+      "h_index": 71,
+      "i10_index": 164,
+      "works_count": 398,
+      "cited_by_count": 15818,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5003061419",
+      "display_name": "T. Douglas Price",
+      "orcid": "https://orcid.org/0000-0001-5951-5621",
+      "h_index": 71,
+      "i10_index": 161,
+      "works_count": 226,
+      "cited_by_count": 19430,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5036616656",
+      "display_name": "Ian Hacking",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 151,
+      "works_count": 480,
+      "cited_by_count": 35098,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5111853770",
+      "display_name": "Jaap J. Boon",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 240,
+      "works_count": 361,
+      "cited_by_count": 14828,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5049495233",
+      "display_name": "Ali Derakhshan",
+      "orcid": "https://orcid.org/0000-0002-6639-9339",
+      "h_index": 70,
+      "i10_index": 198,
+      "works_count": 348,
+      "cited_by_count": 17808,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Arts and Humanities -- 9.2",
+      "id": "https://openalex.org/A5018950644",
+      "display_name": "Ronald W. Langacker",
+      "orcid": "https://orcid.org/0009-0009-7345-455X",
+      "h_index": 70,
+      "i10_index": 151,
+      "works_count": 278,
+      "cited_by_count": 39745,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5030988722",
+      "display_name": "Elizabeth Closs Traugott",
+      "orcid": "https://orcid.org/0000-0002-1016-7803",
+      "h_index": 70,
+      "i10_index": 123,
+      "works_count": 283,
+      "cited_by_count": 27711,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5057365390",
+      "display_name": "Jonathan Potter",
+      "orcid": "https://orcid.org/0000-0002-3889-8480",
+      "h_index": 70,
+      "i10_index": 121,
+      "works_count": 179,
+      "cited_by_count": 30245,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5108353814",
+      "display_name": "R. C. Gardner",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 118,
+      "works_count": 142,
+      "cited_by_count": 47246,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5047363625",
+      "display_name": "Herbert H. Clark",
+      "orcid": "https://orcid.org/0000-0003-1252-666X",
+      "h_index": 70,
+      "i10_index": 112,
+      "works_count": 202,
+      "cited_by_count": 52382,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5090163591",
+      "display_name": "Michael Adrian Peters",
+      "orcid": "https://orcid.org/0000-0002-1482-2975",
+      "h_index": 69,
+      "i10_index": 370,
+      "works_count": 1155,
+      "cited_by_count": 22353,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5109969019",
+      "display_name": "Peter H. Schreier",
+      "orcid": "https://orcid.org/0000-0003-1930-0145",
+      "h_index": 69,
+      "i10_index": 340,
+      "works_count": 560,
+      "cited_by_count": 30300,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5024635859",
+      "display_name": "Sven Ove Hansson",
+      "orcid": "https://orcid.org/0000-0003-0071-3919",
+      "h_index": 69,
+      "i10_index": 249,
+      "works_count": 794,
+      "cited_by_count": 15816,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5004599362",
+      "display_name": "John Joseph O'Connor",
+      "orcid": "https://orcid.org/0000-0001-8229-8602",
+      "h_index": 69,
+      "i10_index": 238,
+      "works_count": 773,
+      "cited_by_count": 16722,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5075922585",
+      "display_name": "Johan Sundberg",
+      "orcid": "https://orcid.org/0000-0002-7234-7551",
+      "h_index": 69,
+      "i10_index": 233,
+      "works_count": 505,
+      "cited_by_count": 19164,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5070791275",
+      "display_name": "Bernard Comrie",
+      "orcid": "https://orcid.org/0000-0003-0487-7005",
+      "h_index": 69,
+      "i10_index": 185,
+      "works_count": 671,
+      "cited_by_count": 21208,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Arts and Humanities -- 9.1",
+      "id": "https://openalex.org/A5007201391",
+      "display_name": "Timothy L. Williamson",
+      "orcid": "https://orcid.org/0000-0002-4659-8672",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 537,
+      "cited_by_count": 22458,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Arts and Humanities -- 9.0",
+      "id": "https://openalex.org/A5016506316",
+      "display_name": "Emanuel A. Schegloff",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 92,
+      "works_count": 135,
+      "cited_by_count": 78062,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Arts and Humanities -- 9.0",
+      "id": "https://openalex.org/A5109849770",
+      "display_name": "Stanley Marion Garn",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 273,
+      "works_count": 490,
+      "cited_by_count": 16486,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Dentistry",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Arts and Humanities -- 9.0",
+      "id": "https://openalex.org/A5112755778",
+      "display_name": "Theodor Wiesengrund Adorno",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 265,
+      "works_count": 864,
+      "cited_by_count": 24320,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Arts and Humanities -- 9.0",
+      "id": "https://openalex.org/A5060761413",
+      "display_name": "Joshua Lederberg",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 186,
+      "works_count": 4527,
+      "cited_by_count": 22353,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Arts and Humanities -- 9.0",
+      "id": "https://openalex.org/A5019765592",
+      "display_name": "Fredric Jameson",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 178,
+      "works_count": 447,
+      "cited_by_count": 33257,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Literature and Literary Theory",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5006934600",
+      "display_name": "David Nunan",
+      "orcid": "https://orcid.org/0000-0003-4597-1276",
+      "h_index": 68,
+      "i10_index": 167,
+      "works_count": 473,
+      "cited_by_count": 31877,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Decision Sciences",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5112422064",
+      "display_name": "Susan Hallam",
+      "orcid": "https://orcid.org/0000-0002-6705-0614",
+      "h_index": 68,
+      "i10_index": 162,
+      "works_count": 407,
+      "cited_by_count": 15427,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5110826404",
+      "display_name": "Patrick Suppes",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 258,
+      "works_count": 775,
+      "cited_by_count": 17987,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Decision Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5088951952",
+      "display_name": "Antti Revonsuo",
+      "orcid": "https://orcid.org/0000-0002-2771-1588",
+      "h_index": 67,
+      "i10_index": 166,
+      "works_count": 290,
+      "cited_by_count": 12830,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5083636619",
+      "display_name": "Geoffrey Leech",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 125,
+      "works_count": 368,
+      "cited_by_count": 43557,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5051840540",
+      "display_name": "Edward Young",
+      "orcid": "https://orcid.org/0000-0002-1299-0801",
+      "h_index": 66,
+      "i10_index": 182,
+      "works_count": 929,
+      "cited_by_count": 16534,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History",
+      "fields": [
+        "Arts and Humanities",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5069496806",
+      "display_name": "Haobin Wang",
+      "orcid": "https://orcid.org/0000-0002-2003-131X",
+      "h_index": 66,
+      "i10_index": 181,
+      "works_count": 501,
+      "cited_by_count": 14540,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5060323887",
+      "display_name": "Jane Ellen Buikstra",
+      "orcid": "https://orcid.org/0000-0003-0206-0165",
+      "h_index": 66,
+      "i10_index": 162,
+      "works_count": 368,
+      "cited_by_count": 19119,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5071242022",
+      "display_name": "Geoffrey M. Reed",
+      "orcid": "https://orcid.org/0000-0002-6572-4785",
+      "h_index": 66,
+      "i10_index": 153,
+      "works_count": 258,
+      "cited_by_count": 23150,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5101806542",
+      "display_name": "Alvin I. Goldman",
+      "orcid": "https://orcid.org/0000-0003-0793-4589",
+      "h_index": 66,
+      "i10_index": 143,
+      "works_count": 254,
+      "cited_by_count": 26884,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5020043743",
+      "display_name": "Sandra Annear Thompson",
+      "orcid": "https://orcid.org/0000-0002-7794-2042",
+      "h_index": 66,
+      "i10_index": 111,
+      "works_count": 195,
+      "cited_by_count": 31273,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Arts and Humanities -- 8.9",
+      "id": "https://openalex.org/A5109342635",
+      "display_name": "T. Givón",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 103,
+      "works_count": 234,
+      "cited_by_count": 21956,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5064052207",
+      "display_name": "Elliott R. Sober",
+      "orcid": "https://orcid.org/0000-0003-3130-1263",
+      "h_index": 65,
+      "i10_index": 204,
+      "works_count": 526,
+      "cited_by_count": 17781,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5062823200",
+      "display_name": "Susan M. Gass",
+      "orcid": "https://orcid.org/0000-0001-5222-3319",
+      "h_index": 65,
+      "i10_index": 125,
+      "works_count": 324,
+      "cited_by_count": 23228,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5016451627",
+      "display_name": "Kit Fine",
+      "orcid": "https://orcid.org/0000-0002-9438-4900",
+      "h_index": 65,
+      "i10_index": 120,
+      "works_count": 245,
+      "cited_by_count": 18816,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5109814986",
+      "display_name": "George J. Armelagos",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 118,
+      "works_count": 222,
+      "cited_by_count": 13843,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5082884079",
+      "display_name": "Duncan Pritchard",
+      "orcid": "https://orcid.org/0000-0002-5997-0752",
+      "h_index": 64,
+      "i10_index": 202,
+      "works_count": 690,
+      "cited_by_count": 15164,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5103971086",
+      "display_name": "Elliot W. Eisner",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 180,
+      "works_count": 454,
+      "cited_by_count": 24868,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Visual Arts and Performing Arts",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5108417677",
+      "display_name": "Massimo Pigliucci",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 138,
+      "works_count": 386,
+      "cited_by_count": 21112,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5042655177",
+      "display_name": "Alexandra Y. Aikhenvald",
+      "orcid": "https://orcid.org/0000-0003-1866-7869",
+      "h_index": 64,
+      "i10_index": 135,
+      "works_count": 470,
+      "cited_by_count": 18065,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5031504392",
+      "display_name": "Willard Van Orman Quine",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 124,
+      "works_count": 410,
+      "cited_by_count": 27995,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5074110444",
+      "display_name": "John A. Sloboda",
+      "orcid": "https://orcid.org/0000-0001-9375-4474",
+      "h_index": 64,
+      "i10_index": 117,
+      "works_count": 217,
+      "cited_by_count": 17057,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Music",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5047857923",
+      "display_name": "Joshua Knobe",
+      "orcid": "https://orcid.org/0000-0003-0733-3775",
+      "h_index": 64,
+      "i10_index": 111,
+      "works_count": 225,
+      "cited_by_count": 16721,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5068364577",
+      "display_name": "Maria Perla Colombini",
+      "orcid": "https://orcid.org/0000-0002-1666-8596",
+      "h_index": 63,
+      "i10_index": 257,
+      "works_count": 490,
+      "cited_by_count": 14556,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5111412543",
+      "display_name": "Karl Heinrich Marx",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 234,
+      "works_count": 1577,
+      "cited_by_count": 18880,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Sociology and Political Science",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5042564856",
+      "display_name": "Bertrand Russell",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 190,
+      "works_count": 1995,
+      "cited_by_count": 18332,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5103093603",
+      "display_name": "John Campbell",
+      "orcid": "https://orcid.org/0000-0002-8089-5304",
+      "h_index": 63,
+      "i10_index": 173,
+      "works_count": 450,
+      "cited_by_count": 14410,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5066200540",
+      "display_name": "David D. Marsh",
+      "orcid": "https://orcid.org/0000-0002-3308-8585",
+      "h_index": 63,
+      "i10_index": 158,
+      "works_count": 483,
+      "cited_by_count": 30460,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5035329131",
+      "display_name": "Peter Louis Galison",
+      "orcid": "https://orcid.org/0000-0002-6429-3872",
+      "h_index": 63,
+      "i10_index": 155,
+      "works_count": 300,
+      "cited_by_count": 41021,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5015911878",
+      "display_name": "Ian Hodder",
+      "orcid": "https://orcid.org/0000-0002-7018-586X",
+      "h_index": 63,
+      "i10_index": 153,
+      "works_count": 390,
+      "cited_by_count": 17775,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Archeology (arts and humanities)",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5090215557",
+      "display_name": "Roger Lévy",
+      "orcid": "https://orcid.org/0000-0002-4493-8864",
+      "h_index": 63,
+      "i10_index": 145,
+      "works_count": 397,
+      "cited_by_count": 30429,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Neuroscience",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Arts and Humanities -- 8.8",
+      "id": "https://openalex.org/A5114948823",
+      "display_name": "William Croft",
+      "orcid": "https://orcid.org/0000-0003-0886-2652",
+      "h_index": 63,
+      "i10_index": 128,
+      "works_count": 321,
+      "cited_by_count": 30633,
+      "discipline": "Arts and Humanities",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Language and Linguistics",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    }
+  ]
+}

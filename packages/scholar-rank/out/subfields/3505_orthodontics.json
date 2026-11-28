@@ -1,0 +1,378 @@
+{
+  "kind": "subfield",
+  "id": 3505,
+  "name": "Orthodontics",
+  "total_in_scrape": 19,
+  "count": 19,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Orthodontics -- 9.9",
+      "id": "https://openalex.org/A5053241546",
+      "display_name": "James A. McNamara",
+      "orcid": "https://orcid.org/0000-0002-4576-7737",
+      "h_index": 87,
+      "i10_index": 242,
+      "works_count": 354,
+      "cited_by_count": 30606,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Orthodontics -- 9.9",
+      "id": "https://openalex.org/A5087583381",
+      "display_name": "Carlos Flores‐Mir",
+      "orcid": "https://orcid.org/0000-0002-0887-9385",
+      "h_index": 84,
+      "i10_index": 345,
+      "works_count": 645,
+      "cited_by_count": 23056,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Orthodontics -- 9.9",
+      "id": "https://openalex.org/A5045866280",
+      "display_name": "Peter H. Buschang",
+      "orcid": "https://orcid.org/0000-0003-4397-6815",
+      "h_index": 82,
+      "i10_index": 290,
+      "works_count": 380,
+      "cited_by_count": 19321,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Orthodontics -- 9.9",
+      "id": "https://openalex.org/A5110607033",
+      "display_name": "William R. Proffit",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 192,
+      "works_count": 275,
+      "cited_by_count": 22511,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Orthodontics -- 9.9",
+      "id": "https://openalex.org/A5045447876",
+      "display_name": "Anne Marie Kuijpers‐Jagtman",
+      "orcid": "https://orcid.org/0000-0001-8172-0090",
+      "h_index": 79,
+      "i10_index": 308,
+      "works_count": 484,
+      "cited_by_count": 20792,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Orthodontics -- 9.9",
+      "id": "https://openalex.org/A5021689183",
+      "display_name": "Tiziano Baccetti",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 195,
+      "works_count": 299,
+      "cited_by_count": 21545,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5023474980",
+      "display_name": "Samir E. Bishara",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 169,
+      "works_count": 190,
+      "cited_by_count": 18941,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5026919359",
+      "display_name": "Lorenzo Franchi",
+      "orcid": "https://orcid.org/0000-0002-2072-460X",
+      "h_index": 77,
+      "i10_index": 272,
+      "works_count": 434,
+      "cited_by_count": 23252,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5103115355",
+      "display_name": "William C. Shaw",
+      "orcid": "https://orcid.org/0000-0002-3208-6000",
+      "h_index": 75,
+      "i10_index": 175,
+      "works_count": 259,
+      "cited_by_count": 20085,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5045966717",
+      "display_name": "Chiarella Sforza",
+      "orcid": "https://orcid.org/0000-0001-6532-6464",
+      "h_index": 74,
+      "i10_index": 405,
+      "works_count": 770,
+      "cited_by_count": 20820,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Arts and Humanities",
+        "Agricultural and Biological Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5008858362",
+      "display_name": "Paul W. Major",
+      "orcid": "https://orcid.org/0000-0002-1581-2306",
+      "h_index": 74,
+      "i10_index": 246,
+      "works_count": 347,
+      "cited_by_count": 17355,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5072100455",
+      "display_name": "Ceib L. Phillips",
+      "orcid": "https://orcid.org/0000-0001-6845-7320",
+      "h_index": 74,
+      "i10_index": 230,
+      "works_count": 309,
+      "cited_by_count": 18027,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5001843546",
+      "display_name": "Birte Melsen",
+      "orcid": "https://orcid.org/0000-0001-7756-3707",
+      "h_index": 65,
+      "i10_index": 183,
+      "works_count": 446,
+      "cited_by_count": 15566,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5060904439",
+      "display_name": "Teruko Takano‐Yamamoto",
+      "orcid": "https://orcid.org/0000-0001-5916-7532",
+      "h_index": 64,
+      "i10_index": 206,
+      "works_count": 308,
+      "cited_by_count": 15664,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5086458661",
+      "display_name": "Stavros Kiliaridis",
+      "orcid": "https://orcid.org/0000-0001-9548-2628",
+      "h_index": 64,
+      "i10_index": 189,
+      "works_count": 268,
+      "cited_by_count": 12074,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5029369497",
+      "display_name": "Stephen Richmond",
+      "orcid": "https://orcid.org/0000-0001-5449-5318",
+      "h_index": 64,
+      "i10_index": 169,
+      "works_count": 327,
+      "cited_by_count": 12481,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Agricultural and Biological Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Orthodontics -- 9.8",
+      "id": "https://openalex.org/A5111927613",
+      "display_name": "Ram Sarup Nanda",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 116,
+      "works_count": 141,
+      "cited_by_count": 10665,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Orthodontics -- 9.7",
+      "id": "https://openalex.org/A5062390379",
+      "display_name": "Eiji I. Tanaka",
+      "orcid": "https://orcid.org/0000-0002-2707-1613",
+      "h_index": 63,
+      "i10_index": 347,
+      "works_count": 723,
+      "cited_by_count": 16475,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Orthodontics -- 9.7",
+      "id": "https://openalex.org/A5051013236",
+      "display_name": "Virgilio F. Ferrario",
+      "orcid": "https://orcid.org/0000-0001-5874-2195",
+      "h_index": 63,
+      "i10_index": 200,
+      "works_count": 299,
+      "cited_by_count": 12138,
+      "discipline": "Orthodontics",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Orthodontics",
+      "fields": [
+        "Dentistry",
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities",
+        "Computer Science"
+      ]
+    }
+  ]
+}

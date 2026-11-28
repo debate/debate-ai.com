@@ -1,0 +1,624 @@
+{
+  "kind": "subfield",
+  "id": 2610,
+  "name": "Mathematical Physics",
+  "total_in_scrape": 32,
+  "count": 32,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Mathematical Physics -- 9.9",
+      "id": "https://openalex.org/A5022360238",
+      "display_name": "James A. Yorke",
+      "orcid": "https://orcid.org/0000-0002-9599-0136",
+      "h_index": 115,
+      "i10_index": 332,
+      "works_count": 552,
+      "cited_by_count": 67603,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Mathematical Physics -- 9.9",
+      "id": "https://openalex.org/A5072851506",
+      "display_name": "Élliott H. Lieb",
+      "orcid": "https://orcid.org/0000-0001-5843-3587",
+      "h_index": 112,
+      "i10_index": 364,
+      "works_count": 848,
+      "cited_by_count": 80597,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Mathematical Physics -- 9.9",
+      "id": "https://openalex.org/A5038838154",
+      "display_name": "Barry Simon",
+      "orcid": "https://orcid.org/0000-0003-2561-8539",
+      "h_index": 109,
+      "i10_index": 382,
+      "works_count": 784,
+      "cited_by_count": 50326,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Mathematical Physics -- 9.9",
+      "id": "https://openalex.org/A5032503181",
+      "display_name": "Michael Berry",
+      "orcid": "https://orcid.org/0000-0001-7921-2468",
+      "h_index": 102,
+      "i10_index": 298,
+      "works_count": 676,
+      "cited_by_count": 60676,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Mathematical Physics -- 9.9",
+      "id": "https://openalex.org/A5029411281",
+      "display_name": "Jean Bourgain",
+      "orcid": null,
+      "h_index": 101,
+      "i10_index": 391,
+      "works_count": 573,
+      "cited_by_count": 37157,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Mathematical Physics -- 9.9",
+      "id": "https://openalex.org/A5035928459",
+      "display_name": "Bernard Derrida",
+      "orcid": "https://orcid.org/0000-0001-6994-0226",
+      "h_index": 90,
+      "i10_index": 234,
+      "works_count": 354,
+      "cited_by_count": 28817,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5047748977",
+      "display_name": "Satya N. Majumdar",
+      "orcid": "https://orcid.org/0000-0001-9844-6980",
+      "h_index": 86,
+      "i10_index": 374,
+      "works_count": 509,
+      "cited_by_count": 27383,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5061543340",
+      "display_name": "Peter Grassberger",
+      "orcid": "https://orcid.org/0000-0003-4966-9998",
+      "h_index": 86,
+      "i10_index": 234,
+      "works_count": 380,
+      "cited_by_count": 45481,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5109952461",
+      "display_name": "Benoît B. Mandelbrot",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 211,
+      "works_count": 505,
+      "cited_by_count": 73717,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Economics, Econometrics and Finance",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5072323616",
+      "display_name": "Henry Garrett",
+      "orcid": "https://orcid.org/0000-0002-2840-4213",
+      "h_index": 82,
+      "i10_index": 327,
+      "works_count": 638,
+      "cited_by_count": 21335,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Decision Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5025672328",
+      "display_name": "Herbert E. Spohn",
+      "orcid": "https://orcid.org/0000-0001-9305-1234",
+      "h_index": 81,
+      "i10_index": 241,
+      "works_count": 451,
+      "cited_by_count": 26081,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5110265959",
+      "display_name": "Jürg Martin Fröhlich",
+      "orcid": "https://orcid.org/0000-0002-4388-5166",
+      "h_index": 80,
+      "i10_index": 288,
+      "works_count": 537,
+      "cited_by_count": 24652,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5007101684",
+      "display_name": "Alain Connes",
+      "orcid": "https://orcid.org/0009-0009-1179-3302",
+      "h_index": 79,
+      "i10_index": 205,
+      "works_count": 545,
+      "cited_by_count": 31550,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5003773351",
+      "display_name": "George H. Weiss",
+      "orcid": "https://orcid.org/0000-0002-9524-2795",
+      "h_index": 76,
+      "i10_index": 349,
+      "works_count": 716,
+      "cited_by_count": 29683,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5020836845",
+      "display_name": "Yuval Peres",
+      "orcid": "https://orcid.org/0000-0001-5456-6323",
+      "h_index": 76,
+      "i10_index": 294,
+      "works_count": 718,
+      "cited_by_count": 25127,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5109171815",
+      "display_name": "Gunther A. Uhlmann",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 267,
+      "works_count": 462,
+      "cited_by_count": 21096,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Mathematical Physics -- 9.8",
+      "id": "https://openalex.org/A5007372240",
+      "display_name": "Athanassios S. Fokas",
+      "orcid": "https://orcid.org/0000-0002-5881-802X",
+      "h_index": 76,
+      "i10_index": 264,
+      "works_count": 577,
+      "cited_by_count": 22245,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5011256345",
+      "display_name": "S. Redner",
+      "orcid": "https://orcid.org/0000-0001-5906-4904",
+      "h_index": 76,
+      "i10_index": 256,
+      "works_count": 463,
+      "cited_by_count": 30070,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Economics, Econometrics and Finance",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5038635374",
+      "display_name": "Raphaël Voituriez",
+      "orcid": "https://orcid.org/0000-0001-8746-5713",
+      "h_index": 75,
+      "i10_index": 184,
+      "works_count": 283,
+      "cited_by_count": 20039,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5018556476",
+      "display_name": "David Pierre Ruelle",
+      "orcid": "https://orcid.org/0000-0001-6402-8940",
+      "h_index": 74,
+      "i10_index": 168,
+      "works_count": 419,
+      "cited_by_count": 37575,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5056562596",
+      "display_name": "Erik Christensen",
+      "orcid": "https://orcid.org/0000-0003-1754-0778",
+      "h_index": 72,
+      "i10_index": 176,
+      "works_count": 283,
+      "cited_by_count": 21308,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5112777087",
+      "display_name": "Horng‐Tzer Yau",
+      "orcid": "https://orcid.org/0009-0002-6671-0833",
+      "h_index": 69,
+      "i10_index": 131,
+      "works_count": 224,
+      "cited_by_count": 14444,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5102109904",
+      "display_name": "Tosio Kato",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 127,
+      "works_count": 185,
+      "cited_by_count": 42182,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5027001546",
+      "display_name": "David Evans",
+      "orcid": "https://orcid.org/0000-0001-7988-8943",
+      "h_index": 67,
+      "i10_index": 168,
+      "works_count": 311,
+      "cited_by_count": 33770,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5109937068",
+      "display_name": "Sergio A Albeverio",
+      "orcid": "https://orcid.org/0000-0003-1790-4375",
+      "h_index": 66,
+      "i10_index": 438,
+      "works_count": 1259,
+      "cited_by_count": 21587,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5038662431",
+      "display_name": "Jennifer Chayes",
+      "orcid": "https://orcid.org/0000-0003-4020-8618",
+      "h_index": 66,
+      "i10_index": 154,
+      "works_count": 213,
+      "cited_by_count": 18784,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5007118333",
+      "display_name": "Olivier Bénichou",
+      "orcid": "https://orcid.org/0000-0002-6749-2391",
+      "h_index": 65,
+      "i10_index": 201,
+      "works_count": 306,
+      "cited_by_count": 14723,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Mathematical Physics -- 9.7",
+      "id": "https://openalex.org/A5029447271",
+      "display_name": "Charles M. Newman",
+      "orcid": "https://orcid.org/0000-0002-7182-6999",
+      "h_index": 64,
+      "i10_index": 176,
+      "works_count": 337,
+      "cited_by_count": 13400,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Mathematical Physics -- 9.6",
+      "id": "https://openalex.org/A5036484429",
+      "display_name": "Petr Hájek",
+      "orcid": "https://orcid.org/0000-0001-5579-1215",
+      "h_index": 63,
+      "i10_index": 273,
+      "works_count": 667,
+      "cited_by_count": 20462,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Mathematical Physics -- 9.6",
+      "id": "https://openalex.org/A5032602392",
+      "display_name": "P. L. Krapivsky",
+      "orcid": "https://orcid.org/0000-0003-3470-5095",
+      "h_index": 63,
+      "i10_index": 242,
+      "works_count": 471,
+      "cited_by_count": 17109,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Physics and Astronomy",
+        "Mathematics",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Mathematical Physics -- 9.6",
+      "id": "https://openalex.org/A5083558768",
+      "display_name": "David Aldous",
+      "orcid": "https://orcid.org/0000-0001-7793-2357",
+      "h_index": 63,
+      "i10_index": 138,
+      "works_count": 291,
+      "cited_by_count": 18964,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Mathematical Physics -- 9.6",
+      "id": "https://openalex.org/A5046873353",
+      "display_name": "Peter D. Lax",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 134,
+      "works_count": 307,
+      "cited_by_count": 33927,
+      "discipline": "Mathematical Physics",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Mathematical Physics",
+      "fields": [
+        "Mathematics",
+        "Engineering"
+      ]
+    }
+  ]
+}
