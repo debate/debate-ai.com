@@ -1,0 +1,4119 @@
+{
+  "kind": "subfield",
+  "id": 2211,
+  "name": "Mechanics of Materials",
+  "total_in_scrape": 219,
+  "count": 219,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Mechanics of Materials -- 9.9",
+      "id": "https://openalex.org/A5034751387",
+      "display_name": "Robert O. Ritchie",
+      "orcid": "https://orcid.org/0000-0002-0501-6998",
+      "h_index": 159,
+      "i10_index": 680,
+      "works_count": 1111,
+      "cited_by_count": 113039,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Mechanics of Materials -- 9.9",
+      "id": "https://openalex.org/A5054582963",
+      "display_name": "Anthony Glyn Evans",
+      "orcid": "https://orcid.org/0000-0001-8547-1730",
+      "h_index": 153,
+      "i10_index": 550,
+      "works_count": 776,
+      "cited_by_count": 90033,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Mechanics of Materials -- 9.9",
+      "id": "https://openalex.org/A5038579615",
+      "display_name": "John Woodside Hutchinson",
+      "orcid": "https://orcid.org/0000-0001-6435-3612",
+      "h_index": 145,
+      "i10_index": 352,
+      "works_count": 464,
+      "cited_by_count": 89690,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Mechanics of Materials -- 9.9",
+      "id": "https://openalex.org/A5065190539",
+      "display_name": "Timon Rabczuk",
+      "orcid": "https://orcid.org/0000-0002-7150-296X",
+      "h_index": 143,
+      "i10_index": 727,
+      "works_count": 1129,
+      "cited_by_count": 75464,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Mechanics of Materials -- 9.9",
+      "id": "https://openalex.org/A5100778674",
+      "display_name": "Bharat Bhushan",
+      "orcid": "https://orcid.org/0000-0001-7161-6601",
+      "h_index": 142,
+      "i10_index": 878,
+      "works_count": 1736,
+      "cited_by_count": 90930,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Mechanics of Materials -- 9.9",
+      "id": "https://openalex.org/A5001073146",
+      "display_name": "Huajian Gao",
+      "orcid": "https://orcid.org/0000-0002-8656-846X",
+      "h_index": 140,
+      "i10_index": 622,
+      "works_count": 976,
+      "cited_by_count": 82633,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5076604032",
+      "display_name": "Mathias Fink",
+      "orcid": "https://orcid.org/0000-0002-8494-7562",
+      "h_index": 130,
+      "i10_index": 463,
+      "works_count": 1173,
+      "cited_by_count": 72344,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5086073947",
+      "display_name": "Lars Hultman",
+      "orcid": "https://orcid.org/0000-0002-2837-3656",
+      "h_index": 125,
+      "i10_index": 755,
+      "works_count": 1035,
+      "cited_by_count": 94561,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5072693495",
+      "display_name": "Yiu‐Wing Mai",
+      "orcid": "https://orcid.org/0000-0002-9141-2793",
+      "h_index": 124,
+      "i10_index": 785,
+      "works_count": 1393,
+      "cited_by_count": 68405,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5107993005",
+      "display_name": "S. Suresh",
+      "orcid": "https://orcid.org/0000-0002-6223-6831",
+      "h_index": 123,
+      "i10_index": 303,
+      "works_count": 444,
+      "cited_by_count": 68435,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5111409797",
+      "display_name": "Zdeněk P. Bažant",
+      "orcid": "https://orcid.org/0000-0003-0319-1300",
+      "h_index": 122,
+      "i10_index": 503,
+      "works_count": 876,
+      "cited_by_count": 60062,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5053596832",
+      "display_name": "Junuthula Narasimha Reddy",
+      "orcid": "https://orcid.org/0000-0002-9739-1639",
+      "h_index": 118,
+      "i10_index": 661,
+      "works_count": 1143,
+      "cited_by_count": 79592,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5090005412",
+      "display_name": "Kim Meow Liew",
+      "orcid": "https://orcid.org/0000-0001-7160-7676",
+      "h_index": 115,
+      "i10_index": 785,
+      "works_count": 1038,
+      "cited_by_count": 54672,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5056618699",
+      "display_name": "Marc André Meyers",
+      "orcid": "https://orcid.org/0000-0003-1698-5396",
+      "h_index": 114,
+      "i10_index": 377,
+      "works_count": 653,
+      "cited_by_count": 59151,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5012093892",
+      "display_name": "James Robert Rice",
+      "orcid": "https://orcid.org/0000-0001-6151-4310",
+      "h_index": 113,
+      "i10_index": 276,
+      "works_count": 483,
+      "cited_by_count": 87765,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5067906717",
+      "display_name": "Norman Andrew Fleck",
+      "orcid": "https://orcid.org/0000-0003-0224-1804",
+      "h_index": 111,
+      "i10_index": 383,
+      "works_count": 586,
+      "cited_by_count": 55497,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Mechanics of Materials -- 9.8",
+      "id": "https://openalex.org/A5053961001",
+      "display_name": "Pathegama Gamage Ranjith",
+      "orcid": "https://orcid.org/0000-0003-0094-7141",
+      "h_index": 108,
+      "i10_index": 536,
+      "works_count": 820,
+      "cited_by_count": 39538,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5078303945",
+      "display_name": "Philip John Withers",
+      "orcid": "https://orcid.org/0000-0002-1946-5647",
+      "h_index": 106,
+      "i10_index": 599,
+      "works_count": 1212,
+      "cited_by_count": 53661,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5010175348",
+      "display_name": "Abdelouahed Encadreur Tounsi",
+      "orcid": "https://orcid.org/0000-0002-5601-3228",
+      "h_index": 104,
+      "i10_index": 453,
+      "works_count": 739,
+      "cited_by_count": 33115,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5014509470",
+      "display_name": "Wing Kam Liu",
+      "orcid": "https://orcid.org/0000-0001-7725-8438",
+      "h_index": 104,
+      "i10_index": 325,
+      "works_count": 498,
+      "cited_by_count": 42791,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5081032697",
+      "display_name": "Brian R. Lawn",
+      "orcid": "https://orcid.org/0000-0002-2978-9514",
+      "h_index": 99,
+      "i10_index": 294,
+      "works_count": 376,
+      "cited_by_count": 48009,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5062162459",
+      "display_name": "Stanislav N. Gorb",
+      "orcid": "https://orcid.org/0000-0001-9712-7953",
+      "h_index": 98,
+      "i10_index": 696,
+      "works_count": 1229,
+      "cited_by_count": 41295,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5111030071",
+      "display_name": "David Hui",
+      "orcid": null,
+      "h_index": 98,
+      "i10_index": 411,
+      "works_count": 591,
+      "cited_by_count": 55153,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5042679368",
+      "display_name": "B. N. J. Persson",
+      "orcid": "https://orcid.org/0000-0003-1535-738X",
+      "h_index": 98,
+      "i10_index": 372,
+      "works_count": 583,
+      "cited_by_count": 37222,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5026245403",
+      "display_name": "Alan Needleman",
+      "orcid": "https://orcid.org/0000-0002-4697-4535",
+      "h_index": 98,
+      "i10_index": 277,
+      "works_count": 462,
+      "cited_by_count": 49490,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5040577889",
+      "display_name": "Sritawat Kitipornchai",
+      "orcid": "https://orcid.org/0000-0003-1782-3380",
+      "h_index": 97,
+      "i10_index": 381,
+      "works_count": 607,
+      "cited_by_count": 32490,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5077269879",
+      "display_name": "Jie Yang",
+      "orcid": "https://orcid.org/0000-0001-9147-1489",
+      "h_index": 97,
+      "i10_index": 339,
+      "works_count": 498,
+      "cited_by_count": 31438,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Mechanics of Materials -- 9.7",
+      "id": "https://openalex.org/A5035872999",
+      "display_name": "Gláucio H. Paulino",
+      "orcid": "https://orcid.org/0000-0002-3493-6857",
+      "h_index": 96,
+      "i10_index": 338,
+      "works_count": 662,
+      "cited_by_count": 30755,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5041025620",
+      "display_name": "Erasmo Carrera",
+      "orcid": "https://orcid.org/0000-0002-6911-7763",
+      "h_index": 95,
+      "i10_index": 578,
+      "works_count": 1308,
+      "cited_by_count": 38769,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5100737313",
+      "display_name": "Chunhui Wang",
+      "orcid": "https://orcid.org/0000-0001-6081-1487",
+      "h_index": 94,
+      "i10_index": 510,
+      "works_count": 889,
+      "cited_by_count": 34609,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5054661641",
+      "display_name": "M. Ortíz",
+      "orcid": "https://orcid.org/0000-0001-5877-4824",
+      "h_index": 94,
+      "i10_index": 320,
+      "works_count": 519,
+      "cited_by_count": 39230,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5000363931",
+      "display_name": "Klaus M. Friedrich",
+      "orcid": "https://orcid.org/0000-0001-9236-8694",
+      "h_index": 93,
+      "i10_index": 425,
+      "works_count": 726,
+      "cited_by_count": 32782,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5044108997",
+      "display_name": "Tsu−Wei Chou",
+      "orcid": "https://orcid.org/0000-0001-5307-1636",
+      "h_index": 93,
+      "i10_index": 295,
+      "works_count": 511,
+      "cited_by_count": 42883,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5069067424",
+      "display_name": "Xiaoying Zhuang",
+      "orcid": "https://orcid.org/0000-0001-6562-2618",
+      "h_index": 92,
+      "i10_index": 340,
+      "works_count": 593,
+      "cited_by_count": 31654,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5063094061",
+      "display_name": "Ignace Verpoest",
+      "orcid": "https://orcid.org/0000-0003-3875-0803",
+      "h_index": 92,
+      "i10_index": 333,
+      "works_count": 1003,
+      "cited_by_count": 32700,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5065847609",
+      "display_name": "Anthony James Kinloch",
+      "orcid": "https://orcid.org/0000-0002-8752-7184",
+      "h_index": 92,
+      "i10_index": 299,
+      "works_count": 492,
+      "cited_by_count": 30404,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5100391270",
+      "display_name": "Lin Ye",
+      "orcid": "https://orcid.org/0000-0003-0062-6436",
+      "h_index": 91,
+      "i10_index": 529,
+      "works_count": 988,
+      "cited_by_count": 34912,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5019095208",
+      "display_name": "Suresh G. Advani",
+      "orcid": "https://orcid.org/0000-0002-2670-903X",
+      "h_index": 91,
+      "i10_index": 369,
+      "works_count": 690,
+      "cited_by_count": 27710,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Mechanics of Materials -- 9.6",
+      "id": "https://openalex.org/A5081654131",
+      "display_name": "Guowei Ma",
+      "orcid": "https://orcid.org/0000-0002-8983-783X",
+      "h_index": 90,
+      "i10_index": 400,
+      "works_count": 607,
+      "cited_by_count": 29123,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5068957187",
+      "display_name": "Javier LLorca",
+      "orcid": "https://orcid.org/0000-0002-3122-7879",
+      "h_index": 90,
+      "i10_index": 298,
+      "works_count": 448,
+      "cited_by_count": 23806,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5080330988",
+      "display_name": "Hung Nguyen‐Xuan",
+      "orcid": "https://orcid.org/0000-0002-1746-8297",
+      "h_index": 90,
+      "i10_index": 297,
+      "works_count": 398,
+      "cited_by_count": 25408,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5100398385",
+      "display_name": "Jian Wei Zhao",
+      "orcid": "https://orcid.org/0000-0001-9303-6528",
+      "h_index": 90,
+      "i10_index": 277,
+      "works_count": 443,
+      "cited_by_count": 26866,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5100679257",
+      "display_name": "Lucas F. M. da Silva",
+      "orcid": "https://orcid.org/0000-0003-3272-4591",
+      "h_index": 89,
+      "i10_index": 445,
+      "works_count": 882,
+      "cited_by_count": 32047,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5011252592",
+      "display_name": "Ömer Cívalek",
+      "orcid": "https://orcid.org/0000-0003-1907-9479",
+      "h_index": 88,
+      "i10_index": 270,
+      "works_count": 415,
+      "cited_by_count": 19119,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5042307268",
+      "display_name": "Filippo Berto",
+      "orcid": "https://orcid.org/0000-0001-9676-9970",
+      "h_index": 87,
+      "i10_index": 596,
+      "works_count": 1046,
+      "cited_by_count": 35597,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5064055337",
+      "display_name": "V.S. Deshpande",
+      "orcid": "https://orcid.org/0000-0003-3899-3573",
+      "h_index": 87,
+      "i10_index": 278,
+      "works_count": 439,
+      "cited_by_count": 28598,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5014023359",
+      "display_name": "George M. Pharr",
+      "orcid": "https://orcid.org/0000-0002-6634-8320",
+      "h_index": 87,
+      "i10_index": 244,
+      "works_count": 373,
+      "cited_by_count": 75124,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5038668071",
+      "display_name": "Magd M. Abdel Wahab",
+      "orcid": "https://orcid.org/0000-0002-3610-865X",
+      "h_index": 86,
+      "i10_index": 384,
+      "works_count": 814,
+      "cited_by_count": 24094,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5100783980",
+      "display_name": "Ning Hu",
+      "orcid": "https://orcid.org/0000-0002-6444-8467",
+      "h_index": 85,
+      "i10_index": 546,
+      "works_count": 995,
+      "cited_by_count": 31944,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5100638120",
+      "display_name": "Xia‐Ting Feng",
+      "orcid": "https://orcid.org/0000-0002-9395-9629",
+      "h_index": 85,
+      "i10_index": 335,
+      "works_count": 510,
+      "cited_by_count": 22237,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Mechanics of Materials -- 9.5",
+      "id": "https://openalex.org/A5083348656",
+      "display_name": "Eduard Arzt",
+      "orcid": "https://orcid.org/0000-0002-0834-4540",
+      "h_index": 85,
+      "i10_index": 278,
+      "works_count": 533,
+      "cited_by_count": 30164,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5089573819",
+      "display_name": "René de Borst",
+      "orcid": "https://orcid.org/0000-0002-3457-3574",
+      "h_index": 85,
+      "i10_index": 266,
+      "works_count": 661,
+      "cited_by_count": 29368,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5113712383",
+      "display_name": "William T. Butler",
+      "orcid": "https://orcid.org/0000-0003-3366-587X",
+      "h_index": 85,
+      "i10_index": 254,
+      "works_count": 636,
+      "cited_by_count": 22170,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Earth and Planetary Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5100450678",
+      "display_name": "Qingyuan Wang",
+      "orcid": "https://orcid.org/0000-0002-3439-287X",
+      "h_index": 84,
+      "i10_index": 650,
+      "works_count": 1223,
+      "cited_by_count": 31217,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5062400121",
+      "display_name": "Chun’an Tang",
+      "orcid": "https://orcid.org/0000-0001-8284-0211",
+      "h_index": 84,
+      "i10_index": 328,
+      "works_count": 667,
+      "cited_by_count": 22799,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5066019368",
+      "display_name": "Robert M. McMeeking",
+      "orcid": "https://orcid.org/0000-0001-6369-7528",
+      "h_index": 84,
+      "i10_index": 268,
+      "works_count": 443,
+      "cited_by_count": 27271,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5113464035",
+      "display_name": "Morton E. Gurtin",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 216,
+      "works_count": 529,
+      "cited_by_count": 37051,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5068242915",
+      "display_name": "Majid Reza Ayatollahi",
+      "orcid": "https://orcid.org/0000-0001-9840-6225",
+      "h_index": 83,
+      "i10_index": 342,
+      "works_count": 545,
+      "cited_by_count": 22399,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5057263022",
+      "display_name": "M.G.D. Geers",
+      "orcid": "https://orcid.org/0000-0002-0009-6351",
+      "h_index": 83,
+      "i10_index": 323,
+      "works_count": 623,
+      "cited_by_count": 25500,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5004928216",
+      "display_name": "Heping Xie",
+      "orcid": "https://orcid.org/0000-0002-1686-7827",
+      "h_index": 81,
+      "i10_index": 384,
+      "works_count": 654,
+      "cited_by_count": 25180,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5022533999",
+      "display_name": "Stepan Vladimirovitch Lomov",
+      "orcid": "https://orcid.org/0000-0002-8194-4913",
+      "h_index": 81,
+      "i10_index": 344,
+      "works_count": 947,
+      "cited_by_count": 25023,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Mechanics of Materials -- 9.4",
+      "id": "https://openalex.org/A5053998535",
+      "display_name": "Trung Nguyen-Thoi",
+      "orcid": "https://orcid.org/0000-0001-7985-6706",
+      "h_index": 81,
+      "i10_index": 321,
+      "works_count": 423,
+      "cited_by_count": 23717,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5100618132",
+      "display_name": "A.J.M. Ferreira",
+      "orcid": "https://orcid.org/0000-0003-4043-9838",
+      "h_index": 81,
+      "i10_index": 245,
+      "works_count": 415,
+      "cited_by_count": 19347,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5063021019",
+      "display_name": "Reza Ansari",
+      "orcid": "https://orcid.org/0000-0002-6810-6624",
+      "h_index": 80,
+      "i10_index": 642,
+      "works_count": 1003,
+      "cited_by_count": 29203,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5046816795",
+      "display_name": "David Robert McKenzie",
+      "orcid": "https://orcid.org/0000-0002-2476-1301",
+      "h_index": 80,
+      "i10_index": 490,
+      "works_count": 821,
+      "cited_by_count": 28824,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5074817623",
+      "display_name": "François Hild",
+      "orcid": "https://orcid.org/0000-0001-5553-0066",
+      "h_index": 80,
+      "i10_index": 343,
+      "works_count": 891,
+      "cited_by_count": 26014,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5034481707",
+      "display_name": "Jonny Rutqvist",
+      "orcid": "https://orcid.org/0000-0002-7949-9785",
+      "h_index": 80,
+      "i10_index": 279,
+      "works_count": 691,
+      "cited_by_count": 25538,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5079166790",
+      "display_name": "Haydn N. G. Wadley",
+      "orcid": "https://orcid.org/0000-0001-8449-9547",
+      "h_index": 80,
+      "i10_index": 271,
+      "works_count": 421,
+      "cited_by_count": 26644,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5078407077",
+      "display_name": "Horacio Dante Espinosa",
+      "orcid": "https://orcid.org/0000-0002-1907-3213",
+      "h_index": 80,
+      "i10_index": 224,
+      "works_count": 395,
+      "cited_by_count": 22764,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5050570353",
+      "display_name": "Pedro Ponces Camanho",
+      "orcid": "https://orcid.org/0000-0003-0363-5207",
+      "h_index": 80,
+      "i10_index": 192,
+      "works_count": 315,
+      "cited_by_count": 27757,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5102907941",
+      "display_name": "Chunhe Yang",
+      "orcid": "https://orcid.org/0000-0003-0619-0944",
+      "h_index": 79,
+      "i10_index": 351,
+      "works_count": 551,
+      "cited_by_count": 23891,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5037331514",
+      "display_name": "Gui Yun Tian",
+      "orcid": "https://orcid.org/0000-0002-7563-1523",
+      "h_index": 79,
+      "i10_index": 332,
+      "works_count": 562,
+      "cited_by_count": 21332,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Mechanics of Materials -- 9.3",
+      "id": "https://openalex.org/A5052643218",
+      "display_name": "Sheldon Lee Semiatin",
+      "orcid": "https://orcid.org/0000-0002-8519-3950",
+      "h_index": 79,
+      "i10_index": 318,
+      "works_count": 499,
+      "cited_by_count": 26363,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5010177657",
+      "display_name": "Ivan Petrov",
+      "orcid": "https://orcid.org/0000-0002-2955-4897",
+      "h_index": 79,
+      "i10_index": 269,
+      "works_count": 400,
+      "cited_by_count": 25386,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5077752517",
+      "display_name": "Sia Nemat‐Nasser",
+      "orcid": "https://orcid.org/0000-0002-7368-1770",
+      "h_index": 79,
+      "i10_index": 231,
+      "works_count": 426,
+      "cited_by_count": 32996,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5014708850",
+      "display_name": "M.R.M. Aliha",
+      "orcid": "https://orcid.org/0000-0001-9451-0949",
+      "h_index": 79,
+      "i10_index": 217,
+      "works_count": 296,
+      "cited_by_count": 17147,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5087472133",
+      "display_name": "R.C. Batra",
+      "orcid": "https://orcid.org/0000-0002-7191-2547",
+      "h_index": 78,
+      "i10_index": 354,
+      "works_count": 614,
+      "cited_by_count": 21633,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5031737309",
+      "display_name": "Quan Wang",
+      "orcid": "https://orcid.org/0000-0002-9808-5035",
+      "h_index": 78,
+      "i10_index": 294,
+      "works_count": 560,
+      "cited_by_count": 23748,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5022052579",
+      "display_name": "Hui‐Shen Shen",
+      "orcid": "https://orcid.org/0000-0002-5240-9284",
+      "h_index": 78,
+      "i10_index": 294,
+      "works_count": 352,
+      "cited_by_count": 22545,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5033981216",
+      "display_name": "Kaliat T. Ramesh",
+      "orcid": "https://orcid.org/0000-0003-2659-4698",
+      "h_index": 78,
+      "i10_index": 284,
+      "works_count": 515,
+      "cited_by_count": 22089,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5039485468",
+      "display_name": "P. Cawley",
+      "orcid": "https://orcid.org/0000-0002-1768-5304",
+      "h_index": 78,
+      "i10_index": 245,
+      "works_count": 460,
+      "cited_by_count": 25978,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5055353787",
+      "display_name": "Paul Steinmann",
+      "orcid": "https://orcid.org/0000-0003-1490-947X",
+      "h_index": 77,
+      "i10_index": 430,
+      "works_count": 967,
+      "cited_by_count": 24462,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5040781254",
+      "display_name": "Shanyong Wang",
+      "orcid": "https://orcid.org/0000-0002-0017-1745",
+      "h_index": 77,
+      "i10_index": 295,
+      "works_count": 433,
+      "cited_by_count": 23465,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Mechanics of Materials -- 9.2",
+      "id": "https://openalex.org/A5030892675",
+      "display_name": "Xibing Li",
+      "orcid": "https://orcid.org/0000-0003-4856-9629",
+      "h_index": 77,
+      "i10_index": 283,
+      "works_count": 439,
+      "cited_by_count": 18919,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5042916010",
+      "display_name": "J. Weertman",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 240,
+      "works_count": 389,
+      "cited_by_count": 24644,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5006621471",
+      "display_name": "Francesco Tornabene",
+      "orcid": "https://orcid.org/0000-0002-5968-3382",
+      "h_index": 77,
+      "i10_index": 236,
+      "works_count": 374,
+      "cited_by_count": 17298,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5090428322",
+      "display_name": "Francesco dell’Isola",
+      "orcid": "https://orcid.org/0000-0002-3607-1113",
+      "h_index": 77,
+      "i10_index": 217,
+      "works_count": 437,
+      "cited_by_count": 17406,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5100329996",
+      "display_name": "Xi Chen",
+      "orcid": "https://orcid.org/0000-0002-8911-4172",
+      "h_index": 76,
+      "i10_index": 349,
+      "works_count": 558,
+      "cited_by_count": 22400,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5001677654",
+      "display_name": "Christian Mitterer",
+      "orcid": "https://orcid.org/0000-0002-7768-7926",
+      "h_index": 76,
+      "i10_index": 340,
+      "works_count": 501,
+      "cited_by_count": 21511,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5082946410",
+      "display_name": "John W. Gillespie",
+      "orcid": "https://orcid.org/0000-0003-4385-034X",
+      "h_index": 76,
+      "i10_index": 290,
+      "works_count": 461,
+      "cited_by_count": 19927,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5016676861",
+      "display_name": "Feng Dai",
+      "orcid": "https://orcid.org/0000-0003-3510-4734",
+      "h_index": 76,
+      "i10_index": 179,
+      "works_count": 252,
+      "cited_by_count": 15400,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5022125318",
+      "display_name": "Mark O. Robbins",
+      "orcid": "https://orcid.org/0000-0001-7160-3608",
+      "h_index": 76,
+      "i10_index": 170,
+      "works_count": 331,
+      "cited_by_count": 19704,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5081623412",
+      "display_name": "Johann Michler",
+      "orcid": "https://orcid.org/0000-0001-8860-4068",
+      "h_index": 75,
+      "i10_index": 422,
+      "works_count": 875,
+      "cited_by_count": 21141,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5100708407",
+      "display_name": "Kwang Ho Kim",
+      "orcid": "https://orcid.org/0000-0001-7401-717X",
+      "h_index": 75,
+      "i10_index": 414,
+      "works_count": 819,
+      "cited_by_count": 22414,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Mechanics of Materials -- 9.1",
+      "id": "https://openalex.org/A5052993744",
+      "display_name": "P.H. Mayrhofer",
+      "orcid": "https://orcid.org/0000-0001-7328-9333",
+      "h_index": 75,
+      "i10_index": 301,
+      "works_count": 447,
+      "cited_by_count": 20477,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Mechanics of Materials -- 9.0",
+      "id": "https://openalex.org/A5046070465",
+      "display_name": "M.F. Horstemeyer",
+      "orcid": "https://orcid.org/0000-0003-4230-0063",
+      "h_index": 75,
+      "i10_index": 280,
+      "works_count": 573,
+      "cited_by_count": 19576,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Mechanics of Materials -- 9.0",
+      "id": "https://openalex.org/A5065881892",
+      "display_name": "Mergen H. Ghayesh",
+      "orcid": "https://orcid.org/0000-0003-4883-0786",
+      "h_index": 75,
+      "i10_index": 270,
+      "works_count": 344,
+      "cited_by_count": 16195,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Mechanics of Materials -- 9.0",
+      "id": "https://openalex.org/A5067947879",
+      "display_name": "Peter Davies",
+      "orcid": "https://orcid.org/0000-0002-0884-748X",
+      "h_index": 75,
+      "i10_index": 259,
+      "works_count": 510,
+      "cited_by_count": 17422,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Mechanics of Materials -- 9.0",
+      "id": "https://openalex.org/A5100649005",
+      "display_name": "Jian Zhou",
+      "orcid": "https://orcid.org/0000-0003-4769-4487",
+      "h_index": 75,
+      "i10_index": 245,
+      "works_count": 348,
+      "cited_by_count": 18251,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Mechanics of Materials -- 9.0",
+      "id": "https://openalex.org/A5031816767",
+      "display_name": "Viggo Tvergaard",
+      "orcid": "https://orcid.org/0000-0001-5579-1178",
+      "h_index": 75,
+      "i10_index": 226,
+      "works_count": 368,
+      "cited_by_count": 30447,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5016621767",
+      "display_name": "Andrey A. Voevodin",
+      "orcid": "https://orcid.org/0000-0002-7078-1274",
+      "h_index": 75,
+      "i10_index": 220,
+      "works_count": 348,
+      "cited_by_count": 16612,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5068340018",
+      "display_name": "Karl Schulte",
+      "orcid": "https://orcid.org/0000-0001-6521-0488",
+      "h_index": 75,
+      "i10_index": 216,
+      "works_count": 395,
+      "cited_by_count": 27718,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5045553984",
+      "display_name": "Ibrahim Atiatallah Abbas",
+      "orcid": "https://orcid.org/0000-0001-9595-439X",
+      "h_index": 75,
+      "i10_index": 175,
+      "works_count": 344,
+      "cited_by_count": 11320,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5090578339",
+      "display_name": "Hiroshi Nakamura",
+      "orcid": "https://orcid.org/0009-0005-6505-1903",
+      "h_index": 74,
+      "i10_index": 520,
+      "works_count": 1986,
+      "cited_by_count": 24426,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Computer Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5100337614",
+      "display_name": "C.M. Wang",
+      "orcid": "https://orcid.org/0000-0002-7604-1744",
+      "h_index": 74,
+      "i10_index": 372,
+      "works_count": 724,
+      "cited_by_count": 23878,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5043109211",
+      "display_name": "Constantinos Soutis",
+      "orcid": "https://orcid.org/0000-0002-1402-9838",
+      "h_index": 74,
+      "i10_index": 285,
+      "works_count": 617,
+      "cited_by_count": 24815,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5052719044",
+      "display_name": "David Arthur Hutchins",
+      "orcid": "https://orcid.org/0000-0002-6637-756X",
+      "h_index": 74,
+      "i10_index": 270,
+      "works_count": 647,
+      "cited_by_count": 22844,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5032208095",
+      "display_name": "Trevor William Clyne",
+      "orcid": "https://orcid.org/0000-0003-2163-1840",
+      "h_index": 74,
+      "i10_index": 238,
+      "works_count": 445,
+      "cited_by_count": 24216,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5058214282",
+      "display_name": "J. Gordon Williams",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 220,
+      "works_count": 340,
+      "cited_by_count": 17765,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5037969331",
+      "display_name": "D. Tabor",
+      "orcid": "https://orcid.org/0000-0002-3325-6147",
+      "h_index": 74,
+      "i10_index": 170,
+      "works_count": 350,
+      "cited_by_count": 25894,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5070983714",
+      "display_name": "Weiqiu Chen",
+      "orcid": "https://orcid.org/0000-0003-0655-3303",
+      "h_index": 73,
+      "i10_index": 465,
+      "works_count": 773,
+      "cited_by_count": 22967,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Mechanics of Materials -- 8.9",
+      "id": "https://openalex.org/A5049840465",
+      "display_name": "Butrus T. Khuri-Yakub",
+      "orcid": "https://orcid.org/0000-0003-3940-7898",
+      "h_index": 73,
+      "i10_index": 345,
+      "works_count": 723,
+      "cited_by_count": 22384,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5081586995",
+      "display_name": "W.J. Cantwell",
+      "orcid": "https://orcid.org/0000-0002-9824-5086",
+      "h_index": 73,
+      "i10_index": 305,
+      "works_count": 538,
+      "cited_by_count": 21053,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5009476002",
+      "display_name": "Chung‐Yuen Hui",
+      "orcid": "https://orcid.org/0000-0001-7270-6000",
+      "h_index": 73,
+      "i10_index": 272,
+      "works_count": 395,
+      "cited_by_count": 18366,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5065203509",
+      "display_name": "Reinhold Horst Dauskardt",
+      "orcid": "https://orcid.org/0000-0003-3989-362X",
+      "h_index": 73,
+      "i10_index": 269,
+      "works_count": 531,
+      "cited_by_count": 23580,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5061056763",
+      "display_name": "Samuel Forest",
+      "orcid": "https://orcid.org/0000-0002-8869-3942",
+      "h_index": 73,
+      "i10_index": 240,
+      "works_count": 496,
+      "cited_by_count": 19063,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5083549438",
+      "display_name": "Sheng‐Qi Yang",
+      "orcid": "https://orcid.org/0000-0003-1493-6136",
+      "h_index": 73,
+      "i10_index": 238,
+      "works_count": 352,
+      "cited_by_count": 17212,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5101473589",
+      "display_name": "Shun‐Peng Zhu",
+      "orcid": "https://orcid.org/0000-0003-2193-6484",
+      "h_index": 73,
+      "i10_index": 188,
+      "works_count": 335,
+      "cited_by_count": 16945,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5074802884",
+      "display_name": "Robert W. Zimmerman",
+      "orcid": "https://orcid.org/0000-0001-6674-3403",
+      "h_index": 73,
+      "i10_index": 162,
+      "works_count": 325,
+      "cited_by_count": 18629,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5101476801",
+      "display_name": "Yue‐Sheng Wang",
+      "orcid": "https://orcid.org/0000-0002-0043-8411",
+      "h_index": 72,
+      "i10_index": 375,
+      "works_count": 558,
+      "cited_by_count": 20314,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5015084709",
+      "display_name": "Alberto Carpinteri",
+      "orcid": "https://orcid.org/0000-0002-5367-6560",
+      "h_index": 72,
+      "i10_index": 368,
+      "works_count": 1044,
+      "cited_by_count": 20777,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5061970875",
+      "display_name": "Sam S. Y. Zhang",
+      "orcid": "https://orcid.org/0000-0002-0716-1910",
+      "h_index": 72,
+      "i10_index": 319,
+      "works_count": 513,
+      "cited_by_count": 19418,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5057810104",
+      "display_name": "Thomas Pardoen",
+      "orcid": "https://orcid.org/0000-0003-0569-9466",
+      "h_index": 72,
+      "i10_index": 233,
+      "works_count": 950,
+      "cited_by_count": 19407,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5007802191",
+      "display_name": "Joost J. Vlassak",
+      "orcid": "https://orcid.org/0000-0002-2166-6288",
+      "h_index": 72,
+      "i10_index": 169,
+      "works_count": 239,
+      "cited_by_count": 28234,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5100385733",
+      "display_name": "Xu Chen",
+      "orcid": "https://orcid.org/0000-0002-7754-9814",
+      "h_index": 71,
+      "i10_index": 486,
+      "works_count": 955,
+      "cited_by_count": 21800,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5065667677",
+      "display_name": "Qing‐Hua Qin",
+      "orcid": "https://orcid.org/0000-0003-0948-784X",
+      "h_index": 71,
+      "i10_index": 446,
+      "works_count": 863,
+      "cited_by_count": 21031,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5003831477",
+      "display_name": "J.F. Shao",
+      "orcid": "https://orcid.org/0000-0002-6632-8207",
+      "h_index": 71,
+      "i10_index": 331,
+      "works_count": 668,
+      "cited_by_count": 18187,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5031947253",
+      "display_name": "Tinh Quoc Bui",
+      "orcid": "https://orcid.org/0000-0002-6426-6639",
+      "h_index": 71,
+      "i10_index": 277,
+      "works_count": 399,
+      "cited_by_count": 15568,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5077582927",
+      "display_name": "David Martin Taylor",
+      "orcid": "https://orcid.org/0000-0002-5470-2062",
+      "h_index": 71,
+      "i10_index": 249,
+      "works_count": 455,
+      "cited_by_count": 18296,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5078281205",
+      "display_name": "Elias C. Aifantis",
+      "orcid": "https://orcid.org/0000-0002-6846-5686",
+      "h_index": 71,
+      "i10_index": 233,
+      "works_count": 505,
+      "cited_by_count": 22006,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5052995559",
+      "display_name": "W. Gregory Sawyer",
+      "orcid": "https://orcid.org/0000-0002-4461-7227",
+      "h_index": 71,
+      "i10_index": 196,
+      "works_count": 337,
+      "cited_by_count": 17863,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5024908876",
+      "display_name": "Ian Ashcroft",
+      "orcid": "https://orcid.org/0000-0002-5118-1804",
+      "h_index": 71,
+      "i10_index": 179,
+      "works_count": 279,
+      "cited_by_count": 22755,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5030932559",
+      "display_name": "A. Cemal Eringen",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 164,
+      "works_count": 286,
+      "cited_by_count": 36756,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Mechanics of Materials -- 8.8",
+      "id": "https://openalex.org/A5039607588",
+      "display_name": "F. Erdoğan",
+      "orcid": "https://orcid.org/0000-0001-9871-6784",
+      "h_index": 71,
+      "i10_index": 155,
+      "works_count": 258,
+      "cited_by_count": 32902,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5081075067",
+      "display_name": "George Z. Voyiadjis",
+      "orcid": "https://orcid.org/0000-0002-7965-6592",
+      "h_index": 70,
+      "i10_index": 347,
+      "works_count": 790,
+      "cited_by_count": 18580,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5013824559",
+      "display_name": "Janos Lajos Urai",
+      "orcid": "https://orcid.org/0000-0001-5299-6979",
+      "h_index": 70,
+      "i10_index": 203,
+      "works_count": 822,
+      "cited_by_count": 16191,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5072534604",
+      "display_name": "Patrick Baud",
+      "orcid": "https://orcid.org/0000-0002-4728-7649",
+      "h_index": 70,
+      "i10_index": 131,
+      "works_count": 384,
+      "cited_by_count": 14841,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5071617350",
+      "display_name": "Ashraf M. Zenkour",
+      "orcid": "https://orcid.org/0000-0002-0883-8073",
+      "h_index": 69,
+      "i10_index": 346,
+      "works_count": 497,
+      "cited_by_count": 18171,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5022882528",
+      "display_name": "K.Y. Lam",
+      "orcid": "https://orcid.org/0000-0002-9055-4706",
+      "h_index": 69,
+      "i10_index": 270,
+      "works_count": 378,
+      "cited_by_count": 17678,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5046407211",
+      "display_name": "Saeid Sahmani",
+      "orcid": "https://orcid.org/0000-0003-4129-4554",
+      "h_index": 69,
+      "i10_index": 230,
+      "works_count": 315,
+      "cited_by_count": 13242,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5101903411",
+      "display_name": "Jianmin Qu",
+      "orcid": "https://orcid.org/0000-0003-0242-1055",
+      "h_index": 69,
+      "i10_index": 218,
+      "works_count": 480,
+      "cited_by_count": 15755,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5086471469",
+      "display_name": "Laura De Lorenzis",
+      "orcid": "https://orcid.org/0000-0003-2748-3287",
+      "h_index": 69,
+      "i10_index": 177,
+      "works_count": 396,
+      "cited_by_count": 18796,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5015681053",
+      "display_name": "Marín Marín",
+      "orcid": "https://orcid.org/0000-0003-1552-3763",
+      "h_index": 69,
+      "i10_index": 174,
+      "works_count": 450,
+      "cited_by_count": 11225,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5072125670",
+      "display_name": "Paul Allan Johnson",
+      "orcid": "https://orcid.org/0000-0002-0927-4003",
+      "h_index": 69,
+      "i10_index": 168,
+      "works_count": 467,
+      "cited_by_count": 16623,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5033752949",
+      "display_name": "Ali Fatemi",
+      "orcid": "https://orcid.org/0000-0002-0468-0870",
+      "h_index": 69,
+      "i10_index": 164,
+      "works_count": 221,
+      "cited_by_count": 19153,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5000488615",
+      "display_name": "Huu‐Tai Thai",
+      "orcid": "https://orcid.org/0000-0002-4461-9548",
+      "h_index": 69,
+      "i10_index": 155,
+      "works_count": 215,
+      "cited_by_count": 16331,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5002459119",
+      "display_name": "P. Lazzarin",
+      "orcid": "https://orcid.org/0000-0003-0963-7406",
+      "h_index": 69,
+      "i10_index": 137,
+      "works_count": 351,
+      "cited_by_count": 14569,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5081502398",
+      "display_name": "L. M. Keer",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 352,
+      "works_count": 594,
+      "cited_by_count": 18077,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5014780426",
+      "display_name": "Anthony M. Waas",
+      "orcid": "https://orcid.org/0000-0002-4916-2102",
+      "h_index": 68,
+      "i10_index": 330,
+      "works_count": 709,
+      "cited_by_count": 19532,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5022663478",
+      "display_name": "Jochen M. Schneider",
+      "orcid": "https://orcid.org/0000-0003-1239-1961",
+      "h_index": 68,
+      "i10_index": 330,
+      "works_count": 627,
+      "cited_by_count": 18670,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5058986971",
+      "display_name": "Kenji Higashi",
+      "orcid": "https://orcid.org/0000-0001-6120-3774",
+      "h_index": 68,
+      "i10_index": 328,
+      "works_count": 779,
+      "cited_by_count": 20814,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5019872871",
+      "display_name": "Paul M. Weaver",
+      "orcid": "https://orcid.org/0000-0002-1905-4477",
+      "h_index": 68,
+      "i10_index": 288,
+      "works_count": 725,
+      "cited_by_count": 18434,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5022934063",
+      "display_name": "Nikhilesh Chawla",
+      "orcid": "https://orcid.org/0000-0002-4478-8552",
+      "h_index": 68,
+      "i10_index": 279,
+      "works_count": 440,
+      "cited_by_count": 17294,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5000622050",
+      "display_name": "M. R. Eslami",
+      "orcid": "https://orcid.org/0000-0001-5490-3131",
+      "h_index": 68,
+      "i10_index": 279,
+      "works_count": 478,
+      "cited_by_count": 17110,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5034551395",
+      "display_name": "Manuel Elices",
+      "orcid": "https://orcid.org/0000-0002-8204-1580",
+      "h_index": 68,
+      "i10_index": 213,
+      "works_count": 422,
+      "cited_by_count": 15746,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Mechanics of Materials -- 8.7",
+      "id": "https://openalex.org/A5069921958",
+      "display_name": "Georg Dresen",
+      "orcid": "https://orcid.org/0000-0002-3737-2858",
+      "h_index": 68,
+      "i10_index": 196,
+      "works_count": 562,
+      "cited_by_count": 15685,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5057150283",
+      "display_name": "Bruce W. Drinkwater",
+      "orcid": "https://orcid.org/0000-0002-8307-1175",
+      "h_index": 68,
+      "i10_index": 194,
+      "works_count": 467,
+      "cited_by_count": 19207,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5076767956",
+      "display_name": "Frank W. Zok",
+      "orcid": "https://orcid.org/0000-0001-7993-900X",
+      "h_index": 68,
+      "i10_index": 194,
+      "works_count": 288,
+      "cited_by_count": 14924,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5008331980",
+      "display_name": "Michael J. Heap",
+      "orcid": "https://orcid.org/0000-0002-4748-735X",
+      "h_index": 68,
+      "i10_index": 193,
+      "works_count": 501,
+      "cited_by_count": 14343,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5011717530",
+      "display_name": "David B. Marshall",
+      "orcid": "https://orcid.org/0000-0002-8313-1123",
+      "h_index": 68,
+      "i10_index": 171,
+      "works_count": 369,
+      "cited_by_count": 22957,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5000601523",
+      "display_name": "L. B. Freund",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 141,
+      "works_count": 272,
+      "cited_by_count": 18959,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5007091573",
+      "display_name": "C.W. Lim",
+      "orcid": "https://orcid.org/0000-0003-1030-9063",
+      "h_index": 67,
+      "i10_index": 342,
+      "works_count": 521,
+      "cited_by_count": 18788,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5049714280",
+      "display_name": "Chuanzeng Zhang",
+      "orcid": "https://orcid.org/0000-0001-6963-9230",
+      "h_index": 67,
+      "i10_index": 324,
+      "works_count": 485,
+      "cited_by_count": 16730,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5108415317",
+      "display_name": "Yukitaka MURAKAMI",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 203,
+      "works_count": 480,
+      "cited_by_count": 19823,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5071213517",
+      "display_name": "Stephen Richard Hallett",
+      "orcid": "https://orcid.org/0000-0003-0751-8323",
+      "h_index": 67,
+      "i10_index": 198,
+      "works_count": 465,
+      "cited_by_count": 14638,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5059478393",
+      "display_name": "Fu‐Kuo Chang",
+      "orcid": "https://orcid.org/0000-0003-3546-1539",
+      "h_index": 67,
+      "i10_index": 184,
+      "works_count": 369,
+      "cited_by_count": 16249,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5055469390",
+      "display_name": "Robert Adams",
+      "orcid": "https://orcid.org/0000-0001-9310-4586",
+      "h_index": 67,
+      "i10_index": 162,
+      "works_count": 314,
+      "cited_by_count": 16959,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5034204600",
+      "display_name": "Philip George Meredith",
+      "orcid": "https://orcid.org/0000-0003-2193-5342",
+      "h_index": 67,
+      "i10_index": 137,
+      "works_count": 384,
+      "cited_by_count": 14763,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5019147062",
+      "display_name": "Christian Miehé",
+      "orcid": "https://orcid.org/0000-0002-4099-0948",
+      "h_index": 67,
+      "i10_index": 124,
+      "works_count": 269,
+      "cited_by_count": 24715,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5051093327",
+      "display_name": "Alexander M. Korsunsky",
+      "orcid": "https://orcid.org/0000-0002-3558-5198",
+      "h_index": 66,
+      "i10_index": 353,
+      "works_count": 859,
+      "cited_by_count": 17367,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5100717180",
+      "display_name": "Qiang Yu",
+      "orcid": "https://orcid.org/0000-0003-0441-7201",
+      "h_index": 66,
+      "i10_index": 334,
+      "works_count": 1051,
+      "cited_by_count": 17840,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5100603433",
+      "display_name": "Qihua Wang",
+      "orcid": "https://orcid.org/0000-0001-6056-7584",
+      "h_index": 66,
+      "i10_index": 314,
+      "works_count": 447,
+      "cited_by_count": 15502,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5036798987",
+      "display_name": "Manchao He",
+      "orcid": "https://orcid.org/0000-0002-3617-2707",
+      "h_index": 66,
+      "i10_index": 276,
+      "works_count": 473,
+      "cited_by_count": 15025,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5016829860",
+      "display_name": "Mohamed Thariq Hameed Sultan",
+      "orcid": "https://orcid.org/0000-0002-5110-0242",
+      "h_index": 66,
+      "i10_index": 227,
+      "works_count": 389,
+      "cited_by_count": 14768,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5101726330",
+      "display_name": "D. R. J. Owen",
+      "orcid": "https://orcid.org/0000-0002-7674-2639",
+      "h_index": 66,
+      "i10_index": 189,
+      "works_count": 403,
+      "cited_by_count": 16100,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5007895016",
+      "display_name": "Yaser Kiani",
+      "orcid": "https://orcid.org/0000-0003-1428-0034",
+      "h_index": 66,
+      "i10_index": 186,
+      "works_count": 223,
+      "cited_by_count": 10987,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5002429726",
+      "display_name": "Ian Sinclair",
+      "orcid": "https://orcid.org/0000-0003-2052-4234",
+      "h_index": 66,
+      "i10_index": 184,
+      "works_count": 425,
+      "cited_by_count": 12740,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Mechanics of Materials -- 8.6",
+      "id": "https://openalex.org/A5111537154",
+      "display_name": "J.‐E. Sundgren",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 173,
+      "works_count": 249,
+      "cited_by_count": 16695,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5100659604",
+      "display_name": "Chuangbing Zhou",
+      "orcid": "https://orcid.org/0000-0002-0114-735X",
+      "h_index": 66,
+      "i10_index": 159,
+      "works_count": 223,
+      "cited_by_count": 13091,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5023247906",
+      "display_name": "Farzad Ebrahimi",
+      "orcid": "https://orcid.org/0000-0001-9091-4647",
+      "h_index": 65,
+      "i10_index": 362,
+      "works_count": 576,
+      "cited_by_count": 16605,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5030898403",
+      "display_name": "Alex A. Volinsky",
+      "orcid": "https://orcid.org/0000-0002-8520-6248",
+      "h_index": 65,
+      "i10_index": 352,
+      "works_count": 566,
+      "cited_by_count": 16978,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5010828095",
+      "display_name": "Wim Van Paepegem",
+      "orcid": "https://orcid.org/0000-0003-0672-3675",
+      "h_index": 65,
+      "i10_index": 318,
+      "works_count": 903,
+      "cited_by_count": 16047,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5036608037",
+      "display_name": "Jianping Zuo",
+      "orcid": "https://orcid.org/0000-0002-5547-089X",
+      "h_index": 65,
+      "i10_index": 310,
+      "works_count": 503,
+      "cited_by_count": 16816,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5022753277",
+      "display_name": "Takayuki Kitamura",
+      "orcid": "https://orcid.org/0000-0002-8625-1630",
+      "h_index": 65,
+      "i10_index": 309,
+      "works_count": 857,
+      "cited_by_count": 18593,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5085644079",
+      "display_name": "Xiaoping Zhou",
+      "orcid": "https://orcid.org/0000-0003-1551-6504",
+      "h_index": 65,
+      "i10_index": 305,
+      "works_count": 415,
+      "cited_by_count": 16630,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5103158908",
+      "display_name": "Jean‐Pierre Célis",
+      "orcid": "https://orcid.org/0000-0002-2086-1452",
+      "h_index": 65,
+      "i10_index": 242,
+      "works_count": 709,
+      "cited_by_count": 15314,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5044892307",
+      "display_name": "Chong Soo Lee",
+      "orcid": "https://orcid.org/0000-0003-2156-4422",
+      "h_index": 65,
+      "i10_index": 234,
+      "works_count": 413,
+      "cited_by_count": 14112,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5012243773",
+      "display_name": "Mahmood Mehrdad Shokrieh",
+      "orcid": "https://orcid.org/0000-0001-9693-1050",
+      "h_index": 65,
+      "i10_index": 226,
+      "works_count": 392,
+      "cited_by_count": 14048,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5100897747",
+      "display_name": "Linzhi Wu",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 199,
+      "works_count": 297,
+      "cited_by_count": 11451,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5053893015",
+      "display_name": "Somnath Ghosh",
+      "orcid": "https://orcid.org/0000-0003-0793-6058",
+      "h_index": 65,
+      "i10_index": 197,
+      "works_count": 353,
+      "cited_by_count": 13312,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5012192569",
+      "display_name": "Michael A. Sutton",
+      "orcid": "https://orcid.org/0000-0002-6946-5047",
+      "h_index": 65,
+      "i10_index": 185,
+      "works_count": 359,
+      "cited_by_count": 25397,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5112065915",
+      "display_name": "Bernard D. Coleman",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 149,
+      "works_count": 251,
+      "cited_by_count": 20457,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Chemical Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5000419147",
+      "display_name": "Vadim V. Silberschmidt",
+      "orcid": "https://orcid.org/0000-0003-3338-3311",
+      "h_index": 64,
+      "i10_index": 386,
+      "works_count": 839,
+      "cited_by_count": 17554,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5080840827",
+      "display_name": "J. D. Achenbach",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 275,
+      "works_count": 676,
+      "cited_by_count": 16355,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5049508445",
+      "display_name": "George J. Weng",
+      "orcid": "https://orcid.org/0000-0003-1543-1535",
+      "h_index": 64,
+      "i10_index": 232,
+      "works_count": 364,
+      "cited_by_count": 15691,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5041861493",
+      "display_name": "Pizhong Qiao",
+      "orcid": "https://orcid.org/0000-0003-2769-0147",
+      "h_index": 64,
+      "i10_index": 226,
+      "works_count": 385,
+      "cited_by_count": 14209,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5000183143",
+      "display_name": "Renato Natal Jorge",
+      "orcid": "https://orcid.org/0000-0002-7281-579X",
+      "h_index": 64,
+      "i10_index": 222,
+      "works_count": 607,
+      "cited_by_count": 13585,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5053909777",
+      "display_name": "Kaiyang Zeng",
+      "orcid": "https://orcid.org/0000-0002-3348-0018",
+      "h_index": 64,
+      "i10_index": 211,
+      "works_count": 305,
+      "cited_by_count": 13486,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5003346378",
+      "display_name": "Ares J. Rosakis",
+      "orcid": "https://orcid.org/0000-0003-0559-0794",
+      "h_index": 64,
+      "i10_index": 193,
+      "works_count": 365,
+      "cited_by_count": 14318,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5109287728",
+      "display_name": "A. N. Gent",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 191,
+      "works_count": 334,
+      "cited_by_count": 18534,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Mechanics of Materials -- 8.5",
+      "id": "https://openalex.org/A5081504023",
+      "display_name": "Stan Veprek",
+      "orcid": "https://orcid.org/0000-0002-6016-3093",
+      "h_index": 64,
+      "i10_index": 183,
+      "works_count": 274,
+      "cited_by_count": 17830,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5022831151",
+      "display_name": "Wieslaw Jerzy Staszewski",
+      "orcid": "https://orcid.org/0000-0003-3071-7427",
+      "h_index": 64,
+      "i10_index": 179,
+      "works_count": 362,
+      "cited_by_count": 13206,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5009440851",
+      "display_name": "Philippe Boisse",
+      "orcid": "https://orcid.org/0000-0001-5930-3047",
+      "h_index": 64,
+      "i10_index": 163,
+      "works_count": 481,
+      "cited_by_count": 14436,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5109890688",
+      "display_name": "J. J. Cuomo",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 160,
+      "works_count": 288,
+      "cited_by_count": 14153,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5065476124",
+      "display_name": "Simon Mark Spearing",
+      "orcid": "https://orcid.org/0000-0002-3059-2014",
+      "h_index": 64,
+      "i10_index": 157,
+      "works_count": 377,
+      "cited_by_count": 12837,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5003116978",
+      "display_name": "Anand Jagota",
+      "orcid": "https://orcid.org/0000-0002-0779-0880",
+      "h_index": 64,
+      "i10_index": 153,
+      "works_count": 277,
+      "cited_by_count": 18685,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5052842999",
+      "display_name": "Gordon S. Kino",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 269,
+      "works_count": 684,
+      "cited_by_count": 20447,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5109863638",
+      "display_name": "Gérard A. Maugin",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 258,
+      "works_count": 669,
+      "cited_by_count": 16707,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5029670996",
+      "display_name": "A.M.S. Hamouda",
+      "orcid": "https://orcid.org/0000-0001-8022-4319",
+      "h_index": 63,
+      "i10_index": 250,
+      "works_count": 473,
+      "cited_by_count": 15485,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5085102760",
+      "display_name": "K. Komvopoulos",
+      "orcid": "https://orcid.org/0000-0001-9418-1567",
+      "h_index": 63,
+      "i10_index": 248,
+      "works_count": 377,
+      "cited_by_count": 16306,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5044535813",
+      "display_name": "Shaofan Li",
+      "orcid": "https://orcid.org/0000-0002-6950-1474",
+      "h_index": 63,
+      "i10_index": 246,
+      "works_count": 409,
+      "cited_by_count": 16751,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5017997193",
+      "display_name": "Anil Kumar Misra",
+      "orcid": "https://orcid.org/0000-0002-9761-2358",
+      "h_index": 63,
+      "i10_index": 212,
+      "works_count": 345,
+      "cited_by_count": 11949,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5014425520",
+      "display_name": "Magnus Odén",
+      "orcid": "https://orcid.org/0000-0002-2286-5588",
+      "h_index": 63,
+      "i10_index": 210,
+      "works_count": 303,
+      "cited_by_count": 11737,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5048348115",
+      "display_name": "Ulf Jansson",
+      "orcid": "https://orcid.org/0000-0001-6063-8522",
+      "h_index": 63,
+      "i10_index": 206,
+      "works_count": 384,
+      "cited_by_count": 16141,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5101550000",
+      "display_name": "F. Berto",
+      "orcid": "https://orcid.org/0000-0002-4207-0109",
+      "h_index": 63,
+      "i10_index": 178,
+      "works_count": 287,
+      "cited_by_count": 11228,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5110183546",
+      "display_name": "Zafer Gürdal",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 175,
+      "works_count": 394,
+      "cited_by_count": 15908,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5000573174",
+      "display_name": "Martine Wevers",
+      "orcid": "https://orcid.org/0000-0002-8797-5454",
+      "h_index": 63,
+      "i10_index": 169,
+      "works_count": 639,
+      "cited_by_count": 12880,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5012216405",
+      "display_name": "Jean Schmittbuhl",
+      "orcid": "https://orcid.org/0000-0002-7000-0618",
+      "h_index": 63,
+      "i10_index": 146,
+      "works_count": 483,
+      "cited_by_count": 12061,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering",
+        "Energy",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Mechanics of Materials -- 8.4",
+      "id": "https://openalex.org/A5013299984",
+      "display_name": "Ronaldo I. Borja",
+      "orcid": "https://orcid.org/0000-0002-8877-7468",
+      "h_index": 63,
+      "i10_index": 138,
+      "works_count": 291,
+      "cited_by_count": 12041,
+      "discipline": "Mechanics of Materials",
+      "primary_field": "Engineering",
+      "primary_subfield": "Mechanics of Materials",
+      "fields": [
+        "Engineering"
+      ]
+    }
+  ]
+}

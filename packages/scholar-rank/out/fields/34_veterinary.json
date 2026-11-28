@@ -1,0 +1,619 @@
+{
+  "kind": "field",
+  "id": 34,
+  "name": "Veterinary",
+  "total_in_scrape": 31,
+  "count": 31,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Veterinary -- 9.9",
+      "id": "https://openalex.org/A5091124551",
+      "display_name": "Thomas Härtung",
+      "orcid": "https://orcid.org/0000-0003-1359-7689",
+      "h_index": 115,
+      "i10_index": 504,
+      "works_count": 874,
+      "cited_by_count": 47592,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Veterinary -- 9.9",
+      "id": "https://openalex.org/A5022661690",
+      "display_name": "Marcel Leist",
+      "orcid": "https://orcid.org/0000-0002-3778-8693",
+      "h_index": 107,
+      "i10_index": 322,
+      "works_count": 520,
+      "cited_by_count": 37688,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Veterinary -- 9.9",
+      "id": "https://openalex.org/A5109115099",
+      "display_name": "Hollis Nancy Erb",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 335,
+      "works_count": 418,
+      "cited_by_count": 23911,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Veterinary -- 9.9",
+      "id": "https://openalex.org/A5067150314",
+      "display_name": "P. René van Weeren",
+      "orcid": "https://orcid.org/0000-0002-6654-1817",
+      "h_index": 81,
+      "i10_index": 354,
+      "works_count": 582,
+      "cited_by_count": 22549,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Equine",
+      "fields": [
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Veterinary -- 9.9",
+      "id": "https://openalex.org/A5010029612",
+      "display_name": "Philip H. Kass",
+      "orcid": "https://orcid.org/0000-0001-6213-0925",
+      "h_index": 78,
+      "i10_index": 424,
+      "works_count": 585,
+      "cited_by_count": 23731,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Veterinary -- 9.9",
+      "id": "https://openalex.org/A5057770336",
+      "display_name": "C. Wayne McIlwraith",
+      "orcid": "https://orcid.org/0000-0002-7302-2265",
+      "h_index": 77,
+      "i10_index": 318,
+      "works_count": 523,
+      "cited_by_count": 20893,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Equine",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5109873207",
+      "display_name": "Stephen J. Withrow",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 217,
+      "works_count": 257,
+      "cited_by_count": 16304,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5001113002",
+      "display_name": "Benedict Duncan X. Lascelles",
+      "orcid": "https://orcid.org/0000-0002-2950-9009",
+      "h_index": 74,
+      "i10_index": 218,
+      "works_count": 461,
+      "cited_by_count": 17671,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5074079751",
+      "display_name": "Luc Duchateau",
+      "orcid": "https://orcid.org/0000-0003-0462-3638",
+      "h_index": 73,
+      "i10_index": 418,
+      "works_count": 680,
+      "cited_by_count": 23333,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5110074489",
+      "display_name": "Jörg M. Steiner",
+      "orcid": "https://orcid.org/0000-0003-3336-2086",
+      "h_index": 73,
+      "i10_index": 245,
+      "works_count": 378,
+      "cited_by_count": 17104,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5011653179",
+      "display_name": "Achim Dieter Gruber",
+      "orcid": "https://orcid.org/0000-0002-4502-0393",
+      "h_index": 71,
+      "i10_index": 261,
+      "works_count": 456,
+      "cited_by_count": 17355,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5043787463",
+      "display_name": "Dave C. Brodbelt",
+      "orcid": "https://orcid.org/0000-0001-5628-4194",
+      "h_index": 71,
+      "i10_index": 196,
+      "works_count": 390,
+      "cited_by_count": 15737,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5034204418",
+      "display_name": "Mark E. Payton",
+      "orcid": "https://orcid.org/0000-0002-2703-7220",
+      "h_index": 69,
+      "i10_index": 320,
+      "works_count": 524,
+      "cited_by_count": 19246,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5004050862",
+      "display_name": "David John Hampson",
+      "orcid": "https://orcid.org/0000-0002-7729-0427",
+      "h_index": 69,
+      "i10_index": 267,
+      "works_count": 460,
+      "cited_by_count": 18472,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5013794293",
+      "display_name": "Patricia A. Harris",
+      "orcid": "https://orcid.org/0000-0003-4068-1624",
+      "h_index": 68,
+      "i10_index": 278,
+      "works_count": 519,
+      "cited_by_count": 17067,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Equine",
+      "fields": [
+        "Veterinary",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5083645031",
+      "display_name": "Alan M. Wilson",
+      "orcid": "https://orcid.org/0000-0001-9914-3455",
+      "h_index": 68,
+      "i10_index": 158,
+      "works_count": 286,
+      "cited_by_count": 15125,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Equine",
+      "fields": [
+        "Veterinary",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Veterinary -- 9.8",
+      "id": "https://openalex.org/A5010935647",
+      "display_name": "Peter Clegg",
+      "orcid": "https://orcid.org/0000-0003-0632-0032",
+      "h_index": 67,
+      "i10_index": 230,
+      "works_count": 481,
+      "cited_by_count": 14578,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Rheumatology",
+      "fields": [
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5003198305",
+      "display_name": "Matti Kiupel",
+      "orcid": "https://orcid.org/0000-0003-4429-9529",
+      "h_index": 66,
+      "i10_index": 284,
+      "works_count": 523,
+      "cited_by_count": 16491,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5062854708",
+      "display_name": "Jonathan Elliott",
+      "orcid": "https://orcid.org/0000-0002-4517-6590",
+      "h_index": 66,
+      "i10_index": 224,
+      "works_count": 455,
+      "cited_by_count": 15157,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5047472326",
+      "display_name": "David M. Vail",
+      "orcid": "https://orcid.org/0000-0002-1964-3693",
+      "h_index": 66,
+      "i10_index": 162,
+      "works_count": 246,
+      "cited_by_count": 13363,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5038240598",
+      "display_name": "Michael H. Goldschmidt",
+      "orcid": "https://orcid.org/0000-0001-9515-0535",
+      "h_index": 66,
+      "i10_index": 156,
+      "works_count": 213,
+      "cited_by_count": 15895,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5008234462",
+      "display_name": "Mark E. Peterson",
+      "orcid": "https://orcid.org/0000-0002-3016-1855",
+      "h_index": 65,
+      "i10_index": 217,
+      "works_count": 292,
+      "cited_by_count": 12579,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5083005720",
+      "display_name": "Steven W. Dow",
+      "orcid": "https://orcid.org/0000-0001-5488-9464",
+      "h_index": 65,
+      "i10_index": 210,
+      "works_count": 316,
+      "cited_by_count": 13784,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5069136293",
+      "display_name": "Sue Dyson",
+      "orcid": "https://orcid.org/0000-0003-4774-7497",
+      "h_index": 64,
+      "i10_index": 296,
+      "works_count": 500,
+      "cited_by_count": 15347,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5068438813",
+      "display_name": "George E. Moore",
+      "orcid": "https://orcid.org/0000-0001-7473-3387",
+      "h_index": 64,
+      "i10_index": 290,
+      "works_count": 597,
+      "cited_by_count": 15415,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5073998761",
+      "display_name": "Noah D. Cohen",
+      "orcid": "https://orcid.org/0000-0002-0384-2903",
+      "h_index": 64,
+      "i10_index": 275,
+      "works_count": 424,
+      "cited_by_count": 14004,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Equine",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5016074804",
+      "display_name": "Alexander J. German",
+      "orcid": "https://orcid.org/0000-0002-3017-7988",
+      "h_index": 64,
+      "i10_index": 188,
+      "works_count": 378,
+      "cited_by_count": 13360,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Veterinary -- 9.7",
+      "id": "https://openalex.org/A5057863113",
+      "display_name": "Renato L. Santos",
+      "orcid": "https://orcid.org/0000-0002-4830-0470",
+      "h_index": 63,
+      "i10_index": 192,
+      "works_count": 396,
+      "cited_by_count": 13927,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Veterinary -- 9.6",
+      "id": "https://openalex.org/A5028208192",
+      "display_name": "Paul Andrew Flecknell",
+      "orcid": "https://orcid.org/0000-0002-1075-1129",
+      "h_index": 63,
+      "i10_index": 183,
+      "works_count": 354,
+      "cited_by_count": 12530,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Veterinary -- 9.6",
+      "id": "https://openalex.org/A5032114701",
+      "display_name": "Gina L. Pinchbeck",
+      "orcid": "https://orcid.org/0000-0002-5671-8623",
+      "h_index": 63,
+      "i10_index": 170,
+      "works_count": 311,
+      "cited_by_count": 10545,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Veterinary -- 9.6",
+      "id": "https://openalex.org/A5063980321",
+      "display_name": "Matthew Breen",
+      "orcid": "https://orcid.org/0000-0002-8901-4155",
+      "h_index": 63,
+      "i10_index": 158,
+      "works_count": 380,
+      "cited_by_count": 15721,
+      "discipline": "Veterinary",
+      "primary_field": "Veterinary",
+      "primary_subfield": "Small Animals",
+      "fields": [
+        "Veterinary",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    }
+  ]
+}

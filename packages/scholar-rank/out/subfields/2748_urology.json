@@ -1,0 +1,5646 @@
+{
+  "kind": "subfield",
+  "id": 2748,
+  "name": "Urology",
+  "total_in_scrape": 299,
+  "count": 299,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Urology -- 9.9",
+      "id": "https://openalex.org/A5062227791",
+      "display_name": "Jonathan I. Epstein",
+      "orcid": "https://orcid.org/0000-0003-1839-6472",
+      "h_index": 161,
+      "i10_index": 950,
+      "works_count": 1432,
+      "cited_by_count": 111957,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Urology -- 9.9",
+      "id": "https://openalex.org/A5056969058",
+      "display_name": "Peter R. Carroll",
+      "orcid": "https://orcid.org/0000-0002-1086-4334",
+      "h_index": 160,
+      "i10_index": 768,
+      "works_count": 1704,
+      "cited_by_count": 119663,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Urology -- 9.9",
+      "id": "https://openalex.org/A5061623935",
+      "display_name": "Francesco Montorsi",
+      "orcid": "https://orcid.org/0000-0002-7267-4181",
+      "h_index": 155,
+      "i10_index": 1480,
+      "works_count": 6316,
+      "cited_by_count": 110866,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Urology -- 9.9",
+      "id": "https://openalex.org/A5012224683",
+      "display_name": "Peter T. Scardino",
+      "orcid": "https://orcid.org/0000-0002-1601-8411",
+      "h_index": 153,
+      "i10_index": 564,
+      "works_count": 1112,
+      "cited_by_count": 85359,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Urology -- 9.9",
+      "id": "https://openalex.org/A5028586618",
+      "display_name": "Steven J. Jacobsen",
+      "orcid": "https://orcid.org/0000-0002-8174-8533",
+      "h_index": 140,
+      "i10_index": 521,
+      "works_count": 846,
+      "cited_by_count": 76119,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Urology -- 9.9",
+      "id": "https://openalex.org/A5025886998",
+      "display_name": "Andrew Julian Vickers",
+      "orcid": "https://orcid.org/0000-0003-1525-6503",
+      "h_index": 136,
+      "i10_index": 596,
+      "works_count": 1356,
+      "cited_by_count": 90693,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5110154818",
+      "display_name": "Patrick C. Walsh",
+      "orcid": null,
+      "h_index": 134,
+      "i10_index": 464,
+      "works_count": 1052,
+      "cited_by_count": 72218,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5057500759",
+      "display_name": "Theodorus van der Kwast",
+      "orcid": "https://orcid.org/0000-0001-8640-5786",
+      "h_index": 131,
+      "i10_index": 646,
+      "works_count": 1269,
+      "cited_by_count": 95911,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5050331319",
+      "display_name": "Michael J. Barry",
+      "orcid": "https://orcid.org/0000-0001-6508-7109",
+      "h_index": 131,
+      "i10_index": 309,
+      "works_count": 518,
+      "cited_by_count": 84946,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5090783984",
+      "display_name": "David Edgar Neal",
+      "orcid": "https://orcid.org/0000-0002-6033-5086",
+      "h_index": 130,
+      "i10_index": 568,
+      "works_count": 1208,
+      "cited_by_count": 74246,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5102984401",
+      "display_name": "Pierre I. Karakiewicz",
+      "orcid": "https://orcid.org/0000-0003-1354-5854",
+      "h_index": 126,
+      "i10_index": 1106,
+      "works_count": 2843,
+      "cited_by_count": 70745,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5076886998",
+      "display_name": "Stuart R. Lipsitz",
+      "orcid": "https://orcid.org/0000-0003-2619-1389",
+      "h_index": 126,
+      "i10_index": 615,
+      "works_count": 1144,
+      "cited_by_count": 70868,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5014573705",
+      "display_name": "Markus Graefen",
+      "orcid": "https://orcid.org/0000-0003-3609-3512",
+      "h_index": 123,
+      "i10_index": 731,
+      "works_count": 2177,
+      "cited_by_count": 88392,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5049636639",
+      "display_name": "Jenny Donovan",
+      "orcid": "https://orcid.org/0000-0002-6488-5472",
+      "h_index": 123,
+      "i10_index": 472,
+      "works_count": 1025,
+      "cited_by_count": 61405,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5063449536",
+      "display_name": "Alan Wayne Partin",
+      "orcid": "https://orcid.org/0000-0003-2523-7592",
+      "h_index": 122,
+      "i10_index": 497,
+      "works_count": 924,
+      "cited_by_count": 62034,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5111726165",
+      "display_name": "David G. Bostwick",
+      "orcid": "https://orcid.org/0009-0006-9613-8144",
+      "h_index": 122,
+      "i10_index": 454,
+      "works_count": 699,
+      "cited_by_count": 49957,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Urology -- 9.8",
+      "id": "https://openalex.org/A5031550729",
+      "display_name": "Alberto Briganti",
+      "orcid": "https://orcid.org/0000-0002-2178-0494",
+      "h_index": 121,
+      "i10_index": 1075,
+      "works_count": 5026,
+      "cited_by_count": 70253,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5015887484",
+      "display_name": "Ian Murchie Thompson",
+      "orcid": "https://orcid.org/0000-0003-0833-952X",
+      "h_index": 116,
+      "i10_index": 623,
+      "works_count": 1343,
+      "cited_by_count": 65607,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5049019006",
+      "display_name": "Claus G. Roehrborn",
+      "orcid": "https://orcid.org/0000-0003-4024-7369",
+      "h_index": 115,
+      "i10_index": 448,
+      "works_count": 950,
+      "cited_by_count": 51199,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5065869555",
+      "display_name": "William J. Catàlona",
+      "orcid": "https://orcid.org/0009-0004-2926-5114",
+      "h_index": 113,
+      "i10_index": 422,
+      "works_count": 882,
+      "cited_by_count": 56756,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5112262632",
+      "display_name": "James Andrew Eastham",
+      "orcid": null,
+      "h_index": 113,
+      "i10_index": 383,
+      "works_count": 811,
+      "cited_by_count": 53764,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5037470251",
+      "display_name": "Thomas M. Wheeler",
+      "orcid": "https://orcid.org/0000-0001-9746-1521",
+      "h_index": 113,
+      "i10_index": 311,
+      "works_count": 491,
+      "cited_by_count": 52043,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5113902259",
+      "display_name": "William Chet de Groat",
+      "orcid": null,
+      "h_index": 111,
+      "i10_index": 507,
+      "works_count": 712,
+      "cited_by_count": 44114,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5025921361",
+      "display_name": "David Paul Dearnaley",
+      "orcid": "https://orcid.org/0000-0002-3954-2806",
+      "h_index": 111,
+      "i10_index": 392,
+      "works_count": 717,
+      "cited_by_count": 48133,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5081611907",
+      "display_name": "Michael J. Zeléfsky",
+      "orcid": "https://orcid.org/0000-0002-6090-6424",
+      "h_index": 111,
+      "i10_index": 368,
+      "works_count": 831,
+      "cited_by_count": 42802,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5080266362",
+      "display_name": "Christopher Reginald Chapple",
+      "orcid": "https://orcid.org/0000-0002-2960-9931",
+      "h_index": 109,
+      "i10_index": 514,
+      "works_count": 1548,
+      "cited_by_count": 44475,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5065328069",
+      "display_name": "Gerald R. Cunha",
+      "orcid": "https://orcid.org/0000-0003-2361-370X",
+      "h_index": 109,
+      "i10_index": 355,
+      "works_count": 494,
+      "cited_by_count": 37450,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Urology -- 9.7",
+      "id": "https://openalex.org/A5055056275",
+      "display_name": "Rodolfo Montironi",
+      "orcid": "https://orcid.org/0000-0003-3938-610X",
+      "h_index": 108,
+      "i10_index": 739,
+      "works_count": 1543,
+      "cited_by_count": 52314,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5089661293",
+      "display_name": "Hartwig Huland",
+      "orcid": "https://orcid.org/0000-0002-4237-9480",
+      "h_index": 108,
+      "i10_index": 513,
+      "works_count": 1516,
+      "cited_by_count": 68622,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5108468198",
+      "display_name": "Fritz H. Schröder",
+      "orcid": null,
+      "h_index": 106,
+      "i10_index": 421,
+      "works_count": 768,
+      "cited_by_count": 46744,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5045162411",
+      "display_name": "Howard Mark Sandler",
+      "orcid": "https://orcid.org/0000-0002-8193-5769",
+      "h_index": 106,
+      "i10_index": 402,
+      "works_count": 1007,
+      "cited_by_count": 45955,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5043350291",
+      "display_name": "Timothy J Wilt",
+      "orcid": "https://orcid.org/0000-0002-6019-7779",
+      "h_index": 106,
+      "i10_index": 338,
+      "works_count": 1286,
+      "cited_by_count": 48229,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5086081364",
+      "display_name": "Gerald L. Andriole",
+      "orcid": "https://orcid.org/0000-0003-4033-2352",
+      "h_index": 105,
+      "i10_index": 341,
+      "works_count": 956,
+      "cited_by_count": 52601,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5007710281",
+      "display_name": "Neil Eric Fleshner",
+      "orcid": "https://orcid.org/0000-0001-7407-7463",
+      "h_index": 103,
+      "i10_index": 483,
+      "works_count": 1348,
+      "cited_by_count": 50731,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5082495905",
+      "display_name": "Jean J.M.C.H. de la Rosette",
+      "orcid": "https://orcid.org/0000-0002-6308-1763",
+      "h_index": 102,
+      "i10_index": 581,
+      "works_count": 1231,
+      "cited_by_count": 42568,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5029422912",
+      "display_name": "Anssi P. Auvinen",
+      "orcid": "https://orcid.org/0000-0003-1125-4818",
+      "h_index": 102,
+      "i10_index": 439,
+      "works_count": 896,
+      "cited_by_count": 47847,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5072104844",
+      "display_name": "Adam Stuart Kibel",
+      "orcid": "https://orcid.org/0000-0002-9446-7781",
+      "h_index": 102,
+      "i10_index": 405,
+      "works_count": 1158,
+      "cited_by_count": 62692,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5001479798",
+      "display_name": "Paul Abrams",
+      "orcid": "https://orcid.org/0000-0003-2776-2200",
+      "h_index": 102,
+      "i10_index": 361,
+      "works_count": 656,
+      "cited_by_count": 59861,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Urology -- 9.6",
+      "id": "https://openalex.org/A5038850729",
+      "display_name": "Peter A. Pinto",
+      "orcid": "https://orcid.org/0000-0002-0190-5931",
+      "h_index": 101,
+      "i10_index": 364,
+      "works_count": 853,
+      "cited_by_count": 57315,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5011425417",
+      "display_name": "Teuvo L.J. Tammela",
+      "orcid": "https://orcid.org/0000-0002-3529-4649",
+      "h_index": 100,
+      "i10_index": 533,
+      "works_count": 1063,
+      "cited_by_count": 55250,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5108214266",
+      "display_name": "John B. McKinlay",
+      "orcid": null,
+      "h_index": 100,
+      "i10_index": 285,
+      "works_count": 450,
+      "cited_by_count": 43148,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5010401322",
+      "display_name": "Pär E. Stattin",
+      "orcid": "https://orcid.org/0000-0002-8306-0687",
+      "h_index": 99,
+      "i10_index": 402,
+      "works_count": 704,
+      "cited_by_count": 31549,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5039867286",
+      "display_name": "Monique J. Roobol",
+      "orcid": "https://orcid.org/0000-0001-6967-1708",
+      "h_index": 99,
+      "i10_index": 388,
+      "works_count": 855,
+      "cited_by_count": 45425,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5081192418",
+      "display_name": "Tom F. Lue",
+      "orcid": "https://orcid.org/0000-0002-0499-9486",
+      "h_index": 98,
+      "i10_index": 439,
+      "works_count": 799,
+      "cited_by_count": 38688,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5010838561",
+      "display_name": "Peter Herbison",
+      "orcid": "https://orcid.org/0000-0002-5684-024X",
+      "h_index": 98,
+      "i10_index": 331,
+      "works_count": 475,
+      "cited_by_count": 35314,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5039363062",
+      "display_name": "Andrea Salonia",
+      "orcid": "https://orcid.org/0000-0002-0595-7165",
+      "h_index": 97,
+      "i10_index": 591,
+      "works_count": 2029,
+      "cited_by_count": 41892,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5062287369",
+      "display_name": "Peter A. Humphrey",
+      "orcid": "https://orcid.org/0009-0006-9958-9717",
+      "h_index": 97,
+      "i10_index": 289,
+      "works_count": 477,
+      "cited_by_count": 41645,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5006241226",
+      "display_name": "Prokar Dasgupta",
+      "orcid": "https://orcid.org/0000-0001-8690-0445",
+      "h_index": 96,
+      "i10_index": 480,
+      "works_count": 1325,
+      "cited_by_count": 34595,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5076037136",
+      "display_name": "Michael B. Chancellor",
+      "orcid": "https://orcid.org/0000-0001-9480-8972",
+      "h_index": 96,
+      "i10_index": 460,
+      "works_count": 1002,
+      "cited_by_count": 28705,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5083172675",
+      "display_name": "Mark Emberton",
+      "orcid": "https://orcid.org/0000-0003-4230-0338",
+      "h_index": 96,
+      "i10_index": 427,
+      "works_count": 1238,
+      "cited_by_count": 45279,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Urology -- 9.5",
+      "id": "https://openalex.org/A5078255109",
+      "display_name": "Kari Bø",
+      "orcid": "https://orcid.org/0000-0003-1176-9272",
+      "h_index": 96,
+      "i10_index": 261,
+      "works_count": 479,
+      "cited_by_count": 31140,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5066330818",
+      "display_name": "Christian Georg Stief",
+      "orcid": "https://orcid.org/0000-0003-3291-9460",
+      "h_index": 95,
+      "i10_index": 703,
+      "works_count": 1897,
+      "cited_by_count": 41000,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5090946201",
+      "display_name": "Michael Marberger",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 326,
+      "works_count": 781,
+      "cited_by_count": 30334,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5016188477",
+      "display_name": "E. Jeffrey Metter",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 208,
+      "works_count": 316,
+      "cited_by_count": 33716,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5108396752",
+      "display_name": "Mani Menon",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 376,
+      "works_count": 875,
+      "cited_by_count": 35522,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5111816760",
+      "display_name": "Thomas A. Stamey",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 249,
+      "works_count": 397,
+      "cited_by_count": 34502,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5014135786",
+      "display_name": "Karl‐Erik Andersson",
+      "orcid": "https://orcid.org/0000-0003-0665-3486",
+      "h_index": 93,
+      "i10_index": 546,
+      "works_count": 979,
+      "cited_by_count": 36641,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5036545543",
+      "display_name": "Ralph Victor Clayman",
+      "orcid": "https://orcid.org/0000-0002-2365-7457",
+      "h_index": 93,
+      "i10_index": 458,
+      "works_count": 1070,
+      "cited_by_count": 33714,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5105471967",
+      "display_name": "Tommaso Cai",
+      "orcid": "https://orcid.org/0000-0002-7234-3526",
+      "h_index": 93,
+      "i10_index": 408,
+      "works_count": 733,
+      "cited_by_count": 38849,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5021979132",
+      "display_name": "David F. Penson",
+      "orcid": "https://orcid.org/0000-0002-2580-2697",
+      "h_index": 93,
+      "i10_index": 301,
+      "works_count": 1013,
+      "cited_by_count": 40411,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5034811772",
+      "display_name": "J. Curtis Nickel",
+      "orcid": "https://orcid.org/0000-0002-4865-7293",
+      "h_index": 92,
+      "i10_index": 332,
+      "works_count": 577,
+      "cited_by_count": 31588,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Urology -- 9.4",
+      "id": "https://openalex.org/A5111831015",
+      "display_name": "Gerald E. Hanks",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 334,
+      "works_count": 702,
+      "cited_by_count": 29624,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5086583298",
+      "display_name": "Arnulf Stenzl",
+      "orcid": "https://orcid.org/0000-0003-4207-9928",
+      "h_index": 90,
+      "i10_index": 591,
+      "works_count": 1580,
+      "cited_by_count": 39756,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5055176143",
+      "display_name": "Alan J. Wein",
+      "orcid": "https://orcid.org/0000-0002-6910-8656",
+      "h_index": 90,
+      "i10_index": 541,
+      "works_count": 1914,
+      "cited_by_count": 37793,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5077545940",
+      "display_name": "Quoc‐Dien Trinh",
+      "orcid": "https://orcid.org/0000-0003-3857-9276",
+      "h_index": 90,
+      "i10_index": 493,
+      "works_count": 1378,
+      "cited_by_count": 29801,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5079427154",
+      "display_name": "Wayne J.G. Hellstrom",
+      "orcid": "https://orcid.org/0000-0003-1284-959X",
+      "h_index": 90,
+      "i10_index": 395,
+      "works_count": 847,
+      "cited_by_count": 30065,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5044844791",
+      "display_name": "Linda T. Brubaker",
+      "orcid": "https://orcid.org/0000-0002-8598-2589",
+      "h_index": 90,
+      "i10_index": 340,
+      "works_count": 666,
+      "cited_by_count": 39044,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5014551797",
+      "display_name": "James E. Lingeman",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 324,
+      "works_count": 741,
+      "cited_by_count": 28903,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5089472018",
+      "display_name": "Mack Roach",
+      "orcid": "https://orcid.org/0000-0002-3546-8565",
+      "h_index": 90,
+      "i10_index": 303,
+      "works_count": 677,
+      "cited_by_count": 34397,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5058030955",
+      "display_name": "Ziding Feng",
+      "orcid": "https://orcid.org/0000-0003-3051-8882",
+      "h_index": 90,
+      "i10_index": 287,
+      "works_count": 538,
+      "cited_by_count": 32020,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5014456130",
+      "display_name": "Mark S. Litwin",
+      "orcid": "https://orcid.org/0000-0002-2318-344X",
+      "h_index": 89,
+      "i10_index": 318,
+      "works_count": 710,
+      "cited_by_count": 36605,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5040869371",
+      "display_name": "Martin Christian Michel",
+      "orcid": "https://orcid.org/0000-0003-4161-8467",
+      "h_index": 88,
+      "i10_index": 458,
+      "works_count": 928,
+      "cited_by_count": 30652,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Urology -- 9.3",
+      "id": "https://openalex.org/A5111828692",
+      "display_name": "Alexandre DE LA TAILLE",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 405,
+      "works_count": 1211,
+      "cited_by_count": 28864,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5052662109",
+      "display_name": "Glenn M. Preminger",
+      "orcid": "https://orcid.org/0000-0003-4287-602X",
+      "h_index": 88,
+      "i10_index": 357,
+      "works_count": 770,
+      "cited_by_count": 32670,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5109205790",
+      "display_name": "William R. Fair",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 269,
+      "works_count": 413,
+      "cited_by_count": 27511,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5042646128",
+      "display_name": "Roger Roman Dmochowski",
+      "orcid": "https://orcid.org/0000-0002-9838-9178",
+      "h_index": 87,
+      "i10_index": 386,
+      "works_count": 1023,
+      "cited_by_count": 32101,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5011328299",
+      "display_name": "Walter Artibani",
+      "orcid": "https://orcid.org/0000-0002-7956-9456",
+      "h_index": 87,
+      "i10_index": 348,
+      "works_count": 839,
+      "cited_by_count": 33047,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5078445671",
+      "display_name": "Laurence H. Klotz",
+      "orcid": "https://orcid.org/0000-0003-1001-2235",
+      "h_index": 87,
+      "i10_index": 341,
+      "works_count": 794,
+      "cited_by_count": 36605,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5011556876",
+      "display_name": "Herbert Lepor",
+      "orcid": "https://orcid.org/0000-0002-7839-835X",
+      "h_index": 87,
+      "i10_index": 332,
+      "works_count": 718,
+      "cited_by_count": 28424,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5110265854",
+      "display_name": "John Thomas Wei",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 277,
+      "works_count": 590,
+      "cited_by_count": 39991,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5022378006",
+      "display_name": "Nicholas David James",
+      "orcid": "https://orcid.org/0000-0002-7314-8204",
+      "h_index": 87,
+      "i10_index": 275,
+      "works_count": 719,
+      "cited_by_count": 43653,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5028513456",
+      "display_name": "James A. Ashton‐Miller",
+      "orcid": "https://orcid.org/0000-0003-1528-2787",
+      "h_index": 87,
+      "i10_index": 268,
+      "works_count": 454,
+      "cited_by_count": 24400,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5111933125",
+      "display_name": "Clare J. Fowler",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 224,
+      "works_count": 441,
+      "cited_by_count": 28868,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Urology -- 9.2",
+      "id": "https://openalex.org/A5052609076",
+      "display_name": "John Richard Landis",
+      "orcid": "https://orcid.org/0000-0001-8099-0988",
+      "h_index": 86,
+      "i10_index": 202,
+      "works_count": 313,
+      "cited_by_count": 129974,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5004587560",
+      "display_name": "Peter N. Wiklund",
+      "orcid": "https://orcid.org/0000-0001-6497-4697",
+      "h_index": 85,
+      "i10_index": 365,
+      "works_count": 891,
+      "cited_by_count": 25773,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5027608466",
+      "display_name": "Gunnar Steineck",
+      "orcid": "https://orcid.org/0000-0002-0787-3969",
+      "h_index": 85,
+      "i10_index": 331,
+      "works_count": 548,
+      "cited_by_count": 27947,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5108083327",
+      "display_name": "John P. Mulhall",
+      "orcid": "https://orcid.org/0000-0001-5455-3047",
+      "h_index": 85,
+      "i10_index": 312,
+      "works_count": 1067,
+      "cited_by_count": 24472,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5042545493",
+      "display_name": "Holly Elizabeth Richter",
+      "orcid": "https://orcid.org/0000-0001-7741-5771",
+      "h_index": 85,
+      "i10_index": 300,
+      "works_count": 576,
+      "cited_by_count": 27283,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5088302147",
+      "display_name": "David S. Goldfarb",
+      "orcid": "https://orcid.org/0000-0002-9215-1273",
+      "h_index": 85,
+      "i10_index": 289,
+      "works_count": 509,
+      "cited_by_count": 26312,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5083971868",
+      "display_name": "Thomas M. Hooton",
+      "orcid": "https://orcid.org/0000-0001-5810-6543",
+      "h_index": 85,
+      "i10_index": 157,
+      "works_count": 248,
+      "cited_by_count": 40516,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5038667646",
+      "display_name": "Olivier Cussenot",
+      "orcid": "https://orcid.org/0000-0002-9912-0533",
+      "h_index": 84,
+      "i10_index": 364,
+      "works_count": 864,
+      "cited_by_count": 29764,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5037019692",
+      "display_name": "Arthur L. “Bud” Burnett",
+      "orcid": "https://orcid.org/0000-0001-6560-8605",
+      "h_index": 84,
+      "i10_index": 363,
+      "works_count": 746,
+      "cited_by_count": 32970,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5063389942",
+      "display_name": "Alan S Pollack",
+      "orcid": "https://orcid.org/0000-0002-1801-2865",
+      "h_index": 84,
+      "i10_index": 325,
+      "works_count": 783,
+      "cited_by_count": 27010,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5068285584",
+      "display_name": "Ashutosh Kumar Tewari",
+      "orcid": "https://orcid.org/0000-0002-3146-4524",
+      "h_index": 84,
+      "i10_index": 275,
+      "works_count": 711,
+      "cited_by_count": 32620,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Urology -- 9.1",
+      "id": "https://openalex.org/A5012746552",
+      "display_name": "Ian Milsom",
+      "orcid": "https://orcid.org/0000-0002-0400-5509",
+      "h_index": 84,
+      "i10_index": 247,
+      "works_count": 405,
+      "cited_by_count": 32328,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Urology -- 9.0",
+      "id": "https://openalex.org/A5087591232",
+      "display_name": "Robert Evan Reiter",
+      "orcid": "https://orcid.org/0000-0002-7962-3985",
+      "h_index": 84,
+      "i10_index": 233,
+      "works_count": 650,
+      "cited_by_count": 28040,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Urology -- 9.0",
+      "id": "https://openalex.org/A5087427252",
+      "display_name": "June M. Chan",
+      "orcid": "https://orcid.org/0000-0002-7620-569X",
+      "h_index": 84,
+      "i10_index": 200,
+      "works_count": 378,
+      "cited_by_count": 53764,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Urology -- 9.0",
+      "id": "https://openalex.org/A5017485109",
+      "display_name": "Jan van der Meulen",
+      "orcid": "https://orcid.org/0000-0002-9451-2335",
+      "h_index": 83,
+      "i10_index": 326,
+      "works_count": 685,
+      "cited_by_count": 31671,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Urology -- 9.0",
+      "id": "https://openalex.org/A5062118116",
+      "display_name": "Anthony Laurence Zietman",
+      "orcid": "https://orcid.org/0000-0002-4005-8691",
+      "h_index": 83,
+      "i10_index": 270,
+      "works_count": 727,
+      "cited_by_count": 29793,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Urology -- 9.0",
+      "id": "https://openalex.org/A5049580074",
+      "display_name": "Arnauld A. Villers",
+      "orcid": "https://orcid.org/0000-0002-6298-7758",
+      "h_index": 83,
+      "i10_index": 264,
+      "works_count": 741,
+      "cited_by_count": 36463,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5113874291",
+      "display_name": "Michael M. Lieber",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 246,
+      "works_count": 400,
+      "cited_by_count": 31113,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5075222976",
+      "display_name": "Urs E. Studer",
+      "orcid": "https://orcid.org/0000-0002-5352-8525",
+      "h_index": 83,
+      "i10_index": 231,
+      "works_count": 685,
+      "cited_by_count": 22641,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5032481721",
+      "display_name": "Lindsay E. Nicolle",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 225,
+      "works_count": 383,
+      "cited_by_count": 31376,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5024919772",
+      "display_name": "Frans M.J. Debruyne",
+      "orcid": "https://orcid.org/0000-0002-6103-199X",
+      "h_index": 82,
+      "i10_index": 447,
+      "works_count": 1007,
+      "cited_by_count": 28282,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5045164790",
+      "display_name": "Naoki Yoshimura",
+      "orcid": "https://orcid.org/0000-0001-8070-1664",
+      "h_index": 82,
+      "i10_index": 338,
+      "works_count": 867,
+      "cited_by_count": 21885,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5076002647",
+      "display_name": "James E. Montie",
+      "orcid": "https://orcid.org/0000-0002-7735-9316",
+      "h_index": 82,
+      "i10_index": 317,
+      "works_count": 736,
+      "cited_by_count": 31284,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5112055432",
+      "display_name": "Jack W. McAninch",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 232,
+      "works_count": 451,
+      "cited_by_count": 19625,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5050663947",
+      "display_name": "Michael S. Cookson",
+      "orcid": "https://orcid.org/0000-0001-8678-0551",
+      "h_index": 82,
+      "i10_index": 231,
+      "works_count": 512,
+      "cited_by_count": 23664,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5083025134",
+      "display_name": "Osamu Ogawa",
+      "orcid": "https://orcid.org/0000-0001-5491-8878",
+      "h_index": 81,
+      "i10_index": 507,
+      "works_count": 1162,
+      "cited_by_count": 28527,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5013864806",
+      "display_name": "Henk G. van der Poel",
+      "orcid": "https://orcid.org/0000-0002-8772-1120",
+      "h_index": 81,
+      "i10_index": 401,
+      "works_count": 1174,
+      "cited_by_count": 36860,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5071741514",
+      "display_name": "Leonard G. Gomella",
+      "orcid": "https://orcid.org/0000-0002-9466-489X",
+      "h_index": 81,
+      "i10_index": 298,
+      "works_count": 825,
+      "cited_by_count": 24226,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Urology -- 8.9",
+      "id": "https://openalex.org/A5057040034",
+      "display_name": "Scott E. Eggener",
+      "orcid": "https://orcid.org/0000-0001-6677-2503",
+      "h_index": 81,
+      "i10_index": 242,
+      "works_count": 506,
+      "cited_by_count": 25379,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5023847764",
+      "display_name": "Stephen K. Van Den Eeden",
+      "orcid": "https://orcid.org/0000-0002-5599-8387",
+      "h_index": 81,
+      "i10_index": 238,
+      "works_count": 569,
+      "cited_by_count": 25709,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5015891160",
+      "display_name": "Fredric L. Coe",
+      "orcid": "https://orcid.org/0000-0001-6729-0389",
+      "h_index": 81,
+      "i10_index": 234,
+      "works_count": 441,
+      "cited_by_count": 20727,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5020657630",
+      "display_name": "Bhaskar Kumar Somani",
+      "orcid": "https://orcid.org/0000-0002-6248-6478",
+      "h_index": 80,
+      "i10_index": 593,
+      "works_count": 1647,
+      "cited_by_count": 29261,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5061749118",
+      "display_name": "John D. Norrie",
+      "orcid": "https://orcid.org/0000-0001-9823-9252",
+      "h_index": 80,
+      "i10_index": 299,
+      "works_count": 643,
+      "cited_by_count": 33495,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Mathematics",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5046387430",
+      "display_name": "Hans Peter Dietz",
+      "orcid": "https://orcid.org/0000-0002-2211-6149",
+      "h_index": 80,
+      "i10_index": 298,
+      "works_count": 654,
+      "cited_by_count": 21161,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5013881851",
+      "display_name": "Edward M. Schaeffer",
+      "orcid": "https://orcid.org/0000-0003-0699-1899",
+      "h_index": 80,
+      "i10_index": 254,
+      "works_count": 935,
+      "cited_by_count": 23935,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5022131347",
+      "display_name": "Kathryn Larsen Burgio",
+      "orcid": "https://orcid.org/0000-0003-3357-2593",
+      "h_index": 80,
+      "i10_index": 224,
+      "works_count": 381,
+      "cited_by_count": 24018,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5089673217",
+      "display_name": "Betsy Foxman",
+      "orcid": "https://orcid.org/0000-0001-6682-238X",
+      "h_index": 79,
+      "i10_index": 272,
+      "works_count": 464,
+      "cited_by_count": 30333,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5001659044",
+      "display_name": "Padraig Richard Warde",
+      "orcid": "https://orcid.org/0000-0002-4236-0026",
+      "h_index": 79,
+      "i10_index": 266,
+      "works_count": 635,
+      "cited_by_count": 26442,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5105412296",
+      "display_name": "Patrizio Rigatti",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 262,
+      "works_count": 575,
+      "cited_by_count": 22142,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5107928956",
+      "display_name": "Anthony J. Schaeffer",
+      "orcid": "https://orcid.org/0000-0002-1324-3517",
+      "h_index": 79,
+      "i10_index": 232,
+      "works_count": 670,
+      "cited_by_count": 28787,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5109191522",
+      "display_name": "Georg Hans Bartsch",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 227,
+      "works_count": 459,
+      "cited_by_count": 16946,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5033592339",
+      "display_name": "Richard A. Schmidt",
+      "orcid": "https://orcid.org/0000-0002-6003-1779",
+      "h_index": 79,
+      "i10_index": 216,
+      "works_count": 360,
+      "cited_by_count": 34883,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5108793445",
+      "display_name": "Chris H. Bangma",
+      "orcid": "https://orcid.org/0000-0002-7787-1969",
+      "h_index": 79,
+      "i10_index": 208,
+      "works_count": 354,
+      "cited_by_count": 26783,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5109571053",
+      "display_name": "Joseph E. Oesterling",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 194,
+      "works_count": 279,
+      "cited_by_count": 22876,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5111599674",
+      "display_name": "W. Weidner",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 324,
+      "works_count": 933,
+      "cited_by_count": 22224,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5031483568",
+      "display_name": "Stacy Loeb",
+      "orcid": "https://orcid.org/0000-0003-3933-9207",
+      "h_index": 78,
+      "i10_index": 323,
+      "works_count": 800,
+      "cited_by_count": 25325,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5008243215",
+      "display_name": "Hashim Uddin Ahmed",
+      "orcid": "https://orcid.org/0000-0003-1674-6723",
+      "h_index": 78,
+      "i10_index": 275,
+      "works_count": 782,
+      "cited_by_count": 25862,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5073009316",
+      "display_name": "John O. L. DeLancey",
+      "orcid": "https://orcid.org/0000-0002-1012-7713",
+      "h_index": 78,
+      "i10_index": 249,
+      "works_count": 462,
+      "cited_by_count": 27965,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5051786644",
+      "display_name": "John Francis Ward",
+      "orcid": "https://orcid.org/0000-0001-6027-8774",
+      "h_index": 78,
+      "i10_index": 235,
+      "works_count": 516,
+      "cited_by_count": 25026,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5109787581",
+      "display_name": "John E. McNeal",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 148,
+      "works_count": 197,
+      "cited_by_count": 28403,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Urology -- 8.8",
+      "id": "https://openalex.org/A5023266580",
+      "display_name": "Giorgio Gandaglia",
+      "orcid": "https://orcid.org/0000-0002-5052-721X",
+      "h_index": 77,
+      "i10_index": 366,
+      "works_count": 1960,
+      "cited_by_count": 28651,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5088388062",
+      "display_name": "Antonio Finelli",
+      "orcid": "https://orcid.org/0000-0003-4032-6120",
+      "h_index": 77,
+      "i10_index": 334,
+      "works_count": 880,
+      "cited_by_count": 21894,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5023172194",
+      "display_name": "Bradley A. Erickson",
+      "orcid": "https://orcid.org/0000-0001-5237-3464",
+      "h_index": 77,
+      "i10_index": 303,
+      "works_count": 810,
+      "cited_by_count": 23657,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5101899166",
+      "display_name": "Joseph A. Jr Smith",
+      "orcid": "https://orcid.org/0000-0003-0114-9109",
+      "h_index": 77,
+      "i10_index": 268,
+      "works_count": 628,
+      "cited_by_count": 21707,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5047934585",
+      "display_name": "Kevin T. McVary",
+      "orcid": "https://orcid.org/0000-0002-0755-0772",
+      "h_index": 77,
+      "i10_index": 245,
+      "works_count": 630,
+      "cited_by_count": 26669,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5112833362",
+      "display_name": "Francois Giuliano",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 239,
+      "works_count": 550,
+      "cited_by_count": 22386,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5079115002",
+      "display_name": "Cynthia J. Girman",
+      "orcid": "https://orcid.org/0000-0002-5714-174X",
+      "h_index": 77,
+      "i10_index": 174,
+      "works_count": 280,
+      "cited_by_count": 20306,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5081221251",
+      "display_name": "Nathan Lawrentschuk",
+      "orcid": "https://orcid.org/0000-0001-8553-5618",
+      "h_index": 76,
+      "i10_index": 370,
+      "works_count": 992,
+      "cited_by_count": 24814,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5041729199",
+      "display_name": "Takashi Morita",
+      "orcid": "https://orcid.org/0000-0002-3900-5410",
+      "h_index": 76,
+      "i10_index": 302,
+      "works_count": 707,
+      "cited_by_count": 21560,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5000403044",
+      "display_name": "Jens Jochen Rassweiler",
+      "orcid": "https://orcid.org/0000-0002-0436-8246",
+      "h_index": 76,
+      "i10_index": 282,
+      "works_count": 669,
+      "cited_by_count": 21979,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5003038893",
+      "display_name": "Giorgio Ferruccio Guazzoni",
+      "orcid": "https://orcid.org/0000-0002-5713-8313",
+      "h_index": 76,
+      "i10_index": 248,
+      "works_count": 821,
+      "cited_by_count": 21140,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5013525656",
+      "display_name": "Paul Perrotte",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 245,
+      "works_count": 499,
+      "cited_by_count": 19219,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5012397578",
+      "display_name": "Alexandre R. Zlotta",
+      "orcid": "https://orcid.org/0000-0003-2315-5809",
+      "h_index": 76,
+      "i10_index": 236,
+      "works_count": 652,
+      "cited_by_count": 18793,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5113466745",
+      "display_name": "Donald S. Coffey",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 197,
+      "works_count": 282,
+      "cited_by_count": 24204,
+      "discipline": "Urology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5109572112",
+      "display_name": "Clive I. Bartram",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 183,
+      "works_count": 271,
+      "cited_by_count": 17518,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5013463417",
+      "display_name": "Felix K.‐H. Chun",
+      "orcid": "https://orcid.org/0000-0001-8486-9536",
+      "h_index": 75,
+      "i10_index": 449,
+      "works_count": 1574,
+      "cited_by_count": 22983,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5045750331",
+      "display_name": "Florian Wagenlehner",
+      "orcid": "https://orcid.org/0000-0002-2909-0797",
+      "h_index": 75,
+      "i10_index": 314,
+      "works_count": 824,
+      "cited_by_count": 19277,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5049635014",
+      "display_name": "Laurence S. Baskin",
+      "orcid": "https://orcid.org/0009-0004-8263-3975",
+      "h_index": 75,
+      "i10_index": 281,
+      "works_count": 670,
+      "cited_by_count": 21844,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5081214299",
+      "display_name": "Steven A. Kaplan",
+      "orcid": "https://orcid.org/0000-0003-2558-7306",
+      "h_index": 75,
+      "i10_index": 276,
+      "works_count": 1215,
+      "cited_by_count": 25911,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5069066834",
+      "display_name": "Andrew P. Evan",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 276,
+      "works_count": 543,
+      "cited_by_count": 18708,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5101702288",
+      "display_name": "Declan G. Murphy",
+      "orcid": "https://orcid.org/0000-0002-7500-5899",
+      "h_index": 75,
+      "i10_index": 260,
+      "works_count": 567,
+      "cited_by_count": 25610,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5062397416",
+      "display_name": "Samir S. Taneja",
+      "orcid": "https://orcid.org/0000-0003-0887-8259",
+      "h_index": 75,
+      "i10_index": 249,
+      "works_count": 1017,
+      "cited_by_count": 22714,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Urology -- 8.7",
+      "id": "https://openalex.org/A5113979417",
+      "display_name": "Edward J. McGuire",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 240,
+      "works_count": 462,
+      "cited_by_count": 18248,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5012715733",
+      "display_name": "Craig Andrew Peters",
+      "orcid": "https://orcid.org/0000-0001-7598-0865",
+      "h_index": 75,
+      "i10_index": 222,
+      "works_count": 459,
+      "cited_by_count": 17792,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5047117846",
+      "display_name": "John Trachtenberg",
+      "orcid": "https://orcid.org/0000-0001-8634-0396",
+      "h_index": 75,
+      "i10_index": 221,
+      "works_count": 379,
+      "cited_by_count": 17624,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5049646055",
+      "display_name": "Eric Mark Horwitz",
+      "orcid": "https://orcid.org/0000-0003-2187-317X",
+      "h_index": 75,
+      "i10_index": 217,
+      "works_count": 538,
+      "cited_by_count": 24027,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5089601078",
+      "display_name": "John N. Krieger",
+      "orcid": "https://orcid.org/0000-0003-4111-3442",
+      "h_index": 75,
+      "i10_index": 217,
+      "works_count": 380,
+      "cited_by_count": 20888,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5107865459",
+      "display_name": "John R. Srigley",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 215,
+      "works_count": 350,
+      "cited_by_count": 26171,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5082496651",
+      "display_name": "Alan B. Retik",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 207,
+      "works_count": 320,
+      "cited_by_count": 17841,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5102732771",
+      "display_name": "Martin George Sanda",
+      "orcid": "https://orcid.org/0000-0003-4288-5786",
+      "h_index": 75,
+      "i10_index": 200,
+      "works_count": 506,
+      "cited_by_count": 29500,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5113432243",
+      "display_name": "David P. Wood",
+      "orcid": "https://orcid.org/0009-0002-2304-8149",
+      "h_index": 75,
+      "i10_index": 200,
+      "works_count": 484,
+      "cited_by_count": 22077,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5006559972",
+      "display_name": "Alan J. Wolfe",
+      "orcid": "https://orcid.org/0000-0003-4532-0545",
+      "h_index": 75,
+      "i10_index": 184,
+      "works_count": 359,
+      "cited_by_count": 19625,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5040984051",
+      "display_name": "Olivier Traxer",
+      "orcid": "https://orcid.org/0000-0002-2459-3803",
+      "h_index": 74,
+      "i10_index": 424,
+      "works_count": 1415,
+      "cited_by_count": 23762,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5030019301",
+      "display_name": "Paolo Gontero",
+      "orcid": "https://orcid.org/0000-0002-9714-6596",
+      "h_index": 74,
+      "i10_index": 390,
+      "works_count": 1367,
+      "cited_by_count": 28135,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5011837566",
+      "display_name": "Michael G Goodman",
+      "orcid": "https://orcid.org/0000-0001-6956-6879",
+      "h_index": 74,
+      "i10_index": 308,
+      "works_count": 531,
+      "cited_by_count": 25471,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5077243123",
+      "display_name": "Boris Alexander Hadaschik",
+      "orcid": "https://orcid.org/0000-0002-1052-2692",
+      "h_index": 74,
+      "i10_index": 298,
+      "works_count": 812,
+      "cited_by_count": 28338,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5019512510",
+      "display_name": "Kurt G. Naber",
+      "orcid": "https://orcid.org/0000-0003-1304-5403",
+      "h_index": 74,
+      "i10_index": 277,
+      "works_count": 816,
+      "cited_by_count": 21537,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5074518172",
+      "display_name": "Clare M. Tempany",
+      "orcid": "https://orcid.org/0000-0002-1642-9720",
+      "h_index": 74,
+      "i10_index": 238,
+      "works_count": 410,
+      "cited_by_count": 31147,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Computer Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5073303043",
+      "display_name": "Jennifer L. St. Sauver",
+      "orcid": "https://orcid.org/0000-0002-9789-8544",
+      "h_index": 74,
+      "i10_index": 222,
+      "works_count": 439,
+      "cited_by_count": 25427,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5068197546",
+      "display_name": "Curtis Alvin Pettaway",
+      "orcid": "https://orcid.org/0000-0003-1697-1840",
+      "h_index": 74,
+      "i10_index": 214,
+      "works_count": 482,
+      "cited_by_count": 18168,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5035822111",
+      "display_name": "Stuart B. Bauer",
+      "orcid": "https://orcid.org/0000-0003-3412-1962",
+      "h_index": 74,
+      "i10_index": 211,
+      "works_count": 386,
+      "cited_by_count": 19426,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5014213335",
+      "display_name": "E. David Crawford",
+      "orcid": "https://orcid.org/0000-0003-0468-0640",
+      "h_index": 74,
+      "i10_index": 188,
+      "works_count": 368,
+      "cited_by_count": 28390,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5109227152",
+      "display_name": "Adrian Grant",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 140,
+      "works_count": 247,
+      "cited_by_count": 21792,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5030545703",
+      "display_name": "Derya Tilki",
+      "orcid": "https://orcid.org/0000-0001-7033-1380",
+      "h_index": 73,
+      "i10_index": 421,
+      "works_count": 1148,
+      "cited_by_count": 27491,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Urology -- 8.6",
+      "id": "https://openalex.org/A5024616322",
+      "display_name": "Brett Delahunt",
+      "orcid": "https://orcid.org/0000-0002-5398-0300",
+      "h_index": 73,
+      "i10_index": 274,
+      "works_count": 514,
+      "cited_by_count": 27315,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5112773892",
+      "display_name": "Emil A. Tanagho",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 238,
+      "works_count": 377,
+      "cited_by_count": 17147,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5019998379",
+      "display_name": "Olivier Rouvière",
+      "orcid": "https://orcid.org/0000-0002-0030-478X",
+      "h_index": 73,
+      "i10_index": 198,
+      "works_count": 536,
+      "cited_by_count": 32904,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5013633423",
+      "display_name": "Peter C. Albertsen",
+      "orcid": "https://orcid.org/0000-0002-1588-4430",
+      "h_index": 73,
+      "i10_index": 168,
+      "works_count": 500,
+      "cited_by_count": 24668,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5024676913",
+      "display_name": "Jim C. Hu",
+      "orcid": "https://orcid.org/0000-0003-2562-8024",
+      "h_index": 72,
+      "i10_index": 265,
+      "works_count": 561,
+      "cited_by_count": 22211,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5026726291",
+      "display_name": "Joseph G. Ouslander",
+      "orcid": "https://orcid.org/0000-0003-3985-5797",
+      "h_index": 72,
+      "i10_index": 242,
+      "works_count": 432,
+      "cited_by_count": 18223,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5071652086",
+      "display_name": "Nazareno Roberto Suardi",
+      "orcid": "https://orcid.org/0000-0002-4331-3010",
+      "h_index": 72,
+      "i10_index": 235,
+      "works_count": 1266,
+      "cited_by_count": 17545,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5001861927",
+      "display_name": "Philipp Dahm",
+      "orcid": "https://orcid.org/0000-0003-2819-2553",
+      "h_index": 72,
+      "i10_index": 234,
+      "works_count": 563,
+      "cited_by_count": 39554,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Decision Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5006418138",
+      "display_name": "Piet B. Hoebeke",
+      "orcid": "https://orcid.org/0000-0002-9883-7647",
+      "h_index": 72,
+      "i10_index": 225,
+      "works_count": 622,
+      "cited_by_count": 19662,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5059567824",
+      "display_name": "Rodney L. Dunn",
+      "orcid": "https://orcid.org/0000-0002-4148-8538",
+      "h_index": 72,
+      "i10_index": 221,
+      "works_count": 439,
+      "cited_by_count": 20987,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5059792318",
+      "display_name": "Emma Hall",
+      "orcid": "https://orcid.org/0000-0001-5999-5020",
+      "h_index": 72,
+      "i10_index": 194,
+      "works_count": 524,
+      "cited_by_count": 27104,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5100731214",
+      "display_name": "Ming Zhou",
+      "orcid": "https://orcid.org/0000-0002-0324-7178",
+      "h_index": 72,
+      "i10_index": 187,
+      "works_count": 419,
+      "cited_by_count": 18765,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5040211432",
+      "display_name": "H. Ballentine Carter",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 181,
+      "works_count": 280,
+      "cited_by_count": 21604,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5033408219",
+      "display_name": "Osamu Yamaguchi",
+      "orcid": "https://orcid.org/0000-0002-7461-369X",
+      "h_index": 71,
+      "i10_index": 301,
+      "works_count": 858,
+      "cited_by_count": 32168,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5103917268",
+      "display_name": "Linda D. Cardozo",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 285,
+      "works_count": 555,
+      "cited_by_count": 32582,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5078408177",
+      "display_name": "Laurent Salomon",
+      "orcid": "https://orcid.org/0000-0003-0627-4347",
+      "h_index": 71,
+      "i10_index": 262,
+      "works_count": 792,
+      "cited_by_count": 16606,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5113803429",
+      "display_name": "Thomas James Polascik",
+      "orcid": "https://orcid.org/0000-0003-3666-1372",
+      "h_index": 71,
+      "i10_index": 256,
+      "works_count": 640,
+      "cited_by_count": 16767,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5022649819",
+      "display_name": "Jonas Hugosson",
+      "orcid": "https://orcid.org/0000-0002-2324-2817",
+      "h_index": 71,
+      "i10_index": 212,
+      "works_count": 388,
+      "cited_by_count": 24662,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5002038596",
+      "display_name": "Philip Van Kerrebroeck",
+      "orcid": "https://orcid.org/0000-0002-4503-3864",
+      "h_index": 71,
+      "i10_index": 211,
+      "works_count": 458,
+      "cited_by_count": 31098,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5089012338",
+      "display_name": "Alexander Haese",
+      "orcid": "https://orcid.org/0000-0001-9339-9521",
+      "h_index": 71,
+      "i10_index": 209,
+      "works_count": 540,
+      "cited_by_count": 15458,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5004897590",
+      "display_name": "Lori J. Sokoll",
+      "orcid": "https://orcid.org/0000-0001-5130-0060",
+      "h_index": 71,
+      "i10_index": 199,
+      "works_count": 401,
+      "cited_by_count": 26153,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5046472038",
+      "display_name": "Louis L. Pisters",
+      "orcid": "https://orcid.org/0000-0002-9226-6062",
+      "h_index": 71,
+      "i10_index": 198,
+      "works_count": 489,
+      "cited_by_count": 19161,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5062880958",
+      "display_name": "Karin S. Coyne",
+      "orcid": "https://orcid.org/0000-0002-5773-131X",
+      "h_index": 71,
+      "i10_index": 156,
+      "works_count": 294,
+      "cited_by_count": 22392,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Urology -- 8.5",
+      "id": "https://openalex.org/A5078250568",
+      "display_name": "Chris Metcalfe",
+      "orcid": "https://orcid.org/0000-0001-8318-8907",
+      "h_index": 70,
+      "i10_index": 247,
+      "works_count": 557,
+      "cited_by_count": 24480,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5061395570",
+      "display_name": "James B. Yu",
+      "orcid": "https://orcid.org/0000-0002-3119-3226",
+      "h_index": 70,
+      "i10_index": 244,
+      "works_count": 673,
+      "cited_by_count": 19358,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5078576293",
+      "display_name": "J.L.H. Ruud Bosch",
+      "orcid": "https://orcid.org/0000-0003-4833-0538",
+      "h_index": 70,
+      "i10_index": 229,
+      "works_count": 561,
+      "cited_by_count": 16364,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5055015769",
+      "display_name": "Alex Freeman",
+      "orcid": "https://orcid.org/0000-0001-5031-3791",
+      "h_index": 70,
+      "i10_index": 214,
+      "works_count": 644,
+      "cited_by_count": 22442,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5001887362",
+      "display_name": "Joseph C. Presti",
+      "orcid": "https://orcid.org/0000-0001-9323-492X",
+      "h_index": 70,
+      "i10_index": 187,
+      "works_count": 369,
+      "cited_by_count": 15246,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5069102269",
+      "display_name": "Deborah Ann Kuban",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 181,
+      "works_count": 406,
+      "cited_by_count": 21597,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5064990836",
+      "display_name": "Abdul H. Sultan",
+      "orcid": "https://orcid.org/0000-0001-8979-2304",
+      "h_index": 70,
+      "i10_index": 179,
+      "works_count": 311,
+      "cited_by_count": 17466,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5109077176",
+      "display_name": "Sharon L. Tennstedt",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 125,
+      "works_count": 174,
+      "cited_by_count": 21991,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5071062016",
+      "display_name": "Yukio Homma",
+      "orcid": "https://orcid.org/0000-0002-4794-5250",
+      "h_index": 69,
+      "i10_index": 349,
+      "works_count": 791,
+      "cited_by_count": 20949,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5076566757",
+      "display_name": "Michel Daudon",
+      "orcid": "https://orcid.org/0000-0001-9844-9823",
+      "h_index": 69,
+      "i10_index": 335,
+      "works_count": 702,
+      "cited_by_count": 17763,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5112783985",
+      "display_name": "Thomas Herrmann",
+      "orcid": "https://orcid.org/0000-0003-4493-1301",
+      "h_index": 69,
+      "i10_index": 314,
+      "works_count": 636,
+      "cited_by_count": 16466,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5046084721",
+      "display_name": "Markus Hohenfellner",
+      "orcid": "https://orcid.org/0000-0003-3798-2039",
+      "h_index": 69,
+      "i10_index": 271,
+      "works_count": 657,
+      "cited_by_count": 17071,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5053570038",
+      "display_name": "Marshall L. Stoller",
+      "orcid": "https://orcid.org/0000-0002-8298-3586",
+      "h_index": 69,
+      "i10_index": 251,
+      "works_count": 630,
+      "cited_by_count": 14714,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5032746256",
+      "display_name": "Massimo Lazzeri",
+      "orcid": "https://orcid.org/0000-0002-4411-3715",
+      "h_index": 69,
+      "i10_index": 247,
+      "works_count": 929,
+      "cited_by_count": 15440,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5005238316",
+      "display_name": "Theo M. de Reijke",
+      "orcid": "https://orcid.org/0000-0003-0651-7361",
+      "h_index": 69,
+      "i10_index": 220,
+      "works_count": 564,
+      "cited_by_count": 18809,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5020617039",
+      "display_name": "Carsten Stephan",
+      "orcid": "https://orcid.org/0000-0002-3270-258X",
+      "h_index": 69,
+      "i10_index": 206,
+      "works_count": 357,
+      "cited_by_count": 15436,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5110165891",
+      "display_name": "Monish Aron",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 197,
+      "works_count": 447,
+      "cited_by_count": 15878,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5068903584",
+      "display_name": "Sheldon Greenfield",
+      "orcid": "https://orcid.org/0000-0003-4628-1998",
+      "h_index": 69,
+      "i10_index": 179,
+      "works_count": 331,
+      "cited_by_count": 23788,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5111829268",
+      "display_name": "Edward H. Kass",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 179,
+      "works_count": 331,
+      "cited_by_count": 15231,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5110013663",
+      "display_name": "Ulf Jodal",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 169,
+      "works_count": 251,
+      "cited_by_count": 14544,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5087322472",
+      "display_name": "Jean B. deKernion",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 154,
+      "works_count": 289,
+      "cited_by_count": 18510,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5063913503",
+      "display_name": "Rajal B. Shah",
+      "orcid": "https://orcid.org/0000-0003-0820-6823",
+      "h_index": 69,
+      "i10_index": 141,
+      "works_count": 315,
+      "cited_by_count": 24505,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Urology -- 8.4",
+      "id": "https://openalex.org/A5025223836",
+      "display_name": "Ashok Kumar Hemal",
+      "orcid": "https://orcid.org/0000-0001-8270-341X",
+      "h_index": 68,
+      "i10_index": 280,
+      "works_count": 598,
+      "cited_by_count": 16389,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5084498556",
+      "display_name": "Masayuki Takeda",
+      "orcid": "https://orcid.org/0000-0002-2950-0960",
+      "h_index": 68,
+      "i10_index": 260,
+      "works_count": 673,
+      "cited_by_count": 17920,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5005902264",
+      "display_name": "Georg C. Bartsch",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 228,
+      "works_count": 565,
+      "cited_by_count": 16376,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5078777330",
+      "display_name": "Suzanne E. Geerlings",
+      "orcid": "https://orcid.org/0000-0002-8518-3576",
+      "h_index": 68,
+      "i10_index": 216,
+      "works_count": 444,
+      "cited_by_count": 27317,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5054678271",
+      "display_name": "Christine S Norton",
+      "orcid": "https://orcid.org/0000-0003-2259-0948",
+      "h_index": 68,
+      "i10_index": 215,
+      "works_count": 683,
+      "cited_by_count": 15883,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5050176380",
+      "display_name": "P. R. O’Connell",
+      "orcid": "https://orcid.org/0000-0002-1846-5629",
+      "h_index": 68,
+      "i10_index": 180,
+      "works_count": 367,
+      "cited_by_count": 14915,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5008857530",
+      "display_name": "Richard G. Stock",
+      "orcid": "https://orcid.org/0000-0002-0784-4535",
+      "h_index": 68,
+      "i10_index": 177,
+      "works_count": 457,
+      "cited_by_count": 13522,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5054678058",
+      "display_name": "Margaret Sue Pearle",
+      "orcid": "https://orcid.org/0000-0002-2929-508X",
+      "h_index": 68,
+      "i10_index": 171,
+      "works_count": 428,
+      "cited_by_count": 22832,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5007116853",
+      "display_name": "Roderick H. MacDonald",
+      "orcid": "https://orcid.org/0000-0002-0276-6558",
+      "h_index": 68,
+      "i10_index": 140,
+      "works_count": 733,
+      "cited_by_count": 16808,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5010409135",
+      "display_name": "Christian Gratzke",
+      "orcid": "https://orcid.org/0000-0003-4070-0952",
+      "h_index": 67,
+      "i10_index": 248,
+      "works_count": 666,
+      "cited_by_count": 18054,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5026139239",
+      "display_name": "Takamichi Hattori",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 244,
+      "works_count": 418,
+      "cited_by_count": 14219,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5016882863",
+      "display_name": "Elspeth M. McDougall",
+      "orcid": "https://orcid.org/0000-0002-9215-1687",
+      "h_index": 67,
+      "i10_index": 220,
+      "works_count": 372,
+      "cited_by_count": 15231,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5067456208",
+      "display_name": "Jürgen E. Gschwend",
+      "orcid": "https://orcid.org/0000-0003-1812-5103",
+      "h_index": 67,
+      "i10_index": 215,
+      "works_count": 674,
+      "cited_by_count": 19399,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5111368983",
+      "display_name": "Gerald P. Murphy",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 212,
+      "works_count": 419,
+      "cited_by_count": 15330,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5021061571",
+      "display_name": "Jochen Christoph Walz",
+      "orcid": "https://orcid.org/0000-0002-1379-7608",
+      "h_index": 67,
+      "i10_index": 200,
+      "works_count": 674,
+      "cited_by_count": 16003,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5111452748",
+      "display_name": "Carl A. Olsson",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 198,
+      "works_count": 429,
+      "cited_by_count": 16130,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5057978449",
+      "display_name": "Stephan Madersbacher",
+      "orcid": "https://orcid.org/0000-0003-2236-8036",
+      "h_index": 67,
+      "i10_index": 197,
+      "works_count": 416,
+      "cited_by_count": 18668,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5004010596",
+      "display_name": "Saeed R. Khan",
+      "orcid": "https://orcid.org/0000-0001-6975-5952",
+      "h_index": 67,
+      "i10_index": 196,
+      "works_count": 307,
+      "cited_by_count": 16165,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5102710879",
+      "display_name": "David T. Redden",
+      "orcid": "https://orcid.org/0000-0002-1016-272X",
+      "h_index": 67,
+      "i10_index": 189,
+      "works_count": 358,
+      "cited_by_count": 20014,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5103580947",
+      "display_name": "Anne M. Stoddard",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 182,
+      "works_count": 224,
+      "cited_by_count": 14370,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5108473318",
+      "display_name": "Claude C. Schulman",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 179,
+      "works_count": 334,
+      "cited_by_count": 14148,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5072384926",
+      "display_name": "Marshall Scott Lucia",
+      "orcid": "https://orcid.org/0000-0003-4974-7378",
+      "h_index": 67,
+      "i10_index": 154,
+      "works_count": 269,
+      "cited_by_count": 29369,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Urology -- 8.3",
+      "id": "https://openalex.org/A5004582424",
+      "display_name": "Mieke Van Hemelrijck",
+      "orcid": "https://orcid.org/0000-0002-7317-0858",
+      "h_index": 66,
+      "i10_index": 278,
+      "works_count": 742,
+      "cited_by_count": 15663,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 246,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5038133469",
+      "display_name": "Thomas D Horn",
+      "orcid": "https://orcid.org/0000-0003-3757-8634",
+      "h_index": 66,
+      "i10_index": 272,
+      "works_count": 503,
+      "cited_by_count": 14942,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 247,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5016971686",
+      "display_name": "Axel S. Merseburger",
+      "orcid": "https://orcid.org/0000-0001-6467-3931",
+      "h_index": 66,
+      "i10_index": 259,
+      "works_count": 839,
+      "cited_by_count": 25081,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 248,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5079938835",
+      "display_name": "Martha K. Terris",
+      "orcid": "https://orcid.org/0000-0002-3843-7270",
+      "h_index": 66,
+      "i10_index": 246,
+      "works_count": 721,
+      "cited_by_count": 17144,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 249,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5046012946",
+      "display_name": "Charles H. Knowles",
+      "orcid": "https://orcid.org/0000-0001-9854-6754",
+      "h_index": 66,
+      "i10_index": 216,
+      "works_count": 476,
+      "cited_by_count": 16650,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 250,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5110022437",
+      "display_name": "Yoshinobu Kubota",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 205,
+      "works_count": 427,
+      "cited_by_count": 14431,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 251,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5108587864",
+      "display_name": "Paul F. Schellhammer",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 202,
+      "works_count": 382,
+      "cited_by_count": 27202,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 252,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5112150048",
+      "display_name": "Stefan A. Loening",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 177,
+      "works_count": 271,
+      "cited_by_count": 13222,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 253,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5022101797",
+      "display_name": "John D. Denstedt",
+      "orcid": "https://orcid.org/0000-0001-5836-4200",
+      "h_index": 66,
+      "i10_index": 174,
+      "works_count": 355,
+      "cited_by_count": 11803,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 254,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5066279767",
+      "display_name": "Daniel Ari Barocas",
+      "orcid": "https://orcid.org/0000-0002-7775-9205",
+      "h_index": 66,
+      "i10_index": 173,
+      "works_count": 440,
+      "cited_by_count": 15596,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 255,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5055878057",
+      "display_name": "Ananias C. Diokno",
+      "orcid": "https://orcid.org/0000-0003-3003-9048",
+      "h_index": 66,
+      "i10_index": 162,
+      "works_count": 299,
+      "cited_by_count": 17031,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 256,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5108204883",
+      "display_name": "William Donald Steers",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 156,
+      "works_count": 400,
+      "cited_by_count": 15389,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 257,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5049199818",
+      "display_name": "Bernard L. Harlow",
+      "orcid": "https://orcid.org/0000-0002-6735-8862",
+      "h_index": 66,
+      "i10_index": 149,
+      "works_count": 237,
+      "cited_by_count": 16033,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 258,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5080840422",
+      "display_name": "Ingrid Elisabeth Nygaard",
+      "orcid": "https://orcid.org/0000-0001-5568-660X",
+      "h_index": 66,
+      "i10_index": 147,
+      "works_count": 224,
+      "cited_by_count": 20453,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 259,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5102910740",
+      "display_name": "Seiji Naito",
+      "orcid": "https://orcid.org/0000-0003-4272-9724",
+      "h_index": 65,
+      "i10_index": 312,
+      "works_count": 666,
+      "cited_by_count": 15754,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 260,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5042911985",
+      "display_name": "Vincenzo G. Mirone",
+      "orcid": "https://orcid.org/0000-0002-7639-2560",
+      "h_index": 65,
+      "i10_index": 282,
+      "works_count": 646,
+      "cited_by_count": 15381,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 261,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5109974838",
+      "display_name": "Hiroyoshi Suzuki",
+      "orcid": "https://orcid.org/0000-0001-5838-114X",
+      "h_index": 65,
+      "i10_index": 259,
+      "works_count": 557,
+      "cited_by_count": 15221,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 262,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5030524392",
+      "display_name": "U. Ulmsten",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 226,
+      "works_count": 401,
+      "cited_by_count": 30141,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 263,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5008343293",
+      "display_name": "Caroline M. Moore",
+      "orcid": "https://orcid.org/0000-0003-0202-7912",
+      "h_index": 65,
+      "i10_index": 204,
+      "works_count": 596,
+      "cited_by_count": 20223,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 264,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5067593138",
+      "display_name": "Steinar Hunskaar",
+      "orcid": "https://orcid.org/0000-0001-9602-6034",
+      "h_index": 65,
+      "i10_index": 195,
+      "works_count": 400,
+      "cited_by_count": 27632,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 265,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5101961913",
+      "display_name": "Michael O. Koch",
+      "orcid": "https://orcid.org/0000-0003-4708-4996",
+      "h_index": 65,
+      "i10_index": 180,
+      "works_count": 372,
+      "cited_by_count": 11687,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 266,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5082392576",
+      "display_name": "Xavier Filella",
+      "orcid": "https://orcid.org/0000-0001-5201-4162",
+      "h_index": 65,
+      "i10_index": 177,
+      "works_count": 336,
+      "cited_by_count": 13344,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 267,
+      "score": 8.2,
+      "label": "Urology -- 8.2",
+      "id": "https://openalex.org/A5090980918",
+      "display_name": "Anthony R. Mundy",
+      "orcid": "https://orcid.org/0000-0002-6614-5179",
+      "h_index": 65,
+      "i10_index": 177,
+      "works_count": 453,
+      "cited_by_count": 12299,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 268,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5020973459",
+      "display_name": "Tiziana Meschi",
+      "orcid": "https://orcid.org/0000-0002-7538-6863",
+      "h_index": 65,
+      "i10_index": 176,
+      "works_count": 310,
+      "cited_by_count": 15948,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 269,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5107599563",
+      "display_name": "Guy Vallancien",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 148,
+      "works_count": 483,
+      "cited_by_count": 13627,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 270,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5109847184",
+      "display_name": "Gina A Lockwood",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 130,
+      "works_count": 214,
+      "cited_by_count": 15312,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 271,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5008066734",
+      "display_name": "Miguel Srougi",
+      "orcid": "https://orcid.org/0000-0002-4545-0596",
+      "h_index": 64,
+      "i10_index": 441,
+      "works_count": 1106,
+      "cited_by_count": 18195,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 272,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5091140339",
+      "display_name": "Visith Thongboonkerd",
+      "orcid": "https://orcid.org/0000-0001-7865-0765",
+      "h_index": 64,
+      "i10_index": 265,
+      "works_count": 460,
+      "cited_by_count": 17621,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 273,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5051194589",
+      "display_name": "Cristian Fiori",
+      "orcid": "https://orcid.org/0000-0002-6345-1322",
+      "h_index": 64,
+      "i10_index": 242,
+      "works_count": 847,
+      "cited_by_count": 13944,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 274,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5054660525",
+      "display_name": "Andrea Gallina",
+      "orcid": "https://orcid.org/0000-0002-4540-9569",
+      "h_index": 64,
+      "i10_index": 221,
+      "works_count": 1238,
+      "cited_by_count": 15195,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 275,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5027594088",
+      "display_name": "Marcus John Drake",
+      "orcid": "https://orcid.org/0000-0002-6230-2552",
+      "h_index": 64,
+      "i10_index": 211,
+      "works_count": 670,
+      "cited_by_count": 15953,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 276,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5000148907",
+      "display_name": "James Quentin Clemens",
+      "orcid": "https://orcid.org/0000-0002-0759-3385",
+      "h_index": 64,
+      "i10_index": 195,
+      "works_count": 503,
+      "cited_by_count": 15697,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 277,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5024950152",
+      "display_name": "Jerry G. Blaivas",
+      "orcid": "https://orcid.org/0000-0003-0410-8476",
+      "h_index": 64,
+      "i10_index": 187,
+      "works_count": 500,
+      "cited_by_count": 16416,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 278,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5109376385",
+      "display_name": "Laurence A. Levine",
+      "orcid": "https://orcid.org/0009-0001-4465-6349",
+      "h_index": 64,
+      "i10_index": 186,
+      "works_count": 377,
+      "cited_by_count": 12010,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 279,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5080192280",
+      "display_name": "Ranee Thakar",
+      "orcid": "https://orcid.org/0000-0002-5279-141X",
+      "h_index": 64,
+      "i10_index": 177,
+      "works_count": 346,
+      "cited_by_count": 12464,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 280,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5065579020",
+      "display_name": "Mark Frydenberg",
+      "orcid": "https://orcid.org/0000-0003-4445-3573",
+      "h_index": 64,
+      "i10_index": 176,
+      "works_count": 391,
+      "cited_by_count": 16990,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 281,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5040945262",
+      "display_name": "Dean G. Assimos",
+      "orcid": "https://orcid.org/0000-0002-5417-0801",
+      "h_index": 64,
+      "i10_index": 174,
+      "works_count": 950,
+      "cited_by_count": 21600,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 282,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5038668083",
+      "display_name": "Victor W. Νitti",
+      "orcid": "https://orcid.org/0000-0002-1390-7053",
+      "h_index": 64,
+      "i10_index": 170,
+      "works_count": 454,
+      "cited_by_count": 14628,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 283,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5025873791",
+      "display_name": "Álvaro Morales",
+      "orcid": "https://orcid.org/0000-0003-0815-7080",
+      "h_index": 64,
+      "i10_index": 169,
+      "works_count": 299,
+      "cited_by_count": 15759,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 284,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5044492888",
+      "display_name": "Deborah P. Lubeck",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 118,
+      "works_count": 210,
+      "cited_by_count": 12780,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 285,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5088688148",
+      "display_name": "David H. Thom",
+      "orcid": "https://orcid.org/0000-0002-8051-6757",
+      "h_index": 64,
+      "i10_index": 107,
+      "works_count": 163,
+      "cited_by_count": 14616,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 286,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5089205145",
+      "display_name": "Vipul Patel",
+      "orcid": "https://orcid.org/0000-0002-8802-9734",
+      "h_index": 63,
+      "i10_index": 244,
+      "works_count": 636,
+      "cited_by_count": 19403,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 287,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5059006875",
+      "display_name": "Udo Jonas",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 237,
+      "works_count": 646,
+      "cited_by_count": 14807,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 288,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5019339401",
+      "display_name": "Dirk J. M. K. De Ridder",
+      "orcid": "https://orcid.org/0000-0001-6914-0077",
+      "h_index": 63,
+      "i10_index": 230,
+      "works_count": 716,
+      "cited_by_count": 21085,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 289,
+      "score": 8.1,
+      "label": "Urology -- 8.1",
+      "id": "https://openalex.org/A5046888497",
+      "display_name": "Joseph L. Chin",
+      "orcid": "https://orcid.org/0000-0002-1171-1436",
+      "h_index": 63,
+      "i10_index": 220,
+      "works_count": 540,
+      "cited_by_count": 20948,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 290,
+      "score": 8,
+      "label": "Urology -- 8.0",
+      "id": "https://openalex.org/A5039779928",
+      "display_name": "Mary Frances Barbe",
+      "orcid": "https://orcid.org/0000-0002-5235-9803",
+      "h_index": 63,
+      "i10_index": 206,
+      "works_count": 459,
+      "cited_by_count": 11866,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 291,
+      "score": 8,
+      "label": "Urology -- 8.0",
+      "id": "https://openalex.org/A5005702123",
+      "display_name": "Ben J Challacombe",
+      "orcid": "https://orcid.org/0000-0001-8631-0314",
+      "h_index": 63,
+      "i10_index": 200,
+      "works_count": 657,
+      "cited_by_count": 31419,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 292,
+      "score": 8,
+      "label": "Urology -- 8.0",
+      "id": "https://openalex.org/A5021967618",
+      "display_name": "Juanita Mary Crook",
+      "orcid": "https://orcid.org/0000-0003-0711-3318",
+      "h_index": 63,
+      "i10_index": 186,
+      "works_count": 478,
+      "cited_by_count": 13674,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 293,
+      "score": 8,
+      "label": "Urology -- 8.0",
+      "id": "https://openalex.org/A5112295683",
+      "display_name": "John W. Duckett",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 169,
+      "works_count": 293,
+      "cited_by_count": 11699,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 294,
+      "score": 8,
+      "label": "Urology -- 8.0",
+      "id": "https://openalex.org/A5067413666",
+      "display_name": "Claudio Jeldres",
+      "orcid": "https://orcid.org/0000-0001-9102-040X",
+      "h_index": 63,
+      "i10_index": 167,
+      "works_count": 421,
+      "cited_by_count": 12055,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 295,
+      "score": 8,
+      "label": "Urology -- 8.0",
+      "id": "https://openalex.org/A5111950819",
+      "display_name": "Joel B. Nelson",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 165,
+      "works_count": 481,
+      "cited_by_count": 27613,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 296,
+      "score": 8,
+      "label": "Urology -- 8.0",
+      "id": "https://openalex.org/A5039368770",
+      "display_name": "Lori Ann Birder",
+      "orcid": "https://orcid.org/0000-0002-3393-2256",
+      "h_index": 63,
+      "i10_index": 164,
+      "works_count": 342,
+      "cited_by_count": 15210,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 297,
+      "score": 8,
+      "label": "Urology -- 8.0",
+      "id": "https://openalex.org/A5035189778",
+      "display_name": "John Kellogg Parsons",
+      "orcid": "https://orcid.org/0000-0002-3676-9730",
+      "h_index": 63,
+      "i10_index": 161,
+      "works_count": 320,
+      "cited_by_count": 17678,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 298,
+      "score": 8,
+      "label": "Urology -- 8.0",
+      "id": "https://openalex.org/A5108764557",
+      "display_name": "Brian R. Matlaga",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 154,
+      "works_count": 356,
+      "cited_by_count": 13390,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 299,
+      "score": 8,
+      "label": "Urology -- 8.0",
+      "id": "https://openalex.org/A5104062160",
+      "display_name": "Leonard S. Marks",
+      "orcid": "https://orcid.org/0000-0002-7910-179X",
+      "h_index": 63,
+      "i10_index": 145,
+      "works_count": 336,
+      "cited_by_count": 15460,
+      "discipline": "Urology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Urology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    }
+  ]
+}

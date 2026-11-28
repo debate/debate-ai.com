@@ -1,0 +1,210 @@
+{
+  "kind": "subfield",
+  "id": 2612,
+  "name": "Numerical Analysis",
+  "total_in_scrape": 10,
+  "count": 10,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Numerical Analysis -- 9.9",
+      "id": "https://openalex.org/A5040083768",
+      "display_name": "Gerhard Wanner",
+      "orcid": "https://orcid.org/0000-0002-5996-5902",
+      "h_index": 89,
+      "i10_index": 258,
+      "works_count": 464,
+      "cited_by_count": 32015,
+      "discipline": "Numerical Analysis",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Numerical Analysis",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Numerical Analysis -- 9.9",
+      "id": "https://openalex.org/A5021640058",
+      "display_name": "Linda Ruth Petzold",
+      "orcid": "https://orcid.org/0000-0001-6251-6078",
+      "h_index": 79,
+      "i10_index": 246,
+      "works_count": 463,
+      "cited_by_count": 29402,
+      "discipline": "Numerical Analysis",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Numerical Analysis",
+      "fields": [
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Numerical Analysis -- 9.9",
+      "id": "https://openalex.org/A5011886900",
+      "display_name": "Liqun Qi",
+      "orcid": "https://orcid.org/0000-0002-1112-5250",
+      "h_index": 76,
+      "i10_index": 321,
+      "works_count": 555,
+      "cited_by_count": 24307,
+      "discipline": "Numerical Analysis",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Numerical Analysis",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Numerical Analysis -- 9.9",
+      "id": "https://openalex.org/A5046109083",
+      "display_name": "Stephen J. Wright",
+      "orcid": "https://orcid.org/0000-0001-6815-7379",
+      "h_index": 73,
+      "i10_index": 225,
+      "works_count": 447,
+      "cited_by_count": 60864,
+      "discipline": "Numerical Analysis",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Numerical Analysis",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Numerical Analysis -- 9.9",
+      "id": "https://openalex.org/A5003330950",
+      "display_name": "Kevin Burrage",
+      "orcid": "https://orcid.org/0000-0002-8111-1137",
+      "h_index": 69,
+      "i10_index": 241,
+      "works_count": 497,
+      "cited_by_count": 17435,
+      "discipline": "Numerical Analysis",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Numerical Analysis",
+      "fields": [
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Numerical Analysis -- 9.9",
+      "id": "https://openalex.org/A5112960033",
+      "display_name": "T. E. Simos",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 236,
+      "works_count": 417,
+      "cited_by_count": 13239,
+      "discipline": "Numerical Analysis",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Numerical Analysis",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Numerical Analysis -- 9.8",
+      "id": "https://openalex.org/A5058813836",
+      "display_name": "Masao Fukushima",
+      "orcid": "https://orcid.org/0000-0002-4372-6376",
+      "h_index": 67,
+      "i10_index": 178,
+      "works_count": 330,
+      "cited_by_count": 14911,
+      "discipline": "Numerical Analysis",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Numerical Analysis",
+      "fields": [
+        "Mathematics",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Numerical Analysis -- 9.8",
+      "id": "https://openalex.org/A5065792988",
+      "display_name": "Christian Lubich",
+      "orcid": "https://orcid.org/0000-0003-0105-4927",
+      "h_index": 67,
+      "i10_index": 152,
+      "works_count": 248,
+      "cited_by_count": 19012,
+      "discipline": "Numerical Analysis",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Numerical Analysis",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Numerical Analysis -- 9.8",
+      "id": "https://openalex.org/A5107917698",
+      "display_name": "Andrea Lodi",
+      "orcid": "https://orcid.org/0000-0001-9269-633X",
+      "h_index": 63,
+      "i10_index": 198,
+      "works_count": 503,
+      "cited_by_count": 20098,
+      "discipline": "Numerical Analysis",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Numerical Analysis",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Engineering",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Numerical Analysis -- 9.8",
+      "id": "https://openalex.org/A5031935416",
+      "display_name": "Pablo A. Parrilo",
+      "orcid": "https://orcid.org/0000-0003-1132-8477",
+      "h_index": 63,
+      "i10_index": 163,
+      "works_count": 312,
+      "cited_by_count": 25529,
+      "discipline": "Numerical Analysis",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Numerical Analysis",
+      "fields": [
+        "Mathematics",
+        "Engineering",
+        "Computer Science"
+      ]
+    }
+  ]
+}

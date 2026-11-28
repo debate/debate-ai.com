@@ -1,0 +1,832 @@
+{
+  "kind": "subfield",
+  "id": 1211,
+  "name": "Philosophy",
+  "total_in_scrape": 43,
+  "count": 43,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Philosophy -- 9.9",
+      "id": "https://openalex.org/A5109864576",
+      "display_name": "Jacques Derrida",
+      "orcid": null,
+      "h_index": 123,
+      "i10_index": 425,
+      "works_count": 1023,
+      "cited_by_count": 78699,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Philosophy -- 9.9",
+      "id": "https://openalex.org/A5027223144",
+      "display_name": "Gert Biesta",
+      "orcid": "https://orcid.org/0000-0001-8530-7105",
+      "h_index": 106,
+      "i10_index": 330,
+      "works_count": 887,
+      "cited_by_count": 54567,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Philosophy -- 9.9",
+      "id": "https://openalex.org/A5054510055",
+      "display_name": "Laurence J. Kirmayer",
+      "orcid": "https://orcid.org/0000-0002-6228-1739",
+      "h_index": 106,
+      "i10_index": 310,
+      "works_count": 433,
+      "cited_by_count": 40756,
+      "discipline": "Philosophy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Medicine",
+        "Arts and Humanities",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Philosophy -- 9.9",
+      "id": "https://openalex.org/A5107836452",
+      "display_name": "Robert L. Spitzer",
+      "orcid": "https://orcid.org/0000-0002-8182-2780",
+      "h_index": 103,
+      "i10_index": 207,
+      "works_count": 359,
+      "cited_by_count": 198422,
+      "discipline": "Philosophy",
+      "primary_field": "Psychology",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Philosophy -- 9.9",
+      "id": "https://openalex.org/A5025473979",
+      "display_name": "Martha C. Nussbaum",
+      "orcid": null,
+      "h_index": 102,
+      "i10_index": 419,
+      "works_count": 1112,
+      "cited_by_count": 86615,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Philosophy -- 9.9",
+      "id": "https://openalex.org/A5051216244",
+      "display_name": "Barry Smith",
+      "orcid": "https://orcid.org/0000-0003-1384-116X",
+      "h_index": 89,
+      "i10_index": 367,
+      "works_count": 1267,
+      "cited_by_count": 38535,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5006482282",
+      "display_name": "Michael B. First",
+      "orcid": "https://orcid.org/0000-0002-8032-3947",
+      "h_index": 87,
+      "i10_index": 212,
+      "works_count": 396,
+      "cited_by_count": 61715,
+      "discipline": "Philosophy",
+      "primary_field": "Psychology",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Psychology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5088734703",
+      "display_name": "Paul Ricœur",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 322,
+      "works_count": 1259,
+      "cited_by_count": 43492,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5059016534",
+      "display_name": "Philip N. Pettit",
+      "orcid": "https://orcid.org/0000-0002-0355-3896",
+      "h_index": 85,
+      "i10_index": 225,
+      "works_count": 544,
+      "cited_by_count": 27558,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5086234972",
+      "display_name": "Francisco J. Varela",
+      "orcid": "https://orcid.org/0000-0001-8403-4467",
+      "h_index": 85,
+      "i10_index": 169,
+      "works_count": 307,
+      "cited_by_count": 65197,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5101074400",
+      "display_name": "Martín Heidegger",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 334,
+      "works_count": 868,
+      "cited_by_count": 40229,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5109804111",
+      "display_name": "Daniel M. Wegner",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 139,
+      "works_count": 244,
+      "cited_by_count": 48859,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5113463563",
+      "display_name": "Hilary Putnam",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 249,
+      "works_count": 661,
+      "cited_by_count": 42201,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5029669651",
+      "display_name": "Shaun Gallagher",
+      "orcid": "https://orcid.org/0000-0002-3147-9929",
+      "h_index": 79,
+      "i10_index": 278,
+      "works_count": 616,
+      "cited_by_count": 36366,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5020923463",
+      "display_name": "Immanuel Kant",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 247,
+      "works_count": 1295,
+      "cited_by_count": 42534,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5110903974",
+      "display_name": "John Rogers Searle",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 221,
+      "works_count": 566,
+      "cited_by_count": 83537,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Philosophy -- 9.8",
+      "id": "https://openalex.org/A5109636964",
+      "display_name": "Jerry A. Fodor",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 147,
+      "works_count": 337,
+      "cited_by_count": 59966,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5047293181",
+      "display_name": "Edmund Husserl",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 218,
+      "works_count": 1072,
+      "cited_by_count": 26951,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5088506012",
+      "display_name": "Andy Clark",
+      "orcid": "https://orcid.org/0000-0002-1233-8629",
+      "h_index": 77,
+      "i10_index": 179,
+      "works_count": 443,
+      "cited_by_count": 45562,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5023188928",
+      "display_name": "Gilles Deleuze",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 170,
+      "works_count": 562,
+      "cited_by_count": 43036,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5037189034",
+      "display_name": "Peter Carruthers",
+      "orcid": "https://orcid.org/0000-0002-7149-2327",
+      "h_index": 75,
+      "i10_index": 232,
+      "works_count": 550,
+      "cited_by_count": 23952,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5108657500",
+      "display_name": "Jacques Rancière",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 203,
+      "works_count": 657,
+      "cited_by_count": 35676,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5031927870",
+      "display_name": "Dan Zahavi",
+      "orcid": "https://orcid.org/0000-0002-2869-4951",
+      "h_index": 75,
+      "i10_index": 196,
+      "works_count": 520,
+      "cited_by_count": 21372,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5060375992",
+      "display_name": "Aristotle ",
+      "orcid": "https://orcid.org/0000-0003-2052-1391",
+      "h_index": 74,
+      "i10_index": 284,
+      "works_count": 1221,
+      "cited_by_count": 26107,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5101873597",
+      "display_name": "Thomas A. E. Fuchs",
+      "orcid": "https://orcid.org/0000-0001-9466-4956",
+      "h_index": 74,
+      "i10_index": 173,
+      "works_count": 435,
+      "cited_by_count": 18893,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5079129069",
+      "display_name": "Richard M. Rorty",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 294,
+      "works_count": 1144,
+      "cited_by_count": 40054,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5083743331",
+      "display_name": "Daniel C. Dennett",
+      "orcid": "https://orcid.org/0000-0003-1181-3093",
+      "h_index": 73,
+      "i10_index": 201,
+      "works_count": 518,
+      "cited_by_count": 41127,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Philosophy -- 9.7",
+      "id": "https://openalex.org/A5069893226",
+      "display_name": "Josef Parnas",
+      "orcid": "https://orcid.org/0000-0001-7864-295X",
+      "h_index": 73,
+      "i10_index": 199,
+      "works_count": 332,
+      "cited_by_count": 18484,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5103215889",
+      "display_name": "David J. Chalmers",
+      "orcid": "https://orcid.org/0000-0003-4190-3161",
+      "h_index": 73,
+      "i10_index": 128,
+      "works_count": 240,
+      "cited_by_count": 36719,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5103783172",
+      "display_name": "Donald Davidson",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 167,
+      "works_count": 386,
+      "cited_by_count": 34460,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5104114047",
+      "display_name": "Bernard Williams",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 165,
+      "works_count": 450,
+      "cited_by_count": 32322,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5090163591",
+      "display_name": "Michael Adrian Peters",
+      "orcid": "https://orcid.org/0000-0002-1482-2975",
+      "h_index": 69,
+      "i10_index": 370,
+      "works_count": 1155,
+      "cited_by_count": 22353,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5024635859",
+      "display_name": "Sven Ove Hansson",
+      "orcid": "https://orcid.org/0000-0003-0071-3919",
+      "h_index": 69,
+      "i10_index": 249,
+      "works_count": 794,
+      "cited_by_count": 15816,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5007201391",
+      "display_name": "Timothy L. Williamson",
+      "orcid": "https://orcid.org/0000-0002-4659-8672",
+      "h_index": 69,
+      "i10_index": 171,
+      "works_count": 537,
+      "cited_by_count": 22458,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5088951952",
+      "display_name": "Antti Revonsuo",
+      "orcid": "https://orcid.org/0000-0002-2771-1588",
+      "h_index": 67,
+      "i10_index": 166,
+      "works_count": 290,
+      "cited_by_count": 12830,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5069496806",
+      "display_name": "Haobin Wang",
+      "orcid": "https://orcid.org/0000-0002-2003-131X",
+      "h_index": 66,
+      "i10_index": 181,
+      "works_count": 501,
+      "cited_by_count": 14540,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5071242022",
+      "display_name": "Geoffrey M. Reed",
+      "orcid": "https://orcid.org/0000-0002-6572-4785",
+      "h_index": 66,
+      "i10_index": 153,
+      "works_count": 258,
+      "cited_by_count": 23150,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5101806542",
+      "display_name": "Alvin I. Goldman",
+      "orcid": "https://orcid.org/0000-0003-0793-4589",
+      "h_index": 66,
+      "i10_index": 143,
+      "works_count": 254,
+      "cited_by_count": 26884,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Philosophy -- 9.6",
+      "id": "https://openalex.org/A5016451627",
+      "display_name": "Kit Fine",
+      "orcid": "https://orcid.org/0000-0002-9438-4900",
+      "h_index": 65,
+      "i10_index": 120,
+      "works_count": 245,
+      "cited_by_count": 18816,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Philosophy -- 9.5",
+      "id": "https://openalex.org/A5082884079",
+      "display_name": "Duncan Pritchard",
+      "orcid": "https://orcid.org/0000-0002-5997-0752",
+      "h_index": 64,
+      "i10_index": 202,
+      "works_count": 690,
+      "cited_by_count": 15164,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Philosophy -- 9.5",
+      "id": "https://openalex.org/A5031504392",
+      "display_name": "Willard Van Orman Quine",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 124,
+      "works_count": 410,
+      "cited_by_count": 27995,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Philosophy -- 9.5",
+      "id": "https://openalex.org/A5047857923",
+      "display_name": "Joshua Knobe",
+      "orcid": "https://orcid.org/0000-0003-0733-3775",
+      "h_index": 64,
+      "i10_index": 111,
+      "works_count": 225,
+      "cited_by_count": 16721,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Philosophy -- 9.5",
+      "id": "https://openalex.org/A5103093603",
+      "display_name": "John Campbell",
+      "orcid": "https://orcid.org/0000-0002-8089-5304",
+      "h_index": 63,
+      "i10_index": 173,
+      "works_count": 450,
+      "cited_by_count": 14410,
+      "discipline": "Philosophy",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Philosophy",
+      "fields": [
+        "Arts and Humanities",
+        "Economics, Econometrics and Finance"
+      ]
+    }
+  ]
+}

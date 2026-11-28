@@ -1,0 +1,703 @@
+{
+  "kind": "subfield",
+  "id": 1712,
+  "name": "Software",
+  "total_in_scrape": 38,
+  "count": 38,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Software -- 9.9",
+      "id": "https://openalex.org/A5000019783",
+      "display_name": "Mark Harman",
+      "orcid": "https://orcid.org/0000-0002-5864-4488",
+      "h_index": 99,
+      "i10_index": 391,
+      "works_count": 710,
+      "cited_by_count": 43817,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Software -- 9.9",
+      "id": "https://openalex.org/A5078533117",
+      "display_name": "Lionel Briand",
+      "orcid": "https://orcid.org/0000-0002-1393-1010",
+      "h_index": 97,
+      "i10_index": 391,
+      "works_count": 580,
+      "cited_by_count": 35526,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Software -- 9.9",
+      "id": "https://openalex.org/A5042653526",
+      "display_name": "Robertas Damaševičius",
+      "orcid": "https://orcid.org/0000-0001-9990-1084",
+      "h_index": 90,
+      "i10_index": 477,
+      "works_count": 826,
+      "cited_by_count": 30115,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Software -- 9.9",
+      "id": "https://openalex.org/A5109387322",
+      "display_name": "Martín Abadi",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 217,
+      "works_count": 375,
+      "cited_by_count": 81503,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Software -- 9.9",
+      "id": "https://openalex.org/A5101897622",
+      "display_name": "John C. Mitchell",
+      "orcid": "https://orcid.org/0000-0002-0024-860X",
+      "h_index": 84,
+      "i10_index": 407,
+      "works_count": 891,
+      "cited_by_count": 28683,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Software -- 9.9",
+      "id": "https://openalex.org/A5087402475",
+      "display_name": "Alex Aiken",
+      "orcid": "https://orcid.org/0000-0002-3723-9555",
+      "h_index": 83,
+      "i10_index": 250,
+      "works_count": 472,
+      "cited_by_count": 23581,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5052098157",
+      "display_name": "John Mylopoulos",
+      "orcid": "https://orcid.org/0000-0002-8698-3292",
+      "h_index": 78,
+      "i10_index": 402,
+      "works_count": 735,
+      "cited_by_count": 31046,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5066916130",
+      "display_name": "Krzysztof Czarnecki",
+      "orcid": "https://orcid.org/0000-0003-1642-1101",
+      "h_index": 76,
+      "i10_index": 208,
+      "works_count": 331,
+      "cited_by_count": 23806,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5069901599",
+      "display_name": "Martin Vechev",
+      "orcid": "https://orcid.org/0000-0002-0054-9568",
+      "h_index": 74,
+      "i10_index": 233,
+      "works_count": 372,
+      "cited_by_count": 21931,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5009458897",
+      "display_name": "David L. Dill",
+      "orcid": "https://orcid.org/0000-0002-6189-0866",
+      "h_index": 74,
+      "i10_index": 192,
+      "works_count": 386,
+      "cited_by_count": 34019,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5101569699",
+      "display_name": "Koushik Sen",
+      "orcid": "https://orcid.org/0000-0002-4539-9188",
+      "h_index": 74,
+      "i10_index": 170,
+      "works_count": 256,
+      "cited_by_count": 25972,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5040574362",
+      "display_name": "Yves Le Traon",
+      "orcid": "https://orcid.org/0000-0002-1045-4861",
+      "h_index": 73,
+      "i10_index": 315,
+      "works_count": 609,
+      "cited_by_count": 24096,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5011543162",
+      "display_name": "Sumit Gulwani",
+      "orcid": "https://orcid.org/0000-0002-9226-9634",
+      "h_index": 73,
+      "i10_index": 197,
+      "works_count": 390,
+      "cited_by_count": 17359,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5105356861",
+      "display_name": "Edmund M. Clarke",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 174,
+      "works_count": 275,
+      "cited_by_count": 33887,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5040623453",
+      "display_name": "Leslie Lamport",
+      "orcid": "https://orcid.org/0000-0002-9756-1327",
+      "h_index": 73,
+      "i10_index": 152,
+      "works_count": 349,
+      "cited_by_count": 57798,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5088778612",
+      "display_name": "David Harel",
+      "orcid": "https://orcid.org/0000-0001-7240-3931",
+      "h_index": 72,
+      "i10_index": 245,
+      "works_count": 606,
+      "cited_by_count": 32157,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Software -- 9.8",
+      "id": "https://openalex.org/A5072362603",
+      "display_name": "Simon Jones",
+      "orcid": "https://orcid.org/0000-0002-6085-1435",
+      "h_index": 72,
+      "i10_index": 237,
+      "works_count": 540,
+      "cited_by_count": 20100,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5051672229",
+      "display_name": "Andreas Zeller",
+      "orcid": "https://orcid.org/0000-0003-4719-8803",
+      "h_index": 72,
+      "i10_index": 193,
+      "works_count": 418,
+      "cited_by_count": 21597,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5032068969",
+      "display_name": "Michael D. Ernst",
+      "orcid": "https://orcid.org/0000-0001-9379-277X",
+      "h_index": 72,
+      "i10_index": 190,
+      "works_count": 387,
+      "cited_by_count": 24118,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5066155126",
+      "display_name": "Thomas Reps",
+      "orcid": "https://orcid.org/0000-0002-5676-9949",
+      "h_index": 71,
+      "i10_index": 232,
+      "works_count": 423,
+      "cited_by_count": 21788,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5077610917",
+      "display_name": "Zhendong Su",
+      "orcid": "https://orcid.org/0000-0002-2970-1391",
+      "h_index": 71,
+      "i10_index": 195,
+      "works_count": 365,
+      "cited_by_count": 18623,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5038406724",
+      "display_name": "Mary Jean Harrold",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 167,
+      "works_count": 296,
+      "cited_by_count": 22192,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5045127387",
+      "display_name": "Martin Rinard",
+      "orcid": "https://orcid.org/0000-0001-8095-8523",
+      "h_index": 70,
+      "i10_index": 234,
+      "works_count": 580,
+      "cited_by_count": 18852,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5052249797",
+      "display_name": "Gregg Rothermel",
+      "orcid": "https://orcid.org/0009-0009-7207-802X",
+      "h_index": 70,
+      "i10_index": 175,
+      "works_count": 303,
+      "cited_by_count": 20793,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5078808456",
+      "display_name": "Bernhard Steffen",
+      "orcid": "https://orcid.org/0000-0001-9619-1558",
+      "h_index": 69,
+      "i10_index": 293,
+      "works_count": 608,
+      "cited_by_count": 16288,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5102754614",
+      "display_name": "José Meseguer",
+      "orcid": "https://orcid.org/0000-0003-4779-3848",
+      "h_index": 68,
+      "i10_index": 335,
+      "works_count": 641,
+      "cited_by_count": 24509,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5007282049",
+      "display_name": "John V. Guttag",
+      "orcid": "https://orcid.org/0000-0003-0992-0906",
+      "h_index": 68,
+      "i10_index": 187,
+      "works_count": 344,
+      "cited_by_count": 27609,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Software -- 9.7",
+      "id": "https://openalex.org/A5045020317",
+      "display_name": "David B. Garlan",
+      "orcid": "https://orcid.org/0000-0002-6735-8301",
+      "h_index": 67,
+      "i10_index": 244,
+      "works_count": 526,
+      "cited_by_count": 24571,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Software -- 9.6",
+      "id": "https://openalex.org/A5013220584",
+      "display_name": "Luca Cardelli",
+      "orcid": "https://orcid.org/0000-0002-8705-8488",
+      "h_index": 67,
+      "i10_index": 205,
+      "works_count": 424,
+      "cited_by_count": 19886,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Software -- 9.6",
+      "id": "https://openalex.org/A5085361253",
+      "display_name": "Benjamin C. Pierce",
+      "orcid": "https://orcid.org/0000-0001-7839-1636",
+      "h_index": 66,
+      "i10_index": 163,
+      "works_count": 444,
+      "cited_by_count": 16886,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Software -- 9.6",
+      "id": "https://openalex.org/A5025438762",
+      "display_name": "Paolo Tonella",
+      "orcid": "https://orcid.org/0000-0003-3088-0339",
+      "h_index": 65,
+      "i10_index": 240,
+      "works_count": 457,
+      "cited_by_count": 14286,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Software -- 9.6",
+      "id": "https://openalex.org/A5040326968",
+      "display_name": "Jacques Klein",
+      "orcid": "https://orcid.org/0000-0003-4052-475X",
+      "h_index": 65,
+      "i10_index": 220,
+      "works_count": 449,
+      "cited_by_count": 17906,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Software -- 9.6",
+      "id": "https://openalex.org/A5026456188",
+      "display_name": "Alan Colman",
+      "orcid": "https://orcid.org/0000-0003-0264-9965",
+      "h_index": 65,
+      "i10_index": 188,
+      "works_count": 369,
+      "cited_by_count": 18186,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Software -- 9.6",
+      "id": "https://openalex.org/A5033605569",
+      "display_name": "Don S. Batory",
+      "orcid": "https://orcid.org/0000-0002-8739-3841",
+      "h_index": 65,
+      "i10_index": 157,
+      "works_count": 300,
+      "cited_by_count": 15476,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Software -- 9.6",
+      "id": "https://openalex.org/A5030961858",
+      "display_name": "Alessandro Orso",
+      "orcid": "https://orcid.org/0000-0003-4516-9320",
+      "h_index": 64,
+      "i10_index": 145,
+      "works_count": 247,
+      "cited_by_count": 13084,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Software -- 9.6",
+      "id": "https://openalex.org/A5054031138",
+      "display_name": "Wouter Joosen",
+      "orcid": "https://orcid.org/0000-0002-7710-5092",
+      "h_index": 63,
+      "i10_index": 372,
+      "works_count": 911,
+      "cited_by_count": 17238,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Software -- 9.6",
+      "id": "https://openalex.org/A5079261847",
+      "display_name": "Gordon Fraser",
+      "orcid": "https://orcid.org/0000-0002-4364-6595",
+      "h_index": 63,
+      "i10_index": 194,
+      "works_count": 380,
+      "cited_by_count": 16207,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Software -- 9.6",
+      "id": "https://openalex.org/A5071340047",
+      "display_name": "Dirk Beyer",
+      "orcid": "https://orcid.org/0000-0003-4832-7662",
+      "h_index": 63,
+      "i10_index": 193,
+      "works_count": 548,
+      "cited_by_count": 12142,
+      "discipline": "Software",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Software",
+      "fields": [
+        "Computer Science",
+        "Engineering"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "kind": "subfield",
+  "id": 2302,
+  "name": "Ecological Modeling",
+  "total_in_scrape": 4,
+  "count": 4,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Ecological Modeling -- 9.9",
+      "id": "https://openalex.org/A5026094744",
+      "display_name": "A. Townsend Peterson",
+      "orcid": "https://orcid.org/0000-0003-0243-2379",
+      "h_index": 128,
+      "i10_index": 532,
+      "works_count": 812,
+      "cited_by_count": 103224,
+      "discipline": "Ecological Modeling",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Ecological Modeling",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Ecological Modeling -- 9.9",
+      "id": "https://openalex.org/A5027499246",
+      "display_name": "Lalit Kumar",
+      "orcid": "https://orcid.org/0000-0002-9205-756X",
+      "h_index": 76,
+      "i10_index": 254,
+      "works_count": 379,
+      "cited_by_count": 23331,
+      "discipline": "Ecological Modeling",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Ecological Modeling",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Ecological Modeling -- 9.9",
+      "id": "https://openalex.org/A5017811194",
+      "display_name": "Robert Guralnick",
+      "orcid": "https://orcid.org/0000-0001-6682-1504",
+      "h_index": 73,
+      "i10_index": 221,
+      "works_count": 412,
+      "cited_by_count": 22775,
+      "discipline": "Ecological Modeling",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Ecological Modeling",
+      "fields": [
+        "Environmental Science",
+        "Computer Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Ecological Modeling -- 9.9",
+      "id": "https://openalex.org/A5084042284",
+      "display_name": "Joshua J. Lawler",
+      "orcid": "https://orcid.org/0000-0002-8306-3175",
+      "h_index": 68,
+      "i10_index": 126,
+      "works_count": 229,
+      "cited_by_count": 27902,
+      "discipline": "Ecological Modeling",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Ecological Modeling",
+      "fields": [
+        "Environmental Science"
+      ]
+    }
+  ]
+}
