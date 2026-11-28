@@ -39,44 +39,30 @@ describe("readability", () => {
   })
 
   it("scores the sample as a difficult adult text, in a sane range", () => {
-    const s = result.scores
-    expect(s.fleschReadingEase).toBeGreaterThan(35)
-    expect(s.fleschReadingEase).toBeLessThan(65)
-    for (const grade of [s.fleschKincaidGrade, s.gunningFog, s.smog, s.automatedReadability, s.colemanLiau, s.linsearWrite]) {
-      expect(grade).toBeGreaterThan(8)
-      expect(grade).toBeLessThan(20)
-    }
-    expect(result.textStandard).toBeGreaterThanOrEqual(11)
-    expect(result.textStandard).toBeLessThanOrEqual(15)
-    expect(result.score).toBe(Math.round(s.fleschReadingEase!))
+    expect(result.fleschReadingEase).toBeGreaterThan(35)
+    expect(result.fleschReadingEase).toBeLessThan(65)
+    expect(result.score).toBe(Math.round(result.fleschReadingEase!))
   })
 
-  it("agrees with the textstat formulas on the counted totals", () => {
-    const { words, sentences, syllables, polysyllables, letters, scores } = result
+  it("agrees with the Flesch Reading Ease formula on the counted totals", () => {
+    const { words, sentences, syllables, fleschReadingEase } = result
     const r1 = (n: number) => Math.round(n * 10) / 10
-    expect(scores.fleschReadingEase).toBe(r1(206.835 - 1.015 * (words / sentences) - 84.6 * (syllables / words)))
-    expect(scores.fleschKincaidGrade).toBe(r1(0.39 * (words / sentences) + 11.8 * (syllables / words) - 15.59))
-    expect(scores.gunningFog).toBe(r1(0.4 * (words / sentences + (100 * polysyllables) / words)))
-    expect(scores.smog).toBe(r1(1.043 * Math.sqrt(polysyllables * (30 / sentences)) + 3.1291))
-    expect(scores.automatedReadability).toBe(r1(4.71 * (letters / words) + 0.5 * (words / sentences) - 21.43))
-    expect(scores.colemanLiau).toBe(r1(0.0588 * (letters / words) * 100 - 0.296 * (sentences / words) * 100 - 15.8))
+    expect(fleschReadingEase).toBe(r1(206.835 - 1.015 * (words / sentences) - 84.6 * (syllables / words)))
   })
 
   it("scores plain short sentences as easy", () => {
     const easy = readability("The cat sat on the mat. The dog ran to the park. We like to play. It is a sunny day.")
     expect(easy.score).toBeGreaterThan(90)
-    expect(easy.band).toBe("Very Easy")
-    expect(easy.scores.fleschKincaidGrade!).toBeLessThan(3)
-    expect(easy.textStandard).toBeLessThanOrEqual(5)
+    expect(easy.band).toBe("Very easy")
   })
 
   it("clamps the headline score to 0-100", () => {
     const dense = readability(
       "Notwithstanding institutionalization's incontrovertible interconnectedness, characteristically incomprehensible epistemological reconceptualizations proliferate indefinitely.",
     )
-    expect(dense.scores.fleschReadingEase!).toBeLessThan(0)
+    expect(dense.fleschReadingEase!).toBeLessThan(0)
     expect(dense.score).toBe(0)
-    expect(dense.band).toBe("Very Confusing")
+    expect(dense.band).toBe("Very difficult")
   })
 
   it("returns nulls, never NaN, for empty or very short text", () => {
@@ -85,16 +71,8 @@ describe("readability", () => {
       expect(short.words).toBeLessThan(MIN_WORDS)
       expect(short.score).toBeNull()
       expect(short.band).toBeNull()
-      expect(short.textStandard).toBeNull()
-      expect(Object.values(short.scores).every((value) => value === null)).toBe(true)
+      expect(short.fleschReadingEase).toBeNull()
     }
-  })
-
-  it("leaves SMOG out below three sentences but scores the rest", () => {
-    const two = readability("Playing games has always been thought to be important to the development of creative children. I believe that playing games is important for adults.")
-    expect(two.sentences).toBe(2)
-    expect(two.scores.smog).toBeNull()
-    expect(two.scores.fleschReadingEase).not.toBeNull()
   })
 
   it("does not split sentences on abbreviations or decimals", () => {
@@ -105,21 +83,21 @@ describe("readability", () => {
 
 describe("readabilityBand", () => {
   it.each([
-    [100, "Very Easy"],
-    [90, "Very Easy"],
+    [100, "Very easy"],
+    [90, "Very easy"],
     [89, "Easy"],
     [80, "Easy"],
-    [79, "Fairly Easy"],
-    [70, "Fairly Easy"],
+    [79, "Fairly easy"],
+    [70, "Fairly easy"],
     [69, "Standard"],
     [62, "Standard"],
     [60, "Standard"],
-    [59, "Fairly Difficult"],
-    [50, "Fairly Difficult"],
+    [59, "Fairly difficult"],
+    [50, "Fairly difficult"],
     [49, "Difficult"],
     [30, "Difficult"],
-    [29, "Very Confusing"],
-    [0, "Very Confusing"],
+    [29, "Very difficult"],
+    [0, "Very difficult"],
   ])("%i is %s", (score, band) => {
     expect(readabilityBand(score)).toBe(band)
   })

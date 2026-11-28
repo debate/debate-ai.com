@@ -210,10 +210,10 @@ describe("greatest high school teams of all time", () => {
   })
 
   it("adds each debater's own college points at the college share, high school part left out", () => {
-    const row = (team: string, total: number, highSchool: number, highSchoolOnly?: true) =>
-      ({ key: team, school: "Northwestern University (IL)", team, total, parts: { highSchool }, highSchoolOnly }) as unknown as NdtPointsRow
+    const row = (team: string, total: number, highSchool: number) =>
+      ({ key: team, school: "Northwestern University (IL)", team, total, parts: { highSchool } }) as unknown as NdtPointsRow
     const college = collegeLookupFromNdt({
-      debaters: [row("Matt Fisher", 120, 20), row("Stephanie Spies", 50, 10), row("Nobody Here", 40, 40, true)],
+      debaters: [row("Matt Fisher", 120, 20), row("Stephanie Spies", 50, 10), row("Nobody Here", 40, 40)],
     })
     const lists = buildHsAllTimeTeams({
       toc: [],

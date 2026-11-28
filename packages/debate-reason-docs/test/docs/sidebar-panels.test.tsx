@@ -153,6 +153,8 @@ function makeDocs(overrides: Record<string, unknown> = {}) {
     createDocument: vi.fn(async () => {}),
     deleteDocument: vi.fn(async () => {}),
     moveDocument: vi.fn(async () => {}),
+    saveRefusal: null,
+    dismissSaveRefusal: vi.fn(),
     updateTitle: vi.fn(),
     selectTopicDocument: vi.fn(),
     importFiles: vi.fn(async () => ({ created: [], failures: [] })),
@@ -645,6 +647,22 @@ describe("ReasonDocsSidebarPanels", () => {
     docsState.value = docs;
     mount(<ReasonDocsSidebarPanels />);
     expect(docs.ensureLoaded).not.toHaveBeenCalled();
+  });
+
+  it("says why a save was refused, and dismisses it", () => {
+    const docs = makeDocs({ saveRefusal: "That move wasn't saved: That folder no longer exists. The file is back where it was." });
+    docsState.value = docs;
+    mount(<ReasonDocsSidebarPanels />);
+    const alert = document.querySelector("[role=alert]");
+    expect(alert?.textContent).toContain("That move wasn't saved: That folder no longer exists.");
+    click(alert!.querySelector("button[aria-label=Dismiss]")!);
+    expect(docs.dismissSaveRefusal).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows no refusal line when nothing was refused", () => {
+    docsState.value = makeDocs();
+    mount(<ReasonDocsSidebarPanels />);
+    expect(document.querySelector("[role=alert] button[aria-label=Dismiss]")).toBeNull();
   });
 
   it("selects topic starters and shows download failures", async () => {

@@ -34,6 +34,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { DocumentSaveQueue, type SaveQueueState } from "../lib/reason-docs/save-queue"
+import { isRefusedMove, saveRefusalMessage } from "../lib/reason-docs/save-refusal"
 import {
   canReopenTab as canReopen,
   closeAllTabs as closeAll,
@@ -192,6 +193,14 @@ export interface ReasonDocsContextValue {
   unsaved: boolean
   /** True when the last write for some document failed and is being retried. */
   saveFailed: boolean
+  /**
+   * Why the server last refused a save for good (a move into a folder that
+   * isn't yours, a file that no longer exists…), or null. A refused move has
+   * already been undone on screen; this says why.
+   */
+  saveRefusal: string | null
+  /** Clears `saveRefusal`. */
+  dismissSaveRefusal: () => void
   /** True while an upload is being converted and stored. */
   importing: boolean
   /** Fetches documents and topic starters once, on first request. */
@@ -338,9 +347,26 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   // One queue for the whole app: per-document debounces, merged patches,
   // retry on failure, and a flush when the page goes away. See
   // `lib/reason-docs/save-queue.ts` for why each of those is load-bearing.
+  const [saveRefusal, setSaveRefusal] = useState<string | null>(null)
+  // Each moved file's folder as the server last confirmed it, so a move the
+  // server refuses (400) can be put back where it really is instead of
+  // staying in the wrong folder until the next reload.
+  const confirmedParentRef = useRef(new Map<number, number | null>())
   const saveQueueRef = useRef<DocumentSaveQueue | null>(null)
   if (!saveQueueRef.current) {
-    saveQueueRef.current = new DocumentSaveQueue({ onStateChange: setSaveState })
+    saveQueueRef.current = new DocumentSaveQueue({
+      onStateChange: setSaveState,
+      onSaved: (id, patch) => {
+        if ("parentId" in patch) confirmedParentRef.current.set(id, patch.parentId ?? null)
+      },
+      onRejected: (rejection) => {
+        if (isRefusedMove(rejection) && confirmedParentRef.current.has(rejection.id)) {
+          const parentId = confirmedParentRef.current.get(rejection.id) ?? null
+          setDocuments((prev) => prev.map((d) => (d.id === rejection.id ? { ...d, parentId } : d)))
+        }
+        setSaveRefusal(saveRefusalMessage(rejection))
+      },
+    })
   }
   const saveQueue = saveQueueRef.current
   // Guards the lazy fetch: `loaded` only flips once the request resolves, so
@@ -981,7 +1007,14 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
 
   const moveDocument = useCallback(
     async (id: number, parentId: number | null) => {
-      setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, parentId } : d)))
+      setDocuments((prev) => {
+        const moved = prev.find((d) => d.id === id)
+        // The first move since load starts from the folder the server sent.
+        if (moved && !confirmedParentRef.current.has(id)) {
+          confirmedParentRef.current.set(id, moved.parentId ?? null)
+        }
+        return prev.map((d) => (d.id === id ? { ...d, parentId } : d))
+      })
       // Through the same queue as title/content edits: a re-parent now gets
       // retry-with-backoff and a `pagehide`/tab-hide flush instead of a
       // fire-and-forget PUT that silently drops on a network blip.
@@ -1334,6 +1367,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     }
   }, [suspendedTabs, saveDocument])
 
+  const dismissSaveRefusal = useCallback(() => setSaveRefusal(null), [])
+
   const value = useMemo<ReasonDocsContextValue>(
     () => ({
       documents,
@@ -1349,6 +1384,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       saving: saveState.saving,
       unsaved: saveState.pendingIds.length > 0,
       saveFailed: saveState.failedIds.length > 0,
+      saveRefusal,
+      dismissSaveRefusal,
       importing,
       ensureLoaded,
       openDocument,
@@ -1395,6 +1432,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       filesLoading,
       loaded,
       saveState,
+      saveRefusal,
+      dismissSaveRefusal,
       importing,
       ensureLoaded,
       openDocument,

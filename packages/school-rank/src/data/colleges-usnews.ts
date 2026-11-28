@@ -161,6 +161,7 @@ export const COLLEGES_OUTSIDE_TOP_100: readonly CollegeRow[] = [
   [148, "University of Kansas", "KS", "public", ["Kansas", "KU"]],
   [148, "University of Kentucky", "KY", "public", ["Kentucky", "UK"]],
   [null, "Liberty University", "VA", "private", ["Liberty"]],
+  [null, "University of Louisville", "KY", "public", ["Louisville", "UofL"]],
   [null, "Loyola University Chicago", "IL", "private", ["Loyola Chicago", "LUC"]],
   [null, "Macalester College", "MN", "private", ["Macalester", "Mac"]],
   [null, "University of North Texas", "TX", "public", ["North Texas", "UNT"]],

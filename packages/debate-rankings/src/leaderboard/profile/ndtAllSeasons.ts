@@ -134,12 +134,6 @@ export interface NdtPointsRow {
    * oldest first, adding the `highSchool` part. Empty when none match.
    */
   highSchool?: NdtHighSchoolResult[]
-  /**
-   * A debater who never scored at the NDT, ranked only on their high school
-   * TOC and NDCA policy record (`debaters` table only); `school` is then their
-   * most recent high school.
-   */
-  highSchoolOnly?: true
 }
 
 /** The high school national championships a college debater's results come from. */
@@ -576,32 +570,10 @@ export function buildNdtAllSeasons(
     return row
   })
 
-  // Debaters who never scored at the NDT, on their high school record alone.
-  const collegeSlugs = new Set([...byDebater.keys()].map((id) => id.slice(id.indexOf("|") + 1)))
-  const highSchoolOnlyRows = highSchoolDebaterNames(tocResults, ndcaResults)
-    .filter((name) => !collegeSlugs.has(profileSlug(name)))
-    .map((name): NdtPointsRow => {
-      const highSchool = highSchoolOf(name)
-      const parts = { ...emptyParts(), highSchool: highSchool.reduce((sum, result) => sum + result.points, 0) }
-      const latest = highSchool.at(-1)!
-      return {
-        key: `hs|${profileSlug(name)}`,
-        school: latest.school,
-        team: name,
-        total: parts.highSchool,
-        parts,
-        counts: emptyCounts(),
-        firstYear: highSchool[0].year,
-        lastYear: latest.year,
-        highSchool,
-        highSchoolOnly: true,
-      }
-    })
-
   return {
     teams: finish(withSides),
     strictTeams: teamRows,
-    debaters: finish([...debaterRows, ...highSchoolOnlyRows].filter((row) => row.total > 0)),
+    debaters: finish(debaterRows.filter((row) => row.total > 0)),
     schools: finish(schools),
   }
 }

@@ -23,11 +23,11 @@ wordmarkSrc(searchSchools("yale")[0].school)                      // "/assets/ya
 
 | Division | Schools bundled | Ranked by | Source |
 | --- | --- | --- | --- |
-| Colleges | 108 in the top 100 (ties), plus 14 colleges with a wordmark outside it | U.S. News **2027 Best National Universities** | Released 2026-09-22. Ranks copied from [Poets & Quants' top-100 table](https://poetsandquantsforundergrads.com/news/u-s-news-best-colleges-ranking-2027-mit-ends-princetons-long-run-at-the-top/2/), 1–11 checked against [Master Grad Schools](https://mastergradschools.com/master-rankings/us-news-best-national-universities-rankings-2027) |
+| Colleges | 108 in the top 100 (ties), plus 15 colleges with a wordmark outside it | U.S. News **2027 Best National Universities** | Released 2026-09-22. Ranks copied from [Poets & Quants' top-100 table](https://poetsandquantsforundergrads.com/news/u-s-news-best-colleges-ranking-2027-mit-ends-princetons-long-run-at-the-top/2/), 1–11 checked against [Master Grad Schools](https://mastergradschools.com/master-rankings/us-news-best-national-universities-rankings-2027) |
 | Public high schools | 1,001 | U.S. News **2026-2027 Best High Schools** where sourced (42 schools), Niche **2027** public rank for all | U.S. News [press release](https://aijourn.com/u-s-news-reveals-2026-2027-best-high-schools-rankings/) (1–10), [Black America Web](https://blackamericaweb.com/2026/10/16/top-20-high-schools-in-america-for-2026-27/) (11–20), [AZFamily](https://www.azfamily.com/2026/08/18/report-13-arizona-charter-public-high-schools-rank-among-top-100-nationwide/) (Arizona), [FOX 5 NY](https://www.fox5ny.com/news/best-public-high-schools-ny-nj-2026-us-news) (NY, NJ). Niche lists are the ones `@debate-ai/rankings` already bundles for school pages |
 | Private high schools | 800 | Niche **2027** private rank | U.S. News does not rank private high schools, so `usNewsRank` is always `null` here |
 
-**1,923 schools** in all, **51** with a wordmark.
+**1,924 schools** in all, **63** with a wordmark.
 
 ### Gaps, stated plainly
 
@@ -117,7 +117,7 @@ entriesAtRank("us-news-2027-national-universities", 5)       // Caltech and Stan
 findRankEntry("us-news-2027-national-universities", "University of California, Berkeley")
 // → { list, entry: { rank: 20, tie: true, … }, matchedBy: "name" }
 reconcileSchool(searchSchools("bronx science")[0].school).status // "matched"
-wordmarkRankCoverage("college")                              // { total: 29, matched: 15, unmatched: [14 colleges] }
+wordmarkRankCoverage("college")                              // { total: 30, matched: 15, unmatched: [15 colleges] }
 ```
 
 | Export | What it does |
@@ -132,18 +132,18 @@ wordmarkRankCoverage("college")                              // { total: 29, mat
 ### Match coverage
 
 - **Colleges:** all 108 compiled schools match a bundled college with the
-  same rank. 15 of the 29 wordmark colleges match; the other **14 are outside
+  same rank. 15 of the 30 wordmark colleges match; the other **15 are outside
   the top 100 and not compiled yet**: Cal State Long Beach, George Mason,
-  Houston, Kansas, Kentucky, Liberty, Loyola Chicago, Macalester, North
-  Texas, Oklahoma, Redlands, Towson, UT Dallas and Western Kentucky.
+  Houston, Kansas, Kentucky, Liberty, Louisville, Loyola Chicago, Macalester,
+  North Texas, Oklahoma, Redlands, Towson, UT Dallas and Western Kentucky.
 - **Private high schools:** all 50 compiled entries match a bundled school
   with the same Niche rank. Of the bundled private schools, 750 sit in
   ranges that are not compiled.
 - **Public high schools:** 199 of 200 entries match. "Lincoln HS" (605) has no
   state and several bundled Lincolns, so it stays unmatched.
-- **Wordmark high schools:** 9 of 30 match (Bronx Science, Payton, Whitney
+- **Wordmark high schools:** 11 of 33 match (Bronx Science, Payton, Whitney
   Young, LASA, Westwood, Caddo Magnet, Palos Verdes Peninsula, Harvard-Westlake,
-  The College Preparatory School). The other **21 are in uncompiled rank
+  Coppell, Lexington, The College Preparatory School). The other **22 are in uncompiled rank
   ranges** (for example New Trier 70, Westminster 69, Harker 218), so they are
   gaps, not mismatches. No wordmark school has a name mismatch.
 - **Rank disagreement:** 24 bundled public schools sit one place lower in the
@@ -240,8 +240,8 @@ recomputes these numbers, and a test pins them to the data.
   Dartmouth 12, UC Berkeley 20, Emory 23, Georgetown 23, Michigan 25, USC 27,
   Texas 34, Wake Forest 34, Georgia 52, Michigan State 69, Baylor 90, Iowa 100.
   Outside the top 100: CSU Long Beach, George Mason, Houston, Kansas,
-  Kentucky, Liberty, Loyola Chicago, Macalester, North Texas, Oklahoma,
-  Redlands, Towson, UT Dallas, Western Kentucky.
+  Kentucky, Liberty, Louisville, Loyola Chicago, Macalester, North Texas,
+  Oklahoma, Redlands, Towson, UT Dallas, Western Kentucky.
 - **Public high schools (Niche public rank):** Payton 7, Bronx Science 12,
   Whitney Young 14, LASA 42, New Trier 70, Glenbrook South 71, Glenbrook
   North 74, Westwood (TX) 92. Lynbrook (293) and Plano West (753) fall outside

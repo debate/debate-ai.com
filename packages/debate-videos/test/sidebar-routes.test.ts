@@ -189,10 +189,10 @@ describe("News & Forums", () => {
     expect(hasEmbeddedDock("/news")).toBe(true);
   });
 
-  it("is one row in the Coaching section, with the forums folded into it", () => {
+  it("is one row in the Research section, with the forums folded into it", () => {
     const tools = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools);
-    const coaching = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "coaching");
-    const row = coaching?.tools.find((tool) => tool.href === "/news");
+    const research = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "research");
+    const row = research?.tools.find((tool) => tool.href === "/news");
 
     expect(row?.title).toBe("News & Forums");
     expect(row?.aliases).toContain("/practice/forums");
@@ -330,5 +330,34 @@ describe("a round's short /<topic code>/… address", () => {
     expect(isTopicStarterDocsPath("/vcx27/aff/aff-k/k-aff-answers")).toBe(true);
     expect(isVideoLibraryPath("/vcx27/aff/aff-k/k-aff-answers")).toBe(false);
     expect(isVideoLibraryPath("/vcx27")).toBe(false);
+  });
+});
+
+describe("Debates section", () => {
+  const debates = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "coaching");
+
+  it("has one Practice debates row, with Practice vs AI folded into it", () => {
+    const hrefs = SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href));
+    const row = debates?.tools.find((tool) => tool.href === "/practice/debates");
+    expect(row?.title).toBe("Practice debates");
+    expect(row?.aliases).toContain("/practice/versus-ai");
+    expect(hrefs).not.toContain("/practice/versus-ai");
+    expect(matchesToolSidebarHref("/practice/versus-ai")).toBe(true);
+  });
+
+  it("carries the former Inference links, and no Inference section remains", () => {
+    expect(debates?.tools.map((tool) => [tool.title, tool.href])).toEqual(
+      expect.arrayContaining([
+        ["Team & School Rank", "/rank"],
+        ["Topics & Statistics", "/practice/statistics"],
+        ["Prediction Markets", "/practice/predictions"],
+      ]),
+    );
+    expect(SIDEBAR_TOOL_SECTIONS.map((section) => section.id)).not.toContain("insights");
+  });
+
+  it("points the phone dock's practice entry at Practice debates", () => {
+    expect(APP_DOCK_LINKS.find((link) => link.href === "/practice/debates")?.title).toBe("Practice debates");
+    expect(APP_DOCK_LINKS.map((link) => link.href)).not.toContain("/practice/versus-ai");
   });
 });

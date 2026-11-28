@@ -24,6 +24,12 @@ describe("getSchoolLogo", () => {
     expect(getSchoolLogo("Berkeley")).not.toBeNull();
   });
 
+  it("doesn't give Louisville High School the University of Louisville's logo", () => {
+    expect(getSchoolLogo("Louisville High School")).toBeNull();
+    expect(getSchoolLogo("University of Louisville")).toBe(getSchoolLogo("Louisville"));
+    expect(getSchoolLogo("UofL")).toBe(getSchoolLogo("Louisville"));
+  });
+
   it.each([
     ["Montgomery Bell Academy (TN)", "Montgomery Bell"],
     ["The Westminster Schools (GA)", "Westminster"],
