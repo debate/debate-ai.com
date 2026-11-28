@@ -180,16 +180,14 @@ describe("lecture category sections", () => {
     expect(formatBadgeIdForStyle("")).toBeUndefined();
   });
 
-  it("shows Open Super Debates in Formats, linked by its slug", () => {
+  it("lists no Open Super Debates card anywhere", () => {
     const html = renderToStaticMarkup(
       createElement(LectureCategoryGridGallery, {
         categories: [...categories, { key: "open_super_debates", label: "Open Super Debates", count: 3, maxViews: 1 }],
       }),
     );
-    const formats = sectionOf(html, "Formats");
-    expect(formats).toContain("Open Super Debates");
-    expect(formats).toContain('href="/lectures/open_super_debates"');
-    expect(sectionOf(html, "More")).not.toContain("Open Super Debates");
+    expect(html).not.toContain("Open Super Debates");
+    expect(html).not.toContain("/lectures/open_super_debates");
   });
 
   it("shows Open Public in Formats after Demo Debates, linked by its slug", () => {
