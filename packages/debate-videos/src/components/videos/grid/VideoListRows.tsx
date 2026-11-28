@@ -87,8 +87,9 @@ interface VideoListRowsProps {
    * newest first instead.
    */
   defaultSort?: { column: ColumnKey; direction: SortDirection }
-  /** Searches the library for a team when its name is clicked in the Aff or
-   *  Neg column; without it the names are plain text. */
+  /** Team names link to their team pages; for a name that has none (a label
+   *  with no team code) this searches the library for it when clicked in the
+   *  Aff or Neg column, and without it that name is plain text. */
   onSearch?: (text: string) => void
   /**
    * Adds a sortable "Last watched" column (how long ago each video was

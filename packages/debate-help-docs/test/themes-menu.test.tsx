@@ -212,6 +212,75 @@ describe("ThemesMenu persistence", () => {
   });
 });
 
+describe("ThemesMenu hover preview", () => {
+  const item = (name: string) => document.querySelector<HTMLElement>(`[data-color-theme="${name}"]`)!;
+  const themeClasses = () => [...document.documentElement.classList].filter((name) => name.startsWith("theme-"));
+  const hover = (el: HTMLElement) => act(async () => void el.dispatchEvent(new MouseEvent("pointerover", { bubbles: true })));
+  const unhover = (el: HTMLElement) => act(async () => void el.dispatchEvent(new MouseEvent("pointerout", { bubbles: true, relatedTarget: document.body })));
+
+  async function mountWithTheme(name: string) {
+    localStorage.setItem("color-theme", name);
+    document.documentElement.classList.add(`theme-${name}`);
+    await mount(<ThemesMenu />);
+    await openWithKeyboard();
+  }
+
+  it("applies a theme on hover without committing it", async () => {
+    await mountWithTheme("twitter");
+    await hover(item("cyberpunk"));
+    expect(themeClasses()).toEqual(["theme-cyberpunk"]);
+    expect(localStorage.getItem("color-theme")).toBe("twitter");
+    expect(document.cookie).not.toContain("color-theme=cyberpunk");
+    expect(mocks.saveUserSettings).not.toHaveBeenCalled();
+  });
+
+  it("keeps the checkmark on the current theme while previewing", async () => {
+    await mountWithTheme("twitter");
+    await hover(item("cyberpunk"));
+    expect(document.querySelector('[data-color-theme][aria-checked="true"]')?.getAttribute("data-color-theme")).toBe("twitter");
+  });
+
+  it("follows the pointer from item to item and reverts when it leaves", async () => {
+    await mountWithTheme("twitter");
+    await hover(item("cyberpunk"));
+    await unhover(item("cyberpunk"));
+    expect(themeClasses()).toEqual(["theme-twitter"]);
+    await hover(item("graphite"));
+    expect(themeClasses()).toEqual(["theme-graphite"]);
+    await unhover(item("graphite"));
+    expect(themeClasses()).toEqual(["theme-twitter"]);
+  });
+
+  it("reverts when the menu closes while previewing", async () => {
+    await mountWithTheme("twitter");
+    await hover(item("cyberpunk"));
+    await act(async () => {
+      menu()!.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    });
+    expect(menu()).toBeNull();
+    expect(themeClasses()).toEqual(["theme-twitter"]);
+    expect(localStorage.getItem("color-theme")).toBe("twitter");
+  });
+
+  it("commits only on click, and closing afterwards does not revert it", async () => {
+    await mountWithTheme("twitter");
+    await hover(item("cyberpunk"));
+    await act(async () => item("cyberpunk").click());
+    expect(menu()).toBeNull();
+    expect(themeClasses()).toEqual(["theme-cyberpunk"]);
+    expect(localStorage.getItem("color-theme")).toBe("cyberpunk");
+    expect(document.cookie).toContain("color-theme=cyberpunk");
+  });
+
+  it("previews on keyboard focus and reverts on blur", async () => {
+    await mountWithTheme("twitter");
+    await act(async () => item("bubblegum").focus());
+    expect(themeClasses()).toEqual(["theme-bubblegum"]);
+    await act(async () => item("bubblegum").blur());
+    expect(themeClasses()).toEqual(["theme-twitter"]);
+  });
+});
+
 describe("readActiveColorTheme", () => {
   it("reads the theme-<name> class and falls back to the default", () => {
     const root = document.createElement("html");

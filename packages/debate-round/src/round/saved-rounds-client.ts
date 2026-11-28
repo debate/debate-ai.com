@@ -20,7 +20,7 @@
  */
 
 import type { Round } from "../types/flow";
-import type { SavedRoundSummary } from "../state/savedRounds";
+import type { DeleteSavedRoundResult, SavedRoundSummary } from "../state/savedRounds";
 
 /** Result of a `saveRoundToAccount` call: either it saved, or it hit a conflict (see `hasRoundSaveConflict`). */
 export type SaveRoundResult =
@@ -84,10 +84,34 @@ export async function saveRoundToAccount(
   return { conflict: false, summary: (await res.json()) as SavedRoundSummary };
 }
 
-/** Deletes a saved round from the current user's account. Throws on failure, `401` included. */
-export async function deleteSavedRound(clientId: number, endpoint = "/api/rounds"): Promise<void> {
-  const res = await fetch(`${endpoint}/${clientId}`, { method: "DELETE" });
+/**
+ * Deletes a saved round from the current user's account. With
+ * `{ withFlows: true }` the route also removes the round's saved flows that
+ * no other saved round uses, and the result says which. A plain delete (or
+ * an older server that ignores `withFlows`) resolves to an empty result.
+ * Throws on failure, `401` included.
+ */
+export async function deleteSavedRound(
+  clientId: number,
+  endpoint = "/api/rounds",
+  opts: { withFlows?: boolean } = {},
+): Promise<DeleteSavedRoundResult> {
+  const url = opts.withFlows ? `${endpoint}/${clientId}?withFlows=1` : `${endpoint}/${clientId}`;
+  const res = await fetch(url, { method: "DELETE" });
   if (!res.ok) {
     throw new Error(await readErrorMessage(res, "Failed to remove this saved round."));
   }
+  let payload: Partial<DeleteSavedRoundResult> = {};
+  try {
+    payload = ((await res.json()) ?? {}) as Partial<DeleteSavedRoundResult>;
+  } catch {
+    // A delete that answered without a JSON body still succeeded.
+  }
+  const ids = (value: unknown): number[] =>
+    Array.isArray(value) ? value.filter((id): id is number => Number.isInteger(id)) : [];
+  return {
+    removedFlowIds: ids(payload.removedFlowIds),
+    keptFlowIds: ids(payload.keptFlowIds),
+    flowsUnreadable: payload.flowsUnreadable === true,
+  };
 }

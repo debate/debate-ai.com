@@ -203,12 +203,13 @@ describe("VideoListRow team cells", () => {
     expect(html).not.toContain(">72<");
   });
 
-  it("keeps an unranked team as a library search", () => {
+  it("links an unranked team to its school-and-initials team page, not a search", () => {
     const html = renderRow(harker, null);
-    expect(html).toContain('title="Search for Gunn AB"');
+    expect(html).toContain('href="/@gunn-ab"');
+    expect(html).toContain('title="Gunn AB — team page"');
+    expect(html).not.toContain('title="Search for Gunn AB"');
     expect(renderRow(null, null)).not.toContain("/teams/");
-    // No team-page link (the school logo's dev-server `/@fs/` URL doesn't count).
-    expect(renderRow(null, null)).not.toMatch(/href="\/@(?!fs\/)/);
+    expect(renderRow(null, null)).toContain('href="/@harker-ll"');
   });
 });
 

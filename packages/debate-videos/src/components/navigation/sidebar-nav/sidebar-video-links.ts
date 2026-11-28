@@ -54,7 +54,7 @@ export interface SidebarVideoLink {
 
 /** Debate Rounds — the round videos of every format combined (no per-format
  *  split), with the lecture library's Formats section (Worlds, NSDA Speech,
- *  Demo Debates, Open Super Debates, Parli …) listed on its page. First child
+ *  Demo Debates, Open Public, Parli …) listed on its page. First child
  *  under "Videos". The per-format pages (`/videos/college`, `/videos/policy`,
  *  `/videos/ld`, `/videos/pf`) and bare `/videos` still render; the page links
  *  to them from its format badges. */
@@ -111,7 +111,7 @@ export const VIDEO_COLLEGE_FILTER_LINKS: SidebarVideoLink[] = VIDEO_ALL_VIDEOS_F
   (link) => link.id === "acc" || link.id === "parli",
 );
 
-/** The reference view listed under Inference rather than as a videos row.
+/** The reference view listed under Debates rather than as a videos row.
  *  Team Rankings lives in the Research tool section instead, so rankings
  *  appear only once. The glossary used to be here too; it is a tab of
  *  `/practice/rules` now, which is not a video library page. */
