@@ -1,0 +1,30 @@
+{
+  "kind": "subfield",
+  "id": 3604,
+  "name": "Emergency Medical Services",
+  "total_in_scrape": 1,
+  "count": 1,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Emergency Medical Services -- 9.9",
+      "id": "https://openalex.org/A5051195547",
+      "display_name": "Nicole Lurie",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 225,
+      "works_count": 408,
+      "cited_by_count": 28228,
+      "discipline": "Emergency Medical Services",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Emergency Medical Services",
+      "fields": [
+        "Social Sciences",
+        "Health Professions",
+        "Economics, Econometrics and Finance",
+        "Medicine"
+      ]
+    }
+  ]
+}

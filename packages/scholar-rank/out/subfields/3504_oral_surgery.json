@@ -1,0 +1,1887 @@
+{
+  "kind": "subfield",
+  "id": 3504,
+  "name": "Oral Surgery",
+  "total_in_scrape": 98,
+  "count": 98,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Oral Surgery -- 9.9",
+      "id": "https://openalex.org/A5007187024",
+      "display_name": "Hom‐Lay Wang",
+      "orcid": "https://orcid.org/0000-0003-4238-1799",
+      "h_index": 124,
+      "i10_index": 704,
+      "works_count": 1059,
+      "cited_by_count": 64150,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Oral Surgery -- 9.9",
+      "id": "https://openalex.org/A5041955556",
+      "display_name": "Reinhilde Jacobs",
+      "orcid": "https://orcid.org/0000-0002-3461-0363",
+      "h_index": 118,
+      "i10_index": 615,
+      "works_count": 1223,
+      "cited_by_count": 47168,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Oral Surgery -- 9.9",
+      "id": "https://openalex.org/A5078186885",
+      "display_name": "Daniel Buser",
+      "orcid": "https://orcid.org/0000-0003-3920-4257",
+      "h_index": 114,
+      "i10_index": 275,
+      "works_count": 377,
+      "cited_by_count": 46595,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Oral Surgery -- 9.9",
+      "id": "https://openalex.org/A5052148012",
+      "display_name": "Tomas O. Albrektsson",
+      "orcid": "https://orcid.org/0000-0001-5719-0157",
+      "h_index": 113,
+      "i10_index": 294,
+      "works_count": 403,
+      "cited_by_count": 55847,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Oral Surgery -- 9.9",
+      "id": "https://openalex.org/A5052953612",
+      "display_name": "Christoph H. F. Hämmerle",
+      "orcid": "https://orcid.org/0000-0002-8280-7347",
+      "h_index": 110,
+      "i10_index": 329,
+      "works_count": 416,
+      "cited_by_count": 41545,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Oral Surgery -- 9.9",
+      "id": "https://openalex.org/A5024305693",
+      "display_name": "José Freitas Siqueira Jr",
+      "orcid": "https://orcid.org/0000-0002-7887-8054",
+      "h_index": 106,
+      "i10_index": 283,
+      "works_count": 351,
+      "cited_by_count": 36479,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5109860850",
+      "display_name": "Daniël van Steenberghe",
+      "orcid": null,
+      "h_index": 102,
+      "i10_index": 272,
+      "works_count": 521,
+      "cited_by_count": 32620,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5051542417",
+      "display_name": "Marco Ferrari",
+      "orcid": "https://orcid.org/0000-0001-5375-076X",
+      "h_index": 101,
+      "i10_index": 445,
+      "works_count": 754,
+      "cited_by_count": 37729,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5112410166",
+      "display_name": "David Lee Cochran",
+      "orcid": "https://orcid.org/0009-0009-4994-7733",
+      "h_index": 100,
+      "i10_index": 263,
+      "works_count": 387,
+      "cited_by_count": 40998,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5059806121",
+      "display_name": "Ali Bijani",
+      "orcid": "https://orcid.org/0000-0003-2233-8726",
+      "h_index": 96,
+      "i10_index": 274,
+      "works_count": 665,
+      "cited_by_count": 174666,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5055887774",
+      "display_name": "Gunnar E. Carlsson",
+      "orcid": "https://orcid.org/0000-0002-7702-1227",
+      "h_index": 96,
+      "i10_index": 234,
+      "works_count": 308,
+      "cited_by_count": 27841,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5087478633",
+      "display_name": "Lars Sennerby",
+      "orcid": "https://orcid.org/0000-0002-3963-1497",
+      "h_index": 96,
+      "i10_index": 223,
+      "works_count": 292,
+      "cited_by_count": 25966,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5006986981",
+      "display_name": "Adriano Piattelli",
+      "orcid": "https://orcid.org/0000-0002-6246-8130",
+      "h_index": 95,
+      "i10_index": 723,
+      "works_count": 1047,
+      "cited_by_count": 40725,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5033583933",
+      "display_name": "Frank Lobbezoo",
+      "orcid": "https://orcid.org/0000-0001-9877-7640",
+      "h_index": 95,
+      "i10_index": 443,
+      "works_count": 895,
+      "cited_by_count": 41190,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5083305100",
+      "display_name": "Marcel Zwahlen",
+      "orcid": "https://orcid.org/0000-0002-6772-6346",
+      "h_index": 95,
+      "i10_index": 284,
+      "works_count": 785,
+      "cited_by_count": 49294,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5043756816",
+      "display_name": "Peter J. Svensson",
+      "orcid": "https://orcid.org/0000-0002-9524-8089",
+      "h_index": 94,
+      "i10_index": 518,
+      "works_count": 945,
+      "cited_by_count": 55009,
+      "discipline": "Oral Surgery",
+      "primary_field": "Medicine",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Oral Surgery -- 9.8",
+      "id": "https://openalex.org/A5080949311",
+      "display_name": "Markus Haapasalo",
+      "orcid": "https://orcid.org/0000-0002-5160-8599",
+      "h_index": 94,
+      "i10_index": 250,
+      "works_count": 320,
+      "cited_by_count": 30858,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5043521676",
+      "display_name": "Matthias Kern",
+      "orcid": "https://orcid.org/0000-0002-0378-9698",
+      "h_index": 91,
+      "i10_index": 323,
+      "works_count": 476,
+      "cited_by_count": 27576,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5035040075",
+      "display_name": "Ann Wennerberg",
+      "orcid": "https://orcid.org/0000-0003-2957-1133",
+      "h_index": 87,
+      "i10_index": 279,
+      "works_count": 344,
+      "cited_by_count": 29709,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5087809602",
+      "display_name": "Isabela Neves Rôças",
+      "orcid": "https://orcid.org/0000-0002-7113-6859",
+      "h_index": 87,
+      "i10_index": 207,
+      "works_count": 258,
+      "cited_by_count": 24649,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5037712797",
+      "display_name": "Ásgeir Sigurðsson",
+      "orcid": "https://orcid.org/0000-0002-6911-8248",
+      "h_index": 86,
+      "i10_index": 170,
+      "works_count": 237,
+      "cited_by_count": 41244,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5044717748",
+      "display_name": "Daniele Manfredini",
+      "orcid": "https://orcid.org/0000-0002-4352-3085",
+      "h_index": 85,
+      "i10_index": 289,
+      "works_count": 477,
+      "cited_by_count": 27461,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Psychology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5000093487",
+      "display_name": "Ignace E. Naert",
+      "orcid": "https://orcid.org/0000-0001-7007-1443",
+      "h_index": 85,
+      "i10_index": 188,
+      "works_count": 493,
+      "cited_by_count": 21090,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5058097849",
+      "display_name": "Massimo DEL FABBRO",
+      "orcid": "https://orcid.org/0000-0001-7144-0984",
+      "h_index": 84,
+      "i10_index": 378,
+      "works_count": 656,
+      "cited_by_count": 22208,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5013941307",
+      "display_name": "Ronald E. Jung",
+      "orcid": "https://orcid.org/0000-0003-2055-1320",
+      "h_index": 84,
+      "i10_index": 283,
+      "works_count": 456,
+      "cited_by_count": 25951,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5031674319",
+      "display_name": "P. M. H. Dummer",
+      "orcid": "https://orcid.org/0000-0002-0726-7467",
+      "h_index": 84,
+      "i10_index": 272,
+      "works_count": 472,
+      "cited_by_count": 23955,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5088058668",
+      "display_name": "Brenda Paula Figueiredo de Almeida Gomes",
+      "orcid": "https://orcid.org/0000-0002-8449-0646",
+      "h_index": 82,
+      "i10_index": 253,
+      "works_count": 394,
+      "cited_by_count": 23468,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Oral Surgery -- 9.7",
+      "id": "https://openalex.org/A5090742260",
+      "display_name": "Kenneth Hargreaves",
+      "orcid": "https://orcid.org/0000-0002-1076-4931",
+      "h_index": 82,
+      "i10_index": 193,
+      "works_count": 362,
+      "cited_by_count": 29595,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5067775878",
+      "display_name": "Marco AB Esposito",
+      "orcid": "https://orcid.org/0009-0004-2952-9933",
+      "h_index": 81,
+      "i10_index": 247,
+      "works_count": 511,
+      "cited_by_count": 22544,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5034008007",
+      "display_name": "Paul Rudolf Wesselink",
+      "orcid": "https://orcid.org/0000-0002-5326-1226",
+      "h_index": 81,
+      "i10_index": 177,
+      "works_count": 290,
+      "cited_by_count": 22357,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5066344777",
+      "display_name": "Urs Brägger",
+      "orcid": "https://orcid.org/0000-0002-2562-6128",
+      "h_index": 81,
+      "i10_index": 173,
+      "works_count": 297,
+      "cited_by_count": 22385,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5023499451",
+      "display_name": "Gerry Max Raghoebar",
+      "orcid": "https://orcid.org/0000-0003-3578-7141",
+      "h_index": 79,
+      "i10_index": 280,
+      "works_count": 433,
+      "cited_by_count": 19125,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5016224618",
+      "display_name": "Ulf Lekholm",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 115,
+      "works_count": 143,
+      "cited_by_count": 32319,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5111441000",
+      "display_name": "Urs C. Belser",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 137,
+      "works_count": 210,
+      "cited_by_count": 20211,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5091581152",
+      "display_name": "Antônio Scarano",
+      "orcid": "https://orcid.org/0000-0003-1374-6146",
+      "h_index": 76,
+      "i10_index": 366,
+      "works_count": 563,
+      "cited_by_count": 21598,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5015454231",
+      "display_name": "Michael Marc Bornstein",
+      "orcid": "https://orcid.org/0000-0002-7773-8957",
+      "h_index": 76,
+      "i10_index": 284,
+      "works_count": 570,
+      "cited_by_count": 22120,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5110193580",
+      "display_name": "James P. Lund",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 160,
+      "works_count": 219,
+      "cited_by_count": 17779,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5035854272",
+      "display_name": "Manoel Damião Sousa‐Neto",
+      "orcid": "https://orcid.org/0000-0002-7696-7600",
+      "h_index": 75,
+      "i10_index": 296,
+      "works_count": 513,
+      "cited_by_count": 18298,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Oral Surgery -- 9.6",
+      "id": "https://openalex.org/A5076765324",
+      "display_name": "Marco Antônio Húngaro Duarte",
+      "orcid": "https://orcid.org/0000-0003-3051-737X",
+      "h_index": 74,
+      "i10_index": 294,
+      "works_count": 821,
+      "cited_by_count": 17817,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5019240012",
+      "display_name": "Steffen Fieuws",
+      "orcid": "https://orcid.org/0000-0002-6875-8366",
+      "h_index": 74,
+      "i10_index": 259,
+      "works_count": 509,
+      "cited_by_count": 18933,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5103527253",
+      "display_name": "Anthony J. Smith",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 201,
+      "works_count": 295,
+      "cited_by_count": 23723,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5081253096",
+      "display_name": "Torsten Jemt",
+      "orcid": "https://orcid.org/0000-0003-3993-8074",
+      "h_index": 74,
+      "i10_index": 169,
+      "works_count": 204,
+      "cited_by_count": 23085,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5089387352",
+      "display_name": "Ya Shen",
+      "orcid": "https://orcid.org/0000-0002-0792-4279",
+      "h_index": 73,
+      "i10_index": 210,
+      "works_count": 316,
+      "cited_by_count": 19333,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5006928165",
+      "display_name": "Larry Miller Wolford",
+      "orcid": "https://orcid.org/0000-0001-5699-4559",
+      "h_index": 72,
+      "i10_index": 198,
+      "works_count": 325,
+      "cited_by_count": 14755,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5090935912",
+      "display_name": "Richard K. Ohrbach",
+      "orcid": "https://orcid.org/0000-0002-9266-9734",
+      "h_index": 72,
+      "i10_index": 173,
+      "works_count": 292,
+      "cited_by_count": 24973,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5075087142",
+      "display_name": "Josette Camilleri",
+      "orcid": "https://orcid.org/0000-0003-3556-6365",
+      "h_index": 72,
+      "i10_index": 163,
+      "works_count": 236,
+      "cited_by_count": 16365,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5074159148",
+      "display_name": "Paulo Guilherme Coelho",
+      "orcid": "https://orcid.org/0000-0001-8347-6124",
+      "h_index": 71,
+      "i10_index": 347,
+      "works_count": 561,
+      "cited_by_count": 19229,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5112803005",
+      "display_name": "Gustavo André De‐Deus",
+      "orcid": "https://orcid.org/0000-0001-7778-047X",
+      "h_index": 71,
+      "i10_index": 179,
+      "works_count": 223,
+      "cited_by_count": 14491,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5028287256",
+      "display_name": "Mahmoud Torabinejad",
+      "orcid": "https://orcid.org/0000-0002-1340-0439",
+      "h_index": 71,
+      "i10_index": 162,
+      "works_count": 252,
+      "cited_by_count": 26658,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5035434795",
+      "display_name": "Edgar Schäfer",
+      "orcid": "https://orcid.org/0000-0002-4443-2345",
+      "h_index": 71,
+      "i10_index": 149,
+      "works_count": 225,
+      "cited_by_count": 15517,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Oral Surgery -- 9.5",
+      "id": "https://openalex.org/A5079059520",
+      "display_name": "Marco Cicciù",
+      "orcid": "https://orcid.org/0000-0003-2311-9728",
+      "h_index": 70,
+      "i10_index": 275,
+      "works_count": 518,
+      "cited_by_count": 13959,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5046099438",
+      "display_name": "Ann Wenzel",
+      "orcid": "https://orcid.org/0000-0001-8562-1313",
+      "h_index": 70,
+      "i10_index": 254,
+      "works_count": 454,
+      "cited_by_count": 16355,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5040862229",
+      "display_name": "Ove Andreas Peters",
+      "orcid": "https://orcid.org/0000-0001-5222-8718",
+      "h_index": 70,
+      "i10_index": 192,
+      "works_count": 350,
+      "cited_by_count": 19855,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5111643590",
+      "display_name": "Robert Schenk",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 109,
+      "works_count": 172,
+      "cited_by_count": 23134,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5007888063",
+      "display_name": "Luiz Felipe Valandro",
+      "orcid": "https://orcid.org/0000-0001-7203-6924",
+      "h_index": 69,
+      "i10_index": 292,
+      "works_count": 519,
+      "cited_by_count": 15202,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5063863219",
+      "display_name": "Cosme Gay‐Escoda",
+      "orcid": "https://orcid.org/0000-0002-6812-024X",
+      "h_index": 69,
+      "i10_index": 256,
+      "works_count": 440,
+      "cited_by_count": 14248,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5014708846",
+      "display_name": "Daniël Wismeijer",
+      "orcid": "https://orcid.org/0000-0001-6736-1941",
+      "h_index": 69,
+      "i10_index": 169,
+      "works_count": 304,
+      "cited_by_count": 17409,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5067706949",
+      "display_name": "Muhammad Sohail Zafar",
+      "orcid": "https://orcid.org/0000-0002-5157-7067",
+      "h_index": 68,
+      "i10_index": 226,
+      "works_count": 375,
+      "cited_by_count": 17010,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5006416796",
+      "display_name": "Martin Rosentritt",
+      "orcid": "https://orcid.org/0000-0002-6017-5529",
+      "h_index": 68,
+      "i10_index": 207,
+      "works_count": 302,
+      "cited_by_count": 12514,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5003962207",
+      "display_name": "Alberto Monje",
+      "orcid": "https://orcid.org/0000-0001-8292-1927",
+      "h_index": 68,
+      "i10_index": 158,
+      "works_count": 262,
+      "cited_by_count": 15278,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5034195360",
+      "display_name": "Ivo Lambrichts",
+      "orcid": "https://orcid.org/0000-0001-7520-0021",
+      "h_index": 67,
+      "i10_index": 189,
+      "works_count": 392,
+      "cited_by_count": 12799,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Oral Surgery -- 9.4",
+      "id": "https://openalex.org/A5091556319",
+      "display_name": "Hugo De Bruyn",
+      "orcid": "https://orcid.org/0000-0003-0200-9546",
+      "h_index": 67,
+      "i10_index": 188,
+      "works_count": 353,
+      "cited_by_count": 15143,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5070001356",
+      "display_name": "James Leo Gutmann",
+      "orcid": "https://orcid.org/0000-0003-3081-2635",
+      "h_index": 67,
+      "i10_index": 180,
+      "works_count": 421,
+      "cited_by_count": 13826,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5016610249",
+      "display_name": "Bruno Ramos Chrcanovic",
+      "orcid": "https://orcid.org/0000-0002-3460-3374",
+      "h_index": 67,
+      "i10_index": 170,
+      "works_count": 206,
+      "cited_by_count": 12702,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5034445155",
+      "display_name": "Georg Watzek",
+      "orcid": "https://orcid.org/0000-0003-4998-2829",
+      "h_index": 67,
+      "i10_index": 154,
+      "works_count": 265,
+      "cited_by_count": 12834,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5084173933",
+      "display_name": "Dag Ørstavik",
+      "orcid": "https://orcid.org/0000-0003-0161-7857",
+      "h_index": 67,
+      "i10_index": 123,
+      "works_count": 206,
+      "cited_by_count": 19157,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5034397752",
+      "display_name": "Samuel F. Dworkin",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 113,
+      "works_count": 176,
+      "cited_by_count": 29806,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5071639180",
+      "display_name": "Bilal Al‐Nawas",
+      "orcid": "https://orcid.org/0000-0002-8665-5803",
+      "h_index": 66,
+      "i10_index": 285,
+      "works_count": 540,
+      "cited_by_count": 14698,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5028278688",
+      "display_name": "Marco Antônıo Bottıno",
+      "orcid": "https://orcid.org/0000-0003-0077-3161",
+      "h_index": 66,
+      "i10_index": 278,
+      "works_count": 611,
+      "cited_by_count": 14067,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5068726390",
+      "display_name": "Mário Tanomaru‐Filho",
+      "orcid": "https://orcid.org/0000-0002-2574-4706",
+      "h_index": 66,
+      "i10_index": 237,
+      "works_count": 447,
+      "cited_by_count": 14585,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5113528434",
+      "display_name": "Friedrich Wilhelm Neukam",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 233,
+      "works_count": 322,
+      "cited_by_count": 14478,
+      "discipline": "Oral Surgery",
+      "primary_field": "Medicine",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Medicine",
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5064722635",
+      "display_name": "Paul Vincent Abbott",
+      "orcid": "https://orcid.org/0000-0001-5727-4211",
+      "h_index": 66,
+      "i10_index": 200,
+      "works_count": 364,
+      "cited_by_count": 17189,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Oral Surgery -- 9.3",
+      "id": "https://openalex.org/A5003440433",
+      "display_name": "Henny J. A. Meijer",
+      "orcid": "https://orcid.org/0000-0003-1702-6031",
+      "h_index": 66,
+      "i10_index": 191,
+      "works_count": 293,
+      "cited_by_count": 12840,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5063198230",
+      "display_name": "Michael Anthony Pogrel",
+      "orcid": "https://orcid.org/0000-0002-4304-5917",
+      "h_index": 66,
+      "i10_index": 174,
+      "works_count": 326,
+      "cited_by_count": 13336,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5068615747",
+      "display_name": "Irena Sailer",
+      "orcid": "https://orcid.org/0000-0002-4537-7624",
+      "h_index": 66,
+      "i10_index": 173,
+      "works_count": 325,
+      "cited_by_count": 18534,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5078974563",
+      "display_name": "Cecilia Goracci",
+      "orcid": "https://orcid.org/0000-0002-3262-6492",
+      "h_index": 66,
+      "i10_index": 152,
+      "works_count": 306,
+      "cited_by_count": 14530,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5059880498",
+      "display_name": "Caio Cézar Randi Ferraz",
+      "orcid": "https://orcid.org/0000-0002-1513-682X",
+      "h_index": 66,
+      "i10_index": 130,
+      "works_count": 165,
+      "cited_by_count": 15429,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5025767182",
+      "display_name": "Constantinus Politis",
+      "orcid": "https://orcid.org/0000-0003-4772-9897",
+      "h_index": 65,
+      "i10_index": 363,
+      "works_count": 727,
+      "cited_by_count": 17320,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5063943840",
+      "display_name": "Emmanuel João Nogueira Leal Silva",
+      "orcid": "https://orcid.org/0000-0002-6445-8243",
+      "h_index": 65,
+      "i10_index": 260,
+      "works_count": 478,
+      "cited_by_count": 14194,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5008287041",
+      "display_name": "Adrian Ujin Yap",
+      "orcid": "https://orcid.org/0000-0003-0361-6209",
+      "h_index": 65,
+      "i10_index": 224,
+      "works_count": 352,
+      "cited_by_count": 13308,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5039683369",
+      "display_name": "Zohaib Khurshid",
+      "orcid": "https://orcid.org/0000-0001-7998-7335",
+      "h_index": 65,
+      "i10_index": 186,
+      "works_count": 289,
+      "cited_by_count": 16782,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5102816432",
+      "display_name": "Michael S. Block",
+      "orcid": "https://orcid.org/0000-0003-2263-4277",
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 401,
+      "cited_by_count": 17424,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5107116060",
+      "display_name": "Karl‐Anton Hiller",
+      "orcid": "https://orcid.org/0000-0002-4726-9555",
+      "h_index": 65,
+      "i10_index": 174,
+      "works_count": 210,
+      "cited_by_count": 12363,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Oral Surgery -- 9.2",
+      "id": "https://openalex.org/A5041949553",
+      "display_name": "Thomas List",
+      "orcid": "https://orcid.org/0000-0002-9638-4648",
+      "h_index": 65,
+      "i10_index": 140,
+      "works_count": 260,
+      "cited_by_count": 18358,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5011383741",
+      "display_name": "Alexandre Augusto Zaia",
+      "orcid": "https://orcid.org/0000-0003-1354-1466",
+      "h_index": 65,
+      "i10_index": 131,
+      "works_count": 188,
+      "cited_by_count": 13624,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5053792409",
+      "display_name": "Ricardo Santiago Gomez",
+      "orcid": "https://orcid.org/0000-0001-8770-8009",
+      "h_index": 64,
+      "i10_index": 362,
+      "works_count": 698,
+      "cited_by_count": 45508,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5036793265",
+      "display_name": "Georgios E. Romanos",
+      "orcid": "https://orcid.org/0000-0002-7745-5957",
+      "h_index": 64,
+      "i10_index": 269,
+      "works_count": 457,
+      "cited_by_count": 14535,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5074195571",
+      "display_name": "Carlos Estrela",
+      "orcid": "https://orcid.org/0000-0002-1488-0366",
+      "h_index": 64,
+      "i10_index": 216,
+      "works_count": 448,
+      "cited_by_count": 15665,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5083268197",
+      "display_name": "Saeed Asgary",
+      "orcid": "https://orcid.org/0000-0001-6691-0478",
+      "h_index": 64,
+      "i10_index": 192,
+      "works_count": 357,
+      "cited_by_count": 21134,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5046858603",
+      "display_name": "Silvio Taschieri",
+      "orcid": "https://orcid.org/0000-0002-7866-5024",
+      "h_index": 64,
+      "i10_index": 190,
+      "works_count": 328,
+      "cited_by_count": 11687,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5056334674",
+      "display_name": "Anil Kishen",
+      "orcid": "https://orcid.org/0000-0002-6953-2633",
+      "h_index": 64,
+      "i10_index": 187,
+      "works_count": 393,
+      "cited_by_count": 13261,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5013412770",
+      "display_name": "Dennis P. Tarnow",
+      "orcid": "https://orcid.org/0000-0002-0805-5802",
+      "h_index": 64,
+      "i10_index": 164,
+      "works_count": 253,
+      "cited_by_count": 19319,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5036113686",
+      "display_name": "Marco Aurélio VERSIANI",
+      "orcid": "https://orcid.org/0000-0001-5277-9827",
+      "h_index": 64,
+      "i10_index": 154,
+      "works_count": 235,
+      "cited_by_count": 12056,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5073071825",
+      "display_name": "Robert J. Shprintzen",
+      "orcid": "https://orcid.org/0000-0001-8940-4973",
+      "h_index": 64,
+      "i10_index": 131,
+      "works_count": 200,
+      "cited_by_count": 14466,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Oral Surgery -- 9.1",
+      "id": "https://openalex.org/A5076627696",
+      "display_name": "Gianluca Plotino",
+      "orcid": "https://orcid.org/0000-0003-3003-8029",
+      "h_index": 64,
+      "i10_index": 131,
+      "works_count": 178,
+      "cited_by_count": 13914,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Oral Surgery -- 9.0",
+      "id": "https://openalex.org/A5110103057",
+      "display_name": "Per‐Ingvar Brånemark",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 123,
+      "works_count": 176,
+      "cited_by_count": 31685,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Oral Surgery -- 9.0",
+      "id": "https://openalex.org/A5028822060",
+      "display_name": "Daniel Stefan Thoma",
+      "orcid": "https://orcid.org/0000-0002-1764-7447",
+      "h_index": 63,
+      "i10_index": 214,
+      "works_count": 347,
+      "cited_by_count": 16331,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Oral Surgery -- 9.0",
+      "id": "https://openalex.org/A5059742427",
+      "display_name": "Dieter D. Bosshardt",
+      "orcid": "https://orcid.org/0000-0002-2132-6363",
+      "h_index": 63,
+      "i10_index": 175,
+      "works_count": 330,
+      "cited_by_count": 15245,
+      "discipline": "Oral Surgery",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Oral Surgery",
+      "fields": [
+        "Dentistry",
+        "Engineering"
+      ]
+    }
+  ]
+}

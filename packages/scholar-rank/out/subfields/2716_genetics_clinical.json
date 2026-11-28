@@ -1,0 +1,2131 @@
+{
+  "kind": "subfield",
+  "id": 2716,
+  "name": "Genetics (clinical)",
+  "total_in_scrape": 111,
+  "count": 111,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Genetics (clinical) -- 9.9",
+      "id": "https://openalex.org/A5100620133",
+      "display_name": "David J. Kwiatkowski",
+      "orcid": "https://orcid.org/0000-0002-5668-5219",
+      "h_index": 153,
+      "i10_index": 466,
+      "works_count": 975,
+      "cited_by_count": 102112,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Genetics (clinical) -- 9.9",
+      "id": "https://openalex.org/A5007944034",
+      "display_name": "Mark T. Gladwin",
+      "orcid": "https://orcid.org/0000-0001-7267-9006",
+      "h_index": 135,
+      "i10_index": 488,
+      "works_count": 1014,
+      "cited_by_count": 76394,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Genetics (clinical) -- 9.9",
+      "id": "https://openalex.org/A5042269980",
+      "display_name": "Eugenio Maria Mercuri",
+      "orcid": "https://orcid.org/0000-0002-9851-5365",
+      "h_index": 118,
+      "i10_index": 592,
+      "works_count": 1377,
+      "cited_by_count": 56606,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Genetics (clinical) -- 9.9",
+      "id": "https://openalex.org/A5090900773",
+      "display_name": "Robert J. Desnick",
+      "orcid": "https://orcid.org/0000-0001-5501-2971",
+      "h_index": 116,
+      "i10_index": 510,
+      "works_count": 753,
+      "cited_by_count": 50164,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Genetics (clinical) -- 9.9",
+      "id": "https://openalex.org/A5066463616",
+      "display_name": "Ernest Beutler",
+      "orcid": null,
+      "h_index": 114,
+      "i10_index": 648,
+      "works_count": 941,
+      "cited_by_count": 61914,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Genetics (clinical) -- 9.9",
+      "id": "https://openalex.org/A5111445891",
+      "display_name": "David John Weatherall",
+      "orcid": null,
+      "h_index": 108,
+      "i10_index": 381,
+      "works_count": 697,
+      "cited_by_count": 66511,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5108090745",
+      "display_name": "Jerry R. Mendell",
+      "orcid": "https://orcid.org/0009-0006-3966-6303",
+      "h_index": 107,
+      "i10_index": 319,
+      "works_count": 517,
+      "cited_by_count": 40075,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5007309669",
+      "display_name": "Konrad Sandhoff",
+      "orcid": "https://orcid.org/0000-0003-2452-8654",
+      "h_index": 105,
+      "i10_index": 385,
+      "works_count": 537,
+      "cited_by_count": 38919,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5014949168",
+      "display_name": "Douglas R. Higgs",
+      "orcid": "https://orcid.org/0000-0003-3579-8705",
+      "h_index": 101,
+      "i10_index": 329,
+      "works_count": 472,
+      "cited_by_count": 36887,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5056946591",
+      "display_name": "Elliott P. Vichinsky",
+      "orcid": "https://orcid.org/0000-0002-0500-9579",
+      "h_index": 100,
+      "i10_index": 329,
+      "works_count": 648,
+      "cited_by_count": 43913,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5049873494",
+      "display_name": "Darryl C. De Vivo",
+      "orcid": "https://orcid.org/0000-0001-8420-0795",
+      "h_index": 100,
+      "i10_index": 319,
+      "works_count": 569,
+      "cited_by_count": 39149,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5013935159",
+      "display_name": "Johannes M. F. G. Aerts",
+      "orcid": "https://orcid.org/0000-0001-8168-2565",
+      "h_index": 99,
+      "i10_index": 363,
+      "works_count": 589,
+      "cited_by_count": 32366,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5002234465",
+      "display_name": "Yuet Wai Kan",
+      "orcid": "https://orcid.org/0000-0003-0117-0100",
+      "h_index": 93,
+      "i10_index": 234,
+      "works_count": 309,
+      "cited_by_count": 30627,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5001000588",
+      "display_name": "Raphael Schiffmann",
+      "orcid": "https://orcid.org/0000-0003-2437-0252",
+      "h_index": 92,
+      "i10_index": 273,
+      "works_count": 457,
+      "cited_by_count": 27881,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5056930601",
+      "display_name": "Mitchell J. Weiss",
+      "orcid": "https://orcid.org/0000-0003-2460-3036",
+      "h_index": 91,
+      "i10_index": 212,
+      "works_count": 436,
+      "cited_by_count": 29858,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5089564343",
+      "display_name": "Roberto Giugliani",
+      "orcid": "https://orcid.org/0000-0001-9655-3686",
+      "h_index": 90,
+      "i10_index": 472,
+      "works_count": 1456,
+      "cited_by_count": 29307,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Genetics (clinical) -- 9.8",
+      "id": "https://openalex.org/A5079691093",
+      "display_name": "Mustafa Şahin",
+      "orcid": "https://orcid.org/0000-0001-7044-2953",
+      "h_index": 89,
+      "i10_index": 293,
+      "works_count": 567,
+      "cited_by_count": 36668,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5084459237",
+      "display_name": "Richard S. Finkel",
+      "orcid": "https://orcid.org/0000-0002-9351-7054",
+      "h_index": 89,
+      "i10_index": 254,
+      "works_count": 470,
+      "cited_by_count": 35997,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5078895245",
+      "display_name": "Frances M. Platt",
+      "orcid": "https://orcid.org/0000-0001-7614-0403",
+      "h_index": 89,
+      "i10_index": 235,
+      "works_count": 381,
+      "cited_by_count": 28766,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5114000147",
+      "display_name": "Roscoe O. Brady",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 229,
+      "works_count": 309,
+      "cited_by_count": 26099,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5024669037",
+      "display_name": "Carla E. M. Hollak",
+      "orcid": "https://orcid.org/0000-0003-0464-1078",
+      "h_index": 86,
+      "i10_index": 269,
+      "works_count": 532,
+      "cited_by_count": 23127,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5072518895",
+      "display_name": "Barry J. Byrne",
+      "orcid": "https://orcid.org/0000-0002-7302-1756",
+      "h_index": 86,
+      "i10_index": 263,
+      "works_count": 529,
+      "cited_by_count": 29817,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5075282771",
+      "display_name": "Aleš Linhart",
+      "orcid": "https://orcid.org/0000-0002-3372-7850",
+      "h_index": 86,
+      "i10_index": 239,
+      "works_count": 655,
+      "cited_by_count": 118370,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5029691139",
+      "display_name": "Carlo Brugnara",
+      "orcid": "https://orcid.org/0000-0001-8192-8713",
+      "h_index": 85,
+      "i10_index": 242,
+      "works_count": 418,
+      "cited_by_count": 24264,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5047418153",
+      "display_name": "Michael Rutledge DeBaun",
+      "orcid": "https://orcid.org/0000-0002-0574-1604",
+      "h_index": 84,
+      "i10_index": 346,
+      "works_count": 605,
+      "cited_by_count": 29532,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5076081716",
+      "display_name": "Swee Lay Thein",
+      "orcid": "https://orcid.org/0000-0002-9835-6501",
+      "h_index": 84,
+      "i10_index": 321,
+      "works_count": 590,
+      "cited_by_count": 32312,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5047048178",
+      "display_name": "Alan N. Schechter",
+      "orcid": "https://orcid.org/0000-0002-6055-6452",
+      "h_index": 82,
+      "i10_index": 248,
+      "works_count": 443,
+      "cited_by_count": 27440,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Genetics (clinical) -- 9.7",
+      "id": "https://openalex.org/A5113671372",
+      "display_name": "Raymond G. Hoffmann",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 212,
+      "works_count": 296,
+      "cited_by_count": 23250,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5111583785",
+      "display_name": "Marie Therese Vanier",
+      "orcid": "https://orcid.org/0000-0001-7249-0238",
+      "h_index": 82,
+      "i10_index": 186,
+      "works_count": 286,
+      "cited_by_count": 22732,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5034341624",
+      "display_name": "Edward Howard Schuchman",
+      "orcid": "https://orcid.org/0000-0002-6638-2385",
+      "h_index": 81,
+      "i10_index": 227,
+      "works_count": 369,
+      "cited_by_count": 22919,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5085307581",
+      "display_name": "Douglas A. Marchuk",
+      "orcid": "https://orcid.org/0000-0002-3110-6671",
+      "h_index": 81,
+      "i10_index": 192,
+      "works_count": 320,
+      "cited_by_count": 28035,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5042201706",
+      "display_name": "John Day",
+      "orcid": "https://orcid.org/0000-0002-0086-9529",
+      "h_index": 81,
+      "i10_index": 178,
+      "works_count": 478,
+      "cited_by_count": 23889,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5037775852",
+      "display_name": "Priya Sunil Kishnani",
+      "orcid": "https://orcid.org/0000-0001-8251-909X",
+      "h_index": 80,
+      "i10_index": 356,
+      "works_count": 767,
+      "cited_by_count": 25288,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5035828284",
+      "display_name": "Lucio Luzzatto",
+      "orcid": "https://orcid.org/0000-0003-4663-8790",
+      "h_index": 80,
+      "i10_index": 312,
+      "works_count": 542,
+      "cited_by_count": 26784,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5112901403",
+      "display_name": "John Brian Clegg",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 237,
+      "works_count": 336,
+      "cited_by_count": 25416,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5024894157",
+      "display_name": "Atul B Mehta",
+      "orcid": "https://orcid.org/0000-0001-6474-9959",
+      "h_index": 80,
+      "i10_index": 223,
+      "works_count": 528,
+      "cited_by_count": 20072,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5077093566",
+      "display_name": "Robert P. Hebbel",
+      "orcid": "https://orcid.org/0000-0002-0660-7933",
+      "h_index": 80,
+      "i10_index": 183,
+      "works_count": 269,
+      "cited_by_count": 23078,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5012936630",
+      "display_name": "Victor R. Gordeuk",
+      "orcid": "https://orcid.org/0000-0003-4725-7295",
+      "h_index": 79,
+      "i10_index": 303,
+      "works_count": 710,
+      "cited_by_count": 23298,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Genetics (clinical) -- 9.6",
+      "id": "https://openalex.org/A5031960202",
+      "display_name": "Isabelle Desguerre",
+      "orcid": "https://orcid.org/0000-0002-4074-5862",
+      "h_index": 79,
+      "i10_index": 260,
+      "works_count": 553,
+      "cited_by_count": 23777,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5002772850",
+      "display_name": "Fenella Jane Kirkham",
+      "orcid": "https://orcid.org/0000-0002-2443-7958",
+      "h_index": 79,
+      "i10_index": 260,
+      "works_count": 674,
+      "cited_by_count": 22475,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5022755764",
+      "display_name": "Achille Iolascon",
+      "orcid": "https://orcid.org/0000-0002-9558-0356",
+      "h_index": 78,
+      "i10_index": 347,
+      "works_count": 704,
+      "cited_by_count": 24523,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5040752648",
+      "display_name": "Russell E. Ware",
+      "orcid": "https://orcid.org/0000-0001-9582-0594",
+      "h_index": 78,
+      "i10_index": 298,
+      "works_count": 604,
+      "cited_by_count": 28759,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5016812185",
+      "display_name": "Derralynn A. Hughes",
+      "orcid": "https://orcid.org/0000-0003-4531-9173",
+      "h_index": 78,
+      "i10_index": 228,
+      "works_count": 727,
+      "cited_by_count": 20194,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5009140419",
+      "display_name": "Ellen Sidransky",
+      "orcid": "https://orcid.org/0000-0002-3019-8500",
+      "h_index": 78,
+      "i10_index": 220,
+      "works_count": 516,
+      "cited_by_count": 24980,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5023561602",
+      "display_name": "Thomas O. Crawford",
+      "orcid": "https://orcid.org/0000-0003-0916-2797",
+      "h_index": 78,
+      "i10_index": 157,
+      "works_count": 251,
+      "cited_by_count": 22860,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5065128454",
+      "display_name": "Martin H. Steinberg",
+      "orcid": "https://orcid.org/0000-0001-8800-8020",
+      "h_index": 77,
+      "i10_index": 293,
+      "works_count": 552,
+      "cited_by_count": 33622,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5110264284",
+      "display_name": "James Edmond Wraith",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 195,
+      "works_count": 297,
+      "cited_by_count": 21431,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5068118983",
+      "display_name": "Elizabeth P. Henske",
+      "orcid": "https://orcid.org/0000-0001-7978-6699",
+      "h_index": 77,
+      "i10_index": 193,
+      "works_count": 386,
+      "cited_by_count": 29169,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5101975996",
+      "display_name": "Michael Beck",
+      "orcid": "https://orcid.org/0000-0001-7865-0124",
+      "h_index": 77,
+      "i10_index": 177,
+      "works_count": 287,
+      "cited_by_count": 20259,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5074269053",
+      "display_name": "Kathryn J. Swoboda",
+      "orcid": "https://orcid.org/0000-0002-4593-6342",
+      "h_index": 77,
+      "i10_index": 156,
+      "works_count": 263,
+      "cited_by_count": 20794,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Genetics (clinical) -- 9.5",
+      "id": "https://openalex.org/A5113607632",
+      "display_name": "Ronald L. Nagel",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 307,
+      "works_count": 488,
+      "cited_by_count": 20359,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5076402259",
+      "display_name": "Basil T. Darras",
+      "orcid": "https://orcid.org/0000-0002-1536-8145",
+      "h_index": 76,
+      "i10_index": 264,
+      "works_count": 570,
+      "cited_by_count": 25565,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5102975961",
+      "display_name": "Gregory Alex Grabowski",
+      "orcid": "https://orcid.org/0000-0002-2437-9487",
+      "h_index": 76,
+      "i10_index": 238,
+      "works_count": 346,
+      "cited_by_count": 20159,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5060324072",
+      "display_name": "Graham Roger Serjeant",
+      "orcid": "https://orcid.org/0000-0003-4684-0286",
+      "h_index": 75,
+      "i10_index": 330,
+      "works_count": 463,
+      "cited_by_count": 20113,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5103033200",
+      "display_name": "Claudio Bruno",
+      "orcid": "https://orcid.org/0000-0002-3426-2901",
+      "h_index": 75,
+      "i10_index": 280,
+      "works_count": 562,
+      "cited_by_count": 18626,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5103432123",
+      "display_name": "John J. Hopwood",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 343,
+      "works_count": 417,
+      "cited_by_count": 19877,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5105524523",
+      "display_name": "George Stamatoyannopoulos",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 323,
+      "works_count": 456,
+      "cited_by_count": 46965,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5040785436",
+      "display_name": "Robert Salvayre",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 227,
+      "works_count": 348,
+      "cited_by_count": 18316,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5066832003",
+      "display_name": "Gregory James Kato",
+      "orcid": "https://orcid.org/0000-0003-4465-3217",
+      "h_index": 74,
+      "i10_index": 179,
+      "works_count": 404,
+      "cited_by_count": 19900,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5068463703",
+      "display_name": "Elizabeth F. Neufeld",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 153,
+      "works_count": 183,
+      "cited_by_count": 18265,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5113576353",
+      "display_name": "Eliezer A. Rachmilewitz",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 237,
+      "works_count": 431,
+      "cited_by_count": 19251,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Genetics (clinical) -- 9.4",
+      "id": "https://openalex.org/A5033396587",
+      "display_name": "Arthur H.M. Burghes",
+      "orcid": "https://orcid.org/0000-0001-9031-1555",
+      "h_index": 73,
+      "i10_index": 157,
+      "works_count": 231,
+      "cited_by_count": 22832,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5054727366",
+      "display_name": "Marika Pane",
+      "orcid": "https://orcid.org/0000-0002-4851-6124",
+      "h_index": 72,
+      "i10_index": 200,
+      "works_count": 437,
+      "cited_by_count": 14828,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5043649821",
+      "display_name": "Gregory M. Vercellotti",
+      "orcid": "https://orcid.org/0000-0003-1324-0831",
+      "h_index": 71,
+      "i10_index": 207,
+      "works_count": 389,
+      "cited_by_count": 20723,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5039609345",
+      "display_name": "Sonia Messina",
+      "orcid": "https://orcid.org/0000-0001-7994-3391",
+      "h_index": 71,
+      "i10_index": 188,
+      "works_count": 355,
+      "cited_by_count": 15258,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5014011351",
+      "display_name": "Janbernd Kirschner",
+      "orcid": "https://orcid.org/0000-0003-1618-7386",
+      "h_index": 71,
+      "i10_index": 186,
+      "works_count": 426,
+      "cited_by_count": 23703,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5113652341",
+      "display_name": "Antonio Cao",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 250,
+      "works_count": 386,
+      "cited_by_count": 25764,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5083735394",
+      "display_name": "Douglas V. Faller",
+      "orcid": "https://orcid.org/0000-0002-2454-3478",
+      "h_index": 70,
+      "i10_index": 241,
+      "works_count": 381,
+      "cited_by_count": 19194,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5047077103",
+      "display_name": "William A. Krivit",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 226,
+      "works_count": 333,
+      "cited_by_count": 20791,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5077591555",
+      "display_name": "Shunji Tomatsu",
+      "orcid": "https://orcid.org/0000-0002-0673-2160",
+      "h_index": 70,
+      "i10_index": 222,
+      "works_count": 427,
+      "cited_by_count": 15079,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5113601445",
+      "display_name": "Brian M. Martin",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 181,
+      "works_count": 211,
+      "cited_by_count": 13049,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5025385826",
+      "display_name": "Arnold J.J. Reuser",
+      "orcid": "https://orcid.org/0000-0003-1256-0681",
+      "h_index": 70,
+      "i10_index": 176,
+      "works_count": 264,
+      "cited_by_count": 14483,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Genetics (clinical) -- 9.3",
+      "id": "https://openalex.org/A5070584148",
+      "display_name": "Roberto Gambari",
+      "orcid": "https://orcid.org/0000-0001-9205-6033",
+      "h_index": 69,
+      "i10_index": 417,
+      "works_count": 926,
+      "cited_by_count": 19501,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5008489634",
+      "display_name": "Adele D’Amico",
+      "orcid": "https://orcid.org/0000-0003-2438-2624",
+      "h_index": 69,
+      "i10_index": 232,
+      "works_count": 493,
+      "cited_by_count": 14974,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5061093150",
+      "display_name": "Laurent Servais",
+      "orcid": "https://orcid.org/0000-0001-9270-4061",
+      "h_index": 69,
+      "i10_index": 221,
+      "works_count": 738,
+      "cited_by_count": 18130,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5061155508",
+      "display_name": "Marilyn J. Telen",
+      "orcid": "https://orcid.org/0000-0003-3809-1780",
+      "h_index": 69,
+      "i10_index": 182,
+      "works_count": 426,
+      "cited_by_count": 19001,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5058612697",
+      "display_name": "Yukio Nakamura",
+      "orcid": "https://orcid.org/0000-0001-6834-4123",
+      "h_index": 68,
+      "i10_index": 314,
+      "works_count": 696,
+      "cited_by_count": 20350,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5064838336",
+      "display_name": "Antonio Pisani",
+      "orcid": "https://orcid.org/0000-0003-0241-8323",
+      "h_index": 68,
+      "i10_index": 236,
+      "works_count": 439,
+      "cited_by_count": 16320,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5000891412",
+      "display_name": "Paul Harmatz",
+      "orcid": "https://orcid.org/0000-0001-5603-2085",
+      "h_index": 68,
+      "i10_index": 212,
+      "works_count": 557,
+      "cited_by_count": 16093,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5030669499",
+      "display_name": "Ans T. van der Ploeg",
+      "orcid": "https://orcid.org/0000-0002-3359-1324",
+      "h_index": 68,
+      "i10_index": 207,
+      "works_count": 325,
+      "cited_by_count": 15433,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5042984916",
+      "display_name": "David A. Wenger",
+      "orcid": "https://orcid.org/0000-0002-7721-3608",
+      "h_index": 68,
+      "i10_index": 196,
+      "works_count": 244,
+      "cited_by_count": 13606,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5047162260",
+      "display_name": "Frans A. Kuypers",
+      "orcid": "https://orcid.org/0000-0003-0731-1007",
+      "h_index": 68,
+      "i10_index": 180,
+      "works_count": 309,
+      "cited_by_count": 13893,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5051623556",
+      "display_name": "Brunhilde Wirth",
+      "orcid": "https://orcid.org/0000-0003-4051-5191",
+      "h_index": 68,
+      "i10_index": 172,
+      "works_count": 232,
+      "cited_by_count": 20973,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Genetics (clinical) -- 9.2",
+      "id": "https://openalex.org/A5016689216",
+      "display_name": "F. Galactéros",
+      "orcid": "https://orcid.org/0000-0003-2029-8126",
+      "h_index": 67,
+      "i10_index": 307,
+      "works_count": 728,
+      "cited_by_count": 16777,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5029112093",
+      "display_name": "Patrick G. Gallagher",
+      "orcid": "https://orcid.org/0000-0002-5424-0224",
+      "h_index": 67,
+      "i10_index": 205,
+      "works_count": 415,
+      "cited_by_count": 16779,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5109198306",
+      "display_name": "Barbara K. Burton",
+      "orcid": "https://orcid.org/0000-0002-3691-7190",
+      "h_index": 67,
+      "i10_index": 202,
+      "works_count": 438,
+      "cited_by_count": 14692,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5051468151",
+      "display_name": "Paul J. Orchard",
+      "orcid": "https://orcid.org/0000-0001-9426-1292",
+      "h_index": 67,
+      "i10_index": 182,
+      "works_count": 452,
+      "cited_by_count": 19764,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5068017197",
+      "display_name": "Winfred C. Wang",
+      "orcid": "https://orcid.org/0000-0001-6774-9698",
+      "h_index": 67,
+      "i10_index": 182,
+      "works_count": 302,
+      "cited_by_count": 16525,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5067753758",
+      "display_name": "Nancy F. Olivieri",
+      "orcid": "https://orcid.org/0000-0002-4053-2445",
+      "h_index": 67,
+      "i10_index": 160,
+      "works_count": 271,
+      "cited_by_count": 19146,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5037829084",
+      "display_name": "Ari Zimran",
+      "orcid": "https://orcid.org/0000-0003-0077-8608",
+      "h_index": 66,
+      "i10_index": 252,
+      "works_count": 508,
+      "cited_by_count": 16419,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5034495408",
+      "display_name": "John C. Wood",
+      "orcid": "https://orcid.org/0000-0003-0996-3439",
+      "h_index": 66,
+      "i10_index": 234,
+      "works_count": 710,
+      "cited_by_count": 17058,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5090681994",
+      "display_name": "Samir K. Ballas",
+      "orcid": "https://orcid.org/0000-0002-7566-1466",
+      "h_index": 66,
+      "i10_index": 232,
+      "works_count": 386,
+      "cited_by_count": 19856,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5011825873",
+      "display_name": "Carlo Sabbà",
+      "orcid": "https://orcid.org/0000-0002-9874-8740",
+      "h_index": 66,
+      "i10_index": 217,
+      "works_count": 412,
+      "cited_by_count": 15833,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5043346952",
+      "display_name": "Forbes D. Porter",
+      "orcid": "https://orcid.org/0000-0001-9397-0046",
+      "h_index": 66,
+      "i10_index": 192,
+      "works_count": 333,
+      "cited_by_count": 14680,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Genetics (clinical) -- 9.1",
+      "id": "https://openalex.org/A5070668450",
+      "display_name": "Jonathan D. Cooper",
+      "orcid": "https://orcid.org/0000-0003-1339-4750",
+      "h_index": 66,
+      "i10_index": 154,
+      "works_count": 324,
+      "cited_by_count": 12593,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Genetics (clinical) -- 9.0",
+      "id": "https://openalex.org/A5072604415",
+      "display_name": "Dominique Paul Germain",
+      "orcid": "https://orcid.org/0000-0002-8355-007X",
+      "h_index": 66,
+      "i10_index": 153,
+      "works_count": 361,
+      "cited_by_count": 20009,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Genetics (clinical) -- 9.0",
+      "id": "https://openalex.org/A5090389497",
+      "display_name": "Anne M. Connolly",
+      "orcid": "https://orcid.org/0000-0002-9193-2457",
+      "h_index": 66,
+      "i10_index": 137,
+      "works_count": 232,
+      "cited_by_count": 18261,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Genetics (clinical) -- 9.0",
+      "id": "https://openalex.org/A5111879281",
+      "display_name": "Myron A. Waclawiw",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 123,
+      "works_count": 170,
+      "cited_by_count": 23002,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Genetics (clinical) -- 9.0",
+      "id": "https://openalex.org/A5077729374",
+      "display_name": "Thomas D. Coates",
+      "orcid": "https://orcid.org/0000-0001-9878-6029",
+      "h_index": 65,
+      "i10_index": 199,
+      "works_count": 432,
+      "cited_by_count": 15044,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Genetics (clinical) -- 9.0",
+      "id": "https://openalex.org/A5005801531",
+      "display_name": "Sergiusz Jóźwiak",
+      "orcid": "https://orcid.org/0000-0003-3350-6326",
+      "h_index": 65,
+      "i10_index": 182,
+      "works_count": 434,
+      "cited_by_count": 21720,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5017093187",
+      "display_name": "Gregory M. Pastores",
+      "orcid": "https://orcid.org/0000-0003-0945-313X",
+      "h_index": 65,
+      "i10_index": 165,
+      "works_count": 333,
+      "cited_by_count": 14137,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5088639513",
+      "display_name": "Petrus J. de Vries",
+      "orcid": "https://orcid.org/0000-0002-8915-1571",
+      "h_index": 65,
+      "i10_index": 152,
+      "works_count": 309,
+      "cited_by_count": 19981,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5049345275",
+      "display_name": "Mark S. Sands",
+      "orcid": "https://orcid.org/0000-0002-5559-0832",
+      "h_index": 65,
+      "i10_index": 142,
+      "works_count": 211,
+      "cited_by_count": 11338,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5112094643",
+      "display_name": "Thomas W. Prior",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 141,
+      "works_count": 216,
+      "cited_by_count": 22688,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5025253171",
+      "display_name": "Alberto Zanella",
+      "orcid": "https://orcid.org/0000-0002-2967-2527",
+      "h_index": 64,
+      "i10_index": 244,
+      "works_count": 507,
+      "cited_by_count": 25231,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5015437955",
+      "display_name": "Monique M. Ryan",
+      "orcid": "https://orcid.org/0000-0001-6397-1910",
+      "h_index": 64,
+      "i10_index": 194,
+      "works_count": 378,
+      "cited_by_count": 14346,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5047421271",
+      "display_name": "Susan T. Iannaccone",
+      "orcid": "https://orcid.org/0000-0003-0851-3516",
+      "h_index": 64,
+      "i10_index": 140,
+      "works_count": 287,
+      "cited_by_count": 18976,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5049971888",
+      "display_name": "Brian K. Kaspar",
+      "orcid": "https://orcid.org/0000-0003-2394-0196",
+      "h_index": 64,
+      "i10_index": 112,
+      "works_count": 181,
+      "cited_by_count": 21792,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5111536809",
+      "display_name": "Tadao Orii",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 228,
+      "works_count": 392,
+      "cited_by_count": 13626,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5109293327",
+      "display_name": "Ulrike Schara",
+      "orcid": "https://orcid.org/0000-0001-5833-2751",
+      "h_index": 63,
+      "i10_index": 185,
+      "works_count": 717,
+      "cited_by_count": 12314,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Genetics (clinical) -- 8.9",
+      "id": "https://openalex.org/A5104507146",
+      "display_name": "Renzo Galanello",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 184,
+      "works_count": 295,
+      "cited_by_count": 16457,
+      "discipline": "Genetics (clinical)",
+      "primary_field": "Medicine",
+      "primary_subfield": "Genetics (clinical)",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    }
+  ]
+}

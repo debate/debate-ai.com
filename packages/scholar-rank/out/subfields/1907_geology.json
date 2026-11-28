@@ -1,0 +1,1325 @@
+{
+  "kind": "subfield",
+  "id": 1907,
+  "name": "Geology",
+  "total_in_scrape": 71,
+  "count": 71,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Geology -- 9.9",
+      "id": "https://openalex.org/A5026147972",
+      "display_name": "R. S. J. Sparks",
+      "orcid": "https://orcid.org/0000-0001-7173-2899",
+      "h_index": 136,
+      "i10_index": 438,
+      "works_count": 844,
+      "cited_by_count": 58999,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Geology -- 9.9",
+      "id": "https://openalex.org/A5053961995",
+      "display_name": "Mark D. Zoback",
+      "orcid": "https://orcid.org/0000-0002-8851-2099",
+      "h_index": 104,
+      "i10_index": 308,
+      "works_count": 665,
+      "cited_by_count": 43494,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Geology -- 9.9",
+      "id": "https://openalex.org/A5042746575",
+      "display_name": "R. Dietmar Müller",
+      "orcid": "https://orcid.org/0000-0002-3334-5764",
+      "h_index": 98,
+      "i10_index": 279,
+      "works_count": 687,
+      "cited_by_count": 41527,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Geology -- 9.9",
+      "id": "https://openalex.org/A5073184140",
+      "display_name": "Trond Helge Torsvik",
+      "orcid": "https://orcid.org/0000-0002-3094-1405",
+      "h_index": 97,
+      "i10_index": 236,
+      "works_count": 481,
+      "cited_by_count": 36505,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Geology -- 9.9",
+      "id": "https://openalex.org/A5035076319",
+      "display_name": "Ken Takai",
+      "orcid": "https://orcid.org/0000-0003-4043-376X",
+      "h_index": 92,
+      "i10_index": 305,
+      "works_count": 1615,
+      "cited_by_count": 28839,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Geology -- 9.9",
+      "id": "https://openalex.org/A5016421467",
+      "display_name": "A. B. Watts",
+      "orcid": "https://orcid.org/0000-0002-2198-2942",
+      "h_index": 88,
+      "i10_index": 216,
+      "works_count": 408,
+      "cited_by_count": 23213,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5084791543",
+      "display_name": "Douglas W. Burbank",
+      "orcid": "https://orcid.org/0000-0001-8497-3296",
+      "h_index": 87,
+      "i10_index": 165,
+      "works_count": 249,
+      "cited_by_count": 32935,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5110347666",
+      "display_name": "Alastair H.F. Robertson",
+      "orcid": "https://orcid.org/0000-0003-4090-2255",
+      "h_index": 85,
+      "i10_index": 296,
+      "works_count": 1386,
+      "cited_by_count": 21941,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5033659181",
+      "display_name": "K. V. Cashman",
+      "orcid": "https://orcid.org/0000-0001-9312-8377",
+      "h_index": 84,
+      "i10_index": 202,
+      "works_count": 466,
+      "cited_by_count": 24272,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5015049064",
+      "display_name": "Ping’an Peng",
+      "orcid": "https://orcid.org/0000-0002-8031-8451",
+      "h_index": 83,
+      "i10_index": 425,
+      "works_count": 796,
+      "cited_by_count": 25769,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5005965181",
+      "display_name": "Vincent E. Courtillot",
+      "orcid": "https://orcid.org/0000-0003-2474-3805",
+      "h_index": 83,
+      "i10_index": 199,
+      "works_count": 454,
+      "cited_by_count": 25463,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5030016629",
+      "display_name": "Peter G. DeCelles",
+      "orcid": "https://orcid.org/0000-0001-6370-8514",
+      "h_index": 82,
+      "i10_index": 162,
+      "works_count": 316,
+      "cited_by_count": 27753,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5014836907",
+      "display_name": "Steve Larter",
+      "orcid": "https://orcid.org/0000-0001-7195-1477",
+      "h_index": 79,
+      "i10_index": 226,
+      "works_count": 364,
+      "cited_by_count": 20385,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Chemistry",
+        "Environmental Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5074794787",
+      "display_name": "Stephan Alan Graham",
+      "orcid": "https://orcid.org/0000-0003-0696-7178",
+      "h_index": 79,
+      "i10_index": 182,
+      "works_count": 352,
+      "cited_by_count": 19700,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5110202438",
+      "display_name": "Christopher Beaumont",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 148,
+      "works_count": 231,
+      "cited_by_count": 20943,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5089851659",
+      "display_name": "William I. Rose",
+      "orcid": "https://orcid.org/0000-0001-9041-2532",
+      "h_index": 78,
+      "i10_index": 186,
+      "works_count": 396,
+      "cited_by_count": 16735,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Geology -- 9.8",
+      "id": "https://openalex.org/A5033343641",
+      "display_name": "David J. W. Piper",
+      "orcid": "https://orcid.org/0000-0002-6276-7560",
+      "h_index": 77,
+      "i10_index": 361,
+      "works_count": 1381,
+      "cited_by_count": 21347,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5037313987",
+      "display_name": "R. D. Hyndman",
+      "orcid": "https://orcid.org/0000-0001-5193-9972",
+      "h_index": 77,
+      "i10_index": 213,
+      "works_count": 492,
+      "cited_by_count": 20698,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5012550860",
+      "display_name": "Stephen Self",
+      "orcid": "https://orcid.org/0000-0002-8081-3532",
+      "h_index": 77,
+      "i10_index": 172,
+      "works_count": 269,
+      "cited_by_count": 22846,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5112042149",
+      "display_name": "William R. Dickinson",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 227,
+      "works_count": 385,
+      "cited_by_count": 30337,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5062756128",
+      "display_name": "Peter R. Vogt",
+      "orcid": "https://orcid.org/0000-0002-1030-4492",
+      "h_index": 76,
+      "i10_index": 224,
+      "works_count": 452,
+      "cited_by_count": 19211,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5061966291",
+      "display_name": "David M. Pyle",
+      "orcid": "https://orcid.org/0000-0002-2663-9940",
+      "h_index": 76,
+      "i10_index": 192,
+      "works_count": 487,
+      "cited_by_count": 15737,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5025841679",
+      "display_name": "Fabio Remondino",
+      "orcid": "https://orcid.org/0000-0001-6097-5342",
+      "h_index": 75,
+      "i10_index": 330,
+      "works_count": 729,
+      "cited_by_count": 26492,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5086795464",
+      "display_name": "Richard E. Ernst",
+      "orcid": "https://orcid.org/0000-0001-9474-0314",
+      "h_index": 75,
+      "i10_index": 242,
+      "works_count": 651,
+      "cited_by_count": 24978,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5111777119",
+      "display_name": "Haraldur Sigurdsson",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 149,
+      "works_count": 448,
+      "cited_by_count": 15329,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5084273448",
+      "display_name": "C.K. Morley",
+      "orcid": "https://orcid.org/0000-0002-6075-9022",
+      "h_index": 73,
+      "i10_index": 199,
+      "works_count": 341,
+      "cited_by_count": 15577,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5076237216",
+      "display_name": "Thor Thordarson",
+      "orcid": "https://orcid.org/0000-0003-4011-7185",
+      "h_index": 73,
+      "i10_index": 177,
+      "works_count": 434,
+      "cited_by_count": 17732,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Geology -- 9.7",
+      "id": "https://openalex.org/A5044004509",
+      "display_name": "Burrell C. Burchfiel",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 129,
+      "works_count": 241,
+      "cited_by_count": 23628,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5047072062",
+      "display_name": "Ralf Littke",
+      "orcid": "https://orcid.org/0000-0003-0421-8720",
+      "h_index": 72,
+      "i10_index": 326,
+      "works_count": 800,
+      "cited_by_count": 21349,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5004095776",
+      "display_name": "Jan Inge Faleide",
+      "orcid": "https://orcid.org/0000-0001-8032-2015",
+      "h_index": 72,
+      "i10_index": 231,
+      "works_count": 466,
+      "cited_by_count": 16801,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5059140199",
+      "display_name": "Brian Horsfield",
+      "orcid": "https://orcid.org/0000-0002-3896-2964",
+      "h_index": 72,
+      "i10_index": 215,
+      "works_count": 621,
+      "cited_by_count": 15817,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5075979303",
+      "display_name": "Haakon Fossen",
+      "orcid": "https://orcid.org/0000-0002-8091-5643",
+      "h_index": 72,
+      "i10_index": 161,
+      "works_count": 358,
+      "cited_by_count": 17788,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5006500638",
+      "display_name": "Claude Jaupart",
+      "orcid": "https://orcid.org/0000-0001-7961-0538",
+      "h_index": 72,
+      "i10_index": 157,
+      "works_count": 357,
+      "cited_by_count": 17937,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5087655690",
+      "display_name": "B. F. Houghton",
+      "orcid": "https://orcid.org/0000-0002-7532-9770",
+      "h_index": 71,
+      "i10_index": 193,
+      "works_count": 402,
+      "cited_by_count": 16090,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5068105372",
+      "display_name": "Sverre Planke",
+      "orcid": "https://orcid.org/0000-0001-6128-2193",
+      "h_index": 71,
+      "i10_index": 188,
+      "works_count": 587,
+      "cited_by_count": 16427,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5029667020",
+      "display_name": "Ágúst Guðmundsson",
+      "orcid": "https://orcid.org/0000-0002-3926-5562",
+      "h_index": 71,
+      "i10_index": 165,
+      "works_count": 425,
+      "cited_by_count": 14404,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5110249837",
+      "display_name": "George P. L. Walker",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 122,
+      "works_count": 176,
+      "cited_by_count": 17549,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5019716051",
+      "display_name": "Giänreto Manatschal",
+      "orcid": "https://orcid.org/0000-0003-3834-2033",
+      "h_index": 70,
+      "i10_index": 186,
+      "works_count": 663,
+      "cited_by_count": 17387,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Geology -- 9.6",
+      "id": "https://openalex.org/A5112104028",
+      "display_name": "Maurice Ewing",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 178,
+      "works_count": 331,
+      "cited_by_count": 13744,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5078474965",
+      "display_name": "Robert Hall",
+      "orcid": "https://orcid.org/0000-0003-1693-6914",
+      "h_index": 70,
+      "i10_index": 157,
+      "works_count": 329,
+      "cited_by_count": 20712,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5007061034",
+      "display_name": "Jean Braun",
+      "orcid": "https://orcid.org/0000-0002-7341-6344",
+      "h_index": 70,
+      "i10_index": 153,
+      "works_count": 501,
+      "cited_by_count": 13421,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5011492064",
+      "display_name": "Joe A. Cartwright",
+      "orcid": "https://orcid.org/0000-0003-4198-9719",
+      "h_index": 69,
+      "i10_index": 212,
+      "works_count": 352,
+      "cited_by_count": 16131,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5042877247",
+      "display_name": "Robert L. Gawthorpe",
+      "orcid": "https://orcid.org/0000-0002-4352-6366",
+      "h_index": 69,
+      "i10_index": 195,
+      "works_count": 418,
+      "cited_by_count": 16085,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5108682092",
+      "display_name": "Caineng Zou",
+      "orcid": "https://orcid.org/0000-0001-5912-1729",
+      "h_index": 69,
+      "i10_index": 188,
+      "works_count": 319,
+      "cited_by_count": 20449,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5037343054",
+      "display_name": "Shane Jason Cronin",
+      "orcid": "https://orcid.org/0000-0001-7499-603X",
+      "h_index": 68,
+      "i10_index": 232,
+      "works_count": 469,
+      "cited_by_count": 13407,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5071208660",
+      "display_name": "Timothy S. Collett",
+      "orcid": "https://orcid.org/0000-0002-7598-4708",
+      "h_index": 68,
+      "i10_index": 219,
+      "works_count": 368,
+      "cited_by_count": 19424,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5047983686",
+      "display_name": "Richard Henry Worden",
+      "orcid": "https://orcid.org/0000-0002-4686-9428",
+      "h_index": 68,
+      "i10_index": 173,
+      "works_count": 286,
+      "cited_by_count": 13956,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5002735902",
+      "display_name": "Robert Marc Bustin",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 167,
+      "works_count": 293,
+      "cited_by_count": 26085,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5011255872",
+      "display_name": "A. M. Celâl Şengör",
+      "orcid": "https://orcid.org/0000-0001-8767-8831",
+      "h_index": 68,
+      "i10_index": 143,
+      "works_count": 301,
+      "cited_by_count": 33192,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5014831343",
+      "display_name": "John Frederick Dewey",
+      "orcid": "https://orcid.org/0000-0002-6290-1635",
+      "h_index": 68,
+      "i10_index": 124,
+      "works_count": 242,
+      "cited_by_count": 27597,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Geology -- 9.5",
+      "id": "https://openalex.org/A5037872919",
+      "display_name": "Jaume Vergés",
+      "orcid": "https://orcid.org/0000-0002-4467-5291",
+      "h_index": 67,
+      "i10_index": 162,
+      "works_count": 422,
+      "cited_by_count": 14213,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5078146087",
+      "display_name": "John Anthony Howell",
+      "orcid": "https://orcid.org/0000-0003-3818-8048",
+      "h_index": 66,
+      "i10_index": 211,
+      "works_count": 453,
+      "cited_by_count": 15048,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5101958436",
+      "display_name": "Andrew J. Nicol",
+      "orcid": "https://orcid.org/0000-0001-5181-1151",
+      "h_index": 66,
+      "i10_index": 180,
+      "works_count": 339,
+      "cited_by_count": 14543,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5068854335",
+      "display_name": "Aral İ. Okay",
+      "orcid": "https://orcid.org/0000-0003-2398-5386",
+      "h_index": 66,
+      "i10_index": 151,
+      "works_count": 265,
+      "cited_by_count": 16739,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5101493174",
+      "display_name": "Andrew J. L. Harris",
+      "orcid": "https://orcid.org/0000-0001-9137-8997",
+      "h_index": 65,
+      "i10_index": 198,
+      "works_count": 393,
+      "cited_by_count": 13226,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5086428184",
+      "display_name": "George Vosselman",
+      "orcid": "https://orcid.org/0000-0001-8813-8028",
+      "h_index": 65,
+      "i10_index": 195,
+      "works_count": 346,
+      "cited_by_count": 16947,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Computer Science",
+        "Engineering",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5110507831",
+      "display_name": "Claude Largeau",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 161,
+      "works_count": 218,
+      "cited_by_count": 15502,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Energy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5085722785",
+      "display_name": "Ken McClay",
+      "orcid": "https://orcid.org/0000-0002-4077-7645",
+      "h_index": 65,
+      "i10_index": 151,
+      "works_count": 279,
+      "cited_by_count": 13945,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5000842260",
+      "display_name": "Yves Fouquet",
+      "orcid": "https://orcid.org/0000-0002-9457-5571",
+      "h_index": 65,
+      "i10_index": 130,
+      "works_count": 2776,
+      "cited_by_count": 14360,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5011527154",
+      "display_name": "J. Michael Moldowan",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 123,
+      "works_count": 228,
+      "cited_by_count": 20756,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5046605510",
+      "display_name": "Rudy Swennen",
+      "orcid": "https://orcid.org/0000-0002-1528-526X",
+      "h_index": 64,
+      "i10_index": 254,
+      "works_count": 593,
+      "cited_by_count": 14215,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Geology -- 9.4",
+      "id": "https://openalex.org/A5100350328",
+      "display_name": "Yunpeng Wang",
+      "orcid": "https://orcid.org/0000-0003-4164-9677",
+      "h_index": 64,
+      "i10_index": 241,
+      "works_count": 574,
+      "cited_by_count": 19185,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Geology -- 9.3",
+      "id": "https://openalex.org/A5051782784",
+      "display_name": "Christopher A.-L. Jackson",
+      "orcid": "https://orcid.org/0000-0002-8592-9032",
+      "h_index": 64,
+      "i10_index": 225,
+      "works_count": 634,
+      "cited_by_count": 15238,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Geology -- 9.3",
+      "id": "https://openalex.org/A5026326429",
+      "display_name": "Mike Sandiford",
+      "orcid": "https://orcid.org/0000-0002-9757-745X",
+      "h_index": 64,
+      "i10_index": 159,
+      "works_count": 301,
+      "cited_by_count": 10447,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Geology -- 9.3",
+      "id": "https://openalex.org/A5006751458",
+      "display_name": "Guillaume Dupont‐Nivet",
+      "orcid": "https://orcid.org/0000-0001-9905-9739",
+      "h_index": 64,
+      "i10_index": 128,
+      "works_count": 443,
+      "cited_by_count": 12848,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Geology -- 9.3",
+      "id": "https://openalex.org/A5029908866",
+      "display_name": "Kerry Gallagher",
+      "orcid": "https://orcid.org/0000-0002-8124-6242",
+      "h_index": 64,
+      "i10_index": 125,
+      "works_count": 273,
+      "cited_by_count": 14208,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Geology -- 9.3",
+      "id": "https://openalex.org/A5103118958",
+      "display_name": "Paul Wallace",
+      "orcid": "https://orcid.org/0009-0006-7833-6753",
+      "h_index": 64,
+      "i10_index": 121,
+      "works_count": 1028,
+      "cited_by_count": 13425,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Geology -- 9.3",
+      "id": "https://openalex.org/A5022743478",
+      "display_name": "Qinhong Hu",
+      "orcid": "https://orcid.org/0000-0002-4782-319X",
+      "h_index": 63,
+      "i10_index": 225,
+      "works_count": 463,
+      "cited_by_count": 13572,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Energy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Geology -- 9.3",
+      "id": "https://openalex.org/A5078159744",
+      "display_name": "T. A. Minshull",
+      "orcid": "https://orcid.org/0000-0002-8202-1379",
+      "h_index": 63,
+      "i10_index": 168,
+      "works_count": 444,
+      "cited_by_count": 12014,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Geology -- 9.3",
+      "id": "https://openalex.org/A5010691668",
+      "display_name": "B. Voight",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 145,
+      "works_count": 285,
+      "cited_by_count": 12797,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Geology -- 9.3",
+      "id": "https://openalex.org/A5058686718",
+      "display_name": "Ian W. D. Dalziel",
+      "orcid": "https://orcid.org/0000-0002-5727-2766",
+      "h_index": 63,
+      "i10_index": 120,
+      "works_count": 351,
+      "cited_by_count": 13117,
+      "discipline": "Geology",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Geology",
+      "fields": [
+        "Earth and Planetary Sciences"
+      ]
+    }
+  ]
+}

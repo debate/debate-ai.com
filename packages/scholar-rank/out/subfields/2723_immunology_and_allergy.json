@@ -1,0 +1,4155 @@
+{
+  "kind": "subfield",
+  "id": 2723,
+  "name": "Immunology and Allergy",
+  "total_in_scrape": 219,
+  "count": 219,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Immunology and Allergy -- 9.9",
+      "id": "https://openalex.org/A5003615852",
+      "display_name": "Timothy A. Springer",
+      "orcid": "https://orcid.org/0000-0001-6627-2904",
+      "h_index": 175,
+      "i10_index": 521,
+      "works_count": 751,
+      "cited_by_count": 122169,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Immunology and Allergy -- 9.9",
+      "id": "https://openalex.org/A5088477154",
+      "display_name": "Erkki I. Ruoslahti",
+      "orcid": "https://orcid.org/0000-0003-2496-3445",
+      "h_index": 170,
+      "i10_index": 430,
+      "works_count": 599,
+      "cited_by_count": 118055,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Immunology and Allergy -- 9.9",
+      "id": "https://openalex.org/A5015552885",
+      "display_name": "Hugh A. Sampson",
+      "orcid": "https://orcid.org/0000-0003-1613-8875",
+      "h_index": 165,
+      "i10_index": 557,
+      "works_count": 1058,
+      "cited_by_count": 99122,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Immunology and Allergy -- 9.9",
+      "id": "https://openalex.org/A5055404517",
+      "display_name": "Cezmi A. Akdiş",
+      "orcid": "https://orcid.org/0000-0001-8020-019X",
+      "h_index": 164,
+      "i10_index": 627,
+      "works_count": 995,
+      "cited_by_count": 99845,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Immunology and Allergy -- 9.9",
+      "id": "https://openalex.org/A5030647867",
+      "display_name": "Richard O. Hynes",
+      "orcid": "https://orcid.org/0000-0001-7603-8396",
+      "h_index": 159,
+      "i10_index": 375,
+      "works_count": 678,
+      "cited_by_count": 124433,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Immunology and Allergy -- 9.9",
+      "id": "https://openalex.org/A5043192106",
+      "display_name": "Stephen R. Durham",
+      "orcid": "https://orcid.org/0000-0001-5264-6207",
+      "h_index": 152,
+      "i10_index": 443,
+      "works_count": 829,
+      "cited_by_count": 83645,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5052453881",
+      "display_name": "Kenneth M. Yamada",
+      "orcid": "https://orcid.org/0000-0003-1512-6805",
+      "h_index": 152,
+      "i10_index": 403,
+      "works_count": 633,
+      "cited_by_count": 88256,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5111427106",
+      "display_name": "Rupert Timpl",
+      "orcid": null,
+      "h_index": 149,
+      "i10_index": 512,
+      "works_count": 628,
+      "cited_by_count": 68547,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5111917213",
+      "display_name": "Gerald M. Edelman",
+      "orcid": null,
+      "h_index": 144,
+      "i10_index": 450,
+      "works_count": 567,
+      "cited_by_count": 70429,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5032907445",
+      "display_name": "Mark H. Ginsberg",
+      "orcid": "https://orcid.org/0000-0002-5685-5417",
+      "h_index": 136,
+      "i10_index": 359,
+      "works_count": 529,
+      "cited_by_count": 62761,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5003887782",
+      "display_name": "Elisabetta Dejana",
+      "orcid": "https://orcid.org/0000-0002-0007-0426",
+      "h_index": 135,
+      "i10_index": 358,
+      "works_count": 569,
+      "cited_by_count": 66266,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5112467058",
+      "display_name": "Reinhard Fässler",
+      "orcid": "https://orcid.org/0000-0002-0145-6937",
+      "h_index": 132,
+      "i10_index": 325,
+      "works_count": 425,
+      "cited_by_count": 53738,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5035344252",
+      "display_name": "Masatoshi Takeichi",
+      "orcid": "https://orcid.org/0000-0002-9931-3378",
+      "h_index": 128,
+      "i10_index": 271,
+      "works_count": 342,
+      "cited_by_count": 61536,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5084684343",
+      "display_name": "Michael A. Gimbrone",
+      "orcid": null,
+      "h_index": 125,
+      "i10_index": 224,
+      "works_count": 300,
+      "cited_by_count": 68128,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5089796560",
+      "display_name": "David A. Cheresh",
+      "orcid": "https://orcid.org/0000-0002-7193-8595",
+      "h_index": 124,
+      "i10_index": 237,
+      "works_count": 405,
+      "cited_by_count": 68230,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5011756238",
+      "display_name": "Asrar B. Malik",
+      "orcid": "https://orcid.org/0000-0002-8205-7128",
+      "h_index": 122,
+      "i10_index": 489,
+      "works_count": 793,
+      "cited_by_count": 55079,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Immunology and Allergy -- 9.8",
+      "id": "https://openalex.org/A5009450784",
+      "display_name": "Dietmar Vestweber",
+      "orcid": "https://orcid.org/0000-0002-3517-732X",
+      "h_index": 122,
+      "i10_index": 297,
+      "works_count": 509,
+      "cited_by_count": 44608,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5076890703",
+      "display_name": "Thomas A.E. Platts‐Mills",
+      "orcid": "https://orcid.org/0000-0002-1263-329X",
+      "h_index": 120,
+      "i10_index": 465,
+      "works_count": 955,
+      "cited_by_count": 57857,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5050048947",
+      "display_name": "Rudolf Valenta",
+      "orcid": "https://orcid.org/0000-0001-5944-3365",
+      "h_index": 119,
+      "i10_index": 624,
+      "works_count": 954,
+      "cited_by_count": 53647,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5014484985",
+      "display_name": "Johannes Ring",
+      "orcid": "https://orcid.org/0000-0001-8236-3152",
+      "h_index": 118,
+      "i10_index": 589,
+      "works_count": 1432,
+      "cited_by_count": 61156,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5054622398",
+      "display_name": "Hynda K. Kleinman",
+      "orcid": "https://orcid.org/0000-0002-8220-9769",
+      "h_index": 116,
+      "i10_index": 319,
+      "works_count": 417,
+      "cited_by_count": 50807,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5004878337",
+      "display_name": "Torsten Zuberbier",
+      "orcid": "https://orcid.org/0000-0002-1466-8875",
+      "h_index": 114,
+      "i10_index": 537,
+      "works_count": 989,
+      "cited_by_count": 61445,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5025157783",
+      "display_name": "Pascal M. Demoly",
+      "orcid": "https://orcid.org/0000-0001-7827-7964",
+      "h_index": 114,
+      "i10_index": 528,
+      "works_count": 1343,
+      "cited_by_count": 58080,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5028760615",
+      "display_name": "Kari Christine Nadeau",
+      "orcid": "https://orcid.org/0000-0002-2146-2955",
+      "h_index": 113,
+      "i10_index": 479,
+      "works_count": 1015,
+      "cited_by_count": 50596,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5019919684",
+      "display_name": "Mübeccel Akdiş",
+      "orcid": "https://orcid.org/0000-0003-0554-9943",
+      "h_index": 112,
+      "i10_index": 296,
+      "works_count": 403,
+      "cited_by_count": 45261,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5086548300",
+      "display_name": "Shöichiro Tsukita",
+      "orcid": null,
+      "h_index": 112,
+      "i10_index": 199,
+      "works_count": 240,
+      "cited_by_count": 60286,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5104472778",
+      "display_name": "Ulrich Wahn",
+      "orcid": "https://orcid.org/0000-0002-5723-6132",
+      "h_index": 111,
+      "i10_index": 342,
+      "works_count": 643,
+      "cited_by_count": 40743,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Immunology and Allergy -- 9.7",
+      "id": "https://openalex.org/A5100773205",
+      "display_name": "Nikolaos G. Papadopoulos",
+      "orcid": "https://orcid.org/0000-0002-4448-3468",
+      "h_index": 110,
+      "i10_index": 527,
+      "works_count": 951,
+      "cited_by_count": 55921,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5065281895",
+      "display_name": "Graham C. Roberts",
+      "orcid": "https://orcid.org/0000-0003-2252-1248",
+      "h_index": 110,
+      "i10_index": 348,
+      "works_count": 654,
+      "cited_by_count": 45772,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5062567534",
+      "display_name": "Scott Howard Sicherer",
+      "orcid": "https://orcid.org/0000-0003-0036-0439",
+      "h_index": 110,
+      "i10_index": 302,
+      "works_count": 684,
+      "cited_by_count": 52265,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5034220226",
+      "display_name": "A. Wesley Burks",
+      "orcid": "https://orcid.org/0000-0003-1873-5702",
+      "h_index": 110,
+      "i10_index": 286,
+      "works_count": 634,
+      "cited_by_count": 47745,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5048797041",
+      "display_name": "Margitta Worm",
+      "orcid": "https://orcid.org/0000-0002-3449-1245",
+      "h_index": 107,
+      "i10_index": 544,
+      "works_count": 1165,
+      "cited_by_count": 50867,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5111504615",
+      "display_name": "Lawrence M. Lichtenstein",
+      "orcid": null,
+      "h_index": 107,
+      "i10_index": 379,
+      "works_count": 521,
+      "cited_by_count": 35411,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5035034281",
+      "display_name": "Ronald van Ree",
+      "orcid": "https://orcid.org/0000-0003-0767-0894",
+      "h_index": 105,
+      "i10_index": 358,
+      "works_count": 613,
+      "cited_by_count": 39676,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5102901739",
+      "display_name": "C. Wayne Smith",
+      "orcid": "https://orcid.org/0009-0000-4060-6574",
+      "h_index": 105,
+      "i10_index": 298,
+      "works_count": 455,
+      "cited_by_count": 35883,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5000246031",
+      "display_name": "Martin James Humphries",
+      "orcid": "https://orcid.org/0000-0002-4331-6967",
+      "h_index": 105,
+      "i10_index": 255,
+      "works_count": 598,
+      "cited_by_count": 35374,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5043920114",
+      "display_name": "Rodger P. McEver",
+      "orcid": "https://orcid.org/0000-0001-5343-2622",
+      "h_index": 105,
+      "i10_index": 194,
+      "works_count": 241,
+      "cited_by_count": 40315,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5076448184",
+      "display_name": "Antonella Maria Muraro",
+      "orcid": "https://orcid.org/0000-0002-5026-5862",
+      "h_index": 102,
+      "i10_index": 249,
+      "works_count": 407,
+      "cited_by_count": 47530,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Immunology and Allergy -- 9.6",
+      "id": "https://openalex.org/A5044165924",
+      "display_name": "Martin E. Hemler",
+      "orcid": "https://orcid.org/0000-0002-7218-0173",
+      "h_index": 102,
+      "i10_index": 170,
+      "works_count": 235,
+      "cited_by_count": 35655,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5101705904",
+      "display_name": "Robert A. Wood",
+      "orcid": "https://orcid.org/0000-0003-3777-802X",
+      "h_index": 101,
+      "i10_index": 276,
+      "works_count": 606,
+      "cited_by_count": 37508,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5024276008",
+      "display_name": "Kirsten M.M. Beyer",
+      "orcid": "https://orcid.org/0000-0003-1859-0419",
+      "h_index": 101,
+      "i10_index": 254,
+      "works_count": 490,
+      "cited_by_count": 38025,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5086672334",
+      "display_name": "Triantafyllos Chavakis",
+      "orcid": "https://orcid.org/0000-0002-1869-5141",
+      "h_index": 100,
+      "i10_index": 266,
+      "works_count": 410,
+      "cited_by_count": 38471,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5046878619",
+      "display_name": "Carsten Bindslev‐Jensen",
+      "orcid": "https://orcid.org/0000-0002-8940-038X",
+      "h_index": 99,
+      "i10_index": 292,
+      "works_count": 507,
+      "cited_by_count": 40788,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5085886525",
+      "display_name": "Sirpa Jalkanen",
+      "orcid": "https://orcid.org/0000-0002-1922-9732",
+      "h_index": 98,
+      "i10_index": 360,
+      "works_count": 649,
+      "cited_by_count": 30821,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5011316528",
+      "display_name": "Mimi L.K. Tang",
+      "orcid": "https://orcid.org/0000-0002-3839-5293",
+      "h_index": 98,
+      "i10_index": 354,
+      "works_count": 558,
+      "cited_by_count": 34960,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5016134289",
+      "display_name": "Joseph A. Madri",
+      "orcid": "https://orcid.org/0000-0003-0008-2440",
+      "h_index": 98,
+      "i10_index": 239,
+      "works_count": 305,
+      "cited_by_count": 27846,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5047011247",
+      "display_name": "Jonathan M. Spergel",
+      "orcid": "https://orcid.org/0000-0002-4658-5353",
+      "h_index": 97,
+      "i10_index": 352,
+      "works_count": 763,
+      "cited_by_count": 42184,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5087600572",
+      "display_name": "F. Estelle R. Simons",
+      "orcid": "https://orcid.org/0000-0002-5669-828X",
+      "h_index": 97,
+      "i10_index": 269,
+      "works_count": 405,
+      "cited_by_count": 40438,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5037893640",
+      "display_name": "Deane F. Mosher",
+      "orcid": "https://orcid.org/0000-0002-1233-1005",
+      "h_index": 94,
+      "i10_index": 299,
+      "works_count": 1328,
+      "cited_by_count": 29167,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5081824936",
+      "display_name": "Magnus Carl Wickman",
+      "orcid": "https://orcid.org/0000-0003-2710-8620",
+      "h_index": 94,
+      "i10_index": 229,
+      "works_count": 320,
+      "cited_by_count": 34871,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Immunology and Allergy -- 9.5",
+      "id": "https://openalex.org/A5007028763",
+      "display_name": "Gideon Lack",
+      "orcid": "https://orcid.org/0000-0001-7350-4021",
+      "h_index": 94,
+      "i10_index": 226,
+      "works_count": 415,
+      "cited_by_count": 37809,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5086177582",
+      "display_name": "Daniel Neil Granger",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 287,
+      "works_count": 434,
+      "cited_by_count": 32235,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5026230972",
+      "display_name": "Stefan Vieths",
+      "orcid": "https://orcid.org/0000-0003-3826-6704",
+      "h_index": 92,
+      "i10_index": 331,
+      "works_count": 546,
+      "cited_by_count": 26482,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5034770022",
+      "display_name": "Liam O’Mahony",
+      "orcid": "https://orcid.org/0000-0003-4705-3583",
+      "h_index": 92,
+      "i10_index": 221,
+      "works_count": 357,
+      "cited_by_count": 39340,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5111447554",
+      "display_name": "Victor Koteliansky",
+      "orcid": null,
+      "h_index": 92,
+      "i10_index": 204,
+      "works_count": 296,
+      "cited_by_count": 47220,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Materials Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5100771423",
+      "display_name": "María José Torres",
+      "orcid": "https://orcid.org/0000-0001-5228-471X",
+      "h_index": 91,
+      "i10_index": 385,
+      "works_count": 793,
+      "cited_by_count": 30515,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5022314531",
+      "display_name": "Martin D. Chapman",
+      "orcid": "https://orcid.org/0000-0002-0845-3632",
+      "h_index": 91,
+      "i10_index": 269,
+      "works_count": 611,
+      "cited_by_count": 26318,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5030244193",
+      "display_name": "Ioana Octavia Agache",
+      "orcid": "https://orcid.org/0000-0001-7994-364X",
+      "h_index": 91,
+      "i10_index": 245,
+      "works_count": 367,
+      "cited_by_count": 36380,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5074708797",
+      "display_name": "Charles A. Parkos",
+      "orcid": "https://orcid.org/0000-0002-2490-7657",
+      "h_index": 91,
+      "i10_index": 234,
+      "works_count": 417,
+      "cited_by_count": 28836,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5090163566",
+      "display_name": "Katrina Jane Allen",
+      "orcid": "https://orcid.org/0000-0002-1921-4493",
+      "h_index": 90,
+      "i10_index": 296,
+      "works_count": 500,
+      "cited_by_count": 28546,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5110277066",
+      "display_name": "Nancy Hogg",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 190,
+      "works_count": 246,
+      "cited_by_count": 27950,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Immunology and Allergy -- 9.4",
+      "id": "https://openalex.org/A5113509100",
+      "display_name": "Dorian O. Haskard",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 270,
+      "works_count": 536,
+      "cited_by_count": 25097,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5071132111",
+      "display_name": "B. Niggemann",
+      "orcid": "https://orcid.org/0000-0002-4276-1858",
+      "h_index": 89,
+      "i10_index": 254,
+      "works_count": 449,
+      "cited_by_count": 37557,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5054596261",
+      "display_name": "Susanne Lau",
+      "orcid": "https://orcid.org/0000-0002-5189-4265",
+      "h_index": 89,
+      "i10_index": 196,
+      "works_count": 330,
+      "cited_by_count": 27513,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5073839386",
+      "display_name": "Giovanni Passalacqua",
+      "orcid": "https://orcid.org/0000-0002-5139-3604",
+      "h_index": 88,
+      "i10_index": 382,
+      "works_count": 658,
+      "cited_by_count": 34452,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5077492180",
+      "display_name": "Susan L. Prescott",
+      "orcid": "https://orcid.org/0000-0003-4845-8590",
+      "h_index": 88,
+      "i10_index": 311,
+      "works_count": 594,
+      "cited_by_count": 35115,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5015449816",
+      "display_name": "Masayuki Miyasaka",
+      "orcid": "https://orcid.org/0000-0001-6122-5201",
+      "h_index": 88,
+      "i10_index": 292,
+      "works_count": 427,
+      "cited_by_count": 24946,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5112202611",
+      "display_name": "Kurt Blaser",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 225,
+      "works_count": 358,
+      "cited_by_count": 28880,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5035264771",
+      "display_name": "Elizabeth N. Clare Mills",
+      "orcid": "https://orcid.org/0000-0001-7433-1740",
+      "h_index": 87,
+      "i10_index": 276,
+      "works_count": 513,
+      "cited_by_count": 23525,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5071563978",
+      "display_name": "Thomas Oskar Philipp Keil",
+      "orcid": "https://orcid.org/0000-0002-9108-3360",
+      "h_index": 87,
+      "i10_index": 235,
+      "works_count": 413,
+      "cited_by_count": 25467,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5034364156",
+      "display_name": "Oliver Pfaar",
+      "orcid": "https://orcid.org/0000-0003-4374-9639",
+      "h_index": 86,
+      "i10_index": 328,
+      "works_count": 630,
+      "cited_by_count": 28926,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5055112840",
+      "display_name": "D. Neil Granger",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 274,
+      "works_count": 379,
+      "cited_by_count": 31338,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Immunology and Allergy -- 9.3",
+      "id": "https://openalex.org/A5059067804",
+      "display_name": "Daniel A. Hammer",
+      "orcid": "https://orcid.org/0000-0002-3522-3154",
+      "h_index": 86,
+      "i10_index": 245,
+      "works_count": 364,
+      "cited_by_count": 31167,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5073842398",
+      "display_name": "Rob C. Aalberse",
+      "orcid": "https://orcid.org/0000-0002-3902-6596",
+      "h_index": 86,
+      "i10_index": 238,
+      "works_count": 421,
+      "cited_by_count": 29586,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5070186406",
+      "display_name": "Jonathan O’B Hourihane",
+      "orcid": "https://orcid.org/0000-0003-4997-9857",
+      "h_index": 85,
+      "i10_index": 239,
+      "works_count": 539,
+      "cited_by_count": 28490,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5055891096",
+      "display_name": "Marek Jutel",
+      "orcid": "https://orcid.org/0000-0003-1555-9379",
+      "h_index": 85,
+      "i10_index": 224,
+      "works_count": 383,
+      "cited_by_count": 31266,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5012218478",
+      "display_name": "Eva Engvall",
+      "orcid": "https://orcid.org/0000-0003-1375-7566",
+      "h_index": 85,
+      "i10_index": 183,
+      "works_count": 212,
+      "cited_by_count": 35474,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5038444881",
+      "display_name": "Ludger Klimek",
+      "orcid": "https://orcid.org/0000-0002-2455-0192",
+      "h_index": 84,
+      "i10_index": 424,
+      "works_count": 1255,
+      "cited_by_count": 30853,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5089377771",
+      "display_name": "Joaquin Sastre",
+      "orcid": "https://orcid.org/0000-0003-4689-6837",
+      "h_index": 84,
+      "i10_index": 360,
+      "works_count": 628,
+      "cited_by_count": 24071,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5064589815",
+      "display_name": "Marianne van Hage",
+      "orcid": "https://orcid.org/0000-0003-3091-1596",
+      "h_index": 84,
+      "i10_index": 305,
+      "works_count": 426,
+      "cited_by_count": 26115,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5113847477",
+      "display_name": "M. Blanca",
+      "orcid": "https://orcid.org/0000-0003-1631-4621",
+      "h_index": 84,
+      "i10_index": 303,
+      "works_count": 674,
+      "cited_by_count": 25479,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5053003825",
+      "display_name": "Harald E. Renz",
+      "orcid": "https://orcid.org/0000-0003-0602-7215",
+      "h_index": 83,
+      "i10_index": 287,
+      "works_count": 568,
+      "cited_by_count": 26088,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5008837949",
+      "display_name": "Lars Kaergaard Poulsen",
+      "orcid": "https://orcid.org/0000-0002-1730-847X",
+      "h_index": 83,
+      "i10_index": 278,
+      "works_count": 453,
+      "cited_by_count": 25648,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Immunology and Allergy -- 9.2",
+      "id": "https://openalex.org/A5091351540",
+      "display_name": "Bengt Björkstén",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 249,
+      "works_count": 396,
+      "cited_by_count": 33261,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5010527699",
+      "display_name": "Arthur M. Mercurio",
+      "orcid": "https://orcid.org/0000-0003-2762-7519",
+      "h_index": 83,
+      "i10_index": 168,
+      "works_count": 393,
+      "cited_by_count": 23261,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5023280808",
+      "display_name": "Knut Brockow",
+      "orcid": "https://orcid.org/0000-0002-2775-3681",
+      "h_index": 82,
+      "i10_index": 287,
+      "works_count": 608,
+      "cited_by_count": 31586,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5111770849",
+      "display_name": "Heidrun Behrendt",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 223,
+      "works_count": 425,
+      "cited_by_count": 23787,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5105181846",
+      "display_name": "Dietrich Kraft",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 210,
+      "works_count": 317,
+      "cited_by_count": 19984,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5079691994",
+      "display_name": "Marko Salmi",
+      "orcid": "https://orcid.org/0000-0002-1913-7408",
+      "h_index": 82,
+      "i10_index": 203,
+      "works_count": 330,
+      "cited_by_count": 19343,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5014470416",
+      "display_name": "Richard F. Lockey",
+      "orcid": "https://orcid.org/0000-0003-0279-8661",
+      "h_index": 81,
+      "i10_index": 311,
+      "works_count": 730,
+      "cited_by_count": 36211,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5073539318",
+      "display_name": "Glenis Kathleen Scadding",
+      "orcid": "https://orcid.org/0000-0002-0732-9728",
+      "h_index": 81,
+      "i10_index": 247,
+      "works_count": 517,
+      "cited_by_count": 31994,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5024384991",
+      "display_name": "Sergio Bonini",
+      "orcid": "https://orcid.org/0000-0003-0079-3031",
+      "h_index": 81,
+      "i10_index": 205,
+      "works_count": 397,
+      "cited_by_count": 29734,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5111475531",
+      "display_name": "Paul Van Cauwenberge",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 196,
+      "works_count": 426,
+      "cited_by_count": 34657,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5046274536",
+      "display_name": "Takako Sasaki",
+      "orcid": "https://orcid.org/0000-0003-0514-9931",
+      "h_index": 81,
+      "i10_index": 183,
+      "works_count": 275,
+      "cited_by_count": 18255,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Immunology and Allergy -- 9.1",
+      "id": "https://openalex.org/A5031719922",
+      "display_name": "Lydia M. Sorokin",
+      "orcid": "https://orcid.org/0000-0001-7704-7921",
+      "h_index": 81,
+      "i10_index": 165,
+      "works_count": 216,
+      "cited_by_count": 20996,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Immunology and Allergy -- 9.0",
+      "id": "https://openalex.org/A5090973852",
+      "display_name": "David D. Schlaepfer",
+      "orcid": "https://orcid.org/0000-0003-4814-9210",
+      "h_index": 81,
+      "i10_index": 123,
+      "works_count": 225,
+      "cited_by_count": 32000,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Immunology and Allergy -- 9.0",
+      "id": "https://openalex.org/A5063121547",
+      "display_name": "Mariana Castells",
+      "orcid": "https://orcid.org/0000-0001-6451-0163",
+      "h_index": 80,
+      "i10_index": 238,
+      "works_count": 471,
+      "cited_by_count": 21976,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Immunology and Allergy -- 9.0",
+      "id": "https://openalex.org/A5001886451",
+      "display_name": "Claudia Traidl‐Hoffmann",
+      "orcid": "https://orcid.org/0000-0001-5085-5179",
+      "h_index": 80,
+      "i10_index": 225,
+      "works_count": 520,
+      "cited_by_count": 22100,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Immunology and Allergy -- 9.0",
+      "id": "https://openalex.org/A5006674601",
+      "display_name": "Robert M. Naclerio",
+      "orcid": "https://orcid.org/0000-0003-4016-9030",
+      "h_index": 80,
+      "i10_index": 217,
+      "works_count": 374,
+      "cited_by_count": 27966,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Immunology and Allergy -- 9.0",
+      "id": "https://openalex.org/A5077072222",
+      "display_name": "Nisse Kalkkinen",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 207,
+      "works_count": 270,
+      "cited_by_count": 20050,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5109906935",
+      "display_name": "Ian R. Hart",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 192,
+      "works_count": 341,
+      "cited_by_count": 23361,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5057913208",
+      "display_name": "Alessandro Giovanni Fiocchi",
+      "orcid": "https://orcid.org/0000-0002-2549-0523",
+      "h_index": 79,
+      "i10_index": 278,
+      "works_count": 622,
+      "cited_by_count": 23561,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5052548559",
+      "display_name": "Anna H Nowak-Wegrzyn",
+      "orcid": "https://orcid.org/0000-0002-0960-9854",
+      "h_index": 79,
+      "i10_index": 239,
+      "works_count": 565,
+      "cited_by_count": 23586,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5040116193",
+      "display_name": "Antonino Gaetano Romano",
+      "orcid": "https://orcid.org/0000-0001-9742-9898",
+      "h_index": 79,
+      "i10_index": 238,
+      "works_count": 409,
+      "cited_by_count": 24503,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5039301319",
+      "display_name": "Lyle C. Gurrin",
+      "orcid": "https://orcid.org/0000-0001-7052-1969",
+      "h_index": 79,
+      "i10_index": 226,
+      "works_count": 362,
+      "cited_by_count": 21140,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5025023582",
+      "display_name": "Roberto Berni Canani",
+      "orcid": "https://orcid.org/0000-0002-5169-9574",
+      "h_index": 79,
+      "i10_index": 225,
+      "works_count": 490,
+      "cited_by_count": 32972,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5022142463",
+      "display_name": "Ruby Pawankar",
+      "orcid": "https://orcid.org/0000-0002-3091-7237",
+      "h_index": 79,
+      "i10_index": 221,
+      "works_count": 415,
+      "cited_by_count": 29923,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5075842464",
+      "display_name": "Tilo Biedermann",
+      "orcid": "https://orcid.org/0000-0002-5352-5105",
+      "h_index": 78,
+      "i10_index": 348,
+      "works_count": 873,
+      "cited_by_count": 24382,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5057294669",
+      "display_name": "Motohiro Ebisawa",
+      "orcid": "https://orcid.org/0000-0003-4117-558X",
+      "h_index": 78,
+      "i10_index": 298,
+      "works_count": 753,
+      "cited_by_count": 28512,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5111792447",
+      "display_name": "Michael Kaliner",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 287,
+      "works_count": 498,
+      "cited_by_count": 26345,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5103103423",
+      "display_name": "Steve L. Taylor",
+      "orcid": "https://orcid.org/0000-0002-7178-7520",
+      "h_index": 78,
+      "i10_index": 233,
+      "works_count": 403,
+      "cited_by_count": 20840,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Immunology and Allergy -- 8.9",
+      "id": "https://openalex.org/A5051276988",
+      "display_name": "Karin Hoffmann‐Sommergruber",
+      "orcid": "https://orcid.org/0000-0002-8830-058X",
+      "h_index": 78,
+      "i10_index": 219,
+      "works_count": 382,
+      "cited_by_count": 21645,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5003212140",
+      "display_name": "Vito Quaranta",
+      "orcid": "https://orcid.org/0000-0001-7491-8672",
+      "h_index": 78,
+      "i10_index": 202,
+      "works_count": 308,
+      "cited_by_count": 23426,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5035180962",
+      "display_name": "Montserrat Fernández‐Rivas",
+      "orcid": "https://orcid.org/0000-0003-1748-2328",
+      "h_index": 78,
+      "i10_index": 200,
+      "works_count": 315,
+      "cited_by_count": 26282,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5034240834",
+      "display_name": "Robyn E. O’Hehir",
+      "orcid": "https://orcid.org/0000-0002-3489-7595",
+      "h_index": 77,
+      "i10_index": 264,
+      "works_count": 465,
+      "cited_by_count": 27333,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5102398216",
+      "display_name": "Yoshihiko Yamada",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 214,
+      "works_count": 321,
+      "cited_by_count": 19068,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5003529451",
+      "display_name": "Peter Schmid‐Grendelmeier",
+      "orcid": "https://orcid.org/0000-0003-3215-3370",
+      "h_index": 77,
+      "i10_index": 207,
+      "works_count": 439,
+      "cited_by_count": 30047,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5112173448",
+      "display_name": "John M. Harlan",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 170,
+      "works_count": 209,
+      "cited_by_count": 24584,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5072998974",
+      "display_name": "Francis William Luscinskas",
+      "orcid": "https://orcid.org/0000-0001-7100-4103",
+      "h_index": 77,
+      "i10_index": 141,
+      "works_count": 208,
+      "cited_by_count": 23692,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5058401548",
+      "display_name": "Tucker Collins",
+      "orcid": "https://orcid.org/0000-0001-9914-4474",
+      "h_index": 77,
+      "i10_index": 119,
+      "works_count": 141,
+      "cited_by_count": 25309,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5062378663",
+      "display_name": "Robert G. Hamilton",
+      "orcid": "https://orcid.org/0000-0002-7011-7066",
+      "h_index": 76,
+      "i10_index": 261,
+      "works_count": 486,
+      "cited_by_count": 21779,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5024581567",
+      "display_name": "Markus W. Ollert",
+      "orcid": "https://orcid.org/0000-0002-8055-0103",
+      "h_index": 76,
+      "i10_index": 241,
+      "works_count": 456,
+      "cited_by_count": 20566,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5040611651",
+      "display_name": "Heimo Breiteneder",
+      "orcid": "https://orcid.org/0000-0003-2022-8689",
+      "h_index": 76,
+      "i10_index": 233,
+      "works_count": 395,
+      "cited_by_count": 22092,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5091164352",
+      "display_name": "Steven D. Rosen",
+      "orcid": "https://orcid.org/0000-0002-6245-701X",
+      "h_index": 76,
+      "i10_index": 144,
+      "works_count": 177,
+      "cited_by_count": 18707,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5056368169",
+      "display_name": "Ruth Chiquet‐Ehrismann",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 153,
+      "works_count": 199,
+      "cited_by_count": 18174,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5109868228",
+      "display_name": "Ramzi S. Cotran",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 141,
+      "works_count": 176,
+      "cited_by_count": 28402,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5070827614",
+      "display_name": "Filippo G. Giancotti",
+      "orcid": "https://orcid.org/0000-0002-0541-9519",
+      "h_index": 75,
+      "i10_index": 109,
+      "works_count": 231,
+      "cited_by_count": 27809,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5015789010",
+      "display_name": "Riccardo Asero",
+      "orcid": "https://orcid.org/0000-0002-8277-1700",
+      "h_index": 74,
+      "i10_index": 321,
+      "works_count": 608,
+      "cited_by_count": 25416,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5071833047",
+      "display_name": "Gerard B. Nash",
+      "orcid": "https://orcid.org/0000-0002-5935-2831",
+      "h_index": 74,
+      "i10_index": 253,
+      "works_count": 410,
+      "cited_by_count": 18314,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5071514603",
+      "display_name": "André C. Knulst",
+      "orcid": "https://orcid.org/0000-0002-1056-3179",
+      "h_index": 74,
+      "i10_index": 233,
+      "works_count": 417,
+      "cited_by_count": 18015,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5006632216",
+      "display_name": "Thomas M. Kündig",
+      "orcid": "https://orcid.org/0000-0003-3863-8766",
+      "h_index": 74,
+      "i10_index": 208,
+      "works_count": 372,
+      "cited_by_count": 25628,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5021020646",
+      "display_name": "Edward F. Knol",
+      "orcid": "https://orcid.org/0000-0001-7368-9820",
+      "h_index": 74,
+      "i10_index": 205,
+      "works_count": 375,
+      "cited_by_count": 22481,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5050310993",
+      "display_name": "Otto Scheiner",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 221,
+      "works_count": 338,
+      "cited_by_count": 17370,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Immunology and Allergy -- 8.8",
+      "id": "https://openalex.org/A5041326746",
+      "display_name": "Beat A. Imhof",
+      "orcid": "https://orcid.org/0000-0002-6446-3990",
+      "h_index": 73,
+      "i10_index": 180,
+      "works_count": 311,
+      "cited_by_count": 18319,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5030907652",
+      "display_name": "Susanne Halken",
+      "orcid": "https://orcid.org/0000-0003-0161-8278",
+      "h_index": 73,
+      "i10_index": 141,
+      "works_count": 257,
+      "cited_by_count": 25331,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5074602745",
+      "display_name": "Gary Wong",
+      "orcid": "https://orcid.org/0000-0001-5939-812X",
+      "h_index": 72,
+      "i10_index": 286,
+      "works_count": 491,
+      "cited_by_count": 26082,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5038864235",
+      "display_name": "Fátima Ferreira",
+      "orcid": "https://orcid.org/0000-0003-0989-2335",
+      "h_index": 72,
+      "i10_index": 243,
+      "works_count": 499,
+      "cited_by_count": 18613,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5086064578",
+      "display_name": "Carsten B. Schmidt‐Weber",
+      "orcid": "https://orcid.org/0000-0002-3203-8084",
+      "h_index": 72,
+      "i10_index": 215,
+      "works_count": 525,
+      "cited_by_count": 19700,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5069048507",
+      "display_name": "Kiyotoshi Sekiguchi",
+      "orcid": "https://orcid.org/0000-0002-6433-1410",
+      "h_index": 72,
+      "i10_index": 191,
+      "works_count": 268,
+      "cited_by_count": 23112,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5037929411",
+      "display_name": "Yoshikazu Takada",
+      "orcid": "https://orcid.org/0000-0001-5481-9589",
+      "h_index": 72,
+      "i10_index": 182,
+      "works_count": 330,
+      "cited_by_count": 20725,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5072546849",
+      "display_name": "Sebastiano Gangemi",
+      "orcid": "https://orcid.org/0000-0001-7001-6532",
+      "h_index": 71,
+      "i10_index": 380,
+      "works_count": 586,
+      "cited_by_count": 19609,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5033267681",
+      "display_name": "Helen Elizabeth Smith",
+      "orcid": "https://orcid.org/0000-0003-1883-6124",
+      "h_index": 71,
+      "i10_index": 249,
+      "works_count": 616,
+      "cited_by_count": 18775,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5078980402",
+      "display_name": "Christophe M. Dupont",
+      "orcid": "https://orcid.org/0000-0002-4943-6329",
+      "h_index": 71,
+      "i10_index": 246,
+      "works_count": 774,
+      "cited_by_count": 16735,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5082629060",
+      "display_name": "Barbara K Ballmer-Weber",
+      "orcid": "https://orcid.org/0000-0002-4136-5036",
+      "h_index": 71,
+      "i10_index": 181,
+      "works_count": 325,
+      "cited_by_count": 22642,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5065277319",
+      "display_name": "Manel Jordana",
+      "orcid": "https://orcid.org/0000-0002-5861-5994",
+      "h_index": 71,
+      "i10_index": 156,
+      "works_count": 247,
+      "cited_by_count": 17238,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5060011272",
+      "display_name": "Markus Moser",
+      "orcid": "https://orcid.org/0000-0001-8825-5566",
+      "h_index": 71,
+      "i10_index": 146,
+      "works_count": 191,
+      "cited_by_count": 17789,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5109261389",
+      "display_name": "Alan F. Horwitz",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 111,
+      "works_count": 141,
+      "cited_by_count": 25651,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5083589748",
+      "display_name": "James Varani",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 270,
+      "works_count": 414,
+      "cited_by_count": 24264,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5065314204",
+      "display_name": "Cristobalina Mayorga",
+      "orcid": "https://orcid.org/0000-0001-8852-8077",
+      "h_index": 70,
+      "i10_index": 269,
+      "works_count": 579,
+      "cited_by_count": 17548,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5002189830",
+      "display_name": "Timo L. Reunala",
+      "orcid": "https://orcid.org/0000-0002-6271-5189",
+      "h_index": 70,
+      "i10_index": 254,
+      "works_count": 429,
+      "cited_by_count": 16968,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5012789959",
+      "display_name": "Karl‐Christian Bergmann",
+      "orcid": "https://orcid.org/0000-0002-0306-9922",
+      "h_index": 70,
+      "i10_index": 250,
+      "works_count": 630,
+      "cited_by_count": 19502,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5105470335",
+      "display_name": "Reto Crameri",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 187,
+      "works_count": 283,
+      "cited_by_count": 19553,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5022292989",
+      "display_name": "Jyrki Heino",
+      "orcid": "https://orcid.org/0000-0003-2978-805X",
+      "h_index": 70,
+      "i10_index": 182,
+      "works_count": 285,
+      "cited_by_count": 16222,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5004123017",
+      "display_name": "Roy Gerth van Wijk",
+      "orcid": "https://orcid.org/0000-0002-9608-8742",
+      "h_index": 70,
+      "i10_index": 178,
+      "works_count": 303,
+      "cited_by_count": 26170,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5027993808",
+      "display_name": "Ignacio Javier Ansotegui",
+      "orcid": "https://orcid.org/0000-0002-6942-1511",
+      "h_index": 70,
+      "i10_index": 178,
+      "works_count": 273,
+      "cited_by_count": 21696,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Immunology and Allergy -- 8.7",
+      "id": "https://openalex.org/A5101837256",
+      "display_name": "Moisés A. Calderón",
+      "orcid": "https://orcid.org/0000-0002-5020-8454",
+      "h_index": 70,
+      "i10_index": 165,
+      "works_count": 266,
+      "cited_by_count": 19988,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5019384731",
+      "display_name": "Scott Irwin Simon",
+      "orcid": "https://orcid.org/0000-0003-1186-6611",
+      "h_index": 70,
+      "i10_index": 152,
+      "works_count": 260,
+      "cited_by_count": 14921,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5047558679",
+      "display_name": "Giorgio Ciprandi",
+      "orcid": "https://orcid.org/0000-0001-7016-8421",
+      "h_index": 69,
+      "i10_index": 498,
+      "works_count": 1083,
+      "cited_by_count": 22054,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5086638886",
+      "display_name": "Frederic de BLAY",
+      "orcid": "https://orcid.org/0000-0001-5678-2214",
+      "h_index": 69,
+      "i10_index": 225,
+      "works_count": 775,
+      "cited_by_count": 17299,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5030563885",
+      "display_name": "Carmen Galán",
+      "orcid": "https://orcid.org/0000-0002-6849-1219",
+      "h_index": 69,
+      "i10_index": 205,
+      "works_count": 312,
+      "cited_by_count": 14845,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5044527553",
+      "display_name": "David A. Khan",
+      "orcid": "https://orcid.org/0000-0001-9880-6181",
+      "h_index": 69,
+      "i10_index": 179,
+      "works_count": 371,
+      "cited_by_count": 25251,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5009610726",
+      "display_name": "Luciano Zardi",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 172,
+      "works_count": 243,
+      "cited_by_count": 18338,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5018355628",
+      "display_name": "Chuanyue Wu",
+      "orcid": "https://orcid.org/0000-0003-2536-4014",
+      "h_index": 69,
+      "i10_index": 157,
+      "works_count": 201,
+      "cited_by_count": 14482,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5112906153",
+      "display_name": "William A. Frazier",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 125,
+      "works_count": 191,
+      "cited_by_count": 17148,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5012556565",
+      "display_name": "Yoshitaka Okamoto",
+      "orcid": "https://orcid.org/0000-0001-9352-1582",
+      "h_index": 68,
+      "i10_index": 214,
+      "works_count": 445,
+      "cited_by_count": 20213,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5038251079",
+      "display_name": "Désirée E. Larenas‐Linnemann",
+      "orcid": "https://orcid.org/0000-0002-5713-5331",
+      "h_index": 68,
+      "i10_index": 205,
+      "works_count": 361,
+      "cited_by_count": 29747,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5111497466",
+      "display_name": "J. O. Warner",
+      "orcid": "https://orcid.org/0000-0001-7123-6369",
+      "h_index": 68,
+      "i10_index": 197,
+      "works_count": 483,
+      "cited_by_count": 15001,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5089476347",
+      "display_name": "Harry J. Wichers",
+      "orcid": "https://orcid.org/0000-0002-8030-7090",
+      "h_index": 68,
+      "i10_index": 196,
+      "works_count": 416,
+      "cited_by_count": 19365,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5086780331",
+      "display_name": "Marek Leszek Kowalski",
+      "orcid": "https://orcid.org/0000-0002-8442-2774",
+      "h_index": 68,
+      "i10_index": 192,
+      "works_count": 345,
+      "cited_by_count": 19494,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5041034753",
+      "display_name": "Lanny J. Rosenwasser",
+      "orcid": "https://orcid.org/0000-0003-3318-2632",
+      "h_index": 68,
+      "i10_index": 172,
+      "works_count": 327,
+      "cited_by_count": 18978,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5051198129",
+      "display_name": "George Du Toit",
+      "orcid": "https://orcid.org/0000-0002-0321-2928",
+      "h_index": 68,
+      "i10_index": 163,
+      "works_count": 329,
+      "cited_by_count": 21345,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5010751186",
+      "display_name": "Philippe Eigenmann",
+      "orcid": "https://orcid.org/0000-0003-1738-1826",
+      "h_index": 68,
+      "i10_index": 162,
+      "works_count": 390,
+      "cited_by_count": 24009,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5085949410",
+      "display_name": "Stacie M. Jones",
+      "orcid": "https://orcid.org/0000-0003-3491-4815",
+      "h_index": 68,
+      "i10_index": 147,
+      "works_count": 423,
+      "cited_by_count": 22391,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5000979295",
+      "display_name": "Peter Ekblom",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 134,
+      "works_count": 176,
+      "cited_by_count": 15489,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5107428097",
+      "display_name": "Erkka Juhani Valovirta",
+      "orcid": "https://orcid.org/0009-0003-5285-8316",
+      "h_index": 68,
+      "i10_index": 125,
+      "works_count": 190,
+      "cited_by_count": 18708,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5090061936",
+      "display_name": "Erika Jensen‐Jarolim",
+      "orcid": "https://orcid.org/0000-0003-4019-5765",
+      "h_index": 67,
+      "i10_index": 261,
+      "works_count": 450,
+      "cited_by_count": 15456,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5029505020",
+      "display_name": "Matthew Greenhawt",
+      "orcid": "https://orcid.org/0000-0002-2365-9372",
+      "h_index": 67,
+      "i10_index": 251,
+      "works_count": 490,
+      "cited_by_count": 19754,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Immunology and Allergy -- 8.6",
+      "id": "https://openalex.org/A5055004014",
+      "display_name": "Paul‐Michel Mertès",
+      "orcid": "https://orcid.org/0000-0002-6060-9438",
+      "h_index": 67,
+      "i10_index": 236,
+      "works_count": 599,
+      "cited_by_count": 20785,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5014404632",
+      "display_name": "Carina Venter",
+      "orcid": "https://orcid.org/0000-0002-7473-5355",
+      "h_index": 67,
+      "i10_index": 214,
+      "works_count": 467,
+      "cited_by_count": 18990,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5028430427",
+      "display_name": "Dennis R. Ownby",
+      "orcid": "https://orcid.org/0000-0003-0944-6466",
+      "h_index": 67,
+      "i10_index": 207,
+      "works_count": 478,
+      "cited_by_count": 16404,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5063862530",
+      "display_name": "Mohamed H. Shamji",
+      "orcid": "https://orcid.org/0000-0003-3425-3463",
+      "h_index": 67,
+      "i10_index": 175,
+      "works_count": 422,
+      "cited_by_count": 16296,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5017168849",
+      "display_name": "Anthony J. Frew",
+      "orcid": "https://orcid.org/0000-0001-8055-641X",
+      "h_index": 67,
+      "i10_index": 173,
+      "works_count": 358,
+      "cited_by_count": 17111,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5102987993",
+      "display_name": "Thilo Jakob",
+      "orcid": "https://orcid.org/0000-0002-3124-9998",
+      "h_index": 67,
+      "i10_index": 159,
+      "works_count": 348,
+      "cited_by_count": 15823,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5028101671",
+      "display_name": "Simon Patrick Hogan",
+      "orcid": "https://orcid.org/0000-0001-5793-4304",
+      "h_index": 67,
+      "i10_index": 139,
+      "works_count": 291,
+      "cited_by_count": 20754,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5008971640",
+      "display_name": "Vincent Castronovo",
+      "orcid": "https://orcid.org/0000-0003-2351-6272",
+      "h_index": 67,
+      "i10_index": 139,
+      "works_count": 199,
+      "cited_by_count": 12742,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5100452610",
+      "display_name": "Yanbo Wang",
+      "orcid": "https://orcid.org/0000-0002-9598-1432",
+      "h_index": 66,
+      "i10_index": 250,
+      "works_count": 377,
+      "cited_by_count": 15782,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5005096039",
+      "display_name": "Michael Breitenbach",
+      "orcid": "https://orcid.org/0000-0003-0868-9036",
+      "h_index": 66,
+      "i10_index": 157,
+      "works_count": 279,
+      "cited_by_count": 18466,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5037497962",
+      "display_name": "Victória Cardona",
+      "orcid": "https://orcid.org/0000-0003-2197-9767",
+      "h_index": 66,
+      "i10_index": 149,
+      "works_count": 273,
+      "cited_by_count": 18699,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5079201163",
+      "display_name": "Derek K. Chu",
+      "orcid": "https://orcid.org/0000-0001-8269-4496",
+      "h_index": 66,
+      "i10_index": 147,
+      "works_count": 271,
+      "cited_by_count": 20286,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5073185822",
+      "display_name": "Kristofer Rubin",
+      "orcid": "https://orcid.org/0000-0003-2789-6276",
+      "h_index": 66,
+      "i10_index": 137,
+      "works_count": 190,
+      "cited_by_count": 15831,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5039582406",
+      "display_name": "M. Amin Arnaout",
+      "orcid": "https://orcid.org/0000-0002-8270-0371",
+      "h_index": 66,
+      "i10_index": 132,
+      "works_count": 223,
+      "cited_by_count": 20588,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5050840654",
+      "display_name": "Guido Tarone",
+      "orcid": "https://orcid.org/0000-0003-4805-086X",
+      "h_index": 66,
+      "i10_index": 131,
+      "works_count": 253,
+      "cited_by_count": 12344,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5073696197",
+      "display_name": "Jean E. Schwarzbauer",
+      "orcid": "https://orcid.org/0000-0003-1012-7593",
+      "h_index": 66,
+      "i10_index": 130,
+      "works_count": 222,
+      "cited_by_count": 15335,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5022982229",
+      "display_name": "Sussan Nourshargh",
+      "orcid": "https://orcid.org/0000-0001-5677-1806",
+      "h_index": 66,
+      "i10_index": 124,
+      "works_count": 211,
+      "cited_by_count": 22247,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5055022644",
+      "display_name": "Gian Luigi Marseglia",
+      "orcid": "https://orcid.org/0000-0003-3662-0159",
+      "h_index": 65,
+      "i10_index": 428,
+      "works_count": 835,
+      "cited_by_count": 22290,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5032008622",
+      "display_name": "Henry T. Bahnson",
+      "orcid": "https://orcid.org/0000-0002-1046-5296",
+      "h_index": 65,
+      "i10_index": 168,
+      "works_count": 263,
+      "cited_by_count": 17345,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5105300614",
+      "display_name": "Philip S. Norman",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 164,
+      "works_count": 254,
+      "cited_by_count": 14625,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5008396156",
+      "display_name": "Mario Sánchez‐Borges",
+      "orcid": "https://orcid.org/0000-0002-9308-6418",
+      "h_index": 65,
+      "i10_index": 156,
+      "works_count": 248,
+      "cited_by_count": 21649,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5007988336",
+      "display_name": "Peter Lodewijk Hordijk",
+      "orcid": "https://orcid.org/0000-0002-3348-078X",
+      "h_index": 65,
+      "i10_index": 152,
+      "works_count": 253,
+      "cited_by_count": 14267,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5024644149",
+      "display_name": "Philippe‐Jean Bousquet",
+      "orcid": "https://orcid.org/0000-0002-0217-5483",
+      "h_index": 65,
+      "i10_index": 148,
+      "works_count": 280,
+      "cited_by_count": 23228,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Immunology and Allergy -- 8.5",
+      "id": "https://openalex.org/A5027843415",
+      "display_name": "Lorenzo Silengo",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 141,
+      "works_count": 214,
+      "cited_by_count": 12991,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5113087215",
+      "display_name": "David Michael Lang",
+      "orcid": "https://orcid.org/0009-0005-8576-8303",
+      "h_index": 65,
+      "i10_index": 136,
+      "works_count": 252,
+      "cited_by_count": 23145,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5103566565",
+      "display_name": "David J. Hill",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 135,
+      "works_count": 199,
+      "cited_by_count": 12253,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5110054139",
+      "display_name": "Leo T. Furcht",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 130,
+      "works_count": 167,
+      "cited_by_count": 11908,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5047986299",
+      "display_name": "Ulla M. Wewer",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 127,
+      "works_count": 176,
+      "cited_by_count": 14728,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5019419595",
+      "display_name": "Eric Rubinstein",
+      "orcid": "https://orcid.org/0000-0001-7623-9665",
+      "h_index": 65,
+      "i10_index": 122,
+      "works_count": 192,
+      "cited_by_count": 16784,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5022223788",
+      "display_name": "Charles H. Streuli",
+      "orcid": "https://orcid.org/0000-0001-7173-0172",
+      "h_index": 65,
+      "i10_index": 115,
+      "works_count": 311,
+      "cited_by_count": 14978,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5040703340",
+      "display_name": "Hans C. Oettgen",
+      "orcid": "https://orcid.org/0000-0003-1199-1391",
+      "h_index": 65,
+      "i10_index": 112,
+      "works_count": 166,
+      "cited_by_count": 15567,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5088180562",
+      "display_name": "Brian A. Baldo",
+      "orcid": "https://orcid.org/0000-0001-9401-4865",
+      "h_index": 64,
+      "i10_index": 253,
+      "works_count": 437,
+      "cited_by_count": 14748,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5110069534",
+      "display_name": "Jacques Bienvenu",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 164,
+      "works_count": 399,
+      "cited_by_count": 14525,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5038001765",
+      "display_name": "Rainer Deutzmann",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 119,
+      "works_count": 334,
+      "cited_by_count": 14770,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5054869745",
+      "display_name": "Christopher Chia-Chi Chang",
+      "orcid": "https://orcid.org/0000-0002-4397-5217",
+      "h_index": 64,
+      "i10_index": 118,
+      "works_count": 231,
+      "cited_by_count": 14737,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5027735621",
+      "display_name": "Simon L. Goodman",
+      "orcid": "https://orcid.org/0000-0002-3480-1346",
+      "h_index": 64,
+      "i10_index": 104,
+      "works_count": 150,
+      "cited_by_count": 17519,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5003847681",
+      "display_name": "Didier Gaston Ebo",
+      "orcid": "https://orcid.org/0000-0003-0672-7529",
+      "h_index": 63,
+      "i10_index": 256,
+      "works_count": 415,
+      "cited_by_count": 14022,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5061998322",
+      "display_name": "D.A. Moneret‐Vautrin",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 248,
+      "works_count": 683,
+      "cited_by_count": 15617,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5100398407",
+      "display_name": "Zhigang Liu",
+      "orcid": "https://orcid.org/0000-0002-6863-6561",
+      "h_index": 63,
+      "i10_index": 229,
+      "works_count": 524,
+      "cited_by_count": 13267,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5008340388",
+      "display_name": "Alfonso Colombatti",
+      "orcid": "https://orcid.org/0000-0002-3676-2379",
+      "h_index": 63,
+      "i10_index": 189,
+      "works_count": 320,
+      "cited_by_count": 12865,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5031674948",
+      "display_name": "Julie Wang",
+      "orcid": "https://orcid.org/0000-0002-8113-9092",
+      "h_index": 63,
+      "i10_index": 169,
+      "works_count": 514,
+      "cited_by_count": 15044,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Immunology and Allergy -- 8.4",
+      "id": "https://openalex.org/A5015937726",
+      "display_name": "Ulf G. Darsow",
+      "orcid": "https://orcid.org/0000-0002-5462-0403",
+      "h_index": 63,
+      "i10_index": 163,
+      "works_count": 354,
+      "cited_by_count": 17530,
+      "discipline": "Immunology and Allergy",
+      "primary_field": "Medicine",
+      "primary_subfield": "Immunology and Allergy",
+      "fields": [
+        "Medicine"
+      ]
+    }
+  ]
+}
