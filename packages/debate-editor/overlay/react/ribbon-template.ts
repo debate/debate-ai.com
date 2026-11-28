@@ -22,30 +22,31 @@ import { cn } from "../ui/lib/utils";
  * "Debate Editor on GitHub") are dropped: they're optional and don't belong in
  * an embedded product surface.
  *
- * This is Debate Editor's OWN ribbon/toolbar, kept as upstream ships it: one
- * unbroken strip, `#ribbon-strip`, holding every panel at once and
- * scrolling left↔right when it outgrows its column. It is deliberately NOT
- * paged into tabs or split into sections. The React shell
+ * This is Debate Editor's OWN ribbon/toolbar with every panel in one strip,
+ * `#ribbon-strip`, laid out as TWO stacked rows (`.ribbon-row-1` /
+ * `.ribbon-row-2` inside `.ribbon-rows`) instead of one long row. Panels stay
+ * whole — a logical group is never split across rows — and are dealt so the
+ * rows take about the same width: row 1 is the file / speech / quick-card
+ * commands and the style + inline-mark text buttons; row 2 is the colour and
+ * font-size controls, the Doc / Card menus, numbering, document / view /
+ * comment tools and the shortcuts / settings / timer cluster (`.ribbon-right`).
+ * Both rows live in the one scrolling strip, so a narrow column scrolls them
+ * together (`initRibbonScroller` in `editor/index.ts`, `embed-containment.css`).
+ * It is deliberately NOT paged into tabs. The React shell
  * (`DebateEditor.tsx`) stacks `MenuBar.tsx` above this markup when
  * `showToolbar` is set — a text-labeled row of dropdown menus over the
  * same commands this strip exposes as icons (plus the ones it has no
  * button for), Google-Docs-style.
  *
- * One deliberate deviation from upstream's order: `.ribbon-right` (the
- * shortcuts / settings / timer grid) sits directly after `.ribbon-left`
- * instead of after `.ribbon-center`, so the two button clusters read as a
- * single unbroken strip rather than one pinned to each edge with a gulf
- * between them. `.ribbon-center` — the flex-grow section holding the
- * opt-in doc-name chip — trails them and soaks up the leftover width.
- * The strip scrolls horizontally when it
- * outgrows the window; see `#ribbon-strip` in `editor/style.css` and
- * `initRibbonScroller` in `editor/index.ts`.
+ * `.ribbon-center` — the flex-grow section holding the opt-in doc-name chip —
+ * trails the rows and soaks up the leftover width.
  */
 const RIBBON_MARKUP = `
 <header id="ribbon" class="dec-ribbon">
   <div id="ribbon-strip" class="ribbon-strip">
   <section id="timer-panel" class="ribbon-section pmd-timer-panel" hidden></section>
-  <div class="ribbon-section ribbon-left">
+  <div class="ribbon-rows">
+  <div class="ribbon-section ribbon-row ribbon-row-1">
     <div id="undo-redo-stack" class="ribbon-button-stack">
       <button id="undo-btn" type="button" title="Undo" aria-label="Undo"><span class="pmd-icon pmd-icon-undo" aria-hidden="true"></span></button>
       <button id="redo-btn" type="button" title="Redo" aria-label="Redo"><span class="pmd-icon pmd-icon-redo" aria-hidden="true"></span></button>
@@ -92,6 +93,8 @@ const RIBBON_MARKUP = `
       <button id="emphasis-btn" class="formatting-panel-btn formatting-panel-emphasis" type="button">Emphasis</button>
       <button id="normal-btn" class="formatting-panel-btn formatting-panel-normal" type="button">Clear</button>
     </div>
+  </div>
+  <div class="ribbon-section ribbon-row ribbon-row-2">
     <div id="color-panel" class="ribbon-color-panel" role="group" aria-label="Colors">
       <div class="ribbon-color-control" data-control="highlight">
         <button id="highlight-btn" class="ribbon-color-main" type="button" title="Highlight (F11)">
@@ -174,14 +177,15 @@ const RIBBON_MARKUP = `
               title="Ask AI about selection" aria-label="Ask AI about selection"><span class="pmd-icon pmd-icon-ai" aria-hidden="true"></span></button>
     </div>
     <div id="custom-ribbon-panel" class="ribbon-doc-ops-panel ribbon-doc-ops-panel-3col" role="group" aria-label="Custom buttons" hidden></div>
-  </div>
-  <div class="ribbon-section ribbon-right">
+    <div class="ribbon-right">
     <div class="ribbon-right-grid">
       <button id="reference-btn" type="button" title="Keyboard shortcuts" aria-label="Keyboard shortcuts"><span class="pmd-icon pmd-icon-shortcuts" aria-hidden="true"></span></button>
       <button id="settings-btn" type="button" title="Settings" aria-label="Settings" hidden><span class="pmd-icon pmd-icon-settings" aria-hidden="true"></span></button>
       <button id="timer-toggle-btn" type="button" aria-pressed="false"
               title="Show / hide the timer panel" aria-label="Toggle timer panel"><span class="pmd-icon pmd-icon-timer" aria-hidden="true"></span></button>
     </div>
+    </div>
+  </div>
   </div>
   <div class="ribbon-section ribbon-center">
     <div id="doc-name-chip" class="pmd-doc-name-chip" title="" hidden>
@@ -243,28 +247,33 @@ const PRESSED =
  *  own border and shadow so the wrapper reads as one control. */
 const JOINED = "h-full rounded-none border-0 shadow-none";
 
+/** Every toolbar control is one compact row-height tall (`h-7`, down from the
+ *  shadcn `icon-sm` / `sm` 2rem) and icon buttons are square at that size, so
+ *  two rows of them fit in the strip without growing it much past one row. */
+const ROW_H = "h-7";
+
 /** The shadcn `Button` look for a ribbon button, by what the button is. Built
  *  from `buttonVariants` so it can't drift from the Button the rest of the
  *  site uses. */
 function buttonClasses(classes: string): string {
   const has = (name: string) => classes.split(/\s+/).includes(name);
   const outline = (size: "icon-sm" | "sm", extra: string) =>
-    cn(buttonVariants({ variant: "outline", size }), PRESSED, extra);
+    cn(buttonVariants({ variant: "outline", size }), PRESSED, ROW_H, extra);
 
-  if (has("formatting-panel-btn")) return outline("sm", "min-w-12 px-2.5 text-xs");
-  if (has("ribbon-numbering-btn")) return outline("icon-sm", "w-auto min-w-8 px-2 text-xs tabular-nums");
-  if (has("ribbon-doc-menu-btn")) return outline("sm", "gap-1.5 px-2.5 text-xs");
+  if (has("formatting-panel-btn")) return outline("sm", "min-w-10 px-1.5 text-xs");
+  if (has("ribbon-numbering-btn")) return outline("sm", "w-auto min-w-7 px-1.5 text-xs tabular-nums");
+  if (has("ribbon-doc-menu-btn")) return outline("sm", "gap-1 px-2 text-xs");
   if (has("ribbon-color-main"))
-    return cn(buttonVariants({ variant: "ghost", size: "icon-sm" }), PRESSED, JOINED, "w-8 flex-col gap-0.5 rounded-l-md text-base");
+    return cn(buttonVariants({ variant: "ghost", size: "sm" }), PRESSED, JOINED, "w-7 flex-col gap-0.5 rounded-l-md px-0 text-base");
   if (has("ribbon-color-arrow"))
-    return cn(buttonVariants({ variant: "ghost", size: "icon-sm" }), JOINED, "w-5 rounded-r-md border-l text-xs text-muted-foreground");
+    return cn(buttonVariants({ variant: "ghost", size: "sm" }), JOINED, "w-4 rounded-r-md border-l px-0 text-xs text-muted-foreground");
   if (has("ribbon-font-size-step"))
-    return outline("icon-sm", "w-auto gap-0 px-1.5 text-xs");
-  return outline("icon-sm", "text-base");
+    return outline("sm", "w-auto gap-0 px-1 text-xs");
+  return outline("icon-sm", "size-7 text-[0.95rem]");
 }
 
 const FONT_SIZE_INPUT_CLASSES =
-  "h-8 w-11 rounded-l-md rounded-r-none border-0 bg-transparent px-0 text-center text-xs tabular-nums shadow-none outline-none " +
+  "h-full w-10 rounded-l-md rounded-r-none border-0 bg-transparent px-0 text-center text-xs tabular-nums shadow-none outline-none " +
   "focus-visible:bg-accent focus-visible:ring-0";
 
 /** Rewrites every `<button>` / the font-size input of the toolbar (the
