@@ -1,0 +1,3486 @@
+{
+  "kind": "subfield",
+  "id": 2808,
+  "name": "Neurology",
+  "total_in_scrape": 178,
+  "count": 178,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Neurology -- 9.9",
+      "id": "https://openalex.org/A5056623917",
+      "display_name": "Álvaro Pascual‐Leone",
+      "orcid": "https://orcid.org/0000-0001-8975-0382",
+      "h_index": 192,
+      "i10_index": 841,
+      "works_count": 1466,
+      "cited_by_count": 154196,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Neurology -- 9.9",
+      "id": "https://openalex.org/A5088964079",
+      "display_name": "John C. Rothwell",
+      "orcid": "https://orcid.org/0000-0003-1367-6467",
+      "h_index": 190,
+      "i10_index": 921,
+      "works_count": 1679,
+      "cited_by_count": 149705,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Neurology -- 9.9",
+      "id": "https://openalex.org/A5080015386",
+      "display_name": "Walter Paulus",
+      "orcid": "https://orcid.org/0000-0001-5549-8377",
+      "h_index": 163,
+      "i10_index": 608,
+      "works_count": 1176,
+      "cited_by_count": 131278,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Neurology -- 9.9",
+      "id": "https://openalex.org/A5050316387",
+      "display_name": "Leonardo G. Cohen",
+      "orcid": "https://orcid.org/0000-0002-1705-8773",
+      "h_index": 143,
+      "i10_index": 324,
+      "works_count": 461,
+      "cited_by_count": 79359,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Neurology -- 9.9",
+      "id": "https://openalex.org/A5034732141",
+      "display_name": "Richard M. Ransohoff",
+      "orcid": "https://orcid.org/0000-0003-0175-6910",
+      "h_index": 141,
+      "i10_index": 393,
+      "works_count": 536,
+      "cited_by_count": 105798,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Neurology -- 9.9",
+      "id": "https://openalex.org/A5062615661",
+      "display_name": "Felipe Fregni",
+      "orcid": "https://orcid.org/0000-0002-1703-7526",
+      "h_index": 136,
+      "i10_index": 618,
+      "works_count": 1131,
+      "cited_by_count": 78504,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5070374515",
+      "display_name": "Ulf Ziemann",
+      "orcid": "https://orcid.org/0000-0001-8372-3615",
+      "h_index": 135,
+      "i10_index": 465,
+      "works_count": 1017,
+      "cited_by_count": 75471,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5020510395",
+      "display_name": "Marco Prinz",
+      "orcid": "https://orcid.org/0000-0002-0349-1955",
+      "h_index": 134,
+      "i10_index": 408,
+      "works_count": 892,
+      "cited_by_count": 87774,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5010768101",
+      "display_name": "Costantino Iadecola",
+      "orcid": "https://orcid.org/0000-0001-9797-073X",
+      "h_index": 134,
+      "i10_index": 403,
+      "works_count": 640,
+      "cited_by_count": 87664,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5052849808",
+      "display_name": "Michael Andreas Nitsche",
+      "orcid": "https://orcid.org/0000-0002-2207-5965",
+      "h_index": 132,
+      "i10_index": 453,
+      "works_count": 854,
+      "cited_by_count": 92812,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5054959155",
+      "display_name": "William A. Banks",
+      "orcid": "https://orcid.org/0000-0002-0496-3619",
+      "h_index": 131,
+      "i10_index": 560,
+      "works_count": 791,
+      "cited_by_count": 64728,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5005012109",
+      "display_name": "Mark S. George",
+      "orcid": "https://orcid.org/0000-0003-1767-1815",
+      "h_index": 129,
+      "i10_index": 459,
+      "works_count": 941,
+      "cited_by_count": 63488,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5044019815",
+      "display_name": "Victor Hugh Perry",
+      "orcid": "https://orcid.org/0000-0001-8950-5045",
+      "h_index": 127,
+      "i10_index": 333,
+      "works_count": 481,
+      "cited_by_count": 80341,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5073892880",
+      "display_name": "William M. Pardridge",
+      "orcid": "https://orcid.org/0000-0002-2664-1338",
+      "h_index": 124,
+      "i10_index": 469,
+      "works_count": 584,
+      "cited_by_count": 58283,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5086549313",
+      "display_name": "Helmut Kettenmann",
+      "orcid": "https://orcid.org/0000-0001-8208-0291",
+      "h_index": 122,
+      "i10_index": 353,
+      "works_count": 513,
+      "cited_by_count": 61829,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5036566811",
+      "display_name": "Berislav V. Zloković",
+      "orcid": "https://orcid.org/0000-0002-6802-8232",
+      "h_index": 122,
+      "i10_index": 304,
+      "works_count": 488,
+      "cited_by_count": 80014,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Neurology -- 9.8",
+      "id": "https://openalex.org/A5083159520",
+      "display_name": "Paul Bernard Fitzgerald",
+      "orcid": "https://orcid.org/0000-0003-4217-8096",
+      "h_index": 118,
+      "i10_index": 539,
+      "works_count": 904,
+      "cited_by_count": 53885,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5027893468",
+      "display_name": "Tony Wyss‐Coray",
+      "orcid": "https://orcid.org/0000-0001-5893-0831",
+      "h_index": 115,
+      "i10_index": 265,
+      "works_count": 523,
+      "cited_by_count": 73151,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5004751576",
+      "display_name": "Zafiris Jeff Daskalakis",
+      "orcid": "https://orcid.org/0000-0001-9502-0538",
+      "h_index": 111,
+      "i10_index": 443,
+      "works_count": 735,
+      "cited_by_count": 46597,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5001134449",
+      "display_name": "Nancy J. Rothwell",
+      "orcid": "https://orcid.org/0000-0002-3325-3149",
+      "h_index": 111,
+      "i10_index": 367,
+      "works_count": 524,
+      "cited_by_count": 43606,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5021365968",
+      "display_name": "Harold A. Sackeïm",
+      "orcid": "https://orcid.org/0000-0002-1107-4553",
+      "h_index": 111,
+      "i10_index": 305,
+      "works_count": 516,
+      "cited_by_count": 53393,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5048696924",
+      "display_name": "Hartwig Roman Siebner",
+      "orcid": "https://orcid.org/0000-0002-3756-9431",
+      "h_index": 110,
+      "i10_index": 490,
+      "works_count": 1064,
+      "cited_by_count": 52701,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5102841602",
+      "display_name": "Michal Schwartz",
+      "orcid": "https://orcid.org/0000-0003-4015-7507",
+      "h_index": 109,
+      "i10_index": 284,
+      "works_count": 435,
+      "cited_by_count": 53013,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5053891607",
+      "display_name": "Raj N. Kalaria",
+      "orcid": "https://orcid.org/0000-0001-7907-4923",
+      "h_index": 108,
+      "i10_index": 370,
+      "works_count": 781,
+      "cited_by_count": 47128,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5020830848",
+      "display_name": "Zoltan I. Ungvari",
+      "orcid": "https://orcid.org/0000-0002-6035-6039",
+      "h_index": 107,
+      "i10_index": 360,
+      "works_count": 602,
+      "cited_by_count": 37903,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5069271331",
+      "display_name": "Britta Engelhardt",
+      "orcid": "https://orcid.org/0000-0003-3059-9846",
+      "h_index": 107,
+      "i10_index": 258,
+      "works_count": 382,
+      "cited_by_count": 39360,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5025915090",
+      "display_name": "Marom Bikson",
+      "orcid": "https://orcid.org/0000-0002-0493-8333",
+      "h_index": 104,
+      "i10_index": 343,
+      "works_count": 694,
+      "cited_by_count": 48007,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Neurology -- 9.7",
+      "id": "https://openalex.org/A5073496526",
+      "display_name": "Gary E. Landreth",
+      "orcid": "https://orcid.org/0000-0002-8808-424X",
+      "h_index": 104,
+      "i10_index": 204,
+      "works_count": 324,
+      "cited_by_count": 48389,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5021282382",
+      "display_name": "Anna Csiszár",
+      "orcid": "https://orcid.org/0000-0003-4842-6660",
+      "h_index": 103,
+      "i10_index": 273,
+      "works_count": 449,
+      "cited_by_count": 32986,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5024523607",
+      "display_name": "Linda J. Van Eldik",
+      "orcid": "https://orcid.org/0000-0002-8139-6400",
+      "h_index": 103,
+      "i10_index": 241,
+      "works_count": 399,
+      "cited_by_count": 40662,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5078660065",
+      "display_name": "Michael Leo Strupp",
+      "orcid": "https://orcid.org/0000-0002-9544-2279",
+      "h_index": 99,
+      "i10_index": 348,
+      "works_count": 778,
+      "cited_by_count": 32537,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5027140673",
+      "display_name": "Serge Rivest",
+      "orcid": "https://orcid.org/0000-0002-6082-770X",
+      "h_index": 99,
+      "i10_index": 246,
+      "works_count": 300,
+      "cited_by_count": 33785,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5111693122",
+      "display_name": "Thomas Brandt",
+      "orcid": null,
+      "h_index": 98,
+      "i10_index": 339,
+      "works_count": 627,
+      "cited_by_count": 35291,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5004149008",
+      "display_name": "Margaret M. Esiri",
+      "orcid": "https://orcid.org/0000-0001-6829-0962",
+      "h_index": 98,
+      "i10_index": 279,
+      "works_count": 430,
+      "cited_by_count": 34817,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5065615661",
+      "display_name": "Eric M. Wassermann",
+      "orcid": "https://orcid.org/0000-0003-0628-0210",
+      "h_index": 95,
+      "i10_index": 196,
+      "works_count": 271,
+      "cited_by_count": 40631,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5063506824",
+      "display_name": "André R. Brunoni",
+      "orcid": "https://orcid.org/0000-0002-6310-3571",
+      "h_index": 94,
+      "i10_index": 378,
+      "works_count": 692,
+      "cited_by_count": 51188,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5110048601",
+      "display_name": "Robert W. Baloh",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 289,
+      "works_count": 502,
+      "cited_by_count": 28020,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5088728393",
+      "display_name": "Jonathan Kipnis",
+      "orcid": "https://orcid.org/0000-0002-3714-517X",
+      "h_index": 93,
+      "i10_index": 181,
+      "works_count": 336,
+      "cited_by_count": 42729,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Neurology -- 9.6",
+      "id": "https://openalex.org/A5079565983",
+      "display_name": "Mikael Simons",
+      "orcid": "https://orcid.org/0000-0001-5329-192X",
+      "h_index": 92,
+      "i10_index": 167,
+      "works_count": 237,
+      "cited_by_count": 41320,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5001978956",
+      "display_name": "Marianne Dieterich",
+      "orcid": "https://orcid.org/0000-0001-9903-9594",
+      "h_index": 91,
+      "i10_index": 372,
+      "works_count": 719,
+      "cited_by_count": 28926,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5022920379",
+      "display_name": "Ingo Bechmann",
+      "orcid": "https://orcid.org/0000-0002-6805-1555",
+      "h_index": 91,
+      "i10_index": 210,
+      "works_count": 310,
+      "cited_by_count": 32319,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5001774953",
+      "display_name": "Helga E. de Vries",
+      "orcid": "https://orcid.org/0000-0001-7904-7124",
+      "h_index": 90,
+      "i10_index": 240,
+      "works_count": 479,
+      "cited_by_count": 24802,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5049234393",
+      "display_name": "Sarah Hollingsworth Lisanby",
+      "orcid": "https://orcid.org/0000-0003-2037-6470",
+      "h_index": 90,
+      "i10_index": 237,
+      "works_count": 379,
+      "cited_by_count": 32883,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5100450216",
+      "display_name": "Jun Chen",
+      "orcid": "https://orcid.org/0000-0002-8077-3403",
+      "h_index": 90,
+      "i10_index": 223,
+      "works_count": 354,
+      "cited_by_count": 27215,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5065074874",
+      "display_name": "Giacomo Koch",
+      "orcid": "https://orcid.org/0000-0001-6155-9439",
+      "h_index": 89,
+      "i10_index": 310,
+      "works_count": 553,
+      "cited_by_count": 28392,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5042538449",
+      "display_name": "Peter C. Searson",
+      "orcid": "https://orcid.org/0000-0002-5417-0828",
+      "h_index": 89,
+      "i10_index": 301,
+      "works_count": 491,
+      "cited_by_count": 31530,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Materials Science",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5103420824",
+      "display_name": "Phillip K. Peterson",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 263,
+      "works_count": 378,
+      "cited_by_count": 24628,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5025747144",
+      "display_name": "Pierre‐Olivier Couraud",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 241,
+      "works_count": 333,
+      "cited_by_count": 26946,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5027399570",
+      "display_name": "Carlo Miniussi",
+      "orcid": "https://orcid.org/0000-0002-5436-4745",
+      "h_index": 89,
+      "i10_index": 204,
+      "works_count": 339,
+      "cited_by_count": 32357,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5022193976",
+      "display_name": "Raymond A. Swanson",
+      "orcid": "https://orcid.org/0000-0002-3664-5359",
+      "h_index": 89,
+      "i10_index": 174,
+      "works_count": 227,
+      "cited_by_count": 28591,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Neurology -- 9.5",
+      "id": "https://openalex.org/A5073488277",
+      "display_name": "Anna Maria Planas",
+      "orcid": "https://orcid.org/0000-0002-6147-1880",
+      "h_index": 88,
+      "i10_index": 263,
+      "works_count": 448,
+      "cited_by_count": 31424,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5074497344",
+      "display_name": "Ian Stewart Curthoys",
+      "orcid": "https://orcid.org/0000-0002-9416-5038",
+      "h_index": 87,
+      "i10_index": 269,
+      "works_count": 403,
+      "cited_by_count": 25290,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5111578984",
+      "display_name": "Hartwig Wolburg",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 257,
+      "works_count": 368,
+      "cited_by_count": 33516,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5072415289",
+      "display_name": "Iain Leslie Campbell",
+      "orcid": "https://orcid.org/0000-0001-8681-1100",
+      "h_index": 87,
+      "i10_index": 238,
+      "works_count": 386,
+      "cited_by_count": 23000,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5021154734",
+      "display_name": "Patrizio Pasqualetti",
+      "orcid": "https://orcid.org/0000-0001-5560-1979",
+      "h_index": 86,
+      "i10_index": 291,
+      "works_count": 536,
+      "cited_by_count": 22922,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5020577454",
+      "display_name": "Kunlin Jin",
+      "orcid": "https://orcid.org/0000-0002-1336-348X",
+      "h_index": 86,
+      "i10_index": 235,
+      "works_count": 289,
+      "cited_by_count": 30045,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5083257675",
+      "display_name": "Frank L. Heppner",
+      "orcid": "https://orcid.org/0000-0001-9816-8917",
+      "h_index": 86,
+      "i10_index": 219,
+      "works_count": 454,
+      "cited_by_count": 40516,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5011457832",
+      "display_name": "James E. Goldman",
+      "orcid": "https://orcid.org/0000-0003-2135-8936",
+      "h_index": 86,
+      "i10_index": 194,
+      "works_count": 333,
+      "cited_by_count": 24642,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5078540204",
+      "display_name": "Mikio Furuse",
+      "orcid": "https://orcid.org/0000-0003-2847-8156",
+      "h_index": 84,
+      "i10_index": 149,
+      "works_count": 219,
+      "cited_by_count": 44702,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5036547162",
+      "display_name": "Stanley Thomas Carmichael",
+      "orcid": "https://orcid.org/0000-0002-1169-9203",
+      "h_index": 84,
+      "i10_index": 146,
+      "works_count": 229,
+      "cited_by_count": 27801,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5082168520",
+      "display_name": "Paulo S. Boggio",
+      "orcid": "https://orcid.org/0000-0002-6109-0447",
+      "h_index": 83,
+      "i10_index": 177,
+      "works_count": 285,
+      "cited_by_count": 40472,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Neurology -- 9.4",
+      "id": "https://openalex.org/A5028410367",
+      "display_name": "Dirk Matthias Hermann",
+      "orcid": "https://orcid.org/0000-0003-0198-3152",
+      "h_index": 82,
+      "i10_index": 324,
+      "works_count": 648,
+      "cited_by_count": 24771,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5041380550",
+      "display_name": "Agnes Flöel",
+      "orcid": "https://orcid.org/0000-0002-1475-5872",
+      "h_index": 82,
+      "i10_index": 228,
+      "works_count": 586,
+      "cited_by_count": 24847,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5084924216",
+      "display_name": "William Edmund Sonntag",
+      "orcid": "https://orcid.org/0000-0003-1850-2407",
+      "h_index": 82,
+      "i10_index": 226,
+      "works_count": 394,
+      "cited_by_count": 21469,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5000415542",
+      "display_name": "Kenneth Maiese",
+      "orcid": "https://orcid.org/0000-0002-5049-9116",
+      "h_index": 82,
+      "i10_index": 205,
+      "works_count": 342,
+      "cited_by_count": 27873,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5059022626",
+      "display_name": "Gary A. Rosenberg",
+      "orcid": "https://orcid.org/0000-0001-7426-7064",
+      "h_index": 82,
+      "i10_index": 188,
+      "works_count": 331,
+      "cited_by_count": 27663,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5009423317",
+      "display_name": "Markus Schwaninger",
+      "orcid": "https://orcid.org/0000-0002-4510-9718",
+      "h_index": 81,
+      "i10_index": 231,
+      "works_count": 398,
+      "cited_by_count": 22903,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5048523093",
+      "display_name": "Andrea Antal",
+      "orcid": "https://orcid.org/0000-0001-9671-8946",
+      "h_index": 81,
+      "i10_index": 202,
+      "works_count": 430,
+      "cited_by_count": 40938,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5087124656",
+      "display_name": "Adolfo Miguel Bronstein",
+      "orcid": "https://orcid.org/0000-0001-5534-882X",
+      "h_index": 80,
+      "i10_index": 313,
+      "works_count": 540,
+      "cited_by_count": 22887,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5070430837",
+      "display_name": "Jari Koıstınaho",
+      "orcid": "https://orcid.org/0000-0001-6559-1153",
+      "h_index": 80,
+      "i10_index": 256,
+      "works_count": 439,
+      "cited_by_count": 29297,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5071331742",
+      "display_name": "Tadeusz W. Wieloch",
+      "orcid": "https://orcid.org/0000-0002-7669-2520",
+      "h_index": 80,
+      "i10_index": 203,
+      "works_count": 285,
+      "cited_by_count": 19306,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5079636891",
+      "display_name": "Thiruma Valavan Arumugam",
+      "orcid": "https://orcid.org/0000-0002-3377-0939",
+      "h_index": 80,
+      "i10_index": 192,
+      "works_count": 330,
+      "cited_by_count": 24020,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Neurology -- 9.3",
+      "id": "https://openalex.org/A5040602448",
+      "display_name": "Yoshikazu Ugawa",
+      "orcid": "https://orcid.org/0000-0002-8016-152X",
+      "h_index": 79,
+      "i10_index": 294,
+      "works_count": 719,
+      "cited_by_count": 28344,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5017539910",
+      "display_name": "Warren M. Grill",
+      "orcid": "https://orcid.org/0000-0001-5240-6588",
+      "h_index": 79,
+      "i10_index": 272,
+      "works_count": 604,
+      "cited_by_count": 23767,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5008413693",
+      "display_name": "Damir Janigro",
+      "orcid": "https://orcid.org/0000-0002-9645-0318",
+      "h_index": 79,
+      "i10_index": 175,
+      "works_count": 276,
+      "cited_by_count": 19124,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5004035910",
+      "display_name": "Long‐Jun Wu",
+      "orcid": "https://orcid.org/0000-0001-8019-3380",
+      "h_index": 78,
+      "i10_index": 190,
+      "works_count": 294,
+      "cited_by_count": 22356,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5012144186",
+      "display_name": "Michal J. Toborek",
+      "orcid": "https://orcid.org/0000-0003-4475-2119",
+      "h_index": 77,
+      "i10_index": 245,
+      "works_count": 420,
+      "cited_by_count": 16547,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Environmental Science",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5003880874",
+      "display_name": "Daniel M. Blumberger",
+      "orcid": "https://orcid.org/0000-0002-8422-5818",
+      "h_index": 76,
+      "i10_index": 347,
+      "works_count": 794,
+      "cited_by_count": 24179,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5100340644",
+      "display_name": "Qian Li",
+      "orcid": "https://orcid.org/0000-0003-0359-5604",
+      "h_index": 76,
+      "i10_index": 327,
+      "works_count": 606,
+      "cited_by_count": 21463,
+      "discipline": "Neurology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5054964892",
+      "display_name": "Young‐Myeong Kim",
+      "orcid": "https://orcid.org/0000-0002-8326-7768",
+      "h_index": 76,
+      "i10_index": 309,
+      "works_count": 388,
+      "cited_by_count": 21611,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5070078265",
+      "display_name": "Frank Padberg",
+      "orcid": "https://orcid.org/0000-0001-7638-8310",
+      "h_index": 76,
+      "i10_index": 275,
+      "works_count": 601,
+      "cited_by_count": 29396,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5017960386",
+      "display_name": "George Emilio Barreto",
+      "orcid": "https://orcid.org/0000-0002-6644-1971",
+      "h_index": 76,
+      "i10_index": 260,
+      "works_count": 422,
+      "cited_by_count": 20960,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5008036209",
+      "display_name": "Malú G. Tansey",
+      "orcid": "https://orcid.org/0000-0002-1719-4708",
+      "h_index": 76,
+      "i10_index": 162,
+      "works_count": 414,
+      "cited_by_count": 22956,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Neurology -- 9.2",
+      "id": "https://openalex.org/A5113598369",
+      "display_name": "Manuel B. Graeber",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 161,
+      "works_count": 259,
+      "cited_by_count": 26427,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5020184761",
+      "display_name": "María Ángeles Moro",
+      "orcid": "https://orcid.org/0000-0003-1010-8237",
+      "h_index": 75,
+      "i10_index": 194,
+      "works_count": 281,
+      "cited_by_count": 17986,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5059245617",
+      "display_name": "Douglas G. Walker",
+      "orcid": "https://orcid.org/0000-0001-5126-7926",
+      "h_index": 75,
+      "i10_index": 145,
+      "works_count": 202,
+      "cited_by_count": 20510,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5019182420",
+      "display_name": "Beth Stevens",
+      "orcid": "https://orcid.org/0000-0003-4226-1201",
+      "h_index": 75,
+      "i10_index": 120,
+      "works_count": 220,
+      "cited_by_count": 53806,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5085936196",
+      "display_name": "Símone Rossi",
+      "orcid": "https://orcid.org/0000-0001-6697-9459",
+      "h_index": 74,
+      "i10_index": 209,
+      "works_count": 444,
+      "cited_by_count": 37913,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5038827888",
+      "display_name": "Rodney W. Johnson",
+      "orcid": "https://orcid.org/0000-0002-2376-1852",
+      "h_index": 74,
+      "i10_index": 174,
+      "works_count": 294,
+      "cited_by_count": 27201,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5008366005",
+      "display_name": "Ziad H. Nahas",
+      "orcid": "https://orcid.org/0000-0002-8391-5673",
+      "h_index": 74,
+      "i10_index": 143,
+      "works_count": 265,
+      "cited_by_count": 30373,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5058899441",
+      "display_name": "Josef Anrather",
+      "orcid": "https://orcid.org/0000-0002-0468-9162",
+      "h_index": 74,
+      "i10_index": 116,
+      "works_count": 195,
+      "cited_by_count": 22251,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5053942124",
+      "display_name": "Eng‐Ang Ling",
+      "orcid": "https://orcid.org/0000-0002-1313-437X",
+      "h_index": 73,
+      "i10_index": 309,
+      "works_count": 392,
+      "cited_by_count": 20319,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5012866137",
+      "display_name": "Kyoungho Suk",
+      "orcid": "https://orcid.org/0000-0002-9555-4203",
+      "h_index": 73,
+      "i10_index": 268,
+      "works_count": 376,
+      "cited_by_count": 17612,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5056423854",
+      "display_name": "Thomas P. Davis",
+      "orcid": "https://orcid.org/0000-0001-8465-4973",
+      "h_index": 73,
+      "i10_index": 219,
+      "works_count": 334,
+      "cited_by_count": 20552,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Neurology -- 9.1",
+      "id": "https://openalex.org/A5007247419",
+      "display_name": "Jean‐Pascal Lefaucheur",
+      "orcid": "https://orcid.org/0000-0002-0294-8239",
+      "h_index": 73,
+      "i10_index": 209,
+      "works_count": 402,
+      "cited_by_count": 24202,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Neurology -- 9.0",
+      "id": "https://openalex.org/A5087133073",
+      "display_name": "Kalipada Pahan",
+      "orcid": "https://orcid.org/0000-0001-6048-9598",
+      "h_index": 73,
+      "i10_index": 192,
+      "works_count": 303,
+      "cited_by_count": 16968,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Neurology -- 9.0",
+      "id": "https://openalex.org/A5036922002",
+      "display_name": "Douglas L. Feinstein",
+      "orcid": "https://orcid.org/0000-0003-2815-2885",
+      "h_index": 73,
+      "i10_index": 178,
+      "works_count": 261,
+      "cited_by_count": 23415,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Neurology -- 9.0",
+      "id": "https://openalex.org/A5013851751",
+      "display_name": "Ignacio Andres Romero",
+      "orcid": "https://orcid.org/0000-0002-0322-9180",
+      "h_index": 73,
+      "i10_index": 148,
+      "works_count": 235,
+      "cited_by_count": 18723,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Neurology -- 9.0",
+      "id": "https://openalex.org/A5088104480",
+      "display_name": "Cordian Beyer",
+      "orcid": "https://orcid.org/0000-0003-3926-2553",
+      "h_index": 72,
+      "i10_index": 250,
+      "works_count": 350,
+      "cited_by_count": 16113,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Neurology -- 9.0",
+      "id": "https://openalex.org/A5100395536",
+      "display_name": "Bin Liu",
+      "orcid": "https://orcid.org/0000-0002-8679-5638",
+      "h_index": 72,
+      "i10_index": 231,
+      "works_count": 382,
+      "cited_by_count": 21670,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5021223799",
+      "display_name": "Marie‐Ève Tremblay",
+      "orcid": "https://orcid.org/0000-0003-2863-9626",
+      "h_index": 72,
+      "i10_index": 195,
+      "works_count": 374,
+      "cited_by_count": 23437,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5016967825",
+      "display_name": "Ignacio Lizasoaín",
+      "orcid": "https://orcid.org/0000-0002-6028-7379",
+      "h_index": 72,
+      "i10_index": 185,
+      "works_count": 253,
+      "cited_by_count": 17799,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5075916057",
+      "display_name": "Friedhelm Christoph Hummel",
+      "orcid": "https://orcid.org/0000-0002-4746-4633",
+      "h_index": 72,
+      "i10_index": 166,
+      "works_count": 381,
+      "cited_by_count": 29713,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5011123522",
+      "display_name": "Jonathan P. Godbout",
+      "orcid": "https://orcid.org/0000-0003-4710-6892",
+      "h_index": 72,
+      "i10_index": 116,
+      "works_count": 245,
+      "cited_by_count": 23142,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5057650635",
+      "display_name": "Joan W. Berman",
+      "orcid": "https://orcid.org/0000-0003-0635-4072",
+      "h_index": 71,
+      "i10_index": 153,
+      "works_count": 213,
+      "cited_by_count": 15264,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5055152100",
+      "display_name": "Kyuya Kogure",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 264,
+      "works_count": 410,
+      "cited_by_count": 17331,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5103333058",
+      "display_name": "С. И. Рапопорт",
+      "orcid": "https://orcid.org/0000-0003-4660-2931",
+      "h_index": 70,
+      "i10_index": 235,
+      "works_count": 538,
+      "cited_by_count": 18463,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5003877429",
+      "display_name": "James Patrick O'Callaghan",
+      "orcid": "https://orcid.org/0000-0001-8497-4598",
+      "h_index": 70,
+      "i10_index": 205,
+      "works_count": 308,
+      "cited_by_count": 20177,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5027668886",
+      "display_name": "Daniel C. Anthony",
+      "orcid": "https://orcid.org/0000-0003-1380-6655",
+      "h_index": 70,
+      "i10_index": 204,
+      "works_count": 443,
+      "cited_by_count": 16496,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5061687105",
+      "display_name": "Klaus Jahn",
+      "orcid": "https://orcid.org/0000-0002-1669-3652",
+      "h_index": 70,
+      "i10_index": 202,
+      "works_count": 465,
+      "cited_by_count": 14721,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5113643054",
+      "display_name": "Joseph M. R. Furman",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 187,
+      "works_count": 304,
+      "cited_by_count": 18956,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Neurology -- 8.9",
+      "id": "https://openalex.org/A5088180752",
+      "display_name": "Antonio Oliviero",
+      "orcid": "https://orcid.org/0000-0001-7723-0478",
+      "h_index": 70,
+      "i10_index": 164,
+      "works_count": 335,
+      "cited_by_count": 26048,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5027637961",
+      "display_name": "William F. Hickey",
+      "orcid": "https://orcid.org/0009-0007-9718-1280",
+      "h_index": 70,
+      "i10_index": 162,
+      "works_count": 232,
+      "cited_by_count": 20940,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5100723428",
+      "display_name": "Zhen Zhao",
+      "orcid": "https://orcid.org/0000-0001-8967-5570",
+      "h_index": 70,
+      "i10_index": 156,
+      "works_count": 242,
+      "cited_by_count": 27121,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5030754480",
+      "display_name": "Charanjit Kaur",
+      "orcid": "https://orcid.org/0000-0003-4140-5816",
+      "h_index": 69,
+      "i10_index": 230,
+      "works_count": 335,
+      "cited_by_count": 21010,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5054781166",
+      "display_name": "Michael Andrew Gresty",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 223,
+      "works_count": 333,
+      "cited_by_count": 16210,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5083512491",
+      "display_name": "Frank C. Barone",
+      "orcid": "https://orcid.org/0000-0001-8509-3936",
+      "h_index": 69,
+      "i10_index": 168,
+      "works_count": 239,
+      "cited_by_count": 18680,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5110105950",
+      "display_name": "Akio Suzumura",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 145,
+      "works_count": 314,
+      "cited_by_count": 15597,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5024320577",
+      "display_name": "Wolfgang J. Streit",
+      "orcid": "https://orcid.org/0000-0003-4973-9052",
+      "h_index": 69,
+      "i10_index": 131,
+      "works_count": 166,
+      "cited_by_count": 24725,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5069312065",
+      "display_name": "Xiaoming Hu",
+      "orcid": "https://orcid.org/0000-0002-5857-6243",
+      "h_index": 69,
+      "i10_index": 128,
+      "works_count": 192,
+      "cited_by_count": 17967,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5078058223",
+      "display_name": "Milos Pekny",
+      "orcid": "https://orcid.org/0000-0003-1607-8075",
+      "h_index": 69,
+      "i10_index": 125,
+      "works_count": 164,
+      "cited_by_count": 25817,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5100432772",
+      "display_name": "Peng Li",
+      "orcid": "https://orcid.org/0000-0003-2030-1807",
+      "h_index": 68,
+      "i10_index": 380,
+      "works_count": 721,
+      "cited_by_count": 24469,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5028603581",
+      "display_name": "Josef Krieglstein",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 229,
+      "works_count": 370,
+      "cited_by_count": 17195,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5022917520",
+      "display_name": "Alexander Thomas Sack",
+      "orcid": "https://orcid.org/0000-0002-1471-0885",
+      "h_index": 68,
+      "i10_index": 209,
+      "works_count": 442,
+      "cited_by_count": 15260,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5059547432",
+      "display_name": "Abraham Zangen",
+      "orcid": "https://orcid.org/0000-0002-1488-5837",
+      "h_index": 68,
+      "i10_index": 165,
+      "works_count": 327,
+      "cited_by_count": 17931,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5021919695",
+      "display_name": "Karl Frei",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 136,
+      "works_count": 253,
+      "cited_by_count": 16676,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5046722897",
+      "display_name": "Robyn S. Klein",
+      "orcid": "https://orcid.org/0000-0003-0281-1352",
+      "h_index": 68,
+      "i10_index": 120,
+      "works_count": 169,
+      "cited_by_count": 17654,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5029383812",
+      "display_name": "Pablo A. Celnik",
+      "orcid": "https://orcid.org/0000-0002-7953-0551",
+      "h_index": 68,
+      "i10_index": 119,
+      "works_count": 221,
+      "cited_by_count": 21785,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5024565293",
+      "display_name": "Colm M. Cunningham",
+      "orcid": "https://orcid.org/0000-0003-1423-5209",
+      "h_index": 68,
+      "i10_index": 101,
+      "works_count": 162,
+      "cited_by_count": 24916,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5064270969",
+      "display_name": "Harald Neumann",
+      "orcid": "https://orcid.org/0000-0002-5071-5202",
+      "h_index": 68,
+      "i10_index": 101,
+      "works_count": 155,
+      "cited_by_count": 21268,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5010190960",
+      "display_name": "Oleg Butovsky",
+      "orcid": "https://orcid.org/0000-0003-0186-8867",
+      "h_index": 68,
+      "i10_index": 100,
+      "works_count": 182,
+      "cited_by_count": 35315,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5064661963",
+      "display_name": "Yun Xu",
+      "orcid": "https://orcid.org/0000-0001-5288-0319",
+      "h_index": 67,
+      "i10_index": 265,
+      "works_count": 422,
+      "cited_by_count": 16657,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5035925368",
+      "display_name": "Bernd L. Fiebich",
+      "orcid": "https://orcid.org/0000-0002-9261-6771",
+      "h_index": 67,
+      "i10_index": 208,
+      "works_count": 295,
+      "cited_by_count": 26475,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Neurology -- 8.8",
+      "id": "https://openalex.org/A5069709227",
+      "display_name": "Joseph C. LaManna",
+      "orcid": "https://orcid.org/0000-0002-0159-4512",
+      "h_index": 67,
+      "i10_index": 197,
+      "works_count": 338,
+      "cited_by_count": 13231,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5102020892",
+      "display_name": "Myeong Ok Kim",
+      "orcid": "https://orcid.org/0000-0003-4317-1072",
+      "h_index": 67,
+      "i10_index": 177,
+      "works_count": 245,
+      "cited_by_count": 13236,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5060290731",
+      "display_name": "Alexander D. Verin",
+      "orcid": "https://orcid.org/0000-0003-0627-7185",
+      "h_index": 67,
+      "i10_index": 161,
+      "works_count": 284,
+      "cited_by_count": 13214,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5057685617",
+      "display_name": "Stephen B. Wharton",
+      "orcid": "https://orcid.org/0000-0003-2785-333X",
+      "h_index": 67,
+      "i10_index": 154,
+      "works_count": 309,
+      "cited_by_count": 17012,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5043006925",
+      "display_name": "Danica B Stanimirovic",
+      "orcid": "https://orcid.org/0000-0001-6678-407X",
+      "h_index": 67,
+      "i10_index": 147,
+      "works_count": 246,
+      "cited_by_count": 14077,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5000540211",
+      "display_name": "Rehana K. Leak",
+      "orcid": "https://orcid.org/0000-0003-2817-7417",
+      "h_index": 67,
+      "i10_index": 144,
+      "works_count": 215,
+      "cited_by_count": 18542,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5108827175",
+      "display_name": "Lloyd B. Minor",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 132,
+      "works_count": 205,
+      "cited_by_count": 15115,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5032985983",
+      "display_name": "Zheng Gang Zhang",
+      "orcid": "https://orcid.org/0000-0002-9018-7723",
+      "h_index": 67,
+      "i10_index": 128,
+      "works_count": 197,
+      "cited_by_count": 16696,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5017927258",
+      "display_name": "Takeshi Kubo",
+      "orcid": "https://orcid.org/0000-0002-3397-4472",
+      "h_index": 66,
+      "i10_index": 337,
+      "works_count": 853,
+      "cited_by_count": 18282,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5088307351",
+      "display_name": "Floris L. Wuyts",
+      "orcid": "https://orcid.org/0000-0002-4485-6412",
+      "h_index": 66,
+      "i10_index": 202,
+      "works_count": 364,
+      "cited_by_count": 14515,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5026637187",
+      "display_name": "Norman Ruthven Saunders",
+      "orcid": "https://orcid.org/0000-0001-6660-7639",
+      "h_index": 66,
+      "i10_index": 193,
+      "works_count": 451,
+      "cited_by_count": 14002,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5077757509",
+      "display_name": "Susan L. Whitney",
+      "orcid": "https://orcid.org/0000-0003-4271-8718",
+      "h_index": 66,
+      "i10_index": 186,
+      "works_count": 378,
+      "cited_by_count": 16416,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5007618142",
+      "display_name": "Emiliano Santarnecchi",
+      "orcid": "https://orcid.org/0000-0002-6533-7427",
+      "h_index": 66,
+      "i10_index": 180,
+      "works_count": 313,
+      "cited_by_count": 13989,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5065429769",
+      "display_name": "Winston D. Byblow",
+      "orcid": "https://orcid.org/0000-0001-8347-6730",
+      "h_index": 66,
+      "i10_index": 171,
+      "works_count": 257,
+      "cited_by_count": 16208,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5062438568",
+      "display_name": "Ken Arai",
+      "orcid": "https://orcid.org/0000-0003-1615-3258",
+      "h_index": 66,
+      "i10_index": 168,
+      "works_count": 332,
+      "cited_by_count": 12466,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5005807695",
+      "display_name": "Bente Pakkenberg",
+      "orcid": "https://orcid.org/0000-0003-3851-6494",
+      "h_index": 66,
+      "i10_index": 160,
+      "works_count": 240,
+      "cited_by_count": 22038,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5026759115",
+      "display_name": "Richard B. Banati",
+      "orcid": "https://orcid.org/0000-0003-3558-597X",
+      "h_index": 66,
+      "i10_index": 129,
+      "works_count": 207,
+      "cited_by_count": 18219,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5035723149",
+      "display_name": "Yanqin Gao",
+      "orcid": "https://orcid.org/0000-0002-4915-9819",
+      "h_index": 66,
+      "i10_index": 120,
+      "works_count": 163,
+      "cited_by_count": 15578,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5053261329",
+      "display_name": "Annadora J. Bruce‐Keller",
+      "orcid": "https://orcid.org/0000-0003-4180-7647",
+      "h_index": 66,
+      "i10_index": 117,
+      "works_count": 143,
+      "cited_by_count": 17114,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5026672890",
+      "display_name": "Chris Baeken",
+      "orcid": "https://orcid.org/0000-0001-9885-3041",
+      "h_index": 65,
+      "i10_index": 245,
+      "works_count": 614,
+      "cited_by_count": 18224,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5111517830",
+      "display_name": "Norimasa Sawada",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 196,
+      "works_count": 267,
+      "cited_by_count": 13190,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5044042665",
+      "display_name": "Guo‐Yuan Yang",
+      "orcid": "https://orcid.org/0000-0003-3105-9307",
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 249,
+      "cited_by_count": 13326,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Neurology -- 8.7",
+      "id": "https://openalex.org/A5042577204",
+      "display_name": "Stefano Tarantini",
+      "orcid": "https://orcid.org/0000-0001-5627-1430",
+      "h_index": 65,
+      "i10_index": 158,
+      "works_count": 292,
+      "cited_by_count": 14469,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5054101427",
+      "display_name": "Peter K. Stys",
+      "orcid": "https://orcid.org/0000-0003-0326-4194",
+      "h_index": 65,
+      "i10_index": 151,
+      "works_count": 292,
+      "cited_by_count": 16705,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5024435931",
+      "display_name": "Rona Greenberg Giffard",
+      "orcid": "https://orcid.org/0000-0003-2173-4436",
+      "h_index": 65,
+      "i10_index": 135,
+      "works_count": 188,
+      "cited_by_count": 15379,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5074755133",
+      "display_name": "Victor J. Wilson",
+      "orcid": "https://orcid.org/0000-0002-9773-5788",
+      "h_index": 65,
+      "i10_index": 127,
+      "works_count": 186,
+      "cited_by_count": 14265,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5030126255",
+      "display_name": "Cathy M. Stinear",
+      "orcid": "https://orcid.org/0000-0002-9404-1959",
+      "h_index": 65,
+      "i10_index": 126,
+      "works_count": 220,
+      "cited_by_count": 16404,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5057472361",
+      "display_name": "Yuri Persidsky",
+      "orcid": "https://orcid.org/0000-0003-1345-6077",
+      "h_index": 65,
+      "i10_index": 123,
+      "works_count": 198,
+      "cited_by_count": 13839,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5014763110",
+      "display_name": "Knut P. H. Biber",
+      "orcid": "https://orcid.org/0000-0002-8815-1705",
+      "h_index": 65,
+      "i10_index": 110,
+      "works_count": 151,
+      "cited_by_count": 17848,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5023071735",
+      "display_name": "Ilmari V. Pyykkö",
+      "orcid": "https://orcid.org/0000-0001-7172-7408",
+      "h_index": 64,
+      "i10_index": 299,
+      "works_count": 470,
+      "cited_by_count": 15790,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5087364900",
+      "display_name": "Nai‐Hong Chen",
+      "orcid": "https://orcid.org/0000-0001-6354-7853",
+      "h_index": 64,
+      "i10_index": 247,
+      "works_count": 377,
+      "cited_by_count": 13391,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5051880625",
+      "display_name": "Jonathan H. Downar",
+      "orcid": "https://orcid.org/0000-0002-5140-174X",
+      "h_index": 64,
+      "i10_index": 172,
+      "works_count": 322,
+      "cited_by_count": 18894,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5082647900",
+      "display_name": "Xiaoxing Xiong",
+      "orcid": "https://orcid.org/0000-0001-6983-8547",
+      "h_index": 64,
+      "i10_index": 171,
+      "works_count": 261,
+      "cited_by_count": 12467,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5035360982",
+      "display_name": "Dong‐Kug Choi",
+      "orcid": "https://orcid.org/0000-0001-7041-1524",
+      "h_index": 64,
+      "i10_index": 157,
+      "works_count": 203,
+      "cited_by_count": 16267,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5052113561",
+      "display_name": "James G. Colebatch",
+      "orcid": "https://orcid.org/0000-0002-2099-4976",
+      "h_index": 64,
+      "i10_index": 156,
+      "works_count": 237,
+      "cited_by_count": 19209,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5019915416",
+      "display_name": "Michael C. Ridding",
+      "orcid": "https://orcid.org/0000-0001-5657-9136",
+      "h_index": 64,
+      "i10_index": 145,
+      "works_count": 201,
+      "cited_by_count": 16805,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5064250454",
+      "display_name": "Axel Thielscher",
+      "orcid": "https://orcid.org/0000-0002-4752-5854",
+      "h_index": 64,
+      "i10_index": 141,
+      "works_count": 373,
+      "cited_by_count": 17527,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5043807997",
+      "display_name": "Roosmarijn E. Vandenbroucke",
+      "orcid": "https://orcid.org/0000-0002-8327-620X",
+      "h_index": 64,
+      "i10_index": 139,
+      "works_count": 223,
+      "cited_by_count": 16409,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5046174766",
+      "display_name": "Wilder Graves Penfield",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 135,
+      "works_count": 239,
+      "cited_by_count": 23546,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5021217241",
+      "display_name": "David E. Newman‐Toker",
+      "orcid": "https://orcid.org/0000-0003-2789-4115",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 252,
+      "cited_by_count": 20878,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5013258874",
+      "display_name": "John P. Carey",
+      "orcid": "https://orcid.org/0000-0001-5853-0344",
+      "h_index": 64,
+      "i10_index": 131,
+      "works_count": 199,
+      "cited_by_count": 15259,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5005416364",
+      "display_name": "Katerina Akassoglou",
+      "orcid": "https://orcid.org/0000-0002-2632-1465",
+      "h_index": 64,
+      "i10_index": 102,
+      "works_count": 177,
+      "cited_by_count": 18452,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5086674978",
+      "display_name": "Karl Matter",
+      "orcid": "https://orcid.org/0000-0001-8026-7220",
+      "h_index": 64,
+      "i10_index": 98,
+      "works_count": 164,
+      "cited_by_count": 17375,
+      "discipline": "Neurology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5110121579",
+      "display_name": "Hidekazu Tomimoto",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 220,
+      "works_count": 446,
+      "cited_by_count": 13006,
+      "discipline": "Neurology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Neurology -- 8.6",
+      "id": "https://openalex.org/A5111543056",
+      "display_name": "H. W. G. M. Boddeke",
+      "orcid": "https://orcid.org/0000-0002-5058-9648",
+      "h_index": 63,
+      "i10_index": 138,
+      "works_count": 290,
+      "cited_by_count": 16028,
+      "discipline": "Neurology",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Neurology",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    }
+  ]
+}

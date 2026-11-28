@@ -1,0 +1,1763 @@
+{
+  "kind": "subfield",
+  "id": 1304,
+  "name": "Biophysics",
+  "total_in_scrape": 87,
+  "count": 87,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Biophysics -- 9.9",
+      "id": "https://openalex.org/A5109193097",
+      "display_name": "Roger Y. Tsien",
+      "orcid": null,
+      "h_index": 173,
+      "i10_index": 320,
+      "works_count": 460,
+      "cited_by_count": 161655,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Biophysics -- 9.9",
+      "id": "https://openalex.org/A5088219208",
+      "display_name": "Stefan W. Hell",
+      "orcid": "https://orcid.org/0000-0002-9638-5077",
+      "h_index": 144,
+      "i10_index": 433,
+      "works_count": 721,
+      "cited_by_count": 82276,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Biophysics -- 9.9",
+      "id": "https://openalex.org/A5005039590",
+      "display_name": "Enrico Gratton",
+      "orcid": "https://orcid.org/0000-0002-6450-7391",
+      "h_index": 130,
+      "i10_index": 565,
+      "works_count": 1177,
+      "cited_by_count": 60631,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Biophysics -- 9.9",
+      "id": "https://openalex.org/A5087959577",
+      "display_name": "Xiaowei Zhuang",
+      "orcid": "https://orcid.org/0000-0002-6034-7853",
+      "h_index": 119,
+      "i10_index": 195,
+      "works_count": 341,
+      "cited_by_count": 72298,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Biophysics -- 9.9",
+      "id": "https://openalex.org/A5051766563",
+      "display_name": "Johan Hofkens",
+      "orcid": "https://orcid.org/0000-0002-9101-0567",
+      "h_index": 114,
+      "i10_index": 560,
+      "works_count": 969,
+      "cited_by_count": 47393,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Biophysics -- 9.9",
+      "id": "https://openalex.org/A5074798370",
+      "display_name": "Joseph R. Lakowicz",
+      "orcid": "https://orcid.org/0000-0003-3032-3620",
+      "h_index": 112,
+      "i10_index": 661,
+      "works_count": 983,
+      "cited_by_count": 99248,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5005075596",
+      "display_name": "Atsushi Miyawaki",
+      "orcid": "https://orcid.org/0000-0002-0671-4376",
+      "h_index": 112,
+      "i10_index": 320,
+      "works_count": 592,
+      "cited_by_count": 55379,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5047064481",
+      "display_name": "Scott E. Fraser",
+      "orcid": "https://orcid.org/0000-0002-5377-0223",
+      "h_index": 106,
+      "i10_index": 303,
+      "works_count": 550,
+      "cited_by_count": 42337,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5005568675",
+      "display_name": "Jürgen J Popp",
+      "orcid": "https://orcid.org/0000-0003-4257-593X",
+      "h_index": 104,
+      "i10_index": 892,
+      "works_count": 1595,
+      "cited_by_count": 59675,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Chemistry",
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5086153927",
+      "display_name": "Ji‐Xin Cheng",
+      "orcid": "https://orcid.org/0000-0002-5607-6683",
+      "h_index": 103,
+      "i10_index": 336,
+      "works_count": 725,
+      "cited_by_count": 37829,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5040860122",
+      "display_name": "Yukihiro Ozaki",
+      "orcid": "https://orcid.org/0000-0002-4479-4004",
+      "h_index": 102,
+      "i10_index": 915,
+      "works_count": 1483,
+      "cited_by_count": 56200,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5102919090",
+      "display_name": "Xiaoliang Sunney Xie",
+      "orcid": "https://orcid.org/0000-0001-7714-9776",
+      "h_index": 101,
+      "i10_index": 163,
+      "works_count": 231,
+      "cited_by_count": 42365,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5006887252",
+      "display_name": "Markus Sauer",
+      "orcid": "https://orcid.org/0000-0002-1692-3219",
+      "h_index": 100,
+      "i10_index": 321,
+      "works_count": 551,
+      "cited_by_count": 39896,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5070326580",
+      "display_name": "Thomas G. Spiro",
+      "orcid": "https://orcid.org/0000-0003-2910-3874",
+      "h_index": 97,
+      "i10_index": 460,
+      "works_count": 1733,
+      "cited_by_count": 32585,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5027929813",
+      "display_name": "Keith Gull",
+      "orcid": "https://orcid.org/0000-0001-6954-9569",
+      "h_index": 94,
+      "i10_index": 281,
+      "works_count": 647,
+      "cited_by_count": 30143,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5066969091",
+      "display_name": "Seok Hyun Yun",
+      "orcid": "https://orcid.org/0000-0002-8903-5909",
+      "h_index": 92,
+      "i10_index": 239,
+      "works_count": 509,
+      "cited_by_count": 28289,
+      "discipline": "Biophysics",
+      "primary_field": "Engineering",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Biophysics -- 9.8",
+      "id": "https://openalex.org/A5058617463",
+      "display_name": "Stephen A. Boppart",
+      "orcid": "https://orcid.org/0000-0002-9386-5630",
+      "h_index": 89,
+      "i10_index": 360,
+      "works_count": 978,
+      "cited_by_count": 30748,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5085922198",
+      "display_name": "Ernst H. K. Stelzer",
+      "orcid": "https://orcid.org/0000-0003-1545-0736",
+      "h_index": 89,
+      "i10_index": 299,
+      "works_count": 469,
+      "cited_by_count": 42634,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5067171744",
+      "display_name": "Christian Eggeling",
+      "orcid": "https://orcid.org/0000-0002-3698-5599",
+      "h_index": 89,
+      "i10_index": 207,
+      "works_count": 478,
+      "cited_by_count": 32414,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5005862811",
+      "display_name": "Keisuke Goda",
+      "orcid": "https://orcid.org/0000-0001-6302-6038",
+      "h_index": 86,
+      "i10_index": 224,
+      "works_count": 549,
+      "cited_by_count": 23005,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5111550689",
+      "display_name": "Ramachandra Rao Dasari",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 203,
+      "works_count": 370,
+      "cited_by_count": 39309,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Physics and Astronomy",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5111539887",
+      "display_name": "Watt W. Webb",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 158,
+      "works_count": 230,
+      "cited_by_count": 57999,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5066925673",
+      "display_name": "Joseph Irudayaraj",
+      "orcid": "https://orcid.org/0000-0002-0630-1520",
+      "h_index": 85,
+      "i10_index": 338,
+      "works_count": 503,
+      "cited_by_count": 25781,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5052473265",
+      "display_name": "Anne Elizabeth Carpenter",
+      "orcid": "https://orcid.org/0000-0003-1555-8261",
+      "h_index": 85,
+      "i10_index": 194,
+      "works_count": 360,
+      "cited_by_count": 43161,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5054436322",
+      "display_name": "Loren L. Looger",
+      "orcid": "https://orcid.org/0000-0002-7531-1757",
+      "h_index": 84,
+      "i10_index": 152,
+      "works_count": 280,
+      "cited_by_count": 41629,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5038645053",
+      "display_name": "Junle Qu",
+      "orcid": "https://orcid.org/0000-0001-7833-4711",
+      "h_index": 83,
+      "i10_index": 527,
+      "works_count": 1232,
+      "cited_by_count": 31015,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5010413374",
+      "display_name": "Kevin W. Eliceiri",
+      "orcid": "https://orcid.org/0000-0001-8678-670X",
+      "h_index": 83,
+      "i10_index": 252,
+      "works_count": 476,
+      "cited_by_count": 191465,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Biophysics -- 9.7",
+      "id": "https://openalex.org/A5100342359",
+      "display_name": "Kun Zhang",
+      "orcid": "https://orcid.org/0000-0002-7596-5224",
+      "h_index": 83,
+      "i10_index": 240,
+      "works_count": 794,
+      "cited_by_count": 41951,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5020934124",
+      "display_name": "Winfried T. Denk",
+      "orcid": "https://orcid.org/0000-0002-0704-6998",
+      "h_index": 82,
+      "i10_index": 128,
+      "works_count": 211,
+      "cited_by_count": 47460,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5003253128",
+      "display_name": "Stefan Jakobs",
+      "orcid": "https://orcid.org/0000-0002-8028-3121",
+      "h_index": 81,
+      "i10_index": 141,
+      "works_count": 247,
+      "cited_by_count": 23637,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5059583115",
+      "display_name": "Tsutomu Araki",
+      "orcid": "https://orcid.org/0000-0001-5943-1145",
+      "h_index": 80,
+      "i10_index": 505,
+      "works_count": 1288,
+      "cited_by_count": 27321,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5043340480",
+      "display_name": "Michael W. Davidson",
+      "orcid": "https://orcid.org/0000-0002-6420-952X",
+      "h_index": 80,
+      "i10_index": 164,
+      "works_count": 344,
+      "cited_by_count": 42351,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5032098186",
+      "display_name": "Peter T. C. So",
+      "orcid": "https://orcid.org/0000-0003-4698-6488",
+      "h_index": 79,
+      "i10_index": 239,
+      "works_count": 620,
+      "cited_by_count": 19834,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5060401840",
+      "display_name": "Shimon Weiss",
+      "orcid": "https://orcid.org/0000-0002-0720-5426",
+      "h_index": 79,
+      "i10_index": 205,
+      "works_count": 402,
+      "cited_by_count": 47482,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5033328311",
+      "display_name": "Vladislav V. Verkhusha",
+      "orcid": "https://orcid.org/0000-0002-2083-8121",
+      "h_index": 79,
+      "i10_index": 172,
+      "works_count": 290,
+      "cited_by_count": 21147,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5056033605",
+      "display_name": "Qingming Luo",
+      "orcid": "https://orcid.org/0000-0002-6725-9311",
+      "h_index": 76,
+      "i10_index": 343,
+      "works_count": 885,
+      "cited_by_count": 23549,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5079930094",
+      "display_name": "Hugh James Byrne",
+      "orcid": "https://orcid.org/0000-0002-1735-8610",
+      "h_index": 76,
+      "i10_index": 303,
+      "works_count": 550,
+      "cited_by_count": 21093,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5051667493",
+      "display_name": "Kai Johnsson",
+      "orcid": "https://orcid.org/0000-0002-8002-1981",
+      "h_index": 76,
+      "i10_index": 167,
+      "works_count": 290,
+      "cited_by_count": 25457,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Biophysics -- 9.6",
+      "id": "https://openalex.org/A5005312067",
+      "display_name": "Howell G. M. Edwards",
+      "orcid": "https://orcid.org/0000-0002-4850-0122",
+      "h_index": 75,
+      "i10_index": 490,
+      "works_count": 932,
+      "cited_by_count": 25188,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Arts and Humanities",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5007464794",
+      "display_name": "Clemens F. Kaminski",
+      "orcid": "https://orcid.org/0000-0002-5194-0962",
+      "h_index": 75,
+      "i10_index": 245,
+      "works_count": 499,
+      "cited_by_count": 19877,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering",
+        "Chemistry",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5003562216",
+      "display_name": "Jean‐Christophe Olivo‐Marín",
+      "orcid": "https://orcid.org/0000-0001-6796-0696",
+      "h_index": 75,
+      "i10_index": 199,
+      "works_count": 406,
+      "cited_by_count": 23130,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5048568518",
+      "display_name": "Eric Betzig",
+      "orcid": "https://orcid.org/0000-0002-4192-1274",
+      "h_index": 75,
+      "i10_index": 124,
+      "works_count": 254,
+      "cited_by_count": 44213,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5062538146",
+      "display_name": "Isao Noda",
+      "orcid": "https://orcid.org/0000-0002-0081-4739",
+      "h_index": 74,
+      "i10_index": 338,
+      "works_count": 522,
+      "cited_by_count": 25818,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5030625987",
+      "display_name": "Igor K. Lednev",
+      "orcid": "https://orcid.org/0000-0002-6504-531X",
+      "h_index": 74,
+      "i10_index": 208,
+      "works_count": 294,
+      "cited_by_count": 16417,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5111466868",
+      "display_name": "Wolfgang Wiltschko",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 196,
+      "works_count": 267,
+      "cited_by_count": 17197,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5101682555",
+      "display_name": "D. Lansing Taylor",
+      "orcid": "https://orcid.org/0000-0001-6947-1343",
+      "h_index": 73,
+      "i10_index": 188,
+      "works_count": 295,
+      "cited_by_count": 16230,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5110899421",
+      "display_name": "Henry Horst Mantsch",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 280,
+      "works_count": 411,
+      "cited_by_count": 25343,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5073079682",
+      "display_name": "Niels Kuster",
+      "orcid": "https://orcid.org/0000-0002-5827-3728",
+      "h_index": 72,
+      "i10_index": 261,
+      "works_count": 636,
+      "cited_by_count": 21244,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5042342502",
+      "display_name": "Sergei G. Kazarian",
+      "orcid": "https://orcid.org/0000-0003-1768-9134",
+      "h_index": 72,
+      "i10_index": 261,
+      "works_count": 368,
+      "cited_by_count": 19835,
+      "discipline": "Biophysics",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5052414910",
+      "display_name": "Pavel Matousek",
+      "orcid": "https://orcid.org/0000-0003-0912-5339",
+      "h_index": 72,
+      "i10_index": 244,
+      "works_count": 490,
+      "cited_by_count": 17359,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Chemistry",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Biophysics -- 9.5",
+      "id": "https://openalex.org/A5032450795",
+      "display_name": "Mike Heilemann",
+      "orcid": "https://orcid.org/0000-0002-9821-3578",
+      "h_index": 72,
+      "i10_index": 180,
+      "works_count": 328,
+      "cited_by_count": 20001,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5057611416",
+      "display_name": "Boris Mizaikoff",
+      "orcid": "https://orcid.org/0000-0002-5583-7962",
+      "h_index": 71,
+      "i10_index": 398,
+      "works_count": 726,
+      "cited_by_count": 19664,
+      "discipline": "Biophysics",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5080182543",
+      "display_name": "Klaus Bernhard Gerwert",
+      "orcid": "https://orcid.org/0000-0001-8759-5964",
+      "h_index": 71,
+      "i10_index": 208,
+      "works_count": 365,
+      "cited_by_count": 16258,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5019048997",
+      "display_name": "Leslie M. Loew",
+      "orcid": "https://orcid.org/0000-0002-1851-4646",
+      "h_index": 71,
+      "i10_index": 190,
+      "works_count": 390,
+      "cited_by_count": 22008,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5054061274",
+      "display_name": "Charles P. Lin",
+      "orcid": "https://orcid.org/0000-0002-7450-627X",
+      "h_index": 71,
+      "i10_index": 170,
+      "works_count": 317,
+      "cited_by_count": 43339,
+      "discipline": "Biophysics",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5042688784",
+      "display_name": "Luke D. Lavis",
+      "orcid": "https://orcid.org/0000-0002-0789-6343",
+      "h_index": 71,
+      "i10_index": 132,
+      "works_count": 268,
+      "cited_by_count": 20330,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Neuroscience",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5105659336",
+      "display_name": "Katharina Gaus",
+      "orcid": "https://orcid.org/0000-0002-8009-9658",
+      "h_index": 70,
+      "i10_index": 204,
+      "works_count": 292,
+      "cited_by_count": 17006,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5009531901",
+      "display_name": "Jörg Enderlein",
+      "orcid": "https://orcid.org/0000-0001-5091-7157",
+      "h_index": 69,
+      "i10_index": 216,
+      "works_count": 494,
+      "cited_by_count": 17021,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5048312093",
+      "display_name": "Philip Tinnefeld",
+      "orcid": "https://orcid.org/0000-0003-4290-7770",
+      "h_index": 69,
+      "i10_index": 178,
+      "works_count": 279,
+      "cited_by_count": 19488,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5083451833",
+      "display_name": "Theodorus W. J. Gadella",
+      "orcid": "https://orcid.org/0000-0002-7639-219X",
+      "h_index": 69,
+      "i10_index": 122,
+      "works_count": 208,
+      "cited_by_count": 15787,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5035947212",
+      "display_name": "P. M. W. French",
+      "orcid": "https://orcid.org/0000-0002-0478-6755",
+      "h_index": 68,
+      "i10_index": 240,
+      "works_count": 671,
+      "cited_by_count": 14872,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Biophysics -- 9.4",
+      "id": "https://openalex.org/A5039935738",
+      "display_name": "Michel Manfait",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 223,
+      "works_count": 415,
+      "cited_by_count": 13075,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5058586071",
+      "display_name": "Christoph G. Cremer",
+      "orcid": "https://orcid.org/0000-0002-2090-6905",
+      "h_index": 68,
+      "i10_index": 222,
+      "works_count": 440,
+      "cited_by_count": 21282,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5015656700",
+      "display_name": "Bruce J. Tromberg",
+      "orcid": "https://orcid.org/0000-0002-7481-7975",
+      "h_index": 68,
+      "i10_index": 149,
+      "works_count": 359,
+      "cited_by_count": 15741,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5022450636",
+      "display_name": "Alberto Diaspro",
+      "orcid": "https://orcid.org/0000-0002-4916-5928",
+      "h_index": 67,
+      "i10_index": 356,
+      "works_count": 915,
+      "cited_by_count": 20033,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5061773929",
+      "display_name": "Robert F. Murphy",
+      "orcid": "https://orcid.org/0000-0003-0358-901X",
+      "h_index": 67,
+      "i10_index": 215,
+      "works_count": 415,
+      "cited_by_count": 17070,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5049383907",
+      "display_name": "Vinod Subramaniam",
+      "orcid": "https://orcid.org/0000-0001-6712-7266",
+      "h_index": 67,
+      "i10_index": 188,
+      "works_count": 580,
+      "cited_by_count": 14935,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5045670313",
+      "display_name": "Guosong Hong",
+      "orcid": "https://orcid.org/0000-0002-8858-4471",
+      "h_index": 67,
+      "i10_index": 113,
+      "works_count": 185,
+      "cited_by_count": 33425,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5055566096",
+      "display_name": "Michael P. Schmitt",
+      "orcid": "https://orcid.org/0000-0002-3807-3630",
+      "h_index": 66,
+      "i10_index": 263,
+      "works_count": 430,
+      "cited_by_count": 16498,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Medicine",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5046510603",
+      "display_name": "Chris Xu",
+      "orcid": "https://orcid.org/0000-0002-3493-6427",
+      "h_index": 66,
+      "i10_index": 172,
+      "works_count": 423,
+      "cited_by_count": 23460,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5039124056",
+      "display_name": "Maxime Dahan",
+      "orcid": "https://orcid.org/0000-0002-4943-2491",
+      "h_index": 66,
+      "i10_index": 98,
+      "works_count": 223,
+      "cited_by_count": 17803,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5023245938",
+      "display_name": "Rohit Bhargava",
+      "orcid": "https://orcid.org/0000-0001-7360-994X",
+      "h_index": 65,
+      "i10_index": 256,
+      "works_count": 573,
+      "cited_by_count": 18041,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Biophysics -- 9.3",
+      "id": "https://openalex.org/A5083219290",
+      "display_name": "Hans J. Tanke",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 241,
+      "works_count": 364,
+      "cited_by_count": 17266,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5110041689",
+      "display_name": "John F. Rabolt",
+      "orcid": "https://orcid.org/0000-0003-4132-4266",
+      "h_index": 65,
+      "i10_index": 185,
+      "works_count": 273,
+      "cited_by_count": 18457,
+      "discipline": "Biophysics",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5089591482",
+      "display_name": "Roswitha Wiltschko",
+      "orcid": "https://orcid.org/0000-0003-1321-4473",
+      "h_index": 65,
+      "i10_index": 180,
+      "works_count": 241,
+      "cited_by_count": 14649,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5053914310",
+      "display_name": "Takeharu Nagai",
+      "orcid": "https://orcid.org/0000-0003-2650-9895",
+      "h_index": 65,
+      "i10_index": 157,
+      "works_count": 438,
+      "cited_by_count": 22729,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5038585473",
+      "display_name": "Gerwin J. Puppels",
+      "orcid": "https://orcid.org/0000-0001-8017-1923",
+      "h_index": 65,
+      "i10_index": 138,
+      "works_count": 242,
+      "cited_by_count": 15684,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5074910375",
+      "display_name": "Robert E. Campbell",
+      "orcid": "https://orcid.org/0000-0003-0604-092X",
+      "h_index": 65,
+      "i10_index": 130,
+      "works_count": 251,
+      "cited_by_count": 26756,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5087159664",
+      "display_name": "Jason R. Swedlow",
+      "orcid": "https://orcid.org/0000-0002-2198-1958",
+      "h_index": 65,
+      "i10_index": 115,
+      "works_count": 275,
+      "cited_by_count": 16540,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5010280330",
+      "display_name": "Jan Greve",
+      "orcid": "https://orcid.org/0000-0002-8202-7076",
+      "h_index": 64,
+      "i10_index": 234,
+      "works_count": 705,
+      "cited_by_count": 15960,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5056284790",
+      "display_name": "Rudolf W. Rigler",
+      "orcid": "https://orcid.org/0000-0003-4742-0857",
+      "h_index": 64,
+      "i10_index": 173,
+      "works_count": 323,
+      "cited_by_count": 18593,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5012885965",
+      "display_name": "Gautam Kumar Bandyopadhyay",
+      "orcid": "https://orcid.org/0000-0003-4347-6036",
+      "h_index": 64,
+      "i10_index": 168,
+      "works_count": 743,
+      "cited_by_count": 17078,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5111672232",
+      "display_name": "Karsten König",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 167,
+      "works_count": 470,
+      "cited_by_count": 14868,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Biophysics -- 9.2",
+      "id": "https://openalex.org/A5013706483",
+      "display_name": "Kerby Shedden",
+      "orcid": "https://orcid.org/0000-0001-7222-6664",
+      "h_index": 64,
+      "i10_index": 138,
+      "works_count": 1683,
+      "cited_by_count": 18653,
+      "discipline": "Biophysics",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Biophysics -- 9.1",
+      "id": "https://openalex.org/A5022670010",
+      "display_name": "Michelle A. Digman",
+      "orcid": "https://orcid.org/0000-0003-4611-7100",
+      "h_index": 64,
+      "i10_index": 133,
+      "works_count": 296,
+      "cited_by_count": 14055,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Biophysics -- 9.1",
+      "id": "https://openalex.org/A5111689543",
+      "display_name": "Watt W. Webb",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 114,
+      "works_count": 168,
+      "cited_by_count": 20446,
+      "discipline": "Biophysics",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Biophysics -- 9.1",
+      "id": "https://openalex.org/A5032317441",
+      "display_name": "Shiv Kumar Sharma",
+      "orcid": "https://orcid.org/0000-0002-5676-7572",
+      "h_index": 63,
+      "i10_index": 186,
+      "works_count": 346,
+      "cited_by_count": 12415,
+      "discipline": "Biophysics",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Biophysics",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Chemistry"
+      ]
+    }
+  ]
+}

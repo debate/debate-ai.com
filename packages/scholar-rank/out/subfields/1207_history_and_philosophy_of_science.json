@@ -1,0 +1,422 @@
+{
+  "kind": "subfield",
+  "id": 1207,
+  "name": "History and Philosophy of Science",
+  "total_in_scrape": 21,
+  "count": 21,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "History and Philosophy of Science -- 9.9",
+      "id": "https://openalex.org/A5108357701",
+      "display_name": "Herbert A. Simon",
+      "orcid": null,
+      "h_index": 156,
+      "i10_index": 419,
+      "works_count": 840,
+      "cited_by_count": 164512,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Computer Science",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "History and Philosophy of Science -- 9.9",
+      "id": "https://openalex.org/A5018806471",
+      "display_name": "Linus Carl Pauling",
+      "orcid": null,
+      "h_index": 114,
+      "i10_index": 366,
+      "works_count": 893,
+      "cited_by_count": 69939,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine",
+        "Nursing",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "History and Philosophy of Science -- 9.9",
+      "id": "https://openalex.org/A5110714596",
+      "display_name": "Paul R. Berg",
+      "orcid": null,
+      "h_index": 95,
+      "i10_index": 193,
+      "works_count": 319,
+      "cited_by_count": 46219,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "History and Philosophy of Science -- 9.9",
+      "id": "https://openalex.org/A5112523816",
+      "display_name": "Ronald Aylmer Fisher",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 260,
+      "works_count": 1086,
+      "cited_by_count": 116765,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "History and Philosophy of Science -- 9.9",
+      "id": "https://openalex.org/A5050563294",
+      "display_name": "Arthur M. Kleinman",
+      "orcid": "https://orcid.org/0000-0003-0721-2017",
+      "h_index": 94,
+      "i10_index": 227,
+      "works_count": 469,
+      "cited_by_count": 54182,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine",
+        "Psychology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "History and Philosophy of Science -- 9.9",
+      "id": "https://openalex.org/A5109876781",
+      "display_name": "Ernst Mayr",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 255,
+      "works_count": 839,
+      "cited_by_count": 42166,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5071663279",
+      "display_name": "Stephen Jay Gould",
+      "orcid": "https://orcid.org/0000-0001-8929-7899",
+      "h_index": 79,
+      "i10_index": 229,
+      "works_count": 666,
+      "cited_by_count": 57882,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5079464744",
+      "display_name": "Stuart Alan Kauffman",
+      "orcid": "https://orcid.org/0000-0001-7094-4312",
+      "h_index": 78,
+      "i10_index": 223,
+      "works_count": 459,
+      "cited_by_count": 41390,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5006868097",
+      "display_name": "Eugene Paul Wigner",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 181,
+      "works_count": 592,
+      "cited_by_count": 73726,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Physics and Astronomy",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5003086136",
+      "display_name": "Charles Robert Darwin",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 224,
+      "works_count": 1056,
+      "cited_by_count": 43691,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5083402270",
+      "display_name": "Paul R. Thagard",
+      "orcid": "https://orcid.org/0000-0002-6594-4761",
+      "h_index": 74,
+      "i10_index": 175,
+      "works_count": 394,
+      "cited_by_count": 25870,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5025743622",
+      "display_name": "Marshall W. Nirenberg",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 148,
+      "works_count": 317,
+      "cited_by_count": 21212,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5103081287",
+      "display_name": "Robert L. Hill",
+      "orcid": "https://orcid.org/0009-0001-2747-3997",
+      "h_index": 71,
+      "i10_index": 164,
+      "works_count": 398,
+      "cited_by_count": 15818,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5036616656",
+      "display_name": "Ian Hacking",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 151,
+      "works_count": 480,
+      "cited_by_count": 35098,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5060761413",
+      "display_name": "Joshua Lederberg",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 186,
+      "works_count": 4527,
+      "cited_by_count": 22353,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5110826404",
+      "display_name": "Patrick Suppes",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 258,
+      "works_count": 775,
+      "cited_by_count": 17987,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Decision Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "History and Philosophy of Science -- 9.8",
+      "id": "https://openalex.org/A5109884453",
+      "display_name": "Francis Harry Compton Crick",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 107,
+      "works_count": 196,
+      "cited_by_count": 61246,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "History and Philosophy of Science -- 9.7",
+      "id": "https://openalex.org/A5064052207",
+      "display_name": "Elliott R. Sober",
+      "orcid": "https://orcid.org/0000-0003-3130-1263",
+      "h_index": 65,
+      "i10_index": 204,
+      "works_count": 526,
+      "cited_by_count": 17781,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "History and Philosophy of Science -- 9.7",
+      "id": "https://openalex.org/A5108417677",
+      "display_name": "Massimo Pigliucci",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 138,
+      "works_count": 386,
+      "cited_by_count": 21112,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "History and Philosophy of Science -- 9.7",
+      "id": "https://openalex.org/A5042564856",
+      "display_name": "Bertrand Russell",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 190,
+      "works_count": 1995,
+      "cited_by_count": 18332,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "History and Philosophy of Science -- 9.7",
+      "id": "https://openalex.org/A5035329131",
+      "display_name": "Peter Louis Galison",
+      "orcid": "https://orcid.org/0000-0002-6429-3872",
+      "h_index": 63,
+      "i10_index": 155,
+      "works_count": 300,
+      "cited_by_count": 41021,
+      "discipline": "History and Philosophy of Science",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "History and Philosophy of Science",
+      "fields": [
+        "Arts and Humanities",
+        "Physics and Astronomy"
+      ]
+    }
+  ]
+}

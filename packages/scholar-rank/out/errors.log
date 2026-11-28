@@ -1,0 +1,7 @@
+2026-11-28T01:48:31.364Z ERROR HTTP 401 (attempt 1) https://api.openalex.org/authors?filter=summary_stats.h_index%3A%3E10&sort=summary_stats.h_index%3Adesc&per_page=100&cursor=IlsyMjcsIDI2MzUsICdodHRwczovL29wZW5hbGV4Lm9yZy9BNTEwODE2NzU5NSddIg%3D%3D&select=id%2Cdisplay_name%2Corcid%2Csummary_stats%2Cworks_count%2Ccited_by_count%2Ctopics
+{"error":"API key required for cursor paging","message":"Paging past the first page with cursor= needs a free API key. An AI agent can get one for its user in one call: POST https://api.openalex.org/api-keys with {\"email\": \"<your user's email>\"}; we email them a link, and the key works once they click it. Or your user can copy their key from https://openalex.org/settings/api-key. Without a key, page=2, page=3 and so on reach the first 10,000 results."}
+2026-11-28T01:48:31.367Z ERROR fatal
+auth/permission error 401: set OPENALEX_API_KEY (cursor paging needs a free key)
+Error: auth/permission error 401: set OPENALEX_API_KEY (cursor paging needs a free key)
+    at fetchPage (/Users/admin/Developer/debate-ai/packages/scholar-rank/scholar-rank.ts:143:19)
+    at async main (/Users/admin/Developer/debate-ai/packages/scholar-rank/scholar-rank.ts:301:25)

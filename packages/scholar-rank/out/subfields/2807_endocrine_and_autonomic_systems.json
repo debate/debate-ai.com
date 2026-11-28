@@ -1,0 +1,3216 @@
+{
+  "kind": "subfield",
+  "id": 2807,
+  "name": "Endocrine and Autonomic Systems",
+  "total_in_scrape": 162,
+  "count": 162,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Endocrine and Autonomic Systems -- 9.9",
+      "id": "https://openalex.org/A5063159500",
+      "display_name": "Russel Joseph Reiter",
+      "orcid": "https://orcid.org/0000-0001-6763-4225",
+      "h_index": 196,
+      "i10_index": 1325,
+      "works_count": 1749,
+      "cited_by_count": 158550,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Endocrine and Autonomic Systems -- 9.9",
+      "id": "https://openalex.org/A5027042734",
+      "display_name": "Clifford B. Saper",
+      "orcid": "https://orcid.org/0000-0002-5788-3014",
+      "h_index": 149,
+      "i10_index": 316,
+      "works_count": 540,
+      "cited_by_count": 89999,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Endocrine and Autonomic Systems -- 9.9",
+      "id": "https://openalex.org/A5047527237",
+      "display_name": "George A. Bray",
+      "orcid": "https://orcid.org/0000-0001-9945-8772",
+      "h_index": 135,
+      "i10_index": 678,
+      "works_count": 1048,
+      "cited_by_count": 109315,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Endocrine and Autonomic Systems -- 9.9",
+      "id": "https://openalex.org/A5076767575",
+      "display_name": "Joseph S. Takahashi",
+      "orcid": "https://orcid.org/0000-0003-0384-8878",
+      "h_index": 132,
+      "i10_index": 301,
+      "works_count": 441,
+      "cited_by_count": 87995,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Endocrine and Autonomic Systems -- 9.9",
+      "id": "https://openalex.org/A5039586613",
+      "display_name": "John Edward Blundell",
+      "orcid": "https://orcid.org/0000-0002-7085-9596",
+      "h_index": 126,
+      "i10_index": 412,
+      "works_count": 694,
+      "cited_by_count": 50771,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Endocrine and Autonomic Systems -- 9.9",
+      "id": "https://openalex.org/A5072321501",
+      "display_name": "Stephen C. Woods",
+      "orcid": "https://orcid.org/0000-0002-9130-4098",
+      "h_index": 124,
+      "i10_index": 421,
+      "works_count": 554,
+      "cited_by_count": 63087,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5086866710",
+      "display_name": "Donald W. Pfaff",
+      "orcid": "https://orcid.org/0000-0002-6569-8505",
+      "h_index": 123,
+      "i10_index": 594,
+      "works_count": 903,
+      "cited_by_count": 58669,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5109987976",
+      "display_name": "Matthias H. Tschöp",
+      "orcid": "https://orcid.org/0000-0002-4744-371X",
+      "h_index": 123,
+      "i10_index": 385,
+      "works_count": 499,
+      "cited_by_count": 69340,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5053926256",
+      "display_name": "Michael W. Schwartz",
+      "orcid": "https://orcid.org/0000-0003-1619-0331",
+      "h_index": 123,
+      "i10_index": 257,
+      "works_count": 398,
+      "cited_by_count": 64954,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5024782501",
+      "display_name": "Bradford B. Lowell",
+      "orcid": "https://orcid.org/0000-0002-0436-3760",
+      "h_index": 122,
+      "i10_index": 204,
+      "works_count": 277,
+      "cited_by_count": 74965,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5065488328",
+      "display_name": "Randy J. Seeley",
+      "orcid": "https://orcid.org/0000-0002-3721-5625",
+      "h_index": 121,
+      "i10_index": 389,
+      "works_count": 547,
+      "cited_by_count": 63589,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5047342979",
+      "display_name": "Joel Keith Elmquist",
+      "orcid": "https://orcid.org/0000-0001-6929-6370",
+      "h_index": 121,
+      "i10_index": 227,
+      "works_count": 368,
+      "cited_by_count": 62995,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5003734252",
+      "display_name": "Tamás L. Horváth",
+      "orcid": "https://orcid.org/0000-0002-7522-4602",
+      "h_index": 120,
+      "i10_index": 332,
+      "works_count": 483,
+      "cited_by_count": 62737,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5112420225",
+      "display_name": "Jens C. Brüning",
+      "orcid": "https://orcid.org/0000-0002-6619-0092",
+      "h_index": 113,
+      "i10_index": 236,
+      "works_count": 344,
+      "cited_by_count": 47968,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5037569117",
+      "display_name": "Ruud M. Buijs",
+      "orcid": "https://orcid.org/0000-0003-3894-4632",
+      "h_index": 109,
+      "i10_index": 281,
+      "works_count": 499,
+      "cited_by_count": 37162,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5024901184",
+      "display_name": "Martin Grosvenor Myers",
+      "orcid": "https://orcid.org/0000-0001-9468-2046",
+      "h_index": 109,
+      "i10_index": 243,
+      "works_count": 352,
+      "cited_by_count": 40259,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Endocrine and Autonomic Systems -- 9.8",
+      "id": "https://openalex.org/A5005842065",
+      "display_name": "Ruth Feldman",
+      "orcid": "https://orcid.org/0000-0001-5048-1381",
+      "h_index": 107,
+      "i10_index": 268,
+      "works_count": 374,
+      "cited_by_count": 43152,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Psychology",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5005912071",
+      "display_name": "I. Sadaf Farooqi",
+      "orcid": "https://orcid.org/0000-0001-7609-3504",
+      "h_index": 107,
+      "i10_index": 255,
+      "works_count": 492,
+      "cited_by_count": 63757,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5091310242",
+      "display_name": "Larry J. Young",
+      "orcid": "https://orcid.org/0000-0003-2044-2239",
+      "h_index": 107,
+      "i10_index": 248,
+      "works_count": 365,
+      "cited_by_count": 44267,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5008739782",
+      "display_name": "Steven M. Reppert",
+      "orcid": "https://orcid.org/0000-0001-7852-438X",
+      "h_index": 107,
+      "i10_index": 192,
+      "works_count": 254,
+      "cited_by_count": 48908,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5085396890",
+      "display_name": "Helgi B. Schiöth",
+      "orcid": "https://orcid.org/0000-0001-7112-0921",
+      "h_index": 105,
+      "i10_index": 519,
+      "works_count": 730,
+      "cited_by_count": 51518,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5006980169",
+      "display_name": "Randy J. Nelson",
+      "orcid": "https://orcid.org/0000-0002-8194-4016",
+      "h_index": 105,
+      "i10_index": 416,
+      "works_count": 624,
+      "cited_by_count": 38755,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5005825467",
+      "display_name": "Rudolph L. Leibel",
+      "orcid": "https://orcid.org/0000-0002-6062-7222",
+      "h_index": 104,
+      "i10_index": 305,
+      "works_count": 435,
+      "cited_by_count": 53893,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5090361193",
+      "display_name": "Patrice G. Guyenet",
+      "orcid": "https://orcid.org/0000-0003-1739-2306",
+      "h_index": 104,
+      "i10_index": 244,
+      "works_count": 323,
+      "cited_by_count": 30424,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5065622211",
+      "display_name": "Jeffrey M. Friedman",
+      "orcid": "https://orcid.org/0000-0003-2152-0868",
+      "h_index": 103,
+      "i10_index": 217,
+      "works_count": 284,
+      "cited_by_count": 79045,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5101463089",
+      "display_name": "Takeshi Sakurai",
+      "orcid": "https://orcid.org/0000-0003-4474-6253",
+      "h_index": 99,
+      "i10_index": 238,
+      "works_count": 542,
+      "cited_by_count": 45198,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5019911441",
+      "display_name": "F. Foster",
+      "orcid": "https://orcid.org/0000-0001-6055-2067",
+      "h_index": 95,
+      "i10_index": 242,
+      "works_count": 413,
+      "cited_by_count": 32268,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Endocrine and Autonomic Systems -- 9.7",
+      "id": "https://openalex.org/A5078110189",
+      "display_name": "Margriet S. Westerterp‐Plantenga",
+      "orcid": "https://orcid.org/0000-0002-6326-3102",
+      "h_index": 93,
+      "i10_index": 254,
+      "works_count": 429,
+      "cited_by_count": 27585,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5067867922",
+      "display_name": "Carol Sue Carter",
+      "orcid": "https://orcid.org/0000-0001-5056-7740",
+      "h_index": 92,
+      "i10_index": 263,
+      "works_count": 414,
+      "cited_by_count": 29683,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5022786999",
+      "display_name": "Frank A. J. L. Scheer",
+      "orcid": "https://orcid.org/0000-0002-2014-7582",
+      "h_index": 92,
+      "i10_index": 187,
+      "works_count": 329,
+      "cited_by_count": 31838,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5039368497",
+      "display_name": "Jacques Balthazart",
+      "orcid": "https://orcid.org/0000-0001-9492-2126",
+      "h_index": 91,
+      "i10_index": 391,
+      "works_count": 649,
+      "cited_by_count": 25404,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5084820716",
+      "display_name": "Fred William Turek",
+      "orcid": "https://orcid.org/0000-0002-4031-4229",
+      "h_index": 91,
+      "i10_index": 326,
+      "works_count": 538,
+      "cited_by_count": 36378,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5048437113",
+      "display_name": "Michael Harvey Hastings",
+      "orcid": "https://orcid.org/0000-0001-8576-6651",
+      "h_index": 91,
+      "i10_index": 226,
+      "works_count": 307,
+      "cited_by_count": 32640,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5107772533",
+      "display_name": "Lex H.T. Van der Ploeg",
+      "orcid": null,
+      "h_index": 91,
+      "i10_index": 215,
+      "works_count": 256,
+      "cited_by_count": 34050,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5054823377",
+      "display_name": "Roger D. Cone",
+      "orcid": "https://orcid.org/0000-0003-3333-5651",
+      "h_index": 91,
+      "i10_index": 183,
+      "works_count": 275,
+      "cited_by_count": 46535,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5035012559",
+      "display_name": "John B. Hogenesch",
+      "orcid": "https://orcid.org/0000-0002-9138-8973",
+      "h_index": 91,
+      "i10_index": 167,
+      "works_count": 315,
+      "cited_by_count": 50257,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5070313847",
+      "display_name": "David C. Klein",
+      "orcid": "https://orcid.org/0000-0002-1792-5806",
+      "h_index": 90,
+      "i10_index": 321,
+      "works_count": 432,
+      "cited_by_count": 30096,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5000445902",
+      "display_name": "Keith Maurice Kendrick",
+      "orcid": "https://orcid.org/0000-0002-0371-5904",
+      "h_index": 88,
+      "i10_index": 339,
+      "works_count": 499,
+      "cited_by_count": 26288,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Endocrine and Autonomic Systems -- 9.6",
+      "id": "https://openalex.org/A5018565033",
+      "display_name": "Andries Kalsbeek",
+      "orcid": "https://orcid.org/0000-0001-9606-8453",
+      "h_index": 88,
+      "i10_index": 256,
+      "works_count": 481,
+      "cited_by_count": 26503,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5063232801",
+      "display_name": "Joséphine Arendt",
+      "orcid": "https://orcid.org/0000-0003-3551-4506",
+      "h_index": 87,
+      "i10_index": 201,
+      "works_count": 278,
+      "cited_by_count": 25484,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5062817134",
+      "display_name": "Amita Sehgal",
+      "orcid": "https://orcid.org/0000-0001-7354-9641",
+      "h_index": 87,
+      "i10_index": 179,
+      "works_count": 322,
+      "cited_by_count": 26156,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5027915756",
+      "display_name": "Ueli Schibler",
+      "orcid": "https://orcid.org/0000-0002-6929-3548",
+      "h_index": 86,
+      "i10_index": 142,
+      "works_count": 297,
+      "cited_by_count": 43359,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5058772320",
+      "display_name": "Timothy H. Moran",
+      "orcid": "https://orcid.org/0000-0001-9877-8723",
+      "h_index": 85,
+      "i10_index": 297,
+      "works_count": 481,
+      "cited_by_count": 26479,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5020982137",
+      "display_name": "Rubén Nogueiras",
+      "orcid": "https://orcid.org/0000-0002-9976-9930",
+      "h_index": 85,
+      "i10_index": 283,
+      "works_count": 430,
+      "cited_by_count": 25215,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5111792477",
+      "display_name": "Jean Mayer",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 227,
+      "works_count": 429,
+      "cited_by_count": 19380,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology",
+        "Nursing",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5111840073",
+      "display_name": "Michael Menaker",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 210,
+      "works_count": 271,
+      "cited_by_count": 32556,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5056677109",
+      "display_name": "Deborah J. Clegg",
+      "orcid": "https://orcid.org/0000-0003-3506-4402",
+      "h_index": 85,
+      "i10_index": 196,
+      "works_count": 295,
+      "cited_by_count": 28440,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5088853861",
+      "display_name": "Serge Daan",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 189,
+      "works_count": 307,
+      "cited_by_count": 31218,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Environmental Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5065268240",
+      "display_name": "Daniel Pedro Cardinali",
+      "orcid": "https://orcid.org/0000-0002-0813-9088",
+      "h_index": 84,
+      "i10_index": 448,
+      "works_count": 779,
+      "cited_by_count": 29702,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5026310782",
+      "display_name": "Anna Wirz‐Justice",
+      "orcid": "https://orcid.org/0000-0003-3790-3652",
+      "h_index": 84,
+      "i10_index": 223,
+      "works_count": 403,
+      "cited_by_count": 29525,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Endocrine and Autonomic Systems -- 9.5",
+      "id": "https://openalex.org/A5049194285",
+      "display_name": "Hans‐Rudolf Berthoud",
+      "orcid": "https://orcid.org/0000-0003-0787-1709",
+      "h_index": 84,
+      "i10_index": 182,
+      "works_count": 235,
+      "cited_by_count": 26894,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5023608974",
+      "display_name": "Satchidananda Panda",
+      "orcid": "https://orcid.org/0000-0002-7855-0091",
+      "h_index": 84,
+      "i10_index": 159,
+      "works_count": 251,
+      "cited_by_count": 43833,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5078259466",
+      "display_name": "Françis Lévi",
+      "orcid": "https://orcid.org/0000-0003-1364-7463",
+      "h_index": 83,
+      "i10_index": 296,
+      "works_count": 614,
+      "cited_by_count": 34454,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5051764425",
+      "display_name": "Denis Richard",
+      "orcid": "https://orcid.org/0000-0003-3995-0938",
+      "h_index": 83,
+      "i10_index": 277,
+      "works_count": 385,
+      "cited_by_count": 23261,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5064975604",
+      "display_name": "Jack L. Feldman",
+      "orcid": "https://orcid.org/0000-0003-3692-9412",
+      "h_index": 83,
+      "i10_index": 166,
+      "works_count": 246,
+      "cited_by_count": 26338,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5101649094",
+      "display_name": "Masamitsu Nakazato",
+      "orcid": "https://orcid.org/0000-0002-6511-1049",
+      "h_index": 82,
+      "i10_index": 294,
+      "works_count": 506,
+      "cited_by_count": 44503,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5021972695",
+      "display_name": "Gregory F. Ball",
+      "orcid": "https://orcid.org/0000-0002-4784-0520",
+      "h_index": 82,
+      "i10_index": 286,
+      "works_count": 454,
+      "cited_by_count": 26840,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5019420426",
+      "display_name": "Timo Partonen",
+      "orcid": "https://orcid.org/0000-0003-1951-2455",
+      "h_index": 82,
+      "i10_index": 278,
+      "works_count": 566,
+      "cited_by_count": 23587,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Psychology",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5090157656",
+      "display_name": "Darío Acuña-Castroviejo",
+      "orcid": "https://orcid.org/0000-0002-9680-1560",
+      "h_index": 82,
+      "i10_index": 238,
+      "works_count": 295,
+      "cited_by_count": 23299,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5018500376",
+      "display_name": "Debra Jean Skene",
+      "orcid": "https://orcid.org/0000-0001-8202-6180",
+      "h_index": 82,
+      "i10_index": 216,
+      "works_count": 398,
+      "cited_by_count": 25973,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5101951891",
+      "display_name": "Masayasu Kojima",
+      "orcid": "https://orcid.org/0000-0002-3153-0341",
+      "h_index": 82,
+      "i10_index": 181,
+      "works_count": 239,
+      "cited_by_count": 45435,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Endocrine and Autonomic Systems -- 9.4",
+      "id": "https://openalex.org/A5064010103",
+      "display_name": "Giles S.H. Yeo",
+      "orcid": "https://orcid.org/0000-0001-8823-3615",
+      "h_index": 82,
+      "i10_index": 159,
+      "works_count": 259,
+      "cited_by_count": 28101,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5046562421",
+      "display_name": "Jay A. Schulkin",
+      "orcid": "https://orcid.org/0000-0002-1546-505X",
+      "h_index": 81,
+      "i10_index": 417,
+      "works_count": 786,
+      "cited_by_count": 31579,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5087343763",
+      "display_name": "Gijsbertus T. J. van der Horst",
+      "orcid": "https://orcid.org/0000-0002-7773-6396",
+      "h_index": 81,
+      "i10_index": 161,
+      "works_count": 250,
+      "cited_by_count": 22435,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Psychology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5100657656",
+      "display_name": "Miguel López",
+      "orcid": "https://orcid.org/0000-0002-7823-1648",
+      "h_index": 80,
+      "i10_index": 252,
+      "works_count": 377,
+      "cited_by_count": 21992,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5049405982",
+      "display_name": "Paul Pévet",
+      "orcid": "https://orcid.org/0000-0002-8471-3619",
+      "h_index": 79,
+      "i10_index": 396,
+      "works_count": 572,
+      "cited_by_count": 22957,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5035433879",
+      "display_name": "Roger A.H. Adan",
+      "orcid": "https://orcid.org/0000-0001-8994-0661",
+      "h_index": 79,
+      "i10_index": 260,
+      "works_count": 426,
+      "cited_by_count": 23013,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5034883620",
+      "display_name": "Eric Barrington Keverne",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 170,
+      "works_count": 236,
+      "cited_by_count": 18606,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5110092461",
+      "display_name": "Arthur D. Loewy",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 138,
+      "works_count": 158,
+      "cited_by_count": 20411,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5032957137",
+      "display_name": "Anthony J. Sclafani",
+      "orcid": "https://orcid.org/0000-0002-3282-0068",
+      "h_index": 78,
+      "i10_index": 287,
+      "works_count": 394,
+      "cited_by_count": 17721,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5111391276",
+      "display_name": "Satya P. Kalra",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 256,
+      "works_count": 302,
+      "cited_by_count": 22414,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5070364047",
+      "display_name": "Jason C. G. Halford",
+      "orcid": "https://orcid.org/0000-0003-1629-3189",
+      "h_index": 78,
+      "i10_index": 210,
+      "works_count": 415,
+      "cited_by_count": 22527,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Nursing",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Endocrine and Autonomic Systems -- 9.3",
+      "id": "https://openalex.org/A5051918182",
+      "display_name": "Eleftheria Maratos–Flier",
+      "orcid": "https://orcid.org/0000-0002-5712-5643",
+      "h_index": 78,
+      "i10_index": 131,
+      "works_count": 171,
+      "cited_by_count": 35127,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5030043930",
+      "display_name": "Ronald M. Harper",
+      "orcid": "https://orcid.org/0000-0001-6469-9429",
+      "h_index": 77,
+      "i10_index": 278,
+      "works_count": 407,
+      "cited_by_count": 20175,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5064414704",
+      "display_name": "Nanduri R. Prabhakar",
+      "orcid": "https://orcid.org/0000-0003-4570-1380",
+      "h_index": 77,
+      "i10_index": 216,
+      "works_count": 407,
+      "cited_by_count": 18710,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5110858576",
+      "display_name": "Alison S. Fleming",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 181,
+      "works_count": 231,
+      "cited_by_count": 16963,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5084518388",
+      "display_name": "Gordon S. Mitchell",
+      "orcid": "https://orcid.org/0000-0002-8489-1861",
+      "h_index": 76,
+      "i10_index": 273,
+      "works_count": 520,
+      "cited_by_count": 20404,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5044198492",
+      "display_name": "David William Ray",
+      "orcid": "https://orcid.org/0000-0002-4739-6773",
+      "h_index": 76,
+      "i10_index": 210,
+      "works_count": 474,
+      "cited_by_count": 20884,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5003599781",
+      "display_name": "Hiroki R. Ueda",
+      "orcid": "https://orcid.org/0000-0001-8342-9176",
+      "h_index": 76,
+      "i10_index": 166,
+      "works_count": 371,
+      "cited_by_count": 26870,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5017567018",
+      "display_name": "Gary J. Schwartz",
+      "orcid": "https://orcid.org/0000-0003-0446-5553",
+      "h_index": 76,
+      "i10_index": 165,
+      "works_count": 228,
+      "cited_by_count": 20815,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5007805428",
+      "display_name": "Kamal Rahmouni",
+      "orcid": "https://orcid.org/0000-0001-5136-6748",
+      "h_index": 76,
+      "i10_index": 165,
+      "works_count": 400,
+      "cited_by_count": 19834,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5082495534",
+      "display_name": "Shigenobu Shibata",
+      "orcid": "https://orcid.org/0000-0002-6177-1963",
+      "h_index": 75,
+      "i10_index": 286,
+      "works_count": 521,
+      "cited_by_count": 19195,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5030462166",
+      "display_name": "Karl‐Heinz Herzig",
+      "orcid": "https://orcid.org/0000-0003-4460-2604",
+      "h_index": 75,
+      "i10_index": 285,
+      "works_count": 494,
+      "cited_by_count": 27514,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Endocrine and Autonomic Systems -- 9.2",
+      "id": "https://openalex.org/A5069304796",
+      "display_name": "Hannah C. Kinney",
+      "orcid": "https://orcid.org/0000-0001-5199-279X",
+      "h_index": 75,
+      "i10_index": 188,
+      "works_count": 277,
+      "cited_by_count": 20966,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5055701866",
+      "display_name": "Russell D. Fernald",
+      "orcid": "https://orcid.org/0000-0003-3648-1742",
+      "h_index": 75,
+      "i10_index": 186,
+      "works_count": 278,
+      "cited_by_count": 19729,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5061035625",
+      "display_name": "Steven A. Shea",
+      "orcid": "https://orcid.org/0000-0003-1949-0954",
+      "h_index": 75,
+      "i10_index": 165,
+      "works_count": 278,
+      "cited_by_count": 20469,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5111663231",
+      "display_name": "Markus Heinrichs",
+      "orcid": "https://orcid.org/0000-0001-5662-0266",
+      "h_index": 75,
+      "i10_index": 163,
+      "works_count": 266,
+      "cited_by_count": 35071,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5062031732",
+      "display_name": "Marc L. Reitman",
+      "orcid": "https://orcid.org/0000-0002-0426-9475",
+      "h_index": 75,
+      "i10_index": 156,
+      "works_count": 213,
+      "cited_by_count": 31071,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5045551755",
+      "display_name": "Ruth L. Stornetta",
+      "orcid": "https://orcid.org/0000-0001-7278-8923",
+      "h_index": 75,
+      "i10_index": 128,
+      "works_count": 172,
+      "cited_by_count": 15347,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5088883400",
+      "display_name": "Dunxian X Tan",
+      "orcid": "https://orcid.org/0000-0001-7838-4639",
+      "h_index": 75,
+      "i10_index": 112,
+      "works_count": 133,
+      "cited_by_count": 25339,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5101610828",
+      "display_name": "Hiroyuki Shimizu",
+      "orcid": "https://orcid.org/0000-0002-5926-2713",
+      "h_index": 74,
+      "i10_index": 312,
+      "works_count": 612,
+      "cited_by_count": 23193,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5024707820",
+      "display_name": "Gabriel George Haddad",
+      "orcid": "https://orcid.org/0000-0001-9043-3245",
+      "h_index": 74,
+      "i10_index": 270,
+      "works_count": 407,
+      "cited_by_count": 20403,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5082727375",
+      "display_name": "Hiroshi Hosoda",
+      "orcid": "https://orcid.org/0000-0002-5215-551X",
+      "h_index": 74,
+      "i10_index": 216,
+      "works_count": 451,
+      "cited_by_count": 34973,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5061965891",
+      "display_name": "Kerstin Uvnäs‐Moberg",
+      "orcid": "https://orcid.org/0000-0003-4902-839X",
+      "h_index": 74,
+      "i10_index": 203,
+      "works_count": 276,
+      "cited_by_count": 19403,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Endocrine and Autonomic Systems -- 9.1",
+      "id": "https://openalex.org/A5034115336",
+      "display_name": "Rüdiger Hardeland",
+      "orcid": "https://orcid.org/0000-0003-0178-6378",
+      "h_index": 74,
+      "i10_index": 202,
+      "works_count": 328,
+      "cited_by_count": 23789,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Endocrine and Autonomic Systems -- 9.0",
+      "id": "https://openalex.org/A5026475727",
+      "display_name": "Thomas A. Wehr",
+      "orcid": "https://orcid.org/0000-0002-4559-9964",
+      "h_index": 74,
+      "i10_index": 143,
+      "works_count": 190,
+      "cited_by_count": 17824,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Endocrine and Autonomic Systems -- 9.0",
+      "id": "https://openalex.org/A5026653338",
+      "display_name": "Geert J. De Vries",
+      "orcid": "https://orcid.org/0000-0002-1263-3775",
+      "h_index": 74,
+      "i10_index": 135,
+      "works_count": 165,
+      "cited_by_count": 20482,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Endocrine and Autonomic Systems -- 9.0",
+      "id": "https://openalex.org/A5110036109",
+      "display_name": "Dun‐Xian Tan",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 109,
+      "works_count": 113,
+      "cited_by_count": 24307,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Endocrine and Autonomic Systems -- 9.0",
+      "id": "https://openalex.org/A5069225603",
+      "display_name": "Nicholas Mrosovsky",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 182,
+      "works_count": 265,
+      "cited_by_count": 16894,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Environmental Science",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Endocrine and Autonomic Systems -- 9.0",
+      "id": "https://openalex.org/A5007383535",
+      "display_name": "Germaine Escames",
+      "orcid": "https://orcid.org/0000-0003-1256-7656",
+      "h_index": 73,
+      "i10_index": 178,
+      "works_count": 224,
+      "cited_by_count": 16836,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5016431924",
+      "display_name": "Harvey J. Grill",
+      "orcid": "https://orcid.org/0000-0003-3290-3784",
+      "h_index": 73,
+      "i10_index": 166,
+      "works_count": 205,
+      "cited_by_count": 24227,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5070571965",
+      "display_name": "David R. Weaver",
+      "orcid": "https://orcid.org/0000-0001-7941-6719",
+      "h_index": 73,
+      "i10_index": 120,
+      "works_count": 160,
+      "cited_by_count": 33677,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5062108130",
+      "display_name": "Gerald Harvey Anderson",
+      "orcid": "https://orcid.org/0000-0001-9613-6225",
+      "h_index": 72,
+      "i10_index": 261,
+      "works_count": 437,
+      "cited_by_count": 17897,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5014317730",
+      "display_name": "Elizabeth Susan Maywood",
+      "orcid": "https://orcid.org/0000-0002-4557-9955",
+      "h_index": 72,
+      "i10_index": 118,
+      "works_count": 138,
+      "cited_by_count": 24257,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5103089991",
+      "display_name": "Michael W. Young",
+      "orcid": "https://orcid.org/0000-0002-9726-2247",
+      "h_index": 72,
+      "i10_index": 110,
+      "works_count": 143,
+      "cited_by_count": 22950,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5102776375",
+      "display_name": "Wolfgang Langhans",
+      "orcid": "https://orcid.org/0000-0001-9742-0068",
+      "h_index": 71,
+      "i10_index": 242,
+      "works_count": 413,
+      "cited_by_count": 18300,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5090443782",
+      "display_name": "Joe Herbert",
+      "orcid": "https://orcid.org/0000-0001-8388-6465",
+      "h_index": 71,
+      "i10_index": 200,
+      "works_count": 299,
+      "cited_by_count": 19504,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5004145141",
+      "display_name": "Urs Albrecht",
+      "orcid": "https://orcid.org/0000-0002-0663-8676",
+      "h_index": 71,
+      "i10_index": 141,
+      "works_count": 265,
+      "cited_by_count": 28549,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5111679007",
+      "display_name": "Lucien C. Manchester",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 105,
+      "works_count": 117,
+      "cited_by_count": 25031,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5014137251",
+      "display_name": "Thomas A. Lutz",
+      "orcid": "https://orcid.org/0000-0002-5056-8548",
+      "h_index": 70,
+      "i10_index": 251,
+      "works_count": 452,
+      "cited_by_count": 15722,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5091040652",
+      "display_name": "Barry E. Levin",
+      "orcid": "https://orcid.org/0000-0003-0486-3631",
+      "h_index": 70,
+      "i10_index": 212,
+      "works_count": 263,
+      "cited_by_count": 19282,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Endocrine and Autonomic Systems -- 8.9",
+      "id": "https://openalex.org/A5014701559",
+      "display_name": "Rae Silver",
+      "orcid": "https://orcid.org/0000-0001-8633-739X",
+      "h_index": 70,
+      "i10_index": 192,
+      "works_count": 287,
+      "cited_by_count": 16650,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5013369091",
+      "display_name": "Timothy J. Bartness",
+      "orcid": "https://orcid.org/0000-0001-8246-6530",
+      "h_index": 70,
+      "i10_index": 179,
+      "works_count": 221,
+      "cited_by_count": 15848,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5073661592",
+      "display_name": "Michael N. Lehman",
+      "orcid": "https://orcid.org/0000-0002-9076-5108",
+      "h_index": 70,
+      "i10_index": 174,
+      "works_count": 240,
+      "cited_by_count": 17243,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5091504821",
+      "display_name": "Marta Garaulet",
+      "orcid": "https://orcid.org/0000-0002-4066-3509",
+      "h_index": 70,
+      "i10_index": 172,
+      "works_count": 257,
+      "cited_by_count": 16516,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5109958561",
+      "display_name": "Amanda Sainsbury",
+      "orcid": "https://orcid.org/0000-0001-9176-1574",
+      "h_index": 70,
+      "i10_index": 167,
+      "works_count": 262,
+      "cited_by_count": 16034,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5110889765",
+      "display_name": "Diethelm Wolfgang Richter",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 155,
+      "works_count": 208,
+      "cited_by_count": 15863,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5010897454",
+      "display_name": "Akio Inui",
+      "orcid": "https://orcid.org/0000-0002-9028-2480",
+      "h_index": 69,
+      "i10_index": 257,
+      "works_count": 477,
+      "cited_by_count": 20622,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5010756785",
+      "display_name": "Jan‐Marino Ramirez",
+      "orcid": "https://orcid.org/0000-0002-5626-3999",
+      "h_index": 69,
+      "i10_index": 184,
+      "works_count": 413,
+      "cited_by_count": 15971,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5112249552",
+      "display_name": "Boris B. Gorzalka",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 174,
+      "works_count": 216,
+      "cited_by_count": 14798,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5108619646",
+      "display_name": "Gloria E. Hoffman",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 147,
+      "works_count": 183,
+      "cited_by_count": 15938,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5017730925",
+      "display_name": "Juan Miguel Guerrero",
+      "orcid": "https://orcid.org/0000-0001-7553-0119",
+      "h_index": 68,
+      "i10_index": 201,
+      "works_count": 306,
+      "cited_by_count": 17076,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5002394730",
+      "display_name": "Edward M. Stricker",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 192,
+      "works_count": 271,
+      "cited_by_count": 14364,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5042566768",
+      "display_name": "Emilie F. Rissman",
+      "orcid": "https://orcid.org/0000-0002-1371-4876",
+      "h_index": 68,
+      "i10_index": 170,
+      "works_count": 230,
+      "cited_by_count": 14983,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5080420621",
+      "display_name": "Charlotte Helfrich‐Förster",
+      "orcid": "https://orcid.org/0000-0002-0859-9092",
+      "h_index": 68,
+      "i10_index": 161,
+      "works_count": 236,
+      "cited_by_count": 15488,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5109548097",
+      "display_name": "Denis G. Baskin",
+      "orcid": "https://orcid.org/0000-0001-8468-3352",
+      "h_index": 68,
+      "i10_index": 115,
+      "works_count": 145,
+      "cited_by_count": 28390,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5080350890",
+      "display_name": "Richard E. Brown",
+      "orcid": "https://orcid.org/0000-0002-4762-8175",
+      "h_index": 67,
+      "i10_index": 225,
+      "works_count": 353,
+      "cited_by_count": 14514,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5047874096",
+      "display_name": "Gareth Leng",
+      "orcid": "https://orcid.org/0000-0002-2388-8466",
+      "h_index": 67,
+      "i10_index": 211,
+      "works_count": 380,
+      "cited_by_count": 16436,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5019542047",
+      "display_name": "Juan Antonio Madrid",
+      "orcid": "https://orcid.org/0000-0002-9286-1371",
+      "h_index": 67,
+      "i10_index": 200,
+      "works_count": 325,
+      "cited_by_count": 14032,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Agricultural and Biological Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5041844648",
+      "display_name": "Andrew S. I. Loudon",
+      "orcid": "https://orcid.org/0000-0003-3648-445X",
+      "h_index": 67,
+      "i10_index": 167,
+      "works_count": 307,
+      "cited_by_count": 17512,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5068748727",
+      "display_name": "Donald A. Morgan",
+      "orcid": "https://orcid.org/0000-0003-3167-1643",
+      "h_index": 67,
+      "i10_index": 138,
+      "works_count": 256,
+      "cited_by_count": 16614,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5066893639",
+      "display_name": "Streamson C. Chua",
+      "orcid": "https://orcid.org/0000-0002-9437-9925",
+      "h_index": 67,
+      "i10_index": 131,
+      "works_count": 173,
+      "cited_by_count": 20270,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5058586273",
+      "display_name": "James K. Rilling",
+      "orcid": "https://orcid.org/0000-0003-4430-1377",
+      "h_index": 67,
+      "i10_index": 104,
+      "works_count": 202,
+      "cited_by_count": 23658,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Agricultural and Biological Sciences",
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Endocrine and Autonomic Systems -- 8.8",
+      "id": "https://openalex.org/A5078251094",
+      "display_name": "Franz Halberg",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 504,
+      "works_count": 1488,
+      "cited_by_count": 26008,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5025295787",
+      "display_name": "David Booth",
+      "orcid": "https://orcid.org/0000-0002-3032-3711",
+      "h_index": 66,
+      "i10_index": 257,
+      "works_count": 597,
+      "cited_by_count": 15601,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Psychology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5014900608",
+      "display_name": "Gregory M. Brown",
+      "orcid": "https://orcid.org/0000-0003-3222-9013",
+      "h_index": 66,
+      "i10_index": 203,
+      "works_count": 322,
+      "cited_by_count": 15401,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5089676982",
+      "display_name": "Sato Honma",
+      "orcid": "https://orcid.org/0000-0003-2874-0732",
+      "h_index": 66,
+      "i10_index": 193,
+      "works_count": 345,
+      "cited_by_count": 13495,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5037757661",
+      "display_name": "Ken‐ichi Honma",
+      "orcid": "https://orcid.org/0000-0003-0552-5511",
+      "h_index": 66,
+      "i10_index": 177,
+      "works_count": 318,
+      "cited_by_count": 12678,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5047336215",
+      "display_name": "Kevin L. Grove",
+      "orcid": "https://orcid.org/0000-0001-5863-3378",
+      "h_index": 66,
+      "i10_index": 142,
+      "works_count": 240,
+      "cited_by_count": 17547,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5024240048",
+      "display_name": "Vsevolod Y. Polotsky",
+      "orcid": "https://orcid.org/0000-0002-2951-7535",
+      "h_index": 66,
+      "i10_index": 140,
+      "works_count": 307,
+      "cited_by_count": 16380,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5055088441",
+      "display_name": "Suzanne Lee Dickson",
+      "orcid": "https://orcid.org/0000-0002-3822-5294",
+      "h_index": 66,
+      "i10_index": 136,
+      "works_count": 242,
+      "cited_by_count": 17581,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5049650244",
+      "display_name": "Vincent du Vigneaud",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 296,
+      "works_count": 385,
+      "cited_by_count": 16634,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5021383328",
+      "display_name": "Jean Albert Boutin",
+      "orcid": "https://orcid.org/0000-0003-0068-7204",
+      "h_index": 65,
+      "i10_index": 244,
+      "works_count": 382,
+      "cited_by_count": 15038,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5006590266",
+      "display_name": "Horst‐Werner Korf",
+      "orcid": "https://orcid.org/0000-0002-5051-0303",
+      "h_index": 65,
+      "i10_index": 234,
+      "works_count": 364,
+      "cited_by_count": 14693,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5109902023",
+      "display_name": "Michael Joseph McKinley",
+      "orcid": "https://orcid.org/0000-0001-6590-8720",
+      "h_index": 65,
+      "i10_index": 221,
+      "works_count": 370,
+      "cited_by_count": 14580,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5070275934",
+      "display_name": "Michael H. Smolensky",
+      "orcid": "https://orcid.org/0000-0002-9184-0739",
+      "h_index": 65,
+      "i10_index": 202,
+      "works_count": 365,
+      "cited_by_count": 16767,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5017132742",
+      "display_name": "Michael J. Baum",
+      "orcid": "https://orcid.org/0000-0003-3066-437X",
+      "h_index": 65,
+      "i10_index": 191,
+      "works_count": 251,
+      "cited_by_count": 12325,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5013981637",
+      "display_name": "Graham Finlayson",
+      "orcid": "https://orcid.org/0000-0002-5620-2256",
+      "h_index": 65,
+      "i10_index": 186,
+      "works_count": 364,
+      "cited_by_count": 15840,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Nursing",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5013110682",
+      "display_name": "David Ross Grattan",
+      "orcid": "https://orcid.org/0000-0001-5606-2559",
+      "h_index": 65,
+      "i10_index": 176,
+      "works_count": 265,
+      "cited_by_count": 12266,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5014620806",
+      "display_name": "Charalambos Panayiotis Kyriacou",
+      "orcid": "https://orcid.org/0000-0003-4889-7606",
+      "h_index": 65,
+      "i10_index": 159,
+      "works_count": 314,
+      "cited_by_count": 15382,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5112408518",
+      "display_name": "Philip Just Larsen",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 155,
+      "works_count": 190,
+      "cited_by_count": 15070,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5000850327",
+      "display_name": "Daniel L. Marks",
+      "orcid": "https://orcid.org/0000-0003-2675-7047",
+      "h_index": 65,
+      "i10_index": 146,
+      "works_count": 205,
+      "cited_by_count": 16367,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5101849770",
+      "display_name": "Ying‐Hui Fu",
+      "orcid": "https://orcid.org/0000-0002-6628-0266",
+      "h_index": 65,
+      "i10_index": 122,
+      "works_count": 189,
+      "cited_by_count": 31435,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5051739908",
+      "display_name": "Robert D. Levitan",
+      "orcid": "https://orcid.org/0000-0003-1306-3847",
+      "h_index": 64,
+      "i10_index": 157,
+      "works_count": 237,
+      "cited_by_count": 14464,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5012212068",
+      "display_name": "Christopher Scott Colwell",
+      "orcid": "https://orcid.org/0000-0002-1059-184X",
+      "h_index": 64,
+      "i10_index": 155,
+      "works_count": 220,
+      "cited_by_count": 13315,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Endocrine and Autonomic Systems -- 8.7",
+      "id": "https://openalex.org/A5015218199",
+      "display_name": "Kevin G. Murphy",
+      "orcid": "https://orcid.org/0000-0002-3417-0310",
+      "h_index": 64,
+      "i10_index": 146,
+      "works_count": 312,
+      "cited_by_count": 21425,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Endocrine and Autonomic Systems -- 8.6",
+      "id": "https://openalex.org/A5082571512",
+      "display_name": "Manfred Hallschmid",
+      "orcid": "https://orcid.org/0000-0002-0352-1106",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 256,
+      "cited_by_count": 14645,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Endocrine and Autonomic Systems -- 8.6",
+      "id": "https://openalex.org/A5027823044",
+      "display_name": "Dana Melanie Small",
+      "orcid": "https://orcid.org/0000-0001-7363-1100",
+      "h_index": 64,
+      "i10_index": 118,
+      "works_count": 168,
+      "cited_by_count": 18244,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Endocrine and Autonomic Systems -- 8.6",
+      "id": "https://openalex.org/A5110452455",
+      "display_name": "Stephen C. Benoit",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 118,
+      "works_count": 171,
+      "cited_by_count": 14938,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Endocrine and Autonomic Systems -- 8.6",
+      "id": "https://openalex.org/A5044194553",
+      "display_name": "Richard B. Simerly",
+      "orcid": "https://orcid.org/0000-0001-5840-0152",
+      "h_index": 64,
+      "i10_index": 92,
+      "works_count": 125,
+      "cited_by_count": 21574,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Endocrine and Autonomic Systems -- 8.6",
+      "id": "https://openalex.org/A5074777419",
+      "display_name": "Clifton A. Baile",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 257,
+      "works_count": 353,
+      "cited_by_count": 15461,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Endocrine and Autonomic Systems -- 8.6",
+      "id": "https://openalex.org/A5048566015",
+      "display_name": "Henrik Oster",
+      "orcid": "https://orcid.org/0000-0002-1414-7068",
+      "h_index": 63,
+      "i10_index": 159,
+      "works_count": 303,
+      "cited_by_count": 13698,
+      "discipline": "Endocrine and Autonomic Systems",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Endocrine and Autonomic Systems",
+      "fields": [
+        "Neuroscience",
+        "Psychology"
+      ]
+    }
+  ]
+}
