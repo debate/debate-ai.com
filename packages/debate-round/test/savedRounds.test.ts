@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { deriveRoundLabel, hasRoundSaveConflict, isValidRound } from "../src/state/savedRounds";
+import {
+  deriveRoundLabel,
+  hasRoundSaveConflict,
+  isValidRound,
+  planSavedRoundFlowRemoval,
+  readSavedRoundFlowIds,
+} from "../src/state/savedRounds";
 import type { Round } from "../src/types/flow";
 
 function makeRound(overrides: Partial<Round> = {}): Round {
@@ -156,5 +162,43 @@ describe("hasRoundSaveConflict", () => {
   it("conflicts when a row exists but the caller has no baseline (null or undefined)", () => {
     expect(hasRoundSaveConflict("2024-01-01T00:00:00.000Z", null)).toBe(true);
     expect(hasRoundSaveConflict("2024-01-01T00:00:00.000Z", undefined)).toBe(true);
+  });
+});
+
+describe("readSavedRoundFlowIds", () => {
+  it("reads a round's integer flow ids, once each, in order", () => {
+    expect(readSavedRoundFlowIds(makeRound({ flowIds: [3, 1, 3, 2] }))).toEqual([3, 1, 2]);
+  });
+
+  it("drops non-integer ids and reads flowIds from a row that isn't a valid round", () => {
+    expect(readSavedRoundFlowIds({ flowIds: [1, "2", 2.5, null, 4] })).toEqual([1, 4]);
+  });
+
+  it("answers [] for anything without a flowIds array", () => {
+    for (const value of [null, undefined, 5, "x", [], {}, { flowIds: "1,2" }]) {
+      expect(readSavedRoundFlowIds(value)).toEqual([]);
+    }
+  });
+});
+
+describe("planSavedRoundFlowRemoval", () => {
+  it("removes every flow when no other round uses them", () => {
+    expect(planSavedRoundFlowRemoval([1, 2], [])).toEqual({ remove: [1, 2], kept: [] });
+  });
+
+  it("keeps a flow another saved round points at", () => {
+    expect(planSavedRoundFlowRemoval([1, 2, 3], [[9], [2, 8], [3]])).toEqual({ remove: [1], kept: [2, 3] });
+  });
+
+  it("drops repeats and never mutates its inputs", () => {
+    const round = [1, 1, 2];
+    const others = [[2]];
+    expect(planSavedRoundFlowRemoval(round, others)).toEqual({ remove: [1], kept: [2] });
+    expect(round).toEqual([1, 1, 2]);
+    expect(others).toEqual([[2]]);
+  });
+
+  it("answers empty lists for a round with no flows", () => {
+    expect(planSavedRoundFlowRemoval([], [[1]])).toEqual({ remove: [], kept: [] });
   });
 });
