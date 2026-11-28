@@ -14,37 +14,18 @@ import { ElimBracket } from "./ElimBracket";
 /** The emblem in the top-right corner of a round's pairings. */
 export const PAIRINGS_EMBLEM = "https://i.imgur.com/ejU0Qon.png";
 
-/** A quote and its source line. */
+/** A quote and the footnote shown beneath it. */
 export interface Quote {
   text: string;
   source: string;
 }
 
-/** The quote the emblem shows as its tooltip and at the top of its dialog. */
+/** The passage the emblem shows as its tooltip and in its dialog. */
 export const PANOPTICON_QUOTE: Quote = {
-  text: "“Panopticon, subtly arranged so that an observer may observe, at a glance, so many different individuals, also enables everyone to come and observe any of the observers.”",
-  source: "— Michel Foucault, Discipline and Punish, translated by Alan Sheridan, “Panopticism,” p. 207.",
+  text: `"He who is subjected to a field of visibility, and who knows it, assumes responsibility for the constraints . . . . Panopticon, subtly arranged so that an observer may observe, at a glance, so many different individuals, also enables everyone to come and observe any of the observers. . . . It has become a transparent building in which the exercise of power may be supervised by society as a whole. . . . The disciplinary mechanism will be democratically controlled, since it will be constantly accessible 'to the great tribunal committee of the world'. . . . Its aim is to strengthen the social forces—to increase production, to develop the economy, spread education, raise the level of public morality; to increase and multiply."¹`,
+  source: `Note
+1. Michel Foucault, Discipline and Punish: The Birth of the Prison, trans. Alan Sheridan (New York: Vintage Books, 1995), 202–3, 207–8. The phrase "to the great tribunal committee of the world" is quoted from Jeremy Bentham.`,
 };
-
-/** Related passages listed under the main quote in the emblem's dialog. */
-export const PANOPTICON_RELATED: Quote[] = [
-  {
-    text: "“It has become a transparent building in which the exercise of power may be supervised by society as a whole.”",
-    source: "— Foucault, Discipline and Punish, p. 207.",
-  },
-  {
-    text: "“The disciplinary mechanism will be democratically controlled, since it will be constantly accessible ‘to the great tribunal committee of the world’.”",
-    source: "— Foucault, Discipline and Punish, p. 207; the embedded phrase comes from Bentham.",
-  },
-  {
-    text: "“Its aim is to strengthen the social forces—to increase production, to develop the economy, spread education, raise the level of public morality; to increase and multiply.”",
-    source: "— Foucault, Discipline and Punish, pp. 207–208.",
-  },
-  {
-    text: "He who is subjected to a field of visibility, and who knows it, assumes responsibility for the constraints",
-    source: "",
-  },
-];
 
 /** One round's pairings: rooms, entries (sides or speaker order) and judges. */
 export function RoundPage({ tournId, eventAbbr, roundName }: { tournId: number; eventAbbr: string; roundName: string }) {
@@ -120,18 +101,8 @@ export function PairingsEmblem() {
             <img src={PAIRINGS_EMBLEM} alt="" width={80} height={80} className="mx-auto size-20 rounded-full" />
             <figure className="space-y-2">
               <blockquote className="text-base italic leading-relaxed">{PANOPTICON_QUOTE.text}</blockquote>
-              <figcaption className="text-sm text-muted-foreground">{PANOPTICON_QUOTE.source}</figcaption>
+              <figcaption className="whitespace-pre-line text-sm text-muted-foreground">{PANOPTICON_QUOTE.source}</figcaption>
             </figure>
-            <ul className="space-y-4 border-t pt-4">
-              {PANOPTICON_RELATED.map((quote) => (
-                <li key={quote.text}>
-                  <figure className="space-y-1">
-                    <blockquote className="text-sm italic leading-relaxed">{quote.text}</blockquote>
-                    <figcaption className="text-xs text-muted-foreground">{quote.source}</figcaption>
-                  </figure>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       )}
