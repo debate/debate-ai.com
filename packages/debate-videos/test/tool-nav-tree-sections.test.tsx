@@ -182,6 +182,22 @@ describe("Learning links", () => {
   });
 });
 
+describe("the Research section", () => {
+  it("ends with Coach Workspace and News & Forums, which no other section lists", async () => {
+    const { SIDEBAR_TOOL_SECTIONS, RESEARCH_SECTION_ID } = await import(
+      "../src/components/navigation/sidebar-nav/sidebar-tool-sections"
+    );
+    const research = SIDEBAR_TOOL_SECTIONS.find((entry) => entry.id === RESEARCH_SECTION_ID);
+    expect(research?.tools.slice(-2).map((tool) => [tool.href, tool.title])).toEqual([
+      ["/coaching", "Coach Workspace"],
+      ["/news", "News & Forums"],
+    ]);
+    for (const section of SIDEBAR_TOOL_SECTIONS.filter((entry) => entry.id !== RESEARCH_SECTION_ID)) {
+      expect(section.tools.some((tool) => ["/coaching", "/news"].includes(tool.href))).toBe(false);
+    }
+  });
+});
+
 describe("the Debates section", () => {
   it("is the renamed Coaching section (titled Debates), with the merged Practice debates row after Tournaments", async () => {
     const { SIDEBAR_TOOL_SECTIONS, PRACTICE_DEBATES_SECTION_ID } = await import(

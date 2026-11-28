@@ -110,8 +110,8 @@ export const RESEARCH_SECTION_ID = "research";
 
 /**
  * Id of the Practice Debates section (formerly Coaching): the Practice Debates
- * page (Online Challenges, Practice Drills and Practice Partners), Tournaments,
- * the Coach Workspace and News & Forums.
+ * page (Online Challenges, Practice Drills and Practice Partners) and
+ * Tournaments.
  */
 export const PRACTICE_DEBATES_SECTION_ID = "coaching";
 
@@ -132,6 +132,13 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       // Pre-Round Briefings, Scout-to-Strategy, Opponent Team Profiles, Judge
       // Profiles, Prep Notes and Debater Stats, one tab each.
       { href: "/practice/prep", title: "Prep Workspace", icon: ClipboardList },
+      // Coach Workspace, AI Coach Mode, Coaching Programs, Team Calendar, Coach
+      // Materials and the Laptop-less Debating guide, one tab each.
+      { href: "/coaching", title: "Coach Workspace", icon: Presentation },
+      // The community's news feed and forums, one tabbed page. Forum threads
+      // keep their `/practice/forums/<id>` addresses, so that prefix is this
+      // row's too.
+      { href: "/news", title: "News & Forums", icon: Rss, aliases: ["/practice/forums"] },
     ],
   },
   {
