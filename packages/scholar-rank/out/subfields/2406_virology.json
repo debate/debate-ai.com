@@ -1,0 +1,3933 @@
+{
+  "kind": "subfield",
+  "id": 2406,
+  "name": "Virology",
+  "total_in_scrape": 199,
+  "count": 199,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Virology -- 9.9",
+      "id": "https://openalex.org/A5031736334",
+      "display_name": "Anthony S. Fauci",
+      "orcid": "https://orcid.org/0000-0002-7865-7235",
+      "h_index": 211,
+      "i10_index": 913,
+      "works_count": 1205,
+      "cited_by_count": 171916,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Virology -- 9.9",
+      "id": "https://openalex.org/A5006749029",
+      "display_name": "Robert C. Gallo",
+      "orcid": "https://orcid.org/0000-0002-3797-7910",
+      "h_index": 175,
+      "i10_index": 815,
+      "works_count": 1321,
+      "cited_by_count": 133373,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Virology -- 9.9",
+      "id": "https://openalex.org/A5016518899",
+      "display_name": "Bruce D. Walker",
+      "orcid": "https://orcid.org/0000-0001-6122-9245",
+      "h_index": 169,
+      "i10_index": 622,
+      "works_count": 1027,
+      "cited_by_count": 105616,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Virology -- 9.9",
+      "id": "https://openalex.org/A5051827275",
+      "display_name": "Barton F. Haynes",
+      "orcid": "https://orcid.org/0000-0002-7643-9023",
+      "h_index": 161,
+      "i10_index": 711,
+      "works_count": 1072,
+      "cited_by_count": 100380,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Virology -- 9.9",
+      "id": "https://openalex.org/A5035265346",
+      "display_name": "Bernard Moss",
+      "orcid": "https://orcid.org/0000-0002-2154-8564",
+      "h_index": 153,
+      "i10_index": 742,
+      "works_count": 900,
+      "cited_by_count": 84094,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Virology -- 9.9",
+      "id": "https://openalex.org/A5043461622",
+      "display_name": "Beatrice H. Hahn",
+      "orcid": "https://orcid.org/0000-0002-9400-9887",
+      "h_index": 145,
+      "i10_index": 436,
+      "works_count": 633,
+      "cited_by_count": 88360,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5071476197",
+      "display_name": "Joseph Sodroski",
+      "orcid": "https://orcid.org/0000-0002-9750-1615",
+      "h_index": 144,
+      "i10_index": 459,
+      "works_count": 645,
+      "cited_by_count": 85641,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5061211279",
+      "display_name": "Gary J. Nabel",
+      "orcid": "https://orcid.org/0000-0003-0619-4419",
+      "h_index": 143,
+      "i10_index": 412,
+      "works_count": 615,
+      "cited_by_count": 69573,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5020230187",
+      "display_name": "Richard A. Koup",
+      "orcid": "https://orcid.org/0000-0002-3090-7282",
+      "h_index": 136,
+      "i10_index": 392,
+      "works_count": 527,
+      "cited_by_count": 76151,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5014091726",
+      "display_name": "George M. Shaw",
+      "orcid": "https://orcid.org/0000-0002-2338-4532",
+      "h_index": 133,
+      "i10_index": 313,
+      "works_count": 468,
+      "cited_by_count": 72136,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5045067166",
+      "display_name": "Bryan R. Cullen",
+      "orcid": "https://orcid.org/0000-0002-8638-6850",
+      "h_index": 131,
+      "i10_index": 315,
+      "works_count": 388,
+      "cited_by_count": 59546,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5043677118",
+      "display_name": "Peter D. Kwong",
+      "orcid": "https://orcid.org/0000-0003-3560-232X",
+      "h_index": 125,
+      "i10_index": 405,
+      "works_count": 1101,
+      "cited_by_count": 74172,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5054247332",
+      "display_name": "Dan H. Barouch",
+      "orcid": "https://orcid.org/0000-0001-5127-4659",
+      "h_index": 124,
+      "i10_index": 427,
+      "works_count": 652,
+      "cited_by_count": 64678,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5021532425",
+      "display_name": "Robin A. Weiss",
+      "orcid": "https://orcid.org/0000-0003-3008-7218",
+      "h_index": 120,
+      "i10_index": 355,
+      "works_count": 662,
+      "cited_by_count": 53964,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5109872740",
+      "display_name": "Jaap Goudsmit",
+      "orcid": null,
+      "h_index": 118,
+      "i10_index": 462,
+      "works_count": 773,
+      "cited_by_count": 47591,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5043225490",
+      "display_name": "Jeffrey D. Lifson",
+      "orcid": "https://orcid.org/0000-0002-9494-0268",
+      "h_index": 118,
+      "i10_index": 429,
+      "works_count": 648,
+      "cited_by_count": 55136,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Virology -- 9.8",
+      "id": "https://openalex.org/A5110411605",
+      "display_name": "Robert W. Doms",
+      "orcid": null,
+      "h_index": 117,
+      "i10_index": 241,
+      "works_count": 312,
+      "cited_by_count": 44257,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5079324608",
+      "display_name": "Robert F. Siliciano",
+      "orcid": "https://orcid.org/0000-0002-1764-1993",
+      "h_index": 116,
+      "i10_index": 321,
+      "works_count": 474,
+      "cited_by_count": 52520,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5058974129",
+      "display_name": "Howard Eliot Gendelman",
+      "orcid": "https://orcid.org/0000-0002-7831-0370",
+      "h_index": 115,
+      "i10_index": 456,
+      "works_count": 674,
+      "cited_by_count": 50937,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Neuroscience",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5006019718",
+      "display_name": "Matthew B. Sullivan",
+      "orcid": "https://orcid.org/0000-0001-8398-8234",
+      "h_index": 114,
+      "i10_index": 238,
+      "works_count": 621,
+      "cited_by_count": 59921,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5028336562",
+      "display_name": "James I. Mullins",
+      "orcid": "https://orcid.org/0000-0002-4461-8158",
+      "h_index": 108,
+      "i10_index": 355,
+      "works_count": 526,
+      "cited_by_count": 38313,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5011044102",
+      "display_name": "Stephen P. Goff",
+      "orcid": "https://orcid.org/0000-0002-9679-0582",
+      "h_index": 108,
+      "i10_index": 324,
+      "works_count": 448,
+      "cited_by_count": 40091,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5069534962",
+      "display_name": "Mario Clerici",
+      "orcid": "https://orcid.org/0000-0001-5920-6191",
+      "h_index": 104,
+      "i10_index": 576,
+      "works_count": 949,
+      "cited_by_count": 46126,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5023619971",
+      "display_name": "Bernard La Scola",
+      "orcid": "https://orcid.org/0000-0001-8006-7704",
+      "h_index": 104,
+      "i10_index": 420,
+      "works_count": 697,
+      "cited_by_count": 48322,
+      "discipline": "Virology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5045361160",
+      "display_name": "Flossie Wong‐Staal",
+      "orcid": null,
+      "h_index": 104,
+      "i10_index": 297,
+      "works_count": 429,
+      "cited_by_count": 44995,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5070872457",
+      "display_name": "Geoffrey L. Smith",
+      "orcid": "https://orcid.org/0000-0002-3730-9955",
+      "h_index": 104,
+      "i10_index": 290,
+      "works_count": 459,
+      "cited_by_count": 34295,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5085788179",
+      "display_name": "James J. Goedert",
+      "orcid": "https://orcid.org/0000-0001-6134-1472",
+      "h_index": 102,
+      "i10_index": 330,
+      "works_count": 497,
+      "cited_by_count": 47956,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Virology -- 9.7",
+      "id": "https://openalex.org/A5065227576",
+      "display_name": "John M. Coffin",
+      "orcid": "https://orcid.org/0000-0003-3856-762X",
+      "h_index": 101,
+      "i10_index": 272,
+      "works_count": 455,
+      "cited_by_count": 36597,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5111596000",
+      "display_name": "J M McCune",
+      "orcid": "https://orcid.org/0000-0002-9388-070X",
+      "h_index": 101,
+      "i10_index": 233,
+      "works_count": 321,
+      "cited_by_count": 34788,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5029140036",
+      "display_name": "William A. Haseltine",
+      "orcid": "https://orcid.org/0000-0003-1567-3702",
+      "h_index": 101,
+      "i10_index": 231,
+      "works_count": 394,
+      "cited_by_count": 40742,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5053636210",
+      "display_name": "Paul D. Bieniasz",
+      "orcid": "https://orcid.org/0000-0002-2368-3719",
+      "h_index": 101,
+      "i10_index": 210,
+      "works_count": 311,
+      "cited_by_count": 44714,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5019287445",
+      "display_name": "Ben Berkhout",
+      "orcid": "https://orcid.org/0000-0002-1905-8486",
+      "h_index": 100,
+      "i10_index": 481,
+      "works_count": 736,
+      "cited_by_count": 44704,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5024024043",
+      "display_name": "David J. Venzon",
+      "orcid": "https://orcid.org/0000-0002-8990-158X",
+      "h_index": 100,
+      "i10_index": 375,
+      "works_count": 530,
+      "cited_by_count": 32971,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5064400315",
+      "display_name": "Graham F. Hatfull",
+      "orcid": "https://orcid.org/0000-0002-6705-6821",
+      "h_index": 100,
+      "i10_index": 266,
+      "works_count": 524,
+      "cited_by_count": 37201,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5012181714",
+      "display_name": "Charles E. Rupprecht",
+      "orcid": "https://orcid.org/0000-0002-8010-0743",
+      "h_index": 99,
+      "i10_index": 426,
+      "works_count": 668,
+      "cited_by_count": 41182,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5042817775",
+      "display_name": "Marcus A. Altfeld",
+      "orcid": "https://orcid.org/0000-0001-5972-2997",
+      "h_index": 99,
+      "i10_index": 281,
+      "works_count": 484,
+      "cited_by_count": 36371,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5006845416",
+      "display_name": "Naoki Yamamoto",
+      "orcid": "https://orcid.org/0009-0001-7364-9543",
+      "h_index": 97,
+      "i10_index": 585,
+      "works_count": 915,
+      "cited_by_count": 42078,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5038583170",
+      "display_name": "Christopher Power",
+      "orcid": "https://orcid.org/0000-0002-5131-9711",
+      "h_index": 97,
+      "i10_index": 294,
+      "works_count": 423,
+      "cited_by_count": 34425,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Virology -- 9.6",
+      "id": "https://openalex.org/A5075006919",
+      "display_name": "Frank Kirchhoff",
+      "orcid": "https://orcid.org/0000-0002-7052-2360",
+      "h_index": 96,
+      "i10_index": 359,
+      "works_count": 534,
+      "cited_by_count": 35418,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5007165900",
+      "display_name": "Giuseppe Pantaleo",
+      "orcid": "https://orcid.org/0000-0003-3651-2721",
+      "h_index": 96,
+      "i10_index": 327,
+      "works_count": 513,
+      "cited_by_count": 36192,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5063432648",
+      "display_name": "Stephen H. Hughes",
+      "orcid": "https://orcid.org/0000-0002-9176-4377",
+      "h_index": 96,
+      "i10_index": 313,
+      "works_count": 485,
+      "cited_by_count": 32398,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5043346206",
+      "display_name": "Philip Goulder",
+      "orcid": "https://orcid.org/0000-0002-9842-4674",
+      "h_index": 96,
+      "i10_index": 272,
+      "works_count": 480,
+      "cited_by_count": 43119,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5036005209",
+      "display_name": "Hans‐Georg Kräusslich",
+      "orcid": "https://orcid.org/0000-0002-8756-329X",
+      "h_index": 96,
+      "i10_index": 251,
+      "works_count": 431,
+      "cited_by_count": 35534,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5028591015",
+      "display_name": "Mart Krupovìč",
+      "orcid": "https://orcid.org/0000-0001-5486-0098",
+      "h_index": 95,
+      "i10_index": 293,
+      "works_count": 536,
+      "cited_by_count": 30901,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5056568447",
+      "display_name": "Rob Lavigne",
+      "orcid": "https://orcid.org/0000-0001-7377-1314",
+      "h_index": 94,
+      "i10_index": 306,
+      "works_count": 488,
+      "cited_by_count": 28366,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5074424857",
+      "display_name": "Guido Silvestri",
+      "orcid": "https://orcid.org/0000-0001-6602-2470",
+      "h_index": 94,
+      "i10_index": 285,
+      "works_count": 447,
+      "cited_by_count": 33622,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5069161180",
+      "display_name": "Frank F. Miedema",
+      "orcid": "https://orcid.org/0000-0002-8063-5799",
+      "h_index": 94,
+      "i10_index": 259,
+      "works_count": 398,
+      "cited_by_count": 32145,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5084520588",
+      "display_name": "M. Juliana McElrath",
+      "orcid": "https://orcid.org/0000-0003-2276-7117",
+      "h_index": 93,
+      "i10_index": 338,
+      "works_count": 477,
+      "cited_by_count": 57151,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5085234192",
+      "display_name": "Olivier Lambotte",
+      "orcid": "https://orcid.org/0000-0003-4425-8516",
+      "h_index": 93,
+      "i10_index": 309,
+      "works_count": 680,
+      "cited_by_count": 39384,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5027975124",
+      "display_name": "Todd M. Allen",
+      "orcid": "https://orcid.org/0000-0002-6609-1318",
+      "h_index": 93,
+      "i10_index": 188,
+      "works_count": 313,
+      "cited_by_count": 26805,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Virology -- 9.5",
+      "id": "https://openalex.org/A5069303302",
+      "display_name": "Ronald C. Desrosiers",
+      "orcid": "https://orcid.org/0000-0001-6851-3003",
+      "h_index": 92,
+      "i10_index": 294,
+      "works_count": 377,
+      "cited_by_count": 36153,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5037397706",
+      "display_name": "Frederick M. Hecht",
+      "orcid": "https://orcid.org/0000-0002-5782-1171",
+      "h_index": 91,
+      "i10_index": 261,
+      "works_count": 430,
+      "cited_by_count": 32932,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5112420205",
+      "display_name": "Donald S. Burke",
+      "orcid": "https://orcid.org/0000-0002-5704-8094",
+      "h_index": 91,
+      "i10_index": 257,
+      "works_count": 354,
+      "cited_by_count": 38518,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5067304304",
+      "display_name": "Paul Kellam",
+      "orcid": "https://orcid.org/0000-0003-3166-4734",
+      "h_index": 91,
+      "i10_index": 227,
+      "works_count": 451,
+      "cited_by_count": 27200,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5002178905",
+      "display_name": "Ashley T. Haase",
+      "orcid": "https://orcid.org/0000-0002-5374-2388",
+      "h_index": 91,
+      "i10_index": 205,
+      "works_count": 293,
+      "cited_by_count": 38262,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5062645957",
+      "display_name": "Sharon R. Lewin",
+      "orcid": "https://orcid.org/0000-0002-0330-8241",
+      "h_index": 90,
+      "i10_index": 338,
+      "works_count": 580,
+      "cited_by_count": 35453,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5035598800",
+      "display_name": "Sarah Rowland‐Jones",
+      "orcid": "https://orcid.org/0000-0001-5788-6998",
+      "h_index": 90,
+      "i10_index": 294,
+      "works_count": 564,
+      "cited_by_count": 39613,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5032352295",
+      "display_name": "Jay A. Levy",
+      "orcid": "https://orcid.org/0000-0002-7584-3702",
+      "h_index": 90,
+      "i10_index": 271,
+      "works_count": 384,
+      "cited_by_count": 31693,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5090367243",
+      "display_name": "Christian Brander",
+      "orcid": "https://orcid.org/0000-0002-0548-5778",
+      "h_index": 90,
+      "i10_index": 246,
+      "works_count": 425,
+      "cited_by_count": 29053,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5082842988",
+      "display_name": "Eric S. Rosenberg",
+      "orcid": "https://orcid.org/0009-0002-3650-7375",
+      "h_index": 90,
+      "i10_index": 192,
+      "works_count": 280,
+      "cited_by_count": 29566,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5009812327",
+      "display_name": "Jason M. Brenchley",
+      "orcid": "https://orcid.org/0000-0001-8357-2984",
+      "h_index": 90,
+      "i10_index": 184,
+      "works_count": 278,
+      "cited_by_count": 42356,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Virology -- 9.4",
+      "id": "https://openalex.org/A5034536696",
+      "display_name": "Georgia D. Tomaras",
+      "orcid": "https://orcid.org/0000-0001-8076-1931",
+      "h_index": 89,
+      "i10_index": 339,
+      "works_count": 518,
+      "cited_by_count": 33011,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5105301136",
+      "display_name": "Hilton C. Whittle",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 280,
+      "works_count": 348,
+      "cited_by_count": 23472,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5112017581",
+      "display_name": "Kuan‐Teh Jeang",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 235,
+      "works_count": 363,
+      "cited_by_count": 26400,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5080227211",
+      "display_name": "Steven M. Wolinsky",
+      "orcid": "https://orcid.org/0000-0002-9625-6697",
+      "h_index": 89,
+      "i10_index": 200,
+      "works_count": 285,
+      "cited_by_count": 33534,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5037123473",
+      "display_name": "Richard T. Wyatt",
+      "orcid": "https://orcid.org/0000-0001-7085-1351",
+      "h_index": 89,
+      "i10_index": 168,
+      "works_count": 257,
+      "cited_by_count": 38095,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5036148999",
+      "display_name": "Arvind Varsani",
+      "orcid": "https://orcid.org/0000-0003-4111-2415",
+      "h_index": 87,
+      "i10_index": 348,
+      "works_count": 577,
+      "cited_by_count": 34532,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5084974249",
+      "display_name": "Curtis A. Suttle",
+      "orcid": "https://orcid.org/0000-0002-0372-0033",
+      "h_index": 87,
+      "i10_index": 196,
+      "works_count": 309,
+      "cited_by_count": 31265,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5042701070",
+      "display_name": "Brigitte Autran",
+      "orcid": "https://orcid.org/0000-0002-3993-9336",
+      "h_index": 86,
+      "i10_index": 304,
+      "works_count": 516,
+      "cited_by_count": 27804,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5041332295",
+      "display_name": "Susan Zolla‐Pazner",
+      "orcid": "https://orcid.org/0000-0002-0750-2666",
+      "h_index": 86,
+      "i10_index": 273,
+      "works_count": 400,
+      "cited_by_count": 27632,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5064593386",
+      "display_name": "Darren Patrick Martin",
+      "orcid": "https://orcid.org/0000-0002-8785-0870",
+      "h_index": 86,
+      "i10_index": 265,
+      "works_count": 398,
+      "cited_by_count": 40822,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5073353369",
+      "display_name": "Jerome E. Groopman",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 208,
+      "works_count": 360,
+      "cited_by_count": 32485,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Virology -- 9.3",
+      "id": "https://openalex.org/A5058005825",
+      "display_name": "Alan Engelman",
+      "orcid": "https://orcid.org/0000-0002-9709-2591",
+      "h_index": 85,
+      "i10_index": 199,
+      "works_count": 304,
+      "cited_by_count": 25663,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5110915402",
+      "display_name": "Jan Marc Orenstein",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 203,
+      "works_count": 257,
+      "cited_by_count": 28617,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5027463016",
+      "display_name": "Anthony R. Fooks",
+      "orcid": "https://orcid.org/0000-0002-3243-6154",
+      "h_index": 83,
+      "i10_index": 337,
+      "works_count": 466,
+      "cited_by_count": 25300,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5030712042",
+      "display_name": "Mariano Estéban",
+      "orcid": "https://orcid.org/0000-0003-0846-2827",
+      "h_index": 83,
+      "i10_index": 335,
+      "works_count": 504,
+      "cited_by_count": 23460,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5016871448",
+      "display_name": "Luc Montagnier",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 260,
+      "works_count": 472,
+      "cited_by_count": 41112,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5070916977",
+      "display_name": "Boris Matija Peterlin",
+      "orcid": "https://orcid.org/0000-0003-3692-219X",
+      "h_index": 83,
+      "i10_index": 212,
+      "works_count": 313,
+      "cited_by_count": 24932,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5039918286",
+      "display_name": "Martin J. Loessner",
+      "orcid": "https://orcid.org/0000-0002-8162-2631",
+      "h_index": 83,
+      "i10_index": 192,
+      "works_count": 298,
+      "cited_by_count": 21184,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5074792801",
+      "display_name": "James A. Hoxie",
+      "orcid": "https://orcid.org/0000-0002-6257-4902",
+      "h_index": 83,
+      "i10_index": 181,
+      "works_count": 228,
+      "cited_by_count": 23920,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5019055664",
+      "display_name": "Dennis Henry Bamford",
+      "orcid": "https://orcid.org/0000-0002-6438-8118",
+      "h_index": 82,
+      "i10_index": 328,
+      "works_count": 444,
+      "cited_by_count": 21656,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5078980820",
+      "display_name": "Andrew A. Lackner",
+      "orcid": "https://orcid.org/0000-0003-2162-1079",
+      "h_index": 82,
+      "i10_index": 246,
+      "works_count": 322,
+      "cited_by_count": 30815,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5111769335",
+      "display_name": "Jean‐Luc Darlix",
+      "orcid": "https://orcid.org/0000-0001-6461-7294",
+      "h_index": 82,
+      "i10_index": 222,
+      "works_count": 367,
+      "cited_by_count": 18805,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Virology -- 9.2",
+      "id": "https://openalex.org/A5054660762",
+      "display_name": "Eric O. Freed",
+      "orcid": "https://orcid.org/0000-0003-3345-022X",
+      "h_index": 82,
+      "i10_index": 196,
+      "works_count": 285,
+      "cited_by_count": 23775,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5032895526",
+      "display_name": "Inger K. Damon",
+      "orcid": "https://orcid.org/0000-0002-0749-0677",
+      "h_index": 82,
+      "i10_index": 193,
+      "works_count": 268,
+      "cited_by_count": 24069,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5081790590",
+      "display_name": "Jeremy Luban",
+      "orcid": "https://orcid.org/0000-0001-5650-4054",
+      "h_index": 82,
+      "i10_index": 162,
+      "works_count": 259,
+      "cited_by_count": 22553,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5002926065",
+      "display_name": "Charles R. Rinaldo",
+      "orcid": "https://orcid.org/0000-0002-9194-3164",
+      "h_index": 81,
+      "i10_index": 309,
+      "works_count": 459,
+      "cited_by_count": 32507,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5044112097",
+      "display_name": "Zeger Debyser",
+      "orcid": "https://orcid.org/0000-0002-3982-1565",
+      "h_index": 81,
+      "i10_index": 297,
+      "works_count": 810,
+      "cited_by_count": 21149,
+      "discipline": "Virology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5035881745",
+      "display_name": "Eric Hunter",
+      "orcid": "https://orcid.org/0000-0002-4273-8631",
+      "h_index": 81,
+      "i10_index": 277,
+      "works_count": 436,
+      "cited_by_count": 24784,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5055963852",
+      "display_name": "Genoveffa Franchini",
+      "orcid": "https://orcid.org/0000-0003-2851-6589",
+      "h_index": 81,
+      "i10_index": 267,
+      "works_count": 423,
+      "cited_by_count": 21835,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5048593024",
+      "display_name": "Mark G. Lewis",
+      "orcid": "https://orcid.org/0000-0001-7852-0135",
+      "h_index": 81,
+      "i10_index": 249,
+      "works_count": 317,
+      "cited_by_count": 47613,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5107827488",
+      "display_name": "Françoise Barré‐Sinoussi",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 243,
+      "works_count": 450,
+      "cited_by_count": 32903,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5105753989",
+      "display_name": "Hiroyuki Ogata",
+      "orcid": "https://orcid.org/0000-0001-6594-377X",
+      "h_index": 81,
+      "i10_index": 172,
+      "works_count": 308,
+      "cited_by_count": 43195,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5067186373",
+      "display_name": "William R. Schief",
+      "orcid": "https://orcid.org/0000-0002-1120-0150",
+      "h_index": 81,
+      "i10_index": 167,
+      "works_count": 263,
+      "cited_by_count": 25344,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Virology -- 9.1",
+      "id": "https://openalex.org/A5057462377",
+      "display_name": "Yves Mély",
+      "orcid": "https://orcid.org/0000-0001-7328-8269",
+      "h_index": 80,
+      "i10_index": 344,
+      "works_count": 489,
+      "cited_by_count": 21382,
+      "discipline": "Virology",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Chemistry",
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Virology -- 9.0",
+      "id": "https://openalex.org/A5054025307",
+      "display_name": "Stephen John Kent",
+      "orcid": "https://orcid.org/0000-0002-8539-4891",
+      "h_index": 80,
+      "i10_index": 342,
+      "works_count": 515,
+      "cited_by_count": 28965,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Virology -- 9.0",
+      "id": "https://openalex.org/A5038607718",
+      "display_name": "Jean‐Pierre Routy",
+      "orcid": "https://orcid.org/0000-0001-9897-7589",
+      "h_index": 80,
+      "i10_index": 327,
+      "works_count": 631,
+      "cited_by_count": 27310,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Virology -- 9.0",
+      "id": "https://openalex.org/A5006725047",
+      "display_name": "Mark Young",
+      "orcid": "https://orcid.org/0000-0001-8069-9840",
+      "h_index": 80,
+      "i10_index": 226,
+      "works_count": 359,
+      "cited_by_count": 22951,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Virology -- 9.0",
+      "id": "https://openalex.org/A5032122826",
+      "display_name": "Hua‐Xin Liao",
+      "orcid": "https://orcid.org/0000-0002-7871-1334",
+      "h_index": 80,
+      "i10_index": 199,
+      "works_count": 249,
+      "cited_by_count": 24085,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Virology -- 9.0",
+      "id": "https://openalex.org/A5000950209",
+      "display_name": "Adrian B. McDermott",
+      "orcid": "https://orcid.org/0000-0003-0616-9117",
+      "h_index": 80,
+      "i10_index": 190,
+      "works_count": 261,
+      "cited_by_count": 26660,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5013600763",
+      "display_name": "Simon Roux",
+      "orcid": "https://orcid.org/0000-0002-5831-5895",
+      "h_index": 80,
+      "i10_index": 162,
+      "works_count": 442,
+      "cited_by_count": 34194,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5079257651",
+      "display_name": "Sylvain Moineau",
+      "orcid": "https://orcid.org/0000-0002-2832-5101",
+      "h_index": 79,
+      "i10_index": 255,
+      "works_count": 422,
+      "cited_by_count": 43404,
+      "discipline": "Virology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5074582058",
+      "display_name": "Ronald G. Collman",
+      "orcid": "https://orcid.org/0000-0002-0508-3701",
+      "h_index": 79,
+      "i10_index": 199,
+      "works_count": 283,
+      "cited_by_count": 32933,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5006894592",
+      "display_name": "Jacob D. Estes",
+      "orcid": "https://orcid.org/0000-0002-9652-6394",
+      "h_index": 79,
+      "i10_index": 184,
+      "works_count": 246,
+      "cited_by_count": 24869,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5071199689",
+      "display_name": "Quentin James Sattentau",
+      "orcid": "https://orcid.org/0000-0001-7170-1937",
+      "h_index": 79,
+      "i10_index": 166,
+      "works_count": 272,
+      "cited_by_count": 23662,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5108493448",
+      "display_name": "Ola A. Selnes",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 153,
+      "works_count": 230,
+      "cited_by_count": 19133,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5081520991",
+      "display_name": "Dana H. Gabuzda",
+      "orcid": "https://orcid.org/0000-0002-4964-5083",
+      "h_index": 78,
+      "i10_index": 151,
+      "works_count": 213,
+      "cited_by_count": 18176,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5035689288",
+      "display_name": "Mark Connors",
+      "orcid": "https://orcid.org/0000-0002-2108-8705",
+      "h_index": 78,
+      "i10_index": 135,
+      "works_count": 194,
+      "cited_by_count": 31425,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5055252960",
+      "display_name": "Douglas F. Nixon",
+      "orcid": "https://orcid.org/0000-0002-2801-1786",
+      "h_index": 77,
+      "i10_index": 267,
+      "works_count": 431,
+      "cited_by_count": 25945,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5081057604",
+      "display_name": "Andrew M. Kropinski",
+      "orcid": "https://orcid.org/0000-0002-6871-6799",
+      "h_index": 77,
+      "i10_index": 235,
+      "works_count": 442,
+      "cited_by_count": 22925,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5056797877",
+      "display_name": "Brandon F. Keele",
+      "orcid": "https://orcid.org/0000-0002-2381-1151",
+      "h_index": 77,
+      "i10_index": 190,
+      "works_count": 309,
+      "cited_by_count": 25723,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Virology -- 8.9",
+      "id": "https://openalex.org/A5029764074",
+      "display_name": "Mya Breitbart",
+      "orcid": "https://orcid.org/0000-0003-3210-2899",
+      "h_index": 77,
+      "i10_index": 136,
+      "works_count": 227,
+      "cited_by_count": 27462,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5080704945",
+      "display_name": "Javier Martínez‐Picado",
+      "orcid": "https://orcid.org/0000-0002-4916-2129",
+      "h_index": 76,
+      "i10_index": 235,
+      "works_count": 409,
+      "cited_by_count": 26754,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5072471885",
+      "display_name": "Jerome A. Zack",
+      "orcid": "https://orcid.org/0000-0001-5486-8495",
+      "h_index": 76,
+      "i10_index": 174,
+      "works_count": 239,
+      "cited_by_count": 23458,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5051442994",
+      "display_name": "Michael Emerman",
+      "orcid": "https://orcid.org/0000-0002-4181-6335",
+      "h_index": 76,
+      "i10_index": 138,
+      "works_count": 235,
+      "cited_by_count": 29013,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5055506281",
+      "display_name": "Harald Brüssow",
+      "orcid": "https://orcid.org/0000-0003-4783-8583",
+      "h_index": 75,
+      "i10_index": 190,
+      "works_count": 350,
+      "cited_by_count": 20135,
+      "discipline": "Virology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5081637587",
+      "display_name": "Sherwood Casjens",
+      "orcid": "https://orcid.org/0000-0002-1213-7130",
+      "h_index": 75,
+      "i10_index": 174,
+      "works_count": 277,
+      "cited_by_count": 20889,
+      "discipline": "Virology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5036844047",
+      "display_name": "Polly Roy",
+      "orcid": "https://orcid.org/0000-0001-6535-6911",
+      "h_index": 74,
+      "i10_index": 265,
+      "works_count": 341,
+      "cited_by_count": 17985,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5019228154",
+      "display_name": "Guido Poli",
+      "orcid": "https://orcid.org/0000-0001-7241-4526",
+      "h_index": 74,
+      "i10_index": 232,
+      "works_count": 487,
+      "cited_by_count": 17168,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5007392842",
+      "display_name": "Janice E. Clements",
+      "orcid": "https://orcid.org/0000-0002-3096-1457",
+      "h_index": 74,
+      "i10_index": 204,
+      "works_count": 275,
+      "cited_by_count": 16020,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5079312171",
+      "display_name": "Nicolas Chomont",
+      "orcid": "https://orcid.org/0000-0001-9747-5018",
+      "h_index": 74,
+      "i10_index": 197,
+      "works_count": 351,
+      "cited_by_count": 22138,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5062524237",
+      "display_name": "Marie Paule Kiény",
+      "orcid": "https://orcid.org/0000-0002-5943-6488",
+      "h_index": 74,
+      "i10_index": 193,
+      "works_count": 277,
+      "cited_by_count": 24126,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5048646352",
+      "display_name": "Irvin S. Y. Chen",
+      "orcid": "https://orcid.org/0000-0003-1199-2415",
+      "h_index": 74,
+      "i10_index": 178,
+      "works_count": 245,
+      "cited_by_count": 22755,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5111590892",
+      "display_name": "Roger W. Hendrix",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 142,
+      "works_count": 211,
+      "cited_by_count": 22315,
+      "discipline": "Virology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5025116137",
+      "display_name": "Susan L. Moir",
+      "orcid": "https://orcid.org/0000-0002-0163-6911",
+      "h_index": 74,
+      "i10_index": 128,
+      "works_count": 186,
+      "cited_by_count": 21549,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5050612131",
+      "display_name": "Guido Ferrari",
+      "orcid": "https://orcid.org/0000-0001-7747-3349",
+      "h_index": 73,
+      "i10_index": 229,
+      "works_count": 409,
+      "cited_by_count": 20142,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5069687616",
+      "display_name": "Barbara K. Felber",
+      "orcid": "https://orcid.org/0000-0001-8925-8128",
+      "h_index": 73,
+      "i10_index": 196,
+      "works_count": 307,
+      "cited_by_count": 17353,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5111818710",
+      "display_name": "Richard A. Kaslow",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 195,
+      "works_count": 294,
+      "cited_by_count": 28530,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5009527416",
+      "display_name": "Thomas J. Hope",
+      "orcid": "https://orcid.org/0000-0001-7183-8319",
+      "h_index": 73,
+      "i10_index": 195,
+      "works_count": 418,
+      "cited_by_count": 22456,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Arts and Humanities",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5043408832",
+      "display_name": "Gerald H. Learn",
+      "orcid": "https://orcid.org/0000-0003-0434-7733",
+      "h_index": 73,
+      "i10_index": 132,
+      "works_count": 173,
+      "cited_by_count": 22758,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5056331601",
+      "display_name": "Mark K. Louder",
+      "orcid": "https://orcid.org/0000-0001-7540-9263",
+      "h_index": 73,
+      "i10_index": 109,
+      "works_count": 142,
+      "cited_by_count": 25139,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5107384085",
+      "display_name": "Yves Lévy",
+      "orcid": "https://orcid.org/0000-0002-5549-6256",
+      "h_index": 72,
+      "i10_index": 260,
+      "works_count": 538,
+      "cited_by_count": 24577,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5016700147",
+      "display_name": "Fatah Kashanchi",
+      "orcid": "https://orcid.org/0000-0001-9681-2780",
+      "h_index": 72,
+      "i10_index": 231,
+      "works_count": 400,
+      "cited_by_count": 15581,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Virology -- 8.8",
+      "id": "https://openalex.org/A5101657177",
+      "display_name": "Preston A. Marx",
+      "orcid": "https://orcid.org/0000-0002-6955-2511",
+      "h_index": 72,
+      "i10_index": 206,
+      "works_count": 334,
+      "cited_by_count": 19968,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5054243164",
+      "display_name": "Vanessa M. Hirsch",
+      "orcid": "https://orcid.org/0000-0002-1228-7761",
+      "h_index": 72,
+      "i10_index": 191,
+      "works_count": 251,
+      "cited_by_count": 17627,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5014454124",
+      "display_name": "Janet D'Angelo Siliciano",
+      "orcid": "https://orcid.org/0000-0001-6712-3775",
+      "h_index": 72,
+      "i10_index": 122,
+      "works_count": 176,
+      "cited_by_count": 28545,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5028558751",
+      "display_name": "Steven Paul Woods",
+      "orcid": "https://orcid.org/0000-0003-0776-4233",
+      "h_index": 71,
+      "i10_index": 288,
+      "works_count": 473,
+      "cited_by_count": 23185,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5033146175",
+      "display_name": "Rebecca Hoh",
+      "orcid": "https://orcid.org/0000-0001-5112-4220",
+      "h_index": 71,
+      "i10_index": 148,
+      "works_count": 213,
+      "cited_by_count": 17900,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5049581015",
+      "display_name": "Jonathan Karn",
+      "orcid": "https://orcid.org/0000-0002-2900-094X",
+      "h_index": 71,
+      "i10_index": 132,
+      "works_count": 224,
+      "cited_by_count": 17848,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5044794320",
+      "display_name": "David H. O’Connor",
+      "orcid": "https://orcid.org/0000-0003-2139-470X",
+      "h_index": 70,
+      "i10_index": 249,
+      "works_count": 448,
+      "cited_by_count": 18410,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5051108938",
+      "display_name": "Paolo Lusso",
+      "orcid": "https://orcid.org/0000-0002-2813-4081",
+      "h_index": 70,
+      "i10_index": 177,
+      "works_count": 280,
+      "cited_by_count": 18864,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5075902185",
+      "display_name": "Paul A. Luciw",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 176,
+      "works_count": 230,
+      "cited_by_count": 18833,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5078444774",
+      "display_name": "DE Kaufmann",
+      "orcid": "https://orcid.org/0000-0003-4467-136X",
+      "h_index": 70,
+      "i10_index": 145,
+      "works_count": 229,
+      "cited_by_count": 20466,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5085482528",
+      "display_name": "Nicole A. Doria‐Rose",
+      "orcid": "https://orcid.org/0000-0002-5731-3054",
+      "h_index": 70,
+      "i10_index": 140,
+      "works_count": 196,
+      "cited_by_count": 26785,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5001716722",
+      "display_name": "Ronald C. Montelaro",
+      "orcid": "https://orcid.org/0000-0003-0147-3419",
+      "h_index": 69,
+      "i10_index": 239,
+      "works_count": 319,
+      "cited_by_count": 16940,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5077309315",
+      "display_name": "Xu G. Yu",
+      "orcid": "https://orcid.org/0000-0002-8295-884X",
+      "h_index": 69,
+      "i10_index": 161,
+      "works_count": 242,
+      "cited_by_count": 20908,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5074172437",
+      "display_name": "Bernhard Dietzschold",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 155,
+      "works_count": 199,
+      "cited_by_count": 13497,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5017336227",
+      "display_name": "Robert J. Gorelick",
+      "orcid": "https://orcid.org/0000-0002-1773-9085",
+      "h_index": 69,
+      "i10_index": 140,
+      "works_count": 229,
+      "cited_by_count": 16515,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5038390972",
+      "display_name": "Klaus Strebel",
+      "orcid": "https://orcid.org/0000-0002-2827-8923",
+      "h_index": 69,
+      "i10_index": 118,
+      "works_count": 187,
+      "cited_by_count": 16161,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5036106449",
+      "display_name": "Nathaniel Roy Landau",
+      "orcid": "https://orcid.org/0000-0002-9997-1004",
+      "h_index": 69,
+      "i10_index": 115,
+      "works_count": 185,
+      "cited_by_count": 30686,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5113492392",
+      "display_name": "Craig A. Rosen",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 97,
+      "works_count": 116,
+      "cited_by_count": 25058,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5004527390",
+      "display_name": "Britta Wahrén",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 384,
+      "works_count": 599,
+      "cited_by_count": 18197,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5000216296",
+      "display_name": "Sarah J. Ratcliffe",
+      "orcid": "https://orcid.org/0000-0002-6644-8284",
+      "h_index": 68,
+      "i10_index": 227,
+      "works_count": 389,
+      "cited_by_count": 15571,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Nursing",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5061418721",
+      "display_name": "Howard S. Fox",
+      "orcid": "https://orcid.org/0000-0003-2032-374X",
+      "h_index": 68,
+      "i10_index": 225,
+      "works_count": 353,
+      "cited_by_count": 18871,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5074069303",
+      "display_name": "Nigel James MacLachlan",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 200,
+      "works_count": 238,
+      "cited_by_count": 13678,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Virology -- 8.7",
+      "id": "https://openalex.org/A5038292231",
+      "display_name": "Harriet L. Robinson",
+      "orcid": "https://orcid.org/0000-0001-6380-3458",
+      "h_index": 68,
+      "i10_index": 185,
+      "works_count": 250,
+      "cited_by_count": 16174,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5013201108",
+      "display_name": "Simon Wain–Hobson",
+      "orcid": "https://orcid.org/0000-0002-6406-3858",
+      "h_index": 68,
+      "i10_index": 172,
+      "works_count": 292,
+      "cited_by_count": 18573,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5025751053",
+      "display_name": "Éric A. Cohen",
+      "orcid": "https://orcid.org/0000-0003-1269-3791",
+      "h_index": 68,
+      "i10_index": 160,
+      "works_count": 247,
+      "cited_by_count": 13349,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5020490780",
+      "display_name": "Joshua S. Weitz",
+      "orcid": "https://orcid.org/0000-0002-3433-8312",
+      "h_index": 68,
+      "i10_index": 159,
+      "works_count": 413,
+      "cited_by_count": 16055,
+      "discipline": "Virology",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Mathematics",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5023133097",
+      "display_name": "Jonathan Luke Heeney",
+      "orcid": "https://orcid.org/0000-0003-2702-1621",
+      "h_index": 67,
+      "i10_index": 273,
+      "works_count": 459,
+      "cited_by_count": 17909,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5059159168",
+      "display_name": "John C. Kappes",
+      "orcid": "https://orcid.org/0000-0002-7586-2815",
+      "h_index": 67,
+      "i10_index": 159,
+      "works_count": 218,
+      "cited_by_count": 22632,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5071190932",
+      "display_name": "Simon D. W. Frost",
+      "orcid": "https://orcid.org/0000-0002-5207-9879",
+      "h_index": 67,
+      "i10_index": 141,
+      "works_count": 262,
+      "cited_by_count": 24386,
+      "discipline": "Virology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5036461085",
+      "display_name": "David Alexander Prangishvili",
+      "orcid": "https://orcid.org/0000-0002-0812-9699",
+      "h_index": 67,
+      "i10_index": 139,
+      "works_count": 248,
+      "cited_by_count": 12702,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5063343955",
+      "display_name": "Mario Stevenson",
+      "orcid": "https://orcid.org/0000-0001-9651-2999",
+      "h_index": 67,
+      "i10_index": 136,
+      "works_count": 269,
+      "cited_by_count": 19425,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5041763125",
+      "display_name": "Francois J. Villinger",
+      "orcid": "https://orcid.org/0000-0002-7790-2008",
+      "h_index": 66,
+      "i10_index": 250,
+      "works_count": 388,
+      "cited_by_count": 15585,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5028123583",
+      "display_name": "Thomas Schneider",
+      "orcid": "https://orcid.org/0000-0003-1125-0518",
+      "h_index": 66,
+      "i10_index": 221,
+      "works_count": 540,
+      "cited_by_count": 18142,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5108589893",
+      "display_name": "Roger J. Pomerantz",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 207,
+      "works_count": 301,
+      "cited_by_count": 17396,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5089780095",
+      "display_name": "Irini Sereti",
+      "orcid": "https://orcid.org/0000-0002-0076-0224",
+      "h_index": 66,
+      "i10_index": 187,
+      "works_count": 368,
+      "cited_by_count": 14822,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5028435043",
+      "display_name": "Hervé Bourhy",
+      "orcid": "https://orcid.org/0000-0002-2608-5589",
+      "h_index": 66,
+      "i10_index": 187,
+      "works_count": 382,
+      "cited_by_count": 13877,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5023687974",
+      "display_name": "Gerd Sutter",
+      "orcid": "https://orcid.org/0000-0001-6143-082X",
+      "h_index": 66,
+      "i10_index": 186,
+      "works_count": 290,
+      "cited_by_count": 15198,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5005255843",
+      "display_name": "Robert Turner Schooley",
+      "orcid": "https://orcid.org/0000-0002-2498-8426",
+      "h_index": 66,
+      "i10_index": 180,
+      "works_count": 295,
+      "cited_by_count": 22474,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5025852667",
+      "display_name": "Paul Goepfert",
+      "orcid": "https://orcid.org/0000-0001-8441-5737",
+      "h_index": 66,
+      "i10_index": 174,
+      "works_count": 328,
+      "cited_by_count": 21360,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5019085141",
+      "display_name": "Mathias D. Lichterfeld",
+      "orcid": "https://orcid.org/0000-0001-9865-8350",
+      "h_index": 66,
+      "i10_index": 158,
+      "works_count": 265,
+      "cited_by_count": 17724,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5051784173",
+      "display_name": "Alan R. Rein",
+      "orcid": "https://orcid.org/0000-0002-8273-546X",
+      "h_index": 66,
+      "i10_index": 149,
+      "works_count": 232,
+      "cited_by_count": 13313,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5002836913",
+      "display_name": "Leonidas Stamatatos",
+      "orcid": "https://orcid.org/0000-0002-1106-7097",
+      "h_index": 66,
+      "i10_index": 136,
+      "works_count": 242,
+      "cited_by_count": 15812,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5110256363",
+      "display_name": "Rodney E. Phillips",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 127,
+      "works_count": 158,
+      "cited_by_count": 15093,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5002278563",
+      "display_name": "Savita G. Pahwa",
+      "orcid": "https://orcid.org/0000-0002-4470-4216",
+      "h_index": 65,
+      "i10_index": 270,
+      "works_count": 505,
+      "cited_by_count": 16358,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Virology -- 8.6",
+      "id": "https://openalex.org/A5082174006",
+      "display_name": "James L. Van Etten",
+      "orcid": "https://orcid.org/0000-0002-5063-0049",
+      "h_index": 65,
+      "i10_index": 252,
+      "works_count": 388,
+      "cited_by_count": 17506,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5108391411",
+      "display_name": "Opendra Narayan",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 214,
+      "works_count": 288,
+      "cited_by_count": 14106,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5051365229",
+      "display_name": "Nobuhiro Suzuki",
+      "orcid": "https://orcid.org/0000-0003-0097-9856",
+      "h_index": 65,
+      "i10_index": 212,
+      "works_count": 359,
+      "cited_by_count": 15152,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5067964875",
+      "display_name": "Marjorie Robert-Guroff",
+      "orcid": "https://orcid.org/0000-0003-0606-6636",
+      "h_index": 65,
+      "i10_index": 198,
+      "works_count": 286,
+      "cited_by_count": 18462,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5008431013",
+      "display_name": "Yoshio Koyanagi",
+      "orcid": "https://orcid.org/0000-0002-3007-6642",
+      "h_index": 65,
+      "i10_index": 181,
+      "works_count": 302,
+      "cited_by_count": 17223,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5030813412",
+      "display_name": "David I. Watkins",
+      "orcid": "https://orcid.org/0000-0001-6582-3305",
+      "h_index": 65,
+      "i10_index": 166,
+      "works_count": 217,
+      "cited_by_count": 15696,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5064409926",
+      "display_name": "Mario Ostrowski",
+      "orcid": "https://orcid.org/0000-0002-7369-1936",
+      "h_index": 65,
+      "i10_index": 146,
+      "works_count": 225,
+      "cited_by_count": 15898,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5019370510",
+      "display_name": "Cristian Apetrei",
+      "orcid": "https://orcid.org/0000-0002-0322-7185",
+      "h_index": 65,
+      "i10_index": 145,
+      "works_count": 212,
+      "cited_by_count": 11389,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5011493742",
+      "display_name": "O. Fackler",
+      "orcid": "https://orcid.org/0000-0003-2982-4209",
+      "h_index": 65,
+      "i10_index": 142,
+      "works_count": 229,
+      "cited_by_count": 11729,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5109919821",
+      "display_name": "Sijy J. O'Dell",
+      "orcid": "https://orcid.org/0000-0002-4951-8471",
+      "h_index": 65,
+      "i10_index": 106,
+      "works_count": 145,
+      "cited_by_count": 24920,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5017389981",
+      "display_name": "Aidan Coffey",
+      "orcid": "https://orcid.org/0000-0003-4116-9913",
+      "h_index": 64,
+      "i10_index": 206,
+      "works_count": 329,
+      "cited_by_count": 14488,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5053649150",
+      "display_name": "Shilpa J. Buch",
+      "orcid": "https://orcid.org/0000-0002-3103-6685",
+      "h_index": 64,
+      "i10_index": 199,
+      "works_count": 318,
+      "cited_by_count": 28962,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5053982479",
+      "display_name": "Leonid B Margolis",
+      "orcid": "https://orcid.org/0000-0002-1960-1928",
+      "h_index": 64,
+      "i10_index": 194,
+      "works_count": 325,
+      "cited_by_count": 14119,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5083872653",
+      "display_name": "Matthew Baylis",
+      "orcid": "https://orcid.org/0000-0003-0335-187X",
+      "h_index": 64,
+      "i10_index": 181,
+      "works_count": 365,
+      "cited_by_count": 16207,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5110861834",
+      "display_name": "Mary Ann Fletcher",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 175,
+      "works_count": 558,
+      "cited_by_count": 13600,
+      "discipline": "Virology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5113935385",
+      "display_name": "Eladio Viñuela",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 153,
+      "works_count": 184,
+      "cited_by_count": 15521,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5018205846",
+      "display_name": "R. Paul Johnson",
+      "orcid": "https://orcid.org/0000-0002-2600-120X",
+      "h_index": 64,
+      "i10_index": 146,
+      "works_count": 233,
+      "cited_by_count": 15414,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5056242229",
+      "display_name": "Enzo Paoletti",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 140,
+      "works_count": 173,
+      "cited_by_count": 13432,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5003760687",
+      "display_name": "Patricia L. Earl",
+      "orcid": "https://orcid.org/0009-0007-2610-1271",
+      "h_index": 64,
+      "i10_index": 128,
+      "works_count": 159,
+      "cited_by_count": 12839,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5055046444",
+      "display_name": "Greg J. Towers",
+      "orcid": "https://orcid.org/0000-0002-7707-0264",
+      "h_index": 64,
+      "i10_index": 120,
+      "works_count": 216,
+      "cited_by_count": 14672,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5087709917",
+      "display_name": "Andrzej Górski",
+      "orcid": "https://orcid.org/0000-0002-0863-6041",
+      "h_index": 63,
+      "i10_index": 215,
+      "works_count": 532,
+      "cited_by_count": 15720,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Virology -- 8.5",
+      "id": "https://openalex.org/A5038299329",
+      "display_name": "Ronald S. Veazey",
+      "orcid": "https://orcid.org/0000-0002-6298-2391",
+      "h_index": 63,
+      "i10_index": 193,
+      "works_count": 314,
+      "cited_by_count": 16804,
+      "discipline": "Virology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Virology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    }
+  ]
+}

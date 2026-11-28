@@ -1,0 +1,735 @@
+{
+  "kind": "subfield",
+  "id": 1404,
+  "name": "Management Information Systems",
+  "total_in_scrape": 37,
+  "count": 37,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Management Information Systems -- 9.9",
+      "id": "https://openalex.org/A5069762894",
+      "display_name": "Wil M. P. van der Aalst",
+      "orcid": "https://orcid.org/0000-0002-0955-6940",
+      "h_index": 160,
+      "i10_index": 952,
+      "works_count": 1599,
+      "cited_by_count": 124312,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Management Information Systems -- 9.9",
+      "id": "https://openalex.org/A5030777326",
+      "display_name": "Zahir Irani",
+      "orcid": "https://orcid.org/0000-0002-6332-6118",
+      "h_index": 95,
+      "i10_index": 250,
+      "works_count": 518,
+      "cited_by_count": 29946,
+      "discipline": "Management Information Systems",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Management Information Systems -- 9.9",
+      "id": "https://openalex.org/A5061026797",
+      "display_name": "Samuel Fosso Wamba",
+      "orcid": "https://orcid.org/0000-0002-1073-058X",
+      "h_index": 93,
+      "i10_index": 249,
+      "works_count": 490,
+      "cited_by_count": 53840,
+      "discipline": "Management Information Systems",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Management Information Systems -- 9.9",
+      "id": "https://openalex.org/A5046464686",
+      "display_name": "Kalle Lyytinen",
+      "orcid": "https://orcid.org/0000-0002-3352-5343",
+      "h_index": 90,
+      "i10_index": 280,
+      "works_count": 651,
+      "cited_by_count": 46422,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Management Information Systems -- 9.9",
+      "id": "https://openalex.org/A5085212075",
+      "display_name": "Marlon Dumas",
+      "orcid": "https://orcid.org/0000-0002-9247-7476",
+      "h_index": 87,
+      "i10_index": 311,
+      "works_count": 530,
+      "cited_by_count": 38177,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Management Information Systems -- 9.9",
+      "id": "https://openalex.org/A5062764959",
+      "display_name": "Jan Mendling",
+      "orcid": "https://orcid.org/0000-0002-7260-524X",
+      "h_index": 86,
+      "i10_index": 397,
+      "works_count": 693,
+      "cited_by_count": 33014,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5068013432",
+      "display_name": "Varun Grover",
+      "orcid": "https://orcid.org/0000-0002-2894-1844",
+      "h_index": 86,
+      "i10_index": 191,
+      "works_count": 304,
+      "cited_by_count": 33801,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5041944945",
+      "display_name": "Andrew B. Whinston",
+      "orcid": "https://orcid.org/0000-0002-8580-4088",
+      "h_index": 82,
+      "i10_index": 303,
+      "works_count": 665,
+      "cited_by_count": 26588,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5019533456",
+      "display_name": "Leslie P. Willcocks",
+      "orcid": "https://orcid.org/0000-0003-2572-9554",
+      "h_index": 81,
+      "i10_index": 210,
+      "works_count": 623,
+      "cited_by_count": 24930,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5032192522",
+      "display_name": "Jan vom Brocke",
+      "orcid": "https://orcid.org/0000-0002-0071-3719",
+      "h_index": 80,
+      "i10_index": 237,
+      "works_count": 481,
+      "cited_by_count": 28349,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5112712257",
+      "display_name": "Jay F. Nunamaker",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 233,
+      "works_count": 494,
+      "cited_by_count": 27489,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5084116084",
+      "display_name": "Detmar W. Straub",
+      "orcid": "https://orcid.org/0000-0001-7030-1034",
+      "h_index": 77,
+      "i10_index": 154,
+      "works_count": 264,
+      "cited_by_count": 80739,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5059016959",
+      "display_name": "Peter Mertens",
+      "orcid": "https://orcid.org/0000-0002-3438-3738",
+      "h_index": 76,
+      "i10_index": 325,
+      "works_count": 1002,
+      "cited_by_count": 22983,
+      "discipline": "Management Information Systems",
+      "primary_field": "Medicine",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Medicine",
+        "Business, Management and Accounting",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5077586272",
+      "display_name": "Helmut Krcmar",
+      "orcid": "https://orcid.org/0000-0002-2754-8493",
+      "h_index": 75,
+      "i10_index": 472,
+      "works_count": 1840,
+      "cited_by_count": 27620,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5086052987",
+      "display_name": "Hajo Alexander Reijers",
+      "orcid": "https://orcid.org/0000-0001-9634-5852",
+      "h_index": 74,
+      "i10_index": 279,
+      "works_count": 617,
+      "cited_by_count": 27681,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5023334979",
+      "display_name": "Arthur H. M. ter Hofstede",
+      "orcid": "https://orcid.org/0000-0002-2730-0201",
+      "h_index": 74,
+      "i10_index": 251,
+      "works_count": 543,
+      "cited_by_count": 28736,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Management Information Systems -- 9.8",
+      "id": "https://openalex.org/A5091354653",
+      "display_name": "David C. Yen",
+      "orcid": "https://orcid.org/0000-0001-7093-0877",
+      "h_index": 74,
+      "i10_index": 241,
+      "works_count": 443,
+      "cited_by_count": 24105,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5049563716",
+      "display_name": "Dursun Delen",
+      "orcid": "https://orcid.org/0000-0001-8857-5148",
+      "h_index": 74,
+      "i10_index": 183,
+      "works_count": 355,
+      "cited_by_count": 21603,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Health Professions",
+        "Decision Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5075861532",
+      "display_name": "Manfred Reichert",
+      "orcid": "https://orcid.org/0000-0003-2536-4153",
+      "h_index": 72,
+      "i10_index": 418,
+      "works_count": 895,
+      "cited_by_count": 23246,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5063729247",
+      "display_name": "Jan Recker",
+      "orcid": "https://orcid.org/0000-0002-2072-5792",
+      "h_index": 72,
+      "i10_index": 232,
+      "works_count": 476,
+      "cited_by_count": 20223,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5000935199",
+      "display_name": "Richard Thomas Watson",
+      "orcid": "https://orcid.org/0000-0003-0664-8337",
+      "h_index": 72,
+      "i10_index": 207,
+      "works_count": 448,
+      "cited_by_count": 33654,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5007990980",
+      "display_name": "Wanda J. Orlikowski",
+      "orcid": "https://orcid.org/0000-0001-7313-9466",
+      "h_index": 72,
+      "i10_index": 117,
+      "works_count": 229,
+      "cited_by_count": 74525,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5018910159",
+      "display_name": "Thomas H. Davenport",
+      "orcid": "https://orcid.org/0000-0001-6205-3907",
+      "h_index": 70,
+      "i10_index": 121,
+      "works_count": 339,
+      "cited_by_count": 57534,
+      "discipline": "Management Information Systems",
+      "primary_field": "Decision Sciences",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Decision Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5011738956",
+      "display_name": "Shan Ling Pan",
+      "orcid": "https://orcid.org/0000-0003-3762-4629",
+      "h_index": 69,
+      "i10_index": 163,
+      "works_count": 310,
+      "cited_by_count": 16028,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5111407609",
+      "display_name": "M. Lynne Markus",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 127,
+      "works_count": 238,
+      "cited_by_count": 31493,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5038425065",
+      "display_name": "Michael Rosemann",
+      "orcid": "https://orcid.org/0000-0003-3303-2896",
+      "h_index": 67,
+      "i10_index": 241,
+      "works_count": 629,
+      "cited_by_count": 21112,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5028695671",
+      "display_name": "Jason Bennett Thatcher",
+      "orcid": "https://orcid.org/0000-0002-7136-8836",
+      "h_index": 67,
+      "i10_index": 152,
+      "works_count": 376,
+      "cited_by_count": 21151,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Management Information Systems -- 9.7",
+      "id": "https://openalex.org/A5004474203",
+      "display_name": "Richard Baskerville",
+      "orcid": "https://orcid.org/0000-0003-2860-5215",
+      "h_index": 66,
+      "i10_index": 167,
+      "works_count": 378,
+      "cited_by_count": 27021,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Management Information Systems -- 9.6",
+      "id": "https://openalex.org/A5017644589",
+      "display_name": "Shahriar Akter",
+      "orcid": "https://orcid.org/0000-0002-2050-9985",
+      "h_index": 66,
+      "i10_index": 128,
+      "works_count": 185,
+      "cited_by_count": 26865,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Management Information Systems -- 9.6",
+      "id": "https://openalex.org/A5048568271",
+      "display_name": "Barbara Weber",
+      "orcid": "https://orcid.org/0000-0002-6004-4860",
+      "h_index": 65,
+      "i10_index": 207,
+      "works_count": 444,
+      "cited_by_count": 18438,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Management Information Systems -- 9.6",
+      "id": "https://openalex.org/A5005171934",
+      "display_name": "Kenneth L. Kraemer",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 173,
+      "works_count": 457,
+      "cited_by_count": 28087,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Management Information Systems -- 9.6",
+      "id": "https://openalex.org/A5049215719",
+      "display_name": "Miklos Antal Vasarhelyi",
+      "orcid": "https://orcid.org/0000-0003-3205-476X",
+      "h_index": 65,
+      "i10_index": 164,
+      "works_count": 325,
+      "cited_by_count": 20795,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Management Information Systems -- 9.6",
+      "id": "https://openalex.org/A5079825006",
+      "display_name": "Thomas W. Malone",
+      "orcid": "https://orcid.org/0000-0002-7005-1482",
+      "h_index": 65,
+      "i10_index": 133,
+      "works_count": 307,
+      "cited_by_count": 36494,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Psychology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Management Information Systems -- 9.6",
+      "id": "https://openalex.org/A5112041005",
+      "display_name": "Daniel Robey",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 98,
+      "works_count": 167,
+      "cited_by_count": 22064,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Management Information Systems -- 9.6",
+      "id": "https://openalex.org/A5001423150",
+      "display_name": "Sirkka L. Järvenpää",
+      "orcid": "https://orcid.org/0000-0001-5156-7726",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 335,
+      "cited_by_count": 34622,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Management Information Systems -- 9.6",
+      "id": "https://openalex.org/A5076679564",
+      "display_name": "Patrick Mikalef",
+      "orcid": "https://orcid.org/0000-0002-6788-2277",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 233,
+      "cited_by_count": 30574,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Management Information Systems -- 9.6",
+      "id": "https://openalex.org/A5008530453",
+      "display_name": "Arun Rai",
+      "orcid": "https://orcid.org/0000-0002-3655-7543",
+      "h_index": 63,
+      "i10_index": 146,
+      "works_count": 304,
+      "cited_by_count": 19602,
+      "discipline": "Management Information Systems",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Management Information Systems",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Computer Science"
+      ]
+    }
+  ]
+}

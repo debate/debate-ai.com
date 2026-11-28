@@ -288,7 +288,7 @@ export function LecturesVideoGridView({
   const showLectureGallery =
     browsingLibrary && !browsingRoundCollection && galleryCategories.length > 0
 
-  // The division pages (College Policy, HS Policy, Individual, Forum) and the
+  // The division pages (College Policy, HS Policy, Forum, Individual) and the
   // round collections (ACC, Parli, Congress) carry no category bar of their
   // own, so they get the four format cards, the open division selected.
   const activeFormatId = formatBadgeIdForStyle(selectedStyle)

@@ -1,0 +1,68 @@
+{
+  "kind": "subfield",
+  "id": 2104,
+  "name": "Nuclear Energy and Engineering",
+  "total_in_scrape": 3,
+  "count": 3,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Nuclear Energy and Engineering -- 9.9",
+      "id": "https://openalex.org/A5110519224",
+      "display_name": "Hideo Nakamura",
+      "orcid": "https://orcid.org/0000-0003-2944-234X",
+      "h_index": 68,
+      "i10_index": 299,
+      "works_count": 1011,
+      "cited_by_count": 20564,
+      "discipline": "Nuclear Energy and Engineering",
+      "primary_field": "Medicine",
+      "primary_subfield": "Nuclear Energy and Engineering",
+      "fields": [
+        "Medicine",
+        "Energy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Nuclear Energy and Engineering -- 9.9",
+      "id": "https://openalex.org/A5034515522",
+      "display_name": "Takashi Takata",
+      "orcid": "https://orcid.org/0000-0002-5682-4215",
+      "h_index": 66,
+      "i10_index": 254,
+      "works_count": 517,
+      "cited_by_count": 14992,
+      "discipline": "Nuclear Energy and Engineering",
+      "primary_field": "Energy",
+      "primary_subfield": "Nuclear Energy and Engineering",
+      "fields": [
+        "Energy",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Nuclear Energy and Engineering -- 9.9",
+      "id": "https://openalex.org/A5103426048",
+      "display_name": "Minoru Takahashi",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 235,
+      "works_count": 799,
+      "cited_by_count": 16812,
+      "discipline": "Nuclear Energy and Engineering",
+      "primary_field": "Energy",
+      "primary_subfield": "Nuclear Energy and Engineering",
+      "fields": [
+        "Energy",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    }
+  ]
+}

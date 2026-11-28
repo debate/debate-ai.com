@@ -1,0 +1,158 @@
+{
+  "kind": "subfield",
+  "id": 2602,
+  "name": "Algebra and Number Theory",
+  "total_in_scrape": 8,
+  "count": 8,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Algebra and Number Theory -- 9.9",
+      "id": "https://openalex.org/A5063999660",
+      "display_name": "Victor Gershevich Kac",
+      "orcid": "https://orcid.org/0000-0002-2860-7811",
+      "h_index": 78,
+      "i10_index": 210,
+      "works_count": 450,
+      "cited_by_count": 31403,
+      "discipline": "Algebra and Number Theory",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Algebra and Number Theory",
+      "fields": [
+        "Mathematics",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Algebra and Number Theory -- 9.9",
+      "id": "https://openalex.org/A5088720034",
+      "display_name": "Jonathan Michael Borwein",
+      "orcid": "https://orcid.org/0000-0002-1263-0646",
+      "h_index": 75,
+      "i10_index": 331,
+      "works_count": 764,
+      "cited_by_count": 27595,
+      "discipline": "Algebra and Number Theory",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Algebra and Number Theory",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Algebra and Number Theory -- 9.9",
+      "id": "https://openalex.org/A5067326744",
+      "display_name": "G. Lusztig",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 205,
+      "works_count": 473,
+      "cited_by_count": 24799,
+      "discipline": "Algebra and Number Theory",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Algebra and Number Theory",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Algebra and Number Theory -- 9.9",
+      "id": "https://openalex.org/A5110436353",
+      "display_name": "Jean-Pierre Serre",
+      "orcid": "https://orcid.org/0000-0002-0306-470X",
+      "h_index": 73,
+      "i10_index": 164,
+      "works_count": 772,
+      "cited_by_count": 35459,
+      "discipline": "Algebra and Number Theory",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Algebra and Number Theory",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Algebra and Number Theory -- 9.9",
+      "id": "https://openalex.org/A5055200378",
+      "display_name": "George E. Andrews",
+      "orcid": "https://orcid.org/0000-0002-8909-823X",
+      "h_index": 65,
+      "i10_index": 249,
+      "works_count": 666,
+      "cited_by_count": 20234,
+      "discipline": "Algebra and Number Theory",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Algebra and Number Theory",
+      "fields": [
+        "Mathematics",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Algebra and Number Theory -- 9.9",
+      "id": "https://openalex.org/A5016016515",
+      "display_name": "Nathan S. Jacobson",
+      "orcid": "https://orcid.org/0000-0002-9177-4129",
+      "h_index": 65,
+      "i10_index": 171,
+      "works_count": 537,
+      "cited_by_count": 16036,
+      "discipline": "Algebra and Number Theory",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Algebra and Number Theory",
+      "fields": [
+        "Mathematics",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Algebra and Number Theory -- 9.8",
+      "id": "https://openalex.org/A5005589416",
+      "display_name": "Don Bernard Zagier",
+      "orcid": "https://orcid.org/0009-0007-6199-9283",
+      "h_index": 64,
+      "i10_index": 151,
+      "works_count": 278,
+      "cited_by_count": 18189,
+      "discipline": "Algebra and Number Theory",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Algebra and Number Theory",
+      "fields": [
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Algebra and Number Theory -- 9.8",
+      "id": "https://openalex.org/A5110397833",
+      "display_name": "G. H. Hardy",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 163,
+      "works_count": 447,
+      "cited_by_count": 20491,
+      "discipline": "Algebra and Number Theory",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Algebra and Number Theory",
+      "fields": [
+        "Mathematics",
+        "Arts and Humanities"
+      ]
+    }
+  ]
+}

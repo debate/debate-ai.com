@@ -1,7 +1,7 @@
 /**
- * @fileoverview The four format cards (College Policy, HS Policy, Individual,
- * Forum) lead every division page — `/videos/college`, `/videos/policy`,
- * `/videos/ld`, `/videos/pf` — and the round collection pages, with the
+ * @fileoverview The four format cards (College Policy, HS Policy, Forum,
+ * Individual) lead every division page — `/videos/college`, `/videos/policy`,
+ * `/videos/pf`, `/videos/ld` — and the round collection pages, with the
  * current division selected. The division pages also list the other formats
  * (Worlds, Demo Debates, Parli, Atlantic, Congress) under the cards. Pages that already carry the full category bar,
  * and the favorites and history views, do not repeat them.
@@ -92,7 +92,7 @@ function render(overrides: Record<string, unknown>): string {
 }
 
 
-const CARD_HREFS = ["/videos/college", "/videos/policy", "/videos/ld", "/videos/pf"];
+const CARD_HREFS = ["/videos/college", "/videos/policy", "/videos/pf", "/videos/ld"];
 
 function sectionOf(html: string, title: string): string {
   const start = html.indexOf(`<section aria-label="${title}"`);
@@ -120,6 +120,16 @@ describe("format cards on division pages", () => {
     const selected = nav!.match(/<a href="([^"]+)" aria-current="page"/);
     expect(selected?.[1]).toBe(`/videos/${id}`);
     if (id === "ld") expect(nav).toContain(">42<");
+  });
+
+  it("orders the cards College Policy, HS Policy, Forum, Individual", () => {
+    const nav = formatNav(render({ selectedStyle: 4 }))!;
+    const positions = CARD_HREFS.map((href) => nav.indexOf(`href="${href}"`));
+    expect(positions.every((p) => p > -1)).toBe(true);
+    expect([...positions].sort((a, b) => a - b)).toEqual(positions);
+    const labels = ["College Policy", "HS Policy", "Forum", "Individual"].map((l) => nav.indexOf(`>${l}<`));
+    expect([...labels].sort((a, b) => a - b)).toEqual(labels);
+    expect(labels.every((p) => p > -1)).toBe(true);
   });
 
   it("shows the cards on round collection pages with none selected", () => {

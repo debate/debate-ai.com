@@ -1,0 +1,290 @@
+{
+  "kind": "subfield",
+  "id": 3607,
+  "name": "Medical Laboratory Technology",
+  "total_in_scrape": 14,
+  "count": 14,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Medical Laboratory Technology -- 9.9",
+      "id": "https://openalex.org/A5073522064",
+      "display_name": "Giuseppe Lippi",
+      "orcid": "https://orcid.org/0000-0001-9523-9054",
+      "h_index": 135,
+      "i10_index": 1442,
+      "works_count": 2693,
+      "cited_by_count": 105243,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Medical Laboratory Technology -- 9.9",
+      "id": "https://openalex.org/A5018059398",
+      "display_name": "Mario Plebani",
+      "orcid": "https://orcid.org/0000-0002-0270-1711",
+      "h_index": 120,
+      "i10_index": 1033,
+      "works_count": 1959,
+      "cited_by_count": 74338,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Medical Laboratory Technology -- 9.9",
+      "id": "https://openalex.org/A5030295153",
+      "display_name": "Khosrow Adeli",
+      "orcid": "https://orcid.org/0000-0002-5839-5709",
+      "h_index": 82,
+      "i10_index": 351,
+      "works_count": 623,
+      "cited_by_count": 40619,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Medical Laboratory Technology -- 9.9",
+      "id": "https://openalex.org/A5083947815",
+      "display_name": "Joris Delanghe",
+      "orcid": "https://orcid.org/0000-0002-5702-6792",
+      "h_index": 81,
+      "i10_index": 374,
+      "works_count": 749,
+      "cited_by_count": 22837,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Medical Laboratory Technology -- 9.9",
+      "id": "https://openalex.org/A5110664509",
+      "display_name": "John H. Eckfeldt",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 251,
+      "works_count": 342,
+      "cited_by_count": 27529,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Medical Laboratory Technology -- 9.9",
+      "id": "https://openalex.org/A5059620963",
+      "display_name": "Giuseppe Banfi",
+      "orcid": "https://orcid.org/0000-0001-9578-5338",
+      "h_index": 77,
+      "i10_index": 422,
+      "works_count": 735,
+      "cited_by_count": 25046,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Medical Laboratory Technology -- 9.8",
+      "id": "https://openalex.org/A5085613233",
+      "display_name": "Mauro Panteghini",
+      "orcid": "https://orcid.org/0000-0002-7147-3433",
+      "h_index": 71,
+      "i10_index": 305,
+      "works_count": 626,
+      "cited_by_count": 18331,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Physics and Astronomy",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Medical Laboratory Technology -- 9.8",
+      "id": "https://openalex.org/A5109987927",
+      "display_name": "George G. Klee",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 191,
+      "works_count": 316,
+      "cited_by_count": 18492,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Medical Laboratory Technology -- 9.8",
+      "id": "https://openalex.org/A5071687195",
+      "display_name": "Gian Cesare Guidi",
+      "orcid": "https://orcid.org/0000-0002-4682-7834",
+      "h_index": 67,
+      "i10_index": 330,
+      "works_count": 597,
+      "cited_by_count": 17652,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Medical Laboratory Technology -- 9.8",
+      "id": "https://openalex.org/A5067573503",
+      "display_name": "Gian Luca Salvagno",
+      "orcid": "https://orcid.org/0000-0003-0487-9051",
+      "h_index": 66,
+      "i10_index": 308,
+      "works_count": 545,
+      "cited_by_count": 18338,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Medical Laboratory Technology -- 9.8",
+      "id": "https://openalex.org/A5050821841",
+      "display_name": "Richard J. Zarbo",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 167,
+      "works_count": 230,
+      "cited_by_count": 12589,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Medical Laboratory Technology -- 9.8",
+      "id": "https://openalex.org/A5115603637",
+      "display_name": "Rui Zhang",
+      "orcid": "https://orcid.org/0000-0002-1360-2452",
+      "h_index": 64,
+      "i10_index": 381,
+      "works_count": 839,
+      "cited_by_count": 19903,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Chemistry",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Medical Laboratory Technology -- 9.8",
+      "id": "https://openalex.org/A5108429203",
+      "display_name": "Kent B Lewandrowski",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 170,
+      "works_count": 303,
+      "cited_by_count": 17532,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Health Professions",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Medical Laboratory Technology -- 9.8",
+      "id": "https://openalex.org/A5112709337",
+      "display_name": "Georg E. HOFFMANN",
+      "orcid": "https://orcid.org/0000-0002-3848-1351",
+      "h_index": 63,
+      "i10_index": 131,
+      "works_count": 307,
+      "cited_by_count": 20177,
+      "discipline": "Medical Laboratory Technology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Medical Laboratory Technology",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Physics and Astronomy",
+        "Nursing"
+      ]
+    }
+  ]
+}
