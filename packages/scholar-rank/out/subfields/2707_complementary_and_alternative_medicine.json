@@ -1,0 +1,1490 @@
+{
+  "kind": "subfield",
+  "id": 2707,
+  "name": "Complementary and alternative medicine",
+  "total_in_scrape": 75,
+  "count": 75,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Complementary and alternative medicine -- 9.9",
+      "id": "https://openalex.org/A5034304968",
+      "display_name": "Gautam Sethi",
+      "orcid": "https://orcid.org/0000-0002-8677-8475",
+      "h_index": 144,
+      "i10_index": 544,
+      "works_count": 815,
+      "cited_by_count": 70478,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Complementary and alternative medicine -- 9.9",
+      "id": "https://openalex.org/A5025581939",
+      "display_name": "Yaser Mohammed Al‐Worafi",
+      "orcid": "https://orcid.org/0000-0002-5752-2913",
+      "h_index": 124,
+      "i10_index": 168,
+      "works_count": 1058,
+      "cited_by_count": 69470,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Health Professions",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Health Professions",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Complementary and alternative medicine -- 9.9",
+      "id": "https://openalex.org/A5001230244",
+      "display_name": "Roger B. Davis",
+      "orcid": "https://orcid.org/0000-0003-3330-3123",
+      "h_index": 108,
+      "i10_index": 323,
+      "works_count": 477,
+      "cited_by_count": 46114,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Complementary and alternative medicine -- 9.9",
+      "id": "https://openalex.org/A5023079588",
+      "display_name": "Ted Jack Kaptchuk",
+      "orcid": "https://orcid.org/0000-0002-2253-1940",
+      "h_index": 102,
+      "i10_index": 289,
+      "works_count": 495,
+      "cited_by_count": 38622,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Complementary and alternative medicine -- 9.9",
+      "id": "https://openalex.org/A5007046565",
+      "display_name": "Cheng Yun Peng",
+      "orcid": "https://orcid.org/0000-0003-3303-906X",
+      "h_index": 90,
+      "i10_index": 578,
+      "works_count": 933,
+      "cited_by_count": 35665,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Complementary and alternative medicine -- 9.9",
+      "id": "https://openalex.org/A5076594495",
+      "display_name": "Aiping Lü",
+      "orcid": "https://orcid.org/0000-0002-2303-0494",
+      "h_index": 90,
+      "i10_index": 500,
+      "works_count": 1092,
+      "cited_by_count": 45711,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5100400752",
+      "display_name": "Min Li",
+      "orcid": "https://orcid.org/0000-0002-7113-2700",
+      "h_index": 89,
+      "i10_index": 581,
+      "works_count": 1219,
+      "cited_by_count": 35482,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5033681865",
+      "display_name": "Guanhua Du",
+      "orcid": "https://orcid.org/0000-0002-6896-0847",
+      "h_index": 87,
+      "i10_index": 559,
+      "works_count": 1079,
+      "cited_by_count": 32776,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5037236595",
+      "display_name": "Kwang Seok Ahn",
+      "orcid": "https://orcid.org/0000-0002-2882-0612",
+      "h_index": 87,
+      "i10_index": 314,
+      "works_count": 409,
+      "cited_by_count": 24993,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5100709594",
+      "display_name": "Xijun Wang",
+      "orcid": "https://orcid.org/0000-0001-9375-8280",
+      "h_index": 86,
+      "i10_index": 337,
+      "works_count": 557,
+      "cited_by_count": 24656,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5061692887",
+      "display_name": "Holger Cramer",
+      "orcid": "https://orcid.org/0000-0002-3640-8046",
+      "h_index": 85,
+      "i10_index": 264,
+      "works_count": 619,
+      "cited_by_count": 22649,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5100379084",
+      "display_name": "Myeong Soo Lee",
+      "orcid": "https://orcid.org/0000-0001-6651-7641",
+      "h_index": 83,
+      "i10_index": 459,
+      "works_count": 847,
+      "cited_by_count": 24855,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5112164479",
+      "display_name": "Edzard Ernst",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 191,
+      "works_count": 351,
+      "cited_by_count": 21322,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5100440013",
+      "display_name": "Jie Wang",
+      "orcid": "https://orcid.org/0000-0001-7870-0646",
+      "h_index": 81,
+      "i10_index": 735,
+      "works_count": 1556,
+      "cited_by_count": 34367,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5064313538",
+      "display_name": "Jin‐Ao Duan",
+      "orcid": "https://orcid.org/0000-0001-7109-7848",
+      "h_index": 81,
+      "i10_index": 606,
+      "works_count": 1249,
+      "cited_by_count": 28462,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5100383000",
+      "display_name": "Ying Chen",
+      "orcid": "https://orcid.org/0000-0001-6303-5858",
+      "h_index": 80,
+      "i10_index": 448,
+      "works_count": 861,
+      "cited_by_count": 25041,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Complementary and alternative medicine -- 9.8",
+      "id": "https://openalex.org/A5109470689",
+      "display_name": "Hui Juan Sun",
+      "orcid": "https://orcid.org/0000-0001-7794-9976",
+      "h_index": 80,
+      "i10_index": 297,
+      "works_count": 452,
+      "cited_by_count": 22297,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5105351693",
+      "display_name": "Stefan N. Willich",
+      "orcid": "https://orcid.org/0009-0006-1270-2597",
+      "h_index": 80,
+      "i10_index": 286,
+      "works_count": 540,
+      "cited_by_count": 26481,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5037193058",
+      "display_name": "Bokyung Sung",
+      "orcid": "https://orcid.org/0009-0001-2423-3613",
+      "h_index": 80,
+      "i10_index": 136,
+      "works_count": 217,
+      "cited_by_count": 26320,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5014564622",
+      "display_name": "Klaus Linde",
+      "orcid": "https://orcid.org/0000-0002-2902-970X",
+      "h_index": 79,
+      "i10_index": 211,
+      "works_count": 464,
+      "cited_by_count": 25823,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5005358084",
+      "display_name": "Yeong Shik Kim",
+      "orcid": "https://orcid.org/0000-0003-1353-3925",
+      "h_index": 78,
+      "i10_index": 299,
+      "works_count": 366,
+      "cited_by_count": 18337,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5010398005",
+      "display_name": "George T. Lewith",
+      "orcid": "https://orcid.org/0000-0002-2364-3960",
+      "h_index": 77,
+      "i10_index": 268,
+      "works_count": 649,
+      "cited_by_count": 23262,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5049567539",
+      "display_name": "Brian Berman",
+      "orcid": "https://orcid.org/0000-0001-9872-5402",
+      "h_index": 77,
+      "i10_index": 222,
+      "works_count": 322,
+      "cited_by_count": 21819,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5100601073",
+      "display_name": "Zhengtao Wang",
+      "orcid": "https://orcid.org/0000-0003-2797-4625",
+      "h_index": 76,
+      "i10_index": 600,
+      "works_count": 981,
+      "cited_by_count": 27710,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5011573172",
+      "display_name": "Guangji Wang",
+      "orcid": "https://orcid.org/0000-0002-0777-3896",
+      "h_index": 76,
+      "i10_index": 485,
+      "works_count": 749,
+      "cited_by_count": 24203,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5009913628",
+      "display_name": "Ping‐Chung Leung",
+      "orcid": "https://orcid.org/0000-0002-0195-4688",
+      "h_index": 76,
+      "i10_index": 349,
+      "works_count": 553,
+      "cited_by_count": 26017,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5100368060",
+      "display_name": "Na Li",
+      "orcid": "https://orcid.org/0000-0002-0404-6431",
+      "h_index": 75,
+      "i10_index": 582,
+      "works_count": 1166,
+      "cited_by_count": 26536,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Chemistry",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Complementary and alternative medicine -- 9.7",
+      "id": "https://openalex.org/A5100404173",
+      "display_name": "Qing Li",
+      "orcid": "https://orcid.org/0000-0003-3087-4692",
+      "h_index": 75,
+      "i10_index": 557,
+      "works_count": 1281,
+      "cited_by_count": 26264,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5055172170",
+      "display_name": "Con K. K. Stough",
+      "orcid": "https://orcid.org/0000-0002-3628-3220",
+      "h_index": 75,
+      "i10_index": 248,
+      "works_count": 437,
+      "cited_by_count": 20435,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5100435589",
+      "display_name": "Ping Li",
+      "orcid": "https://orcid.org/0000-0003-4150-3758",
+      "h_index": 74,
+      "i10_index": 515,
+      "works_count": 803,
+      "cited_by_count": 23701,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5100661693",
+      "display_name": "Aihua Zhang",
+      "orcid": "https://orcid.org/0000-0002-3784-4472",
+      "h_index": 74,
+      "i10_index": 220,
+      "works_count": 304,
+      "cited_by_count": 17799,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5100317669",
+      "display_name": "Jianping Liu",
+      "orcid": "https://orcid.org/0000-0002-0320-061X",
+      "h_index": 73,
+      "i10_index": 388,
+      "works_count": 931,
+      "cited_by_count": 22376,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5005720957",
+      "display_name": "Yutaka Shimada",
+      "orcid": "https://orcid.org/0000-0002-2836-0492",
+      "h_index": 73,
+      "i10_index": 351,
+      "works_count": 732,
+      "cited_by_count": 22735,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5108095978",
+      "display_name": "Yitao Wang",
+      "orcid": "https://orcid.org/0000-0003-3302-4941",
+      "h_index": 73,
+      "i10_index": 295,
+      "works_count": 374,
+      "cited_by_count": 19907,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5081371514",
+      "display_name": "Romy Lauche",
+      "orcid": "https://orcid.org/0000-0002-4171-7935",
+      "h_index": 73,
+      "i10_index": 171,
+      "works_count": 419,
+      "cited_by_count": 16467,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5041465938",
+      "display_name": "Kwok‐Pui Fung",
+      "orcid": "https://orcid.org/0000-0001-6214-5123",
+      "h_index": 72,
+      "i10_index": 350,
+      "works_count": 522,
+      "cited_by_count": 19597,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5074425597",
+      "display_name": "Zhaoxiang Bian",
+      "orcid": "https://orcid.org/0000-0001-6206-1958",
+      "h_index": 71,
+      "i10_index": 307,
+      "works_count": 505,
+      "cited_by_count": 20453,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5083377609",
+      "display_name": "Yibin Feng",
+      "orcid": "https://orcid.org/0000-0002-0241-670X",
+      "h_index": 71,
+      "i10_index": 199,
+      "works_count": 323,
+      "cited_by_count": 23917,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Complementary and alternative medicine -- 9.6",
+      "id": "https://openalex.org/A5066320861",
+      "display_name": "Caroline Anne Smith",
+      "orcid": "https://orcid.org/0000-0002-7828-0597",
+      "h_index": 71,
+      "i10_index": 192,
+      "works_count": 362,
+      "cited_by_count": 17038,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5100341210",
+      "display_name": "Qi Wang",
+      "orcid": "https://orcid.org/0000-0001-7626-676X",
+      "h_index": 70,
+      "i10_index": 565,
+      "works_count": 918,
+      "cited_by_count": 26788,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5056277994",
+      "display_name": "Jon Adams",
+      "orcid": "https://orcid.org/0000-0002-9901-5717",
+      "h_index": 70,
+      "i10_index": 408,
+      "works_count": 815,
+      "cited_by_count": 19261,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5015198590",
+      "display_name": "Lixing Lao",
+      "orcid": "https://orcid.org/0000-0003-0198-9714",
+      "h_index": 70,
+      "i10_index": 267,
+      "works_count": 445,
+      "cited_by_count": 21071,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5013936218",
+      "display_name": "Jerome J. Sarris",
+      "orcid": "https://orcid.org/0000-0001-9287-8854",
+      "h_index": 70,
+      "i10_index": 188,
+      "works_count": 348,
+      "cited_by_count": 22807,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Psychology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5100733463",
+      "display_name": "Li Yang",
+      "orcid": "https://orcid.org/0000-0002-5484-0895",
+      "h_index": 69,
+      "i10_index": 448,
+      "works_count": 770,
+      "cited_by_count": 21897,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5044788727",
+      "display_name": "Yan Zhu",
+      "orcid": "https://orcid.org/0000-0002-3197-7936",
+      "h_index": 69,
+      "i10_index": 284,
+      "works_count": 425,
+      "cited_by_count": 18710,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5025530383",
+      "display_name": "Lian‐Wen Qi",
+      "orcid": "https://orcid.org/0000-0003-0728-4475",
+      "h_index": 69,
+      "i10_index": 222,
+      "works_count": 286,
+      "cited_by_count": 14447,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Chemistry",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5112385787",
+      "display_name": "E Ernst",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 166,
+      "works_count": 348,
+      "cited_by_count": 15773,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5100725242",
+      "display_name": "Min Ye",
+      "orcid": "https://orcid.org/0000-0002-9952-2380",
+      "h_index": 68,
+      "i10_index": 300,
+      "works_count": 447,
+      "cited_by_count": 16366,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5006890585",
+      "display_name": "Qiang Xu",
+      "orcid": "https://orcid.org/0000-0002-3530-9855",
+      "h_index": 68,
+      "i10_index": 292,
+      "works_count": 430,
+      "cited_by_count": 15579,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5019539940",
+      "display_name": "Jun J. J. Mao",
+      "orcid": "https://orcid.org/0000-0001-9229-0380",
+      "h_index": 68,
+      "i10_index": 255,
+      "works_count": 503,
+      "cited_by_count": 16530,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Complementary and alternative medicine -- 9.5",
+      "id": "https://openalex.org/A5107072741",
+      "display_name": "Shaoping Li",
+      "orcid": "https://orcid.org/0000-0003-4255-6229",
+      "h_index": 68,
+      "i10_index": 248,
+      "works_count": 380,
+      "cited_by_count": 13947,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5020497141",
+      "display_name": "Andreas Michalsen",
+      "orcid": "https://orcid.org/0000-0002-9145-7246",
+      "h_index": 68,
+      "i10_index": 184,
+      "works_count": 523,
+      "cited_by_count": 16178,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5037204409",
+      "display_name": "Sang‐Bae Han",
+      "orcid": "https://orcid.org/0000-0001-6656-6523",
+      "h_index": 67,
+      "i10_index": 372,
+      "works_count": 567,
+      "cited_by_count": 19065,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Chemistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5050029453",
+      "display_name": "Sahdeo Prasad",
+      "orcid": "https://orcid.org/0000-0002-3160-6959",
+      "h_index": 67,
+      "i10_index": 120,
+      "works_count": 187,
+      "cited_by_count": 20535,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5100323703",
+      "display_name": "Wei Wei",
+      "orcid": "https://orcid.org/0000-0002-3117-9598",
+      "h_index": 66,
+      "i10_index": 351,
+      "works_count": 571,
+      "cited_by_count": 18776,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5018799075",
+      "display_name": "Takako Yokozawa",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 315,
+      "works_count": 492,
+      "cited_by_count": 16401,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5018454768",
+      "display_name": "Haiping Hao",
+      "orcid": "https://orcid.org/0000-0003-2522-7546",
+      "h_index": 66,
+      "i10_index": 248,
+      "works_count": 373,
+      "cited_by_count": 16427,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5074659805",
+      "display_name": "Sunita Vohra",
+      "orcid": "https://orcid.org/0000-0002-6210-7933",
+      "h_index": 66,
+      "i10_index": 211,
+      "works_count": 406,
+      "cited_by_count": 22904,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Decision Sciences",
+        "Mathematics",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5100387207",
+      "display_name": "Ning Wang",
+      "orcid": "https://orcid.org/0000-0003-1410-329X",
+      "h_index": 66,
+      "i10_index": 178,
+      "works_count": 342,
+      "cited_by_count": 17106,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5103381564",
+      "display_name": "Edzard Ernst",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 151,
+      "works_count": 423,
+      "cited_by_count": 16892,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5112288234",
+      "display_name": "Adrian R White",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 134,
+      "works_count": 435,
+      "cited_by_count": 17251,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Complementary and alternative medicine -- 9.4",
+      "id": "https://openalex.org/A5001212085",
+      "display_name": "Sae‐Kwang Ku",
+      "orcid": "https://orcid.org/0000-0003-1269-3804",
+      "h_index": 65,
+      "i10_index": 356,
+      "works_count": 591,
+      "cited_by_count": 16349,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5100413307",
+      "display_name": "Xiaomin Wang",
+      "orcid": "https://orcid.org/0000-0003-1274-224X",
+      "h_index": 65,
+      "i10_index": 350,
+      "works_count": 710,
+      "cited_by_count": 16946,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5013990587",
+      "display_name": "Yukihiro Shoyama",
+      "orcid": "https://orcid.org/0000-0001-7190-0258",
+      "h_index": 65,
+      "i10_index": 296,
+      "works_count": 470,
+      "cited_by_count": 15696,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5076786058",
+      "display_name": "Claudia M. Witt",
+      "orcid": "https://orcid.org/0000-0002-5440-7805",
+      "h_index": 65,
+      "i10_index": 254,
+      "works_count": 578,
+      "cited_by_count": 20062,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5061972415",
+      "display_name": "Xiuping Chen",
+      "orcid": "https://orcid.org/0000-0003-2675-7645",
+      "h_index": 65,
+      "i10_index": 250,
+      "works_count": 411,
+      "cited_by_count": 15384,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5019005101",
+      "display_name": "Yang Sun",
+      "orcid": "https://orcid.org/0000-0003-1425-0089",
+      "h_index": 65,
+      "i10_index": 243,
+      "works_count": 339,
+      "cited_by_count": 13993,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5100606222",
+      "display_name": "Jin‐Jian Lu",
+      "orcid": "https://orcid.org/0000-0001-6703-3120",
+      "h_index": 65,
+      "i10_index": 200,
+      "works_count": 291,
+      "cited_by_count": 17098,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5037389181",
+      "display_name": "David O. Kennedy",
+      "orcid": "https://orcid.org/0000-0002-9746-8771",
+      "h_index": 65,
+      "i10_index": 104,
+      "works_count": 182,
+      "cited_by_count": 15301,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5007020400",
+      "display_name": "Karl Wah Keung Tsim",
+      "orcid": "https://orcid.org/0000-0003-4808-1674",
+      "h_index": 64,
+      "i10_index": 370,
+      "works_count": 1026,
+      "cited_by_count": 17197,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5037644295",
+      "display_name": "De‐an Guo",
+      "orcid": "https://orcid.org/0000-0003-0223-9448",
+      "h_index": 64,
+      "i10_index": 362,
+      "works_count": 536,
+      "cited_by_count": 16831,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Chemistry",
+        "Agricultural and Biological Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5051749404",
+      "display_name": "David William Sibbritt",
+      "orcid": "https://orcid.org/0000-0003-3561-9447",
+      "h_index": 64,
+      "i10_index": 286,
+      "works_count": 579,
+      "cited_by_count": 15339,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Complementary and alternative medicine -- 9.3",
+      "id": "https://openalex.org/A5011199027",
+      "display_name": "Mahendra Kumar Trivedi",
+      "orcid": "https://orcid.org/0000-0002-2548-780X",
+      "h_index": 64,
+      "i10_index": 179,
+      "works_count": 840,
+      "cited_by_count": 13372,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Complementary and alternative medicine -- 9.2",
+      "id": "https://openalex.org/A5025241446",
+      "display_name": "Karen J. Sherman",
+      "orcid": "https://orcid.org/0000-0002-1437-0390",
+      "h_index": 64,
+      "i10_index": 150,
+      "works_count": 229,
+      "cited_by_count": 17955,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Health Professions",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Complementary and alternative medicine -- 9.2",
+      "id": "https://openalex.org/A5040189982",
+      "display_name": "Rong‐Rong He",
+      "orcid": "https://orcid.org/0000-0001-5505-5672",
+      "h_index": 63,
+      "i10_index": 234,
+      "works_count": 424,
+      "cited_by_count": 17973,
+      "discipline": "Complementary and alternative medicine",
+      "primary_field": "Medicine",
+      "primary_subfield": "Complementary and alternative medicine",
+      "fields": [
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    }
+  ]
+}

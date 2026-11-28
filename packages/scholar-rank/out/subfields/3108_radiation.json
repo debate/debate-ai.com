@@ -1,0 +1,3882 @@
+{
+  "kind": "subfield",
+  "id": 3108,
+  "name": "Radiation",
+  "total_in_scrape": 196,
+  "count": 196,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Radiation -- 9.9",
+      "id": "https://openalex.org/A5078003238",
+      "display_name": "Jürgen Debus",
+      "orcid": "https://orcid.org/0000-0002-6411-4811",
+      "h_index": 119,
+      "i10_index": 1023,
+      "works_count": 1947,
+      "cited_by_count": 73951,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Radiation -- 9.9",
+      "id": "https://openalex.org/A5080794141",
+      "display_name": "Zvi Y. Fuks",
+      "orcid": null,
+      "h_index": 118,
+      "i10_index": 376,
+      "works_count": 622,
+      "cited_by_count": 49784,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Radiation -- 9.9",
+      "id": "https://openalex.org/A5073129301",
+      "display_name": "Jens Overgaard",
+      "orcid": "https://orcid.org/0000-0002-0814-8179",
+      "h_index": 116,
+      "i10_index": 561,
+      "works_count": 1121,
+      "cited_by_count": 55941,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Radiation -- 9.9",
+      "id": "https://openalex.org/A5041943880",
+      "display_name": "Radhe Mohan",
+      "orcid": "https://orcid.org/0000-0003-3746-4557",
+      "h_index": 116,
+      "i10_index": 410,
+      "works_count": 900,
+      "cited_by_count": 41660,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Radiation -- 9.9",
+      "id": "https://openalex.org/A5079940663",
+      "display_name": "Søren Møller Bentzen",
+      "orcid": "https://orcid.org/0000-0002-7444-7564",
+      "h_index": 111,
+      "i10_index": 414,
+      "works_count": 928,
+      "cited_by_count": 45847,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Radiation -- 9.9",
+      "id": "https://openalex.org/A5044541675",
+      "display_name": "Jinghua Guo",
+      "orcid": "https://orcid.org/0000-0002-8576-2172",
+      "h_index": 108,
+      "i10_index": 459,
+      "works_count": 804,
+      "cited_by_count": 45818,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5020453607",
+      "display_name": "Peter Hoskin",
+      "orcid": "https://orcid.org/0000-0001-8323-9567",
+      "h_index": 105,
+      "i10_index": 496,
+      "works_count": 1407,
+      "cited_by_count": 49951,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5046132413",
+      "display_name": "Theodore Steven Lawrence",
+      "orcid": "https://orcid.org/0000-0002-4186-8821",
+      "h_index": 105,
+      "i10_index": 465,
+      "works_count": 1223,
+      "cited_by_count": 45036,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5002522655",
+      "display_name": "Johannes Albertus Langendijk",
+      "orcid": "https://orcid.org/0000-0003-1083-372X",
+      "h_index": 104,
+      "i10_index": 503,
+      "works_count": 1224,
+      "cited_by_count": 38870,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5008048551",
+      "display_name": "David Anthony Jaffray",
+      "orcid": "https://orcid.org/0000-0001-7378-7543",
+      "h_index": 104,
+      "i10_index": 378,
+      "works_count": 984,
+      "cited_by_count": 38374,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5109369043",
+      "display_name": "James D. Cox",
+      "orcid": null,
+      "h_index": 102,
+      "i10_index": 382,
+      "works_count": 818,
+      "cited_by_count": 40762,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5068938553",
+      "display_name": "Ben J. Slotman",
+      "orcid": "https://orcid.org/0000-0002-9902-4592",
+      "h_index": 100,
+      "i10_index": 392,
+      "works_count": 899,
+      "cited_by_count": 36387,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5109163005",
+      "display_name": "Nancy J. Tarbell",
+      "orcid": null,
+      "h_index": 100,
+      "i10_index": 255,
+      "works_count": 456,
+      "cited_by_count": 27717,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5046960589",
+      "display_name": "Charlotte Ling",
+      "orcid": "https://orcid.org/0000-0003-0587-7154",
+      "h_index": 98,
+      "i10_index": 262,
+      "works_count": 437,
+      "cited_by_count": 37397,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5100381484",
+      "display_name": "Lei Xing",
+      "orcid": "https://orcid.org/0000-0003-2536-5359",
+      "h_index": 97,
+      "i10_index": 451,
+      "works_count": 1382,
+      "cited_by_count": 36363,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5036700518",
+      "display_name": "Tsun‐Kong Sham",
+      "orcid": "https://orcid.org/0000-0003-1928-6697",
+      "h_index": 97,
+      "i10_index": 446,
+      "works_count": 653,
+      "cited_by_count": 39543,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Radiation -- 9.8",
+      "id": "https://openalex.org/A5079405457",
+      "display_name": "Jean Bourhis",
+      "orcid": "https://orcid.org/0000-0001-5162-1171",
+      "h_index": 97,
+      "i10_index": 374,
+      "works_count": 903,
+      "cited_by_count": 54105,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5086483620",
+      "display_name": "Zhongxing X. Liao",
+      "orcid": "https://orcid.org/0000-0002-2224-9478",
+      "h_index": 96,
+      "i10_index": 387,
+      "works_count": 890,
+      "cited_by_count": 30406,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5006395860",
+      "display_name": "Henry N. Chapman",
+      "orcid": "https://orcid.org/0000-0002-4655-1743",
+      "h_index": 94,
+      "i10_index": 320,
+      "works_count": 911,
+      "cited_by_count": 39010,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5071185138",
+      "display_name": "Albert C. Koong",
+      "orcid": "https://orcid.org/0000-0001-9824-1643",
+      "h_index": 94,
+      "i10_index": 299,
+      "works_count": 826,
+      "cited_by_count": 31836,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5101803784",
+      "display_name": "Alvaro A. Martinez",
+      "orcid": "https://orcid.org/0000-0003-1712-2971",
+      "h_index": 94,
+      "i10_index": 287,
+      "works_count": 771,
+      "cited_by_count": 28846,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5023510680",
+      "display_name": "Matthias Gückenberger",
+      "orcid": "https://orcid.org/0000-0002-7146-9071",
+      "h_index": 93,
+      "i10_index": 451,
+      "works_count": 1118,
+      "cited_by_count": 35971,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5060831255",
+      "display_name": "Joachim Stohr",
+      "orcid": "https://orcid.org/0000-0001-5815-1918",
+      "h_index": 92,
+      "i10_index": 241,
+      "works_count": 441,
+      "cited_by_count": 33790,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5037659354",
+      "display_name": "Laura Ann Dawson",
+      "orcid": "https://orcid.org/0000-0002-9068-6872",
+      "h_index": 91,
+      "i10_index": 231,
+      "works_count": 503,
+      "cited_by_count": 28882,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5077820862",
+      "display_name": "Richard Pötter",
+      "orcid": "https://orcid.org/0000-0002-0703-572X",
+      "h_index": 90,
+      "i10_index": 339,
+      "works_count": 758,
+      "cited_by_count": 34606,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5085651347",
+      "display_name": "Lawrence Bruce Marks",
+      "orcid": "https://orcid.org/0000-0001-8832-3303",
+      "h_index": 90,
+      "i10_index": 325,
+      "works_count": 785,
+      "cited_by_count": 37200,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5052699796",
+      "display_name": "Frank M. F. de Groot",
+      "orcid": "https://orcid.org/0000-0002-1340-2186",
+      "h_index": 90,
+      "i10_index": 322,
+      "works_count": 526,
+      "cited_by_count": 36280,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Radiation -- 9.7",
+      "id": "https://openalex.org/A5037938903",
+      "display_name": "Harald Paganetti",
+      "orcid": "https://orcid.org/0000-0002-6257-2413",
+      "h_index": 90,
+      "i10_index": 282,
+      "works_count": 724,
+      "cited_by_count": 28376,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5038738545",
+      "display_name": "Eli J. Glatstein",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 275,
+      "works_count": 632,
+      "cited_by_count": 29518,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5038323479",
+      "display_name": "Claus Belka",
+      "orcid": "https://orcid.org/0000-0002-1287-7825",
+      "h_index": 89,
+      "i10_index": 525,
+      "works_count": 1438,
+      "cited_by_count": 31064,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5110147599",
+      "display_name": "Steven A. Leibel",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 187,
+      "works_count": 297,
+      "cited_by_count": 26633,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5009101796",
+      "display_name": "Marcel van Herk",
+      "orcid": "https://orcid.org/0000-0001-6448-898X",
+      "h_index": 88,
+      "i10_index": 322,
+      "works_count": 989,
+      "cited_by_count": 35320,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5054431032",
+      "display_name": "Karin M. Haustermans",
+      "orcid": "https://orcid.org/0000-0003-0364-682X",
+      "h_index": 88,
+      "i10_index": 310,
+      "works_count": 891,
+      "cited_by_count": 39344,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5038819739",
+      "display_name": "Jeff M. Michalski",
+      "orcid": "https://orcid.org/0000-0003-0563-3766",
+      "h_index": 88,
+      "i10_index": 291,
+      "works_count": 634,
+      "cited_by_count": 30099,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5018120191",
+      "display_name": "Steve B Jiang",
+      "orcid": "https://orcid.org/0000-0002-3083-6752",
+      "h_index": 87,
+      "i10_index": 279,
+      "works_count": 833,
+      "cited_by_count": 27286,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5109125245",
+      "display_name": "Susan L. Tucker",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 220,
+      "works_count": 333,
+      "cited_by_count": 23896,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5113547168",
+      "display_name": "Gordon E. Brown",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 178,
+      "works_count": 263,
+      "cited_by_count": 21315,
+      "discipline": "Radiation",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Environmental Science",
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5023890271",
+      "display_name": "Peter Cloetens",
+      "orcid": "https://orcid.org/0000-0002-4129-9091",
+      "h_index": 86,
+      "i10_index": 290,
+      "works_count": 736,
+      "cited_by_count": 26352,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Radiation -- 9.6",
+      "id": "https://openalex.org/A5066759628",
+      "display_name": "Matthew A. Marcus",
+      "orcid": "https://orcid.org/0000-0003-2527-7586",
+      "h_index": 86,
+      "i10_index": 240,
+      "works_count": 479,
+      "cited_by_count": 24052,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5020632738",
+      "display_name": "Christian Dávid",
+      "orcid": "https://orcid.org/0000-0002-2953-1265",
+      "h_index": 85,
+      "i10_index": 335,
+      "works_count": 625,
+      "cited_by_count": 29819,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5079894409",
+      "display_name": "Catharine West",
+      "orcid": "https://orcid.org/0000-0002-0839-3449",
+      "h_index": 85,
+      "i10_index": 308,
+      "works_count": 718,
+      "cited_by_count": 25055,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5043319397",
+      "display_name": "Randall K. Ten Haken",
+      "orcid": "https://orcid.org/0000-0003-1331-0297",
+      "h_index": 85,
+      "i10_index": 262,
+      "works_count": 579,
+      "cited_by_count": 30731,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5020774876",
+      "display_name": "Hiroki Shirato",
+      "orcid": "https://orcid.org/0000-0003-3699-6439",
+      "h_index": 84,
+      "i10_index": 353,
+      "works_count": 815,
+      "cited_by_count": 31196,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5101477989",
+      "display_name": "John W. Wong",
+      "orcid": "https://orcid.org/0000-0002-6317-2067",
+      "h_index": 83,
+      "i10_index": 253,
+      "works_count": 501,
+      "cited_by_count": 27834,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5049288636",
+      "display_name": "Joos V. Lebesque",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 156,
+      "works_count": 284,
+      "cited_by_count": 24271,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5048120391",
+      "display_name": "Tetsuya Ishikawa",
+      "orcid": "https://orcid.org/0000-0002-6906-9909",
+      "h_index": 82,
+      "i10_index": 485,
+      "works_count": 1016,
+      "cited_by_count": 31402,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5022885146",
+      "display_name": "Franz Pfeiffer",
+      "orcid": "https://orcid.org/0000-0001-6665-4363",
+      "h_index": 82,
+      "i10_index": 395,
+      "works_count": 681,
+      "cited_by_count": 31888,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5042243800",
+      "display_name": "Herman D. Suit",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 250,
+      "works_count": 446,
+      "cited_by_count": 23743,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5024098067",
+      "display_name": "Patrick A. Kupelian",
+      "orcid": "https://orcid.org/0000-0002-5373-1611",
+      "h_index": 82,
+      "i10_index": 234,
+      "works_count": 592,
+      "cited_by_count": 21083,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5080362183",
+      "display_name": "Vincent S Khoo",
+      "orcid": "https://orcid.org/0000-0002-0763-6832",
+      "h_index": 82,
+      "i10_index": 217,
+      "works_count": 452,
+      "cited_by_count": 37852,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Radiation -- 9.5",
+      "id": "https://openalex.org/A5012356605",
+      "display_name": "Paul Keall",
+      "orcid": "https://orcid.org/0000-0003-4803-6507",
+      "h_index": 81,
+      "i10_index": 345,
+      "works_count": 893,
+      "cited_by_count": 29155,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5062544738",
+      "display_name": "Valentin Djonov",
+      "orcid": "https://orcid.org/0000-0002-5062-1169",
+      "h_index": 81,
+      "i10_index": 241,
+      "works_count": 445,
+      "cited_by_count": 24672,
+      "discipline": "Radiation",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5000970066",
+      "display_name": "Charles Catton",
+      "orcid": "https://orcid.org/0000-0003-2248-1370",
+      "h_index": 81,
+      "i10_index": 229,
+      "works_count": 538,
+      "cited_by_count": 23574,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5053972376",
+      "display_name": "Roberto Orecchia",
+      "orcid": "https://orcid.org/0000-0003-3135-7152",
+      "h_index": 80,
+      "i10_index": 396,
+      "works_count": 955,
+      "cited_by_count": 29553,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5083101824",
+      "display_name": "Michael A. Baumann",
+      "orcid": "https://orcid.org/0000-0002-9340-974X",
+      "h_index": 80,
+      "i10_index": 354,
+      "works_count": 998,
+      "cited_by_count": 24958,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5050165993",
+      "display_name": "Daniel A. Fischer",
+      "orcid": "https://orcid.org/0000-0002-3072-6000",
+      "h_index": 80,
+      "i10_index": 303,
+      "works_count": 514,
+      "cited_by_count": 23595,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5064867911",
+      "display_name": "Uwe Bergmann",
+      "orcid": "https://orcid.org/0000-0001-5639-166X",
+      "h_index": 80,
+      "i10_index": 196,
+      "works_count": 418,
+      "cited_by_count": 22795,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5008208200",
+      "display_name": "Vincenzo Valentini",
+      "orcid": "https://orcid.org/0000-0003-4637-6487",
+      "h_index": 79,
+      "i10_index": 507,
+      "works_count": 1312,
+      "cited_by_count": 36649,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5089595019",
+      "display_name": "Makina Yabashi",
+      "orcid": "https://orcid.org/0000-0002-2472-1684",
+      "h_index": 79,
+      "i10_index": 456,
+      "works_count": 1015,
+      "cited_by_count": 28581,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5061037633",
+      "display_name": "Stephanie Elisabeth Combs",
+      "orcid": "https://orcid.org/0000-0002-6934-2864",
+      "h_index": 79,
+      "i10_index": 412,
+      "works_count": 810,
+      "cited_by_count": 23762,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5055277438",
+      "display_name": "Marco Durante",
+      "orcid": "https://orcid.org/0000-0002-4615-553X",
+      "h_index": 79,
+      "i10_index": 387,
+      "works_count": 906,
+      "cited_by_count": 26321,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Radiation -- 9.4",
+      "id": "https://openalex.org/A5104909454",
+      "display_name": "Vincent Grégoire",
+      "orcid": "https://orcid.org/0000-0001-8604-4271",
+      "h_index": 79,
+      "i10_index": 296,
+      "works_count": 724,
+      "cited_by_count": 26748,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5100651593",
+      "display_name": "Lei Dong",
+      "orcid": "https://orcid.org/0000-0003-2623-3198",
+      "h_index": 79,
+      "i10_index": 224,
+      "works_count": 608,
+      "cited_by_count": 22005,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5016420174",
+      "display_name": "Billy W. Loo",
+      "orcid": "https://orcid.org/0000-0002-2521-0544",
+      "h_index": 79,
+      "i10_index": 223,
+      "works_count": 663,
+      "cited_by_count": 30923,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5000777470",
+      "display_name": "Thomas R Bortfeld",
+      "orcid": "https://orcid.org/0000-0002-3883-0398",
+      "h_index": 79,
+      "i10_index": 201,
+      "works_count": 486,
+      "cited_by_count": 22428,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5038083997",
+      "display_name": "Marc M. Messerschmidt",
+      "orcid": "https://orcid.org/0000-0002-8641-3302",
+      "h_index": 79,
+      "i10_index": 177,
+      "works_count": 372,
+      "cited_by_count": 29484,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5031472760",
+      "display_name": "Mayeen Uddin Khandaker",
+      "orcid": "https://orcid.org/0000-0003-3772-294X",
+      "h_index": 78,
+      "i10_index": 547,
+      "works_count": 922,
+      "cited_by_count": 27447,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5002647826",
+      "display_name": "Marco Stampanoni",
+      "orcid": "https://orcid.org/0000-0001-7486-6681",
+      "h_index": 78,
+      "i10_index": 328,
+      "works_count": 775,
+      "cited_by_count": 23805,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5068359755",
+      "display_name": "Robert D Timmerman",
+      "orcid": "https://orcid.org/0000-0003-2462-1007",
+      "h_index": 78,
+      "i10_index": 277,
+      "works_count": 764,
+      "cited_by_count": 33985,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5076875343",
+      "display_name": "Kevin M. Prise",
+      "orcid": "https://orcid.org/0000-0001-6134-7946",
+      "h_index": 78,
+      "i10_index": 258,
+      "works_count": 599,
+      "cited_by_count": 20743,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5070431570",
+      "display_name": "Howard D. Thames",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 219,
+      "works_count": 414,
+      "cited_by_count": 23140,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5015259799",
+      "display_name": "Masahiro Hiraoka",
+      "orcid": "https://orcid.org/0000-0002-7639-569X",
+      "h_index": 77,
+      "i10_index": 388,
+      "works_count": 888,
+      "cited_by_count": 24886,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Radiation -- 9.3",
+      "id": "https://openalex.org/A5043313789",
+      "display_name": "Anca‐Ligia Grosu",
+      "orcid": "https://orcid.org/0000-0003-2255-2255",
+      "h_index": 77,
+      "i10_index": 316,
+      "works_count": 928,
+      "cited_by_count": 21183,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5070251002",
+      "display_name": "John J. Rehr",
+      "orcid": "https://orcid.org/0000-0002-4411-3125",
+      "h_index": 77,
+      "i10_index": 283,
+      "works_count": 577,
+      "cited_by_count": 39579,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5075226112",
+      "display_name": "Richard Peter Hill",
+      "orcid": "https://orcid.org/0000-0001-5331-8045",
+      "h_index": 77,
+      "i10_index": 253,
+      "works_count": 436,
+      "cited_by_count": 22899,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5010597773",
+      "display_name": "Issam El Naqa",
+      "orcid": "https://orcid.org/0000-0001-6023-1132",
+      "h_index": 77,
+      "i10_index": 241,
+      "works_count": 495,
+      "cited_by_count": 32096,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5110896833",
+      "display_name": "Theodore Locke Phillips",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 240,
+      "works_count": 421,
+      "cited_by_count": 22084,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5103081517",
+      "display_name": "Ellen D. Yorke",
+      "orcid": "https://orcid.org/0000-0003-2604-3140",
+      "h_index": 77,
+      "i10_index": 234,
+      "works_count": 525,
+      "cited_by_count": 27337,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5010375570",
+      "display_name": "Frederik K. Wenz",
+      "orcid": "https://orcid.org/0000-0001-6037-0853",
+      "h_index": 76,
+      "i10_index": 415,
+      "works_count": 1264,
+      "cited_by_count": 24906,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5014829112",
+      "display_name": "Éric Deutsch",
+      "orcid": "https://orcid.org/0000-0002-8223-3697",
+      "h_index": 76,
+      "i10_index": 342,
+      "works_count": 959,
+      "cited_by_count": 32692,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5046756579",
+      "display_name": "Michael P. Flentje",
+      "orcid": "https://orcid.org/0000-0002-9463-4535",
+      "h_index": 76,
+      "i10_index": 290,
+      "works_count": 504,
+      "cited_by_count": 19014,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5083034892",
+      "display_name": "Lena Specht",
+      "orcid": "https://orcid.org/0000-0002-6902-2190",
+      "h_index": 76,
+      "i10_index": 245,
+      "works_count": 569,
+      "cited_by_count": 28876,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5049762198",
+      "display_name": "Cai Grau",
+      "orcid": "https://orcid.org/0000-0003-3548-3527",
+      "h_index": 76,
+      "i10_index": 233,
+      "works_count": 508,
+      "cited_by_count": 21628,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Radiation -- 9.2",
+      "id": "https://openalex.org/A5053987524",
+      "display_name": "Pieter Glatzel",
+      "orcid": "https://orcid.org/0000-0001-6532-8144",
+      "h_index": 76,
+      "i10_index": 217,
+      "works_count": 418,
+      "cited_by_count": 20279,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5083519149",
+      "display_name": "James E. Penner‐Hahn",
+      "orcid": "https://orcid.org/0000-0003-0314-1274",
+      "h_index": 76,
+      "i10_index": 188,
+      "works_count": 348,
+      "cited_by_count": 17784,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5018427856",
+      "display_name": "Joel E. Tepper",
+      "orcid": "https://orcid.org/0000-0002-8591-4228",
+      "h_index": 76,
+      "i10_index": 186,
+      "works_count": 395,
+      "cited_by_count": 28222,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5053413006",
+      "display_name": "Adam P. Hitchcock",
+      "orcid": "https://orcid.org/0000-0002-1598-7886",
+      "h_index": 75,
+      "i10_index": 323,
+      "works_count": 568,
+      "cited_by_count": 20295,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5004625690",
+      "display_name": "Benjamin Movsas",
+      "orcid": "https://orcid.org/0000-0003-2703-9776",
+      "h_index": 75,
+      "i10_index": 305,
+      "works_count": 789,
+      "cited_by_count": 24339,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5058639044",
+      "display_name": "Graham Neil George",
+      "orcid": "https://orcid.org/0000-0002-0420-7493",
+      "h_index": 75,
+      "i10_index": 292,
+      "works_count": 473,
+      "cited_by_count": 21797,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5012719992",
+      "display_name": "Stephen P. Cramer",
+      "orcid": "https://orcid.org/0000-0002-3751-7623",
+      "h_index": 75,
+      "i10_index": 231,
+      "works_count": 424,
+      "cited_by_count": 15770,
+      "discipline": "Radiation",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5040980527",
+      "display_name": "John Michael Buatti",
+      "orcid": "https://orcid.org/0000-0001-8499-3721",
+      "h_index": 75,
+      "i10_index": 209,
+      "works_count": 540,
+      "cited_by_count": 27838,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5069874449",
+      "display_name": "Mitchell Steven Anscher",
+      "orcid": "https://orcid.org/0000-0003-4480-111X",
+      "h_index": 75,
+      "i10_index": 174,
+      "works_count": 430,
+      "cited_by_count": 18340,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5052234283",
+      "display_name": "Clifton David Fuller",
+      "orcid": "https://orcid.org/0000-0002-5264-3994",
+      "h_index": 74,
+      "i10_index": 435,
+      "works_count": 1224,
+      "cited_by_count": 23269,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Dentistry",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5102815979",
+      "display_name": "Antony Lomax",
+      "orcid": "https://orcid.org/0000-0002-0666-425X",
+      "h_index": 74,
+      "i10_index": 289,
+      "works_count": 856,
+      "cited_by_count": 22379,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Radiation -- 9.1",
+      "id": "https://openalex.org/A5091674984",
+      "display_name": "Daniel A. Low",
+      "orcid": "https://orcid.org/0000-0002-6425-9228",
+      "h_index": 74,
+      "i10_index": 268,
+      "works_count": 870,
+      "cited_by_count": 27673,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Radiation -- 9.0",
+      "id": "https://openalex.org/A5090717912",
+      "display_name": "Ben J.M. Heijmen",
+      "orcid": "https://orcid.org/0000-0003-1647-0528",
+      "h_index": 74,
+      "i10_index": 229,
+      "works_count": 576,
+      "cited_by_count": 16859,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Radiation -- 9.0",
+      "id": "https://openalex.org/A5110023624",
+      "display_name": "Stephen M. Hahn",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 199,
+      "works_count": 335,
+      "cited_by_count": 23703,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Radiation -- 9.0",
+      "id": "https://openalex.org/A5110001029",
+      "display_name": "F. Sette",
+      "orcid": "https://orcid.org/0009-0009-1851-8477",
+      "h_index": 74,
+      "i10_index": 171,
+      "works_count": 237,
+      "cited_by_count": 22139,
+      "discipline": "Radiation",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Radiation -- 9.0",
+      "id": "https://openalex.org/A5067536094",
+      "display_name": "Charles B. Simone",
+      "orcid": "https://orcid.org/0000-0002-0867-3694",
+      "h_index": 73,
+      "i10_index": 387,
+      "works_count": 979,
+      "cited_by_count": 23227,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Radiation -- 9.0",
+      "id": "https://openalex.org/A5071706202",
+      "display_name": "Luca Cozzi",
+      "orcid": "https://orcid.org/0000-0001-7862-898X",
+      "h_index": 73,
+      "i10_index": 251,
+      "works_count": 565,
+      "cited_by_count": 16057,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5108454970",
+      "display_name": "James A. Purdy",
+      "orcid": "https://orcid.org/0000-0001-8177-6975",
+      "h_index": 73,
+      "i10_index": 221,
+      "works_count": 525,
+      "cited_by_count": 22402,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5039488752",
+      "display_name": "Chris J. Jacobsen",
+      "orcid": "https://orcid.org/0000-0001-8562-0353",
+      "h_index": 73,
+      "i10_index": 186,
+      "works_count": 440,
+      "cited_by_count": 19917,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5068559343",
+      "display_name": "Jun Kawai",
+      "orcid": "https://orcid.org/0000-0002-1289-7666",
+      "h_index": 72,
+      "i10_index": 309,
+      "works_count": 666,
+      "cited_by_count": 54528,
+      "discipline": "Radiation",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5060509370",
+      "display_name": "Umberto Ricardi",
+      "orcid": "https://orcid.org/0000-0003-4406-7621",
+      "h_index": 72,
+      "i10_index": 307,
+      "works_count": 719,
+      "cited_by_count": 20107,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5059958623",
+      "display_name": "Barry Chi Hong Lai",
+      "orcid": "https://orcid.org/0000-0002-6061-7155",
+      "h_index": 72,
+      "i10_index": 303,
+      "works_count": 701,
+      "cited_by_count": 21431,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5111798651",
+      "display_name": "Christopher G. Morris",
+      "orcid": "https://orcid.org/0000-0002-3863-7504",
+      "h_index": 72,
+      "i10_index": 275,
+      "works_count": 677,
+      "cited_by_count": 16382,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5113518975",
+      "display_name": "J J W Lagendijk",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 260,
+      "works_count": 538,
+      "cited_by_count": 18145,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Computer Science",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5090288280",
+      "display_name": "David Anthony Palma",
+      "orcid": "https://orcid.org/0000-0002-9542-0627",
+      "h_index": 72,
+      "i10_index": 248,
+      "works_count": 658,
+      "cited_by_count": 24149,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5090203521",
+      "display_name": "Stefan Vogt",
+      "orcid": "https://orcid.org/0000-0002-8034-5513",
+      "h_index": 72,
+      "i10_index": 208,
+      "works_count": 351,
+      "cited_by_count": 16569,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5034017799",
+      "display_name": "Qiang Li",
+      "orcid": "https://orcid.org/0000-0003-0096-7679",
+      "h_index": 71,
+      "i10_index": 436,
+      "works_count": 3618,
+      "cited_by_count": 24054,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5029444442",
+      "display_name": "Volker Budach",
+      "orcid": "https://orcid.org/0000-0002-2191-9871",
+      "h_index": 71,
+      "i10_index": 306,
+      "works_count": 741,
+      "cited_by_count": 23785,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Radiation -- 8.9",
+      "id": "https://openalex.org/A5026159944",
+      "display_name": "Joseph O. Deasy",
+      "orcid": "https://orcid.org/0000-0002-9437-266X",
+      "h_index": 71,
+      "i10_index": 282,
+      "works_count": 908,
+      "cited_by_count": 27252,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5011597168",
+      "display_name": "Eric J. Hall",
+      "orcid": "https://orcid.org/0000-0003-4564-657X",
+      "h_index": 71,
+      "i10_index": 260,
+      "works_count": 500,
+      "cited_by_count": 38054,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5108080497",
+      "display_name": "Timothy James Kinsella",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 258,
+      "works_count": 418,
+      "cited_by_count": 21484,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5107296786",
+      "display_name": "Tolek Tyliszczak",
+      "orcid": "https://orcid.org/0009-0009-9427-7062",
+      "h_index": 71,
+      "i10_index": 225,
+      "works_count": 465,
+      "cited_by_count": 20237,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5081930385",
+      "display_name": "David Prendergast",
+      "orcid": "https://orcid.org/0000-0003-0598-1453",
+      "h_index": 71,
+      "i10_index": 211,
+      "works_count": 441,
+      "cited_by_count": 19499,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5028738166",
+      "display_name": "Ingrid J. Pickering",
+      "orcid": "https://orcid.org/0000-0002-0936-2994",
+      "h_index": 71,
+      "i10_index": 204,
+      "works_count": 319,
+      "cited_by_count": 19698,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5059669551",
+      "display_name": "Mark L. Rivers",
+      "orcid": "https://orcid.org/0000-0003-4728-4189",
+      "h_index": 71,
+      "i10_index": 201,
+      "works_count": 415,
+      "cited_by_count": 17571,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5002507883",
+      "display_name": "Jeffrey D. Bradley",
+      "orcid": "https://orcid.org/0000-0003-3047-3151",
+      "h_index": 71,
+      "i10_index": 197,
+      "works_count": 582,
+      "cited_by_count": 22017,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5028403057",
+      "display_name": "Andrzej Niemierko",
+      "orcid": "https://orcid.org/0000-0002-8895-5500",
+      "h_index": 71,
+      "i10_index": 196,
+      "works_count": 536,
+      "cited_by_count": 20028,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5020849177",
+      "display_name": "Garth J. Williams",
+      "orcid": "https://orcid.org/0000-0002-2466-1861",
+      "h_index": 71,
+      "i10_index": 136,
+      "works_count": 286,
+      "cited_by_count": 22715,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5033023422",
+      "display_name": "P. Pianetta",
+      "orcid": "https://orcid.org/0000-0002-4834-6014",
+      "h_index": 70,
+      "i10_index": 318,
+      "works_count": 589,
+      "cited_by_count": 19378,
+      "discipline": "Radiation",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5100651695",
+      "display_name": "F.-F. Yin",
+      "orcid": "https://orcid.org/0000-0002-2025-4740",
+      "h_index": 70,
+      "i10_index": 293,
+      "works_count": 978,
+      "cited_by_count": 21441,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5000377815",
+      "display_name": "Katia Parodi",
+      "orcid": "https://orcid.org/0000-0001-7779-6690",
+      "h_index": 70,
+      "i10_index": 285,
+      "works_count": 803,
+      "cited_by_count": 17182,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5038595632",
+      "display_name": "Jean‐Louis Hazemann",
+      "orcid": "https://orcid.org/0000-0002-3717-2151",
+      "h_index": 70,
+      "i10_index": 205,
+      "works_count": 404,
+      "cited_by_count": 14792,
+      "discipline": "Radiation",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5111538984",
+      "display_name": "Edward A. Stern",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 189,
+      "works_count": 370,
+      "cited_by_count": 22656,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5007447103",
+      "display_name": "Oliver Bunk",
+      "orcid": "https://orcid.org/0000-0001-6563-4053",
+      "h_index": 70,
+      "i10_index": 163,
+      "works_count": 258,
+      "cited_by_count": 21190,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5001478135",
+      "display_name": "Steven Jay Frank",
+      "orcid": "https://orcid.org/0000-0001-6517-7884",
+      "h_index": 69,
+      "i10_index": 347,
+      "works_count": 861,
+      "cited_by_count": 17997,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5108478996",
+      "display_name": "Louis Benjamin Harrison",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 216,
+      "works_count": 491,
+      "cited_by_count": 18297,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5044517920",
+      "display_name": "Marcel Verheij",
+      "orcid": "https://orcid.org/0000-0002-8079-7421",
+      "h_index": 69,
+      "i10_index": 208,
+      "works_count": 468,
+      "cited_by_count": 21376,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5086658735",
+      "display_name": "Peter Ernst Huber",
+      "orcid": "https://orcid.org/0000-0002-4811-300X",
+      "h_index": 69,
+      "i10_index": 207,
+      "works_count": 394,
+      "cited_by_count": 17732,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5031793291",
+      "display_name": "Matthew G. Newville",
+      "orcid": "https://orcid.org/0000-0001-6938-1014",
+      "h_index": 69,
+      "i10_index": 197,
+      "works_count": 444,
+      "cited_by_count": 99968,
+      "discipline": "Radiation",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5111959261",
+      "display_name": "Lester J. Peters",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 163,
+      "works_count": 258,
+      "cited_by_count": 18604,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Radiation -- 8.8",
+      "id": "https://openalex.org/A5101895081",
+      "display_name": "Di Yan",
+      "orcid": "https://orcid.org/0000-0003-1977-8448",
+      "h_index": 69,
+      "i10_index": 156,
+      "works_count": 490,
+      "cited_by_count": 14045,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5034586842",
+      "display_name": "Larry Llyn Kestin",
+      "orcid": "https://orcid.org/0000-0002-1824-4615",
+      "h_index": 69,
+      "i10_index": 150,
+      "works_count": 398,
+      "cited_by_count": 14831,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5038274786",
+      "display_name": "Timothy E. Schultheiss",
+      "orcid": "https://orcid.org/0000-0002-8984-196X",
+      "h_index": 69,
+      "i10_index": 127,
+      "works_count": 284,
+      "cited_by_count": 12923,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5000230079",
+      "display_name": "Kentaro Uesugi",
+      "orcid": "https://orcid.org/0000-0003-2579-513X",
+      "h_index": 68,
+      "i10_index": 390,
+      "works_count": 948,
+      "cited_by_count": 21194,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5060976792",
+      "display_name": "Damien Charles Weber",
+      "orcid": "https://orcid.org/0000-0003-1166-8236",
+      "h_index": 68,
+      "i10_index": 286,
+      "works_count": 564,
+      "cited_by_count": 20013,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5028492548",
+      "display_name": "Mechthild Krause",
+      "orcid": "https://orcid.org/0000-0003-1776-9556",
+      "h_index": 68,
+      "i10_index": 238,
+      "works_count": 668,
+      "cited_by_count": 16996,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5023209696",
+      "display_name": "Wolfgang A. Tomé",
+      "orcid": "https://orcid.org/0000-0003-1586-8091",
+      "h_index": 68,
+      "i10_index": 219,
+      "works_count": 565,
+      "cited_by_count": 20066,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5033000618",
+      "display_name": "Keith A Nugent",
+      "orcid": "https://orcid.org/0000-0002-4281-3478",
+      "h_index": 68,
+      "i10_index": 219,
+      "works_count": 559,
+      "cited_by_count": 17243,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5064246875",
+      "display_name": "Dimosthenis Sokaras",
+      "orcid": "https://orcid.org/0000-0001-8117-1933",
+      "h_index": 68,
+      "i10_index": 217,
+      "works_count": 401,
+      "cited_by_count": 22531,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5049692719",
+      "display_name": "Timothy D. Solberg",
+      "orcid": "https://orcid.org/0000-0001-8829-7774",
+      "h_index": 68,
+      "i10_index": 211,
+      "works_count": 547,
+      "cited_by_count": 16523,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5011864520",
+      "display_name": "Wilfried De Neve",
+      "orcid": "https://orcid.org/0000-0002-1818-064X",
+      "h_index": 68,
+      "i10_index": 211,
+      "works_count": 474,
+      "cited_by_count": 14023,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5052966036",
+      "display_name": "Brian D. Kavanagh",
+      "orcid": "https://orcid.org/0000-0001-5579-1725",
+      "h_index": 68,
+      "i10_index": 206,
+      "works_count": 487,
+      "cited_by_count": 24144,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5091456022",
+      "display_name": "John Charnock",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 160,
+      "works_count": 256,
+      "cited_by_count": 15980,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Environmental Science",
+        "Chemistry",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5038655872",
+      "display_name": "Moshe H Maor",
+      "orcid": "https://orcid.org/0000-0003-0411-2977",
+      "h_index": 68,
+      "i10_index": 140,
+      "works_count": 239,
+      "cited_by_count": 20503,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5106353859",
+      "display_name": "Charles R. Thomas",
+      "orcid": "https://orcid.org/0009-0005-2278-1818",
+      "h_index": 67,
+      "i10_index": 260,
+      "works_count": 677,
+      "cited_by_count": 18879,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5055342690",
+      "display_name": "S. Bajt",
+      "orcid": "https://orcid.org/0000-0002-7163-7602",
+      "h_index": 67,
+      "i10_index": 215,
+      "works_count": 616,
+      "cited_by_count": 20539,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5037458493",
+      "display_name": "Paul Tafforeau",
+      "orcid": "https://orcid.org/0000-0002-5962-1683",
+      "h_index": 67,
+      "i10_index": 204,
+      "works_count": 1138,
+      "cited_by_count": 13754,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5086227131",
+      "display_name": "John R. Adler",
+      "orcid": "https://orcid.org/0000-0003-1604-5425",
+      "h_index": 67,
+      "i10_index": 197,
+      "works_count": 436,
+      "cited_by_count": 15304,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5001104767",
+      "display_name": "Mitchell X. Machtay",
+      "orcid": "https://orcid.org/0009-0006-8675-9334",
+      "h_index": 67,
+      "i10_index": 193,
+      "works_count": 503,
+      "cited_by_count": 22071,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5017996890",
+      "display_name": "Kai Siegbahn",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 174,
+      "works_count": 298,
+      "cited_by_count": 16214,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5048449652",
+      "display_name": "Jean Albert Laissue",
+      "orcid": "https://orcid.org/0000-0002-9616-9294",
+      "h_index": 67,
+      "i10_index": 168,
+      "works_count": 259,
+      "cited_by_count": 14077,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5088018828",
+      "display_name": "Eberhard Helmar Lehmann",
+      "orcid": "https://orcid.org/0000-0001-9145-9009",
+      "h_index": 66,
+      "i10_index": 259,
+      "works_count": 496,
+      "cited_by_count": 14913,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Arts and Humanities",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Radiation -- 8.7",
+      "id": "https://openalex.org/A5071374686",
+      "display_name": "Nancy Price Mendenhall",
+      "orcid": "https://orcid.org/0000-0003-2893-7703",
+      "h_index": 66,
+      "i10_index": 211,
+      "works_count": 595,
+      "cited_by_count": 13558,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5080633542",
+      "display_name": "Peter C. Levendag",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 187,
+      "works_count": 307,
+      "cited_by_count": 15023,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5088968570",
+      "display_name": "Sasa Mutic",
+      "orcid": "https://orcid.org/0000-0001-7242-9699",
+      "h_index": 66,
+      "i10_index": 184,
+      "works_count": 566,
+      "cited_by_count": 20867,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5010921583",
+      "display_name": "Liesbeth Jorinne Boersma",
+      "orcid": "https://orcid.org/0000-0001-9173-279X",
+      "h_index": 66,
+      "i10_index": 165,
+      "works_count": 425,
+      "cited_by_count": 12912,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5036402068",
+      "display_name": "Frank J. Lagerwaard",
+      "orcid": "https://orcid.org/0000-0002-8740-2517",
+      "h_index": 66,
+      "i10_index": 157,
+      "works_count": 397,
+      "cited_by_count": 15498,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5026913056",
+      "display_name": "Sunil Krishnan",
+      "orcid": "https://orcid.org/0000-0002-1340-4771",
+      "h_index": 66,
+      "i10_index": 156,
+      "works_count": 348,
+      "cited_by_count": 14618,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5059479603",
+      "display_name": "Michael Goitein",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 144,
+      "works_count": 202,
+      "cited_by_count": 21369,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5100438974",
+      "display_name": "Tae Hyun Kim",
+      "orcid": "https://orcid.org/0000-0001-8413-3385",
+      "h_index": 65,
+      "i10_index": 309,
+      "works_count": 634,
+      "cited_by_count": 16022,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5090907377",
+      "display_name": "Pavel P. Povinec",
+      "orcid": "https://orcid.org/0000-0003-0275-794X",
+      "h_index": 65,
+      "i10_index": 296,
+      "works_count": 539,
+      "cited_by_count": 15747,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5087851185",
+      "display_name": "Jan‐Jakob Sonke",
+      "orcid": "https://orcid.org/0000-0001-5155-5274",
+      "h_index": 65,
+      "i10_index": 240,
+      "works_count": 727,
+      "cited_by_count": 15850,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5060753820",
+      "display_name": "Oliver Jäkel",
+      "orcid": "https://orcid.org/0000-0002-6056-9747",
+      "h_index": 65,
+      "i10_index": 235,
+      "works_count": 497,
+      "cited_by_count": 14589,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5083886265",
+      "display_name": "Shankar Siva",
+      "orcid": "https://orcid.org/0000-0003-2840-0658",
+      "h_index": 65,
+      "i10_index": 232,
+      "works_count": 615,
+      "cited_by_count": 14928,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5012910042",
+      "display_name": "Tadashi Kamada",
+      "orcid": "https://orcid.org/0000-0002-9848-7368",
+      "h_index": 65,
+      "i10_index": 211,
+      "works_count": 431,
+      "cited_by_count": 13325,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5101809187",
+      "display_name": "Carlos A. Perez",
+      "orcid": "https://orcid.org/0000-0002-5484-4159",
+      "h_index": 65,
+      "i10_index": 208,
+      "works_count": 400,
+      "cited_by_count": 16524,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5080979202",
+      "display_name": "Thomas Baptist Brunner",
+      "orcid": "https://orcid.org/0000-0002-6780-2820",
+      "h_index": 65,
+      "i10_index": 208,
+      "works_count": 503,
+      "cited_by_count": 14884,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5032441898",
+      "display_name": "George Rodrigues",
+      "orcid": "https://orcid.org/0000-0002-7174-4280",
+      "h_index": 65,
+      "i10_index": 192,
+      "works_count": 544,
+      "cited_by_count": 22620,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5044584621",
+      "display_name": "Paul G Okunieff",
+      "orcid": "https://orcid.org/0000-0003-1937-9316",
+      "h_index": 65,
+      "i10_index": 192,
+      "works_count": 419,
+      "cited_by_count": 19510,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5035533418",
+      "display_name": "J. B. Hastings",
+      "orcid": "https://orcid.org/0000-0002-3577-9857",
+      "h_index": 65,
+      "i10_index": 171,
+      "works_count": 407,
+      "cited_by_count": 21676,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5079124490",
+      "display_name": "Mohammed Mohiuddin",
+      "orcid": "https://orcid.org/0000-0002-1825-4661",
+      "h_index": 65,
+      "i10_index": 162,
+      "works_count": 341,
+      "cited_by_count": 18955,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5006971681",
+      "display_name": "Marie‐Catherine Vozenin",
+      "orcid": "https://orcid.org/0000-0002-2109-8073",
+      "h_index": 65,
+      "i10_index": 145,
+      "works_count": 374,
+      "cited_by_count": 17442,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5108505915",
+      "display_name": "Sunil Krishnan",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 126,
+      "works_count": 206,
+      "cited_by_count": 13466,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5071827540",
+      "display_name": "Vivek Verma",
+      "orcid": "https://orcid.org/0000-0002-5863-6023",
+      "h_index": 64,
+      "i10_index": 276,
+      "works_count": 536,
+      "cited_by_count": 15248,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Radiation -- 8.6",
+      "id": "https://openalex.org/A5075767418",
+      "display_name": "Kenji Tamasaku",
+      "orcid": "https://orcid.org/0000-0003-1440-0518",
+      "h_index": 64,
+      "i10_index": 214,
+      "works_count": 447,
+      "cited_by_count": 16224,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5070217555",
+      "display_name": "S. Incerti",
+      "orcid": "https://orcid.org/0000-0002-0619-2053",
+      "h_index": 64,
+      "i10_index": 208,
+      "works_count": 445,
+      "cited_by_count": 28756,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5058930966",
+      "display_name": "Hirohiko Tsujii",
+      "orcid": "https://orcid.org/0000-0001-9898-2193",
+      "h_index": 64,
+      "i10_index": 205,
+      "works_count": 425,
+      "cited_by_count": 13673,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5022864667",
+      "display_name": "Yolande N. Lievens",
+      "orcid": "https://orcid.org/0000-0002-9157-3730",
+      "h_index": 64,
+      "i10_index": 175,
+      "works_count": 442,
+      "cited_by_count": 15487,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5102803263",
+      "display_name": "Mahmut Özşahin",
+      "orcid": "https://orcid.org/0000-0003-2947-5360",
+      "h_index": 64,
+      "i10_index": 167,
+      "works_count": 575,
+      "cited_by_count": 19123,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5075259167",
+      "display_name": "Roberto Alonso‐Mori",
+      "orcid": "https://orcid.org/0000-0002-5357-0934",
+      "h_index": 64,
+      "i10_index": 153,
+      "works_count": 326,
+      "cited_by_count": 15875,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5014884181",
+      "display_name": "Torunn Ingrid Yock",
+      "orcid": "https://orcid.org/0000-0001-6408-8011",
+      "h_index": 64,
+      "i10_index": 143,
+      "works_count": 389,
+      "cited_by_count": 11218,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5112507294",
+      "display_name": "J. C. Fuggle",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 136,
+      "works_count": 191,
+      "cited_by_count": 18785,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5034493174",
+      "display_name": "Allen S. Lichter",
+      "orcid": "https://orcid.org/0000-0002-0378-1258",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 220,
+      "cited_by_count": 15250,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5056905162",
+      "display_name": "Henrik Till Lemke",
+      "orcid": "https://orcid.org/0000-0003-1577-8643",
+      "h_index": 64,
+      "i10_index": 131,
+      "works_count": 248,
+      "cited_by_count": 14358,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5013484038",
+      "display_name": "Jianwei Miao",
+      "orcid": "https://orcid.org/0000-0003-4033-3945",
+      "h_index": 64,
+      "i10_index": 113,
+      "works_count": 257,
+      "cited_by_count": 19353,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5043750518",
+      "display_name": "Hiroshi Tsuji",
+      "orcid": "https://orcid.org/0000-0002-1249-2546",
+      "h_index": 63,
+      "i10_index": 292,
+      "works_count": 667,
+      "cited_by_count": 14779,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5021925904",
+      "display_name": "Dietmar Georg",
+      "orcid": "https://orcid.org/0000-0002-8327-3877",
+      "h_index": 63,
+      "i10_index": 243,
+      "works_count": 659,
+      "cited_by_count": 14965,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5031202796",
+      "display_name": "D. Azria",
+      "orcid": "https://orcid.org/0000-0002-7533-2988",
+      "h_index": 63,
+      "i10_index": 233,
+      "works_count": 927,
+      "cited_by_count": 14787,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5067540828",
+      "display_name": "M. Molls",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 215,
+      "works_count": 563,
+      "cited_by_count": 14792,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5085730505",
+      "display_name": "P. Maingon",
+      "orcid": "https://orcid.org/0000-0001-5364-9979",
+      "h_index": 63,
+      "i10_index": 188,
+      "works_count": 591,
+      "cited_by_count": 25872,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5040475138",
+      "display_name": "David E. Wazer",
+      "orcid": "https://orcid.org/0000-0003-0355-0932",
+      "h_index": 63,
+      "i10_index": 171,
+      "works_count": 465,
+      "cited_by_count": 12674,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5085287368",
+      "display_name": "Nina A. Mayr",
+      "orcid": "https://orcid.org/0000-0003-2182-7739",
+      "h_index": 63,
+      "i10_index": 167,
+      "works_count": 391,
+      "cited_by_count": 14821,
+      "discipline": "Radiation",
+      "primary_field": "Physics and Astronomy",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Physics and Astronomy",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Radiation -- 8.5",
+      "id": "https://openalex.org/A5072760427",
+      "display_name": "Christian Kirisits",
+      "orcid": "https://orcid.org/0000-0002-2815-8083",
+      "h_index": 63,
+      "i10_index": 149,
+      "works_count": 295,
+      "cited_by_count": 19630,
+      "discipline": "Radiation",
+      "primary_field": "Medicine",
+      "primary_subfield": "Radiation",
+      "fields": [
+        "Medicine",
+        "Physics and Astronomy"
+      ]
+    }
+  ]
+}

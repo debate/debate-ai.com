@@ -1,0 +1,67 @@
+{
+  "kind": "subfield",
+  "id": 3206,
+  "name": "Neuropsychology and Physiological Psychology",
+  "total_in_scrape": 3,
+  "count": 3,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Neuropsychology and Physiological Psychology -- 9.9",
+      "id": "https://openalex.org/A5085652246",
+      "display_name": "Martha Bridge Denckla",
+      "orcid": "https://orcid.org/0000-0002-8033-0709",
+      "h_index": 89,
+      "i10_index": 173,
+      "works_count": 223,
+      "cited_by_count": 27339,
+      "discipline": "Neuropsychology and Physiological Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Neuropsychology and Physiological Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Neuropsychology and Physiological Psychology -- 9.9",
+      "id": "https://openalex.org/A5046247199",
+      "display_name": "Stephen R. Hooper",
+      "orcid": "https://orcid.org/0000-0002-6761-4504",
+      "h_index": 74,
+      "i10_index": 254,
+      "works_count": 470,
+      "cited_by_count": 17996,
+      "discipline": "Neuropsychology and Physiological Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Neuropsychology and Physiological Psychology",
+      "fields": [
+        "Psychology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Neuropsychology and Physiological Psychology -- 9.9",
+      "id": "https://openalex.org/A5016862343",
+      "display_name": "Cesare Cornoldi",
+      "orcid": "https://orcid.org/0000-0003-0861-0519",
+      "h_index": 68,
+      "i10_index": 260,
+      "works_count": 528,
+      "cited_by_count": 16077,
+      "discipline": "Neuropsychology and Physiological Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "Neuropsychology and Physiological Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience"
+      ]
+    }
+  ]
+}

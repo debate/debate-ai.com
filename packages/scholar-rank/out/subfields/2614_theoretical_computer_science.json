@@ -1,0 +1,144 @@
+{
+  "kind": "subfield",
+  "id": 2614,
+  "name": "Theoretical Computer Science",
+  "total_in_scrape": 7,
+  "count": 7,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Theoretical Computer Science -- 9.9",
+      "id": "https://openalex.org/A5062318856",
+      "display_name": "Michael Mitzenmacher",
+      "orcid": "https://orcid.org/0000-0001-5430-5457",
+      "h_index": 82,
+      "i10_index": 263,
+      "works_count": 421,
+      "cited_by_count": 39016,
+      "discipline": "Theoretical Computer Science",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Theoretical Computer Science",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Theoretical Computer Science -- 9.9",
+      "id": "https://openalex.org/A5045502987",
+      "display_name": "Subramanian Muthukrishnan",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 214,
+      "works_count": 300,
+      "cited_by_count": 22891,
+      "discipline": "Theoretical Computer Science",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Theoretical Computer Science",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Theoretical Computer Science -- 9.9",
+      "id": "https://openalex.org/A5078491738",
+      "display_name": "Prabhakar Raghavan",
+      "orcid": "https://orcid.org/0009-0009-3506-0226",
+      "h_index": 76,
+      "i10_index": 173,
+      "works_count": 317,
+      "cited_by_count": 57028,
+      "discipline": "Theoretical Computer Science",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Theoretical Computer Science",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Theoretical Computer Science -- 9.9",
+      "id": "https://openalex.org/A5080743153",
+      "display_name": "Gonzalo Navarro",
+      "orcid": "https://orcid.org/0000-0002-2286-741X",
+      "h_index": 73,
+      "i10_index": 351,
+      "works_count": 688,
+      "cited_by_count": 24349,
+      "discipline": "Theoretical Computer Science",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Theoretical Computer Science",
+      "fields": [
+        "Computer Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Theoretical Computer Science -- 9.9",
+      "id": "https://openalex.org/A5065128060",
+      "display_name": "Yossi Matias",
+      "orcid": "https://orcid.org/0000-0003-3960-6002",
+      "h_index": 70,
+      "i10_index": 183,
+      "works_count": 345,
+      "cited_by_count": 49456,
+      "discipline": "Theoretical Computer Science",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Theoretical Computer Science",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Theoretical Computer Science -- 9.9",
+      "id": "https://openalex.org/A5007364145",
+      "display_name": "John H. Reif",
+      "orcid": "https://orcid.org/0000-0002-9096-2056",
+      "h_index": 67,
+      "i10_index": 235,
+      "works_count": 455,
+      "cited_by_count": 22348,
+      "discipline": "Theoretical Computer Science",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Theoretical Computer Science",
+      "fields": [
+        "Computer Science",
+        "Mathematics",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Theoretical Computer Science -- 9.8",
+      "id": "https://openalex.org/A5003340402",
+      "display_name": "Jeffrey Scott Vitter",
+      "orcid": "https://orcid.org/0000-0001-7970-6118",
+      "h_index": 63,
+      "i10_index": 229,
+      "works_count": 417,
+      "cited_by_count": 19047,
+      "discipline": "Theoretical Computer Science",
+      "primary_field": "Mathematics",
+      "primary_subfield": "Theoretical Computer Science",
+      "fields": [
+        "Mathematics",
+        "Computer Science"
+      ]
+    }
+  ]
+}

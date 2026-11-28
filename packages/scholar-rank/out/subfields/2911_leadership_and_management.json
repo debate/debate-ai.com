@@ -1,0 +1,90 @@
+{
+  "kind": "subfield",
+  "id": 2911,
+  "name": "Leadership and Management",
+  "total_in_scrape": 4,
+  "count": 4,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Leadership and Management -- 9.9",
+      "id": "https://openalex.org/A5014552450",
+      "display_name": "Carl van Walraven",
+      "orcid": "https://orcid.org/0000-0002-8390-0930",
+      "h_index": 81,
+      "i10_index": 214,
+      "works_count": 341,
+      "cited_by_count": 25538,
+      "discipline": "Leadership and Management",
+      "primary_field": "Nursing",
+      "primary_subfield": "Leadership and Management",
+      "fields": [
+        "Nursing",
+        "Medicine",
+        "Health Professions",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Leadership and Management -- 9.9",
+      "id": "https://openalex.org/A5045146638",
+      "display_name": "Andrew David Auerbach",
+      "orcid": "https://orcid.org/0000-0001-8440-0527",
+      "h_index": 64,
+      "i10_index": 189,
+      "works_count": 350,
+      "cited_by_count": 20312,
+      "discipline": "Leadership and Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Leadership and Management",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Leadership and Management -- 9.9",
+      "id": "https://openalex.org/A5106919305",
+      "display_name": "Leora Idit Horwitz",
+      "orcid": "https://orcid.org/0000-0003-1800-6040",
+      "h_index": 64,
+      "i10_index": 152,
+      "works_count": 254,
+      "cited_by_count": 17817,
+      "discipline": "Leadership and Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Leadership and Management",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Leadership and Management -- 9.9",
+      "id": "https://openalex.org/A5081132781",
+      "display_name": "Jeffrey L. Schnipper",
+      "orcid": "https://orcid.org/0000-0001-7072-0781",
+      "h_index": 63,
+      "i10_index": 191,
+      "works_count": 304,
+      "cited_by_count": 17033,
+      "discipline": "Leadership and Management",
+      "primary_field": "Medicine",
+      "primary_subfield": "Leadership and Management",
+      "fields": [
+        "Medicine",
+        "Nursing",
+        "Health Professions"
+      ]
+    }
+  ]
+}

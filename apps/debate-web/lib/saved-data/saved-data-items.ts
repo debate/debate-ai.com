@@ -1,7 +1,8 @@
-import { and, asc, desc, eq, gt, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, getTableColumns, gt, or, sql, type SQL } from "drizzle-orm";
 import type { AnySQLiteColumn } from "drizzle-orm/sqlite-core";
 import type { getDBFromContext } from "@/lib/database/context";
 import { findToolRecordCollection } from "@debate-ai/research-evidence/src/account-sync/toolRecordCollections";
+import { SAVED_SQL_TOOLS } from "./saved-data";
 import { documents, practiceVsAiDebates, savedDrillSets, savedFlows, savedJudgeDecisions, savedRounds, savedSpeechSendLog, savedToolRecords, savedWordCountRounds } from "../database/schema";
 
 type AccountDB = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -488,6 +489,9 @@ export interface SavedDataArchive {
   /**
    * JSON document: `{ exportedAt, docs: [...], flows: [...], rounds: [...], practiceRounds: [...], wordCountRounds: [...], drills: [...], judgeDecisions: [...], speeches: [...], toolRecords: { <collection>: [...] }, ... }`.
    * `toolRecords` holds each synced tool's records exactly as the tool stored them.
+   * `moreSavedWork` holds the rows of each `SAVED_SQL_TOOLS` table (`{ roundPairings: [...], quickCards: [...], ... }`,
+   * see {@link exportOwnSqlTools}), and `moreSavedWorkTruncated` names the tables that hit the per-kind ceiling.
+   * **Restore from export…** doesn't read `moreSavedWork` back yet; it is a backup.
    */
   body: string;
 }
@@ -562,7 +566,72 @@ export async function exportOwnToolCollection(
   return { filename: `toolRecords-${slug(collection)}-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(file, null, 2) };
 }
 
-/** Every row of every kind of the caller's work, with full content, plus their synced tool data, as one downloadable JSON archive (read a page at a time, up to `maxPerKind` rows per kind). */
+/**
+ * One row of a {@link SAVED_SQL_TOOLS} table as it appears in the export: every
+ * column except `user_id`, with `data` parsed back into the object the tool
+ * stored and timestamps as ISO strings. Extra columns some tables keep beside
+ * `data` (`matchupId`, `roundId`, `topic`, `dayKey`, `shared`) come through
+ * under their own names.
+ */
+export type SqlToolExportRow = Record<string, unknown>;
+
+function sqlToolExportRow(row: Record<string, unknown>): SqlToolExportRow {
+  const out: SqlToolExportRow = {};
+  for (const [key, value] of Object.entries(row)) {
+    if (key === "userId") continue;
+    if (key === "data" && typeof value === "string") out.data = parseData(value);
+    else out[key] = value instanceof Date ? value.toISOString() : value;
+  }
+  return out;
+}
+
+/**
+ * The caller's rows from every {@link SAVED_SQL_TOOLS} table (the "More saved
+ * work" counted in Settings: briefings, strategies, outcome charts, opponent
+ * personas, coach materials, topic sprints, quick cards, flashcard decks,
+ * flashcards, best-card comments), keyed by the table's `key`, oldest first.
+ * Every key is present, with an empty list when the user has none. Each table
+ * is read by row id in pages of {@link EXPORT_PAGE_SIZE} (keyset, owner-scoped)
+ * and stops after `maxPerTable` rows; `truncated` names the tables that had
+ * more. Another user's rows are never read.
+ */
+export async function exportOwnSqlTools(
+  db: AccountDB,
+  userId: string,
+  maxPerTable = EXPORT_MAX_ITEMS,
+): Promise<{ moreSavedWork: Record<string, SqlToolExportRow[]>; truncated: string[] }> {
+  const moreSavedWork: Record<string, SqlToolExportRow[]> = {};
+  const truncated: string[] = [];
+  for (const tool of SAVED_SQL_TOOLS) {
+    const idColumn = (getTableColumns(tool.table) as Record<string, AnySQLiteColumn>).id;
+    const rows: SqlToolExportRow[] = [];
+    let afterId = 0;
+    let more = false;
+    for (;;) {
+      const limit = Math.min(EXPORT_PAGE_SIZE, maxPerTable - rows.length + 1);
+      const page = (await db
+        .select()
+        .from(tool.table)
+        .where(and(eq(tool.userId, userId), gt(idColumn, afterId)))
+        .orderBy(asc(idColumn))
+        .limit(limit)) as Array<Record<string, unknown>>;
+      for (const row of page) {
+        if (rows.length >= maxPerTable) {
+          more = true;
+          break;
+        }
+        afterId = Number(row.id);
+        rows.push(sqlToolExportRow(row));
+      }
+      if (more || page.length < limit) break;
+    }
+    moreSavedWork[tool.key] = rows;
+    if (more) truncated.push(tool.key);
+  }
+  return { moreSavedWork, truncated };
+}
+
+/** Every row of every kind of the caller's work, with full content, plus their synced tool data and "More saved work" tables, as one downloadable JSON archive (read a page at a time, up to `maxPerKind` rows per kind and per table). */
 export async function exportAllOwnSavedData(db: AccountDB, userId: string, now = new Date(), maxPerKind = EXPORT_MAX_ITEMS): Promise<SavedDataArchive> {
   const archive: Record<string, unknown> = { exportedAt: now.toISOString() };
   const truncated: ItemKind[] = [];
@@ -582,5 +651,8 @@ export async function exportAllOwnSavedData(db: AccountDB, userId: string, now =
   const tools = await exportOwnToolRecords(db, userId);
   archive.toolRecords = tools.toolRecords;
   archive.toolRecordsTruncated = tools.truncated;
+  const sqlTools = await exportOwnSqlTools(db, userId, maxPerKind);
+  archive.moreSavedWork = sqlTools.moreSavedWork;
+  archive.moreSavedWorkTruncated = sqlTools.truncated;
   return { filename: `debate-ai-saved-data-${now.toISOString().slice(0, 10)}.json`, body: JSON.stringify(archive, null, 2) };
 }

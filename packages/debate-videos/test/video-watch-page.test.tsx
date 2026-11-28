@@ -38,8 +38,8 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("next/link", () => ({
-  default: ({ href, children, className }: { href: string; children?: ReactNode; className?: string }) =>
-    createElement("a", { href, className }, children),
+  default: ({ href, children, className, title }: { href: string; children?: ReactNode; className?: string; title?: string }) =>
+    createElement("a", { href, className, title }, children),
 }));
 
 vi.mock("next/image", () => ({
@@ -374,7 +374,7 @@ describe("VideoWatchPage reveal decision", () => {
     expect(names("neg")).toEqual(["Ann Lee", "Bo Kim"]);
     expect(names("aff")).toEqual(["Cy Diaz*"]);
     expect(container.querySelector('a[href*="tabroom.com"]')?.textContent).toContain("Tabroom");
-    const negBadge = container.querySelector<HTMLButtonElement>(`button[title="Negative: ${SPOILER_TEAM}"]`);
+    const negBadge = container.querySelector<HTMLElement>(`a[title^="Negative: ${SPOILER_TEAM}"]`);
     expect(negBadge?.className).toContain("border-amber-400");
     unmount();
   });
