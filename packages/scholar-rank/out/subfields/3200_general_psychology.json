@@ -1,0 +1,48 @@
+{
+  "kind": "subfield",
+  "id": 3200,
+  "name": "General Psychology",
+  "total_in_scrape": 2,
+  "count": 2,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "General Psychology -- 9.9",
+      "id": "https://openalex.org/A5112815045",
+      "display_name": "B. F. Skinner",
+      "orcid": "https://orcid.org/0000-0001-7831-6994",
+      "h_index": 76,
+      "i10_index": 171,
+      "works_count": 264,
+      "cited_by_count": 56829,
+      "discipline": "General Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "General Psychology",
+      "fields": [
+        "Psychology",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "General Psychology -- 9.9",
+      "id": "https://openalex.org/A5114016455",
+      "display_name": "Philip G. Zimbardo",
+      "orcid": "https://orcid.org/0000-0002-3085-992X",
+      "h_index": 71,
+      "i10_index": 176,
+      "works_count": 571,
+      "cited_by_count": 29908,
+      "discipline": "General Psychology",
+      "primary_field": "Psychology",
+      "primary_subfield": "General Psychology",
+      "fields": [
+        "Psychology",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

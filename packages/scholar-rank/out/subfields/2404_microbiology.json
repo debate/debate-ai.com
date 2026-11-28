@@ -1,0 +1,4868 @@
+{
+  "kind": "subfield",
+  "id": 2404,
+  "name": "Microbiology",
+  "total_in_scrape": 245,
+  "count": 245,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Microbiology -- 9.9",
+      "id": "https://openalex.org/A5066530115",
+      "display_name": "Robert E. W. Hancock",
+      "orcid": "https://orcid.org/0000-0001-5989-8503",
+      "h_index": 183,
+      "i10_index": 756,
+      "works_count": 983,
+      "cited_by_count": 143004,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Microbiology -- 9.9",
+      "id": "https://openalex.org/A5030919684",
+      "display_name": "B. Brett Finlay",
+      "orcid": "https://orcid.org/0000-0001-5303-6128",
+      "h_index": 161,
+      "i10_index": 574,
+      "works_count": 846,
+      "cited_by_count": 97905,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Microbiology -- 9.9",
+      "id": "https://openalex.org/A5086124703",
+      "display_name": "Rino Rappuoli",
+      "orcid": "https://orcid.org/0000-0002-8827-254X",
+      "h_index": 159,
+      "i10_index": 724,
+      "works_count": 1442,
+      "cited_by_count": 90160,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Microbiology -- 9.9",
+      "id": "https://openalex.org/A5060949723",
+      "display_name": "Gordon Dougan",
+      "orcid": "https://orcid.org/0000-0003-0022-965X",
+      "h_index": 151,
+      "i10_index": 655,
+      "works_count": 868,
+      "cited_by_count": 90044,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Microbiology -- 9.9",
+      "id": "https://openalex.org/A5069666784",
+      "display_name": "Philippe Jean Sansonetti",
+      "orcid": "https://orcid.org/0000-0001-7542-4527",
+      "h_index": 147,
+      "i10_index": 458,
+      "works_count": 847,
+      "cited_by_count": 68816,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Microbiology -- 9.9",
+      "id": "https://openalex.org/A5003823609",
+      "display_name": "Rita R. Colwell",
+      "orcid": "https://orcid.org/0000-0001-5432-1502",
+      "h_index": 136,
+      "i10_index": 667,
+      "works_count": 1063,
+      "cited_by_count": 86199,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Environmental Science",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5045253972",
+      "display_name": "John J. Mekalanos",
+      "orcid": "https://orcid.org/0000-0003-2792-9293",
+      "h_index": 132,
+      "i10_index": 300,
+      "works_count": 398,
+      "cited_by_count": 61595,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5035728249",
+      "display_name": "Scott J. Hultgren",
+      "orcid": "https://orcid.org/0000-0001-8785-564X",
+      "h_index": 122,
+      "i10_index": 300,
+      "works_count": 399,
+      "cited_by_count": 52610,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5001627403",
+      "display_name": "James B. Kaper",
+      "orcid": "https://orcid.org/0000-0003-0715-2907",
+      "h_index": 121,
+      "i10_index": 325,
+      "works_count": 456,
+      "cited_by_count": 65581,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5049145301",
+      "display_name": "Myron M. Levine",
+      "orcid": "https://orcid.org/0000-0002-5721-5040",
+      "h_index": 120,
+      "i10_index": 525,
+      "works_count": 681,
+      "cited_by_count": 60329,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5065914659",
+      "display_name": "Andrew John Pollard",
+      "orcid": "https://orcid.org/0000-0001-7361-719X",
+      "h_index": 119,
+      "i10_index": 610,
+      "works_count": 1127,
+      "cited_by_count": 73954,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5073330626",
+      "display_name": "Robert F. Breiman",
+      "orcid": "https://orcid.org/0000-0002-7099-2936",
+      "h_index": 119,
+      "i10_index": 441,
+      "works_count": 552,
+      "cited_by_count": 59844,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5038221052",
+      "display_name": "King K. Holmes",
+      "orcid": "https://orcid.org/0000-0002-4673-8401",
+      "h_index": 116,
+      "i10_index": 435,
+      "works_count": 564,
+      "cited_by_count": 53053,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5087164752",
+      "display_name": "Freddy Haesebrouck",
+      "orcid": "https://orcid.org/0000-0002-1709-933X",
+      "h_index": 115,
+      "i10_index": 786,
+      "works_count": 1371,
+      "cited_by_count": 56439,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5079499882",
+      "display_name": "Thomas F. Meyer",
+      "orcid": "https://orcid.org/0000-0002-6120-8679",
+      "h_index": 115,
+      "i10_index": 385,
+      "works_count": 547,
+      "cited_by_count": 43445,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5109908806",
+      "display_name": "Robert I. Lehrer",
+      "orcid": null,
+      "h_index": 113,
+      "i10_index": 259,
+      "works_count": 322,
+      "cited_by_count": 44150,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Microbiology -- 9.8",
+      "id": "https://openalex.org/A5055597053",
+      "display_name": "James C. Paton",
+      "orcid": "https://orcid.org/0000-0001-9807-5278",
+      "h_index": 112,
+      "i10_index": 383,
+      "works_count": 524,
+      "cited_by_count": 42084,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5083239509",
+      "display_name": "Martin C. J. Maiden",
+      "orcid": "https://orcid.org/0000-0001-6321-5138",
+      "h_index": 112,
+      "i10_index": 364,
+      "works_count": 717,
+      "cited_by_count": 55776,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5074817052",
+      "display_name": "Dennis Lee Kasper",
+      "orcid": "https://orcid.org/0000-0001-8808-5333",
+      "h_index": 110,
+      "i10_index": 333,
+      "works_count": 516,
+      "cited_by_count": 54425,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5111726895",
+      "display_name": "Walter E. Stamm",
+      "orcid": null,
+      "h_index": 109,
+      "i10_index": 317,
+      "works_count": 442,
+      "cited_by_count": 41612,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5077742706",
+      "display_name": "Stephen D. Bentley",
+      "orcid": "https://orcid.org/0000-0001-8094-3751",
+      "h_index": 108,
+      "i10_index": 294,
+      "works_count": 647,
+      "cited_by_count": 52250,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5111510413",
+      "display_name": "James P. Nataro",
+      "orcid": "https://orcid.org/0000-0003-4159-0097",
+      "h_index": 107,
+      "i10_index": 285,
+      "works_count": 370,
+      "cited_by_count": 52381,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5068674119",
+      "display_name": "Lee H. Harrison",
+      "orcid": "https://orcid.org/0000-0002-3787-2705",
+      "h_index": 106,
+      "i10_index": 346,
+      "works_count": 533,
+      "cited_by_count": 48191,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5036101186",
+      "display_name": "Teun Boekhout",
+      "orcid": "https://orcid.org/0000-0002-0476-3609",
+      "h_index": 105,
+      "i10_index": 416,
+      "works_count": 730,
+      "cited_by_count": 49653,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5034386514",
+      "display_name": "James R. Johnson",
+      "orcid": "https://orcid.org/0000-0002-9588-5045",
+      "h_index": 104,
+      "i10_index": 369,
+      "works_count": 571,
+      "cited_by_count": 38648,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5017547539",
+      "display_name": "Sharon L. Hillier",
+      "orcid": "https://orcid.org/0000-0002-4192-7481",
+      "h_index": 104,
+      "i10_index": 328,
+      "works_count": 498,
+      "cited_by_count": 43690,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5067108842",
+      "display_name": "Matthew K. Waldor",
+      "orcid": "https://orcid.org/0000-0003-1843-7000",
+      "h_index": 103,
+      "i10_index": 296,
+      "works_count": 425,
+      "cited_by_count": 37540,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Microbiology -- 9.7",
+      "id": "https://openalex.org/A5072485453",
+      "display_name": "Nick J Andrews",
+      "orcid": "https://orcid.org/0000-0003-2069-2684",
+      "h_index": 102,
+      "i10_index": 497,
+      "works_count": 737,
+      "cited_by_count": 51476,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5065434292",
+      "display_name": "Mary Elizabeth Ramsay",
+      "orcid": "https://orcid.org/0000-0002-7156-7640",
+      "h_index": 102,
+      "i10_index": 468,
+      "works_count": 693,
+      "cited_by_count": 50887,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Social Sciences",
+        "Medicine",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5091080582",
+      "display_name": "Diederik van de Beek",
+      "orcid": "https://orcid.org/0000-0002-4571-044X",
+      "h_index": 101,
+      "i10_index": 408,
+      "works_count": 759,
+      "cited_by_count": 50841,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5070753697",
+      "display_name": "Jan R. Holmgren",
+      "orcid": "https://orcid.org/0000-0003-1784-5918",
+      "h_index": 100,
+      "i10_index": 408,
+      "works_count": 580,
+      "cited_by_count": 35153,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5086250528",
+      "display_name": "Ron Dagan",
+      "orcid": "https://orcid.org/0000-0002-8888-1046",
+      "h_index": 99,
+      "i10_index": 503,
+      "works_count": 763,
+      "cited_by_count": 35335,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5041377151",
+      "display_name": "David Allen Sack",
+      "orcid": "https://orcid.org/0000-0002-9338-5119",
+      "h_index": 98,
+      "i10_index": 411,
+      "works_count": 573,
+      "cited_by_count": 33865,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5054039682",
+      "display_name": "Elizabeth Miller",
+      "orcid": "https://orcid.org/0000-0002-1884-0097",
+      "h_index": 98,
+      "i10_index": 362,
+      "works_count": 532,
+      "cited_by_count": 37086,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5037678266",
+      "display_name": "Helge Karch",
+      "orcid": null,
+      "h_index": 97,
+      "i10_index": 282,
+      "works_count": 359,
+      "cited_by_count": 33863,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5112413236",
+      "display_name": "Monica M. Farley",
+      "orcid": "https://orcid.org/0000-0003-0557-9958",
+      "h_index": 97,
+      "i10_index": 221,
+      "works_count": 336,
+      "cited_by_count": 45862,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5045135220",
+      "display_name": "Mark Achtman",
+      "orcid": "https://orcid.org/0000-0001-6815-0070",
+      "h_index": 94,
+      "i10_index": 186,
+      "works_count": 303,
+      "cited_by_count": 39169,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5053121427",
+      "display_name": "Ray Borrow",
+      "orcid": "https://orcid.org/0000-0002-0691-6568",
+      "h_index": 93,
+      "i10_index": 401,
+      "works_count": 647,
+      "cited_by_count": 29652,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Microbiology -- 9.6",
+      "id": "https://openalex.org/A5023116254",
+      "display_name": "Brendan William Wren",
+      "orcid": "https://orcid.org/0000-0002-6140-9489",
+      "h_index": 93,
+      "i10_index": 340,
+      "works_count": 631,
+      "cited_by_count": 33191,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5109099531",
+      "display_name": "E. Richard Moxon",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 293,
+      "works_count": 389,
+      "cited_by_count": 27343,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5044653645",
+      "display_name": "Richard Ducatelle",
+      "orcid": "https://orcid.org/0000-0002-3721-872X",
+      "h_index": 92,
+      "i10_index": 481,
+      "works_count": 999,
+      "cited_by_count": 35386,
+      "discipline": "Microbiology",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5041318439",
+      "display_name": "John David Clemens",
+      "orcid": "https://orcid.org/0000-0002-6379-1052",
+      "h_index": 92,
+      "i10_index": 401,
+      "works_count": 570,
+      "cited_by_count": 34971,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5046888535",
+      "display_name": "Shamez N Ladhani",
+      "orcid": "https://orcid.org/0000-0002-0856-2476",
+      "h_index": 92,
+      "i10_index": 389,
+      "works_count": 573,
+      "cited_by_count": 36205,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5029661601",
+      "display_name": "Gad M. Frankel",
+      "orcid": "https://orcid.org/0000-0002-0046-1363",
+      "h_index": 91,
+      "i10_index": 280,
+      "works_count": 429,
+      "cited_by_count": 29266,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5057509814",
+      "display_name": "David C. W. Mabey",
+      "orcid": "https://orcid.org/0000-0002-0031-8276",
+      "h_index": 90,
+      "i10_index": 443,
+      "works_count": 765,
+      "cited_by_count": 34827,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5009991935",
+      "display_name": "Camille Locht",
+      "orcid": "https://orcid.org/0000-0001-7295-7336",
+      "h_index": 90,
+      "i10_index": 318,
+      "works_count": 553,
+      "cited_by_count": 27762,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5066405485",
+      "display_name": "Jeffrey N. Weiser",
+      "orcid": "https://orcid.org/0000-0001-7168-8090",
+      "h_index": 90,
+      "i10_index": 180,
+      "works_count": 236,
+      "cited_by_count": 26697,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5069892567",
+      "display_name": "Magnus Unemo",
+      "orcid": "https://orcid.org/0000-0003-1710-2081",
+      "h_index": 89,
+      "i10_index": 424,
+      "works_count": 770,
+      "cited_by_count": 36776,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5057937276",
+      "display_name": "Timothy J. Mitchell",
+      "orcid": "https://orcid.org/0000-0002-8309-5556",
+      "h_index": 89,
+      "i10_index": 278,
+      "works_count": 511,
+      "cited_by_count": 24481,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5110113203",
+      "display_name": "David E. Briles",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 276,
+      "works_count": 339,
+      "cited_by_count": 22760,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Microbiology -- 9.5",
+      "id": "https://openalex.org/A5113088148",
+      "display_name": "Jörg Hinrich Hacker",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 227,
+      "works_count": 360,
+      "cited_by_count": 29114,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5110240120",
+      "display_name": "Anne Schuchat",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 185,
+      "works_count": 261,
+      "cited_by_count": 36931,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5004698044",
+      "display_name": "Jorma A. Paavonen",
+      "orcid": "https://orcid.org/0000-0003-4775-606X",
+      "h_index": 88,
+      "i10_index": 370,
+      "works_count": 681,
+      "cited_by_count": 33576,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5052358059",
+      "display_name": "Phillip I. Tarr",
+      "orcid": "https://orcid.org/0000-0003-4078-7517",
+      "h_index": 88,
+      "i10_index": 258,
+      "works_count": 443,
+      "cited_by_count": 33326,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5036791262",
+      "display_name": "Elaine I. Tuomanen",
+      "orcid": "https://orcid.org/0000-0003-0349-8716",
+      "h_index": 88,
+      "i10_index": 217,
+      "works_count": 326,
+      "cited_by_count": 27333,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5049639550",
+      "display_name": "Simon R. Harris",
+      "orcid": "https://orcid.org/0000-0003-1512-6194",
+      "h_index": 88,
+      "i10_index": 175,
+      "works_count": 266,
+      "cited_by_count": 39839,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5068172675",
+      "display_name": "Gilbert Greub",
+      "orcid": "https://orcid.org/0000-0001-9529-3317",
+      "h_index": 87,
+      "i10_index": 414,
+      "works_count": 847,
+      "cited_by_count": 32476,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5079264989",
+      "display_name": "Érick Denamur",
+      "orcid": "https://orcid.org/0000-0002-7860-1717",
+      "h_index": 87,
+      "i10_index": 266,
+      "works_count": 484,
+      "cited_by_count": 31617,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5086074728",
+      "display_name": "Mogens Kilian",
+      "orcid": "https://orcid.org/0000-0002-5861-0472",
+      "h_index": 87,
+      "i10_index": 239,
+      "works_count": 327,
+      "cited_by_count": 25627,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5108605427",
+      "display_name": "Yechiel Shai",
+      "orcid": "https://orcid.org/0000-0002-8588-5586",
+      "h_index": 86,
+      "i10_index": 232,
+      "works_count": 321,
+      "cited_by_count": 27115,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5059367411",
+      "display_name": "Edward W. Hook",
+      "orcid": "https://orcid.org/0000-0002-8515-2884",
+      "h_index": 85,
+      "i10_index": 317,
+      "works_count": 497,
+      "cited_by_count": 25580,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Microbiology -- 9.4",
+      "id": "https://openalex.org/A5070872896",
+      "display_name": "Karen Angeliki Krogfelt",
+      "orcid": "https://orcid.org/0000-0001-7536-3453",
+      "h_index": 85,
+      "i10_index": 299,
+      "works_count": 451,
+      "cited_by_count": 27204,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5032374370",
+      "display_name": "Roy Michael Robins-Browne",
+      "orcid": "https://orcid.org/0000-0001-9179-7884",
+      "h_index": 85,
+      "i10_index": 252,
+      "works_count": 355,
+      "cited_by_count": 26748,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5075750865",
+      "display_name": "Catharina Svanborg",
+      "orcid": "https://orcid.org/0000-0001-8145-0553",
+      "h_index": 85,
+      "i10_index": 216,
+      "works_count": 323,
+      "cited_by_count": 20783,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5033473134",
+      "display_name": "Michael A. Zasloff",
+      "orcid": "https://orcid.org/0000-0002-1453-9328",
+      "h_index": 85,
+      "i10_index": 199,
+      "works_count": 281,
+      "cited_by_count": 38473,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5040018261",
+      "display_name": "William Paul Hanage",
+      "orcid": "https://orcid.org/0000-0002-6319-7336",
+      "h_index": 85,
+      "i10_index": 196,
+      "works_count": 387,
+      "cited_by_count": 33925,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5056540101",
+      "display_name": "Charlotte Ann Gaydos",
+      "orcid": "https://orcid.org/0000-0002-1021-3195",
+      "h_index": 84,
+      "i10_index": 428,
+      "works_count": 688,
+      "cited_by_count": 27917,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5044344943",
+      "display_name": "Roy Curtiss",
+      "orcid": "https://orcid.org/0000-0003-0673-9562",
+      "h_index": 84,
+      "i10_index": 305,
+      "works_count": 383,
+      "cited_by_count": 25384,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5079747911",
+      "display_name": "Lothar H. Wieler",
+      "orcid": "https://orcid.org/0000-0003-4365-3717",
+      "h_index": 84,
+      "i10_index": 295,
+      "works_count": 489,
+      "cited_by_count": 28599,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5025149327",
+      "display_name": "Karen L. Kotloff",
+      "orcid": "https://orcid.org/0000-0003-1808-6431",
+      "h_index": 84,
+      "i10_index": 288,
+      "works_count": 406,
+      "cited_by_count": 38232,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5080408994",
+      "display_name": "Nicola N Low",
+      "orcid": "https://orcid.org/0000-0003-4817-8986",
+      "h_index": 84,
+      "i10_index": 276,
+      "works_count": 553,
+      "cited_by_count": 62686,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5071279105",
+      "display_name": "Bernard Beall",
+      "orcid": "https://orcid.org/0000-0001-5315-1070",
+      "h_index": 84,
+      "i10_index": 253,
+      "works_count": 364,
+      "cited_by_count": 26973,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Microbiology -- 9.3",
+      "id": "https://openalex.org/A5001374764",
+      "display_name": "Stephen B. Calderwood",
+      "orcid": "https://orcid.org/0000-0002-2083-7153",
+      "h_index": 84,
+      "i10_index": 242,
+      "works_count": 318,
+      "cited_by_count": 27412,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5059456421",
+      "display_name": "Mark A. Schembri",
+      "orcid": "https://orcid.org/0000-0003-4863-9260",
+      "h_index": 84,
+      "i10_index": 242,
+      "works_count": 377,
+      "cited_by_count": 27001,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5111584664",
+      "display_name": "J. Thomas Grayston",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 225,
+      "works_count": 316,
+      "cited_by_count": 24368,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5047900679",
+      "display_name": "Alison D. O’Brien",
+      "orcid": "https://orcid.org/0000-0002-1315-3204",
+      "h_index": 84,
+      "i10_index": 189,
+      "works_count": 216,
+      "cited_by_count": 24112,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5036861140",
+      "display_name": "Octávio Luiz Franco",
+      "orcid": "https://orcid.org/0000-0001-9546-0525",
+      "h_index": 83,
+      "i10_index": 442,
+      "works_count": 689,
+      "cited_by_count": 27184,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5069420370",
+      "display_name": "Cynthia G. Whitney",
+      "orcid": "https://orcid.org/0000-0002-1056-3216",
+      "h_index": 83,
+      "i10_index": 252,
+      "works_count": 404,
+      "cited_by_count": 43521,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5044292989",
+      "display_name": "Kathrin Ute Jansen",
+      "orcid": "https://orcid.org/0000-0001-5354-4202",
+      "h_index": 83,
+      "i10_index": 226,
+      "works_count": 292,
+      "cited_by_count": 52542,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5034393834",
+      "display_name": "Adam H.R. Finn",
+      "orcid": "https://orcid.org/0000-0003-1756-5668",
+      "h_index": 82,
+      "i10_index": 309,
+      "works_count": 622,
+      "cited_by_count": 38262,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5109061581",
+      "display_name": "Gopinath Balakrish Nair",
+      "orcid": "https://orcid.org/0000-0003-3667-7024",
+      "h_index": 82,
+      "i10_index": 287,
+      "works_count": 383,
+      "cited_by_count": 24045,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5047587564",
+      "display_name": "Robert C. Brunham",
+      "orcid": "https://orcid.org/0000-0002-2853-3402",
+      "h_index": 82,
+      "i10_index": 244,
+      "works_count": 360,
+      "cited_by_count": 24359,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5070935391",
+      "display_name": "Duncan J. Maskell",
+      "orcid": "https://orcid.org/0000-0002-5065-653X",
+      "h_index": 82,
+      "i10_index": 237,
+      "works_count": 391,
+      "cited_by_count": 23515,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Microbiology -- 9.2",
+      "id": "https://openalex.org/A5009524336",
+      "display_name": "Andrew Camilli",
+      "orcid": "https://orcid.org/0000-0002-1521-5894",
+      "h_index": 82,
+      "i10_index": 158,
+      "works_count": 241,
+      "cited_by_count": 24668,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5070156251",
+      "display_name": "Mathuram Santosham",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 275,
+      "works_count": 400,
+      "cited_by_count": 24484,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5108515854",
+      "display_name": "Michael A. Apicella",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 254,
+      "works_count": 316,
+      "cited_by_count": 19204,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5038332045",
+      "display_name": "Xavier Nassif",
+      "orcid": "https://orcid.org/0000-0003-2855-3240",
+      "h_index": 81,
+      "i10_index": 181,
+      "works_count": 310,
+      "cited_by_count": 20068,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5074430162",
+      "display_name": "Thomas S. Whittam",
+      "orcid": null,
+      "h_index": 81,
+      "i10_index": 166,
+      "works_count": 220,
+      "cited_by_count": 22248,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5102838612",
+      "display_name": "Firdausi Qadri",
+      "orcid": "https://orcid.org/0000-0002-8928-9888",
+      "h_index": 80,
+      "i10_index": 443,
+      "works_count": 738,
+      "cited_by_count": 48335,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5009940787",
+      "display_name": "Dominique A. Caugant",
+      "orcid": "https://orcid.org/0000-0003-2765-9844",
+      "h_index": 80,
+      "i10_index": 273,
+      "works_count": 374,
+      "cited_by_count": 28321,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5006985309",
+      "display_name": "Mariagrazia Pizza",
+      "orcid": "https://orcid.org/0000-0002-7800-1404",
+      "h_index": 80,
+      "i10_index": 235,
+      "works_count": 382,
+      "cited_by_count": 22992,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5110011702",
+      "display_name": "R. Bradley Sack",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 230,
+      "works_count": 290,
+      "cited_by_count": 22425,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5034990894",
+      "display_name": "Garth D. Ehrlich",
+      "orcid": "https://orcid.org/0000-0003-0341-8771",
+      "h_index": 80,
+      "i10_index": 224,
+      "works_count": 418,
+      "cited_by_count": 24403,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5016165244",
+      "display_name": "Kwang Sik Kim",
+      "orcid": "https://orcid.org/0000-0002-3939-8568",
+      "h_index": 80,
+      "i10_index": 221,
+      "works_count": 318,
+      "cited_by_count": 19261,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Microbiology -- 9.1",
+      "id": "https://openalex.org/A5034013271",
+      "display_name": "Robert S. Heyderman",
+      "orcid": "https://orcid.org/0000-0003-4573-449X",
+      "h_index": 79,
+      "i10_index": 321,
+      "works_count": 613,
+      "cited_by_count": 28630,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Microbiology -- 9.0",
+      "id": "https://openalex.org/A5072981943",
+      "display_name": "Joachim Frey",
+      "orcid": "https://orcid.org/0000-0001-9133-0280",
+      "h_index": 79,
+      "i10_index": 320,
+      "works_count": 566,
+      "cited_by_count": 21396,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Microbiology -- 9.0",
+      "id": "https://openalex.org/A5110196275",
+      "display_name": "Ann‐Mari Svennerholm",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 299,
+      "works_count": 379,
+      "cited_by_count": 20396,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Microbiology -- 9.0",
+      "id": "https://openalex.org/A5048500830",
+      "display_name": "Elisabeth A. M. Sanders",
+      "orcid": "https://orcid.org/0000-0002-6672-3266",
+      "h_index": 79,
+      "i10_index": 296,
+      "works_count": 447,
+      "cited_by_count": 25080,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Microbiology -- 9.0",
+      "id": "https://openalex.org/A5042640464",
+      "display_name": "John B. Robbins",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 237,
+      "works_count": 317,
+      "cited_by_count": 20488,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Microbiology -- 9.0",
+      "id": "https://openalex.org/A5053630816",
+      "display_name": "Jørgen Skov Jensen",
+      "orcid": "https://orcid.org/0000-0002-7464-7435",
+      "h_index": 79,
+      "i10_index": 232,
+      "works_count": 339,
+      "cited_by_count": 19284,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5023023714",
+      "display_name": "David A. Eschenbach",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 164,
+      "works_count": 236,
+      "cited_by_count": 26550,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5102895153",
+      "display_name": "David Taylor‐Robinson",
+      "orcid": "https://orcid.org/0000-0002-2252-7933",
+      "h_index": 78,
+      "i10_index": 424,
+      "works_count": 687,
+      "cited_by_count": 24859,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5113671564",
+      "display_name": "Julius Schachter",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 256,
+      "works_count": 366,
+      "cited_by_count": 18804,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5109165145",
+      "display_name": "Barry P. Katz",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 245,
+      "works_count": 345,
+      "cited_by_count": 20406,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Dentistry",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5043793039",
+      "display_name": "Ben Adler",
+      "orcid": "https://orcid.org/0000-0002-0575-8123",
+      "h_index": 78,
+      "i10_index": 232,
+      "works_count": 307,
+      "cited_by_count": 22329,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5003260011",
+      "display_name": "Thomas E. Besser",
+      "orcid": "https://orcid.org/0000-0003-0449-1989",
+      "h_index": 78,
+      "i10_index": 216,
+      "works_count": 273,
+      "cited_by_count": 19413,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5086524484",
+      "display_name": "William C. Gruber",
+      "orcid": "https://orcid.org/0000-0002-6518-4547",
+      "h_index": 78,
+      "i10_index": 211,
+      "works_count": 314,
+      "cited_by_count": 45733,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5045040015",
+      "display_name": "Scott A. Halperin",
+      "orcid": "https://orcid.org/0000-0003-0525-589X",
+      "h_index": 77,
+      "i10_index": 353,
+      "works_count": 608,
+      "cited_by_count": 22168,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5008481687",
+      "display_name": "Jane Simone Hocking",
+      "orcid": "https://orcid.org/0000-0001-9329-8501",
+      "h_index": 77,
+      "i10_index": 349,
+      "works_count": 691,
+      "cited_by_count": 21321,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5074950777",
+      "display_name": "Arie VAN DER ENDE",
+      "orcid": "https://orcid.org/0000-0003-1298-3086",
+      "h_index": 77,
+      "i10_index": 304,
+      "works_count": 517,
+      "cited_by_count": 18964,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5018101817",
+      "display_name": "Martin Malmsten",
+      "orcid": "https://orcid.org/0000-0003-0046-5599",
+      "h_index": 77,
+      "i10_index": 272,
+      "works_count": 450,
+      "cited_by_count": 19658,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Materials Science",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Microbiology -- 8.9",
+      "id": "https://openalex.org/A5058553692",
+      "display_name": "Anne von Gottberg",
+      "orcid": "https://orcid.org/0000-0002-0243-7455",
+      "h_index": 77,
+      "i10_index": 247,
+      "works_count": 446,
+      "cited_by_count": 33163,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5068332954",
+      "display_name": "Heikki Peltola",
+      "orcid": "https://orcid.org/0000-0003-2145-1460",
+      "h_index": 77,
+      "i10_index": 203,
+      "works_count": 371,
+      "cited_by_count": 20882,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5013019060",
+      "display_name": "Peter William Andrew",
+      "orcid": "https://orcid.org/0000-0002-1273-8956",
+      "h_index": 77,
+      "i10_index": 200,
+      "works_count": 291,
+      "cited_by_count": 19009,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5003957453",
+      "display_name": "Michael E. Pichichero",
+      "orcid": "https://orcid.org/0000-0002-8276-3938",
+      "h_index": 76,
+      "i10_index": 342,
+      "works_count": 570,
+      "cited_by_count": 21585,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5103413418",
+      "display_name": "James D. Cherry",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 232,
+      "works_count": 420,
+      "cited_by_count": 22867,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5016230559",
+      "display_name": "Oscar Colin Stine",
+      "orcid": "https://orcid.org/0000-0003-3974-3752",
+      "h_index": 76,
+      "i10_index": 177,
+      "works_count": 254,
+      "cited_by_count": 20841,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5045196992",
+      "display_name": "Michael E. Selsted",
+      "orcid": "https://orcid.org/0000-0002-7152-4739",
+      "h_index": 76,
+      "i10_index": 138,
+      "works_count": 171,
+      "cited_by_count": 26250,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5051283258",
+      "display_name": "Ted Hackstadt",
+      "orcid": "https://orcid.org/0000-0003-1367-5528",
+      "h_index": 76,
+      "i10_index": 131,
+      "works_count": 172,
+      "cited_by_count": 15482,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5111955405",
+      "display_name": "Arlette Darfeuille–Michaud",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 122,
+      "works_count": 248,
+      "cited_by_count": 31324,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5055608441",
+      "display_name": "Steven Sol Witkin",
+      "orcid": "https://orcid.org/0000-0002-3502-3929",
+      "h_index": 75,
+      "i10_index": 354,
+      "works_count": 811,
+      "cited_by_count": 29630,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5108379929",
+      "display_name": "Steven B. Black",
+      "orcid": "https://orcid.org/0000-0003-1575-8335",
+      "h_index": 75,
+      "i10_index": 223,
+      "works_count": 324,
+      "cited_by_count": 26275,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5066731405",
+      "display_name": "Éric Oswald",
+      "orcid": "https://orcid.org/0000-0002-3017-0081",
+      "h_index": 75,
+      "i10_index": 202,
+      "works_count": 353,
+      "cited_by_count": 20207,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5041821939",
+      "display_name": "Andrew Bruce Onderdonk",
+      "orcid": "https://orcid.org/0000-0001-8998-8972",
+      "h_index": 75,
+      "i10_index": 193,
+      "works_count": 277,
+      "cited_by_count": 19823,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5061638194",
+      "display_name": "David S. Stephens",
+      "orcid": "https://orcid.org/0000-0002-8174-660X",
+      "h_index": 75,
+      "i10_index": 187,
+      "works_count": 310,
+      "cited_by_count": 21954,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5010237643",
+      "display_name": "Richard Adebayo Adegbola",
+      "orcid": "https://orcid.org/0000-0002-2423-1853",
+      "h_index": 75,
+      "i10_index": 181,
+      "works_count": 226,
+      "cited_by_count": 20585,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5065030286",
+      "display_name": "Robert E. Mandrell",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 173,
+      "works_count": 199,
+      "cited_by_count": 19188,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5052782883",
+      "display_name": "Kim Orth",
+      "orcid": "https://orcid.org/0000-0002-0678-7620",
+      "h_index": 75,
+      "i10_index": 146,
+      "works_count": 231,
+      "cited_by_count": 19580,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5100340815",
+      "display_name": "David Goldblatt",
+      "orcid": "https://orcid.org/0000-0002-0769-5242",
+      "h_index": 74,
+      "i10_index": 249,
+      "works_count": 418,
+      "cited_by_count": 20731,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5088538717",
+      "display_name": "Robert Charles Read",
+      "orcid": "https://orcid.org/0000-0002-4297-6728",
+      "h_index": 74,
+      "i10_index": 236,
+      "works_count": 413,
+      "cited_by_count": 23501,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5029853341",
+      "display_name": "Matthias Frosch",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 230,
+      "works_count": 307,
+      "cited_by_count": 16725,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5045695482",
+      "display_name": "Ly‐Mee Yu",
+      "orcid": "https://orcid.org/0000-0003-0331-7364",
+      "h_index": 74,
+      "i10_index": 197,
+      "works_count": 287,
+      "cited_by_count": 24437,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5108590248",
+      "display_name": "Edward O. Mason",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 190,
+      "works_count": 256,
+      "cited_by_count": 17304,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Microbiology -- 8.8",
+      "id": "https://openalex.org/A5079586716",
+      "display_name": "David A. Rasko",
+      "orcid": "https://orcid.org/0000-0002-7337-7154",
+      "h_index": 74,
+      "i10_index": 173,
+      "works_count": 257,
+      "cited_by_count": 24663,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5061538365",
+      "display_name": "Robert Edelman",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 168,
+      "works_count": 226,
+      "cited_by_count": 19632,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5006838648",
+      "display_name": "Charles L Bevins",
+      "orcid": "https://orcid.org/0000-0003-2725-2622",
+      "h_index": 74,
+      "i10_index": 140,
+      "works_count": 280,
+      "cited_by_count": 25977,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5025647520",
+      "display_name": "Carlos A. Rosa",
+      "orcid": "https://orcid.org/0000-0002-0056-9075",
+      "h_index": 73,
+      "i10_index": 345,
+      "works_count": 482,
+      "cited_by_count": 18804,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5051047014",
+      "display_name": "Jorge Blanco",
+      "orcid": "https://orcid.org/0000-0003-0264-4136",
+      "h_index": 73,
+      "i10_index": 184,
+      "works_count": 244,
+      "cited_by_count": 14923,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5067622825",
+      "display_name": "Catriona S. Bradshaw",
+      "orcid": "https://orcid.org/0000-0002-6643-5678",
+      "h_index": 72,
+      "i10_index": 284,
+      "works_count": 548,
+      "cited_by_count": 18970,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5110022590",
+      "display_name": "J. Dankert",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 260,
+      "works_count": 433,
+      "cited_by_count": 17855,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5005809475",
+      "display_name": "Matthijs C. Brouwer",
+      "orcid": "https://orcid.org/0000-0001-7775-7843",
+      "h_index": 72,
+      "i10_index": 258,
+      "works_count": 487,
+      "cited_by_count": 27534,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5108102529",
+      "display_name": "Peter W. M. Hermans",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 232,
+      "works_count": 296,
+      "cited_by_count": 22871,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5027663167",
+      "display_name": "Michael Emmerson Ward",
+      "orcid": "https://orcid.org/0000-0002-5296-8051",
+      "h_index": 72,
+      "i10_index": 230,
+      "works_count": 361,
+      "cited_by_count": 19064,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5018759732",
+      "display_name": "David H. Martin",
+      "orcid": "https://orcid.org/0009-0002-4102-8395",
+      "h_index": 72,
+      "i10_index": 173,
+      "works_count": 248,
+      "cited_by_count": 17207,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5105268112",
+      "display_name": "Frits R. Mooi",
+      "orcid": "https://orcid.org/0000-0002-5779-6252",
+      "h_index": 72,
+      "i10_index": 173,
+      "works_count": 292,
+      "cited_by_count": 14936,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5101954448",
+      "display_name": "James D. Oliver",
+      "orcid": "https://orcid.org/0000-0001-9070-3196",
+      "h_index": 72,
+      "i10_index": 160,
+      "works_count": 189,
+      "cited_by_count": 19311,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5108497260",
+      "display_name": "Genevieve A. Losonsky",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 144,
+      "works_count": 184,
+      "cited_by_count": 16150,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5047645117",
+      "display_name": "Edward Thomas Ryan",
+      "orcid": "https://orcid.org/0009-0005-0169-394X",
+      "h_index": 71,
+      "i10_index": 259,
+      "works_count": 464,
+      "cited_by_count": 20874,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5071979134",
+      "display_name": "Moon H. Nahm",
+      "orcid": "https://orcid.org/0000-0002-6922-1042",
+      "h_index": 71,
+      "i10_index": 245,
+      "works_count": 373,
+      "cited_by_count": 19245,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5030530700",
+      "display_name": "Henk P. Haagsman",
+      "orcid": "https://orcid.org/0000-0002-4931-5201",
+      "h_index": 71,
+      "i10_index": 209,
+      "works_count": 278,
+      "cited_by_count": 17450,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5046289689",
+      "display_name": "Olivier Clermont",
+      "orcid": "https://orcid.org/0000-0003-3961-1397",
+      "h_index": 71,
+      "i10_index": 133,
+      "works_count": 217,
+      "cited_by_count": 26530,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5037287149",
+      "display_name": "Ulrich Heininger",
+      "orcid": "https://orcid.org/0000-0001-8901-6778",
+      "h_index": 70,
+      "i10_index": 266,
+      "works_count": 701,
+      "cited_by_count": 19848,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5102783997",
+      "display_name": "Ronald de Groot",
+      "orcid": "https://orcid.org/0000-0001-5266-5002",
+      "h_index": 70,
+      "i10_index": 250,
+      "works_count": 385,
+      "cited_by_count": 23124,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5016242677",
+      "display_name": "Kim E. Mulholland",
+      "orcid": "https://orcid.org/0000-0001-7947-680X",
+      "h_index": 70,
+      "i10_index": 243,
+      "works_count": 391,
+      "cited_by_count": 23318,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5061999503",
+      "display_name": "Arnold Lee Smith",
+      "orcid": "https://orcid.org/0000-0003-0207-8816",
+      "h_index": 70,
+      "i10_index": 239,
+      "works_count": 342,
+      "cited_by_count": 18808,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Microbiology -- 8.7",
+      "id": "https://openalex.org/A5006315819",
+      "display_name": "Dan M. Granoff",
+      "orcid": "https://orcid.org/0000-0002-1514-2250",
+      "h_index": 70,
+      "i10_index": 224,
+      "works_count": 282,
+      "cited_by_count": 17352,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5023457650",
+      "display_name": "Debby Bogaert",
+      "orcid": "https://orcid.org/0000-0003-2651-7000",
+      "h_index": 70,
+      "i10_index": 185,
+      "works_count": 296,
+      "cited_by_count": 24364,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5045671781",
+      "display_name": "Lothar Beutin",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 160,
+      "works_count": 202,
+      "cited_by_count": 14766,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5084925508",
+      "display_name": "Hervé Tettelin",
+      "orcid": "https://orcid.org/0000-0002-0615-3257",
+      "h_index": 70,
+      "i10_index": 133,
+      "works_count": 222,
+      "cited_by_count": 39545,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5108759743",
+      "display_name": "Makoto Ohnishi",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 286,
+      "works_count": 452,
+      "cited_by_count": 17208,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5100436159",
+      "display_name": "Lei Wang",
+      "orcid": "https://orcid.org/0000-0003-4427-0881",
+      "h_index": 69,
+      "i10_index": 275,
+      "works_count": 407,
+      "cited_by_count": 21018,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5057018288",
+      "display_name": "Sujit Bhattacharya",
+      "orcid": "https://orcid.org/0000-0002-6769-8293",
+      "h_index": 69,
+      "i10_index": 273,
+      "works_count": 436,
+      "cited_by_count": 17807,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5038094499",
+      "display_name": "Jan T. Poolman",
+      "orcid": "https://orcid.org/0000-0002-9583-8126",
+      "h_index": 69,
+      "i10_index": 214,
+      "works_count": 331,
+      "cited_by_count": 16545,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5112263827",
+      "display_name": "Martin John Woodward",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 199,
+      "works_count": 244,
+      "cited_by_count": 13616,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5059182343",
+      "display_name": "Josée Harel",
+      "orcid": "https://orcid.org/0000-0002-7822-3795",
+      "h_index": 69,
+      "i10_index": 178,
+      "works_count": 247,
+      "cited_by_count": 14435,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Veterinary",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5051273903",
+      "display_name": "Randall K. Holmes",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 173,
+      "works_count": 225,
+      "cited_by_count": 14973,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5043485383",
+      "display_name": "Keith A. Jolley",
+      "orcid": "https://orcid.org/0000-0002-0751-0287",
+      "h_index": 69,
+      "i10_index": 157,
+      "works_count": 293,
+      "cited_by_count": 23859,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5032587901",
+      "display_name": "Birgitta Henriques‐Normark",
+      "orcid": "https://orcid.org/0000-0002-5429-4759",
+      "h_index": 69,
+      "i10_index": 157,
+      "works_count": 215,
+      "cited_by_count": 16254,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5058286316",
+      "display_name": "William C. Blackwelder",
+      "orcid": "https://orcid.org/0000-0003-1655-5003",
+      "h_index": 69,
+      "i10_index": 138,
+      "works_count": 218,
+      "cited_by_count": 23911,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Mathematics",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5005953351",
+      "display_name": "Jeff F. Miller",
+      "orcid": "https://orcid.org/0009-0000-7272-6706",
+      "h_index": 69,
+      "i10_index": 137,
+      "works_count": 196,
+      "cited_by_count": 19112,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5108352492",
+      "display_name": "Hans G. Boman",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 125,
+      "works_count": 175,
+      "cited_by_count": 22734,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5109112215",
+      "display_name": "R K Selander",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 99,
+      "works_count": 111,
+      "cited_by_count": 15060,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5010103437",
+      "display_name": "Alf A. Lindberg",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 430,
+      "works_count": 664,
+      "cited_by_count": 19812,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5111434155",
+      "display_name": "Haruo Watanabe",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 282,
+      "works_count": 447,
+      "cited_by_count": 15044,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5090401686",
+      "display_name": "Martín Antonio",
+      "orcid": "https://orcid.org/0000-0002-4810-1308",
+      "h_index": 68,
+      "i10_index": 217,
+      "works_count": 322,
+      "cited_by_count": 24478,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5051074403",
+      "display_name": "Nicole Guiso",
+      "orcid": "https://orcid.org/0000-0001-5163-4028",
+      "h_index": 68,
+      "i10_index": 208,
+      "works_count": 380,
+      "cited_by_count": 15207,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5030519106",
+      "display_name": "Stephen I. Pelton",
+      "orcid": "https://orcid.org/0000-0003-4862-5344",
+      "h_index": 68,
+      "i10_index": 199,
+      "works_count": 409,
+      "cited_by_count": 14922,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Microbiology -- 8.6",
+      "id": "https://openalex.org/A5057961204",
+      "display_name": "Sven Hammerschmidt",
+      "orcid": "https://orcid.org/0000-0002-6382-6681",
+      "h_index": 68,
+      "i10_index": 183,
+      "works_count": 286,
+      "cited_by_count": 14703,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5010857482",
+      "display_name": "Jos P. M. van Putten",
+      "orcid": "https://orcid.org/0000-0002-4126-8172",
+      "h_index": 68,
+      "i10_index": 171,
+      "works_count": 243,
+      "cited_by_count": 13308,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5012089635",
+      "display_name": "César de la Fuente‐Núñez",
+      "orcid": "https://orcid.org/0000-0002-2005-5629",
+      "h_index": 68,
+      "i10_index": 169,
+      "works_count": 291,
+      "cited_by_count": 20403,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5027665615",
+      "display_name": "Vanessa Sperandio",
+      "orcid": "https://orcid.org/0000-0003-0819-7904",
+      "h_index": 68,
+      "i10_index": 125,
+      "works_count": 186,
+      "cited_by_count": 21466,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5073008185",
+      "display_name": "John Elmerdahl Olsen",
+      "orcid": "https://orcid.org/0000-0001-6225-6587",
+      "h_index": 67,
+      "i10_index": 306,
+      "works_count": 561,
+      "cited_by_count": 16342,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5052309984",
+      "display_name": "Thandavarayan Ramamurthy",
+      "orcid": "https://orcid.org/0000-0001-7999-5036",
+      "h_index": 67,
+      "i10_index": 233,
+      "works_count": 315,
+      "cited_by_count": 20514,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5067750112",
+      "display_name": "Tetsuya Hayashi",
+      "orcid": "https://orcid.org/0000-0001-6366-7177",
+      "h_index": 67,
+      "i10_index": 232,
+      "works_count": 351,
+      "cited_by_count": 21893,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5045328465",
+      "display_name": "Jonathan Mark Zenilman",
+      "orcid": "https://orcid.org/0000-0003-0244-6973",
+      "h_index": 67,
+      "i10_index": 232,
+      "works_count": 370,
+      "cited_by_count": 18264,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5022145907",
+      "display_name": "Timothy F. Murphy",
+      "orcid": "https://orcid.org/0000-0002-3496-2641",
+      "h_index": 67,
+      "i10_index": 207,
+      "works_count": 301,
+      "cited_by_count": 17875,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5079061786",
+      "display_name": "Ulrich Dobrindt",
+      "orcid": "https://orcid.org/0000-0001-9949-1898",
+      "h_index": 67,
+      "i10_index": 192,
+      "works_count": 380,
+      "cited_by_count": 18839,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5003385022",
+      "display_name": "Alan S. Cross",
+      "orcid": "https://orcid.org/0000-0003-4362-9936",
+      "h_index": 67,
+      "i10_index": 191,
+      "works_count": 289,
+      "cited_by_count": 13497,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5112851975",
+      "display_name": "Emil C. Gotschlich",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 131,
+      "works_count": 190,
+      "cited_by_count": 17123,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5047063103",
+      "display_name": "Virginia L. Miller",
+      "orcid": "https://orcid.org/0000-0002-9522-1767",
+      "h_index": 67,
+      "i10_index": 123,
+      "works_count": 243,
+      "cited_by_count": 17722,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5089121517",
+      "display_name": "Michael S. Donnenberg",
+      "orcid": "https://orcid.org/0000-0002-8818-3184",
+      "h_index": 67,
+      "i10_index": 122,
+      "works_count": 191,
+      "cited_by_count": 20199,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5023574039",
+      "display_name": "Richard A. Cone",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 113,
+      "works_count": 140,
+      "cited_by_count": 21262,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5030667842",
+      "display_name": "Peter Richmond",
+      "orcid": "https://orcid.org/0000-0001-7562-7228",
+      "h_index": 66,
+      "i10_index": 291,
+      "works_count": 465,
+      "cited_by_count": 16853,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5108167032",
+      "display_name": "Bruno Maria Goddeeris",
+      "orcid": "https://orcid.org/0000-0003-3729-7592",
+      "h_index": 66,
+      "i10_index": 262,
+      "works_count": 536,
+      "cited_by_count": 14018,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Veterinary"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5006090545",
+      "display_name": "Michael P. Jennings",
+      "orcid": "https://orcid.org/0000-0002-1027-4684",
+      "h_index": 66,
+      "i10_index": 221,
+      "works_count": 323,
+      "cited_by_count": 15153,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5060094040",
+      "display_name": "Ken B. Waites",
+      "orcid": "https://orcid.org/0000-0002-8775-765X",
+      "h_index": 66,
+      "i10_index": 212,
+      "works_count": 312,
+      "cited_by_count": 16557,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5113758608",
+      "display_name": "Gerald T. Keusch",
+      "orcid": "https://orcid.org/0000-0001-5724-2965",
+      "h_index": 66,
+      "i10_index": 204,
+      "works_count": 380,
+      "cited_by_count": 16962,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5084181720",
+      "display_name": "Rachel Schneerson",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 187,
+      "works_count": 247,
+      "cited_by_count": 14495,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5082123381",
+      "display_name": "Artur Schmidtchen",
+      "orcid": "https://orcid.org/0000-0001-9209-3141",
+      "h_index": 66,
+      "i10_index": 169,
+      "works_count": 246,
+      "cited_by_count": 16011,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5101819979",
+      "display_name": "Timothy J. Johnson",
+      "orcid": "https://orcid.org/0000-0001-7556-9347",
+      "h_index": 66,
+      "i10_index": 157,
+      "works_count": 245,
+      "cited_by_count": 17827,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Microbiology -- 8.5",
+      "id": "https://openalex.org/A5068098793",
+      "display_name": "Beth A. McCormick",
+      "orcid": "https://orcid.org/0000-0001-5992-2673",
+      "h_index": 66,
+      "i10_index": 129,
+      "works_count": 218,
+      "cited_by_count": 14339,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5009544026",
+      "display_name": "William E. Goldman",
+      "orcid": "https://orcid.org/0000-0002-1551-6718",
+      "h_index": 66,
+      "i10_index": 123,
+      "works_count": 138,
+      "cited_by_count": 12572,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5014246647",
+      "display_name": "Brian D. Plikaytis",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 122,
+      "works_count": 165,
+      "cited_by_count": 16964,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5077072507",
+      "display_name": "Elizabeth R. Fischer",
+      "orcid": "https://orcid.org/0000-0002-3292-3673",
+      "h_index": 66,
+      "i10_index": 112,
+      "works_count": 147,
+      "cited_by_count": 17883,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5005901241",
+      "display_name": "Peter Bruce McIntyre",
+      "orcid": "https://orcid.org/0000-0001-5808-7450",
+      "h_index": 65,
+      "i10_index": 324,
+      "works_count": 519,
+      "cited_by_count": 17128,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5082229439",
+      "display_name": "Gunna Christiansen",
+      "orcid": "https://orcid.org/0000-0003-0540-1367",
+      "h_index": 65,
+      "i10_index": 226,
+      "works_count": 358,
+      "cited_by_count": 14722,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5057901946",
+      "display_name": "Samba Ousmane Sow",
+      "orcid": "https://orcid.org/0000-0002-6335-5066",
+      "h_index": 65,
+      "i10_index": 222,
+      "works_count": 365,
+      "cited_by_count": 21616,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5083818763",
+      "display_name": "Helena M. Käyhty",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 214,
+      "works_count": 278,
+      "cited_by_count": 15883,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5005574134",
+      "display_name": "Paul S. Morley",
+      "orcid": "https://orcid.org/0000-0001-8138-2714",
+      "h_index": 65,
+      "i10_index": 211,
+      "works_count": 341,
+      "cited_by_count": 14193,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Veterinary",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5050489995",
+      "display_name": "John Glenn Morris",
+      "orcid": "https://orcid.org/0000-0001-9347-1984",
+      "h_index": 65,
+      "i10_index": 180,
+      "works_count": 272,
+      "cited_by_count": 20984,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5048018579",
+      "display_name": "Carlton L Gyles",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 177,
+      "works_count": 303,
+      "cited_by_count": 16910,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5019230382",
+      "display_name": "Thomas Rudel",
+      "orcid": "https://orcid.org/0000-0003-4740-6991",
+      "h_index": 65,
+      "i10_index": 159,
+      "works_count": 241,
+      "cited_by_count": 23081,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5110884299",
+      "display_name": "Hans‐Walter Pfister",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 159,
+      "works_count": 259,
+      "cited_by_count": 12427,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5087445309",
+      "display_name": "Scott A. Beatson",
+      "orcid": "https://orcid.org/0000-0002-1806-3283",
+      "h_index": 65,
+      "i10_index": 155,
+      "works_count": 220,
+      "cited_by_count": 25347,
+      "discipline": "Microbiology",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5078302103",
+      "display_name": "Ida Ørskov",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 155,
+      "works_count": 190,
+      "cited_by_count": 14087,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5068243367",
+      "display_name": "Wuyuan Lu",
+      "orcid": "https://orcid.org/0000-0003-1318-9968",
+      "h_index": 65,
+      "i10_index": 153,
+      "works_count": 200,
+      "cited_by_count": 12792,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5004180463",
+      "display_name": "P. Frederick Sparling",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 136,
+      "works_count": 182,
+      "cited_by_count": 11553,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5062218086",
+      "display_name": "Basil J Donovan",
+      "orcid": "https://orcid.org/0000-0001-8851-4126",
+      "h_index": 64,
+      "i10_index": 282,
+      "works_count": 528,
+      "cited_by_count": 17492,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5066471533",
+      "display_name": "Henry J.C. de Vries",
+      "orcid": "https://orcid.org/0000-0001-9784-547X",
+      "h_index": 64,
+      "i10_index": 279,
+      "works_count": 590,
+      "cited_by_count": 15503,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5011966862",
+      "display_name": "Shai Ashkenazi",
+      "orcid": "https://orcid.org/0000-0001-7244-0679",
+      "h_index": 64,
+      "i10_index": 264,
+      "works_count": 489,
+      "cited_by_count": 15782,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Engineering",
+        "Agricultural and Biological Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5055511264",
+      "display_name": "Peter Timms",
+      "orcid": "https://orcid.org/0000-0002-1682-0025",
+      "h_index": 64,
+      "i10_index": 259,
+      "works_count": 413,
+      "cited_by_count": 12758,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5081161395",
+      "display_name": "Stéphane Bonacorsi",
+      "orcid": "https://orcid.org/0000-0001-6447-6874",
+      "h_index": 64,
+      "i10_index": 230,
+      "works_count": 440,
+      "cited_by_count": 19010,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Microbiology -- 8.4",
+      "id": "https://openalex.org/A5084196556",
+      "display_name": "Shinji Yamasaki",
+      "orcid": "https://orcid.org/0000-0001-9063-2201",
+      "h_index": 64,
+      "i10_index": 228,
+      "works_count": 330,
+      "cited_by_count": 15498,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5051117448",
+      "display_name": "Roland Nau",
+      "orcid": "https://orcid.org/0000-0001-8316-995X",
+      "h_index": 64,
+      "i10_index": 223,
+      "works_count": 452,
+      "cited_by_count": 14753,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5073778415",
+      "display_name": "Steven Philip Djordjevic",
+      "orcid": "https://orcid.org/0000-0001-9301-5372",
+      "h_index": 64,
+      "i10_index": 223,
+      "works_count": 344,
+      "cited_by_count": 13056,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5104351095",
+      "display_name": "Yoshifumi Takeda",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 198,
+      "works_count": 272,
+      "cited_by_count": 14648,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5088229750",
+      "display_name": "Joel Barry Baseman",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 177,
+      "works_count": 223,
+      "cited_by_count": 11873,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5025156995",
+      "display_name": "Jane R. Schwebke",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 173,
+      "works_count": 274,
+      "cited_by_count": 15035,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5113821342",
+      "display_name": "Werner Lubitz",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 170,
+      "works_count": 218,
+      "cited_by_count": 11315,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5013602212",
+      "display_name": "George R. Siber",
+      "orcid": "https://orcid.org/0000-0003-2116-5448",
+      "h_index": 64,
+      "i10_index": 168,
+      "works_count": 231,
+      "cited_by_count": 20151,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5018104424",
+      "display_name": "William Maurice Shafer",
+      "orcid": "https://orcid.org/0000-0001-9303-8777",
+      "h_index": 64,
+      "i10_index": 168,
+      "works_count": 265,
+      "cited_by_count": 13782,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5062066729",
+      "display_name": "Peter H. Nibbering",
+      "orcid": "https://orcid.org/0000-0002-0432-8340",
+      "h_index": 64,
+      "i10_index": 153,
+      "works_count": 214,
+      "cited_by_count": 11794,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5109949114",
+      "display_name": "David N. Taylor",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 152,
+      "works_count": 187,
+      "cited_by_count": 11730,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5040931066",
+      "display_name": "John David Clements",
+      "orcid": "https://orcid.org/0000-0001-5744-3249",
+      "h_index": 64,
+      "i10_index": 141,
+      "works_count": 174,
+      "cited_by_count": 12258,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5075883457",
+      "display_name": "Derek Pickard",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 139,
+      "works_count": 226,
+      "cited_by_count": 16756,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5081766078",
+      "display_name": "Shah M. Faruque",
+      "orcid": "https://orcid.org/0000-0002-7006-622X",
+      "h_index": 64,
+      "i10_index": 138,
+      "works_count": 178,
+      "cited_by_count": 14970,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5042664178",
+      "display_name": "Mohamed A. Karmali",
+      "orcid": "https://orcid.org/0000-0001-7308-6085",
+      "h_index": 64,
+      "i10_index": 128,
+      "works_count": 165,
+      "cited_by_count": 16944,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 238,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5078176047",
+      "display_name": "Harlan D. Caldwell",
+      "orcid": "https://orcid.org/0000-0002-2018-8106",
+      "h_index": 64,
+      "i10_index": 123,
+      "works_count": 134,
+      "cited_by_count": 14270,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 239,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5108515902",
+      "display_name": "Birgitta Agerberth",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 113,
+      "works_count": 161,
+      "cited_by_count": 17390,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 240,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5000276152",
+      "display_name": "Thomas A. Russo",
+      "orcid": "https://orcid.org/0000-0003-4566-7442",
+      "h_index": 64,
+      "i10_index": 110,
+      "works_count": 163,
+      "cited_by_count": 16645,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 241,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5007614139",
+      "display_name": "Muhamed‐Kheir Taha",
+      "orcid": "https://orcid.org/0000-0002-0716-3174",
+      "h_index": 63,
+      "i10_index": 246,
+      "works_count": 472,
+      "cited_by_count": 16239,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 242,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5071620914",
+      "display_name": "Dani Cohen",
+      "orcid": "https://orcid.org/0000-0003-2664-2303",
+      "h_index": 63,
+      "i10_index": 235,
+      "works_count": 366,
+      "cited_by_count": 15387,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 243,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5028490934",
+      "display_name": "Kenneth W. Beagley",
+      "orcid": "https://orcid.org/0000-0003-3112-6557",
+      "h_index": 63,
+      "i10_index": 197,
+      "works_count": 322,
+      "cited_by_count": 13321,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 244,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5075015536",
+      "display_name": "Pekka Saikku",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 193,
+      "works_count": 287,
+      "cited_by_count": 18239,
+      "discipline": "Microbiology",
+      "primary_field": "Immunology and Microbiology",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Immunology and Microbiology",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 245,
+      "score": 8.3,
+      "label": "Microbiology -- 8.3",
+      "id": "https://openalex.org/A5035085780",
+      "display_name": "Jeanne Marisa Marrazzo",
+      "orcid": "https://orcid.org/0000-0002-9277-7364",
+      "h_index": 63,
+      "i10_index": 177,
+      "works_count": 386,
+      "cited_by_count": 18886,
+      "discipline": "Microbiology",
+      "primary_field": "Medicine",
+      "primary_subfield": "Microbiology",
+      "fields": [
+        "Medicine",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1127 @@
+{
+  "kind": "subfield",
+  "id": 2806,
+  "name": "Developmental Neuroscience",
+  "total_in_scrape": 57,
+  "count": 57,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Developmental Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5072968010",
+      "display_name": "Fred H. Gage",
+      "orcid": "https://orcid.org/0000-0002-0938-4106",
+      "h_index": 241,
+      "i10_index": 803,
+      "works_count": 1184,
+      "cited_by_count": 237121,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Developmental Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5038455977",
+      "display_name": "Pasko T. Rakic",
+      "orcid": "https://orcid.org/0000-0002-6963-0508",
+      "h_index": 149,
+      "i10_index": 368,
+      "works_count": 499,
+      "cited_by_count": 91056,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Developmental Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5031779232",
+      "display_name": "Arturo Álvarez-Buylla",
+      "orcid": "https://orcid.org/0000-0003-4426-8925",
+      "h_index": 131,
+      "i10_index": 213,
+      "works_count": 377,
+      "cited_by_count": 78859,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Developmental Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5009183873",
+      "display_name": "Hongjun Song",
+      "orcid": "https://orcid.org/0000-0002-8720-5310",
+      "h_index": 129,
+      "i10_index": 284,
+      "works_count": 477,
+      "cited_by_count": 68872,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Developmental Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5027036729",
+      "display_name": "Wieland Β. Huttner",
+      "orcid": "https://orcid.org/0000-0003-4143-7201",
+      "h_index": 123,
+      "i10_index": 327,
+      "works_count": 454,
+      "cited_by_count": 52458,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Developmental Neuroscience -- 9.9",
+      "id": "https://openalex.org/A5004329894",
+      "display_name": "Guo‐li Ming",
+      "orcid": "https://orcid.org/0000-0002-2517-6075",
+      "h_index": 120,
+      "i10_index": 258,
+      "works_count": 397,
+      "cited_by_count": 58991,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5043980648",
+      "display_name": "David H. Rowitch",
+      "orcid": "https://orcid.org/0000-0002-0079-0060",
+      "h_index": 114,
+      "i10_index": 229,
+      "works_count": 427,
+      "cited_by_count": 69406,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5013660009",
+      "display_name": "Robin J.M. Franklin",
+      "orcid": "https://orcid.org/0000-0001-6522-2104",
+      "h_index": 111,
+      "i10_index": 308,
+      "works_count": 432,
+      "cited_by_count": 47491,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5085113673",
+      "display_name": "Magdalena Götz",
+      "orcid": "https://orcid.org/0000-0003-1551-9203",
+      "h_index": 111,
+      "i10_index": 231,
+      "works_count": 366,
+      "cited_by_count": 44793,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5015217389",
+      "display_name": "José Manuel García‐Verdugo",
+      "orcid": "https://orcid.org/0000-0001-9872-6499",
+      "h_index": 107,
+      "i10_index": 292,
+      "works_count": 460,
+      "cited_by_count": 61417,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5080409608",
+      "display_name": "Gerd Kempermann",
+      "orcid": "https://orcid.org/0000-0002-5304-4061",
+      "h_index": 102,
+      "i10_index": 203,
+      "works_count": 412,
+      "cited_by_count": 56920,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5110255946",
+      "display_name": "Verne S. Caviness",
+      "orcid": null,
+      "h_index": 99,
+      "i10_index": 208,
+      "works_count": 321,
+      "cited_by_count": 40931,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5050869682",
+      "display_name": "Gord Fishell",
+      "orcid": "https://orcid.org/0000-0002-9640-9278",
+      "h_index": 98,
+      "i10_index": 178,
+      "works_count": 310,
+      "cited_by_count": 38347,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5010524054",
+      "display_name": "Richard L. Sidman",
+      "orcid": "https://orcid.org/0000-0002-7863-659X",
+      "h_index": 97,
+      "i10_index": 250,
+      "works_count": 359,
+      "cited_by_count": 36041,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5042664107",
+      "display_name": "Jonas Frisén",
+      "orcid": "https://orcid.org/0000-0001-5819-458X",
+      "h_index": 96,
+      "i10_index": 176,
+      "works_count": 241,
+      "cited_by_count": 53512,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5024009145",
+      "display_name": "Charles ffrench‐Constant",
+      "orcid": "https://orcid.org/0000-0002-5621-3377",
+      "h_index": 93,
+      "i10_index": 176,
+      "works_count": 264,
+      "cited_by_count": 27485,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Developmental Neuroscience -- 9.8",
+      "id": "https://openalex.org/A5049519375",
+      "display_name": "Freda D. Miller",
+      "orcid": "https://orcid.org/0000-0001-5104-5557",
+      "h_index": 92,
+      "i10_index": 189,
+      "works_count": 306,
+      "cited_by_count": 29259,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5004312566",
+      "display_name": "Patrik Ernfors",
+      "orcid": "https://orcid.org/0000-0002-1140-3986",
+      "h_index": 91,
+      "i10_index": 189,
+      "works_count": 238,
+      "cited_by_count": 36591,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5032584291",
+      "display_name": "Steven A. Goldman",
+      "orcid": "https://orcid.org/0000-0002-5498-4303",
+      "h_index": 90,
+      "i10_index": 205,
+      "works_count": 313,
+      "cited_by_count": 45831,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5025102809",
+      "display_name": "Joseph Altman",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 157,
+      "works_count": 241,
+      "cited_by_count": 34213,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5038418840",
+      "display_name": "William David Richardson",
+      "orcid": "https://orcid.org/0000-0001-7261-2485",
+      "h_index": 89,
+      "i10_index": 128,
+      "works_count": 195,
+      "cited_by_count": 36582,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5065903201",
+      "display_name": "Greg Lemke",
+      "orcid": "https://orcid.org/0000-0001-5805-9855",
+      "h_index": 87,
+      "i10_index": 140,
+      "works_count": 189,
+      "cited_by_count": 31811,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Immunology and Microbiology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5063120236",
+      "display_name": "Liisa A.M. Galea",
+      "orcid": "https://orcid.org/0000-0003-2874-9972",
+      "h_index": 86,
+      "i10_index": 222,
+      "works_count": 331,
+      "cited_by_count": 25059,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5035203676",
+      "display_name": "Ursula Bellugi",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 197,
+      "works_count": 282,
+      "cited_by_count": 24447,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5032995907",
+      "display_name": "Urs S. Rutishauser",
+      "orcid": "https://orcid.org/0000-0001-7869-600X",
+      "h_index": 86,
+      "i10_index": 166,
+      "works_count": 209,
+      "cited_by_count": 23134,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5000946736",
+      "display_name": "William A. Harris",
+      "orcid": "https://orcid.org/0000-0002-9995-8096",
+      "h_index": 86,
+      "i10_index": 159,
+      "works_count": 260,
+      "cited_by_count": 23406,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5111166361",
+      "display_name": "Perry Francis Bartlett",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 229,
+      "works_count": 365,
+      "cited_by_count": 24970,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Developmental Neuroscience -- 9.7",
+      "id": "https://openalex.org/A5026189128",
+      "display_name": "Andréas Faissner",
+      "orcid": "https://orcid.org/0000-0002-2211-8259",
+      "h_index": 84,
+      "i10_index": 218,
+      "works_count": 330,
+      "cited_by_count": 21256,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5056031438",
+      "display_name": "Luis Puelles",
+      "orcid": "https://orcid.org/0000-0002-9541-7073",
+      "h_index": 82,
+      "i10_index": 248,
+      "works_count": 415,
+      "cited_by_count": 26066,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5086049459",
+      "display_name": "Vittorio Gallo",
+      "orcid": "https://orcid.org/0000-0002-2429-0845",
+      "h_index": 82,
+      "i10_index": 170,
+      "works_count": 270,
+      "cited_by_count": 23118,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5003946825",
+      "display_name": "Zoltán Molnár",
+      "orcid": "https://orcid.org/0000-0002-6852-6004",
+      "h_index": 81,
+      "i10_index": 226,
+      "works_count": 513,
+      "cited_by_count": 25755,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5066365730",
+      "display_name": "Zaal Kokaia",
+      "orcid": "https://orcid.org/0000-0003-2296-2449",
+      "h_index": 81,
+      "i10_index": 157,
+      "works_count": 236,
+      "cited_by_count": 29364,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5041026882",
+      "display_name": "Robert F. Hevner",
+      "orcid": "https://orcid.org/0000-0002-8441-1047",
+      "h_index": 80,
+      "i10_index": 142,
+      "works_count": 211,
+      "cited_by_count": 21927,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5043281110",
+      "display_name": "Rhona Mirsky",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 151,
+      "works_count": 329,
+      "cited_by_count": 25220,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5019963761",
+      "display_name": "Karl Herrup",
+      "orcid": "https://orcid.org/0000-0001-7786-5844",
+      "h_index": 78,
+      "i10_index": 195,
+      "works_count": 335,
+      "cited_by_count": 35691,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5030332501",
+      "display_name": "Robert H. Miller",
+      "orcid": "https://orcid.org/0000-0001-9050-4154",
+      "h_index": 77,
+      "i10_index": 172,
+      "works_count": 280,
+      "cited_by_count": 20994,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5004015422",
+      "display_name": "Alain Prochiantz",
+      "orcid": "https://orcid.org/0000-0001-7626-5863",
+      "h_index": 77,
+      "i10_index": 166,
+      "works_count": 478,
+      "cited_by_count": 27551,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5072375926",
+      "display_name": "Alan Mackay‐Sim",
+      "orcid": "https://orcid.org/0000-0003-4446-5371",
+      "h_index": 75,
+      "i10_index": 172,
+      "works_count": 367,
+      "cited_by_count": 20649,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Developmental Neuroscience -- 9.6",
+      "id": "https://openalex.org/A5100760099",
+      "display_name": "Salvador Martínez",
+      "orcid": "https://orcid.org/0000-0002-9320-4103",
+      "h_index": 71,
+      "i10_index": 204,
+      "works_count": 358,
+      "cited_by_count": 19999,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5033114289",
+      "display_name": "Carolyn Β. Mervis",
+      "orcid": "https://orcid.org/0000-0003-4206-6115",
+      "h_index": 71,
+      "i10_index": 143,
+      "works_count": 231,
+      "cited_by_count": 36811,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Psychology",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5069002539",
+      "display_name": "Ashok Kumar Shetty",
+      "orcid": "https://orcid.org/0000-0001-5049-6671",
+      "h_index": 70,
+      "i10_index": 187,
+      "works_count": 248,
+      "cited_by_count": 28210,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5020168218",
+      "display_name": "Flora Maria Vaccarino",
+      "orcid": "https://orcid.org/0000-0003-2167-981X",
+      "h_index": 70,
+      "i10_index": 140,
+      "works_count": 215,
+      "cited_by_count": 21300,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5024200192",
+      "display_name": "Mary E. Hatten",
+      "orcid": "https://orcid.org/0000-0001-9059-660X",
+      "h_index": 70,
+      "i10_index": 109,
+      "works_count": 155,
+      "cited_by_count": 21625,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5044204717",
+      "display_name": "Kazunori Nakajima",
+      "orcid": "https://orcid.org/0000-0003-1864-9425",
+      "h_index": 69,
+      "i10_index": 194,
+      "works_count": 388,
+      "cited_by_count": 18995,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5016523750",
+      "display_name": "Richard B. Hawkes",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 157,
+      "works_count": 204,
+      "cited_by_count": 18129,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5090823484",
+      "display_name": "Martyn Goulding",
+      "orcid": "https://orcid.org/0000-0001-7950-409X",
+      "h_index": 69,
+      "i10_index": 94,
+      "works_count": 131,
+      "cited_by_count": 18599,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5081730976",
+      "display_name": "Jean de Vellis",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 216,
+      "works_count": 330,
+      "cited_by_count": 19546,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5037116171",
+      "display_name": "Linda J. Richards",
+      "orcid": "https://orcid.org/0000-0002-7590-7390",
+      "h_index": 67,
+      "i10_index": 143,
+      "works_count": 243,
+      "cited_by_count": 14538,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5008702710",
+      "display_name": "Theo D. Palmer",
+      "orcid": "https://orcid.org/0000-0002-6266-1862",
+      "h_index": 67,
+      "i10_index": 104,
+      "works_count": 158,
+      "cited_by_count": 32891,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5033022509",
+      "display_name": "Grigori Enikolopov",
+      "orcid": "https://orcid.org/0000-0001-8178-8917",
+      "h_index": 66,
+      "i10_index": 128,
+      "works_count": 230,
+      "cited_by_count": 24984,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Developmental Neuroscience -- 9.5",
+      "id": "https://openalex.org/A5068019067",
+      "display_name": "Gabriel Corfas",
+      "orcid": "https://orcid.org/0000-0001-5412-9473",
+      "h_index": 66,
+      "i10_index": 103,
+      "works_count": 141,
+      "cited_by_count": 16036,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Developmental Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5100709184",
+      "display_name": "Xinyu Zhao",
+      "orcid": "https://orcid.org/0000-0002-5128-4424",
+      "h_index": 65,
+      "i10_index": 245,
+      "works_count": 733,
+      "cited_by_count": 19294,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Developmental Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5073590053",
+      "display_name": "Ludwig Aigner",
+      "orcid": "https://orcid.org/0000-0002-1653-8046",
+      "h_index": 65,
+      "i10_index": 185,
+      "works_count": 338,
+      "cited_by_count": 24629,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Developmental Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5103176060",
+      "display_name": "Kazuhiro Ikenaka",
+      "orcid": "https://orcid.org/0000-0002-2983-2498",
+      "h_index": 64,
+      "i10_index": 219,
+      "works_count": 388,
+      "cited_by_count": 14608,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Developmental Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5048519194",
+      "display_name": "André M. Goffinet",
+      "orcid": "https://orcid.org/0000-0002-8003-2680",
+      "h_index": 64,
+      "i10_index": 129,
+      "works_count": 179,
+      "cited_by_count": 14510,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Developmental Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5109473366",
+      "display_name": "Shirley A. Bayer",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 107,
+      "works_count": 183,
+      "cited_by_count": 16530,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Neuroscience",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Neuroscience",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Developmental Neuroscience -- 9.4",
+      "id": "https://openalex.org/A5103083521",
+      "display_name": "M.S. Rama Rao",
+      "orcid": "https://orcid.org/0000-0002-8815-2089",
+      "h_index": 63,
+      "i10_index": 187,
+      "works_count": 352,
+      "cited_by_count": 14165,
+      "discipline": "Developmental Neuroscience",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Developmental Neuroscience",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    }
+  ]
+}

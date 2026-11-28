@@ -1,0 +1,3292 @@
+{
+  "kind": "subfield",
+  "id": 2304,
+  "name": "Environmental Chemistry",
+  "total_in_scrape": 168,
+  "count": 168,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Environmental Chemistry -- 9.9",
+      "id": "https://openalex.org/A5085453092",
+      "display_name": "Bo Barker Jørgensen",
+      "orcid": "https://orcid.org/0000-0001-9398-8027",
+      "h_index": 149,
+      "i10_index": 372,
+      "works_count": 663,
+      "cited_by_count": 75037,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Environmental Chemistry -- 9.9",
+      "id": "https://openalex.org/A5034039087",
+      "display_name": "Stephen R. Carpenter",
+      "orcid": "https://orcid.org/0000-0001-8097-8700",
+      "h_index": 148,
+      "i10_index": 405,
+      "works_count": 657,
+      "cited_by_count": 198971,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Environmental Chemistry -- 9.9",
+      "id": "https://openalex.org/A5027576315",
+      "display_name": "Gene E. Likens",
+      "orcid": "https://orcid.org/0000-0002-0884-2726",
+      "h_index": 136,
+      "i10_index": 426,
+      "works_count": 972,
+      "cited_by_count": 82488,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Environmental Chemistry -- 9.9",
+      "id": "https://openalex.org/A5076622946",
+      "display_name": "Erik Jeppesen",
+      "orcid": "https://orcid.org/0000-0002-0542-369X",
+      "h_index": 133,
+      "i10_index": 733,
+      "works_count": 1061,
+      "cited_by_count": 78053,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Environmental Chemistry -- 9.9",
+      "id": "https://openalex.org/A5066505037",
+      "display_name": "Hans W. Paerl",
+      "orcid": "https://orcid.org/0000-0003-2211-1011",
+      "h_index": 127,
+      "i10_index": 363,
+      "works_count": 511,
+      "cited_by_count": 72431,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Environmental Chemistry -- 9.9",
+      "id": "https://openalex.org/A5056098740",
+      "display_name": "Andrew N. Sharpley",
+      "orcid": "https://orcid.org/0000-0003-1667-2971",
+      "h_index": 121,
+      "i10_index": 330,
+      "works_count": 442,
+      "cited_by_count": 53512,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5067346298",
+      "display_name": "Charles T. Driscoll",
+      "orcid": "https://orcid.org/0000-0003-2692-2890",
+      "h_index": 114,
+      "i10_index": 476,
+      "works_count": 2422,
+      "cited_by_count": 50902,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5078140856",
+      "display_name": "Andrew A. Meharg",
+      "orcid": "https://orcid.org/0000-0003-2019-0449",
+      "h_index": 113,
+      "i10_index": 334,
+      "works_count": 445,
+      "cited_by_count": 46005,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5008110236",
+      "display_name": "Lex Bouwman",
+      "orcid": "https://orcid.org/0000-0002-2045-1859",
+      "h_index": 108,
+      "i10_index": 234,
+      "works_count": 406,
+      "cited_by_count": 52284,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5069595428",
+      "display_name": "John P. Smol",
+      "orcid": "https://orcid.org/0000-0002-2499-6696",
+      "h_index": 107,
+      "i10_index": 619,
+      "works_count": 957,
+      "cited_by_count": 52723,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5076390818",
+      "display_name": "James J. Elser",
+      "orcid": "https://orcid.org/0000-0002-1460-2155",
+      "h_index": 107,
+      "i10_index": 288,
+      "works_count": 426,
+      "cited_by_count": 63073,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5003374278",
+      "display_name": "Habibul Ahsan",
+      "orcid": "https://orcid.org/0000-0001-9808-377X",
+      "h_index": 105,
+      "i10_index": 354,
+      "works_count": 621,
+      "cited_by_count": 44333,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5018925238",
+      "display_name": "Gilles Billen",
+      "orcid": "https://orcid.org/0000-0003-4413-4169",
+      "h_index": 103,
+      "i10_index": 289,
+      "works_count": 809,
+      "cited_by_count": 35850,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5110159041",
+      "display_name": "E. Dendy Sloan",
+      "orcid": null,
+      "h_index": 101,
+      "i10_index": 244,
+      "works_count": 361,
+      "cited_by_count": 36914,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Chemistry",
+        "Earth and Planetary Sciences",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5025013215",
+      "display_name": "Robert Warren Howarth",
+      "orcid": "https://orcid.org/0000-0001-9531-4288",
+      "h_index": 101,
+      "i10_index": 208,
+      "works_count": 345,
+      "cited_by_count": 80601,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5018366970",
+      "display_name": "Donald Mark Anderson",
+      "orcid": "https://orcid.org/0000-0002-3983-6388",
+      "h_index": 100,
+      "i10_index": 281,
+      "works_count": 415,
+      "cited_by_count": 40999,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Environmental Chemistry -- 9.8",
+      "id": "https://openalex.org/A5040181823",
+      "display_name": "William H. McDowell",
+      "orcid": "https://orcid.org/0000-0002-8739-9047",
+      "h_index": 100,
+      "i10_index": 278,
+      "works_count": 518,
+      "cited_by_count": 47475,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5053700390",
+      "display_name": "Michael L. Pace",
+      "orcid": "https://orcid.org/0000-0001-5945-6131",
+      "h_index": 100,
+      "i10_index": 228,
+      "works_count": 346,
+      "cited_by_count": 40275,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5107232749",
+      "display_name": "David W. Schindler",
+      "orcid": null,
+      "h_index": 100,
+      "i10_index": 194,
+      "works_count": 236,
+      "cited_by_count": 48945,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5031843213",
+      "display_name": "Hjalmar Laudon",
+      "orcid": "https://orcid.org/0000-0001-6058-1466",
+      "h_index": 97,
+      "i10_index": 359,
+      "works_count": 685,
+      "cited_by_count": 34333,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5110303422",
+      "display_name": "Takeshi Yasumoto",
+      "orcid": null,
+      "h_index": 96,
+      "i10_index": 317,
+      "works_count": 385,
+      "cited_by_count": 30012,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5059540749",
+      "display_name": "Sally MacIntyre",
+      "orcid": "https://orcid.org/0000-0003-3644-7237",
+      "h_index": 96,
+      "i10_index": 246,
+      "works_count": 500,
+      "cited_by_count": 50636,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5037707164",
+      "display_name": "Philippe Van Cappellen",
+      "orcid": "https://orcid.org/0000-0001-5476-0820",
+      "h_index": 96,
+      "i10_index": 242,
+      "works_count": 603,
+      "cited_by_count": 32620,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5100415738",
+      "display_name": "Jae Wook Lee",
+      "orcid": "https://orcid.org/0000-0002-8756-0195",
+      "h_index": 95,
+      "i10_index": 812,
+      "works_count": 1952,
+      "cited_by_count": 44948,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Environmental Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5083194211",
+      "display_name": "Sergi Sabater",
+      "orcid": "https://orcid.org/0000-0003-3730-0261",
+      "h_index": 95,
+      "i10_index": 317,
+      "works_count": 488,
+      "cited_by_count": 27397,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5035527997",
+      "display_name": "Martin Søndergaard",
+      "orcid": "https://orcid.org/0000-0002-1514-0482",
+      "h_index": 94,
+      "i10_index": 296,
+      "works_count": 484,
+      "cited_by_count": 36237,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5111745139",
+      "display_name": "Wayne W. Carmichael",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 170,
+      "works_count": 216,
+      "cited_by_count": 32409,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Environmental Chemistry -- 9.7",
+      "id": "https://openalex.org/A5067181898",
+      "display_name": "Brett Anthony Neilan",
+      "orcid": "https://orcid.org/0000-0001-6113-772X",
+      "h_index": 92,
+      "i10_index": 292,
+      "works_count": 413,
+      "cited_by_count": 31043,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5058855467",
+      "display_name": "Boqiang Qin",
+      "orcid": "https://orcid.org/0000-0003-3977-4903",
+      "h_index": 91,
+      "i10_index": 309,
+      "works_count": 453,
+      "cited_by_count": 30160,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5086043230",
+      "display_name": "Lora E. Fleming",
+      "orcid": "https://orcid.org/0000-0003-1076-9967",
+      "h_index": 91,
+      "i10_index": 300,
+      "works_count": 433,
+      "cited_by_count": 30776,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5022007448",
+      "display_name": "Kai‐Uwe Hinrichs",
+      "orcid": "https://orcid.org/0000-0002-0739-9291",
+      "h_index": 91,
+      "i10_index": 242,
+      "works_count": 613,
+      "cited_by_count": 29715,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5047370358",
+      "display_name": "Kaarina Sivonen",
+      "orcid": "https://orcid.org/0000-0002-2904-0458",
+      "h_index": 90,
+      "i10_index": 260,
+      "works_count": 365,
+      "cited_by_count": 30148,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5029017897",
+      "display_name": "Scott A. Mabury",
+      "orcid": "https://orcid.org/0000-0003-0091-8199",
+      "h_index": 90,
+      "i10_index": 230,
+      "works_count": 273,
+      "cited_by_count": 34258,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5017813616",
+      "display_name": "Prosun Bhattacharya",
+      "orcid": "https://orcid.org/0000-0003-4350-9950",
+      "h_index": 89,
+      "i10_index": 331,
+      "works_count": 750,
+      "cited_by_count": 28227,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5011714690",
+      "display_name": "Emily S. Bernhardt",
+      "orcid": "https://orcid.org/0000-0003-3031-621X",
+      "h_index": 89,
+      "i10_index": 210,
+      "works_count": 498,
+      "cited_by_count": 33438,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5112622895",
+      "display_name": "Jonathan J. Cole",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 157,
+      "works_count": 214,
+      "cited_by_count": 33238,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5019262810",
+      "display_name": "Walter K. Dodds",
+      "orcid": "https://orcid.org/0000-0002-6666-8930",
+      "h_index": 88,
+      "i10_index": 224,
+      "works_count": 398,
+      "cited_by_count": 31828,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5002752807",
+      "display_name": "Praveen Linga",
+      "orcid": "https://orcid.org/0000-0002-1466-038X",
+      "h_index": 88,
+      "i10_index": 217,
+      "works_count": 294,
+      "cited_by_count": 25608,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Chemistry",
+        "Materials Science",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Environmental Chemistry -- 9.6",
+      "id": "https://openalex.org/A5063740595",
+      "display_name": "Jef Huisman",
+      "orcid": "https://orcid.org/0000-0001-9598-3211",
+      "h_index": 88,
+      "i10_index": 165,
+      "works_count": 340,
+      "cited_by_count": 37221,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Mathematics",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5061264834",
+      "display_name": "Lutz Ahrens",
+      "orcid": "https://orcid.org/0000-0002-5430-6764",
+      "h_index": 87,
+      "i10_index": 238,
+      "works_count": 552,
+      "cited_by_count": 23639,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5059709529",
+      "display_name": "Stephen K. Hamilton",
+      "orcid": "https://orcid.org/0000-0002-4702-9017",
+      "h_index": 87,
+      "i10_index": 194,
+      "works_count": 323,
+      "cited_by_count": 28232,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5109165919",
+      "display_name": "Bruce J. Peterson",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 134,
+      "works_count": 164,
+      "cited_by_count": 40852,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5109359773",
+      "display_name": "Sybil P. Seitzinger",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 131,
+      "works_count": 175,
+      "cited_by_count": 55369,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5085595000",
+      "display_name": "Josette A. Garnier",
+      "orcid": "https://orcid.org/0000-0001-9416-9242",
+      "h_index": 85,
+      "i10_index": 235,
+      "works_count": 674,
+      "cited_by_count": 26203,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5044493473",
+      "display_name": "Andreas Teske",
+      "orcid": "https://orcid.org/0000-0003-3669-5425",
+      "h_index": 85,
+      "i10_index": 209,
+      "works_count": 498,
+      "cited_by_count": 27438,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5003261817",
+      "display_name": "Alexander van Geen",
+      "orcid": "https://orcid.org/0000-0003-2073-9841",
+      "h_index": 85,
+      "i10_index": 201,
+      "works_count": 446,
+      "cited_by_count": 24681,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5065209840",
+      "display_name": "Ronald S. Oremland",
+      "orcid": "https://orcid.org/0000-0001-7382-0147",
+      "h_index": 85,
+      "i10_index": 171,
+      "works_count": 261,
+      "cited_by_count": 25624,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5059408274",
+      "display_name": "John Downing",
+      "orcid": "https://orcid.org/0000-0001-8547-0789",
+      "h_index": 85,
+      "i10_index": 137,
+      "works_count": 244,
+      "cited_by_count": 39006,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5063206184",
+      "display_name": "Laurent Charlet",
+      "orcid": "https://orcid.org/0000-0003-3669-7316",
+      "h_index": 83,
+      "i10_index": 209,
+      "works_count": 411,
+      "cited_by_count": 23595,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5063202522",
+      "display_name": "Christopher P. Higgins",
+      "orcid": "https://orcid.org/0000-0001-6220-8673",
+      "h_index": 83,
+      "i10_index": 185,
+      "works_count": 257,
+      "cited_by_count": 28370,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Environmental Chemistry -- 9.5",
+      "id": "https://openalex.org/A5084914829",
+      "display_name": "Walter Giger",
+      "orcid": "https://orcid.org/0000-0002-2866-2933",
+      "h_index": 83,
+      "i10_index": 164,
+      "works_count": 256,
+      "cited_by_count": 25065,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5039488721",
+      "display_name": "X. Chris Le",
+      "orcid": "https://orcid.org/0000-0002-7690-6701",
+      "h_index": 82,
+      "i10_index": 295,
+      "works_count": 413,
+      "cited_by_count": 25032,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5035021609",
+      "display_name": "Ellen van Donk",
+      "orcid": "https://orcid.org/0000-0003-3279-4936",
+      "h_index": 82,
+      "i10_index": 207,
+      "works_count": 422,
+      "cited_by_count": 23974,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5061145948",
+      "display_name": "Jennifer L. Tank",
+      "orcid": "https://orcid.org/0000-0001-9005-9548",
+      "h_index": 82,
+      "i10_index": 184,
+      "works_count": 333,
+      "cited_by_count": 23915,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5029834486",
+      "display_name": "Yongchen Song",
+      "orcid": "https://orcid.org/0000-0002-9752-7671",
+      "h_index": 81,
+      "i10_index": 440,
+      "works_count": 705,
+      "cited_by_count": 23022,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5101969515",
+      "display_name": "Yanxin Wang",
+      "orcid": "https://orcid.org/0000-0002-4098-138X",
+      "h_index": 81,
+      "i10_index": 407,
+      "works_count": 637,
+      "cited_by_count": 23187,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5081716971",
+      "display_name": "Yunlin Zhang",
+      "orcid": "https://orcid.org/0000-0002-3382-4570",
+      "h_index": 81,
+      "i10_index": 280,
+      "works_count": 452,
+      "cited_by_count": 24084,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5062195363",
+      "display_name": "Carolyn Ann Koh",
+      "orcid": "https://orcid.org/0000-0003-3452-4032",
+      "h_index": 81,
+      "i10_index": 247,
+      "works_count": 394,
+      "cited_by_count": 26188,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Chemistry",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5056369148",
+      "display_name": "Lars‐Anders Hansson",
+      "orcid": "https://orcid.org/0000-0002-3035-1317",
+      "h_index": 81,
+      "i10_index": 223,
+      "works_count": 370,
+      "cited_by_count": 24474,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5085328315",
+      "display_name": "Catterina Ferreccio",
+      "orcid": "https://orcid.org/0000-0001-6331-5534",
+      "h_index": 81,
+      "i10_index": 193,
+      "works_count": 416,
+      "cited_by_count": 48343,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5111429336",
+      "display_name": "Robert G. Wetzel",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 246,
+      "works_count": 425,
+      "cited_by_count": 23144,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Environmental Chemistry -- 9.4",
+      "id": "https://openalex.org/A5082013090",
+      "display_name": "David P. Hamilton",
+      "orcid": "https://orcid.org/0000-0002-9341-8777",
+      "h_index": 79,
+      "i10_index": 295,
+      "works_count": 786,
+      "cited_by_count": 23913,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5012545388",
+      "display_name": "Steven W. Wilhelm",
+      "orcid": "https://orcid.org/0000-0001-6283-8077",
+      "h_index": 78,
+      "i10_index": 212,
+      "works_count": 415,
+      "cited_by_count": 25877,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Immunology and Microbiology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5052985872",
+      "display_name": "Samantha B. Joye",
+      "orcid": "https://orcid.org/0000-0003-1610-451X",
+      "h_index": 78,
+      "i10_index": 210,
+      "works_count": 393,
+      "cited_by_count": 21022,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5045167883",
+      "display_name": "Robert E. Hecky",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 186,
+      "works_count": 252,
+      "cited_by_count": 26516,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5066176863",
+      "display_name": "Patrick J. Mulholland",
+      "orcid": "https://orcid.org/0000-0003-0780-5971",
+      "h_index": 78,
+      "i10_index": 132,
+      "works_count": 267,
+      "cited_by_count": 22910,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5060421147",
+      "display_name": "Vitor Manuel Vasconcelos",
+      "orcid": "https://orcid.org/0000-0003-3585-2417",
+      "h_index": 77,
+      "i10_index": 463,
+      "works_count": 734,
+      "cited_by_count": 24155,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5047641218",
+      "display_name": "Jörg Feldmann",
+      "orcid": "https://orcid.org/0000-0002-0524-8254",
+      "h_index": 77,
+      "i10_index": 295,
+      "works_count": 475,
+      "cited_by_count": 24310,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5059513007",
+      "display_name": "Philip M. Haygarth",
+      "orcid": "https://orcid.org/0000-0002-1672-6290",
+      "h_index": 77,
+      "i10_index": 194,
+      "works_count": 437,
+      "cited_by_count": 19653,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5000892869",
+      "display_name": "Brian Moss",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 191,
+      "works_count": 258,
+      "cited_by_count": 25682,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5019526841",
+      "display_name": "Gustaaf Marinus Hallegraeff",
+      "orcid": "https://orcid.org/0000-0001-8464-7343",
+      "h_index": 76,
+      "i10_index": 215,
+      "works_count": 413,
+      "cited_by_count": 23570,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5014942392",
+      "display_name": "Miquel Lürling",
+      "orcid": "https://orcid.org/0000-0001-6726-7904",
+      "h_index": 76,
+      "i10_index": 190,
+      "works_count": 246,
+      "cited_by_count": 20441,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Environmental Chemistry -- 9.3",
+      "id": "https://openalex.org/A5040086177",
+      "display_name": "Dag O. Hessen",
+      "orcid": "https://orcid.org/0000-0002-0154-7847",
+      "h_index": 75,
+      "i10_index": 267,
+      "works_count": 390,
+      "cited_by_count": 26622,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5066621899",
+      "display_name": "Konda R. Reddy",
+      "orcid": "https://orcid.org/0000-0001-9696-6675",
+      "h_index": 75,
+      "i10_index": 223,
+      "works_count": 263,
+      "cited_by_count": 20695,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5082628678",
+      "display_name": "Tony Fletcher",
+      "orcid": "https://orcid.org/0000-0003-3385-200X",
+      "h_index": 75,
+      "i10_index": 165,
+      "works_count": 359,
+      "cited_by_count": 20568,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5010130357",
+      "display_name": "Stephen Christopher MABERLY",
+      "orcid": "https://orcid.org/0000-0003-3541-5903",
+      "h_index": 75,
+      "i10_index": 158,
+      "works_count": 310,
+      "cited_by_count": 16592,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5013302812",
+      "display_name": "Peter R. Leavitt",
+      "orcid": "https://orcid.org/0000-0001-9805-9307",
+      "h_index": 74,
+      "i10_index": 208,
+      "works_count": 325,
+      "cited_by_count": 18711,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5077124354",
+      "display_name": "Bernhard Wehrli",
+      "orcid": "https://orcid.org/0000-0001-7029-1972",
+      "h_index": 74,
+      "i10_index": 193,
+      "works_count": 402,
+      "cited_by_count": 22579,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5000494141",
+      "display_name": "Paul T. Anastas",
+      "orcid": "https://orcid.org/0000-0003-4777-5172",
+      "h_index": 74,
+      "i10_index": 183,
+      "works_count": 325,
+      "cited_by_count": 44732,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Arts and Humanities",
+        "Business, Management and Accounting",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5036810129",
+      "display_name": "Gesa A. Weyhenmeyer",
+      "orcid": "https://orcid.org/0000-0002-4013-2281",
+      "h_index": 74,
+      "i10_index": 154,
+      "works_count": 259,
+      "cited_by_count": 24861,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5080951776",
+      "display_name": "Emily H. Stanley",
+      "orcid": "https://orcid.org/0000-0003-4922-8121",
+      "h_index": 74,
+      "i10_index": 148,
+      "works_count": 640,
+      "cited_by_count": 20766,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5073134817",
+      "display_name": "Helen P. Jarvie",
+      "orcid": "https://orcid.org/0000-0002-4984-1607",
+      "h_index": 74,
+      "i10_index": 145,
+      "works_count": 206,
+      "cited_by_count": 17473,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5047983599",
+      "display_name": "Stuart Findlay",
+      "orcid": "https://orcid.org/0000-0002-8135-4147",
+      "h_index": 74,
+      "i10_index": 141,
+      "works_count": 177,
+      "cited_by_count": 22301,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Environmental Chemistry -- 9.2",
+      "id": "https://openalex.org/A5016786612",
+      "display_name": "Ping Xie",
+      "orcid": "https://orcid.org/0000-0003-2332-1547",
+      "h_index": 73,
+      "i10_index": 320,
+      "works_count": 528,
+      "cited_by_count": 18642,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5051852537",
+      "display_name": "Xiao‐Sen Li",
+      "orcid": "https://orcid.org/0000-0001-8608-0950",
+      "h_index": 73,
+      "i10_index": 299,
+      "works_count": 437,
+      "cited_by_count": 19352,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5101962888",
+      "display_name": "Fengchang Wu",
+      "orcid": "https://orcid.org/0000-0001-8595-2243",
+      "h_index": 73,
+      "i10_index": 243,
+      "works_count": 340,
+      "cited_by_count": 17387,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5021095074",
+      "display_name": "Torben L. Lauridsen",
+      "orcid": "https://orcid.org/0000-0003-0139-2395",
+      "h_index": 73,
+      "i10_index": 187,
+      "works_count": 312,
+      "cited_by_count": 22918,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5004401516",
+      "display_name": "Jochen Bundschuh",
+      "orcid": "https://orcid.org/0000-0002-4900-5633",
+      "h_index": 73,
+      "i10_index": 184,
+      "works_count": 406,
+      "cited_by_count": 18720,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5109852008",
+      "display_name": "Jan G. M. Roelofs",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 173,
+      "works_count": 216,
+      "cited_by_count": 16767,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5016563954",
+      "display_name": "John E. Hobbie",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 133,
+      "works_count": 333,
+      "cited_by_count": 23478,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5032744552",
+      "display_name": "Richard William McDowell",
+      "orcid": "https://orcid.org/0000-0003-3911-4825",
+      "h_index": 72,
+      "i10_index": 234,
+      "works_count": 418,
+      "cited_by_count": 18710,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5052862902",
+      "display_name": "Carolien Kroeze",
+      "orcid": "https://orcid.org/0000-0002-8954-6629",
+      "h_index": 72,
+      "i10_index": 202,
+      "works_count": 520,
+      "cited_by_count": 20877,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Economics, Econometrics and Finance",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5083932844",
+      "display_name": "Peter J. A. Kleinman",
+      "orcid": "https://orcid.org/0000-0002-5093-3736",
+      "h_index": 72,
+      "i10_index": 195,
+      "works_count": 305,
+      "cited_by_count": 18000,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5062527109",
+      "display_name": "Klaus Wallmann",
+      "orcid": "https://orcid.org/0000-0002-1795-376X",
+      "h_index": 72,
+      "i10_index": 176,
+      "works_count": 831,
+      "cited_by_count": 16788,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Environmental Chemistry -- 9.1",
+      "id": "https://openalex.org/A5111853268",
+      "display_name": "Lin Ma",
+      "orcid": "https://orcid.org/0000-0003-1761-0158",
+      "h_index": 72,
+      "i10_index": 172,
+      "works_count": 258,
+      "cited_by_count": 16487,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Environmental Chemistry -- 9.0",
+      "id": "https://openalex.org/A5056151887",
+      "display_name": "Jennifer A. Field",
+      "orcid": "https://orcid.org/0000-0002-9346-4693",
+      "h_index": 72,
+      "i10_index": 170,
+      "works_count": 233,
+      "cited_by_count": 19740,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Environmental Chemistry -- 9.0",
+      "id": "https://openalex.org/A5079134418",
+      "display_name": "Peter Englezos",
+      "orcid": "https://orcid.org/0000-0003-1569-4626",
+      "h_index": 72,
+      "i10_index": 159,
+      "works_count": 229,
+      "cited_by_count": 18129,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Engineering",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Environmental Chemistry -- 9.0",
+      "id": "https://openalex.org/A5086417208",
+      "display_name": "Victoria J. Orphan",
+      "orcid": "https://orcid.org/0000-0002-5374-6178",
+      "h_index": 72,
+      "i10_index": 147,
+      "works_count": 333,
+      "cited_by_count": 21279,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Environmental Chemistry -- 9.0",
+      "id": "https://openalex.org/A5018930193",
+      "display_name": "Daniel R. Engstrom",
+      "orcid": "https://orcid.org/0000-0002-8066-029X",
+      "h_index": 72,
+      "i10_index": 140,
+      "works_count": 187,
+      "cited_by_count": 17197,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Environmental Chemistry -- 9.0",
+      "id": "https://openalex.org/A5031412262",
+      "display_name": "Jiafei Zhao",
+      "orcid": "https://orcid.org/0000-0001-8401-4204",
+      "h_index": 71,
+      "i10_index": 282,
+      "works_count": 358,
+      "cited_by_count": 15929,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5008341240",
+      "display_name": "David W. Blowes",
+      "orcid": "https://orcid.org/0000-0003-4667-277X",
+      "h_index": 71,
+      "i10_index": 215,
+      "works_count": 335,
+      "cited_by_count": 19731,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5090243955",
+      "display_name": "Mohammad Mahmudur Rahman‬",
+      "orcid": "https://orcid.org/0000-0002-3426-5221",
+      "h_index": 71,
+      "i10_index": 214,
+      "works_count": 344,
+      "cited_by_count": 18498,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5011612137",
+      "display_name": "Gerhard Bohrmann",
+      "orcid": "https://orcid.org/0000-0001-9976-4948",
+      "h_index": 71,
+      "i10_index": 204,
+      "works_count": 792,
+      "cited_by_count": 15498,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5067084569",
+      "display_name": "Michael A. Quilliam",
+      "orcid": "https://orcid.org/0000-0002-2670-4220",
+      "h_index": 71,
+      "i10_index": 197,
+      "works_count": 251,
+      "cited_by_count": 15076,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5112807060",
+      "display_name": "JoAnn M. Burkholder",
+      "orcid": "https://orcid.org/0000-0002-9613-5510",
+      "h_index": 71,
+      "i10_index": 155,
+      "works_count": 213,
+      "cited_by_count": 26898,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5063662359",
+      "display_name": "Arthur H. W. Beusen",
+      "orcid": "https://orcid.org/0000-0003-0104-8615",
+      "h_index": 71,
+      "i10_index": 129,
+      "works_count": 298,
+      "cited_by_count": 23036,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5100438696",
+      "display_name": "Gang Li",
+      "orcid": "https://orcid.org/0000-0002-4549-293X",
+      "h_index": 70,
+      "i10_index": 403,
+      "works_count": 954,
+      "cited_by_count": 20624,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Earth and Planetary Sciences",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5063784981",
+      "display_name": "Peter Dillon",
+      "orcid": "https://orcid.org/0000-0002-1942-7552",
+      "h_index": 70,
+      "i10_index": 256,
+      "works_count": 358,
+      "cited_by_count": 20180,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5107596923",
+      "display_name": "Huaming Guo",
+      "orcid": "https://orcid.org/0000-0002-4408-8775",
+      "h_index": 70,
+      "i10_index": 219,
+      "works_count": 390,
+      "cited_by_count": 13832,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5111622523",
+      "display_name": "Charles R. Goldman",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 212,
+      "works_count": 305,
+      "cited_by_count": 16336,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5078830743",
+      "display_name": "William M. Lewis",
+      "orcid": "https://orcid.org/0000-0002-9465-240X",
+      "h_index": 70,
+      "i10_index": 190,
+      "works_count": 342,
+      "cited_by_count": 18667,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Environmental Chemistry -- 8.9",
+      "id": "https://openalex.org/A5015549068",
+      "display_name": "Nelson G. Hairston",
+      "orcid": "https://orcid.org/0000-0002-0615-9843",
+      "h_index": 70,
+      "i10_index": 164,
+      "works_count": 274,
+      "cited_by_count": 24517,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5013897511",
+      "display_name": "Craig E. Williamson",
+      "orcid": "https://orcid.org/0000-0001-7350-1912",
+      "h_index": 70,
+      "i10_index": 154,
+      "works_count": 237,
+      "cited_by_count": 20008,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5108351109",
+      "display_name": "Geoffrey A. Codd",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 153,
+      "works_count": 181,
+      "cited_by_count": 22659,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5007040952",
+      "display_name": "Amadeu K. Sum",
+      "orcid": "https://orcid.org/0000-0003-1903-4537",
+      "h_index": 69,
+      "i10_index": 206,
+      "works_count": 341,
+      "cited_by_count": 16982,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5067061468",
+      "display_name": "Colin S. Reynolds",
+      "orcid": "https://orcid.org/0009-0000-7589-0958",
+      "h_index": 69,
+      "i10_index": 177,
+      "works_count": 236,
+      "cited_by_count": 24925,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5109355694",
+      "display_name": "Richard William Battarbee",
+      "orcid": "https://orcid.org/0000-0003-3963-6228",
+      "h_index": 69,
+      "i10_index": 170,
+      "works_count": 323,
+      "cited_by_count": 17172,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5065439474",
+      "display_name": "Fumio Inagaki",
+      "orcid": "https://orcid.org/0000-0003-2887-6525",
+      "h_index": 69,
+      "i10_index": 169,
+      "works_count": 466,
+      "cited_by_count": 16362,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5078219567",
+      "display_name": "Kathleen C. Weathers",
+      "orcid": "https://orcid.org/0000-0002-3575-6508",
+      "h_index": 69,
+      "i10_index": 166,
+      "works_count": 354,
+      "cited_by_count": 21002,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5055615065",
+      "display_name": "Yali Shi",
+      "orcid": "https://orcid.org/0000-0001-9946-1525",
+      "h_index": 69,
+      "i10_index": 135,
+      "works_count": 196,
+      "cited_by_count": 14306,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5057617939",
+      "display_name": "Michael D. Vanden Berg",
+      "orcid": "https://orcid.org/0000-0002-7342-4061",
+      "h_index": 69,
+      "i10_index": 126,
+      "works_count": 251,
+      "cited_by_count": 18299,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5034134503",
+      "display_name": "Kaishan Song",
+      "orcid": "https://orcid.org/0000-0001-9996-2450",
+      "h_index": 68,
+      "i10_index": 242,
+      "works_count": 570,
+      "cited_by_count": 15323,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5113676329",
+      "display_name": "Myron J. Mitchell",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 197,
+      "works_count": 252,
+      "cited_by_count": 16578,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5011383537",
+      "display_name": "Kazi Matin Ahmed",
+      "orcid": "https://orcid.org/0000-0001-5188-4385",
+      "h_index": 68,
+      "i10_index": 186,
+      "works_count": 407,
+      "cited_by_count": 19479,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5062584855",
+      "display_name": "Nicholas John Anderson",
+      "orcid": "https://orcid.org/0000-0002-0037-0306",
+      "h_index": 68,
+      "i10_index": 174,
+      "works_count": 254,
+      "cited_by_count": 15516,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5091494543",
+      "display_name": "Jussi A. O. Meriluoto",
+      "orcid": "https://orcid.org/0000-0002-6300-301X",
+      "h_index": 68,
+      "i10_index": 166,
+      "works_count": 215,
+      "cited_by_count": 13905,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5021437993",
+      "display_name": "Norman David Yan",
+      "orcid": "https://orcid.org/0000-0003-4870-6865",
+      "h_index": 68,
+      "i10_index": 160,
+      "works_count": 184,
+      "cited_by_count": 11649,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5041206946",
+      "display_name": "Guillaume Morin",
+      "orcid": "https://orcid.org/0000-0001-9304-4202",
+      "h_index": 68,
+      "i10_index": 144,
+      "works_count": 358,
+      "cited_by_count": 11999,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5111595738",
+      "display_name": "Mark B. David",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 128,
+      "works_count": 171,
+      "cited_by_count": 17440,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5084671242",
+      "display_name": "Pham Hung Viet",
+      "orcid": "https://orcid.org/0000-0002-9016-0694",
+      "h_index": 67,
+      "i10_index": 146,
+      "works_count": 256,
+      "cited_by_count": 16094,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5078911732",
+      "display_name": "Leo W. Y. Yeung",
+      "orcid": "https://orcid.org/0000-0001-6800-5658",
+      "h_index": 67,
+      "i10_index": 129,
+      "works_count": 175,
+      "cited_by_count": 13505,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5069598830",
+      "display_name": "Tinglin Huang",
+      "orcid": "https://orcid.org/0000-0002-8345-7772",
+      "h_index": 66,
+      "i10_index": 337,
+      "works_count": 650,
+      "cited_by_count": 15394,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5025468528",
+      "display_name": "Hee‐Mock Oh",
+      "orcid": "https://orcid.org/0000-0002-2151-3687",
+      "h_index": 66,
+      "i10_index": 235,
+      "works_count": 386,
+      "cited_by_count": 18171,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Energy",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Environmental Chemistry -- 8.8",
+      "id": "https://openalex.org/A5086203581",
+      "display_name": "Giuseppe Etiope",
+      "orcid": "https://orcid.org/0000-0001-8614-4221",
+      "h_index": 66,
+      "i10_index": 168,
+      "works_count": 376,
+      "cited_by_count": 20441,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5042665158",
+      "display_name": "Baojing Gu",
+      "orcid": "https://orcid.org/0000-0003-3986-3519",
+      "h_index": 66,
+      "i10_index": 138,
+      "works_count": 240,
+      "cited_by_count": 16468,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5000010237",
+      "display_name": "Yves T. Prairie",
+      "orcid": "https://orcid.org/0000-0003-1210-992X",
+      "h_index": 66,
+      "i10_index": 127,
+      "works_count": 297,
+      "cited_by_count": 25149,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5008435804",
+      "display_name": "Miroslav Stýblo",
+      "orcid": "https://orcid.org/0000-0001-6764-1900",
+      "h_index": 66,
+      "i10_index": 127,
+      "works_count": 194,
+      "cited_by_count": 13559,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5111449805",
+      "display_name": "Judy A. Bean",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 123,
+      "works_count": 168,
+      "cited_by_count": 17086,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Medicine",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5030218184",
+      "display_name": "Judson W. Harvey",
+      "orcid": "https://orcid.org/0000-0002-2654-9873",
+      "h_index": 66,
+      "i10_index": 120,
+      "works_count": 300,
+      "cited_by_count": 18757,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5056560478",
+      "display_name": "Mats Jansson",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 117,
+      "works_count": 160,
+      "cited_by_count": 17445,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5043622784",
+      "display_name": "Jun Yang",
+      "orcid": "https://orcid.org/0000-0002-7920-2777",
+      "h_index": 65,
+      "i10_index": 265,
+      "works_count": 426,
+      "cited_by_count": 17437,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5074597860",
+      "display_name": "Linda Lee",
+      "orcid": "https://orcid.org/0000-0003-4471-7284",
+      "h_index": 65,
+      "i10_index": 245,
+      "works_count": 402,
+      "cited_by_count": 16428,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5110124931",
+      "display_name": "Jalal A.-A. Hawari",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 215,
+      "works_count": 478,
+      "cited_by_count": 12996,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5048698776",
+      "display_name": "Irena F. Creed",
+      "orcid": "https://orcid.org/0000-0001-8199-1472",
+      "h_index": 65,
+      "i10_index": 201,
+      "works_count": 394,
+      "cited_by_count": 20594,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5015731342",
+      "display_name": "Bahman Tohidi",
+      "orcid": "https://orcid.org/0000-0001-5656-5754",
+      "h_index": 65,
+      "i10_index": 197,
+      "works_count": 461,
+      "cited_by_count": 14916,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Chemistry",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5055510669",
+      "display_name": "Martyn Norman Futter",
+      "orcid": "https://orcid.org/0000-0002-9789-7138",
+      "h_index": 65,
+      "i10_index": 172,
+      "works_count": 305,
+      "cited_by_count": 18084,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5103232849",
+      "display_name": "Ken‐ichi Harada",
+      "orcid": "https://orcid.org/0000-0001-5501-4811",
+      "h_index": 65,
+      "i10_index": 169,
+      "works_count": 222,
+      "cited_by_count": 13097,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Immunology and Microbiology",
+        "Chemistry",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5008577519",
+      "display_name": "Allan Douglas Cembella",
+      "orcid": "https://orcid.org/0000-0002-1297-2240",
+      "h_index": 65,
+      "i10_index": 164,
+      "works_count": 350,
+      "cited_by_count": 14882,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5049652568",
+      "display_name": "Per Juel Hansen",
+      "orcid": "https://orcid.org/0000-0003-0228-9621",
+      "h_index": 65,
+      "i10_index": 151,
+      "works_count": 217,
+      "cited_by_count": 14936,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5081431445",
+      "display_name": "Justin D. Brookes",
+      "orcid": "https://orcid.org/0000-0001-8408-9142",
+      "h_index": 65,
+      "i10_index": 138,
+      "works_count": 249,
+      "cited_by_count": 15546,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5016926203",
+      "display_name": "Bastiaan Willem Ibelings",
+      "orcid": "https://orcid.org/0000-0002-7213-7407",
+      "h_index": 65,
+      "i10_index": 128,
+      "works_count": 250,
+      "cited_by_count": 19543,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5057863865",
+      "display_name": "Jacques C. Finlay",
+      "orcid": "https://orcid.org/0000-0002-7968-7030",
+      "h_index": 65,
+      "i10_index": 122,
+      "works_count": 233,
+      "cited_by_count": 15133,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5057742361",
+      "display_name": "Robert W. Sterner",
+      "orcid": "https://orcid.org/0000-0003-2292-6122",
+      "h_index": 65,
+      "i10_index": 106,
+      "works_count": 204,
+      "cited_by_count": 22908,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5074992579",
+      "display_name": "Bruno Bussière",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 228,
+      "works_count": 413,
+      "cited_by_count": 14568,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5036516611",
+      "display_name": "Kun� Shi",
+      "orcid": "https://orcid.org/0000-0002-6124-7512",
+      "h_index": 64,
+      "i10_index": 174,
+      "works_count": 285,
+      "cited_by_count": 12807,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Environmental Chemistry -- 8.7",
+      "id": "https://openalex.org/A5063437850",
+      "display_name": "Donald Scavia",
+      "orcid": "https://orcid.org/0000-0002-2784-8269",
+      "h_index": 64,
+      "i10_index": 157,
+      "works_count": 235,
+      "cited_by_count": 15870,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5077902412",
+      "display_name": "Sherry L. Schiff",
+      "orcid": "https://orcid.org/0000-0002-7704-7304",
+      "h_index": 64,
+      "i10_index": 149,
+      "works_count": 218,
+      "cited_by_count": 12182,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5063100167",
+      "display_name": "Wolf M. Mooij",
+      "orcid": "https://orcid.org/0000-0001-5586-8200",
+      "h_index": 64,
+      "i10_index": 140,
+      "works_count": 208,
+      "cited_by_count": 19254,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5109935757",
+      "display_name": "J. T. Sims",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 122,
+      "works_count": 147,
+      "cited_by_count": 15609,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5000117941",
+      "display_name": "Michael J. Vanni",
+      "orcid": "https://orcid.org/0000-0001-8690-9124",
+      "h_index": 64,
+      "i10_index": 120,
+      "works_count": 212,
+      "cited_by_count": 18957,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5019874641",
+      "display_name": "Laurence Carvalho",
+      "orcid": "https://orcid.org/0000-0002-9768-9902",
+      "h_index": 64,
+      "i10_index": 110,
+      "works_count": 368,
+      "cited_by_count": 15937,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5111766042",
+      "display_name": "Christopher S. Martens",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 96,
+      "works_count": 119,
+      "cited_by_count": 12584,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5058073103",
+      "display_name": "Guangjin Chen",
+      "orcid": "https://orcid.org/0000-0002-8454-2485",
+      "h_index": 63,
+      "i10_index": 294,
+      "works_count": 477,
+      "cited_by_count": 15223,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Engineering",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5003848639",
+      "display_name": "Hongtao Duan",
+      "orcid": "https://orcid.org/0000-0002-1985-2292",
+      "h_index": 63,
+      "i10_index": 180,
+      "works_count": 343,
+      "cited_by_count": 13489,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5067844243",
+      "display_name": "Brian Kronvang",
+      "orcid": "https://orcid.org/0000-0003-1165-1354",
+      "h_index": 63,
+      "i10_index": 168,
+      "works_count": 569,
+      "cited_by_count": 13450,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5005412911",
+      "display_name": "Ann Louise Heathwaite",
+      "orcid": "https://orcid.org/0000-0001-8791-0039",
+      "h_index": 63,
+      "i10_index": 162,
+      "works_count": 401,
+      "cited_by_count": 13413,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5090833154",
+      "display_name": "Rubén Sommaruga",
+      "orcid": "https://orcid.org/0000-0002-1055-2461",
+      "h_index": 63,
+      "i10_index": 154,
+      "works_count": 288,
+      "cited_by_count": 14314,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Environmental Chemistry -- 8.6",
+      "id": "https://openalex.org/A5022674397",
+      "display_name": "Yan Zheng",
+      "orcid": "https://orcid.org/0000-0001-5256-9395",
+      "h_index": 63,
+      "i10_index": 150,
+      "works_count": 283,
+      "cited_by_count": 14536,
+      "discipline": "Environmental Chemistry",
+      "primary_field": "Environmental Science",
+      "primary_subfield": "Environmental Chemistry",
+      "fields": [
+        "Environmental Science",
+        "Earth and Planetary Sciences"
+      ]
+    }
+  ]
+}

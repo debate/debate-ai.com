@@ -1,0 +1,88 @@
+{
+  "kind": "subfield",
+  "id": 3316,
+  "name": "Cultural Studies",
+  "total_in_scrape": 4,
+  "count": 4,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Cultural Studies -- 9.9",
+      "id": "https://openalex.org/A5054780327",
+      "display_name": "Bruno Latour",
+      "orcid": "https://orcid.org/0000-0003-3420-2105",
+      "h_index": 141,
+      "i10_index": 427,
+      "works_count": 1083,
+      "cited_by_count": 166195,
+      "discipline": "Cultural Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Cultural Studies",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Cultural Studies -- 9.9",
+      "id": "https://openalex.org/A5076786881",
+      "display_name": "Russell David Gray",
+      "orcid": "https://orcid.org/0000-0002-9858-0191",
+      "h_index": 86,
+      "i10_index": 184,
+      "works_count": 286,
+      "cited_by_count": 25748,
+      "discipline": "Cultural Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Cultural Studies",
+      "fields": [
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Arts and Humanities",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Cultural Studies -- 9.9",
+      "id": "https://openalex.org/A5104058935",
+      "display_name": "Stuart Hall",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 212,
+      "works_count": 590,
+      "cited_by_count": 56350,
+      "discipline": "Cultural Studies",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Cultural Studies",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Cultural Studies -- 9.9",
+      "id": "https://openalex.org/A5026050123",
+      "display_name": "Peter J. Richerson",
+      "orcid": "https://orcid.org/0000-0002-7233-358X",
+      "h_index": 79,
+      "i10_index": 194,
+      "works_count": 379,
+      "cited_by_count": 37548,
+      "discipline": "Cultural Studies",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Cultural Studies",
+      "fields": [
+        "Social Sciences",
+        "Psychology",
+        "Economics, Econometrics and Finance"
+      ]
+    }
+  ]
+}

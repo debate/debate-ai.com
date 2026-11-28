@@ -1,0 +1,2034 @@
+{
+  "kind": "subfield",
+  "id": 2003,
+  "name": "Finance",
+  "total_in_scrape": 108,
+  "count": 108,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Finance -- 9.9",
+      "id": "https://openalex.org/A5110890240",
+      "display_name": "Andrei Shleifer",
+      "orcid": null,
+      "h_index": 167,
+      "i10_index": 382,
+      "works_count": 528,
+      "cited_by_count": 305518,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Finance -- 9.9",
+      "id": "https://openalex.org/A5102961182",
+      "display_name": "Mike Wright",
+      "orcid": "https://orcid.org/0000-0001-7762-8785",
+      "h_index": 154,
+      "i10_index": 501,
+      "works_count": 1011,
+      "cited_by_count": 107939,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Finance -- 9.9",
+      "id": "https://openalex.org/A5110601803",
+      "display_name": "Asli Demirgüç‐Kunt",
+      "orcid": "https://orcid.org/0000-0002-2107-5461",
+      "h_index": 126,
+      "i10_index": 318,
+      "works_count": 483,
+      "cited_by_count": 110630,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Finance -- 9.9",
+      "id": "https://openalex.org/A5043537207",
+      "display_name": "Barry J. Eichengreen",
+      "orcid": "https://orcid.org/0000-0002-1683-4486",
+      "h_index": 124,
+      "i10_index": 589,
+      "works_count": 1286,
+      "cited_by_count": 62608,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Finance -- 9.9",
+      "id": "https://openalex.org/A5004620923",
+      "display_name": "René M. Stulz",
+      "orcid": "https://orcid.org/0000-0003-2956-4806",
+      "h_index": 116,
+      "i10_index": 289,
+      "works_count": 513,
+      "cited_by_count": 89530,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Finance -- 9.9",
+      "id": "https://openalex.org/A5103079011",
+      "display_name": "Ross Eric Levine",
+      "orcid": "https://orcid.org/0000-0002-7459-9541",
+      "h_index": 116,
+      "i10_index": 270,
+      "works_count": 528,
+      "cited_by_count": 134590,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5108432458",
+      "display_name": "Allen N. Berger",
+      "orcid": null,
+      "h_index": 109,
+      "i10_index": 261,
+      "works_count": 638,
+      "cited_by_count": 85744,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5047040699",
+      "display_name": "Robert F. Engle",
+      "orcid": "https://orcid.org/0009-0009-9491-1510",
+      "h_index": 108,
+      "i10_index": 260,
+      "works_count": 535,
+      "cited_by_count": 158396,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5026390628",
+      "display_name": "James M. Poterba",
+      "orcid": "https://orcid.org/0000-0003-3532-0998",
+      "h_index": 101,
+      "i10_index": 279,
+      "works_count": 727,
+      "cited_by_count": 51261,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5088627183",
+      "display_name": "Campbell R. Harvey",
+      "orcid": "https://orcid.org/0000-0002-2397-652X",
+      "h_index": 100,
+      "i10_index": 231,
+      "works_count": 364,
+      "cited_by_count": 81565,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5091820687",
+      "display_name": "Eugene F. Fama",
+      "orcid": null,
+      "h_index": 100,
+      "i10_index": 142,
+      "works_count": 212,
+      "cited_by_count": 298877,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5037961713",
+      "display_name": "Josh Lerner",
+      "orcid": "https://orcid.org/0000-0003-3822-2162",
+      "h_index": 99,
+      "i10_index": 259,
+      "works_count": 790,
+      "cited_by_count": 51036,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5071230295",
+      "display_name": "Elie I. Bouri",
+      "orcid": "https://orcid.org/0000-0003-2628-5027",
+      "h_index": 98,
+      "i10_index": 318,
+      "works_count": 440,
+      "cited_by_count": 33933,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5106127381",
+      "display_name": "Frederic S. Mishkin",
+      "orcid": "https://orcid.org/0000-0003-4150-1971",
+      "h_index": 98,
+      "i10_index": 247,
+      "works_count": 454,
+      "cited_by_count": 38180,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5083813378",
+      "display_name": "Jean‐Philippe Bouchaud",
+      "orcid": "https://orcid.org/0000-0002-0427-6456",
+      "h_index": 97,
+      "i10_index": 351,
+      "works_count": 713,
+      "cited_by_count": 42100,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Physics and Astronomy",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5035390303",
+      "display_name": "Stijn Claessens",
+      "orcid": "https://orcid.org/0000-0001-6627-7799",
+      "h_index": 97,
+      "i10_index": 320,
+      "works_count": 737,
+      "cited_by_count": 53434,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Finance -- 9.8",
+      "id": "https://openalex.org/A5084412348",
+      "display_name": "Francis X. Diebold",
+      "orcid": null,
+      "h_index": 96,
+      "i10_index": 230,
+      "works_count": 443,
+      "cited_by_count": 75934,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5051645674",
+      "display_name": "Robert J. Shiller",
+      "orcid": "https://orcid.org/0009-0006-2316-6486",
+      "h_index": 96,
+      "i10_index": 222,
+      "works_count": 462,
+      "cited_by_count": 61197,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5109487336",
+      "display_name": "Jeremy C. Stein",
+      "orcid": null,
+      "h_index": 96,
+      "i10_index": 167,
+      "works_count": 336,
+      "cited_by_count": 79813,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5057673396",
+      "display_name": "Annamaria Lusardi",
+      "orcid": "https://orcid.org/0000-0002-2378-7489",
+      "h_index": 93,
+      "i10_index": 241,
+      "works_count": 460,
+      "cited_by_count": 72383,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5047005082",
+      "display_name": "Luigi Zingales",
+      "orcid": "https://orcid.org/0000-0002-6804-1883",
+      "h_index": 93,
+      "i10_index": 187,
+      "works_count": 328,
+      "cited_by_count": 95001,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5080219284",
+      "display_name": "Carmen Reinhart",
+      "orcid": "https://orcid.org/0000-0003-4355-1411",
+      "h_index": 92,
+      "i10_index": 261,
+      "works_count": 601,
+      "cited_by_count": 65923,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5027298282",
+      "display_name": "Hyun Song Shin",
+      "orcid": "https://orcid.org/0000-0002-0821-2759",
+      "h_index": 92,
+      "i10_index": 245,
+      "works_count": 414,
+      "cited_by_count": 37564,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5051966809",
+      "display_name": "Franklin Allen",
+      "orcid": "https://orcid.org/0000-0003-2706-3872",
+      "h_index": 92,
+      "i10_index": 240,
+      "works_count": 513,
+      "cited_by_count": 50782,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5012755577",
+      "display_name": "Luc A. Laeven",
+      "orcid": "https://orcid.org/0000-0001-9820-755X",
+      "h_index": 92,
+      "i10_index": 215,
+      "works_count": 375,
+      "cited_by_count": 49683,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5015669404",
+      "display_name": "Rangan Gupta",
+      "orcid": "https://orcid.org/0000-0001-5002-3428",
+      "h_index": 91,
+      "i10_index": 619,
+      "works_count": 1160,
+      "cited_by_count": 37631,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5001446777",
+      "display_name": "M. Kabir Hassan",
+      "orcid": "https://orcid.org/0000-0001-6274-3545",
+      "h_index": 91,
+      "i10_index": 463,
+      "works_count": 833,
+      "cited_by_count": 34163,
+      "discipline": "Finance",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Finance -- 9.7",
+      "id": "https://openalex.org/A5049827825",
+      "display_name": "Jakob de Haan",
+      "orcid": "https://orcid.org/0000-0002-5504-9448",
+      "h_index": 91,
+      "i10_index": 337,
+      "works_count": 870,
+      "cited_by_count": 30879,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5058269956",
+      "display_name": "David Laibson",
+      "orcid": "https://orcid.org/0000-0003-4556-8508",
+      "h_index": 91,
+      "i10_index": 213,
+      "works_count": 419,
+      "cited_by_count": 60868,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5030330197",
+      "display_name": "Paresh Kumar Narayan",
+      "orcid": "https://orcid.org/0000-0001-7934-8146",
+      "h_index": 90,
+      "i10_index": 322,
+      "works_count": 530,
+      "cited_by_count": 37851,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5010285399",
+      "display_name": "Brian M. Lucey",
+      "orcid": "https://orcid.org/0000-0002-4052-8235",
+      "h_index": 90,
+      "i10_index": 287,
+      "works_count": 572,
+      "cited_by_count": 35487,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5020155328",
+      "display_name": "Raghuram G. Rajan",
+      "orcid": "https://orcid.org/0000-0003-4135-4940",
+      "h_index": 90,
+      "i10_index": 184,
+      "works_count": 380,
+      "cited_by_count": 87965,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5113450091",
+      "display_name": "John Y. Campbell",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 153,
+      "works_count": 320,
+      "cited_by_count": 86023,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5102799463",
+      "display_name": "Tim Bollerslev",
+      "orcid": "https://orcid.org/0000-0003-2743-3087",
+      "h_index": 90,
+      "i10_index": 149,
+      "works_count": 283,
+      "cited_by_count": 100784,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5003597161",
+      "display_name": "Viral V. Acharya",
+      "orcid": "https://orcid.org/0000-0002-8925-4239",
+      "h_index": 88,
+      "i10_index": 275,
+      "works_count": 505,
+      "cited_by_count": 45173,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5007094837",
+      "display_name": "Douglas J. Cumming",
+      "orcid": "https://orcid.org/0000-0003-4366-6112",
+      "h_index": 88,
+      "i10_index": 271,
+      "works_count": 663,
+      "cited_by_count": 29996,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5109980718",
+      "display_name": "Andrew W. Lo",
+      "orcid": "https://orcid.org/0000-0003-2944-7773",
+      "h_index": 87,
+      "i10_index": 264,
+      "works_count": 669,
+      "cited_by_count": 60937,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5029439630",
+      "display_name": "Iftekhar Hasan",
+      "orcid": "https://orcid.org/0000-0003-2469-0539",
+      "h_index": 85,
+      "i10_index": 335,
+      "works_count": 763,
+      "cited_by_count": 31297,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Finance -- 9.6",
+      "id": "https://openalex.org/A5035656073",
+      "display_name": "Olivia S. Mitchell",
+      "orcid": "https://orcid.org/0000-0002-6419-8314",
+      "h_index": 85,
+      "i10_index": 309,
+      "works_count": 710,
+      "cited_by_count": 48713,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Decision Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5011644728",
+      "display_name": "Sheridan D. Titman",
+      "orcid": "https://orcid.org/0000-0002-0935-7394",
+      "h_index": 85,
+      "i10_index": 174,
+      "works_count": 275,
+      "cited_by_count": 76189,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5020421565",
+      "display_name": "Darrell Duffie",
+      "orcid": "https://orcid.org/0000-0002-1212-7004",
+      "h_index": 83,
+      "i10_index": 174,
+      "works_count": 425,
+      "cited_by_count": 46157,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5000219591",
+      "display_name": "Orazio Pietro Attanasio",
+      "orcid": "https://orcid.org/0000-0003-3693-4393",
+      "h_index": 82,
+      "i10_index": 260,
+      "works_count": 666,
+      "cited_by_count": 26256,
+      "discipline": "Finance",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5001100407",
+      "display_name": "Xuan Vinh Vo",
+      "orcid": "https://orcid.org/0000-0002-3868-8176",
+      "h_index": 81,
+      "i10_index": 330,
+      "works_count": 462,
+      "cited_by_count": 24035,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5114256255",
+      "display_name": "Thorsten Beck",
+      "orcid": "https://orcid.org/0000-0001-8382-2066",
+      "h_index": 80,
+      "i10_index": 185,
+      "works_count": 277,
+      "cited_by_count": 48682,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5068490503",
+      "display_name": "Michael C. Jensen",
+      "orcid": "https://orcid.org/0000-0001-9084-1361",
+      "h_index": 78,
+      "i10_index": 126,
+      "works_count": 305,
+      "cited_by_count": 253340,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5109126440",
+      "display_name": "Lucian A. Bebchuk",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 177,
+      "works_count": 318,
+      "cited_by_count": 31696,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5047267836",
+      "display_name": "Allan Timmermann",
+      "orcid": "https://orcid.org/0000-0002-1555-2268",
+      "h_index": 77,
+      "i10_index": 152,
+      "works_count": 331,
+      "cited_by_count": 27559,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5047191177",
+      "display_name": "Leonardo Gambacorta",
+      "orcid": "https://orcid.org/0000-0002-9895-6590",
+      "h_index": 76,
+      "i10_index": 160,
+      "works_count": 260,
+      "cited_by_count": 22601,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5086723146",
+      "display_name": "Geert Bekaert",
+      "orcid": "https://orcid.org/0000-0002-6835-5612",
+      "h_index": 76,
+      "i10_index": 159,
+      "works_count": 329,
+      "cited_by_count": 42103,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5042883498",
+      "display_name": "Robert W. Vishny",
+      "orcid": "https://orcid.org/0009-0000-0539-9872",
+      "h_index": 76,
+      "i10_index": 105,
+      "works_count": 128,
+      "cited_by_count": 165311,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Finance -- 9.5",
+      "id": "https://openalex.org/A5025517678",
+      "display_name": "Luigi Guiso",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 152,
+      "works_count": 274,
+      "cited_by_count": 41285,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5111631292",
+      "display_name": "Michael A. Firth",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 150,
+      "works_count": 226,
+      "cited_by_count": 22136,
+      "discipline": "Finance",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5020344688",
+      "display_name": "David F. Larcker",
+      "orcid": "https://orcid.org/0000-0002-9585-2227",
+      "h_index": 75,
+      "i10_index": 145,
+      "works_count": 396,
+      "cited_by_count": 208368,
+      "discipline": "Finance",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5102899198",
+      "display_name": "Patrick Bolton",
+      "orcid": "https://orcid.org/0009-0005-8004-6002",
+      "h_index": 74,
+      "i10_index": 169,
+      "works_count": 397,
+      "cited_by_count": 37519,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5066524349",
+      "display_name": "Anjan V. Thakor",
+      "orcid": "https://orcid.org/0000-0002-3919-6456",
+      "h_index": 74,
+      "i10_index": 162,
+      "works_count": 489,
+      "cited_by_count": 30557,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5019087210",
+      "display_name": "J. Doyne Farmer",
+      "orcid": "https://orcid.org/0000-0001-7871-073X",
+      "h_index": 74,
+      "i10_index": 146,
+      "works_count": 298,
+      "cited_by_count": 35824,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5043790847",
+      "display_name": "Omrane Guedhami",
+      "orcid": "https://orcid.org/0000-0002-3945-8313",
+      "h_index": 74,
+      "i10_index": 126,
+      "works_count": 232,
+      "cited_by_count": 24120,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5101655460",
+      "display_name": "Duc Khuong Nguyen",
+      "orcid": "https://orcid.org/0000-0002-7796-8787",
+      "h_index": 73,
+      "i10_index": 180,
+      "works_count": 375,
+      "cited_by_count": 20035,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5002503825",
+      "display_name": "Eduardo S. Schwartz",
+      "orcid": "https://orcid.org/0000-0002-7424-5487",
+      "h_index": 73,
+      "i10_index": 135,
+      "works_count": 208,
+      "cited_by_count": 36184,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5007981041",
+      "display_name": "Garry D. Bruton",
+      "orcid": "https://orcid.org/0000-0003-2348-0716",
+      "h_index": 73,
+      "i10_index": 135,
+      "works_count": 214,
+      "cited_by_count": 28345,
+      "discipline": "Finance",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5055304783",
+      "display_name": "Frank J. Fabozzi",
+      "orcid": "https://orcid.org/0000-0002-2827-1465",
+      "h_index": 72,
+      "i10_index": 389,
+      "works_count": 1912,
+      "cited_by_count": 21734,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Finance -- 9.4",
+      "id": "https://openalex.org/A5045661677",
+      "display_name": "Wing‐Keung Wong",
+      "orcid": "https://orcid.org/0000-0001-6755-572X",
+      "h_index": 72,
+      "i10_index": 339,
+      "works_count": 657,
+      "cited_by_count": 18722,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5045702318",
+      "display_name": "Michael J. McAleer",
+      "orcid": "https://orcid.org/0000-0003-2707-3835",
+      "h_index": 72,
+      "i10_index": 324,
+      "works_count": 871,
+      "cited_by_count": 21594,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5021804779",
+      "display_name": "Syed Jawad Hussain Shahzad",
+      "orcid": "https://orcid.org/0000-0003-3511-6057",
+      "h_index": 72,
+      "i10_index": 193,
+      "works_count": 270,
+      "cited_by_count": 19278,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5010529454",
+      "display_name": "Gary Gorton",
+      "orcid": "https://orcid.org/0000-0002-5317-3752",
+      "h_index": 72,
+      "i10_index": 167,
+      "works_count": 308,
+      "cited_by_count": 27139,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5067662277",
+      "display_name": "David A. Hirshleifer",
+      "orcid": "https://orcid.org/0000-0003-0280-8882",
+      "h_index": 72,
+      "i10_index": 139,
+      "works_count": 303,
+      "cited_by_count": 52319,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5019881858",
+      "display_name": "Igor V. Filatotchev",
+      "orcid": "https://orcid.org/0000-0003-4291-7768",
+      "h_index": 71,
+      "i10_index": 161,
+      "works_count": 318,
+      "cited_by_count": 22510,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5084624849",
+      "display_name": "Edward I. Altman",
+      "orcid": "https://orcid.org/0000-0002-7874-7310",
+      "h_index": 71,
+      "i10_index": 160,
+      "works_count": 352,
+      "cited_by_count": 49048,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5072985012",
+      "display_name": "Marco Pagano",
+      "orcid": "https://orcid.org/0000-0002-0709-6119",
+      "h_index": 71,
+      "i10_index": 156,
+      "works_count": 306,
+      "cited_by_count": 34806,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5008090769",
+      "display_name": "Claudio E. V. Borio",
+      "orcid": "https://orcid.org/0000-0003-3239-8810",
+      "h_index": 71,
+      "i10_index": 137,
+      "works_count": 236,
+      "cited_by_count": 24422,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5109857703",
+      "display_name": "Robert C. Merton",
+      "orcid": "https://orcid.org/0000-0001-9387-1822",
+      "h_index": 70,
+      "i10_index": 128,
+      "works_count": 315,
+      "cited_by_count": 84161,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5110205824",
+      "display_name": "Richard W. Roll",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 120,
+      "works_count": 234,
+      "cited_by_count": 55428,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Finance -- 9.3",
+      "id": "https://openalex.org/A5068715764",
+      "display_name": "Éric Ghysels",
+      "orcid": "https://orcid.org/0000-0002-7125-2040",
+      "h_index": 69,
+      "i10_index": 181,
+      "works_count": 467,
+      "cited_by_count": 23755,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5086963129",
+      "display_name": "Anthony Saunders",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 173,
+      "works_count": 342,
+      "cited_by_count": 21952,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5041928817",
+      "display_name": "Avanidhar Subrahmanyam",
+      "orcid": "https://orcid.org/0000-0001-8496-7646",
+      "h_index": 69,
+      "i10_index": 151,
+      "works_count": 337,
+      "cited_by_count": 37631,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5085943844",
+      "display_name": "Richard Harrison",
+      "orcid": "https://orcid.org/0000-0002-0154-0039",
+      "h_index": 69,
+      "i10_index": 151,
+      "works_count": 411,
+      "cited_by_count": 17291,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5038881190",
+      "display_name": "Leora F. Klapper",
+      "orcid": "https://orcid.org/0000-0002-3454-3279",
+      "h_index": 69,
+      "i10_index": 145,
+      "works_count": 275,
+      "cited_by_count": 40961,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5013070084",
+      "display_name": "Maureen O’Hara",
+      "orcid": "https://orcid.org/0000-0001-6914-9370",
+      "h_index": 69,
+      "i10_index": 109,
+      "works_count": 172,
+      "cited_by_count": 33699,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5066686727",
+      "display_name": "Robert W. Faff",
+      "orcid": "https://orcid.org/0000-0001-6867-9599",
+      "h_index": 68,
+      "i10_index": 283,
+      "works_count": 643,
+      "cited_by_count": 20003,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5039331964",
+      "display_name": "Muhammad Abubakr Naeem",
+      "orcid": "https://orcid.org/0000-0001-6962-3175",
+      "h_index": 68,
+      "i10_index": 177,
+      "works_count": 228,
+      "cited_by_count": 14121,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5060857602",
+      "display_name": "Massimo G. Colombo",
+      "orcid": "https://orcid.org/0000-0003-0373-1565",
+      "h_index": 68,
+      "i10_index": 119,
+      "works_count": 359,
+      "cited_by_count": 18978,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5079027910",
+      "display_name": "Andy Lockett",
+      "orcid": "https://orcid.org/0000-0001-5752-1112",
+      "h_index": 68,
+      "i10_index": 106,
+      "works_count": 192,
+      "cited_by_count": 25202,
+      "discipline": "Finance",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5016674922",
+      "display_name": "Luc D. R. Renneboog",
+      "orcid": "https://orcid.org/0000-0002-6068-3910",
+      "h_index": 67,
+      "i10_index": 186,
+      "works_count": 443,
+      "cited_by_count": 24815,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Finance -- 9.2",
+      "id": "https://openalex.org/A5028883167",
+      "display_name": "Colin M. Mason",
+      "orcid": "https://orcid.org/0000-0003-0074-1864",
+      "h_index": 67,
+      "i10_index": 162,
+      "works_count": 364,
+      "cited_by_count": 17641,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5109171080",
+      "display_name": "William Nelson Goetzmann",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 144,
+      "works_count": 285,
+      "cited_by_count": 22283,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5113523709",
+      "display_name": "Dan R. Dalton",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 138,
+      "works_count": 228,
+      "cited_by_count": 34548,
+      "discipline": "Finance",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5030225272",
+      "display_name": "Marcel Fratzscher",
+      "orcid": "https://orcid.org/0000-0001-6592-6646",
+      "h_index": 67,
+      "i10_index": 137,
+      "works_count": 577,
+      "cited_by_count": 18562,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5088788655",
+      "display_name": "Steven R. G. Ongena",
+      "orcid": "https://orcid.org/0000-0002-8381-0062",
+      "h_index": 66,
+      "i10_index": 218,
+      "works_count": 613,
+      "cited_by_count": 22642,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5019480291",
+      "display_name": "Gazi Salah Uddin",
+      "orcid": "https://orcid.org/0000-0002-5744-0192",
+      "h_index": 66,
+      "i10_index": 191,
+      "works_count": 366,
+      "cited_by_count": 14717,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5059397539",
+      "display_name": "Arie Kapteyn",
+      "orcid": "https://orcid.org/0000-0002-1855-5528",
+      "h_index": 65,
+      "i10_index": 193,
+      "works_count": 512,
+      "cited_by_count": 16057,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5109281241",
+      "display_name": "Jean Jacod",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 139,
+      "works_count": 361,
+      "cited_by_count": 19888,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5019704910",
+      "display_name": "Jeong‐Bon Kim",
+      "orcid": "https://orcid.org/0000-0002-9857-9123",
+      "h_index": 65,
+      "i10_index": 135,
+      "works_count": 270,
+      "cited_by_count": 22839,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5049415936",
+      "display_name": "Tullio Jappelli",
+      "orcid": "https://orcid.org/0000-0001-9254-6526",
+      "h_index": 65,
+      "i10_index": 132,
+      "works_count": 255,
+      "cited_by_count": 22066,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5086549864",
+      "display_name": "Stephen A. Ross",
+      "orcid": "https://orcid.org/0000-0003-3552-2856",
+      "h_index": 65,
+      "i10_index": 109,
+      "works_count": 271,
+      "cited_by_count": 78886,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Finance -- 9.1",
+      "id": "https://openalex.org/A5102011938",
+      "display_name": "John Robert Graham",
+      "orcid": "https://orcid.org/0000-0003-1413-9495",
+      "h_index": 65,
+      "i10_index": 107,
+      "works_count": 153,
+      "cited_by_count": 50619,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Finance -- 9.0",
+      "id": "https://openalex.org/A5114017314",
+      "display_name": "Michael John Brennan",
+      "orcid": "https://orcid.org/0009-0001-6041-2619",
+      "h_index": 65,
+      "i10_index": 103,
+      "works_count": 222,
+      "cited_by_count": 27249,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Finance -- 9.0",
+      "id": "https://openalex.org/A5076309222",
+      "display_name": "Sumit D. Agarwal",
+      "orcid": "https://orcid.org/0000-0002-8305-3786",
+      "h_index": 64,
+      "i10_index": 224,
+      "works_count": 473,
+      "cited_by_count": 18765,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Finance -- 9.0",
+      "id": "https://openalex.org/A5007059951",
+      "display_name": "Philip R. Lane",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 153,
+      "works_count": 327,
+      "cited_by_count": 24349,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Finance -- 9.0",
+      "id": "https://openalex.org/A5064209674",
+      "display_name": "Randall Mørck",
+      "orcid": "https://orcid.org/0000-0001-7412-0222",
+      "h_index": 64,
+      "i10_index": 143,
+      "works_count": 331,
+      "cited_by_count": 37144,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Finance -- 9.0",
+      "id": "https://openalex.org/A5055933334",
+      "display_name": "Lucio Sarno",
+      "orcid": "https://orcid.org/0000-0003-1279-9748",
+      "h_index": 64,
+      "i10_index": 132,
+      "works_count": 296,
+      "cited_by_count": 16691,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Finance -- 8.9",
+      "id": "https://openalex.org/A5034194808",
+      "display_name": "Markus Konrad Brunnermeier",
+      "orcid": "https://orcid.org/0009-0001-7025-6998",
+      "h_index": 64,
+      "i10_index": 128,
+      "works_count": 379,
+      "cited_by_count": 38410,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Finance -- 8.9",
+      "id": "https://openalex.org/A5112605911",
+      "display_name": "Clifford W. Smith",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 128,
+      "works_count": 267,
+      "cited_by_count": 35001,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Finance -- 8.9",
+      "id": "https://openalex.org/A5111050048",
+      "display_name": "Steven Neil Kaplan",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 114,
+      "works_count": 201,
+      "cited_by_count": 32433,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Finance -- 8.9",
+      "id": "https://openalex.org/A5021139306",
+      "display_name": "Roni Michaely",
+      "orcid": "https://orcid.org/0000-0003-2675-9667",
+      "h_index": 64,
+      "i10_index": 105,
+      "works_count": 200,
+      "cited_by_count": 26930,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Finance -- 8.9",
+      "id": "https://openalex.org/A5074054769",
+      "display_name": "Axel H. Borsch-Supan",
+      "orcid": "https://orcid.org/0000-0003-0470-8850",
+      "h_index": 63,
+      "i10_index": 249,
+      "works_count": 578,
+      "cited_by_count": 20042,
+      "discipline": "Finance",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Finance -- 8.9",
+      "id": "https://openalex.org/A5044104834",
+      "display_name": "Philip Molyneux",
+      "orcid": "https://orcid.org/0000-0001-6210-7418",
+      "h_index": 63,
+      "i10_index": 169,
+      "works_count": 429,
+      "cited_by_count": 28582,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Finance -- 8.9",
+      "id": "https://openalex.org/A5056085635",
+      "display_name": "Siem Jan Koopman",
+      "orcid": "https://orcid.org/0000-0002-4440-9524",
+      "h_index": 63,
+      "i10_index": 164,
+      "works_count": 496,
+      "cited_by_count": 17246,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Mathematics",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Finance -- 8.9",
+      "id": "https://openalex.org/A5047291984",
+      "display_name": "Neil Shephard",
+      "orcid": "https://orcid.org/0000-0001-8230-9754",
+      "h_index": 63,
+      "i10_index": 123,
+      "works_count": 290,
+      "cited_by_count": 27406,
+      "discipline": "Finance",
+      "primary_field": "Economics, Econometrics and Finance",
+      "primary_subfield": "Finance",
+      "fields": [
+        "Economics, Econometrics and Finance",
+        "Mathematics"
+      ]
+    }
+  ]
+}
