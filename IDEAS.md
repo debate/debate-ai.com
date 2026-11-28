@@ -1,5 +1,7 @@
 # Ideas for New Contributors
 
+> **Scheduled run 2026-11-28** (branch `claude/gifted-babbage-7a4bev`): open PRs #2095–#2097 from this routine cover REASON docs saves, word-count deletes and judge-decision caps, and #2082 fixes the 16 failing tests on `master`, so this run stayed out of their files. For "save … in SQL and link to users", Settings' **Export all as JSON** now includes the "More saved work" tables (briefings, flashcards, opponent personas and 7 more) that it used to leave out (see "Put "More saved work" in Export all" under Account sync of tools below).
+
 > **Scheduled run 2026-11-23** (branch `claude/gifted-babbage-emly6r`, PR #1897): open PRs #1881–#1896 cover Flow History, Settings' tool-storage list, Debate History, judge decisions, the timer and REASON docs, so this run stayed out of their files. The videos-admin test follow-up was already fixed on `master`. For "save … in SQL and link to users" and "better tool UI", it fixed word-count rounds deleted from the account coming back on the next merge, and made deletes ask first (see "Don't let a deleted word-count round come back" under Account sync of tools below).
 
 > **Scheduled run 2026-11-22, seventh run** (branch `claude/gifted-babbage-y5m2my`, PR #1871): no open PRs. For "develop better tool UI" on the flows and rounds saved in SQL, Flow History's **Saved to account** tab now says why a saved flow or round won't open (no longer in the account, or the route's 422 "damaged" message) instead of silently doing nothing, and a saved round still opens when one of its flows can't be read (see "Say why a saved flow or round won't open" under Account sync of tools below). `bun run test` has 25 pre-existing failures in `debate-videos-admin` on `master` (follow-up recorded there).
@@ -279,6 +281,15 @@
   - [x] Docs: `features/rounds.mdx` (Word-Count-Only Speech Format) and `dev-docs/packages/debate-practice-drills.mdx` (new "Word-count rounds: deleting from the account" section with Known gaps)
   - [x] Verified 2026-11-23 (after `git submodule update --init`, `bun install`, each package's `scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 32/32; `bun run test` 1298 files / 17125 tests pass (5 files / 19 skipped); `bun run build:web` 4/4
   - Follow-ups: none new (tombstones for second-device deletes and persisting pending deletes are recorded as Known gaps in the dev doc)
+
+- [ ] **Put "More saved work" in Export all** (In Progress 2026-11-28, branch `claude/gifted-babbage-7a4bev`). Problem: Settings → General's **Export all as JSON** carried the work kinds and synced tool data but none of the rows tools keep in their own `saved_*` tables (`SAVED_SQL_TOOLS`: briefings, strategies, outcome charts, opponent personas, coach materials, topic sprints, quick cards, flashcard decks, flashcards, best-card comments), so a user's "backup" silently left out work Settings counts under "More saved work" — a documented gap in `dev-docs/database/app-schema.md`. Goal: the archive holds every one of those rows, linked to the caller only. Non-goals: restoring them (**Restore from export…** still reads only the work kinds and tool data); adding them to **Manage**; a schema change
+  - [x] `exportOwnSqlTools(db, userId, maxPerTable)` in `apps/debate-web/lib/saved-data/saved-data-items.ts`: every `SAVED_SQL_TOOLS` table, owner-scoped, keyset-paged by id (oldest first), `data` parsed (raw text kept if it isn't JSON), timestamps ISO, `user_id` dropped, extra columns (`matchupId`, `roundId`, `topic`, `dayKey`, `shared`) kept; stops at the per-kind ceiling and names the tables that had more
+  - [x] `exportAllOwnSavedData` adds `moreSavedWork` and `moreSavedWorkTruncated`; the Export all link's tooltip names More saved work
+  - [x] Vitest: `lib/saved-data/__tests__/saved-data-items.test.ts` (5: every key present and empty, owner-only rows with parsed data and extra columns, non-JSON data, paging past a page boundary, ceiling + truncated names)
+  - [x] Docs: `features/app-ui.mdx` (Saved to your account), `dev-docs/database/app-schema.md` (gap narrowed to Manage and Restore)
+  - [x] Verified 2026-11-28 (after `git submodule update --init`, `bun install`, each package's `scripts/sync-upstream.mjs`; no lint script is configured): `bun run typecheck` 32/32; `bun run build:web` 4/4; `bun run test` 20621 pass / 19 skipped, **16 fail in 13 files this change doesn't touch** — the same 16 open PR #2082 ("Fix master CI") fixes
+  - [ ] PR
+  - Follow-ups: restore `moreSavedWork` from an export (each table has its own route and conflict rules, so it needs a per-tool restore plan); list them in **Manage**
 
 ---
 
