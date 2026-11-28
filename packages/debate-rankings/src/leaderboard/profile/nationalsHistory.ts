@@ -14,7 +14,7 @@ import { findBarkleySchoolResults } from "../../sync/barkley-champions"
 import { findCalSchoolResults } from "../../sync/berkeley-champions"
 import { findGlenbrooksSchoolResults } from "../../sync/glenbrooks-champions"
 import { pastHighSchoolTeamHandle } from "./pastHighSchoolTeam"
-import { profileSlug } from "./rankingProfileHelpers"
+import { profileSlug, teamHref } from "./rankingProfileHelpers"
 
 export type NationalsTournament = "TOC" | "NDCA" | "Barkley" | "Cal" | "Glenbrooks"
 
@@ -146,4 +146,29 @@ export function findNationalsTeamFinishes(school: string, schoolKey: string, slu
   return schoolNationals(school).rows.filter(
     (row) => row.competitors.trim() !== "" && pastHighSchoolTeamHandle(schoolKey, row.competitors) === target,
   )
+}
+
+/** Every ordering of `items`, so a pair can be tried as listed in either order. */
+function orderings<T>(items: readonly T[]): T[][] {
+  if (items.length <= 1) return [[...items]]
+  return items.flatMap((item, i) => orderings([...items.slice(0, i), ...items.slice(i + 1)]).map((rest) => [item, ...rest]))
+}
+
+/**
+ * Path of the team page for a high school pair (`/@school-last-last`) that has
+ * one, or `null`. A high school pair has a page when the nationals records
+ * list it at its school ({@link findNationalsTeamFinishes}), and the handle
+ * follows the order the records list the debaters in, so each order is tried.
+ *
+ * @param school - The pair's high school, as the result names it.
+ * @param debaters - Both debaters' full names; fewer than two (a top speaker) has no pair, so no page.
+ */
+export function highSchoolPairHref(school: string, debaters: readonly string[]): string | null {
+  if (debaters.length < 2) return null
+  const schoolKey = profileSlug(school)
+  for (const order of orderings(debaters)) {
+    const href = teamHref({ school, name: order.join(" & ") })
+    if (findNationalsTeamFinishes(school, schoolKey, href.slice(2)).length > 0) return href
+  }
+  return null
 }
