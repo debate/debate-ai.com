@@ -1,0 +1,266 @@
+{
+  "kind": "subfield",
+  "id": 1100,
+  "name": "General Agricultural and Biological Sciences",
+  "total_in_scrape": 13,
+  "count": 13,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "General Agricultural and Biological Sciences -- 9.9",
+      "id": "https://openalex.org/A5023923483",
+      "display_name": "Matin Qaim",
+      "orcid": "https://orcid.org/0000-0003-4143-0763",
+      "h_index": 101,
+      "i10_index": 256,
+      "works_count": 515,
+      "cited_by_count": 33476,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Economics, Econometrics and Finance",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "General Agricultural and Biological Sciences -- 9.9",
+      "id": "https://openalex.org/A5082996343",
+      "display_name": "Thomas Reardon",
+      "orcid": "https://orcid.org/0000-0001-7374-1799",
+      "h_index": 92,
+      "i10_index": 235,
+      "works_count": 427,
+      "cited_by_count": 39529,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Economics, Econometrics and Finance",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "General Agricultural and Biological Sciences -- 9.9",
+      "id": "https://openalex.org/A5070319534",
+      "display_name": "Jules Pretty",
+      "orcid": "https://orcid.org/0000-0002-3897-6581",
+      "h_index": 88,
+      "i10_index": 194,
+      "works_count": 391,
+      "cited_by_count": 64361,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "General Agricultural and Biological Sciences -- 9.9",
+      "id": "https://openalex.org/A5079514119",
+      "display_name": "Frank Asche",
+      "orcid": "https://orcid.org/0000-0002-1540-9728",
+      "h_index": 87,
+      "i10_index": 273,
+      "works_count": 611,
+      "cited_by_count": 24806,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "General Agricultural and Biological Sciences -- 9.9",
+      "id": "https://openalex.org/A5029868613",
+      "display_name": "Laurens Klerkx",
+      "orcid": "https://orcid.org/0000-0002-1664-886X",
+      "h_index": 85,
+      "i10_index": 197,
+      "works_count": 370,
+      "cited_by_count": 30130,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "General Agricultural and Biological Sciences -- 9.9",
+      "id": "https://openalex.org/A5058290087",
+      "display_name": "Rosamond L. Naylor",
+      "orcid": "https://orcid.org/0000-0002-1260-3322",
+      "h_index": 77,
+      "i10_index": 128,
+      "works_count": 264,
+      "cited_by_count": 57270,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "General Agricultural and Biological Sciences -- 9.8",
+      "id": "https://openalex.org/A5005443740",
+      "display_name": "Claude E. Boyd",
+      "orcid": "https://orcid.org/0000-0003-4956-7115",
+      "h_index": 75,
+      "i10_index": 342,
+      "works_count": 542,
+      "cited_by_count": 26244,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "General Agricultural and Biological Sciences -- 9.8",
+      "id": "https://openalex.org/A5091854898",
+      "display_name": "Alain de Janvry",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 203,
+      "works_count": 427,
+      "cited_by_count": 24579,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "General Agricultural and Biological Sciences -- 9.8",
+      "id": "https://openalex.org/A5023045063",
+      "display_name": "Mark T. van Wijk",
+      "orcid": "https://orcid.org/0000-0003-0728-8839",
+      "h_index": 73,
+      "i10_index": 146,
+      "works_count": 316,
+      "cited_by_count": 18861,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "General Agricultural and Biological Sciences -- 9.8",
+      "id": "https://openalex.org/A5073272621",
+      "display_name": "Dil Bahadur Rahut",
+      "orcid": "https://orcid.org/0000-0002-7505-5271",
+      "h_index": 68,
+      "i10_index": 205,
+      "works_count": 358,
+      "cited_by_count": 15081,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "General Agricultural and Biological Sciences -- 9.8",
+      "id": "https://openalex.org/A5006164202",
+      "display_name": "Cees Leeuwis",
+      "orcid": "https://orcid.org/0000-0003-1146-9413",
+      "h_index": 68,
+      "i10_index": 189,
+      "works_count": 490,
+      "cited_by_count": 20809,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "General Agricultural and Biological Sciences -- 9.8",
+      "id": "https://openalex.org/A5066942900",
+      "display_name": "Christophe Béné",
+      "orcid": "https://orcid.org/0000-0002-7078-9241",
+      "h_index": 67,
+      "i10_index": 146,
+      "works_count": 287,
+      "cited_by_count": 23906,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Nursing",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "General Agricultural and Biological Sciences -- 9.8",
+      "id": "https://openalex.org/A5026878877",
+      "display_name": "Peter Hazell",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 150,
+      "works_count": 432,
+      "cited_by_count": 18521,
+      "discipline": "General Agricultural and Biological Sciences",
+      "primary_field": "Agricultural and Biological Sciences",
+      "primary_subfield": "General Agricultural and Biological Sciences",
+      "fields": [
+        "Agricultural and Biological Sciences",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    }
+  ]
+}

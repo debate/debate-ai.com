@@ -1,0 +1,1516 @@
+{
+  "kind": "subfield",
+  "id": 2503,
+  "name": "Ceramics and Composites",
+  "total_in_scrape": 78,
+  "count": 78,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Ceramics and Composites -- 9.9",
+      "id": "https://openalex.org/A5027105299",
+      "display_name": "Larry L. Hench",
+      "orcid": null,
+      "h_index": 118,
+      "i10_index": 362,
+      "works_count": 657,
+      "cited_by_count": 73239,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Ceramics and Composites -- 9.9",
+      "id": "https://openalex.org/A5107700446",
+      "display_name": "David R. Clarke",
+      "orcid": "https://orcid.org/0000-0002-5902-7369",
+      "h_index": 110,
+      "i10_index": 381,
+      "works_count": 583,
+      "cited_by_count": 53613,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Ceramics and Composites -- 9.9",
+      "id": "https://openalex.org/A5072912162",
+      "display_name": "Laifei Cheng",
+      "orcid": "https://orcid.org/0000-0001-6485-2614",
+      "h_index": 101,
+      "i10_index": 848,
+      "works_count": 1220,
+      "cited_by_count": 50293,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Ceramics and Composites -- 9.9",
+      "id": "https://openalex.org/A5053190469",
+      "display_name": "Rishi Raj",
+      "orcid": "https://orcid.org/0000-0001-8556-9797",
+      "h_index": 92,
+      "i10_index": 353,
+      "works_count": 552,
+      "cited_by_count": 30077,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Ceramics and Composites -- 9.9",
+      "id": "https://openalex.org/A5043105216",
+      "display_name": "George W. Scherer",
+      "orcid": "https://orcid.org/0000-0002-5874-2627",
+      "h_index": 90,
+      "i10_index": 279,
+      "works_count": 389,
+      "cited_by_count": 42206,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Ceramics and Composites -- 9.9",
+      "id": "https://openalex.org/A5006383663",
+      "display_name": "Jonathan F. Stebbins",
+      "orcid": "https://orcid.org/0000-0002-2384-6637",
+      "h_index": 90,
+      "i10_index": 254,
+      "works_count": 357,
+      "cited_by_count": 21513,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5061590341",
+      "display_name": "Ralf Riedel",
+      "orcid": "https://orcid.org/0000-0001-6888-7208",
+      "h_index": 89,
+      "i10_index": 481,
+      "works_count": 817,
+      "cited_by_count": 33566,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5006935322",
+      "display_name": "Manfred Rühle",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 360,
+      "works_count": 663,
+      "cited_by_count": 26427,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5104804479",
+      "display_name": "Lian Gao",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 316,
+      "works_count": 422,
+      "cited_by_count": 25060,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5057501557",
+      "display_name": "José M.F. Ferreira",
+      "orcid": "https://orcid.org/0000-0002-7520-2809",
+      "h_index": 87,
+      "i10_index": 466,
+      "works_count": 660,
+      "cited_by_count": 26629,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5015545828",
+      "display_name": "Mohammadreza Shokouhimehr",
+      "orcid": "https://orcid.org/0000-0003-1416-6805",
+      "h_index": 87,
+      "i10_index": 319,
+      "works_count": 380,
+      "cited_by_count": 22444,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Energy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5021488921",
+      "display_name": "Litong Zhang",
+      "orcid": "https://orcid.org/0000-0001-5769-1859",
+      "h_index": 86,
+      "i10_index": 554,
+      "works_count": 783,
+      "cited_by_count": 35253,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5019614740",
+      "display_name": "Yanchun Zhou",
+      "orcid": "https://orcid.org/0000-0001-5676-5676",
+      "h_index": 86,
+      "i10_index": 372,
+      "works_count": 503,
+      "cited_by_count": 27610,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5040361170",
+      "display_name": "Arthur H. Heuer",
+      "orcid": "https://orcid.org/0000-0001-5674-2036",
+      "h_index": 86,
+      "i10_index": 372,
+      "works_count": 637,
+      "cited_by_count": 27013,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5111972244",
+      "display_name": "Rustum Roy",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 308,
+      "works_count": 553,
+      "cited_by_count": 24772,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Business, Management and Accounting",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5012128516",
+      "display_name": "Dechang Jia",
+      "orcid": "https://orcid.org/0000-0001-7714-4684",
+      "h_index": 85,
+      "i10_index": 547,
+      "works_count": 821,
+      "cited_by_count": 27529,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Ceramics and Composites -- 9.8",
+      "id": "https://openalex.org/A5069234280",
+      "display_name": "Masahiro Yoshimura",
+      "orcid": "https://orcid.org/0000-0003-1810-0301",
+      "h_index": 85,
+      "i10_index": 423,
+      "works_count": 2190,
+      "cited_by_count": 31724,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5032009641",
+      "display_name": "Paolo Colombo",
+      "orcid": "https://orcid.org/0000-0001-8005-6618",
+      "h_index": 82,
+      "i10_index": 339,
+      "works_count": 652,
+      "cited_by_count": 25831,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5005071816",
+      "display_name": "I‐Wei Chen",
+      "orcid": "https://orcid.org/0000-0002-4045-4467",
+      "h_index": 80,
+      "i10_index": 231,
+      "works_count": 369,
+      "cited_by_count": 24622,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5028900482",
+      "display_name": "Mehdi Shahedi Asl",
+      "orcid": "https://orcid.org/0000-0002-9915-2367",
+      "h_index": 80,
+      "i10_index": 209,
+      "works_count": 248,
+      "cited_by_count": 15029,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5100412209",
+      "display_name": "Jef Vleugels",
+      "orcid": "https://orcid.org/0000-0003-4432-4675",
+      "h_index": 79,
+      "i10_index": 438,
+      "works_count": 904,
+      "cited_by_count": 23853,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5109981827",
+      "display_name": "Freddy Y. C. Boey",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 249,
+      "works_count": 325,
+      "cited_by_count": 30035,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5017363033",
+      "display_name": "Yoshio Sakka",
+      "orcid": "https://orcid.org/0000-0001-8357-5843",
+      "h_index": 78,
+      "i10_index": 497,
+      "works_count": 890,
+      "cited_by_count": 27886,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5054016598",
+      "display_name": "Delbert E. Day",
+      "orcid": "https://orcid.org/0000-0001-7017-3327",
+      "h_index": 78,
+      "i10_index": 276,
+      "works_count": 457,
+      "cited_by_count": 21607,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5046867572",
+      "display_name": "Georges Calas",
+      "orcid": "https://orcid.org/0000-0003-0525-5734",
+      "h_index": 78,
+      "i10_index": 258,
+      "works_count": 492,
+      "cited_by_count": 18481,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5015428928",
+      "display_name": "Gijsbertus de With",
+      "orcid": "https://orcid.org/0000-0002-7163-8429",
+      "h_index": 77,
+      "i10_index": 319,
+      "works_count": 499,
+      "cited_by_count": 28831,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5111641965",
+      "display_name": "Fritz Aldinger",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 359,
+      "works_count": 655,
+      "cited_by_count": 21966,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Ceramics and Composites -- 9.7",
+      "id": "https://openalex.org/A5071388400",
+      "display_name": "Jian Luo",
+      "orcid": "https://orcid.org/0000-0002-5424-0216",
+      "h_index": 76,
+      "i10_index": 208,
+      "works_count": 320,
+      "cited_by_count": 23717,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5016817765",
+      "display_name": "Michael J. Hoffmann",
+      "orcid": "https://orcid.org/0000-0002-2464-1588",
+      "h_index": 74,
+      "i10_index": 291,
+      "works_count": 503,
+      "cited_by_count": 17707,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5101518787",
+      "display_name": "Xiaowei Yin",
+      "orcid": "https://orcid.org/0000-0001-8756-8624",
+      "h_index": 74,
+      "i10_index": 227,
+      "works_count": 288,
+      "cited_by_count": 22468,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5038705580",
+      "display_name": "Soon Hyung Hong",
+      "orcid": "https://orcid.org/0000-0001-7358-3989",
+      "h_index": 74,
+      "i10_index": 210,
+      "works_count": 530,
+      "cited_by_count": 19023,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5080759731",
+      "display_name": "Younès Messaddeq",
+      "orcid": "https://orcid.org/0000-0002-0868-2726",
+      "h_index": 73,
+      "i10_index": 452,
+      "works_count": 935,
+      "cited_by_count": 22019,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5100341082",
+      "display_name": "Nan Li",
+      "orcid": "https://orcid.org/0000-0002-8248-9027",
+      "h_index": 73,
+      "i10_index": 391,
+      "works_count": 829,
+      "cited_by_count": 22016,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5100458465",
+      "display_name": "Haijun Zhang",
+      "orcid": "https://orcid.org/0000-0002-9546-8524",
+      "h_index": 73,
+      "i10_index": 390,
+      "works_count": 677,
+      "cited_by_count": 28739,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Energy",
+        "Chemistry",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5026139562",
+      "display_name": "William Edward Lee",
+      "orcid": "https://orcid.org/0000-0002-0650-1442",
+      "h_index": 73,
+      "i10_index": 263,
+      "works_count": 519,
+      "cited_by_count": 18429,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5018347719",
+      "display_name": "Gary L. Messing",
+      "orcid": "https://orcid.org/0000-0003-0067-5959",
+      "h_index": 73,
+      "i10_index": 217,
+      "works_count": 346,
+      "cited_by_count": 18299,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5000152248",
+      "display_name": "André R. Studart",
+      "orcid": "https://orcid.org/0000-0003-4205-8545",
+      "h_index": 73,
+      "i10_index": 207,
+      "works_count": 320,
+      "cited_by_count": 25804,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5036309567",
+      "display_name": "Yuanzheng Yue",
+      "orcid": "https://orcid.org/0000-0002-6048-5236",
+      "h_index": 72,
+      "i10_index": 338,
+      "works_count": 810,
+      "cited_by_count": 21444,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Ceramics and Composites -- 9.6",
+      "id": "https://openalex.org/A5077075644",
+      "display_name": "Edgar Dutra Zanotto",
+      "orcid": "https://orcid.org/0000-0003-4931-4505",
+      "h_index": 72,
+      "i10_index": 326,
+      "works_count": 572,
+      "cited_by_count": 19894,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5032773583",
+      "display_name": "William G. Fahrenholtz",
+      "orcid": "https://orcid.org/0000-0002-8497-0092",
+      "h_index": 72,
+      "i10_index": 249,
+      "works_count": 457,
+      "cited_by_count": 21244,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5053994876",
+      "display_name": "Bikramjit Basu",
+      "orcid": "https://orcid.org/0000-0001-7454-368X",
+      "h_index": 71,
+      "i10_index": 350,
+      "works_count": 562,
+      "cited_by_count": 19419,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5086360610",
+      "display_name": "Hideaki Itoh",
+      "orcid": "https://orcid.org/0000-0002-9359-1051",
+      "h_index": 71,
+      "i10_index": 325,
+      "works_count": 654,
+      "cited_by_count": 17529,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5031422196",
+      "display_name": "Peter Greil",
+      "orcid": "https://orcid.org/0000-0003-3795-7255",
+      "h_index": 71,
+      "i10_index": 258,
+      "works_count": 402,
+      "cited_by_count": 21042,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5084857768",
+      "display_name": "Hans‐Joachim Kleebe",
+      "orcid": "https://orcid.org/0000-0001-8850-1771",
+      "h_index": 71,
+      "i10_index": 232,
+      "works_count": 330,
+      "cited_by_count": 16864,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5100725627",
+      "display_name": "Hejun Li",
+      "orcid": "https://orcid.org/0000-0003-3001-4772",
+      "h_index": 70,
+      "i10_index": 423,
+      "works_count": 575,
+      "cited_by_count": 19934,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5027621350",
+      "display_name": "Qiangang Fu",
+      "orcid": "https://orcid.org/0000-0002-9293-5190",
+      "h_index": 70,
+      "i10_index": 421,
+      "works_count": 519,
+      "cited_by_count": 20228,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5100887941",
+      "display_name": "Kazuyuki Hirao",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 313,
+      "works_count": 640,
+      "cited_by_count": 17143,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5110505346",
+      "display_name": "Xinghong Zhang",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 296,
+      "works_count": 354,
+      "cited_by_count": 19408,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5058971939",
+      "display_name": "Gregory E. Hilmas",
+      "orcid": "https://orcid.org/0000-0002-1611-5457",
+      "h_index": 70,
+      "i10_index": 237,
+      "works_count": 386,
+      "cited_by_count": 20116,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5035433379",
+      "display_name": "Sasvat Sayee Ram Ramesh",
+      "orcid": "https://orcid.org/0000-0002-4425-0146",
+      "h_index": 70,
+      "i10_index": 194,
+      "works_count": 401,
+      "cited_by_count": 13386,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Ceramics and Composites -- 9.5",
+      "id": "https://openalex.org/A5112211061",
+      "display_name": "Koichi Niihara",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 339,
+      "works_count": 818,
+      "cited_by_count": 26054,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5100735913",
+      "display_name": "Wei Pan",
+      "orcid": "https://orcid.org/0000-0002-8807-8974",
+      "h_index": 69,
+      "i10_index": 338,
+      "works_count": 691,
+      "cited_by_count": 20027,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5018622119",
+      "display_name": "Zuhair A. Munir",
+      "orcid": "https://orcid.org/0000-0001-9611-7366",
+      "h_index": 69,
+      "i10_index": 298,
+      "works_count": 490,
+      "cited_by_count": 21754,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5052016058",
+      "display_name": "Jingyang Wang",
+      "orcid": "https://orcid.org/0000-0002-4748-8512",
+      "h_index": 69,
+      "i10_index": 232,
+      "works_count": 377,
+      "cited_by_count": 15105,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5019644945",
+      "display_name": "Takayuki Komatsu",
+      "orcid": "https://orcid.org/0000-0003-2116-5122",
+      "h_index": 68,
+      "i10_index": 422,
+      "works_count": 667,
+      "cited_by_count": 21735,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5077039310",
+      "display_name": "Jiecai Han",
+      "orcid": "https://orcid.org/0000-0002-5892-7787",
+      "h_index": 68,
+      "i10_index": 296,
+      "works_count": 414,
+      "cited_by_count": 22212,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5062292733",
+      "display_name": "Cristina Leonelli",
+      "orcid": "https://orcid.org/0000-0001-8524-8715",
+      "h_index": 68,
+      "i10_index": 294,
+      "works_count": 595,
+      "cited_by_count": 16197,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Engineering",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5039807477",
+      "display_name": "John C. Mauro",
+      "orcid": "https://orcid.org/0000-0002-4319-3530",
+      "h_index": 67,
+      "i10_index": 309,
+      "works_count": 623,
+      "cited_by_count": 19659,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5008318861",
+      "display_name": "Michael John Reece",
+      "orcid": "https://orcid.org/0000-0002-2293-7123",
+      "h_index": 67,
+      "i10_index": 236,
+      "works_count": 323,
+      "cited_by_count": 17549,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5043484322",
+      "display_name": "Jérôme Chevalier",
+      "orcid": "https://orcid.org/0000-0001-8546-6149",
+      "h_index": 67,
+      "i10_index": 221,
+      "works_count": 505,
+      "cited_by_count": 21173,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5043318210",
+      "display_name": "Daniel R. Neuville",
+      "orcid": "https://orcid.org/0000-0002-8487-5001",
+      "h_index": 67,
+      "i10_index": 183,
+      "works_count": 398,
+      "cited_by_count": 13751,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Earth and Planetary Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Ceramics and Composites -- 9.4",
+      "id": "https://openalex.org/A5000480458",
+      "display_name": "Pascal Richet",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 162,
+      "works_count": 321,
+      "cited_by_count": 14907,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5025193101",
+      "display_name": "Kenneth J. D. MacKenzie",
+      "orcid": "https://orcid.org/0000-0003-3460-6708",
+      "h_index": 66,
+      "i10_index": 296,
+      "works_count": 466,
+      "cited_by_count": 18163,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Engineering",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5111631521",
+      "display_name": "Gilbert Fantozzi",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 275,
+      "works_count": 734,
+      "cited_by_count": 16003,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5021241484",
+      "display_name": "Lothar Wondraczek",
+      "orcid": "https://orcid.org/0000-0002-0747-3076",
+      "h_index": 66,
+      "i10_index": 253,
+      "works_count": 434,
+      "cited_by_count": 14801,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5016598150",
+      "display_name": "Stéṕhane Gin",
+      "orcid": "https://orcid.org/0000-0002-1950-9195",
+      "h_index": 66,
+      "i10_index": 167,
+      "works_count": 295,
+      "cited_by_count": 13394,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5075956895",
+      "display_name": "Carlos G. Levi",
+      "orcid": "https://orcid.org/0000-0002-9770-9010",
+      "h_index": 66,
+      "i10_index": 159,
+      "works_count": 214,
+      "cited_by_count": 16452,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5009838353",
+      "display_name": "Masayuki Nogami",
+      "orcid": "https://orcid.org/0000-0001-9569-6140",
+      "h_index": 65,
+      "i10_index": 321,
+      "works_count": 610,
+      "cited_by_count": 16203,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5100655276",
+      "display_name": "Zhili Dong",
+      "orcid": "https://orcid.org/0000-0001-8116-6747",
+      "h_index": 65,
+      "i10_index": 229,
+      "works_count": 332,
+      "cited_by_count": 23128,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5015433810",
+      "display_name": "Naohiro Soga",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 220,
+      "works_count": 366,
+      "cited_by_count": 17259,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5002987272",
+      "display_name": "A. M. Abdelghany",
+      "orcid": "https://orcid.org/0000-0001-8953-0056",
+      "h_index": 65,
+      "i10_index": 207,
+      "works_count": 328,
+      "cited_by_count": 11198,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Arts and Humanities",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5033746162",
+      "display_name": "Jakrapong Kaewkhao",
+      "orcid": "https://orcid.org/0000-0003-0623-9007",
+      "h_index": 64,
+      "i10_index": 376,
+      "works_count": 1010,
+      "cited_by_count": 17664,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Physics and Astronomy",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Ceramics and Composites -- 9.3",
+      "id": "https://openalex.org/A5015047748",
+      "display_name": "George N Papatheodorou",
+      "orcid": "https://orcid.org/0000-0003-3732-1900",
+      "h_index": 64,
+      "i10_index": 257,
+      "works_count": 502,
+      "cited_by_count": 13756,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Earth and Planetary Sciences",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Earth and Planetary Sciences",
+        "Materials Science",
+        "Chemistry",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Ceramics and Composites -- 9.2",
+      "id": "https://openalex.org/A5028147994",
+      "display_name": "F. F. Lange",
+      "orcid": "https://orcid.org/0000-0003-1108-3510",
+      "h_index": 64,
+      "i10_index": 136,
+      "works_count": 197,
+      "cited_by_count": 14211,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Ceramics and Composites -- 9.2",
+      "id": "https://openalex.org/A5061374560",
+      "display_name": "Dachamir Hotza",
+      "orcid": "https://orcid.org/0000-0002-7086-3085",
+      "h_index": 63,
+      "i10_index": 290,
+      "works_count": 570,
+      "cited_by_count": 15985,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Engineering",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Engineering",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Ceramics and Composites -- 9.2",
+      "id": "https://openalex.org/A5010461720",
+      "display_name": "Thomas J. Graule",
+      "orcid": "https://orcid.org/0000-0002-6004-6567",
+      "h_index": 63,
+      "i10_index": 273,
+      "works_count": 402,
+      "cited_by_count": 15829,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Ceramics and Composites -- 9.2",
+      "id": "https://openalex.org/A5100752623",
+      "display_name": "Fen Wang",
+      "orcid": "https://orcid.org/0000-0003-1035-2205",
+      "h_index": 63,
+      "i10_index": 230,
+      "works_count": 481,
+      "cited_by_count": 16427,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Chemistry",
+        "Arts and Humanities",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Ceramics and Composites -- 9.2",
+      "id": "https://openalex.org/A5053104967",
+      "display_name": "Waltraud M. Kriven",
+      "orcid": "https://orcid.org/0000-0002-2983-5760",
+      "h_index": 63,
+      "i10_index": 217,
+      "works_count": 538,
+      "cited_by_count": 16113,
+      "discipline": "Ceramics and Composites",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Ceramics and Composites",
+      "fields": [
+        "Materials Science",
+        "Engineering",
+        "Chemistry"
+      ]
+    }
+  ]
+}

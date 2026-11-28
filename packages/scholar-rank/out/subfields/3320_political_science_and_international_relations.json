@@ -1,0 +1,1539 @@
+{
+  "kind": "subfield",
+  "id": 3320,
+  "name": "Political Science and International Relations",
+  "total_in_scrape": 81,
+  "count": 81,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Political Science and International Relations -- 9.9",
+      "id": "https://openalex.org/A5033821921",
+      "display_name": "Stephen J. Ball",
+      "orcid": "https://orcid.org/0000-0001-7446-4201",
+      "h_index": 117,
+      "i10_index": 297,
+      "works_count": 618,
+      "cited_by_count": 73930,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Political Science and International Relations -- 9.9",
+      "id": "https://openalex.org/A5062073470",
+      "display_name": "Marijn Janssen",
+      "orcid": "https://orcid.org/0000-0001-6211-8790",
+      "h_index": 98,
+      "i10_index": 401,
+      "works_count": 907,
+      "cited_by_count": 62671,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Political Science and International Relations -- 9.9",
+      "id": "https://openalex.org/A5077475073",
+      "display_name": "Michael P. Howlett",
+      "orcid": "https://orcid.org/0000-0003-4689-740X",
+      "h_index": 98,
+      "i10_index": 325,
+      "works_count": 757,
+      "cited_by_count": 37826,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Political Science and International Relations -- 9.9",
+      "id": "https://openalex.org/A5049574879",
+      "display_name": "Todd M. Sandler",
+      "orcid": "https://orcid.org/0000-0001-9077-5915",
+      "h_index": 97,
+      "i10_index": 281,
+      "works_count": 582,
+      "cited_by_count": 36068,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Political Science and International Relations -- 9.9",
+      "id": "https://openalex.org/A5032884966",
+      "display_name": "Ronald Inglehart",
+      "orcid": "https://orcid.org/0000-0002-5620-3363",
+      "h_index": 96,
+      "i10_index": 229,
+      "works_count": 534,
+      "cited_by_count": 90258,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Political Science and International Relations -- 9.9",
+      "id": "https://openalex.org/A5021318098",
+      "display_name": "B. Guy Peters",
+      "orcid": "https://orcid.org/0000-0001-9143-7547",
+      "h_index": 92,
+      "i10_index": 282,
+      "works_count": 766,
+      "cited_by_count": 34435,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5090480102",
+      "display_name": "Pippa Norris",
+      "orcid": "https://orcid.org/0000-0001-8632-4636",
+      "h_index": 91,
+      "i10_index": 264,
+      "works_count": 799,
+      "cited_by_count": 63809,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5017194047",
+      "display_name": "Robert O. Keohane",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 193,
+      "works_count": 400,
+      "cited_by_count": 60027,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5082330712",
+      "display_name": "James H. Fowler",
+      "orcid": "https://orcid.org/0000-0001-7795-1638",
+      "h_index": 90,
+      "i10_index": 149,
+      "works_count": 204,
+      "cited_by_count": 52227,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5057733936",
+      "display_name": "Donald Philip Green",
+      "orcid": "https://orcid.org/0000-0002-8850-438X",
+      "h_index": 89,
+      "i10_index": 195,
+      "works_count": 414,
+      "cited_by_count": 37125,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5110757928",
+      "display_name": "Timothy J. Besley",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 171,
+      "works_count": 272,
+      "cited_by_count": 43214,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5004567468",
+      "display_name": "Edmund Kieran Burke",
+      "orcid": "https://orcid.org/0000-0003-0712-4762",
+      "h_index": 86,
+      "i10_index": 282,
+      "works_count": 1061,
+      "cited_by_count": 26390,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5011735863",
+      "display_name": "G. John Ikenberry",
+      "orcid": null,
+      "h_index": 85,
+      "i10_index": 264,
+      "works_count": 661,
+      "cited_by_count": 31281,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5065959761",
+      "display_name": "Andrew Jordan",
+      "orcid": "https://orcid.org/0000-0001-7678-1024",
+      "h_index": 84,
+      "i10_index": 234,
+      "works_count": 559,
+      "cited_by_count": 26860,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5030998554",
+      "display_name": "André Blais",
+      "orcid": "https://orcid.org/0000-0003-4292-110X",
+      "h_index": 83,
+      "i10_index": 250,
+      "works_count": 772,
+      "cited_by_count": 25466,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5066976206",
+      "display_name": "Francis Fukuyama",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 249,
+      "works_count": 691,
+      "cited_by_count": 60835,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Political Science and International Relations -- 9.8",
+      "id": "https://openalex.org/A5063647785",
+      "display_name": "James N. Druckman",
+      "orcid": "https://orcid.org/0000-0002-1249-6790",
+      "h_index": 83,
+      "i10_index": 206,
+      "works_count": 549,
+      "cited_by_count": 50530,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Mathematics"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5021274183",
+      "display_name": "Fritz W. Scharpf",
+      "orcid": null,
+      "h_index": 82,
+      "i10_index": 232,
+      "works_count": 527,
+      "cited_by_count": 39103,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5066316449",
+      "display_name": "Jon Elster",
+      "orcid": "https://orcid.org/0000-0002-9543-1780",
+      "h_index": 82,
+      "i10_index": 209,
+      "works_count": 639,
+      "cited_by_count": 42462,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Decision Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5011443884",
+      "display_name": "David Chandler",
+      "orcid": "https://orcid.org/0000-0002-2766-7169",
+      "h_index": 81,
+      "i10_index": 282,
+      "works_count": 780,
+      "cited_by_count": 26521,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Physics and Astronomy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5033277158",
+      "display_name": "Immanuel Maurice Wallerstein",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 280,
+      "works_count": 984,
+      "cited_by_count": 35557,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5011467777",
+      "display_name": "John S. Dryzek",
+      "orcid": "https://orcid.org/0000-0001-6358-0047",
+      "h_index": 79,
+      "i10_index": 161,
+      "works_count": 419,
+      "cited_by_count": 31918,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5081533291",
+      "display_name": "Richard Rose",
+      "orcid": "https://orcid.org/0000-0002-6603-1067",
+      "h_index": 78,
+      "i10_index": 253,
+      "works_count": 1097,
+      "cited_by_count": 28605,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5026592049",
+      "display_name": "Marc Hooghe",
+      "orcid": "https://orcid.org/0000-0003-3840-2497",
+      "h_index": 78,
+      "i10_index": 210,
+      "works_count": 932,
+      "cited_by_count": 20962,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5034008934",
+      "display_name": "Hanspeter Kriesi",
+      "orcid": "https://orcid.org/0000-0003-4229-8960",
+      "h_index": 78,
+      "i10_index": 193,
+      "works_count": 415,
+      "cited_by_count": 27694,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5084169778",
+      "display_name": "Jun Wang",
+      "orcid": "https://orcid.org/0000-0003-0064-3551",
+      "h_index": 77,
+      "i10_index": 546,
+      "works_count": 3990,
+      "cited_by_count": 34890,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Materials Science",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Materials Science",
+        "Social Sciences",
+        "Engineering",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5082109923",
+      "display_name": "Staffan I. Lindberg",
+      "orcid": "https://orcid.org/0000-0003-0386-7390",
+      "h_index": 77,
+      "i10_index": 233,
+      "works_count": 494,
+      "cited_by_count": 23933,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Political Science and International Relations -- 9.7",
+      "id": "https://openalex.org/A5039276358",
+      "display_name": "Martin P. Wattenberg",
+      "orcid": "https://orcid.org/0000-0003-0904-4862",
+      "h_index": 77,
+      "i10_index": 140,
+      "works_count": 212,
+      "cited_by_count": 51902,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Computer Science",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Computer Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5082263110",
+      "display_name": "Gerry Stoker",
+      "orcid": "https://orcid.org/0000-0002-8172-3395",
+      "h_index": 76,
+      "i10_index": 198,
+      "works_count": 627,
+      "cited_by_count": 26478,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5090041457",
+      "display_name": "Bob Lingard",
+      "orcid": "https://orcid.org/0000-0002-4101-9985",
+      "h_index": 75,
+      "i10_index": 217,
+      "works_count": 478,
+      "cited_by_count": 22720,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5027265830",
+      "display_name": "Gary Wolfe Marks",
+      "orcid": "https://orcid.org/0000-0003-1331-0975",
+      "h_index": 75,
+      "i10_index": 127,
+      "works_count": 264,
+      "cited_by_count": 41978,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5063130484",
+      "display_name": "Tim M. Cook",
+      "orcid": "https://orcid.org/0000-0002-3654-497X",
+      "h_index": 74,
+      "i10_index": 257,
+      "works_count": 3688,
+      "cited_by_count": 29022,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5069876802",
+      "display_name": "Russell J. Dalton",
+      "orcid": "https://orcid.org/0000-0002-5973-4135",
+      "h_index": 74,
+      "i10_index": 146,
+      "works_count": 299,
+      "cited_by_count": 26485,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5072547710",
+      "display_name": "Robert E. Goodin",
+      "orcid": "https://orcid.org/0000-0002-1704-5817",
+      "h_index": 73,
+      "i10_index": 214,
+      "works_count": 598,
+      "cited_by_count": 27704,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5091718489",
+      "display_name": "Tom Christensen",
+      "orcid": "https://orcid.org/0000-0003-1441-9243",
+      "h_index": 73,
+      "i10_index": 201,
+      "works_count": 428,
+      "cited_by_count": 20270,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5059004718",
+      "display_name": "Barry G. Buzan",
+      "orcid": "https://orcid.org/0000-0002-7922-5194",
+      "h_index": 73,
+      "i10_index": 162,
+      "works_count": 610,
+      "cited_by_count": 35366,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5070933865",
+      "display_name": "Simeon Djankov",
+      "orcid": "https://orcid.org/0000-0002-0822-6456",
+      "h_index": 73,
+      "i10_index": 161,
+      "works_count": 303,
+      "cited_by_count": 50026,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5024670893",
+      "display_name": "James L. Gibson",
+      "orcid": "https://orcid.org/0000-0002-2571-6596",
+      "h_index": 73,
+      "i10_index": 142,
+      "works_count": 339,
+      "cited_by_count": 16644,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Political Science and International Relations -- 9.6",
+      "id": "https://openalex.org/A5045800347",
+      "display_name": "Bernard Grofman",
+      "orcid": "https://orcid.org/0000-0002-2801-3351",
+      "h_index": 71,
+      "i10_index": 259,
+      "works_count": 584,
+      "cited_by_count": 18010,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5000265576",
+      "display_name": "Christopher Pollitt",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 148,
+      "works_count": 419,
+      "cited_by_count": 27510,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Health Professions"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5003097760",
+      "display_name": "Ron J. Johnston",
+      "orcid": "https://orcid.org/0000-0003-3031-8573",
+      "h_index": 70,
+      "i10_index": 526,
+      "works_count": 1682,
+      "cited_by_count": 25363,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5023327040",
+      "display_name": "Linxiu Zhang",
+      "orcid": "https://orcid.org/0000-0002-8386-0350",
+      "h_index": 70,
+      "i10_index": 215,
+      "works_count": 341,
+      "cited_by_count": 14416,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Agricultural and Biological Sciences",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5018550609",
+      "display_name": "Jeremy Waldron",
+      "orcid": "https://orcid.org/0009-0001-6291-1710",
+      "h_index": 70,
+      "i10_index": 206,
+      "works_count": 494,
+      "cited_by_count": 26127,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5033417715",
+      "display_name": "Per Lægreid",
+      "orcid": "https://orcid.org/0000-0001-5048-4275",
+      "h_index": 70,
+      "i10_index": 197,
+      "works_count": 541,
+      "cited_by_count": 19524,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5067589326",
+      "display_name": "Joseph S. Nye",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 173,
+      "works_count": 459,
+      "cited_by_count": 35077,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5085884721",
+      "display_name": "Robert S. Erikson",
+      "orcid": "https://orcid.org/0000-0003-1693-4839",
+      "h_index": 70,
+      "i10_index": 149,
+      "works_count": 308,
+      "cited_by_count": 22761,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5082717327",
+      "display_name": "John Gerring",
+      "orcid": "https://orcid.org/0000-0001-9858-2050",
+      "h_index": 70,
+      "i10_index": 121,
+      "works_count": 500,
+      "cited_by_count": 41681,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5058771936",
+      "display_name": "Theda R. Skocpol",
+      "orcid": "https://orcid.org/0000-0002-3866-8108",
+      "h_index": 69,
+      "i10_index": 155,
+      "works_count": 438,
+      "cited_by_count": 36030,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5101878570",
+      "display_name": "Thomas Risse",
+      "orcid": "https://orcid.org/0000-0002-4155-7230",
+      "h_index": 69,
+      "i10_index": 139,
+      "works_count": 274,
+      "cited_by_count": 32817,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5073391163",
+      "display_name": "Rui Cunha Marques",
+      "orcid": "https://orcid.org/0000-0003-0344-5200",
+      "h_index": 68,
+      "i10_index": 239,
+      "works_count": 374,
+      "cited_by_count": 14834,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences",
+        "Business, Management and Accounting",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Political Science and International Relations -- 9.5",
+      "id": "https://openalex.org/A5075837299",
+      "display_name": "Justin Yifu Lin",
+      "orcid": "https://orcid.org/0000-0003-0518-9829",
+      "h_index": 68,
+      "i10_index": 202,
+      "works_count": 733,
+      "cited_by_count": 19888,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5035768135",
+      "display_name": "Christoph Knill",
+      "orcid": "https://orcid.org/0000-0002-8562-2102",
+      "h_index": 68,
+      "i10_index": 172,
+      "works_count": 498,
+      "cited_by_count": 18475,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5051699903",
+      "display_name": "Larry Jay Diamond",
+      "orcid": "https://orcid.org/0000-0001-5471-666X",
+      "h_index": 68,
+      "i10_index": 169,
+      "works_count": 397,
+      "cited_by_count": 28281,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5039590620",
+      "display_name": "Tanja A. Börzel",
+      "orcid": "https://orcid.org/0000-0002-7313-2181",
+      "h_index": 68,
+      "i10_index": 161,
+      "works_count": 315,
+      "cited_by_count": 21310,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5020982608",
+      "display_name": "Saul Estrin",
+      "orcid": "https://orcid.org/0000-0002-3447-8593",
+      "h_index": 67,
+      "i10_index": 181,
+      "works_count": 489,
+      "cited_by_count": 22740,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5001139108",
+      "display_name": "Wolfgang Wagner",
+      "orcid": "https://orcid.org/0000-0001-5191-2470",
+      "h_index": 67,
+      "i10_index": 178,
+      "works_count": 463,
+      "cited_by_count": 23535,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Chemistry",
+        "Chemical Engineering"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5053230035",
+      "display_name": "Hannah Arendt",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 176,
+      "works_count": 449,
+      "cited_by_count": 29774,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5111483878",
+      "display_name": "Richard G. Niemi",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 144,
+      "works_count": 253,
+      "cited_by_count": 17081,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance",
+        "Arts and Humanities",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5084778347",
+      "display_name": "Albert Jacob Meijer",
+      "orcid": "https://orcid.org/0000-0001-8532-7894",
+      "h_index": 67,
+      "i10_index": 139,
+      "works_count": 358,
+      "cited_by_count": 19856,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5069815945",
+      "display_name": "Gary W. Cox",
+      "orcid": "https://orcid.org/0000-0002-9256-5193",
+      "h_index": 67,
+      "i10_index": 119,
+      "works_count": 402,
+      "cited_by_count": 21953,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5056390227",
+      "display_name": "William L. Miller",
+      "orcid": "https://orcid.org/0000-0002-9957-1211",
+      "h_index": 66,
+      "i10_index": 204,
+      "works_count": 485,
+      "cited_by_count": 17195,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Medicine",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Medicine",
+        "Social Sciences",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Political Science and International Relations -- 9.4",
+      "id": "https://openalex.org/A5063641432",
+      "display_name": "Colin Hay",
+      "orcid": "https://orcid.org/0000-0001-6327-6547",
+      "h_index": 66,
+      "i10_index": 152,
+      "works_count": 376,
+      "cited_by_count": 18037,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5014012260",
+      "display_name": "Frank Schimmelfennig",
+      "orcid": "https://orcid.org/0000-0002-1638-1819",
+      "h_index": 66,
+      "i10_index": 149,
+      "works_count": 442,
+      "cited_by_count": 22422,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5112386764",
+      "display_name": "James M. Snyder",
+      "orcid": "https://orcid.org/0000-0002-1386-2844",
+      "h_index": 66,
+      "i10_index": 128,
+      "works_count": 286,
+      "cited_by_count": 20474,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5065707858",
+      "display_name": "Ian McAllister",
+      "orcid": "https://orcid.org/0000-0001-8448-6738",
+      "h_index": 65,
+      "i10_index": 258,
+      "works_count": 686,
+      "cited_by_count": 15645,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5008996116",
+      "display_name": "Giovanni Sartori",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 209,
+      "works_count": 398,
+      "cited_by_count": 20571,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5040027314",
+      "display_name": "Peter C. John",
+      "orcid": "https://orcid.org/0000-0002-7934-1187",
+      "h_index": 65,
+      "i10_index": 184,
+      "works_count": 613,
+      "cited_by_count": 14852,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5002587321",
+      "display_name": "Robert S. Ross",
+      "orcid": "https://orcid.org/0000-0003-2195-8982",
+      "h_index": 65,
+      "i10_index": 150,
+      "works_count": 387,
+      "cited_by_count": 14478,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5020257111",
+      "display_name": "Adam Przeworski",
+      "orcid": "https://orcid.org/0000-0002-1721-1627",
+      "h_index": 65,
+      "i10_index": 141,
+      "works_count": 322,
+      "cited_by_count": 37799,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5008414458",
+      "display_name": "Seyla Benhabib",
+      "orcid": "https://orcid.org/0000-0002-7318-028X",
+      "h_index": 65,
+      "i10_index": 140,
+      "works_count": 351,
+      "cited_by_count": 26298,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5087864502",
+      "display_name": "Liesbet Hooghe",
+      "orcid": "https://orcid.org/0000-0002-6644-8882",
+      "h_index": 65,
+      "i10_index": 115,
+      "works_count": 267,
+      "cited_by_count": 38294,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5081228771",
+      "display_name": "Peter Mair",
+      "orcid": "https://orcid.org/0000-0002-1408-3762",
+      "h_index": 65,
+      "i10_index": 115,
+      "works_count": 283,
+      "cited_by_count": 29104,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Political Science and International Relations -- 9.3",
+      "id": "https://openalex.org/A5043357488",
+      "display_name": "Michael S. Lewis‐Beck",
+      "orcid": "https://orcid.org/0000-0003-0301-5497",
+      "h_index": 64,
+      "i10_index": 202,
+      "works_count": 399,
+      "cited_by_count": 21313,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Political Science and International Relations -- 9.2",
+      "id": "https://openalex.org/A5061031604",
+      "display_name": "Paul Cairney",
+      "orcid": "https://orcid.org/0000-0002-9956-832X",
+      "h_index": 64,
+      "i10_index": 148,
+      "works_count": 406,
+      "cited_by_count": 16496,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Political Science and International Relations -- 9.2",
+      "id": "https://openalex.org/A5070013933",
+      "display_name": "Sara Binzer Hobolt",
+      "orcid": "https://orcid.org/0000-0002-9742-9502",
+      "h_index": 64,
+      "i10_index": 124,
+      "works_count": 357,
+      "cited_by_count": 19749,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Political Science and International Relations -- 9.2",
+      "id": "https://openalex.org/A5107909644",
+      "display_name": "John M. Finnis",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 121,
+      "works_count": 334,
+      "cited_by_count": 12104,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Political Science and International Relations -- 9.2",
+      "id": "https://openalex.org/A5031460077",
+      "display_name": "Amber Wutich",
+      "orcid": "https://orcid.org/0000-0003-4164-1632",
+      "h_index": 63,
+      "i10_index": 176,
+      "works_count": 306,
+      "cited_by_count": 14122,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Environmental Science",
+        "Medicine",
+        "Nursing",
+        "Psychology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Political Science and International Relations -- 9.2",
+      "id": "https://openalex.org/A5066200540",
+      "display_name": "David D. Marsh",
+      "orcid": "https://orcid.org/0000-0002-3308-8585",
+      "h_index": 63,
+      "i10_index": 158,
+      "works_count": 483,
+      "cited_by_count": 30460,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Arts and Humanities",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Arts and Humanities",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Political Science and International Relations -- 9.2",
+      "id": "https://openalex.org/A5109595821",
+      "display_name": "Philippe C. Schmitter",
+      "orcid": null,
+      "h_index": 63,
+      "i10_index": 158,
+      "works_count": 344,
+      "cited_by_count": 23642,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Political Science and International Relations -- 9.2",
+      "id": "https://openalex.org/A5060969324",
+      "display_name": "Eva Sørensen",
+      "orcid": "https://orcid.org/0000-0003-4845-9665",
+      "h_index": 63,
+      "i10_index": 133,
+      "works_count": 423,
+      "cited_by_count": 20868,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Political Science and International Relations -- 9.2",
+      "id": "https://openalex.org/A5076904986",
+      "display_name": "Alan S. Gerber",
+      "orcid": "https://orcid.org/0000-0002-8133-3995",
+      "h_index": 63,
+      "i10_index": 121,
+      "works_count": 285,
+      "cited_by_count": 19967,
+      "discipline": "Political Science and International Relations",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Political Science and International Relations",
+      "fields": [
+        "Social Sciences",
+        "Neuroscience",
+        "Economics, Econometrics and Finance"
+      ]
+    }
+  ]
+}

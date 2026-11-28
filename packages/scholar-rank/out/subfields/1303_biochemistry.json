@@ -1,0 +1,4648 @@
+{
+  "kind": "subfield",
+  "id": 1303,
+  "name": "Biochemistry",
+  "total_in_scrape": 237,
+  "count": 237,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Biochemistry -- 9.9",
+      "id": "https://openalex.org/A5058164552",
+      "display_name": "Joseph L. Goldstein",
+      "orcid": "https://orcid.org/0000-0002-1894-9463",
+      "h_index": 218,
+      "i10_index": 500,
+      "works_count": 624,
+      "cited_by_count": 176840,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Biochemistry -- 9.9",
+      "id": "https://openalex.org/A5079762911",
+      "display_name": "Michael S. Brown",
+      "orcid": "https://orcid.org/0000-0002-1324-152X",
+      "h_index": 185,
+      "i10_index": 354,
+      "works_count": 437,
+      "cited_by_count": 140522,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Biochemistry -- 9.9",
+      "id": "https://openalex.org/A5026538320",
+      "display_name": "Bruce D. Hammock",
+      "orcid": "https://orcid.org/0000-0003-1408-8317",
+      "h_index": 132,
+      "i10_index": 1263,
+      "works_count": 1943,
+      "cited_by_count": 81946,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Agricultural and Biological Sciences",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Biochemistry -- 9.9",
+      "id": "https://openalex.org/A5059382959",
+      "display_name": "John Robert Vane",
+      "orcid": null,
+      "h_index": 129,
+      "i10_index": 423,
+      "works_count": 562,
+      "cited_by_count": 88336,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Biochemistry -- 9.9",
+      "id": "https://openalex.org/A5077198825",
+      "display_name": "John Russell Falck",
+      "orcid": "https://orcid.org/0000-0002-9219-7845",
+      "h_index": 126,
+      "i10_index": 783,
+      "works_count": 1073,
+      "cited_by_count": 61235,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Biochemistry -- 9.9",
+      "id": "https://openalex.org/A5088448170",
+      "display_name": "Edward A A Fisher",
+      "orcid": "https://orcid.org/0000-0001-9802-143X",
+      "h_index": 121,
+      "i10_index": 386,
+      "works_count": 670,
+      "cited_by_count": 68124,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5037865809",
+      "display_name": "Joachim Herz",
+      "orcid": "https://orcid.org/0000-0002-8506-3400",
+      "h_index": 121,
+      "i10_index": 296,
+      "works_count": 427,
+      "cited_by_count": 57156,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5062221634",
+      "display_name": "Marc Fontecave",
+      "orcid": "https://orcid.org/0000-0002-8016-4747",
+      "h_index": 112,
+      "i10_index": 426,
+      "works_count": 845,
+      "cited_by_count": 46704,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5029940065",
+      "display_name": "Peter Tontonoz",
+      "orcid": "https://orcid.org/0000-0003-1259-0477",
+      "h_index": 112,
+      "i10_index": 238,
+      "works_count": 377,
+      "cited_by_count": 64906,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5054562365",
+      "display_name": "Michael H. Gelb",
+      "orcid": "https://orcid.org/0000-0001-7000-5219",
+      "h_index": 111,
+      "i10_index": 446,
+      "works_count": 711,
+      "cited_by_count": 45240,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5048434963",
+      "display_name": "Carl Grünfeld",
+      "orcid": "https://orcid.org/0000-0003-3501-4421",
+      "h_index": 111,
+      "i10_index": 356,
+      "works_count": 591,
+      "cited_by_count": 43049,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5083674919",
+      "display_name": "Robert V. Farese",
+      "orcid": "https://orcid.org/0000-0001-8103-2239",
+      "h_index": 111,
+      "i10_index": 228,
+      "works_count": 284,
+      "cited_by_count": 52869,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5091451352",
+      "display_name": "Vadivel Ganapathy",
+      "orcid": "https://orcid.org/0000-0003-0799-6018",
+      "h_index": 110,
+      "i10_index": 479,
+      "works_count": 729,
+      "cited_by_count": 47423,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5070833222",
+      "display_name": "Gerd Schmitz",
+      "orcid": "https://orcid.org/0000-0002-1325-1007",
+      "h_index": 109,
+      "i10_index": 531,
+      "works_count": 917,
+      "cited_by_count": 46825,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5065260044",
+      "display_name": "Rudolf Kurt Thauer",
+      "orcid": "https://orcid.org/0000-0003-0714-0148",
+      "h_index": 109,
+      "i10_index": 399,
+      "works_count": 641,
+      "cited_by_count": 52150,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5040164343",
+      "display_name": "Alan M. Fogelman",
+      "orcid": "https://orcid.org/0000-0003-3796-9125",
+      "h_index": 107,
+      "i10_index": 270,
+      "works_count": 365,
+      "cited_by_count": 44740,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Biochemistry -- 9.8",
+      "id": "https://openalex.org/A5101458079",
+      "display_name": "Takao Shimizu",
+      "orcid": "https://orcid.org/0000-0002-9079-1357",
+      "h_index": 104,
+      "i10_index": 391,
+      "works_count": 644,
+      "cited_by_count": 44732,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5010547713",
+      "display_name": "Michael W. W. Adams",
+      "orcid": "https://orcid.org/0000-0002-9796-5014",
+      "h_index": 103,
+      "i10_index": 460,
+      "works_count": 717,
+      "cited_by_count": 37298,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5020866795",
+      "display_name": "Darryl C. Zeldin",
+      "orcid": "https://orcid.org/0000-0002-2087-7307",
+      "h_index": 103,
+      "i10_index": 359,
+      "works_count": 600,
+      "cited_by_count": 36303,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5111465272",
+      "display_name": "Alton Meister",
+      "orcid": null,
+      "h_index": 103,
+      "i10_index": 343,
+      "works_count": 527,
+      "cited_by_count": 45318,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5112719354",
+      "display_name": "Hitoshi Endou",
+      "orcid": null,
+      "h_index": 103,
+      "i10_index": 318,
+      "works_count": 670,
+      "cited_by_count": 36066,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5103043727",
+      "display_name": "Yoshikatsu Kanai",
+      "orcid": "https://orcid.org/0000-0001-8126-286X",
+      "h_index": 102,
+      "i10_index": 281,
+      "works_count": 487,
+      "cited_by_count": 40424,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5037222936",
+      "display_name": "Robert C. Murphy",
+      "orcid": "https://orcid.org/0000-0002-9430-6515",
+      "h_index": 101,
+      "i10_index": 384,
+      "works_count": 524,
+      "cited_by_count": 41101,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5003115146",
+      "display_name": "Albert Kornelis Groen",
+      "orcid": "https://orcid.org/0000-0002-9942-1854",
+      "h_index": 100,
+      "i10_index": 368,
+      "works_count": 704,
+      "cited_by_count": 47133,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5091522261",
+      "display_name": "John E. Cronan",
+      "orcid": "https://orcid.org/0000-0002-7064-312X",
+      "h_index": 100,
+      "i10_index": 359,
+      "works_count": 439,
+      "cited_by_count": 33669,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5071412244",
+      "display_name": "Dieter Lütjohann",
+      "orcid": "https://orcid.org/0000-0002-7941-8308",
+      "h_index": 100,
+      "i10_index": 341,
+      "works_count": 534,
+      "cited_by_count": 33758,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5051973789",
+      "display_name": "Rudolf Zechner",
+      "orcid": "https://orcid.org/0000-0001-5483-1182",
+      "h_index": 100,
+      "i10_index": 236,
+      "works_count": 349,
+      "cited_by_count": 39858,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Biochemistry -- 9.7",
+      "id": "https://openalex.org/A5076210539",
+      "display_name": "Samuel D. Wright",
+      "orcid": "https://orcid.org/0000-0001-5583-0595",
+      "h_index": 99,
+      "i10_index": 208,
+      "works_count": 254,
+      "cited_by_count": 40823,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5039561796",
+      "display_name": "Michael A. Marletta",
+      "orcid": "https://orcid.org/0000-0001-8715-4253",
+      "h_index": 98,
+      "i10_index": 243,
+      "works_count": 354,
+      "cited_by_count": 37242,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5075984061",
+      "display_name": "Søren K. Moestrup",
+      "orcid": "https://orcid.org/0000-0003-3862-2107",
+      "h_index": 98,
+      "i10_index": 221,
+      "works_count": 303,
+      "cited_by_count": 28543,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5032174537",
+      "display_name": "Folkert Kuipers",
+      "orcid": "https://orcid.org/0000-0003-2518-737X",
+      "h_index": 97,
+      "i10_index": 373,
+      "works_count": 818,
+      "cited_by_count": 33652,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5002502444",
+      "display_name": "Charles O. Rock",
+      "orcid": "https://orcid.org/0000-0001-8648-4189",
+      "h_index": 97,
+      "i10_index": 261,
+      "works_count": 407,
+      "cited_by_count": 28991,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5072123276",
+      "display_name": "Jan F. C. Glatz",
+      "orcid": "https://orcid.org/0000-0001-6533-9548",
+      "h_index": 96,
+      "i10_index": 328,
+      "works_count": 523,
+      "cited_by_count": 30469,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5019944871",
+      "display_name": "Karen Reue",
+      "orcid": "https://orcid.org/0000-0002-7487-2624",
+      "h_index": 96,
+      "i10_index": 208,
+      "works_count": 308,
+      "cited_by_count": 29286,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5083711185",
+      "display_name": "Wolfgang Lubitz",
+      "orcid": "https://orcid.org/0000-0001-7059-5327",
+      "h_index": 95,
+      "i10_index": 457,
+      "works_count": 735,
+      "cited_by_count": 36658,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Physics and Astronomy"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5002068723",
+      "display_name": "Peter J.H. Jones",
+      "orcid": "https://orcid.org/0000-0001-5887-2846",
+      "h_index": 95,
+      "i10_index": 394,
+      "works_count": 702,
+      "cited_by_count": 35243,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5085638660",
+      "display_name": "Fraser Andrew Armstrong",
+      "orcid": "https://orcid.org/0000-0001-8041-2491",
+      "h_index": 95,
+      "i10_index": 260,
+      "works_count": 456,
+      "cited_by_count": 28233,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5028962254",
+      "display_name": "Hitoshi Shimano",
+      "orcid": "https://orcid.org/0000-0002-5562-5572",
+      "h_index": 94,
+      "i10_index": 364,
+      "works_count": 559,
+      "cited_by_count": 36454,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Biochemistry -- 9.6",
+      "id": "https://openalex.org/A5108028161",
+      "display_name": "Ingemar Björkhem",
+      "orcid": "https://orcid.org/0000-0002-0575-9425",
+      "h_index": 94,
+      "i10_index": 326,
+      "works_count": 407,
+      "cited_by_count": 28862,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5054559312",
+      "display_name": "Keith N. Frayn",
+      "orcid": "https://orcid.org/0000-0001-7281-1863",
+      "h_index": 94,
+      "i10_index": 266,
+      "works_count": 491,
+      "cited_by_count": 32646,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5110275577",
+      "display_name": "George H. Rothblat",
+      "orcid": null,
+      "h_index": 94,
+      "i10_index": 212,
+      "works_count": 276,
+      "cited_by_count": 30493,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 42,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5024733637",
+      "display_name": "Theo J.C. van Berkel",
+      "orcid": "https://orcid.org/0000-0003-1548-440X",
+      "h_index": 93,
+      "i10_index": 399,
+      "works_count": 646,
+      "cited_by_count": 32888,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 43,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5014593771",
+      "display_name": "Mats Hámberg",
+      "orcid": "https://orcid.org/0000-0002-8910-7810",
+      "h_index": 93,
+      "i10_index": 303,
+      "works_count": 363,
+      "cited_by_count": 36416,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 44,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5112540646",
+      "display_name": "John B. Ohlrogge",
+      "orcid": null,
+      "h_index": 93,
+      "i10_index": 197,
+      "works_count": 280,
+      "cited_by_count": 34212,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 45,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5064633984",
+      "display_name": "Dennis R. Dean",
+      "orcid": "https://orcid.org/0000-0001-8960-6196",
+      "h_index": 92,
+      "i10_index": 212,
+      "works_count": 322,
+      "cited_by_count": 27713,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 46,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5081268367",
+      "display_name": "Richard W. Gross",
+      "orcid": "https://orcid.org/0000-0003-2262-9443",
+      "h_index": 91,
+      "i10_index": 205,
+      "works_count": 235,
+      "cited_by_count": 28317,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 47,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5038343851",
+      "display_name": "Mohamad Navab",
+      "orcid": "https://orcid.org/0000-0002-3754-4461",
+      "h_index": 91,
+      "i10_index": 181,
+      "works_count": 245,
+      "cited_by_count": 35988,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 48,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5072015473",
+      "display_name": "Luc J. Moens",
+      "orcid": null,
+      "h_index": 90,
+      "i10_index": 443,
+      "works_count": 733,
+      "cited_by_count": 31323,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Arts and Humanities",
+        "Chemistry",
+        "Earth and Planetary Sciences"
+      ]
+    },
+    {
+      "rank": 49,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5100431408",
+      "display_name": "Rui Wang",
+      "orcid": "https://orcid.org/0000-0003-3825-3620",
+      "h_index": 89,
+      "i10_index": 276,
+      "works_count": 399,
+      "cited_by_count": 38887,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 50,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5110082880",
+      "display_name": "Max Ferdinand Perutz",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 212,
+      "works_count": 410,
+      "cited_by_count": 34562,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 51,
+      "score": 9.5,
+      "label": "Biochemistry -- 9.5",
+      "id": "https://openalex.org/A5028038671",
+      "display_name": "Monty Krieger",
+      "orcid": "https://orcid.org/0000-0003-4541-5181",
+      "h_index": 89,
+      "i10_index": 170,
+      "works_count": 228,
+      "cited_by_count": 33062,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 52,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5082866305",
+      "display_name": "Peter A. Edwards",
+      "orcid": null,
+      "h_index": 89,
+      "i10_index": 153,
+      "works_count": 196,
+      "cited_by_count": 31760,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 53,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5011765239",
+      "display_name": "Pappachan E. Kolattukudy",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 261,
+      "works_count": 314,
+      "cited_by_count": 23925,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 54,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5019567141",
+      "display_name": "Nada A. Abumrad",
+      "orcid": "https://orcid.org/0000-0002-6475-0877",
+      "h_index": 88,
+      "i10_index": 180,
+      "works_count": 234,
+      "cited_by_count": 28944,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 55,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5109551617",
+      "display_name": "John M. Dietschy",
+      "orcid": null,
+      "h_index": 88,
+      "i10_index": 175,
+      "works_count": 209,
+      "cited_by_count": 24094,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 56,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5110158416",
+      "display_name": "Jan Sjövall",
+      "orcid": null,
+      "h_index": 87,
+      "i10_index": 378,
+      "works_count": 499,
+      "cited_by_count": 28203,
+      "discipline": "Biochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 57,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5032060997",
+      "display_name": "Manuel Palacín",
+      "orcid": "https://orcid.org/0000-0002-8670-293X",
+      "h_index": 87,
+      "i10_index": 242,
+      "works_count": 341,
+      "cited_by_count": 26826,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 58,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5018989541",
+      "display_name": "Donald M. Small",
+      "orcid": "https://orcid.org/0009-0006-3410-7000",
+      "h_index": 87,
+      "i10_index": 235,
+      "works_count": 296,
+      "cited_by_count": 26527,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 59,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5015888784",
+      "display_name": "Gert Matthijs",
+      "orcid": "https://orcid.org/0000-0001-6710-1912",
+      "h_index": 86,
+      "i10_index": 312,
+      "works_count": 592,
+      "cited_by_count": 24589,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 60,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5075092495",
+      "display_name": "Makoto Murakami",
+      "orcid": "https://orcid.org/0000-0002-4565-6017",
+      "h_index": 86,
+      "i10_index": 297,
+      "works_count": 540,
+      "cited_by_count": 26813,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 61,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5108437170",
+      "display_name": "Melvin J. Glimcher",
+      "orcid": null,
+      "h_index": 86,
+      "i10_index": 268,
+      "works_count": 342,
+      "cited_by_count": 26667,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 62,
+      "score": 9.4,
+      "label": "Biochemistry -- 9.4",
+      "id": "https://openalex.org/A5090674310",
+      "display_name": "Guanghou Shui",
+      "orcid": "https://orcid.org/0000-0002-1621-9643",
+      "h_index": 86,
+      "i10_index": 241,
+      "works_count": 343,
+      "cited_by_count": 26574,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 63,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5109397899",
+      "display_name": "Nobuyo Maeda",
+      "orcid": "https://orcid.org/0000-0002-2248-3299",
+      "h_index": 86,
+      "i10_index": 233,
+      "works_count": 290,
+      "cited_by_count": 30657,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 64,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5030643977",
+      "display_name": "Marc D. McKee",
+      "orcid": "https://orcid.org/0000-0001-8349-965X",
+      "h_index": 86,
+      "i10_index": 209,
+      "works_count": 334,
+      "cited_by_count": 32013,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Materials Science",
+        "Engineering"
+      ]
+    },
+    {
+      "rank": 65,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5090015641",
+      "display_name": "Maurizio Brunori",
+      "orcid": "https://orcid.org/0000-0002-7795-1635",
+      "h_index": 85,
+      "i10_index": 524,
+      "works_count": 911,
+      "cited_by_count": 29180,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 66,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5006945105",
+      "display_name": "Ronald P. Mensink",
+      "orcid": "https://orcid.org/0000-0002-8908-3580",
+      "h_index": 85,
+      "i10_index": 293,
+      "works_count": 545,
+      "cited_by_count": 29458,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 67,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5049963014",
+      "display_name": "Patrícia Torres Bozza",
+      "orcid": "https://orcid.org/0000-0001-8349-9529",
+      "h_index": 85,
+      "i10_index": 291,
+      "works_count": 438,
+      "cited_by_count": 25624,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 68,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5020808506",
+      "display_name": "Emile H. Levy",
+      "orcid": "https://orcid.org/0000-0001-9983-7027",
+      "h_index": 84,
+      "i10_index": 357,
+      "works_count": 635,
+      "cited_by_count": 23696,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 69,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5086617626",
+      "display_name": "Robert A. Harris",
+      "orcid": "https://orcid.org/0000-0003-3108-4748",
+      "h_index": 84,
+      "i10_index": 261,
+      "works_count": 341,
+      "cited_by_count": 20480,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 70,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5016113649",
+      "display_name": "Giuseppe Cirino",
+      "orcid": "https://orcid.org/0000-0003-3954-4083",
+      "h_index": 84,
+      "i10_index": 256,
+      "works_count": 410,
+      "cited_by_count": 28405,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 71,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5028977272",
+      "display_name": "Philip Needleman",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 237,
+      "works_count": 309,
+      "cited_by_count": 27777,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 72,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5006441824",
+      "display_name": "Helmut Beinert",
+      "orcid": null,
+      "h_index": 84,
+      "i10_index": 219,
+      "works_count": 293,
+      "cited_by_count": 24682,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 73,
+      "score": 9.3,
+      "label": "Biochemistry -- 9.3",
+      "id": "https://openalex.org/A5044700206",
+      "display_name": "Dennis R. Voelker",
+      "orcid": "https://orcid.org/0000-0002-3254-6644",
+      "h_index": 84,
+      "i10_index": 204,
+      "works_count": 279,
+      "cited_by_count": 30612,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 74,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5070541271",
+      "display_name": "James Mukasa Ntambi",
+      "orcid": "https://orcid.org/0000-0001-9784-9550",
+      "h_index": 84,
+      "i10_index": 182,
+      "works_count": 342,
+      "cited_by_count": 27835,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 75,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5048379477",
+      "display_name": "Carlos F Fernandez-Hernando",
+      "orcid": "https://orcid.org/0000-0002-3950-1924",
+      "h_index": 84,
+      "i10_index": 176,
+      "works_count": 233,
+      "cited_by_count": 22350,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 76,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5110860965",
+      "display_name": "I.L. Chaikoff",
+      "orcid": null,
+      "h_index": 83,
+      "i10_index": 441,
+      "works_count": 578,
+      "cited_by_count": 24685,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 77,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5071033886",
+      "display_name": "John S. Parks",
+      "orcid": "https://orcid.org/0000-0002-5227-8915",
+      "h_index": 83,
+      "i10_index": 283,
+      "works_count": 420,
+      "cited_by_count": 24834,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 78,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5049081447",
+      "display_name": "Kerry‐Anne Rye",
+      "orcid": "https://orcid.org/0000-0002-9751-917X",
+      "h_index": 83,
+      "i10_index": 277,
+      "works_count": 464,
+      "cited_by_count": 25181,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 79,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5042625397",
+      "display_name": "Gerhard Liebisch",
+      "orcid": "https://orcid.org/0000-0003-4886-0811",
+      "h_index": 83,
+      "i10_index": 273,
+      "works_count": 505,
+      "cited_by_count": 26894,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 80,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5052103601",
+      "display_name": "H. Franklin Bunn",
+      "orcid": "https://orcid.org/0000-0001-8918-2207",
+      "h_index": 83,
+      "i10_index": 183,
+      "works_count": 265,
+      "cited_by_count": 31237,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 81,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5026744789",
+      "display_name": "Jay D. Horton",
+      "orcid": "https://orcid.org/0000-0002-7778-1074",
+      "h_index": 83,
+      "i10_index": 111,
+      "works_count": 170,
+      "cited_by_count": 55459,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 82,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5014603417",
+      "display_name": "William B. Campbell",
+      "orcid": "https://orcid.org/0000-0003-4361-1488",
+      "h_index": 82,
+      "i10_index": 326,
+      "works_count": 460,
+      "cited_by_count": 23676,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 83,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5059424230",
+      "display_name": "Thomas M. Coffman",
+      "orcid": "https://orcid.org/0000-0002-8433-1629",
+      "h_index": 82,
+      "i10_index": 234,
+      "works_count": 362,
+      "cited_by_count": 27609,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 84,
+      "score": 9.2,
+      "label": "Biochemistry -- 9.2",
+      "id": "https://openalex.org/A5017318009",
+      "display_name": "John S. Olson",
+      "orcid": "https://orcid.org/0000-0002-0760-5403",
+      "h_index": 82,
+      "i10_index": 224,
+      "works_count": 309,
+      "cited_by_count": 21694,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 85,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5053531825",
+      "display_name": "Marian F. Young",
+      "orcid": "https://orcid.org/0000-0003-0929-8854",
+      "h_index": 82,
+      "i10_index": 185,
+      "works_count": 256,
+      "cited_by_count": 28373,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 86,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5065198053",
+      "display_name": "Paul A. Price",
+      "orcid": "https://orcid.org/0000-0002-6001-3941",
+      "h_index": 82,
+      "i10_index": 149,
+      "works_count": 189,
+      "cited_by_count": 20138,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 87,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5044124013",
+      "display_name": "John A. Lawson",
+      "orcid": "https://orcid.org/0000-0002-9814-3039",
+      "h_index": 81,
+      "i10_index": 220,
+      "works_count": 390,
+      "cited_by_count": 24166,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 88,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5105351645",
+      "display_name": "Jerry L. Nadler",
+      "orcid": "https://orcid.org/0000-0002-4200-6991",
+      "h_index": 80,
+      "i10_index": 237,
+      "works_count": 354,
+      "cited_by_count": 21198,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 89,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5111661810",
+      "display_name": "Dennis E. Vance",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 223,
+      "works_count": 289,
+      "cited_by_count": 23068,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 90,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5084345521",
+      "display_name": "Andrew John Brown",
+      "orcid": "https://orcid.org/0000-0002-4475-0116",
+      "h_index": 80,
+      "i10_index": 221,
+      "works_count": 414,
+      "cited_by_count": 22099,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 91,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5027560531",
+      "display_name": "David T. Denhardt",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 218,
+      "works_count": 302,
+      "cited_by_count": 29164,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 92,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5105193849",
+      "display_name": "K.V. Rajagopalan",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 211,
+      "works_count": 286,
+      "cited_by_count": 18922,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 93,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5080373573",
+      "display_name": "Lance C. Seefeldt",
+      "orcid": "https://orcid.org/0000-0002-6457-9504",
+      "h_index": 80,
+      "i10_index": 200,
+      "works_count": 290,
+      "cited_by_count": 24613,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemical Engineering",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 94,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5021007054",
+      "display_name": "Rosalind Coleman",
+      "orcid": "https://orcid.org/0000-0003-4379-3824",
+      "h_index": 80,
+      "i10_index": 174,
+      "works_count": 246,
+      "cited_by_count": 22059,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 95,
+      "score": 9.1,
+      "label": "Biochemistry -- 9.1",
+      "id": "https://openalex.org/A5076764999",
+      "display_name": "Hideo Kimura",
+      "orcid": "https://orcid.org/0000-0002-6069-0475",
+      "h_index": 80,
+      "i10_index": 167,
+      "works_count": 336,
+      "cited_by_count": 29562,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 96,
+      "score": 9,
+      "label": "Biochemistry -- 9.0",
+      "id": "https://openalex.org/A5002942595",
+      "display_name": "Philip Keith Moore",
+      "orcid": null,
+      "h_index": 80,
+      "i10_index": 157,
+      "works_count": 216,
+      "cited_by_count": 22149,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 97,
+      "score": 9,
+      "label": "Biochemistry -- 9.0",
+      "id": "https://openalex.org/A5088440923",
+      "display_name": "Puttur Devi Prasad",
+      "orcid": "https://orcid.org/0000-0002-8455-0186",
+      "h_index": 80,
+      "i10_index": 152,
+      "works_count": 240,
+      "cited_by_count": 21463,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 98,
+      "score": 9,
+      "label": "Biochemistry -- 9.0",
+      "id": "https://openalex.org/A5078087465",
+      "display_name": "Tobias C. Walther",
+      "orcid": "https://orcid.org/0000-0003-1442-1327",
+      "h_index": 80,
+      "i10_index": 126,
+      "works_count": 223,
+      "cited_by_count": 35606,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 99,
+      "score": 9,
+      "label": "Biochemistry -- 9.0",
+      "id": "https://openalex.org/A5021553442",
+      "display_name": "José J. G. Moura",
+      "orcid": "https://orcid.org/0000-0002-4726-2388",
+      "h_index": 79,
+      "i10_index": 371,
+      "works_count": 657,
+      "cited_by_count": 22366,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 100,
+      "score": 9,
+      "label": "Biochemistry -- 9.0",
+      "id": "https://openalex.org/A5056475417",
+      "display_name": "Anthony J. Turner",
+      "orcid": "https://orcid.org/0000-0001-8218-8198",
+      "h_index": 79,
+      "i10_index": 227,
+      "works_count": 434,
+      "cited_by_count": 26371,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 101,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5111556993",
+      "display_name": "Michael Aviram",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 223,
+      "works_count": 274,
+      "cited_by_count": 23230,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 102,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5063847286",
+      "display_name": "Clay F. Semenkovich",
+      "orcid": "https://orcid.org/0000-0003-1163-1871",
+      "h_index": 79,
+      "i10_index": 183,
+      "works_count": 303,
+      "cited_by_count": 43681,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 103,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5113687963",
+      "display_name": "Martin C. Carey",
+      "orcid": null,
+      "h_index": 79,
+      "i10_index": 174,
+      "works_count": 252,
+      "cited_by_count": 21092,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 104,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5021023350",
+      "display_name": "Julie McGarry",
+      "orcid": "https://orcid.org/0000-0002-7629-2447",
+      "h_index": 79,
+      "i10_index": 169,
+      "works_count": 243,
+      "cited_by_count": 26147,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 105,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5013909385",
+      "display_name": "Christophe H.P. Morisseau",
+      "orcid": "https://orcid.org/0000-0002-5672-6631",
+      "h_index": 78,
+      "i10_index": 298,
+      "works_count": 522,
+      "cited_by_count": 20683,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 106,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5020610670",
+      "display_name": "Patrick Tso",
+      "orcid": "https://orcid.org/0000-0002-5392-9695",
+      "h_index": 78,
+      "i10_index": 298,
+      "works_count": 445,
+      "cited_by_count": 20518,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 107,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5008614222",
+      "display_name": "Robert K. Poole",
+      "orcid": "https://orcid.org/0000-0002-4664-6689",
+      "h_index": 78,
+      "i10_index": 280,
+      "works_count": 414,
+      "cited_by_count": 20144,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 108,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5050528640",
+      "display_name": "Andrew J. Thomson",
+      "orcid": "https://orcid.org/0000-0002-4372-6325",
+      "h_index": 78,
+      "i10_index": 280,
+      "works_count": 423,
+      "cited_by_count": 19071,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 109,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5037990142",
+      "display_name": "Alan R. Brash",
+      "orcid": "https://orcid.org/0009-0003-2639-5848",
+      "h_index": 78,
+      "i10_index": 202,
+      "works_count": 291,
+      "cited_by_count": 20098,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 110,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5003245466",
+      "display_name": "Jaro Sodek",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 200,
+      "works_count": 235,
+      "cited_by_count": 22240,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 111,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5111517962",
+      "display_name": "William E.M. Lands",
+      "orcid": null,
+      "h_index": 78,
+      "i10_index": 200,
+      "works_count": 284,
+      "cited_by_count": 20206,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 112,
+      "score": 8.9,
+      "label": "Biochemistry -- 8.9",
+      "id": "https://openalex.org/A5090935512",
+      "display_name": "Suzanne Jackowski",
+      "orcid": "https://orcid.org/0000-0002-6855-1429",
+      "h_index": 78,
+      "i10_index": 156,
+      "works_count": 208,
+      "cited_by_count": 17193,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 113,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5002732282",
+      "display_name": "John Y.L. Chiang",
+      "orcid": "https://orcid.org/0000-0001-9360-7650",
+      "h_index": 78,
+      "i10_index": 151,
+      "works_count": 217,
+      "cited_by_count": 24110,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 114,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5105367267",
+      "display_name": "Jack Preiss",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 253,
+      "works_count": 317,
+      "cited_by_count": 20312,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 115,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5113727788",
+      "display_name": "Arthur A. Spector",
+      "orcid": null,
+      "h_index": 77,
+      "i10_index": 233,
+      "works_count": 286,
+      "cited_by_count": 21997,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 116,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5113699285",
+      "display_name": "Jean LeGall",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 323,
+      "works_count": 485,
+      "cited_by_count": 19909,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 117,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5005337571",
+      "display_name": "John L. Harwood",
+      "orcid": "https://orcid.org/0000-0003-2377-2612",
+      "h_index": 76,
+      "i10_index": 307,
+      "works_count": 550,
+      "cited_by_count": 23391,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 118,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5064301762",
+      "display_name": "Hartmut Kühn",
+      "orcid": "https://orcid.org/0000-0001-8142-3192",
+      "h_index": 76,
+      "i10_index": 261,
+      "works_count": 415,
+      "cited_by_count": 18838,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 119,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5110168268",
+      "display_name": "Masafumi Tsujimoto",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 200,
+      "works_count": 332,
+      "cited_by_count": 18481,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 120,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5068250479",
+      "display_name": "Simon Scharpé",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 199,
+      "works_count": 288,
+      "cited_by_count": 19976,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 121,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5019295905",
+      "display_name": "Frederick H. Leibach",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 196,
+      "works_count": 225,
+      "cited_by_count": 19461,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 122,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5008080313",
+      "display_name": "Gattadahalli M. Anantharamaiah",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 188,
+      "works_count": 237,
+      "cited_by_count": 19796,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 123,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5112119004",
+      "display_name": "David Rae Harder",
+      "orcid": null,
+      "h_index": 76,
+      "i10_index": 181,
+      "works_count": 289,
+      "cited_by_count": 18033,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 124,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5007314231",
+      "display_name": "Paolo Ascenzi",
+      "orcid": "https://orcid.org/0000-0002-6449-2150",
+      "h_index": 75,
+      "i10_index": 438,
+      "works_count": 725,
+      "cited_by_count": 27865,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 125,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5027654969",
+      "display_name": "Pascal Laforêt",
+      "orcid": "https://orcid.org/0000-0002-4489-4718",
+      "h_index": 75,
+      "i10_index": 273,
+      "works_count": 699,
+      "cited_by_count": 19645,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 126,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5079289136",
+      "display_name": "Thomas Olivecrona",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 224,
+      "works_count": 267,
+      "cited_by_count": 16649,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 127,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5056009731",
+      "display_name": "Srinivasa T. Reddy",
+      "orcid": "https://orcid.org/0000-0003-2959-9531",
+      "h_index": 75,
+      "i10_index": 217,
+      "works_count": 354,
+      "cited_by_count": 21188,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 128,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5108538965",
+      "display_name": "Boi Hanh Huynh",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 155,
+      "works_count": 226,
+      "cited_by_count": 15300,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 129,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5108400573",
+      "display_name": "Larry W. Fisher",
+      "orcid": null,
+      "h_index": 75,
+      "i10_index": 141,
+      "works_count": 177,
+      "cited_by_count": 24291,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 130,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5079736054",
+      "display_name": "Isabel Moura",
+      "orcid": "https://orcid.org/0000-0003-0971-4977",
+      "h_index": 74,
+      "i10_index": 313,
+      "works_count": 540,
+      "cited_by_count": 18828,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 131,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5101578487",
+      "display_name": "Grace Y. Sun",
+      "orcid": "https://orcid.org/0000-0003-4303-0317",
+      "h_index": 74,
+      "i10_index": 266,
+      "works_count": 393,
+      "cited_by_count": 18183,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 132,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5046386333",
+      "display_name": "David N. Brindley",
+      "orcid": "https://orcid.org/0000-0003-2227-0020",
+      "h_index": 74,
+      "i10_index": 257,
+      "works_count": 343,
+      "cited_by_count": 17633,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 133,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5039511381",
+      "display_name": "John D. Imig",
+      "orcid": "https://orcid.org/0000-0002-9668-2899",
+      "h_index": 74,
+      "i10_index": 216,
+      "works_count": 435,
+      "cited_by_count": 17191,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 134,
+      "score": 8.8,
+      "label": "Biochemistry -- 8.8",
+      "id": "https://openalex.org/A5076659724",
+      "display_name": "John W. Peters",
+      "orcid": "https://orcid.org/0000-0001-9117-9568",
+      "h_index": 74,
+      "i10_index": 193,
+      "works_count": 337,
+      "cited_by_count": 20581,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Chemical Engineering",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 135,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5112443370",
+      "display_name": "Ichiro Kudo",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 190,
+      "works_count": 267,
+      "cited_by_count": 18942,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 136,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5069136351",
+      "display_name": "Matthew Whiteman",
+      "orcid": "https://orcid.org/0000-0002-6583-6779",
+      "h_index": 74,
+      "i10_index": 186,
+      "works_count": 284,
+      "cited_by_count": 23668,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 137,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5112868349",
+      "display_name": "Linda K. Curtiss",
+      "orcid": null,
+      "h_index": 74,
+      "i10_index": 173,
+      "works_count": 233,
+      "cited_by_count": 19853,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 138,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5068795367",
+      "display_name": "Elina Ikonen",
+      "orcid": "https://orcid.org/0000-0001-8382-1135",
+      "h_index": 74,
+      "i10_index": 166,
+      "works_count": 272,
+      "cited_by_count": 34270,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 139,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5032705392",
+      "display_name": "Colin D. Funk",
+      "orcid": "https://orcid.org/0000-0001-7029-4233",
+      "h_index": 74,
+      "i10_index": 159,
+      "works_count": 216,
+      "cited_by_count": 23832,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 140,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5015311189",
+      "display_name": "François Verrey",
+      "orcid": "https://orcid.org/0000-0003-3250-9824",
+      "h_index": 74,
+      "i10_index": 144,
+      "works_count": 214,
+      "cited_by_count": 17483,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 141,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5111806216",
+      "display_name": "Eishun Tsuchida",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 526,
+      "works_count": 1242,
+      "cited_by_count": 24917,
+      "discipline": "Biochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Chemistry",
+        "Materials Science",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 142,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5075027819",
+      "display_name": "David Kritchevsky",
+      "orcid": null,
+      "h_index": 73,
+      "i10_index": 369,
+      "works_count": 796,
+      "cited_by_count": 21550,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 143,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5023686004",
+      "display_name": "Barbara Stauch Slusher",
+      "orcid": "https://orcid.org/0000-0001-9814-4157",
+      "h_index": 73,
+      "i10_index": 265,
+      "works_count": 579,
+      "cited_by_count": 22868,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 144,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5075525029",
+      "display_name": "Vesa M. Olkkonen",
+      "orcid": "https://orcid.org/0000-0001-5553-7997",
+      "h_index": 73,
+      "i10_index": 215,
+      "works_count": 340,
+      "cited_by_count": 16766,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 145,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5017956246",
+      "display_name": "Antonio Nanci",
+      "orcid": "https://orcid.org/0000-0003-0616-843X",
+      "h_index": 73,
+      "i10_index": 190,
+      "works_count": 301,
+      "cited_by_count": 17062,
+      "discipline": "Biochemistry",
+      "primary_field": "Dentistry",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Dentistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Engineering",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 146,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5068606823",
+      "display_name": "Loren G. Fong",
+      "orcid": "https://orcid.org/0000-0002-4465-5290",
+      "h_index": 73,
+      "i10_index": 181,
+      "works_count": 221,
+      "cited_by_count": 17771,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 147,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5054753881",
+      "display_name": "Valerie B. O’Donnell",
+      "orcid": "https://orcid.org/0000-0003-4089-8460",
+      "h_index": 73,
+      "i10_index": 160,
+      "works_count": 235,
+      "cited_by_count": 30032,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 148,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5060731094",
+      "display_name": "Daniel S. Ory",
+      "orcid": "https://orcid.org/0000-0003-2188-2818",
+      "h_index": 73,
+      "i10_index": 160,
+      "works_count": 229,
+      "cited_by_count": 26046,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 149,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5088412895",
+      "display_name": "Yi Zhun Zhu",
+      "orcid": "https://orcid.org/0000-0001-7700-8041",
+      "h_index": 72,
+      "i10_index": 365,
+      "works_count": 589,
+      "cited_by_count": 20709,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 150,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5002034222",
+      "display_name": "Frédéric Carrière",
+      "orcid": "https://orcid.org/0000-0003-4848-9418",
+      "h_index": 72,
+      "i10_index": 217,
+      "works_count": 424,
+      "cited_by_count": 28330,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 151,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5080730574",
+      "display_name": "Stephen Wiley Ragsdale",
+      "orcid": "https://orcid.org/0000-0003-3938-8906",
+      "h_index": 72,
+      "i10_index": 213,
+      "works_count": 304,
+      "cited_by_count": 22324,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 152,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5109718208",
+      "display_name": "Michael K. Johnson",
+      "orcid": null,
+      "h_index": 72,
+      "i10_index": 190,
+      "works_count": 245,
+      "cited_by_count": 16918,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 153,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5026795284",
+      "display_name": "Wolfgang J. Schneider",
+      "orcid": "https://orcid.org/0000-0002-9162-1640",
+      "h_index": 72,
+      "i10_index": 182,
+      "works_count": 259,
+      "cited_by_count": 18123,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 154,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5074021013",
+      "display_name": "Stefan Bröer",
+      "orcid": "https://orcid.org/0000-0002-8040-1634",
+      "h_index": 72,
+      "i10_index": 165,
+      "works_count": 232,
+      "cited_by_count": 17266,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 155,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5040844784",
+      "display_name": "Ralf R. Mendel",
+      "orcid": "https://orcid.org/0000-0003-3785-7764",
+      "h_index": 72,
+      "i10_index": 162,
+      "works_count": 201,
+      "cited_by_count": 17201,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 156,
+      "score": 8.7,
+      "label": "Biochemistry -- 8.7",
+      "id": "https://openalex.org/A5077274238",
+      "display_name": "Timothy F. Osborne",
+      "orcid": "https://orcid.org/0000-0002-5150-4300",
+      "h_index": 72,
+      "i10_index": 136,
+      "works_count": 176,
+      "cited_by_count": 20829,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 157,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5110016084",
+      "display_name": "Rolf Kristian Berge",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 308,
+      "works_count": 471,
+      "cited_by_count": 17602,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 158,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5091912561",
+      "display_name": "Martha Joan Somerman",
+      "orcid": "https://orcid.org/0000-0002-4819-6079",
+      "h_index": 71,
+      "i10_index": 195,
+      "works_count": 241,
+      "cited_by_count": 14618,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Dentistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 159,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5085224645",
+      "display_name": "Salih J. Wakil",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 169,
+      "works_count": 197,
+      "cited_by_count": 19830,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 160,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5052325616",
+      "display_name": "William Scott Argraves",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 132,
+      "works_count": 162,
+      "cited_by_count": 15161,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 161,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5112776911",
+      "display_name": "Jean E. Vance",
+      "orcid": null,
+      "h_index": 71,
+      "i10_index": 124,
+      "works_count": 152,
+      "cited_by_count": 19565,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 162,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5105180720",
+      "display_name": "Stuart J. Ferguson",
+      "orcid": "https://orcid.org/0000-0003-0569-100X",
+      "h_index": 70,
+      "i10_index": 277,
+      "works_count": 410,
+      "cited_by_count": 16659,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 163,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5089801293",
+      "display_name": "Henry J. Pownall",
+      "orcid": "https://orcid.org/0000-0001-8412-506X",
+      "h_index": 70,
+      "i10_index": 273,
+      "works_count": 427,
+      "cited_by_count": 18447,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 164,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5046497078",
+      "display_name": "Friedhelm Schroeder",
+      "orcid": "https://orcid.org/0000-0002-3545-7962",
+      "h_index": 70,
+      "i10_index": 262,
+      "works_count": 302,
+      "cited_by_count": 15490,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 165,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5064237607",
+      "display_name": "Tadhg P. Begley",
+      "orcid": "https://orcid.org/0000-0001-5134-2623",
+      "h_index": 70,
+      "i10_index": 231,
+      "works_count": 298,
+      "cited_by_count": 15737,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 166,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5063605916",
+      "display_name": "Michal Laniado Schwartzman",
+      "orcid": "https://orcid.org/0000-0003-0254-7248",
+      "h_index": 70,
+      "i10_index": 219,
+      "works_count": 390,
+      "cited_by_count": 15159,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 167,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5080995646",
+      "display_name": "Timothy Martin Cox",
+      "orcid": "https://orcid.org/0000-0002-4951-9941",
+      "h_index": 70,
+      "i10_index": 212,
+      "works_count": 405,
+      "cited_by_count": 15631,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 168,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5055404631",
+      "display_name": "M. Mahmood Hussain",
+      "orcid": "https://orcid.org/0000-0002-9663-300X",
+      "h_index": 70,
+      "i10_index": 201,
+      "works_count": 342,
+      "cited_by_count": 17983,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 169,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5112817943",
+      "display_name": "Jorge H. Capdevila",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 185,
+      "works_count": 249,
+      "cited_by_count": 14956,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 170,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5012696265",
+      "display_name": "David Y. Hui",
+      "orcid": "https://orcid.org/0000-0001-7333-2151",
+      "h_index": 70,
+      "i10_index": 183,
+      "works_count": 261,
+      "cited_by_count": 15936,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 171,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5046442129",
+      "display_name": "Jin‐Song Bian",
+      "orcid": "https://orcid.org/0000-0001-8000-3356",
+      "h_index": 70,
+      "i10_index": 180,
+      "works_count": 321,
+      "cited_by_count": 15617,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 172,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5018247144",
+      "display_name": "Thorsten Burmester",
+      "orcid": "https://orcid.org/0000-0002-5772-7863",
+      "h_index": 70,
+      "i10_index": 177,
+      "works_count": 282,
+      "cited_by_count": 16496,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Environmental Science",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 173,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5005653232",
+      "display_name": "Jöerg Heeren",
+      "orcid": "https://orcid.org/0000-0002-5647-1034",
+      "h_index": 70,
+      "i10_index": 170,
+      "works_count": 299,
+      "cited_by_count": 21673,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 174,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5103538908",
+      "display_name": "Wendy Jessup",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 159,
+      "works_count": 265,
+      "cited_by_count": 15844,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 175,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5072409509",
+      "display_name": "Bärbel Friedrich",
+      "orcid": null,
+      "h_index": 70,
+      "i10_index": 153,
+      "works_count": 207,
+      "cited_by_count": 15082,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 176,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5078374648",
+      "display_name": "Simon P. J. Albracht",
+      "orcid": "https://orcid.org/0000-0002-8493-8527",
+      "h_index": 70,
+      "i10_index": 144,
+      "works_count": 187,
+      "cited_by_count": 14223,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 177,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5032058846",
+      "display_name": "Jesús Balsinde",
+      "orcid": "https://orcid.org/0000-0002-4157-6714",
+      "h_index": 70,
+      "i10_index": 138,
+      "works_count": 240,
+      "cited_by_count": 12795,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 178,
+      "score": 8.6,
+      "label": "Biochemistry -- 8.6",
+      "id": "https://openalex.org/A5036215518",
+      "display_name": "Thomas Happe",
+      "orcid": "https://orcid.org/0000-0003-1206-5234",
+      "h_index": 70,
+      "i10_index": 129,
+      "works_count": 221,
+      "cited_by_count": 14519,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Energy"
+      ]
+    },
+    {
+      "rank": 179,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5036191557",
+      "display_name": "Morris Kates",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 191,
+      "works_count": 234,
+      "cited_by_count": 15388,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 180,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5038863786",
+      "display_name": "Hei Sook Sul",
+      "orcid": "https://orcid.org/0000-0002-3372-5097",
+      "h_index": 69,
+      "i10_index": 122,
+      "works_count": 162,
+      "cited_by_count": 21013,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 181,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5028048155",
+      "display_name": "John F. Oram",
+      "orcid": null,
+      "h_index": 69,
+      "i10_index": 106,
+      "works_count": 128,
+      "cited_by_count": 17235,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 182,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5074303150",
+      "display_name": "Jaak Jaeken",
+      "orcid": "https://orcid.org/0000-0003-1571-9707",
+      "h_index": 68,
+      "i10_index": 248,
+      "works_count": 376,
+      "cited_by_count": 16005,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 183,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5041440753",
+      "display_name": "Ming Xian",
+      "orcid": "https://orcid.org/0000-0002-7902-2987",
+      "h_index": 68,
+      "i10_index": 228,
+      "works_count": 346,
+      "cited_by_count": 19136,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 184,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5008642978",
+      "display_name": "Miguel S. Teixeira",
+      "orcid": "https://orcid.org/0000-0003-4124-6237",
+      "h_index": 68,
+      "i10_index": 225,
+      "works_count": 343,
+      "cited_by_count": 16137,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 185,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5109865618",
+      "display_name": "Quentin Howieson Gibson",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 207,
+      "works_count": 273,
+      "cited_by_count": 15495,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 186,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5041761706",
+      "display_name": "Antonio Moschetta",
+      "orcid": "https://orcid.org/0000-0003-2123-6074",
+      "h_index": 68,
+      "i10_index": 184,
+      "works_count": 379,
+      "cited_by_count": 20662,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 187,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5081137337",
+      "display_name": "Erik Änggård",
+      "orcid": null,
+      "h_index": 68,
+      "i10_index": 156,
+      "works_count": 231,
+      "cited_by_count": 16709,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 188,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5036246480",
+      "display_name": "Ulf Diczfalusy",
+      "orcid": "https://orcid.org/0000-0001-6643-3763",
+      "h_index": 68,
+      "i10_index": 145,
+      "works_count": 182,
+      "cited_by_count": 16830,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 189,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5002528642",
+      "display_name": "Yajaira Suárez",
+      "orcid": "https://orcid.org/0000-0003-4549-2953",
+      "h_index": 68,
+      "i10_index": 104,
+      "works_count": 137,
+      "cited_by_count": 15591,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 190,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5102955816",
+      "display_name": "Chien Ho",
+      "orcid": "https://orcid.org/0000-0002-4094-9232",
+      "h_index": 67,
+      "i10_index": 269,
+      "works_count": 389,
+      "cited_by_count": 15237,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 191,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5110887933",
+      "display_name": "D.O. Hall",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 247,
+      "works_count": 582,
+      "cited_by_count": 15757,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Energy",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 192,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5081851324",
+      "display_name": "Richard L. Jackson",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 194,
+      "works_count": 265,
+      "cited_by_count": 16847,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 193,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5110904044",
+      "display_name": "Lambert M. G. van Golde",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 190,
+      "works_count": 237,
+      "cited_by_count": 13936,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 194,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5112068108",
+      "display_name": "John H. Law",
+      "orcid": "https://orcid.org/0009-0000-8696-9944",
+      "h_index": 67,
+      "i10_index": 183,
+      "works_count": 220,
+      "cited_by_count": 14200,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 195,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5111975349",
+      "display_name": "Rex M. C. Dawson",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 172,
+      "works_count": 213,
+      "cited_by_count": 14950,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 196,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5022202339",
+      "display_name": "Kaspar H. Winterhalter",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 165,
+      "works_count": 243,
+      "cited_by_count": 13321,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 197,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5111482964",
+      "display_name": "Jean L. Johnson",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 129,
+      "works_count": 194,
+      "cited_by_count": 13811,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Business, Management and Accounting",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 198,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5023371818",
+      "display_name": "Ruth Welti",
+      "orcid": "https://orcid.org/0000-0003-4373-2538",
+      "h_index": 67,
+      "i10_index": 127,
+      "works_count": 212,
+      "cited_by_count": 20165,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 199,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5108443957",
+      "display_name": "John D. Termine",
+      "orcid": null,
+      "h_index": 67,
+      "i10_index": 126,
+      "works_count": 152,
+      "cited_by_count": 17442,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Dentistry"
+      ]
+    },
+    {
+      "rank": 200,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5110459797",
+      "display_name": "Fred F. C. Snyder",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 257,
+      "works_count": 357,
+      "cited_by_count": 15535,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 201,
+      "score": 8.5,
+      "label": "Biochemistry -- 8.5",
+      "id": "https://openalex.org/A5049502167",
+      "display_name": "Gustav Dallner",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 221,
+      "works_count": 303,
+      "cited_by_count": 19426,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 202,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5103156779",
+      "display_name": "Peter Klein",
+      "orcid": "https://orcid.org/0000-0003-2926-2066",
+      "h_index": 66,
+      "i10_index": 215,
+      "works_count": 369,
+      "cited_by_count": 17036,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 203,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5110139779",
+      "display_name": "Jürgen C. Frölich",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 189,
+      "works_count": 272,
+      "cited_by_count": 17372,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 204,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5110436238",
+      "display_name": "Wilhelm Stoffel",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 187,
+      "works_count": 236,
+      "cited_by_count": 16007,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 205,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5091229812",
+      "display_name": "A. Grant Mauk",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 186,
+      "works_count": 255,
+      "cited_by_count": 11920,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 206,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5082020452",
+      "display_name": "Lloyd D. Fricker",
+      "orcid": "https://orcid.org/0000-0001-5484-9243",
+      "h_index": 66,
+      "i10_index": 175,
+      "works_count": 263,
+      "cited_by_count": 12914,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Neuroscience",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 207,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5021739134",
+      "display_name": "Kent Dean Chapman",
+      "orcid": "https://orcid.org/0000-0003-0489-3072",
+      "h_index": 66,
+      "i10_index": 175,
+      "works_count": 255,
+      "cited_by_count": 12877,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 208,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5004209066",
+      "display_name": "David E. Cohen",
+      "orcid": "https://orcid.org/0000-0001-9827-6926",
+      "h_index": 66,
+      "i10_index": 161,
+      "works_count": 256,
+      "cited_by_count": 19781,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 209,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5091743443",
+      "display_name": "Paul A. Watkins",
+      "orcid": "https://orcid.org/0000-0002-3246-1405",
+      "h_index": 66,
+      "i10_index": 134,
+      "works_count": 210,
+      "cited_by_count": 13792,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Neuroscience"
+      ]
+    },
+    {
+      "rank": 210,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5103492850",
+      "display_name": "Christopher J. Fielding",
+      "orcid": null,
+      "h_index": 66,
+      "i10_index": 122,
+      "works_count": 152,
+      "cited_by_count": 14040,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 211,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5000512905",
+      "display_name": "Jun Yang",
+      "orcid": "https://orcid.org/0000-0001-8126-1728",
+      "h_index": 65,
+      "i10_index": 223,
+      "works_count": 348,
+      "cited_by_count": 14467,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 212,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5109128571",
+      "display_name": "Richard Cammack",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 203,
+      "works_count": 345,
+      "cited_by_count": 13832,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 213,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5009982249",
+      "display_name": "Ingrid De Meester",
+      "orcid": "https://orcid.org/0000-0002-3421-0124",
+      "h_index": 65,
+      "i10_index": 181,
+      "works_count": 290,
+      "cited_by_count": 14328,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 214,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5110420472",
+      "display_name": "Donald B. Zilversmit",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 179,
+      "works_count": 218,
+      "cited_by_count": 18164,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 215,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5111438911",
+      "display_name": "Halvor N. Christensen",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 175,
+      "works_count": 238,
+      "cited_by_count": 14699,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Agricultural and Biological Sciences"
+      ]
+    },
+    {
+      "rank": 216,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5112856730",
+      "display_name": "Donald Talbot Downing",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 165,
+      "works_count": 187,
+      "cited_by_count": 14758,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 217,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5082465084",
+      "display_name": "Naoya Yahagi",
+      "orcid": "https://orcid.org/0000-0002-1823-1865",
+      "h_index": 65,
+      "i10_index": 144,
+      "works_count": 422,
+      "cited_by_count": 16044,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 218,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5075976228",
+      "display_name": "P. Roy Vagelos",
+      "orcid": null,
+      "h_index": 65,
+      "i10_index": 129,
+      "works_count": 170,
+      "cited_by_count": 12192,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 219,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5067547623",
+      "display_name": "Barbara A. Fielding",
+      "orcid": "https://orcid.org/0000-0001-7887-809X",
+      "h_index": 65,
+      "i10_index": 123,
+      "works_count": 227,
+      "cited_by_count": 14103,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 220,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5012834613",
+      "display_name": "Oswald Quehenberger",
+      "orcid": "https://orcid.org/0000-0001-8950-9169",
+      "h_index": 65,
+      "i10_index": 108,
+      "works_count": 150,
+      "cited_by_count": 17426,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 221,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5058393037",
+      "display_name": "Nan Wang",
+      "orcid": "https://orcid.org/0000-0001-9976-0859",
+      "h_index": 65,
+      "i10_index": 86,
+      "works_count": 125,
+      "cited_by_count": 20212,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 222,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5073641797",
+      "display_name": "Eraldo Antonini",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 255,
+      "works_count": 348,
+      "cited_by_count": 16747,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 223,
+      "score": 8.4,
+      "label": "Biochemistry -- 8.4",
+      "id": "https://openalex.org/A5003169557",
+      "display_name": "Loredano Pollegioni",
+      "orcid": "https://orcid.org/0000-0003-1733-7243",
+      "h_index": 64,
+      "i10_index": 235,
+      "works_count": 571,
+      "cited_by_count": 15362,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 224,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5101654505",
+      "display_name": "Takashi Yonetani",
+      "orcid": "https://orcid.org/0000-0003-0476-0472",
+      "h_index": 64,
+      "i10_index": 202,
+      "works_count": 295,
+      "cited_by_count": 13889,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry",
+        "Materials Science"
+      ]
+    },
+    {
+      "rank": 225,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5112006496",
+      "display_name": "William W. Christie",
+      "orcid": null,
+      "h_index": 64,
+      "i10_index": 192,
+      "works_count": 272,
+      "cited_by_count": 14793,
+      "discipline": "Biochemistry",
+      "primary_field": "Chemistry",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Chemistry",
+        "Biochemistry, Genetics and Molecular Biology",
+        "Nursing"
+      ]
+    },
+    {
+      "rank": 226,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5006206064",
+      "display_name": "Denis L. Rousseau",
+      "orcid": "https://orcid.org/0000-0001-5405-5128",
+      "h_index": 64,
+      "i10_index": 190,
+      "works_count": 266,
+      "cited_by_count": 13770,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    },
+    {
+      "rank": 227,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5062077189",
+      "display_name": "Donatella Caruso",
+      "orcid": "https://orcid.org/0000-0003-2115-778X",
+      "h_index": 64,
+      "i10_index": 189,
+      "works_count": 295,
+      "cited_by_count": 12067,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 228,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5110263933",
+      "display_name": "Berge Arakel Minassian",
+      "orcid": "https://orcid.org/0000-0002-9322-0189",
+      "h_index": 64,
+      "i10_index": 180,
+      "works_count": 285,
+      "cited_by_count": 14811,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 229,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5059473457",
+      "display_name": "Jogchum Plat",
+      "orcid": "https://orcid.org/0000-0002-1570-9608",
+      "h_index": 64,
+      "i10_index": 178,
+      "works_count": 338,
+      "cited_by_count": 12686,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Nursing",
+        "Pharmacology, Toxicology and Pharmaceutics"
+      ]
+    },
+    {
+      "rank": 230,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5053011805",
+      "display_name": "Fredric B. Kraemer",
+      "orcid": "https://orcid.org/0000-0003-2468-7807",
+      "h_index": 64,
+      "i10_index": 172,
+      "works_count": 223,
+      "cited_by_count": 15778,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 231,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5065582421",
+      "display_name": "Xian‐Cheng Jiang",
+      "orcid": "https://orcid.org/0000-0003-2030-9542",
+      "h_index": 64,
+      "i10_index": 156,
+      "works_count": 220,
+      "cited_by_count": 13385,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 232,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5048849311",
+      "display_name": "Miranda Van Eck",
+      "orcid": "https://orcid.org/0000-0003-3936-3194",
+      "h_index": 64,
+      "i10_index": 149,
+      "works_count": 276,
+      "cited_by_count": 11972,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine",
+        "Immunology and Microbiology"
+      ]
+    },
+    {
+      "rank": 233,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5079929612",
+      "display_name": "Cecilia Holm",
+      "orcid": "https://orcid.org/0000-0002-7496-8167",
+      "h_index": 64,
+      "i10_index": 147,
+      "works_count": 169,
+      "cited_by_count": 13056,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 234,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5019115247",
+      "display_name": "David Q.‐H. Wang",
+      "orcid": "https://orcid.org/0000-0002-5439-7651",
+      "h_index": 64,
+      "i10_index": 140,
+      "works_count": 209,
+      "cited_by_count": 14575,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 235,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5069470083",
+      "display_name": "Robert Zimmermann",
+      "orcid": "https://orcid.org/0000-0002-7354-870X",
+      "h_index": 64,
+      "i10_index": 120,
+      "works_count": 178,
+      "cited_by_count": 20926,
+      "discipline": "Biochemistry",
+      "primary_field": "Medicine",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Medicine",
+        "Biochemistry, Genetics and Molecular Biology"
+      ]
+    },
+    {
+      "rank": 236,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5102780734",
+      "display_name": "Christoph Thiele",
+      "orcid": "https://orcid.org/0000-0001-5161-2558",
+      "h_index": 64,
+      "i10_index": 109,
+      "works_count": 198,
+      "cited_by_count": 17192,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Medicine"
+      ]
+    },
+    {
+      "rank": 237,
+      "score": 8.3,
+      "label": "Biochemistry -- 8.3",
+      "id": "https://openalex.org/A5062670274",
+      "display_name": "Gerard W. Canters",
+      "orcid": "https://orcid.org/0000-0002-8496-2332",
+      "h_index": 63,
+      "i10_index": 252,
+      "works_count": 381,
+      "cited_by_count": 13394,
+      "discipline": "Biochemistry",
+      "primary_field": "Biochemistry, Genetics and Molecular Biology",
+      "primary_subfield": "Biochemistry",
+      "fields": [
+        "Biochemistry, Genetics and Molecular Biology",
+        "Chemistry"
+      ]
+    }
+  ]
+}

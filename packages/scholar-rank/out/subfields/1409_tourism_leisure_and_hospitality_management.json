@@ -1,0 +1,797 @@
+{
+  "kind": "subfield",
+  "id": 1409,
+  "name": "Tourism, Leisure and Hospitality Management",
+  "total_in_scrape": 41,
+  "count": 41,
+  "scholars": [
+    {
+      "rank": 1,
+      "score": 9.9,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.9",
+      "id": "https://openalex.org/A5051839223",
+      "display_name": "C. Michael Hall",
+      "orcid": "https://orcid.org/0000-0002-7734-4587",
+      "h_index": 131,
+      "i10_index": 619,
+      "works_count": 1197,
+      "cited_by_count": 74990,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 2,
+      "score": 9.9,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.9",
+      "id": "https://openalex.org/A5005460332",
+      "display_name": "Rob Law",
+      "orcid": "https://orcid.org/0000-0001-7199-3757",
+      "h_index": 128,
+      "i10_index": 645,
+      "works_count": 1066,
+      "cited_by_count": 72140,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences"
+      ]
+    },
+    {
+      "rank": 3,
+      "score": 9.9,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.9",
+      "id": "https://openalex.org/A5068663980",
+      "display_name": "Dimitrios Buhalis",
+      "orcid": "https://orcid.org/0000-0001-9148-6090",
+      "h_index": 111,
+      "i10_index": 306,
+      "works_count": 615,
+      "cited_by_count": 81757,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 4,
+      "score": 9.9,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.9",
+      "id": "https://openalex.org/A5086298888",
+      "display_name": "Doğan Gürsoy",
+      "orcid": "https://orcid.org/0000-0002-3602-9433",
+      "h_index": 100,
+      "i10_index": 221,
+      "works_count": 347,
+      "cited_by_count": 42433,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 5,
+      "score": 9.9,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.9",
+      "id": "https://openalex.org/A5008535035",
+      "display_name": "Sara Dolničar",
+      "orcid": "https://orcid.org/0000-0001-5176-3161",
+      "h_index": 95,
+      "i10_index": 283,
+      "works_count": 835,
+      "cited_by_count": 29347,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 6,
+      "score": 9.9,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.9",
+      "id": "https://openalex.org/A5039529252",
+      "display_name": "Stefan Gößling",
+      "orcid": "https://orcid.org/0000-0003-0505-9207",
+      "h_index": 86,
+      "i10_index": 187,
+      "works_count": 324,
+      "cited_by_count": 36176,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 7,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5068024517",
+      "display_name": "Stephen John Page",
+      "orcid": "https://orcid.org/0000-0002-1756-4561",
+      "h_index": 84,
+      "i10_index": 250,
+      "works_count": 643,
+      "cited_by_count": 27925,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Medicine",
+        "Neuroscience",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 8,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5030434922",
+      "display_name": "Haiyan Song",
+      "orcid": "https://orcid.org/0000-0001-6158-1222",
+      "h_index": 84,
+      "i10_index": 192,
+      "works_count": 338,
+      "cited_by_count": 24062,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 9,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5008359579",
+      "display_name": "Daniel J. Scott",
+      "orcid": "https://orcid.org/0000-0001-7825-9301",
+      "h_index": 84,
+      "i10_index": 187,
+      "works_count": 303,
+      "cited_by_count": 33931,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 10,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5069884435",
+      "display_name": "Alastair M. Morrison",
+      "orcid": "https://orcid.org/0000-0002-0754-1083",
+      "h_index": 83,
+      "i10_index": 273,
+      "works_count": 506,
+      "cited_by_count": 25495,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 11,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5035975032",
+      "display_name": "Ulrike Gretzel",
+      "orcid": "https://orcid.org/0000-0001-8416-1829",
+      "h_index": 82,
+      "i10_index": 214,
+      "works_count": 460,
+      "cited_by_count": 35772,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Computer Science"
+      ]
+    },
+    {
+      "rank": 12,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5058967946",
+      "display_name": "Choong‐Ki Lee",
+      "orcid": "https://orcid.org/0000-0002-2865-8918",
+      "h_index": 82,
+      "i10_index": 207,
+      "works_count": 431,
+      "cited_by_count": 25960,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 13,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5024870077",
+      "display_name": "Muzaffer Uysal",
+      "orcid": "https://orcid.org/0000-0003-1970-932X",
+      "h_index": 82,
+      "i10_index": 185,
+      "works_count": 348,
+      "cited_by_count": 37970,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 14,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5049773475",
+      "display_name": "Fevzi Okumuş",
+      "orcid": "https://orcid.org/0000-0001-8670-9720",
+      "h_index": 80,
+      "i10_index": 195,
+      "works_count": 439,
+      "cited_by_count": 34716,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 15,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5029343434",
+      "display_name": "Seongseop Kim",
+      "orcid": "https://orcid.org/0000-0002-9213-6540",
+      "h_index": 78,
+      "i10_index": 271,
+      "works_count": 433,
+      "cited_by_count": 21673,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 16,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5015208437",
+      "display_name": "Bob McKercher",
+      "orcid": "https://orcid.org/0000-0001-7451-1266",
+      "h_index": 77,
+      "i10_index": 186,
+      "works_count": 425,
+      "cited_by_count": 24553,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 17,
+      "score": 9.8,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.8",
+      "id": "https://openalex.org/A5085325322",
+      "display_name": "Chris Ryan",
+      "orcid": "https://orcid.org/0000-0001-6244-5214",
+      "h_index": 75,
+      "i10_index": 216,
+      "works_count": 399,
+      "cited_by_count": 22231,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 18,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5111918810",
+      "display_name": "John L. Crompton",
+      "orcid": "https://orcid.org/0000-0002-1302-383X",
+      "h_index": 73,
+      "i10_index": 197,
+      "works_count": 383,
+      "cited_by_count": 38238,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 19,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5077990719",
+      "display_name": "Tom G. Baum",
+      "orcid": "https://orcid.org/0000-0002-5918-847X",
+      "h_index": 72,
+      "i10_index": 198,
+      "works_count": 378,
+      "cited_by_count": 17328,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 20,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5086736228",
+      "display_name": "Larry Dwyer",
+      "orcid": "https://orcid.org/0000-0002-9797-1043",
+      "h_index": 72,
+      "i10_index": 177,
+      "works_count": 411,
+      "cited_by_count": 20486,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 21,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5103079250",
+      "display_name": "Philip L. Pearce",
+      "orcid": "https://orcid.org/0000-0003-3829-4449",
+      "h_index": 71,
+      "i10_index": 205,
+      "works_count": 416,
+      "cited_by_count": 20849,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 22,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5061386250",
+      "display_name": "Donald Getz",
+      "orcid": "https://orcid.org/0000-0001-5562-8012",
+      "h_index": 71,
+      "i10_index": 150,
+      "works_count": 344,
+      "cited_by_count": 30438,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 23,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5004109046",
+      "display_name": "Christian M. Rogerson",
+      "orcid": "https://orcid.org/0000-0003-1306-8867",
+      "h_index": 70,
+      "i10_index": 376,
+      "works_count": 649,
+      "cited_by_count": 18284,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 24,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5003915227",
+      "display_name": "Girish Prayag",
+      "orcid": "https://orcid.org/0000-0001-6243-2747",
+      "h_index": 70,
+      "i10_index": 155,
+      "works_count": 302,
+      "cited_by_count": 21173,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 25,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5065344299",
+      "display_name": "Brent W. Ritchie",
+      "orcid": "https://orcid.org/0000-0003-1540-9389",
+      "h_index": 70,
+      "i10_index": 131,
+      "works_count": 281,
+      "cited_by_count": 18451,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 26,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5066300611",
+      "display_name": "Ralf Buckley",
+      "orcid": "https://orcid.org/0000-0003-0442-5818",
+      "h_index": 69,
+      "i10_index": 246,
+      "works_count": 574,
+      "cited_by_count": 19142,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 27,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5044784683",
+      "display_name": "Noel Scott",
+      "orcid": "https://orcid.org/0000-0001-8770-2563",
+      "h_index": 69,
+      "i10_index": 188,
+      "works_count": 476,
+      "cited_by_count": 18030,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 28,
+      "score": 9.7,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.7",
+      "id": "https://openalex.org/A5006428406",
+      "display_name": "Μαριάννα Σιγάλα",
+      "orcid": "https://orcid.org/0000-0001-8997-2292",
+      "h_index": 69,
+      "i10_index": 185,
+      "works_count": 410,
+      "cited_by_count": 27774,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 29,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5050200906",
+      "display_name": "Geoffrey C. Wall",
+      "orcid": "https://orcid.org/0000-0001-5649-8715",
+      "h_index": 68,
+      "i10_index": 206,
+      "works_count": 428,
+      "cited_by_count": 19163,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 30,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5028808219",
+      "display_name": "Daniel R. Fesenmaier",
+      "orcid": "https://orcid.org/0000-0003-4829-8056",
+      "h_index": 68,
+      "i10_index": 192,
+      "works_count": 391,
+      "cited_by_count": 26247,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 31,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5031891671",
+      "display_name": "Susanne Becken",
+      "orcid": "https://orcid.org/0000-0002-3348-2750",
+      "h_index": 68,
+      "i10_index": 162,
+      "works_count": 311,
+      "cited_by_count": 16130,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Economics, Econometrics and Finance",
+        "Social Sciences",
+        "Environmental Science"
+      ]
+    },
+    {
+      "rank": 32,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5058313826",
+      "display_name": "Dallen J. Timothy",
+      "orcid": "https://orcid.org/0000-0003-1373-1251",
+      "h_index": 66,
+      "i10_index": 197,
+      "works_count": 556,
+      "cited_by_count": 20412,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Arts and Humanities"
+      ]
+    },
+    {
+      "rank": 33,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5022418334",
+      "display_name": "Jerry J. Vaske",
+      "orcid": "https://orcid.org/0000-0002-6703-2264",
+      "h_index": 66,
+      "i10_index": 180,
+      "works_count": 301,
+      "cited_by_count": 19080,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Environmental Science",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 34,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5056030658",
+      "display_name": "Abraham Pizam",
+      "orcid": "https://orcid.org/0000-0002-1448-4312",
+      "h_index": 66,
+      "i10_index": 145,
+      "works_count": 343,
+      "cited_by_count": 19887,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 35,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5032492210",
+      "display_name": "Levent Altınay",
+      "orcid": "https://orcid.org/0000-0002-7293-9362",
+      "h_index": 66,
+      "i10_index": 132,
+      "works_count": 198,
+      "cited_by_count": 13606,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences"
+      ]
+    },
+    {
+      "rank": 36,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5021474188",
+      "display_name": "Greg Richards",
+      "orcid": "https://orcid.org/0000-0002-5903-6310",
+      "h_index": 65,
+      "i10_index": 194,
+      "works_count": 488,
+      "cited_by_count": 23655,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Social Sciences",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Social Sciences",
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 37,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5108052996",
+      "display_name": "Yang Yang",
+      "orcid": "https://orcid.org/0000-0001-9436-964X",
+      "h_index": 65,
+      "i10_index": 193,
+      "works_count": 640,
+      "cited_by_count": 15785,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Social Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    },
+    {
+      "rank": 38,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5025927856",
+      "display_name": "Songshan Sam Huang",
+      "orcid": "https://orcid.org/0000-0003-4990-2788",
+      "h_index": 65,
+      "i10_index": 183,
+      "works_count": 326,
+      "cited_by_count": 14626,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 39,
+      "score": 9.6,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.6",
+      "id": "https://openalex.org/A5100331004",
+      "display_name": "Xiang Robert Li",
+      "orcid": "https://orcid.org/0000-0001-6968-5958",
+      "h_index": 65,
+      "i10_index": 171,
+      "works_count": 417,
+      "cited_by_count": 14400,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 40,
+      "score": 9.5,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.5",
+      "id": "https://openalex.org/A5027684507",
+      "display_name": "Xinran You Lehto",
+      "orcid": "https://orcid.org/0000-0002-4812-4315",
+      "h_index": 65,
+      "i10_index": 140,
+      "works_count": 221,
+      "cited_by_count": 15290,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting"
+      ]
+    },
+    {
+      "rank": 41,
+      "score": 9.5,
+      "label": "Tourism, Leisure and Hospitality Management -- 9.5",
+      "id": "https://openalex.org/A5054196834",
+      "display_name": "A. George Assaf",
+      "orcid": "https://orcid.org/0000-0002-3920-2844",
+      "h_index": 64,
+      "i10_index": 136,
+      "works_count": 206,
+      "cited_by_count": 13781,
+      "discipline": "Tourism, Leisure and Hospitality Management",
+      "primary_field": "Business, Management and Accounting",
+      "primary_subfield": "Tourism, Leisure and Hospitality Management",
+      "fields": [
+        "Business, Management and Accounting",
+        "Decision Sciences",
+        "Economics, Econometrics and Finance"
+      ]
+    }
+  ]
+}
