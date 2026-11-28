@@ -32,14 +32,17 @@ import {
 import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
-import { deriveRoundLabel, type SavedRoundSummary } from "../state/savedRounds"
+import { deriveRoundLabel, readSavedRoundFlowIds, type SavedRoundSummary } from "../state/savedRounds"
 import {
   filterSavedSummaries,
   SAVED_SUMMARY_SORT_OPTIONS,
   describeSavedLoadFailure,
+  describeSavedRoundRemoval,
+  savedRoundFlowsPrompt,
   savedSummaryCountLabel,
   sortSavedSummaries,
   toSavedSummarySort,
+  type SavedRoundFlowsChoice,
   type SavedSummarySort,
 } from "../state/savedSummaryFilter"
 import {
@@ -206,6 +209,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   /** Why a saved flow / round wouldn't open, keyed by `clientId`; shown while its status is `"load-error"`. */
   const [cloudLoadErrors, setCloudLoadErrors] = useState<Record<number, string>>({})
   const [cloudRoundLoadErrors, setCloudRoundLoadErrors] = useState<Record<number, string>>({})
+  /** The `aria-live` line after a saved round is removed (and how many of its flows went with it). */
+  const [cloudRoundRemovedNotice, setCloudRoundRemovedNotice] = useState("")
   const [bulkSaveStatus, setBulkSaveStatus] = useState<"idle" | "saving" | "done">("idle")
   const [bulkSaveSummary, setBulkSaveSummary] = useState<{ savedCount: number; errorCount: number } | null>(null)
   const [bulkFlowSaveStatus, setBulkFlowSaveStatus] = useState<"idle" | "saving" | "done">("idle")
@@ -237,6 +242,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       setCloudRoundActions({})
       setCloudLoadErrors({})
       setCloudRoundLoadErrors({})
+      setCloudRoundRemovedNotice("")
       setBulkSaveStatus("idle")
       setBulkSaveSummary(null)
       setBulkFlowSaveStatus("idle")
@@ -595,22 +601,46 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     }
   }
 
-  /** Removes a saved round from the account. Leaves the local round (and its flows) untouched. */
+  /**
+   * Removes a saved round from the account. When some of its flows are in
+   * the account list too, a second prompt asks whether they go with it
+   * (`DELETE …?withFlows=1`, which keeps any flow another saved round uses).
+   * The copy in this browser is never touched.
+   */
   const handleRemoveCloudRound = async (clientId: number, label: string) => {
-    if (
-      !confirm(
-        `Remove "${label}" from your account? Its flows saved to your account and the copy in this browser are not affected.`,
-      )
-    )
-      return
+    if (!confirm(`Remove "${label}" from your account? The copy in this browser is not affected.`)) return
     setCloudRoundActions((prev) => ({ ...prev, [clientId]: "removing" }))
+    setCloudRoundRemovedNotice("")
+
+    let choice: SavedRoundFlowsChoice = "none"
+    const savedFlowIds = cloudList.kind === "loaded" ? new Set(cloudList.flows.map((f) => f.clientId)) : null
+    if (savedFlowIds && savedFlowIds.size > 0) {
+      // Which of this round's flows are saved too. A round that can't be read
+      // here is removed on its own, as before.
+      const saved = await fetchSavedRound(clientId).catch(() => null)
+      const count = saved ? readSavedRoundFlowIds(saved).filter((id) => savedFlowIds.has(id)).length : 0
+      if (count > 0) choice = confirm(savedRoundFlowsPrompt(label, count)) ? "removed" : "kept"
+    }
+    const withFlows = choice === "removed"
+
     try {
-      await deleteSavedRound(clientId)
+      const outcome = (await deleteSavedRound(clientId, undefined, { withFlows })) ?? {
+        removedFlowIds: [],
+        keptFlowIds: [],
+        flowsUnreadable: false,
+      }
       setCloudRoundList((prev) =>
         prev.kind === "loaded"
           ? { kind: "loaded", rounds: prev.rounds.filter((r) => r.clientId !== clientId) }
           : prev,
       )
+      if (outcome.removedFlowIds.length > 0) {
+        const removed = new Set(outcome.removedFlowIds)
+        setCloudList((prev) =>
+          prev.kind === "loaded" ? { kind: "loaded", flows: prev.flows.filter((f) => !removed.has(f.clientId)) } : prev,
+        )
+      }
+      setCloudRoundRemovedNotice(describeSavedRoundRemoval(label, outcome, choice))
     } catch {
       setCloudRoundActions((prev) => ({ ...prev, [clientId]: "remove-error" }))
     }
@@ -1042,6 +1072,14 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                       </span>
                     )}
                   </div>
+                  <p
+                    role="status"
+                    aria-live="polite"
+                    className={cloudRoundRemovedNotice ? "px-1 pt-1 text-xs text-muted-foreground" : "sr-only"}
+                    data-testid="saved-round-removed-notice"
+                  >
+                    {cloudRoundRemovedNotice}
+                  </p>
                   {cloudRoundList.kind === "loading" && (
                     <div className="flex justify-center py-4">
                       <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
